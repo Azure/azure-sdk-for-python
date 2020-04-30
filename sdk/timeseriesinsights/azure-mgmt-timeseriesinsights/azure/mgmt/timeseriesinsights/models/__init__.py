@@ -62,6 +62,7 @@ try:
     from ._models_py3 import TimeSeriesIdProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import WarmStorageEnvironmentStatus
+    from ._models_py3 import WarmStoreConfigurationProperties
 except (SyntaxError, ImportError):
     from ._models import AccessPolicyCreateOrUpdateParameters
     from ._models import AccessPolicyListResponse
@@ -115,6 +116,7 @@ except (SyntaxError, ImportError):
     from ._models import TimeSeriesIdProperty
     from ._models import TrackedResource
     from ._models import WarmStorageEnvironmentStatus
+    from ._models import WarmStoreConfigurationProperties
 from ._paged_models import OperationPaged
 from ._time_series_insights_client_enums import (
     ProvisioningState,
@@ -182,6 +184,7 @@ __all__ = [
     'TimeSeriesIdProperty',
     'TrackedResource',
     'WarmStorageEnvironmentStatus',
+    'WarmStoreConfigurationProperties',
     'OperationPaged',
     'ProvisioningState',
     'SkuName',

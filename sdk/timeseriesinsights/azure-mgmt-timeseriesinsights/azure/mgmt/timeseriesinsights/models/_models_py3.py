@@ -709,6 +709,13 @@ class EventSourceCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
     :type location: str
     :param tags: Key-value pairs of additional properties for the resource.
     :type tags: dict[str, str]
+    :param local_timestamp: An object that represents the local timestamp
+     property. It contains the format of local timestamp that needs to be used
+     and the corresponding timezone offset information. If a value isn't
+     specified for localTimestamp, or if null, then the local timestamp will
+     not be ingressed with the events.
+    :type local_timestamp:
+     ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     :param kind: Required. Constant filled by server.
     :type kind: str
     """
@@ -721,6 +728,7 @@ class EventSourceCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -728,8 +736,9 @@ class EventSourceCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
         'kind': {'Microsoft.EventHub': 'EventHubEventSourceCreateOrUpdateParameters', 'Microsoft.IoTHub': 'IoTHubEventSourceCreateOrUpdateParameters'}
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, local_timestamp=None, **kwargs) -> None:
         super(EventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.local_timestamp = local_timestamp
         self.kind = None
         self.kind = 'EventSourceCreateOrUpdateParameters'
 
@@ -747,6 +756,13 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
     :type location: str
     :param tags: Key-value pairs of additional properties for the resource.
     :type tags: dict[str, str]
+    :param local_timestamp: An object that represents the local timestamp
+     property. It contains the format of local timestamp that needs to be used
+     and the corresponding timezone offset information. If a value isn't
+     specified for localTimestamp, or if null, then the local timestamp will
+     not be ingressed with the events.
+    :type local_timestamp:
+     ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param provisioning_state: Provisioning state of the resource. Possible
@@ -797,6 +813,7 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
         'kind': {'key': 'kind', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -809,8 +826,8 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         'shared_access_key': {'key': 'properties.sharedAccessKey', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, event_source_resource_id: str, service_bus_namespace: str, event_hub_name: str, consumer_group_name: str, key_name: str, shared_access_key: str, tags=None, provisioning_state=None, timestamp_property_name: str=None, **kwargs) -> None:
-        super(EventHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, event_source_resource_id: str, service_bus_namespace: str, event_hub_name: str, consumer_group_name: str, key_name: str, shared_access_key: str, tags=None, local_timestamp=None, provisioning_state=None, timestamp_property_name: str=None, **kwargs) -> None:
+        super(EventHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
         self.provisioning_state = provisioning_state
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
@@ -868,7 +885,7 @@ class EventSourceResource(TrackedResource):
     }
 
     _subtype_map = {
-        'kind': {'Microsoft.EventHub': 'EventHubEventSourceResource', 'Microsoft.IotHub': 'IoTHubEventSourceResource'}
+        'kind': {'Microsoft.EventHub': 'EventHubEventSourceResource', 'Microsoft.IoTHub': 'IoTHubEventSourceResource'}
     }
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
@@ -1169,6 +1186,13 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
     :type location: str
     :param tags: Key-value pairs of additional properties for the resource.
     :type tags: dict[str, str]
+    :param local_timestamp: An object that represents the local timestamp
+     property. It contains the format of local timestamp that needs to be used
+     and the corresponding timezone offset information. If a value isn't
+     specified for localTimestamp, or if null, then the local timestamp will
+     not be ingressed with the events.
+    :type local_timestamp:
+     ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param provisioning_state: Provisioning state of the resource. Possible
@@ -1215,6 +1239,7 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
         'kind': {'key': 'kind', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -1226,8 +1251,8 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         'shared_access_key': {'key': 'properties.sharedAccessKey', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, event_source_resource_id: str, iot_hub_name: str, consumer_group_name: str, key_name: str, shared_access_key: str, tags=None, provisioning_state=None, timestamp_property_name: str=None, **kwargs) -> None:
-        super(IoTHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, event_source_resource_id: str, iot_hub_name: str, consumer_group_name: str, key_name: str, shared_access_key: str, tags=None, local_timestamp=None, provisioning_state=None, timestamp_property_name: str=None, **kwargs) -> None:
+        super(IoTHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
         self.provisioning_state = provisioning_state
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
@@ -1323,7 +1348,7 @@ class IoTHubEventSourceResource(EventSourceResource):
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
         self.key_name = key_name
-        self.kind = 'Microsoft.IotHub'
+        self.kind = 'Microsoft.IoTHub'
 
 
 class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
@@ -1372,8 +1397,7 @@ class LocalTimestamp(Model):
     or if null, then the local timestamp will not be ingressed with the events.
 
     :param format: An enum that represents the format of the local timestamp
-     property that needs to be set. Possible values include: 'Embedded',
-     'Iana', 'TimeSpan'
+     property that needs to be set. Possible values include: 'Embedded'
     :type format: str or
      ~azure.mgmt.timeseriesinsights.models.LocalTimestampFormat
     :param time_zone_offset: An object that represents the offset information
@@ -1444,10 +1468,11 @@ class LongTermEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParam
      environment's data.
     :type storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationInput
-    :param data_retention: Required. ISO8601 timespan specifying the number of
-     days the environment's events will be available for query from the warm
-     store.
-    :type data_retention: timedelta
+    :param warm_store_configuration: The warm store configuration provides the
+     details to create a warm store cache that will retain a copy of the
+     environment's data available for faster query.
+    :type warm_store_configuration:
+     ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
     """
 
     _validation = {
@@ -1456,7 +1481,6 @@ class LongTermEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParam
         'kind': {'required': True},
         'time_series_id_properties': {'required': True},
         'storage_configuration': {'required': True},
-        'data_retention': {'required': True},
     }
 
     _attribute_map = {
@@ -1466,14 +1490,14 @@ class LongTermEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParam
         'kind': {'key': 'kind', 'type': 'str'},
         'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationInput'},
-        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+        'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
     }
 
-    def __init__(self, *, location: str, sku, time_series_id_properties, storage_configuration, data_retention, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, time_series_id_properties, storage_configuration, tags=None, warm_store_configuration=None, **kwargs) -> None:
         super(LongTermEnvironmentCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.time_series_id_properties = time_series_id_properties
         self.storage_configuration = storage_configuration
-        self.data_retention = data_retention
+        self.warm_store_configuration = warm_store_configuration
         self.kind = 'LongTerm'
 
 
@@ -1532,10 +1556,11 @@ class LongTermEnvironmentResource(EnvironmentResource):
      environment's data.
     :type storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationOutput
-    :param data_retention: Required. ISO8601 timespan specifying the number of
-     days the environment's events will be available for query from the warm
-     store.
-    :type data_retention: timedelta
+    :param warm_store_configuration: The warm store configuration provides the
+     details to create a warm store cache that will retain a copy of the
+     environment's data available for faster query.
+    :type warm_store_configuration:
+     ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
     """
 
     _validation = {
@@ -1550,7 +1575,6 @@ class LongTermEnvironmentResource(EnvironmentResource):
         'creation_time': {'readonly': True},
         'time_series_id_properties': {'required': True},
         'storage_configuration': {'required': True},
-        'data_retention': {'required': True},
     }
 
     _attribute_map = {
@@ -1568,10 +1592,10 @@ class LongTermEnvironmentResource(EnvironmentResource):
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationOutput'},
-        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+        'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
     }
 
-    def __init__(self, *, location: str, sku, time_series_id_properties, storage_configuration, data_retention, tags=None, status=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, time_series_id_properties, storage_configuration, tags=None, status=None, provisioning_state=None, warm_store_configuration=None, **kwargs) -> None:
         super(LongTermEnvironmentResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.data_access_id = None
         self.data_access_fqdn = None
@@ -1580,15 +1604,13 @@ class LongTermEnvironmentResource(EnvironmentResource):
         self.creation_time = None
         self.time_series_id_properties = time_series_id_properties
         self.storage_configuration = storage_configuration
-        self.data_retention = data_retention
+        self.warm_store_configuration = warm_store_configuration
         self.kind = 'LongTerm'
 
 
 class LongTermEnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a
     long-term environment.
-
-    All required parameters must be populated in order to send to Azure.
 
     :param tags: Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
@@ -1598,26 +1620,23 @@ class LongTermEnvironmentUpdateParameters(EnvironmentUpdateParameters):
      data.
     :type storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationMutableProperties
-    :param data_retention: Required. ISO8601 timespan specifying the number of
-     days the environment's events will be available for query from the warm
-     store.
-    :type data_retention: timedelta
+    :param warm_store_configuration: The warm store configuration provides the
+     details to create a warm store cache that will retain a copy of the
+     environment's data available for faster query.
+    :type warm_store_configuration:
+     ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
     """
-
-    _validation = {
-        'data_retention': {'required': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationMutableProperties'},
-        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+        'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
     }
 
-    def __init__(self, *, data_retention, tags=None, storage_configuration=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, storage_configuration=None, warm_store_configuration=None, **kwargs) -> None:
         super(LongTermEnvironmentUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.storage_configuration = storage_configuration
-        self.data_retention = data_retention
+        self.warm_store_configuration = warm_store_configuration
 
 
 class LongTermStorageConfigurationInput(Model):
@@ -2004,7 +2023,8 @@ class StandardEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParam
     :type storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
     :param partition_key_properties: The list of event properties which will
-     be used to partition data in the environment.
+     be used to partition data in the environment. Currently, only a single
+     partition key property is supported.
     :type partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     """
@@ -2075,7 +2095,8 @@ class StandardEnvironmentResource(EnvironmentResource):
     :type storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
     :param partition_key_properties: The list of event properties which will
-     be used to partition data in the environment.
+     be used to partition data in the environment. Currently, only a single
+     partition key property is supported.
     :type partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     :ivar data_access_id: An id used to access the environment data, e.g. to
@@ -2162,10 +2183,6 @@ class StandardEnvironmentUpdateParameters(EnvironmentUpdateParameters):
      'PauseIngress'
     :type storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will
-     be used to partition data in the environment.
-    :type partition_key_properties:
-     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     """
 
     _attribute_map = {
@@ -2173,15 +2190,13 @@ class StandardEnvironmentUpdateParameters(EnvironmentUpdateParameters):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
         'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'str'},
-        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[TimeSeriesIdProperty]'},
     }
 
-    def __init__(self, *, tags=None, sku=None, data_retention_time=None, storage_limit_exceeded_behavior=None, partition_key_properties=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, data_retention_time=None, storage_limit_exceeded_behavior=None, **kwargs) -> None:
         super(StandardEnvironmentUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.data_retention_time = data_retention_time
         self.storage_limit_exceeded_behavior = storage_limit_exceeded_behavior
-        self.partition_key_properties = partition_key_properties
 
 
 class TimeSeriesIdProperty(Model):
@@ -2239,3 +2254,29 @@ class WarmStorageEnvironmentStatus(Model):
         self.state = state
         self.current_count = current_count
         self.max_count = max_count
+
+
+class WarmStoreConfigurationProperties(Model):
+    """The warm store configuration provides the details to create a warm store
+    cache that will retain a copy of the environment's data available for
+    faster query.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_retention: Required. ISO8601 timespan specifying the number of
+     days the environment's events will be available for query from the warm
+     store.
+    :type data_retention: timedelta
+    """
+
+    _validation = {
+        'data_retention': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_retention': {'key': 'dataRetention', 'type': 'duration'},
+    }
+
+    def __init__(self, *, data_retention, **kwargs) -> None:
+        super(WarmStoreConfigurationProperties, self).__init__(**kwargs)
+        self.data_retention = data_retention
