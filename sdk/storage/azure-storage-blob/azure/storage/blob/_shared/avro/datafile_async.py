@@ -135,10 +135,10 @@ class AsyncDataFileReader(object):
         header_decoder = self._header_decoder if self._header_decoder else self._raw_decoder
 
         # seek to the beginning of the file to get magic block
-        await self.reader.seek(0, 0)
+        await header_reader.seek(0, 0)
 
         # read header into a dict
-        header = self.datum_reader.read_data(META_SCHEMA, header_decoder)
+        header = await self.datum_reader.read_data(META_SCHEMA, header_decoder)
 
         # check magic number
         if header.get('magic') != MAGIC:
