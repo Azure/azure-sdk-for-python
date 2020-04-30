@@ -27,6 +27,7 @@ from azure.servicebus.exceptions import (
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
+from uamqp.errors import MessageContentTooLarge
 from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
@@ -709,11 +710,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             too_large = "A" * 256 * 1024
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
+                with pytest.raises(MessageContentTooLarge):
                     sender.send(Message(too_large))
 
                 half_too_large = "A" * int((1024 * 256) / 2)
-                with pytest.raises(ValueError):
+                with pytest.raises(MessageContentTooLarge):
                     sender.send([Message(half_too_large), Message(half_too_large)])
     
 
