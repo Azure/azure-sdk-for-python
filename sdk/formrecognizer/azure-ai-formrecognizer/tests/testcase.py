@@ -354,6 +354,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
         self.multipage_test = kwargs.get("multipage", False)
+        self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
 
     def _load_settings(self):
         try:
@@ -380,10 +381,15 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         return key_value
 
     def create_resource(self, name, **kwargs):
-        client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
+        client, container_sas_url, blob_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
 
-        return {"client": client,
-                "container_sas_url": container_sas_url}
+        if self.need_blob_sas_url:
+            return {"client": client,
+                    "container_sas_url": container_sas_url,
+                    "blob_sas_url": blob_sas_url}
+        else:
+            return {"client": client,
+                    "container_sas_url": container_sas_url}
 
     def create_form_client_and_container_sas_url(self, **kwargs):
         form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
@@ -397,20 +403,31 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             if self.multipage_test:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
+                url = container_sas_url.split("multipage-training-data")
+                url[0] += "multipage-training-data/multipage_invoice1.pdf"
+                blob_sas_url = url[0] + url[1]
+                self.test_class_instance.scrubber.register_name_pair(
+                    blob_sas_url,
+                    "blob_sas_url"
+                )
+
             else:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+                blob_sas_url = None
+
             self.test_class_instance.scrubber.register_name_pair(
                 container_sas_url,
                 "containersasurl"
             )
         else:
             container_sas_url = "containersasurl"
+            blob_sas_url = "blob_sas_url"
 
         return self.client_cls(
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
             **self.client_kwargs
-        ), container_sas_url
+        ), container_sas_url, blob_sas_url
 
 
 @pytest.fixture(scope="session")

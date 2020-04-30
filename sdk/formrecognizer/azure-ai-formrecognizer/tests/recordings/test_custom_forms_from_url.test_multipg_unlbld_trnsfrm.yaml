@@ -10,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '320'
+      - '301'
       Content-Type:
       - application/json
       User-Agent:
@@ -23,19 +23,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - d3c8050a-5c9d-40c4-ab33-3011efc88063
+      - 7f00d484-0917-4421-b03b-2dea2378e96b
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 00:42:57 GMT
+      - Thu, 30 Apr 2020 20:11:33 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '34'
+      - '124'
     status:
       code: 201
       message: Created
@@ -52,17 +52,17 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"b1afa6c8-903b-4ccf-a8c7-c53aa01fe605","status":"creating","createdDateTime":"2020-04-28T00:42:57Z","lastUpdatedDateTime":"2020-04-28T00:42:57Z"}}'
+      string: '{"modelInfo":{"modelId":"e3eb2683-aba8-4723-a0d9-be0fc8894069","status":"creating","createdDateTime":"2020-04-30T20:11:34Z","lastUpdatedDateTime":"2020-04-30T20:11:34Z"}}'
     headers:
       apim-request-id:
-      - 64673bda-6bf2-4cd4-97d8-5d98424a8354
+      - 566faa98-6e3d-4a07-8056-a37bdd21a158
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 00:43:02 GMT
+      - Thu, 30 Apr 2020 20:11:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +70,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '78'
     status:
       code: 200
       message: OK
@@ -87,17 +87,17 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"b1afa6c8-903b-4ccf-a8c7-c53aa01fe605","status":"creating","createdDateTime":"2020-04-28T00:42:57Z","lastUpdatedDateTime":"2020-04-28T00:42:57Z"}}'
+      string: '{"modelInfo":{"modelId":"e3eb2683-aba8-4723-a0d9-be0fc8894069","status":"creating","createdDateTime":"2020-04-30T20:11:34Z","lastUpdatedDateTime":"2020-04-30T20:11:34Z"}}'
     headers:
       apim-request-id:
-      - cac298af-5b4f-4224-9bbc-4a69e9f5025c
+      - 9f00f567-6a47-4a3c-b005-b4dea32dd458
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 00:43:07 GMT
+      - Thu, 30 Apr 2020 20:11:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -105,7 +105,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '28'
+      - '135'
     status:
       code: 200
       message: OK
@@ -122,18 +122,18 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"b1afa6c8-903b-4ccf-a8c7-c53aa01fe605","status":"ready","createdDateTime":"2020-04-28T00:42:57Z","lastUpdatedDateTime":"2020-04-28T00:43:11Z"},"keys":{"clusters":{"0":["Address:","Invoice
+      string: '{"modelInfo":{"modelId":"e3eb2683-aba8-4723-a0d9-be0fc8894069","status":"ready","createdDateTime":"2020-04-30T20:11:34Z","lastUpdatedDateTime":"2020-04-30T20:11:47Z"},"keys":{"clusters":{"0":["Address:","Invoice
         For:","Redmond, WA","Signature:","Subtotal:","Tax:","Tip:","Total:"]}},"trainResult":{"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"errors":[],"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"errors":[],"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"errors":[],"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"errors":[],"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"errors":[],"status":"succeeded"}],"errors":[]}}'
     headers:
       apim-request-id:
-      - 43fc46ea-839d-4475-a4cc-f0a15cc0322d
+      - 6f5783eb-2ab0-4215-bb92-0c4c4b113900
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 00:43:12 GMT
+      - Thu, 30 Apr 2020 20:11:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -141,12 +141,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '144'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/training_multipage/multipage_invoice1.pdf"}'
+    body: 'b''{"source": "blob_sas_url"}'''
     headers:
       Accept:
       - '*/*'
@@ -155,32 +155,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '116'
+      - '241'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605/analyze?includeTextDetails=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - d4b237f5-d954-4307-bb8c-3906456d4033
+      - 6f51eb1c-c4a1-4226-b685-98293aca994d
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 00:43:13 GMT
+      - Thu, 30 Apr 2020 20:11:50 GMT
       operation-location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605/analyzeresults/83fefa29-e420-45cb-a953-42cb91e59656
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069/analyzeresults/d0e29eab-18e7-48ae-bc4c-789b64c7f181
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '227'
+      - '272'
     status:
       code: 202
       message: Accepted
@@ -197,10 +197,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b1afa6c8-903b-4ccf-a8c7-c53aa01fe605/analyzeresults/83fefa29-e420-45cb-a953-42cb91e59656
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e3eb2683-aba8-4723-a0d9-be0fc8894069/analyzeresults/d0e29eab-18e7-48ae-bc4c-789b64c7f181
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-28T00:43:13Z","lastUpdatedDateTime":"2020-04-28T00:43:18Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0,"width":8.5,"height":11.0,"unit":"inch","lines":[{"text":"Company
+      string: '{"status":"succeeded","createdDateTime":"2020-04-30T20:11:50Z","lastUpdatedDateTime":"2020-04-30T20:11:54Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0,"width":8.5,"height":11.0,"unit":"inch","lines":[{"text":"Company
         A Invoice","boundingBox":[0.8764,1.1014,2.3875,1.1014,2.3875,1.2958,0.8764,1.2958],"words":[{"text":"Company","boundingBox":[0.8764,1.1014,1.6236,1.1014,1.6236,1.2958,0.8764,1.2958]},{"text":"A","boundingBox":[1.6667,1.1014,1.7778,1.1014,1.7778,1.2958,1.6667,1.2958]},{"text":"Invoice","boundingBox":[1.8222,1.1014,2.3875,1.1014,2.3875,1.2958,1.8222,1.2958]}]},{"text":"Invoice
         For:","boundingBox":[6.0028,1.0431,7.0528,1.0431,7.0528,1.2667,6.0028,1.2667],"words":[{"text":"Invoice","boundingBox":[6.0028,1.0431,6.6472,1.0431,6.6472,1.2667,6.0028,1.2667]},{"text":"For:","boundingBox":[6.6958,1.0431,7.0528,1.0431,7.0528,1.2667,6.6958,1.2667]}]},{"text":"Address:","boundingBox":[0.8764,1.4681,1.5778,1.4681,1.5778,1.6625,0.8764,1.6625],"words":[{"text":"Address:","boundingBox":[0.8764,1.4681,1.5778,1.4681,1.5778,1.6625,0.8764,1.6625]}]},{"text":"Bilbo
         Baggins","boundingBox":[6.0028,1.4389,6.9028,1.4389,6.9028,1.6056,6.0028,1.6056],"words":[{"text":"Bilbo","boundingBox":[6.0028,1.4389,6.3472,1.4389,6.3472,1.6056,6.0028,1.6056]},{"text":"Baggins","boundingBox":[6.3819,1.4389,6.9028,1.4389,6.9028,1.6056,6.3819,1.6056]}]},{"text":"123
@@ -233,11 +233,11 @@ interactions:
         B Invoice","boundingBox":[0.8764,1.1014,2.3833,1.1014,2.3833,1.2958,0.8764,1.2958],"elements":["#/readResults/2/lines/0/words/0","#/readResults/2/lines/0/words/1","#/readResults/2/lines/0/words/2"]},"confidence":1.0}],"tables":[{"rows":8,"columns":3,"cells":[{"text":"Item","rowIndex":0,"columnIndex":0,"boundingBox":[1.0806,2.9833,1.3958,2.9833,1.3958,3.15,1.0806,3.15],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/10/words/0"],"isHeader":true,"isFooter":false},{"text":"Quantity","rowIndex":0,"columnIndex":1,"boundingBox":[3.2444,2.9833,3.8389,2.9833,3.8389,3.15,3.2444,3.15],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/11/words/0"],"isHeader":true,"isFooter":false},{"text":"Price","rowIndex":0,"columnIndex":2,"boundingBox":[5.4083,2.9833,5.7458,2.9833,5.7458,3.15,5.4083,3.15],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/12/words/0"],"isHeader":true,"isFooter":false},{"text":"A","rowIndex":1,"columnIndex":0,"boundingBox":[1.0806,3.1931,1.1764,3.1931,1.1764,3.3597,1.0806,3.3597],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/13/words/0"],"isHeader":false,"isFooter":false},{"text":"10","rowIndex":1,"columnIndex":1,"boundingBox":[3.2444,3.1931,3.4125,3.1931,3.4125,3.3597,3.2444,3.3597],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/14/words/0"],"isHeader":false,"isFooter":false},{"text":"100.99","rowIndex":1,"columnIndex":2,"boundingBox":[5.4083,3.1931,5.8708,3.1931,5.8708,3.3597,5.4083,3.3597],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/15/words/0"],"isHeader":false,"isFooter":false},{"text":"B","rowIndex":2,"columnIndex":0,"boundingBox":[1.0806,3.4056,1.1708,3.4056,1.1708,3.5722,1.0806,3.5722],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/16/words/0"],"isHeader":false,"isFooter":false},{"text":"20","rowIndex":2,"columnIndex":1,"boundingBox":[3.2444,3.4056,3.4125,3.4056,3.4125,3.5722,3.2444,3.5722],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/17/words/0"],"isHeader":false,"isFooter":false},{"text":"140.67","rowIndex":2,"columnIndex":2,"boundingBox":[5.4083,3.4056,5.8694,3.4056,5.8694,3.5722,5.4083,3.5722],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/18/words/0"],"isHeader":false,"isFooter":false},{"text":"C","rowIndex":3,"columnIndex":0,"boundingBox":[1.0806,3.6167,1.1694,3.6167,1.1694,3.7833,1.0806,3.7833],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/19/words/0"],"isHeader":false,"isFooter":false},{"text":"40","rowIndex":3,"columnIndex":1,"boundingBox":[3.2444,3.6167,3.4125,3.6167,3.4125,3.7833,3.2444,3.7833],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/20/words/0"],"isHeader":false,"isFooter":false},{"text":"150.66","rowIndex":3,"columnIndex":2,"boundingBox":[5.4083,3.6167,5.8694,3.6167,5.8694,3.7833,5.4083,3.7833],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/21/words/0"],"isHeader":false,"isFooter":false},{"text":"D","rowIndex":4,"columnIndex":0,"boundingBox":[1.0806,3.8264,1.1833,3.8264,1.1833,3.9931,1.0806,3.9931],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/22/words/0"],"isHeader":false,"isFooter":false},{"text":"10","rowIndex":4,"columnIndex":1,"boundingBox":[3.2444,3.8264,3.4125,3.8264,3.4125,3.9931,3.2444,3.9931],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/23/words/0"],"isHeader":false,"isFooter":false},{"text":"120.00","rowIndex":4,"columnIndex":2,"boundingBox":[5.4083,3.8264,5.8694,3.8264,5.8694,3.9931,5.4083,3.9931],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/24/words/0"],"isHeader":false,"isFooter":false},{"text":"E","rowIndex":5,"columnIndex":0,"boundingBox":[1.0806,4.0361,1.1611,4.0361,1.1611,4.2028,1.0806,4.2028],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/25/words/0"],"isHeader":false,"isFooter":false},{"text":"40","rowIndex":5,"columnIndex":1,"boundingBox":[3.2444,4.0361,3.4125,4.0361,3.4125,4.2028,3.2444,4.2028],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/26/words/0"],"isHeader":false,"isFooter":false},{"text":"100.00","rowIndex":5,"columnIndex":2,"boundingBox":[5.4083,4.0361,5.8708,4.0361,5.8708,4.2028,5.4083,4.2028],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/27/words/0"],"isHeader":false,"isFooter":false},{"text":"F","rowIndex":6,"columnIndex":0,"boundingBox":[1.0806,4.2458,1.1569,4.2458,1.1569,4.4125,1.0806,4.4125],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/28/words/0"],"isHeader":false,"isFooter":false},{"text":"60","rowIndex":6,"columnIndex":1,"boundingBox":[3.2444,4.2458,3.4125,4.2458,3.4125,4.4125,3.2444,4.4125],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/29/words/0"],"isHeader":false,"isFooter":false},{"text":"120.00","rowIndex":6,"columnIndex":2,"boundingBox":[5.4083,4.2458,5.8694,4.2458,5.8694,4.4125,5.4083,4.4125],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/30/words/0"],"isHeader":false,"isFooter":false},{"text":"G","rowIndex":7,"columnIndex":0,"boundingBox":[1.0806,4.4569,1.1861,4.4569,1.1861,4.6236,1.0806,4.6236],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/31/words/0"],"isHeader":false,"isFooter":false},{"text":"80","rowIndex":7,"columnIndex":1,"boundingBox":[3.2444,4.4569,3.4125,4.4569,3.4125,4.6236,3.2444,4.6236],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/32/words/0"],"isHeader":false,"isFooter":false},{"text":"220.00","rowIndex":7,"columnIndex":2,"boundingBox":[5.4083,4.4569,5.8708,4.4569,5.8708,4.6236,5.4083,4.6236],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":["#/readResults/2/lines/33/words/0"],"isHeader":false,"isFooter":false}]}],"clusterId":0}],"documentResults":[],"errors":[]}}'
     headers:
       apim-request-id:
-      - 9e6b2b1f-025e-43ff-a098-5fcb2e1f0a92
+      - 2ad1da5c-c622-4dd9-a477-5a70bf4172c2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 00:43:19 GMT
+      - Thu, 30 Apr 2020 20:11:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -245,7 +245,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '54'
+      - '126'
     status:
       code: 200
       message: OK

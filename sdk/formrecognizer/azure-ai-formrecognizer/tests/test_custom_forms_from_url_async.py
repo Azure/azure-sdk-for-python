@@ -82,15 +82,15 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(field.label_data.text)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_multipg_unlbld(self, client, container_sas_url):
+    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    async def test_multipg_unlbld(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
 
         forms = await client.recognize_custom_forms_from_url(
             model.model_id,
-            self.multipage_url_pdf,
+            blob_sas_url,
         )
 
         for form in forms:
@@ -123,8 +123,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(field.value_data.bounding_box)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_multipg_lbld(self, client, container_sas_url):
+    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    async def test_multipg_lbld(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(
@@ -134,7 +134,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         forms = await client.recognize_custom_forms_from_url(
             model.model_id,
-            self.multipage_url_pdf
+            blob_sas_url
         )
 
         for form in forms:
@@ -146,7 +146,6 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.value_data.bounding_box)
-
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
@@ -182,8 +181,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_mltipg_unlbl_tfrm(self, client, container_sas_url):
+    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    async def test_mltipg_unlbl_tfrm(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -198,7 +197,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         form = await client.recognize_custom_forms_from_url(
             model.model_id,
-            self.multipage_url_pdf,
+            blob_sas_url,
             include_text_content=True,
             cls=callback
         )
@@ -248,8 +247,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_multipg_lbl_trfrm(self, client, container_sas_url):
+    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    async def test_multipg_lbl_trfrm(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url, use_labels=True)
@@ -264,7 +263,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         form = await client.recognize_custom_forms_from_url(
             model.model_id,
-            self.multipage_url_pdf,
+            blob_sas_url,
             include_text_content=True,
             cls=callback
         )
