@@ -12,6 +12,7 @@ from azure.identity import CredentialUnavailableError, KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
 from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
+from azure.identity.aio._credentials.vscode_credential import VSCodeCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
@@ -114,6 +115,9 @@ def test_exclude_options():
 
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
+
+    credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
+    assert_credentials_not_present(credential, VSCodeCredential)
 
 
 @pytest.mark.asyncio
