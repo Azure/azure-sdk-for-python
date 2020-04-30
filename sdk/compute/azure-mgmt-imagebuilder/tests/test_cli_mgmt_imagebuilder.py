@@ -18,7 +18,6 @@
 
 import unittest
 
-raise unittest.SkipTest("Skipping tests since live running failed before release.")
 
 import azure.mgmt.imagebuilder
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
