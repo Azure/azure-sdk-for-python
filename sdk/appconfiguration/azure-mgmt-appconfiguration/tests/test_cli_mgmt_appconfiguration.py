@@ -240,7 +240,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         PRIVATE_LINK_RESOURCE_NAME = privatelinks[0].name
 
         # PrivateLinkResources_Get[get]
-        #result = self.mgmt_client.private_link_resources.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_LINK_RESOURCE_NAME)
+        result = self.mgmt_client.private_link_resources.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_LINK_RESOURCE_NAME)
 
         # PrivateEndpointConnection_List[get]
         result = list(self.mgmt_client.private_endpoint_connections.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
@@ -290,16 +290,15 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         result = self.mgmt_client.operations.check_name_availability(BODY)
 
         # ConfigurationStores_CheckNameAvailable[post]
-        # BODY = {
-        #   "name": "contoso",
-        #   "type": "Microsoft.AppConfiguration/configurationStores"
-        # }
-        # result = self.mgmt_client.operations.check_name_availability(BODY["name"])
+        BODY = {
+          "name": "contoso",
+          "type": "Microsoft.AppConfiguration/configurationStores"
+        }
+        result = self.mgmt_client.operations.check_name_availability(BODY)
 
-        # if self.is_live:
-          # PrivateEndpointConnections_Delete[delete]
-          # result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
-          # result = result.result()
+        # PrivateEndpointConnections_Delete[delete]
+        result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        result = result.result()
 
         # ConfigurationStores_Delete[delete]
         result = self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
