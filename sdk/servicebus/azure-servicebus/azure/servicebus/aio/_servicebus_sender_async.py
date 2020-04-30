@@ -12,8 +12,6 @@ from uamqp import SendClientAsync, types
 from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
-from ..exceptions import (
-    MessageContentTooLarge)
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -298,7 +296,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             await self._open_with_retry()
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
-            raise MessageContentTooLarge(
+            raise ValueError(
                 "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
                     max_size_in_bytes, self._max_message_size_on_link
                 )

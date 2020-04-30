@@ -16,7 +16,7 @@ from ._common.message import Message, BatchMessage
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
-    MessageContentTooLarge)
+    )
 from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -350,7 +350,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._open_with_retry()
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
-            raise MessageContentTooLarge(
+            raise ValueError(
                 "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
                     max_size_in_bytes, self._max_message_size_on_link
                 )
