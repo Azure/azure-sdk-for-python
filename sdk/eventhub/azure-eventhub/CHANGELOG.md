@@ -2,6 +2,9 @@
 
 ## 5.1.0b2 (Unreleased)
 
+**New Features**
+
+- `EventHubProducerClient.send_batch` accepts either an `EventDataBatch` or a finite list of `EventData`. #9181
 
 ## 5.1.0b1 (2020-04-06)
 
