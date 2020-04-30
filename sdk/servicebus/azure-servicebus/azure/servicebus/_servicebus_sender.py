@@ -14,10 +14,9 @@ from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
-    MessageSendFailed,
     OperationTimeoutError,
-    _ServiceBusErrorPolicy
-)
+    _ServiceBusErrorPolicy,
+    )
 from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -183,10 +182,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def _send(self, message, timeout=None, last_exception=None):
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            self._handler.send_message(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        self._handler.send_message(message.message)
 
     def _schedule(self, message, schedule_time_utc):
         # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
@@ -319,8 +315,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             batch = self.create_batch()
             batch._from_list(message)
             message = batch
-        except TypeError: # Message was not a list or generator.
+        except TypeError:  # Message was not a list or generator.
             pass
+        if isinstance(message, BatchMessage) and len(message) == 0:
+            raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
         self._do_retryable_operation(
             self._send,
