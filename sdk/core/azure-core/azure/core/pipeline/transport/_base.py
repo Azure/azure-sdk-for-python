@@ -71,7 +71,7 @@ from azure.core.pipeline import (
     PipelineResponse,
     PipelineContext,
 )
-from .._base import _await_result
+from .._tools import await_result as _await_result
 
 
 if TYPE_CHECKING:

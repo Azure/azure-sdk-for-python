@@ -238,16 +238,20 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send(self, message, timeout=None):
-        # type: (Message, float) -> None
+    async def send(self, message):
+        # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
+        If a list of messages was provided, attempts to send them as a single batch, throwing a
+        `ValueError` if they cannot fit in a single batch.
+
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
-        :param float timeout: The maximum wait time to send the event data.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+        :raises: :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to
+         send
+                :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
+                :class: `ValueError` if list of messages is provided and cannot fit in a batch.
 
         .. admonition:: Example:
 
@@ -259,10 +263,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Send message.
 
         """
+        try:
+            batch = await self.create_batch()
+            batch._from_list(message)
+            message = batch
+        except TypeError: # Message was not a list or generator.
+            pass
+
         await self._do_retryable_operation(
             self._send,
             message=message,
-            timeout=timeout,
             require_timeout=True,
             require_last_exception=True
         )

@@ -1,9 +1,13 @@
 # Release History
 
-## 12.3.1 (Unreleased)
+## 12.3.2 (Unreleased)
+
+
+## 12.3.1 (2020-04-29)
 
 **Fixes**
 - Fixed issue where batch requests could not be combined with token credentials (#9534)
+- Skip '/' in url encoding.
 
 
 ## 12.3.0 (2020-03-10)

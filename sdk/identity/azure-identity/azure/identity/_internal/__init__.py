@@ -3,12 +3,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
 
 
+def normalize_authority(authority):
+    # type: (str) -> str
+    """Ensure authority uses https, strip trailing spaces and /"""
+
+    parsed = urlparse(authority)
+    if not parsed.scheme:
+        return "https://" + authority.rstrip(" /")
+    if parsed.scheme != "https":
+        raise ValueError(
+            "'{}' is an invalid authority. The value must be a TLS protected (https) URL.".format(authority)
+        )
+
+    return authority.rstrip(" /")
+
+
 def get_default_authority():
-    return os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    # type: () -> str
+    authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    return normalize_authority(authority)
 
 
 # pylint:disable=wrong-import-position
