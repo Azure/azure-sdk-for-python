@@ -18,6 +18,7 @@ try:
         [ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_void_p]
     _libsecret.secret_password_lookup_sync.argtypes = \
         [ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_void_p]
+    _libsecret.secret_password_lookup_sync.restype = ct.c_char_p
 except OSError:
     _libsecret = None
 
@@ -52,7 +53,7 @@ def _get_refresh_token(service_name, account_name):
                                           _c_str("service"), 0, _c_str("account"), 0, None)
     p_str = _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
                                                    _c_str("account"), _c_str(account_name), None)
-    return ct.c_char_p(p_str).value.decode('utf-8')
+    return p_str.decode('utf-8')
 
 
 def get_credentials():
