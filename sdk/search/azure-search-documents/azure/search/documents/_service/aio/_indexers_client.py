@@ -88,12 +88,21 @@ class SearchIndexersClient(HeadersMixin):
         :return: The created Indexer
         :rtype: dict
         """
-        # TODO: access_condition
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
         if not name:
             name = indexer.name
-        result = await self._client.indexers.create_or_update(name, indexer, **kwargs)
+        result = await self._client.indexers.create_or_update(
+            indexer_name=name,
+            indexer=indexer,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
         return result
 
     @distributed_trace_async
@@ -165,14 +174,15 @@ class SearchIndexersClient(HeadersMixin):
                 :caption: Delete an Indexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             name = indexer.name
-            # TODO: update the placeholder
-            access_condition = None
         except AttributeError:
             name = indexer
-        await self._client.indexers.delete(name, access_condition=access_condition, **kwargs)
+        await self._client.indexers.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
 
     @distributed_trace_async
     async def run_indexer(self, name, **kwargs):

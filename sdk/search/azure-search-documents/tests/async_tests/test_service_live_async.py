@@ -560,3 +560,34 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         result = await client.create_indexer(indexer)
         status = await client.get_indexer_status("sample-indexer")
         assert status.status is not None
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_create_or_update_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        indexer = await self._prepare_indexer(endpoint, api_key)
+        created = await client.create_indexer(indexer)
+        etag = created.e_tag
+
+
+        indexer.description = "updated"
+        await client.create_or_update_indexer(indexer)
+
+        indexer.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            await client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_delete_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        indexer = await self._prepare_indexer(endpoint, api_key)
+        result = await client.create_indexer(indexer)
+        etag = result.e_tag
+
+        indexer.description = "updated"
+        await client.create_or_update_indexer(indexer)
+
+        indexer.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            await client.delete_indexer(indexer, match_condition=MatchConditions.IfNotModified)
