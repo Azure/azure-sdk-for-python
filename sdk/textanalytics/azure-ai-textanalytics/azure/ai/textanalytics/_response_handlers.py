@@ -62,8 +62,7 @@ def prepare_result(func):
     def _get_error_code_and_message(error):
         if hasattr(error.error, 'innererror') and error.error.innererror:
             return error.error.innererror.code, error.error.innererror.message
-        else:
-            return error.error.code, error.error.message
+        return error.error.code, error.error.message
 
     def _deal_with_too_many_documents(response, obj):
         # special case for now if there are too many documents in the request
