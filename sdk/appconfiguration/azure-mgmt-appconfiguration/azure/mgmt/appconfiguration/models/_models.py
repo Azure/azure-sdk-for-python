@@ -183,6 +183,15 @@ class ConfigurationStore(Resource):
     :vartype endpoint: str
     :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
+    :ivar private_endpoint_connections: The list of private endpoint
+     connections that are set up for this resource.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.appconfiguration.models.PrivateEndpointConnectionReference]
+    :param public_network_access: Control permission for data plane traffic
+     coming from public networks while private endpoint is enabled. Possible
+     values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
     :param sku: Required. The sku of the configuration store.
     :type sku: ~azure.mgmt.appconfiguration.models.Sku
     """
@@ -195,6 +204,7 @@ class ConfigurationStore(Resource):
         'provisioning_state': {'readonly': True},
         'creation_date': {'readonly': True},
         'endpoint': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
         'sku': {'required': True},
     }
 
@@ -209,6 +219,8 @@ class ConfigurationStore(Resource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnectionReference]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
@@ -219,6 +231,8 @@ class ConfigurationStore(Resource):
         self.creation_date = None
         self.endpoint = None
         self.encryption = kwargs.get('encryption', None)
+        self.private_endpoint_connections = None
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.sku = kwargs.get('sku', None)
 
 
@@ -578,6 +592,62 @@ class PrivateEndpointConnection(Model):
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
 
 
+class PrivateEndpointConnectionReference(Model):
+    """A reference to a related private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar provisioning_state: The provisioning status of the private endpoint
+     connection. Possible values include: 'Creating', 'Updating', 'Deleting',
+     'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appconfiguration.models.ProvisioningState
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.appconfiguration.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionReference, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
 class PrivateLinkResource(Model):
     """A resource that supports private link capabilities.
 
@@ -594,6 +664,9 @@ class PrivateLinkResource(Model):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
+    :ivar required_zone_names: The list of required DNS zone names of the
+     private link resource.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -602,6 +675,7 @@ class PrivateLinkResource(Model):
         'type': {'readonly': True},
         'group_id': {'readonly': True},
         'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
     }
 
     _attribute_map = {
@@ -610,6 +684,7 @@ class PrivateLinkResource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -619,6 +694,7 @@ class PrivateLinkResource(Model):
         self.type = None
         self.group_id = None
         self.required_members = None
+        self.required_zone_names = None
 
 
 class PrivateLinkServiceConnectionState(Model):

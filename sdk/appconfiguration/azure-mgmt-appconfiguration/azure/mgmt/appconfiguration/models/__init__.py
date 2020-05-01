@@ -24,6 +24,7 @@ try:
     from ._models_py3 import OperationDefinitionDisplay
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionReference
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import RegenerateKeyParameters
@@ -46,6 +47,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDefinitionDisplay
     from ._models import PrivateEndpoint
     from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionReference
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkServiceConnectionState
     from ._models import RegenerateKeyParameters
@@ -63,6 +65,7 @@ from ._app_configuration_management_client_enums import (
     ProvisioningState,
     ConnectionStatus,
     ActionsRequired,
+    PublicNetworkAccess,
 )
 
 __all__ = [
@@ -80,6 +83,7 @@ __all__ = [
     'OperationDefinitionDisplay',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionReference',
     'PrivateLinkResource',
     'PrivateLinkServiceConnectionState',
     'RegenerateKeyParameters',
@@ -96,4 +100,5 @@ __all__ = [
     'ProvisioningState',
     'ConnectionStatus',
     'ActionsRequired',
+    'PublicNetworkAccess',
 ]
