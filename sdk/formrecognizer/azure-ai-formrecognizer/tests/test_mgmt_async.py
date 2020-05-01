@@ -9,7 +9,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.ai.formrecognizer.aio import FormTrainingClient, FormRecognizerClient
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
@@ -53,7 +53,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
@@ -88,7 +88,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ResourceNotFoundError):
             await client.get_custom_model(labeled_model_from_train.model_id)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_unlabeled(self, client, container_sas_url):
         unlabeled_model_from_train = await client.train_model(container_sas_url)
