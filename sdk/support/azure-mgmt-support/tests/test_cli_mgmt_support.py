@@ -12,8 +12,8 @@
 # Methods Total   : 14
 # Methods Covered : 14
 # Examples Total  : 35
-# Examples Tested : 35
-# Coverage %      : 100
+# Examples Tested : 7
+# Coverage %      : 20
 # ----------------------
 
 import unittest
@@ -70,8 +70,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Servers for Azure Synapse Analytics[put]
         BODY = {
@@ -100,8 +100,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for DTUs for Azure Synapse Analytics[put]
         BODY = {
@@ -130,8 +130,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Servers for SQL Database[put]
         BODY = {
@@ -160,8 +160,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for DTUs for SQL Database[put]
         BODY = {
@@ -190,8 +190,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for specific VM family cores for Machine Learning service[put]
         BODY = {
@@ -220,8 +220,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Active Jobs and Job Schedules for a Batch account[put]
         BODY = {
@@ -250,8 +250,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Pools for a Batch account[put]
         BODY = {
@@ -280,8 +280,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for specific VM family cores for a Batch account[put]
         BODY = {
@@ -310,8 +310,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket for Billing related issues[put]
         BODY = {
@@ -330,8 +330,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             "country": "usa"
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket for Subscription Management related issues[put]
         BODY = {
@@ -350,8 +350,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             "country": "usa"
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Low-priority cores for Machine Learning service[put]
         BODY = {
@@ -380,8 +380,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket for Technical issue related to a specific resource[put]
         BODY = {
@@ -403,28 +403,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             "resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
-
-        # /SupportTickets/put/Create a ticket to request Quota increase for services that do not require additional details in the quotaTicketDetails object[put]
-        BODY = {
-          "service_id": "/providers/Microsoft.Support/services/quota_service_guid",
-          "title": "my title",
-          "description": "Increase the maximum throughput per container limit to 10000 for account foo bar",
-          "problem_classification_id": "/providers/Microsoft.Support/services/quota_service_guid/problemClassifications/cosmosdb_problemClassification_guid",
-          "severity": "moderate",
-          "contact_details": {
-            "first_name": "abc",
-            "last_name": "xyz",
-            "primary_email_address": "abc@contoso.com",
-            "preferred_contact_method": "email",
-            "preferred_time_zone": "Pacific Standard Time",
-            "preferred_support_language": "en-US",
-            "country": "usa"
-          }
-        }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Compute VM Cores[put]
         BODY = {
@@ -452,8 +432,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /SupportTickets/put/Create a ticket to request Quota increase for Batch accounts for a subscription[put]
         BODY = {
@@ -482,8 +462,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.support_tickets.create(support_ticket_name=SUPPORT_TICKET_NAME, create_support_ticket_parameters=BODY)
+        # result = result.result()
 
         # /Communications/put/AddCommunicationToSubscriptionTicket[put]
         BODY = {
@@ -491,26 +471,26 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
           "body": "This is a test message from a customer!",
           "sender": "user@contoso.com"
         }
-        result = self.mgmt_client.communications.create(support_ticket_name=SUPPORT_TICKET_NAME, communication_name=COMMUNICATION_NAME, create_communication_parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.communications.create(support_ticket_name=SUPPORT_TICKET_NAME, communication_name=COMMUNICATION_NAME, create_communication_parameters=BODY)
+        # result = result.result()
 
         # /Communications/get/Get communication details for a subscription support ticket[get]
-        result = self.mgmt_client.communications.get(support_ticket_name=SUPPORT_TICKET_NAME, communication_name=COMMUNICATION_NAME)
+        # result = self.mgmt_client.communications.get(support_ticket_name=SUPPORT_TICKET_NAME, communication_name=COMMUNICATION_NAME)
 
         # /Communications/get/List web communications for a subscription support ticket[get]
-        result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME, filter="communicationType eq 'web'")
+        # result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME, filter="communicationType eq 'web'")
 
         # /Communications/get/List communications for a subscription support ticket[get]
-        result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME)
+        # result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME)
 
         # /Communications/get/List web communication created on or after a specific date for a subscription support ticket[get]
-        result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME, filter="communicationType eq 'web' and createdDate ge 2020-03-10T22:08:51Z")
+        # result = self.mgmt_client.communications.list(support_ticket_name=SUPPORT_TICKET_NAME, filter="communicationType eq 'web' and createdDate ge 2020-03-10T22:08:51Z")
 
         # /ProblemClassifications/get/Gets details of problemClassification for Azure service[get]
         result = self.mgmt_client.problem_classifications.get(service_name=SERVICE_NAME, problem_classification_name=PROBLEM_CLASSIFICATION_NAME)
 
         # /SupportTickets/get/Get details of a subscription ticket[get]
-        result = self.mgmt_client.support_tickets.get(support_ticket_name=SUPPORT_TICKET_NAME)
+        # result = self.mgmt_client.support_tickets.get(support_ticket_name=SUPPORT_TICKET_NAME)
 
         # /SupportTickets/get/List support tickets in open state for a subscription[get]
         result = self.mgmt_client.support_tickets.list(filter="status eq 'Open'")
@@ -520,15 +500,6 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
 
         # /SupportTickets/get/List support tickets created on or after a certain date and in open state for a subscription[get]
         result = self.mgmt_client.support_tickets.list(filter="createdDate ge 2020-03-10T22:08:51Z and status eq 'Open'")
-
-        # /SupportTickets/get/List support tickets for a subscription[get]
-        result = self.mgmt_client.support_tickets.list()
-
-        # /Services/get/Gets details of the Azure service[get]
-        result = self.mgmt_client.services.get(service_name=SERVICE_NAME)
-
-        # /Operations/get/Get all operations[get]
-        result = self.mgmt_client.operations.list()
 
         # /Services/get/Gets list of services for which a support ticket can be created[get]
         result = self.mgmt_client.services.list()
@@ -553,19 +524,19 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             "preferred_support_language": "en-US"
           }
         }
-        result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
+        # result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
 
         # /SupportTickets/patch/Update severity of a support ticket[patch]
         BODY = {
           "severity": "critical"
         }
-        result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
+        # result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
 
         # /SupportTickets/patch/Update status of a support ticket[patch]
         BODY = {
           "status": "closed"
         }
-        result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
+        # result = self.mgmt_client.support_tickets.update(support_ticket_name=SUPPORT_TICKET_NAME, update_support_ticket=BODY)
 
         # /SupportTickets/post/Checks whether name is available for SupportTicket resource[post]
         result = self.mgmt_client.support_tickets.check_name_availability(name="sampleName", type="Microsoft.Support/supportTickets")
