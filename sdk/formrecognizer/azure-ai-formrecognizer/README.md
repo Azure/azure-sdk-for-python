@@ -23,6 +23,8 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer
 ```
 
+> Note: This version of the client library supports the v2.0-preview version of the Form Recognizer service
+
 ### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource.
