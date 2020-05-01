@@ -85,7 +85,6 @@ class StorageCommonBlobTest(StorageTestCase):
     def _create_block_blob(self):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.delete_blob()
         blob.upload_blob(self.byte_data, length=len(self.byte_data))
         return blob_name
 
@@ -118,10 +117,10 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _enable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
-        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
         if self.is_live:
+            self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
             time.sleep(30)
 
     def _disable_soft_delete(self):
@@ -615,6 +614,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_returns_vid(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
@@ -651,11 +651,13 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_delete_specific_blob_version(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        blob_name = self._create_block_blob()
+        blob_name = self.get_resource_name("blobtodelete")
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
 
         resp = blob_client.upload_blob(b'abc', overwrite=True)
         self.assertIsNotNone(resp['version_id'])
+
+        blob_client.upload_blob(b'abc', overwrite=True)
 
         # Act
         resp = blob_client.delete_blob(version_id=resp['version_id'])
@@ -666,8 +668,10 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(resp)
         self.assertTrue(len(blob_list) > 0)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_delete_blob_version_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
         self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)

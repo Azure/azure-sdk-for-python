@@ -1104,7 +1104,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StorageAppendBlobAsyncTest.NonSeekableFile(stream)
             await blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
@@ -1126,7 +1126,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StorageAppendBlobAsyncTest.NonSeekableFile(stream)
             await blob.upload_blob(non_seekable_file, blob_type=BlobType.AppendBlob)
 
         # Assert

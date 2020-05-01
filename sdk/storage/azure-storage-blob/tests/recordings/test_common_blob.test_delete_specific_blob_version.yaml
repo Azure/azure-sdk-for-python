@@ -11,35 +11,35 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 30 Apr 2020 00:24:38 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer884146f?timeout=5&restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:393c0c5f-c01e-0059-7f85-1e5d41000000\nTime:2020-04-30T00:24:38.6738281Z</Message></Error>"
+        specified container already exists.\nRequestId:ad586d74-f01e-007d-21c3-28abe1000000\nTime:2020-05-13T01:10:49.2793420Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Thu, 30 Apr 2020 00:24:38 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ContainerAlreadyExists
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     status:
       code: 409
       message: The specified container already exists.
 - request:
-    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    body: abc
     headers:
       Accept:
       - '*/*'
@@ -48,21 +48,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1024'
+      - '3'
       Content-Type:
       - application/octet-stream
-      If-None-Match:
-      - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 30 Apr 2020 00:24:39 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blob884146f
+    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blobtodelete884146f
   response:
     body:
       string: ''
@@ -70,23 +68,23 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - yaNM/IXZgmmMasifdgcavQ==
+      - kAFQmDzST7DWlj99KOF/cg==
       date:
-      - Thu, 30 Apr 2020 00:24:39 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       etag:
-      - '"0x8D7EC9CDF2E7E90"'
+      - '"0x8D7F6DA793A8C89"'
       last-modified:
-      - Thu, 30 Apr 2020 00:24:39 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - ov8U1LLnyKc=
+      - 6/rBP7vK5QU=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
       x-ms-version-id:
-      - '2020-04-30T00:24:39.9634064Z'
+      - '2020-05-13T01:10:49.3408156Z'
     status:
       code: 201
       message: Created
@@ -104,15 +102,15 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 30 Apr 2020 00:24:40 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blob884146f
+    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blobtodelete884146f
   response:
     body:
       string: ''
@@ -122,11 +120,11 @@ interactions:
       content-md5:
       - kAFQmDzST7DWlj99KOF/cg==
       date:
-      - Thu, 30 Apr 2020 00:24:39 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       etag:
-      - '"0x8D7EC9CDF3A196E"'
+      - '"0x8D7F6DA7943DD08"'
       last-modified:
-      - Thu, 30 Apr 2020 00:24:40 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -134,9 +132,9 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
       x-ms-version-id:
-      - '2020-04-30T00:24:40.0414613Z'
+      - '2020-05-13T01:10:49.4018584Z'
     status:
       code: 201
       message: Created
@@ -152,13 +150,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 30 Apr 2020 00:24:40 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blob884146f
+    uri: https://storagename.blob.core.windows.net/utcontainer884146f/blobtodelete884146f?versionid=2020-05-13T01%3A10%3A49.3408156Z
   response:
     body:
       string: ''
@@ -166,13 +164,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 30 Apr 2020 00:24:40 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent:
-      - 'false'
+      - 'true'
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     status:
       code: 202
       message: Accepted
@@ -186,11 +184,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 30 Apr 2020 00:24:41 GMT
+      - Wed, 13 May 2020 01:10:49 GMT
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer884146f?include=versions&restype=container&comp=list
   response:
@@ -304,23 +302,49 @@ interactions:
         30 Apr 2020 00:24:40 GMT</Creation-Time><Last-Modified>Thu, 30 Apr 2020 00:24:40
         GMT</Last-Modified><Etag>0x8D7EC9CDF3A196E</Etag><Content-Length>3</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>kAFQmDzST7DWlj99KOF/cg==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:19:51.5029880Z</VersionId><Properties><Creation-Time>Fri,
+        01 May 2020 00:19:51 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:19:51
+        GMT</Last-Modified><Etag>0x8D7ED655DA88665</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:19:51.5810424Z</VersionId><Properties><Creation-Time>Fri,
+        01 May 2020 00:19:51 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:19:51
+        GMT</Last-Modified><Etag>0x8D7ED655DB46F68</Etag><Content-Length>3</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>kAFQmDzST7DWlj99KOF/cg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:20:43.5567580Z</VersionId><Properties><Creation-Time>Fri,
+        01 May 2020 00:20:43 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:20:43
+        GMT</Last-Modified><Etag>0x8D7ED657CAF73DC</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:20:43.6598307Z</VersionId><Properties><Creation-Time>Fri,
+        01 May 2020 00:20:43 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:20:43
+        GMT</Last-Modified><Etag>0x8D7ED657CBF0713</Etag><Content-Length>3</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>kAFQmDzST7DWlj99KOF/cg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:21:03.8121508Z</VersionId><Properties><Creation-Time>Fri,
+        01 May 2020 00:21:03 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:21:03
+        GMT</Last-Modified><Etag>0x8D7ED6588C22E24</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob884146f</Name><VersionId>2020-05-01T00:21:03.8811993Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Fri,
+        01 May 2020 00:21:03 GMT</Creation-Time><Last-Modified>Fri, 01 May 2020 00:21:03
+        GMT</Last-Modified><Etag>0x8D7ED6588CC9049</Etag><Content-Length>3</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>kAFQmDzST7DWlj99KOF/cg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blobtodelete884146f</Name><VersionId>2020-05-13T01:10:49.4018584Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Wed,
+        13 May 2020 01:10:49 GMT</Creation-Time><Last-Modified>Wed, 13 May 2020 01:10:49
+        GMT</Last-Modified><Etag>0x8D7F6DA7943DD08</Etag><Content-Length>3</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>kAFQmDzST7DWlj99KOF/cg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
         /></EnumerationResults>"
     headers:
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,Content-Type,Content-Length,Date,Transfer-Encoding
       content-type:
       - application/xml
       date:
-      - Thu, 30 Apr 2020 00:24:42 GMT
+      - Wed, 13 May 2020 01:10:48 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
-      - '2019-10-10'
+      - '2019-12-12'
     status:
       code: 200
       message: OK

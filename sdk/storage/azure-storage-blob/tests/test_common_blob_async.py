@@ -277,7 +277,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             blob_name = '{0}a{0}a{0}'.format(c)
             blob_data = c
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            resp = await blob.upload_blob(blob_data, length=len(blob_data))
+            resp = await blob.upload_blob(blob_data, length=len(blob_data), overwrite=True)
             self.assertIsNotNone(resp.get('version_id'))
 
             data = await (await blob.download_blob(version_id=resp.get('version_id'))).readall()
@@ -724,6 +724,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_returns_vid(self, resource_group, location, storage_account, storage_account_key):
@@ -766,7 +767,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def test_delete_specific_blob_version(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        blob_name = await self._create_block_blob()
+        blob_name = self.get_resource_name("blobtodelete")
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -774,6 +775,9 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp['version_id'])
+
+        # upload to override the previous version
+        await blob.upload_blob(b'abc', overwrite=True)
 
         # Act
         resp = await blob.delete_blob(version_id=resp['version_id'])
@@ -784,6 +788,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(resp)
         self.assertTrue(len(blob_list) > 0)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_version_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
