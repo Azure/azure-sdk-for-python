@@ -5,17 +5,20 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import Skillset
+from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from ._generated.models import Skill
-    from typing import Any, List, Sequence
+    from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -102,12 +105,16 @@ class SearchSkillsetsClient(HeadersMixin):
         return self._client.skillsets.get(name, **kwargs)
 
     @distributed_trace
-    def delete_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Skillset in an Azure Search service
+    def delete_skillset(self, skillset, **kwargs):
+        # type: (Union[str, Skillset], **Any) -> None
+        """Delete a named Skillset in an Azure Search service. To use access conditions,
+        the Skillset model must be provided instead of the name. It is enough to provide
+        the name of the skillset to delete unconditionally
 
-        :param name: The name of the Skillset to delete
-        :type name: str
+        :param name: The Skillset to delete
+        :type name: str or ~search.models.Skillset
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
 
         .. admonition:: Example:
 
@@ -120,7 +127,15 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.skillsets.delete(name, **kwargs)
+        error_map, access_condition = get_access_conditions(
+            skillset,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
+        try:
+            name = skillset.name
+        except AttributeError:
+            name = skillset
+        self._client.skillsets.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_skillset(self, name, skills, description, **kwargs):
@@ -156,18 +171,19 @@ class SearchSkillsetsClient(HeadersMixin):
     def create_or_update_skillset(self, name, **kwargs):
         # type: (str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service, or update an
-        existing one.
-
-        A `Skillset` object mat
+        existing one. The skillset param must be provided to perform the
+        operation with access conditions.
 
         :param name: The name of the Skillset to create or update
         :type name: str
-        :param skills: A list of Skill objects to include in the Skillset
+        :keyword skills: A list of Skill objects to include in the Skillset
         :type skills: List[Skill]
-        :param description: A description for the Skillset
+        :keyword description: A description for the Skillset
         :type description: Optional[str]
-        :param skillset: A Skillset to create or update.
+        :keyword skillset: A Skillset to create or update.
         :type skillset: :class:`~azure.search.documents.Skillset`
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Skillset
         :rtype: dict
 
@@ -176,9 +192,18 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError
+        }
+        access_condition = None
 
         if "skillset" in kwargs:
             skillset = kwargs.pop("skillset")
+            error_map, access_condition = get_access_conditions(
+                skillset,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
             skillset = Skillset.deserialize(skillset.serialize())
             skillset.name = name
             for param in ("description", "skills"):
@@ -192,4 +217,10 @@ class SearchSkillsetsClient(HeadersMixin):
                 skills=kwargs.pop("skills", None),
             )
 
-        return self._client.skillsets.create_or_update(name, skillset, **kwargs)
+        return self._client.skillsets.create_or_update(
+            skillset_name=name,
+            skillset=skillset,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )

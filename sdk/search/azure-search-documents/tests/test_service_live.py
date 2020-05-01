@@ -13,6 +13,7 @@ from devtools_testutils import AzureMgmtTestCase
 
 from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
 
+from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import(
@@ -30,9 +31,11 @@ from azure.search.documents import(
     DataSourceCredentials,
     DataSource,
     DataContainer,
+    SynonymMap,
     SimpleField,
     edm
 )
+from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
@@ -100,6 +103,45 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+
+        # First create an index
+        name = "hotels"
+        fields = [
+        {
+          "name": "hotelId",
+          "type": "Edm.String",
+          "key": True,
+          "searchable": False
+        },
+        {
+          "name": "baseRate",
+          "type": "Edm.Double"
+        }]
+        scoring_profile = ScoringProfile(
+            name="MyProfile"
+        )
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = Index(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        result = client.create_index(index)
+        etag = result.e_tag
+        # get e tag  and update
+        index.scoring_profiles = []
+        client.create_or_update_index(index.name, index)
+
+        index.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.delete_index(index, match_condition=MatchConditions.IfNotModified)
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
@@ -161,6 +203,45 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+
+        # First create an index
+        name = "hotels"
+        fields = [
+        {
+          "name": "hotelId",
+          "type": "Edm.String",
+          "key": True,
+          "searchable": False
+        },
+        {
+          "name": "baseRate",
+          "type": "Edm.Double"
+        }]
+        scoring_profile = ScoringProfile(
+            name="MyProfile"
+        )
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = Index(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        result = client.create_index(index)
+        etag = result.e_tag
+        # get e tag  and update
+        index.scoring_profiles = []
+        client.create_or_update_index(index.name, index)
+
+        index.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_index(index.name, index, match_condition=MatchConditions.IfNotModified)
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
         analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
@@ -168,7 +249,6 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         assert len(result.tokens) == 2
 
 class SearchSynonymMapsClientTest(AzureMgmtTestCase):
-
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
@@ -196,6 +276,26 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         assert len(client.get_synonym_maps()) == 1
         client.delete_synonym_map("test-syn-map")
         assert len(client.get_synonym_maps()) == 0
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        result = client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ])
+        sm_result = build_synonym_map_from_dict(result)
+        etag = sm_result.e_tag
+
+        client.create_or_update_synonym_map("test-syn-map", [
+            "Washington, Wash. => WA",
+        ])
+
+        sm_result.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.delete_synonym_map(sm_result, match_condition=MatchConditions.IfNotModified)
+            assert len(client.get_synonym_maps()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -248,6 +348,24 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "Washington, Wash. => WA",
         ]
 
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        result = build_synonym_map_from_dict(client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+        ]))
+        etag = result.e_tag
+
+        client.create_or_update_synonym_map("test-syn-map", [
+            "Washington, Wash. => WA",
+        ])
+
+        result.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_synonym_map(result, match_condition=MatchConditions.IfNotModified)
+
+
 class SearchSkillsetClientTest(AzureMgmtTestCase):
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -280,6 +398,22 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 
         client.delete_skillset("test-ss")
         assert len(client.get_skillsets()) == 0
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        result = client.create_skillset(name='test-ss', skills=[s], description="desc")
+        etag = result.e_tag
+
+        updated = client.create_or_update_skillset(name='test-ss', skills=[s], description="updated")
+        updated.e_tag = etag
+
+        with pytest.raises(HttpResponseError):
+            client.delete_skillset(updated, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -344,6 +478,23 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        ss = client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
+        etag = ss.e_tag
+
+        client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        assert len(client.get_skillsets()) == 1
+
+        ss.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_skillset(name='test-ss', skills=[s], skillset=ss, match_condition=MatchConditions.IfNotModified)
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
@@ -411,3 +562,56 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         result = client.get_datasource("sample-datasource")
         assert result.name == "sample-datasource"
         assert result.description == "updated"
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        etag = created.e_tag
+
+        # Now update the data source
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
+
+        # prepare data source
+        data_source.e_tag = etag # reset to the original datasource
+        data_source.description = "changed"
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_datasource(data_source, match_condition=MatchConditions.IfNotModified)
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        etag = created.e_tag
+
+        # Now update the data source
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
+
+        # prepare data source
+        data_source.e_tag = etag # reset to the original datasource
+        with pytest.raises(HttpResponseError):
+            client.delete_datasource(data_source, match_condition=MatchConditions.IfNotModified)
+            assert len(client.get_datasources()) == 1
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_datasource_string_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        etag = created.e_tag
+
+        # Now update the data source
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
+
+        # prepare data source
+        data_source.e_tag = etag # reset to the original datasource
+        with pytest.raises(ValueError):
+            client.delete_datasource(data_source.name, match_condition=MatchConditions.IfNotModified)
