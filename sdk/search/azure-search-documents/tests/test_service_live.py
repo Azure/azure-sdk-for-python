@@ -610,3 +610,20 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.delete_datasource(data_source, match_condition=MatchConditions.IfNotModified)
             assert len(client.get_datasources()) == 1
+
+    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_datasource_string_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        etag = created.e_tag
+
+        # Now update the data source
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
+
+        # prepare data source
+        data_source.e_tag = etag # reset to the original datasource
+        with pytest.raises(ValueError):
+            client.delete_datasource(data_source.name, match_condition=MatchConditions.IfNotModified)
