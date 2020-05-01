@@ -168,12 +168,6 @@ class CategorizedEntity(DictMixin):
     :type category: str
     :param subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :type subcategory: str
-    :param grapheme_offset: Start position (in Unicode characters) for the
-        entity text.
-    :type grapheme_offset: int
-    :param grapheme_length: Length (in Unicode characters) for the entity
-        text.
-    :type grapheme_length: int
     :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :type confidence_score: float
@@ -183,8 +177,6 @@ class CategorizedEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
-        self.grapheme_offset = kwargs.get('grapheme_offset', None)
-        self.grapheme_length = kwargs.get('grapheme_length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
@@ -193,15 +185,13 @@ class CategorizedEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
-            grapheme_offset=entity.offset,
-            grapheme_length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.confidence_score)[:1024]
+        return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
+            self.text, self.category, self.subcategory, self.confidence_score
+        )[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -391,16 +381,16 @@ class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
-    :param grapheme_count: Number of text elements recognized in
+    :param character_count: Number of text elements recognized in
         the document.
-    :type grapheme_count: int
+    :type character_count: int
     :param transaction_count: Number of transactions for the
         document.
     :type transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.grapheme_count = kwargs.get("grapheme_count", None)
+        self.character_count = kwargs.get("character_count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
@@ -408,13 +398,13 @@ class TextDocumentStatistics(DictMixin):
         if stats is None:
             return None
         return cls(
-            grapheme_count=stats.characters_count,
+            character_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(grapheme_count={}, transaction_count={})" \
-            .format(self.grapheme_count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
+            .format(self.character_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
@@ -549,32 +539,23 @@ class LinkedEntityMatch(DictMixin):
     :type confidence_score: float
     :param text: Entity text as appears in the request.
     :type text: str
-    :param grapheme_offset: Start position (in Unicode characters) for the
-        entity match text.
-    :type grapheme_offset: int
-    :param grapheme_length: Length (in Unicode characters) for the entity
-        match text.
-    :type grapheme_length: int
     """
 
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
-        self.grapheme_offset = kwargs.get("grapheme_offset", None)
-        self.grapheme_length = kwargs.get("grapheme_length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
             confidence_score=match.confidence_score,
-            text=match.text,
-            grapheme_offset=match.offset,
-            grapheme_length=match.length
+            text=match.text
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={}, grapheme_offset={}, grapheme_length={})" \
-            .format(self.confidence_score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
+        return "LinkedEntityMatch(confidence_score={}, text={})".format(
+            self.confidence_score, self.text
+        )[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):
@@ -654,19 +635,12 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :type confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :param grapheme_offset: The sentence offset from the start of the
-        document.
-    :type grapheme_offset: int
-    :param grapheme_length: The length of the sentence by Unicode standard.
-    :type grapheme_length: int
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.grapheme_offset = kwargs.get("grapheme_offset", None)
-        self.grapheme_length = kwargs.get("grapheme_length", None)
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -674,14 +648,13 @@ class SentenceSentiment(DictMixin):
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
-            grapheme_offset=sentence.offset,
-            grapheme_length=sentence.length
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, grapheme_offset={}, "\
-            "grapheme_length={})".format(self.text, self.sentiment, repr(self.confidence_scores),
-            self.grapheme_offset, self.grapheme_length
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={})".format(
+            self.text,
+            self.sentiment,
+            repr(self.confidence_scores)
         )[:1024]
 
 
