@@ -6,15 +6,16 @@ import os
 import json
 import ctypes as ct
 from .._constants import VSCODE_CREDENTIALS_SECTION
+
 try:
     import ctypes.wintypes as wt
 except (IOError, ValueError):
     pass
 
 
-SUPPORTED_CREDKEYS = set((
-    'Type', 'TargetName', 'Persist',
-    'UserName', 'Comment', 'CredentialBlob'))
+SUPPORTED_CREDKEYS = set(("Type", "TargetName", "Persist", "UserName", "Comment", "CredentialBlob"))
+
+_PBYTE = ct.POINTER(ct.c_byte)
 
 
 class _CREDENTIAL(ct.Structure):
@@ -25,17 +26,18 @@ class _CREDENTIAL(ct.Structure):
         ("Comment", ct.c_wchar_p),
         ("LastWritten", wt.FILETIME),
         ("CredentialBlobSize", wt.DWORD),
-        ("CredentialBlob", wt.LPBYTE),
+        ("CredentialBlob", _PBYTE),
         ("Persist", wt.DWORD),
         ("AttributeCount", wt.DWORD),
         ("Attributes", ct.c_void_p),
         ("TargetAlias", ct.c_wchar_p),
-        ("UserName", ct.c_wchar_p)]
+        ("UserName", ct.c_wchar_p),
+    ]
 
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
-_advapi = ct.WinDLL('advapi32')
+_advapi = ct.WinDLL("advapi32")
 _advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
 _advapi.CredReadW.restype = wt.BOOL
 _advapi.CredFree.argtypes = [_PCREDENTIAL]
@@ -47,16 +49,15 @@ def _read_credential(service_name, account_name):
     if _advapi.CredReadW(target, 1, 0, ct.byref(cred_ptr)):
         cred_blob = cred_ptr.contents.CredentialBlob
         cred_blob_size = cred_ptr.contents.CredentialBlobSize
-        password_as_list = [int.from_bytes(cred_blob[pos:pos + 1], 'little')
-                            for pos in range(0, cred_blob_size)]
-        cred = ''.join(map(chr, password_as_list))
+        password_as_list = [int.from_bytes(cred_blob[pos : pos + 1], "little") for pos in range(0, cred_blob_size)]
+        cred = "".join(map(chr, password_as_list))
         _advapi.CredFree(cred_ptr)
         return cred
     return None
 
 
 def _get_user_settings_path():
-    app_data_folder = os.environ['APPDATA']
+    app_data_folder = os.environ["APPDATA"]
     return os.path.join(app_data_folder, "Code", "User", "settings.json")
 
 
@@ -80,5 +81,5 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
-    except Exception: #pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         return None

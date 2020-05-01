@@ -9,6 +9,7 @@ from azure.identity import CredentialUnavailableError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from helpers import build_aad_response, mock_response, Request, validating_transport
+
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
@@ -65,20 +66,52 @@ def test_redeem_token():
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
-        mock_client.obtain_token_by_refresh_token.assert_called_with('VALUE', ('scope',))
+        mock_client.obtain_token_by_refresh_token.assert_called_with("VALUE", ("scope",))
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
-@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+def test_cache_refresh_token():
+    expected_token = AccessToken("token", 42)
+
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
+    mock_get_credentials = mock.Mock(return_value="VALUE")
+
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", mock_get_credentials):
+        credential = VSCodeCredential(_client=mock_client)
+        token = credential.get_token("scope")
+        assert token is expected_token
+        assert mock_get_credentials.call_count == 1
+        token = credential.get_token("scope")
+        assert token is expected_token
+        assert mock_get_credentials.call_count == 1
+
+
+def test_no_obtain_token_if_cached():
+    expected_token = AccessToken("token", 42)
+
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value='VALUE')
+
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+        credential = VSCodeCredential(_client=mock_client)
+        token = credential.get_token("scope")
+        assert mock_client.obtain_token_by_refresh_token.call_count == 0
+
+
+@pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
-    with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
+    with mock.patch("msal_extensions.osx.Keychain.get_generic_password", return_value="VALUE"):
         assert get_credentials() == "VALUE"
 
 
-@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+@pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
 def test_mac_keychain_error():
     from msal_extensions.osx import Keychain, KeychainError
-    with mock.patch.object(Keychain, 'get_generic_password', side_effect=KeychainError()):
+
+    with mock.patch.object(Keychain, "get_generic_password", side_effect=KeychainError(-1)):
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
@@ -86,5 +119,5 @@ def test_mac_keychain_error():
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 def test_get_token():
-    with mock.patch('azure.identity._credentials.linux_vscode_adapter._get_refresh_token', return_value="VALUE"):
+    with mock.patch("azure.identity._credentials.linux_vscode_adapter._get_refresh_token", return_value="VALUE"):
         assert get_credentials() == "VALUE"
