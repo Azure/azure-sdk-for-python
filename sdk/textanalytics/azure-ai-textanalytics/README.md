@@ -77,7 +77,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `AzureKeyCredential` from azure.core.credentials or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from azure.core.credentials or as a token from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
@@ -452,6 +452,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
 [service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
 [detect_language_result]: https://aka.ms/azsdk-python-textanalytics-detectlanguageresult

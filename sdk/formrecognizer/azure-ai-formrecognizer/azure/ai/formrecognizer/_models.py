@@ -12,6 +12,14 @@ import re
 import six
 
 
+def adjust_confidence(score):
+    """Adjust confidence when not returned.
+    """
+    if score is None:
+        return 1.0
+    return score
+
+
 def get_elements(field, read_result):
     text_elements = []
 
@@ -166,6 +174,11 @@ class RecognizedForm(object):
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
 
+    def __repr__(self):
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})".format(
+            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
+        )[:1024]
+
 
 class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     """Extracted fields found on the US sales receipt. Provides
@@ -182,7 +195,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     :ivar list[~azure.ai.formrecognizer.USReceiptItem] receipt_items:
         The purchased items found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField subtotal:
-        The subtotal found on the receipt.
+        The subtotal found on the receipt
     :ivar ~azure.ai.formrecognizer.FormField tax:
         The tax value found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField tip:
@@ -224,6 +237,17 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
         self.form_type = kwargs.get("form_type", None)
         self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
+    def __repr__(self):
+        return "USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, " \
+                "receipt_type={}, receipt_items={}, subtotal={}, tax={}, tip={}, total={}, "\
+                "transaction_date={}, transaction_time={}, fields={}, page_range={}, pages={}, " \
+                "form_type={}, receipt_locale={})".format(
+                    repr(self.merchant_address), repr(self.merchant_name), repr(self.merchant_phone_number),
+                    repr(self.receipt_type), repr(self.receipt_items), repr(self.subtotal), repr(self.tax),
+                    repr(self.tip), repr(self.total), repr(self.transaction_date), repr(self.transaction_time),
+                    repr(self.fields), repr(self.page_range), repr(self.pages), self.form_type, self.receipt_locale
+                )[:1024]
+
 
 class FormField(object):
     """Represents a field recognized in an input form.
@@ -259,9 +283,10 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=value.confidence or 1.0 if value else None,
+            confidence=adjust_confidence(value.confidence) if value else None,
             page_number=value.page if value else None,
         )
+
 
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
@@ -270,9 +295,14 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=field.confidence or 1.0,
+            confidence=adjust_confidence(field.confidence),
             page_number=page,
         )
+
+    def __repr__(self):
+        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={}, page_number={})".format(
+            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence, self.page_number
+        )[:1024]
 
 
 class FieldText(FormContent):
@@ -328,6 +358,11 @@ class FieldText(FormContent):
             text_content=get_elements(field, read_result) if field.elements else None
         )
 
+    def __repr__(self):
+        return "FieldText(page_number={}, text={}, bounding_box={}, text_content={})".format(
+            self.page_number, self.text, self.bounding_box, repr(self.text_content)
+        )[:1024]
+
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
@@ -377,6 +412,11 @@ class FormPage(object):
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None
         ) for page in read_result]
 
+    def __repr__(self):
+        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})".format(
+            self.page_number, self.text_angle, self.width, self.height, self.unit, repr(self.tables), repr(self.lines)
+        )[:1024]
+
 
 class FormLine(FormContent):
     """An object representing an extracted line of text.
@@ -395,7 +435,7 @@ class FormLine(FormContent):
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(**kwargs)
-        self.words = kwargs.get("words", None)
+        self.words = kwargs.get("words", [])
 
     @classmethod
     def _from_generated(cls, line, page):
@@ -411,6 +451,10 @@ class FormLine(FormContent):
             words=[FormWord._from_generated(word, page) for word in line.words] if line.words else None
         )
 
+    def __repr__(self):
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={})".format(
+            self.text, self.bounding_box, repr(self.words), self.page_number
+        )[:1024]
 
 class FormWord(FormContent):
     """Represents a word recognized from the input document.
@@ -441,9 +485,14 @@ class FormWord(FormContent):
                 Point(x=word.bounding_box[4], y=word.bounding_box[5]),
                 Point(x=word.bounding_box[6], y=word.bounding_box[7])
             ] if word.bounding_box else None,
-            confidence=word.confidence or 1.0,
+            confidence=adjust_confidence(word.confidence),
             page_number=page
         )
+
+    def __repr__(self):
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})".format(
+            self.text, self.bounding_box, self.confidence, self.page_number
+        )[:1024]
 
 
 class USReceiptType(object):
@@ -464,7 +513,10 @@ class USReceiptType(object):
     def _from_generated(cls, item):
         return cls(
             type=item.value_string,
-            confidence=item.confidence or 1.0) if item else None
+            confidence=adjust_confidence(item.confidence)) if item else None
+
+    def __repr__(self):
+        return "USReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
 
 
 class USReceiptItem(object):
@@ -500,6 +552,11 @@ class USReceiptItem(object):
         except AttributeError:
             return []
 
+    def __repr__(self):
+        return "USReceiptItem(name={}, quantity={}, price={}, total_price={})".format(
+            repr(self.name), repr(self.quantity), repr(self.price), repr(self.total_price)
+        )[:1024]
+
 
 class FormTable(object):
     """Information about the extracted table contained on a page.
@@ -513,9 +570,14 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
-        self.cells = kwargs.get("cells", None)
+        self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+
+    def __repr__(self):
+        return "FormTable(cells={}, row_count={}, column_count={})".format(
+            repr(self.cells), self.row_count, self.column_count
+        )[:1024]
 
 
 class FormTableCell(FormContent):
@@ -569,12 +631,19 @@ class FormTableCell(FormContent):
                 Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
                 Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
             ] if cell.bounding_box else None,
-            confidence=cell.confidence or 1.0,
+            confidence=adjust_confidence(cell.confidence),
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
             text_content=get_elements(cell, read_result) if cell.elements else None
         )
+
+    def __repr__(self):
+        return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
+                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, text_content={})".format(
+                    self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
+                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.text_content)
+                )[:1024]
 
 
 class CustomFormModel(object):
@@ -605,7 +674,7 @@ class CustomFormModel(object):
         self.last_modified = kwargs.get("last_modified", None)
         self.models = kwargs.get("models", None)
         self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", None)
+        self.training_documents = kwargs.get("training_documents", [])
 
     @classmethod
     def _from_generated(cls, model):
@@ -616,10 +685,17 @@ class CustomFormModel(object):
             last_modified=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else [],
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
+
+    def __repr__(self):
+        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+                "errors={}, training_documents={})".format(
+                    self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
+                    repr(self.errors), repr(self.training_documents)
+                )[:1024]
 
 
 class CustomFormSubModel(object):
@@ -656,6 +732,11 @@ class CustomFormSubModel(object):
             form_type="form-" + model.model_info.model_id
         )] if model.train_result else None
 
+    def __repr__(self):
+        return "CustomFormSubModel(accuracy={}, fields={}, form_type={})".format(
+            self.accuracy, repr(self.fields), self.form_type
+        )[:1024]
+
 
 class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
@@ -685,6 +766,11 @@ class CustomFormModelField(object):
             ) for idx, field_name in enumerate(fields)
         }
 
+    def __repr__(self):
+        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
+            self.label, self.name, self.accuracy
+        )[:1024]
+
 
 class TrainingDocumentInfo(object):
     """Report for an individual document used for training
@@ -706,7 +792,7 @@ class TrainingDocumentInfo(object):
         self.document_name = kwargs.get("document_name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)
+        self.errors = kwargs.get("errors", [])
 
     @classmethod
     def _from_generated(cls, train_result):
@@ -716,6 +802,11 @@ class TrainingDocumentInfo(object):
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
         ) for doc in train_result.training_documents] if train_result.training_documents else None
+
+    def __repr__(self):
+        return "TrainingDocumentInfo(document_name={}, status={}, page_count={}, errors={})".format(
+            self.document_name, self.status, self.page_count, repr(self.errors)
+        )[:1024]
 
 
 class FormRecognizerError(object):
@@ -732,6 +823,9 @@ class FormRecognizerError(object):
     @classmethod
     def _from_generated(cls, err):
         return [cls(code=error.code, message=error.message) for error in err] if err else []
+
+    def __repr__(self):
+        return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
 class CustomFormModelInfo(object):
@@ -762,6 +856,11 @@ class CustomFormModelInfo(object):
             last_modified=model.last_updated_date_time
         )
 
+    def __repr__(self):
+        return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
+            self.model_id, self.status, self.created_on, self.last_modified
+        )[:1024]
+
 
 class AccountProperties(object):
     """Summary of all the custom models on the account.
@@ -780,3 +879,8 @@ class AccountProperties(object):
             custom_model_count=model.count,
             custom_model_limit=model.limit,
         )
+
+    def __repr__(self):
+        return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
+            self.custom_model_count, self.custom_model_limit
+        )[:1024]

@@ -374,6 +374,15 @@ class EventDataBatch(object):
         )
         return batch_data_instance
 
+    def _load_events(self, events):
+        for event_data in events:
+            try:
+                self.add(event_data)
+            except ValueError:
+                raise ValueError("The combined size of EventData collection exceeds the Event Hub frame size limit. "
+                                 "Please send a smaller collection of EventData, or use EventDataBatch, "
+                                 "which is guaranteed to be under the frame size limit")
+
     @property
     def size_in_bytes(self):
         # type: () -> int

@@ -11,9 +11,9 @@ import pytest
 import time
 import json
 
-from azure.eventhub import EventData, TransportType
+from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient
-
+from azure.eventhub.exceptions import EventDataSendError
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -169,3 +169,57 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
             received.extend(r.receive_message_batch(timeout=10000))
         assert len(received) >= 1
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"
+
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_list_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    payload = "A1"
+    async with client:
+        await client.send_batch([EventData(payload)])
+    received = []
+    for r in receivers:
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=10000)])
+
+    assert len(received) == 1
+    assert received[0].body_as_str() == payload
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_list_partition_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    payload = "A1"
+    async with client:
+        await client.send_batch([EventData(payload)], partition_id="0")
+        message = receivers[0].receive_message_batch(timeout=10000)[0]
+        received = EventData._from_message(message)
+    assert received.body_as_str() == payload
+
+
+@pytest.mark.parametrize("to_send, exception_type",
+                         [([], EventDataSendError),
+                          ([EventData("A"*1024)]*1100, ValueError),
+                          ("any str", AttributeError)
+                          ])
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_list_wrong_data_async(connection_str, to_send, exception_type):
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    async with client:
+        with pytest.raises(exception_type):
+            await client.send_batch(to_send)
+
+
+@pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
+async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition_key):
+    # Use invalid_hostname because this is not a live test.
+    client = EventHubProducerClient.from_connection_string(invalid_hostname)
+    batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key)
+    async with client:
+        with pytest.raises(TypeError):
+            await client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
