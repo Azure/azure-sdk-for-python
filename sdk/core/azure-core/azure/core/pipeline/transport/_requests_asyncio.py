@@ -60,7 +60,7 @@ def _get_running_loop():
 
 
 #pylint: disable=too-many-ancestors
-class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
+class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
 
@@ -103,7 +103,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request, # type: ignore
+                    self.session.request,
                     request.method,
                     request.url,
                     headers=request.headers,

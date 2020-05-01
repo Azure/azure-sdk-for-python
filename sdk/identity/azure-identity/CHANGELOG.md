@@ -1,7 +1,22 @@
 # Release History
 
 ## 1.4.0b3 (Unreleased)
+- First preview of new API for authenticating users with `DeviceCodeCredential`
+  and `InteractiveBrowserCredential`
+  - new method `authenticate` interactively authenticates a user, returns a
+    serializable `AuthenticationRecord`
+  - new constructor keyword arguments
+    - `authentication_record` enables initializing a credential with an
+      `AuthenticationRecord` from a prior authentication
+    - `disable_automatic_authentication=True` configures the credential to raise
+    `AuthenticationRequiredError` when interactive authentication is necessary
+    to acquire a token rather than immediately begin that authentication
+    - `enable_persistent_cache=True` configures these credentials to use a
+    persistent cache on supported platforms (in this release, Windows only).
+    By default they cache in memory only.
 
+- Now `DefaultAzureCredential` can authenticate with the identity signed in to Visual 
+Studio Code's Azure extension. ([#10472](https://github.com/Azure/azure-sdk-for-python/issues/10472))
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it

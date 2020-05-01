@@ -292,6 +292,33 @@ class FileTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     @record
+    def test_upload_data_to_existing_file_with_permission_and_umask(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        etag = file_client.create_file()['etag']
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+
+        file_client.upload_data(data, overwrite=True, max_concurrency=5,
+                                permissions='0777', umask="0000",
+                                etag=etag,
+                                match_condition=MatchConditions.IfNotModified)
+
+        downloaded_data = file_client.download_file().readall()
+        prop = file_client.get_access_control()
+
+        # Assert
+        self.assertEqual(data, downloaded_data)
+        self.assertEqual(prop['permissions'], 'rwxrwxrwx')
+
+    @record
     def test_read_file(self):
         file_client = self._create_file_and_return_client()
         data = self.get_random_bytes(1024)

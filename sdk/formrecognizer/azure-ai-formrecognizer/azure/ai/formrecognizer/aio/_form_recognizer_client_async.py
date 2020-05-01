@@ -91,7 +91,8 @@ class FormRecognizerClient(object):
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
             Currently only supports US sales receipts.
         :type stream: stream
-        :keyword bool include_text_content: Include text lines and text content references in the result.
+        :keyword bool include_text_content:
+            Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -142,7 +143,8 @@ class FormRecognizerClient(object):
 
         :param url: The url of the receipt. Currently only supports US sales receipts.
         :type url: str
-        :keyword bool include_text_content: Include text lines and text content references in the result.
+        :keyword bool include_text_content:
+            Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of USReceipt.
@@ -257,7 +259,8 @@ class FormRecognizerClient(object):
         :param str model_id: Custom model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
-        :keyword bool include_text_content: Include text lines and element references in the result.
+        :keyword bool include_text_content:
+            Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -318,7 +321,8 @@ class FormRecognizerClient(object):
         :param str model_id: Custom model identifier.
         :param url: The url of the document.
         :type url: str
-        :keyword bool include_text_content: Include text lines and element references in the result.
+        :keyword bool include_text_content:
+            Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of RecognizedForm.

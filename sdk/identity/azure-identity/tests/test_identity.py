@@ -21,10 +21,50 @@ from azure.identity import (
     EnvironmentCredential,
 )
 from azure.identity._credentials.managed_identity import ImdsCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, KnownAuthorities
+from azure.identity._internal import get_default_authority, normalize_authority
 import pytest
 
 from helpers import mock_response, Request, validating_transport
+
+
+def test_get_default_authority():
+    """get_default_authority should return public cloud or the value of $AZURE_AUTHORITY_HOST, with 'https' scheme"""
+
+    # default scheme is https
+    for authority in ("localhost", "https://localhost"):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+            assert get_default_authority() == "https://localhost"
+
+    # default to public cloud
+    for environ in ({}, {EnvironmentVariables.AZURE_AUTHORITY_HOST: KnownAuthorities.AZURE_PUBLIC_CLOUD}):
+        with patch.dict("os.environ", environ, clear=True):
+            assert get_default_authority() == "https://" + KnownAuthorities.AZURE_PUBLIC_CLOUD
+
+    # require https
+    with pytest.raises(ValueError):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: "http://localhost"}, clear=True):
+            get_default_authority()
+
+
+def test_normalize_authority():
+    """normalize_authority should return a URI with a scheme and no trailing spaces or forward slashes"""
+
+    localhost = "localhost"
+    localhost_tls = "https://" + localhost
+
+    # accept https if specified, default to it when no scheme specified
+    for uri in (localhost, localhost_tls):
+        assert normalize_authority(uri) == localhost_tls
+
+        # remove trailing characters
+        for string in ("/", " ", "/ ", " /"):
+            assert normalize_authority(uri + string) == localhost_tls
+
+    # raise for other schemes
+    for scheme in ("http", "file"):
+        with pytest.raises(ValueError):
+            normalize_authority(scheme + "://localhost")
 
 
 def test_client_secret_environment_credential():
@@ -204,53 +244,3 @@ def test_default_credential_shared_cache_use(mock_credential):
     assert mock_credential.call_count == 1
     assert mock_credential.supported.call_count == 1
     mock_credential.supported.reset_mock()
-
-
-def test_username_password_environment_credential():
-    client_id = "fake-client-id"
-    username = "foo@bar.com"
-    password = "password"
-    expected_token = "***"
-
-    create_transport = functools.partial(
-        validating_transport,
-        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
-        responses=[
-            # tenant discovery
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
-            # user realm discovery, interests MSAL only when the response body contains account_type == "Federated"
-            mock_response(json_payload={}),
-            # token request
-            mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": 42,
-                    "token_type": "Bearer",
-                    "ext_expires_in": 42,
-                }
-            ),
-        ],
-    )
-
-    environment = {
-        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
-        EnvironmentVariables.AZURE_USERNAME: username,
-        EnvironmentVariables.AZURE_PASSWORD: password,
-    }
-    with patch("os.environ", environment):
-        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
-
-    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
-    assert token.token == expected_token
-
-    # now with a tenant id
-    environment = {
-        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
-        EnvironmentVariables.AZURE_USERNAME: username,
-        EnvironmentVariables.AZURE_PASSWORD: password,
-        EnvironmentVariables.AZURE_TENANT_ID: "tenant_id",
-    }
-    with patch("os.environ", environment):
-        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
-
-    assert token.token == expected_token
