@@ -5,23 +5,14 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core import MatchConditions
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceNotModifiedError,
-)
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import AccessCondition
 from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    prep_if_match,
-    prep_if_none_match,
+    get_access_conditions
 )
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
@@ -29,7 +20,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import AnalyzeRequest, AnalyzeResult, Index
-    from typing import Any, Dict, List
+    from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -130,12 +121,15 @@ class SearchIndexesClient(HeadersMixin):
         return result.as_dict()
 
     @distributed_trace_async
-    async def delete_index(self, index_name, **kwargs):
-        # type: (str, **Any) -> None
-        """Deletes a search index and all the documents it contains.
+    async def delete_index(self, index, **kwargs):
+        # type: (Union[str, Index], **Any) -> None
+        """Deletes a search index and all the documents it contains. The model must be
+        provided instead of the name to use the access conditions
 
-        :param index_name: The name of the index to retrieve.
-        :type index_name: str
+        :param index: The index to retrieve.
+        :type index: str or ~search.models.Index
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -148,7 +142,20 @@ class SearchIndexesClient(HeadersMixin):
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        await self._client.indexes.delete(index_name, **kwargs)
+        error_map, access_condition = get_access_conditions(
+            index,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
+        try:
+            index_name = index.name
+        except AttributeError:
+            index_name = index
+        await self._client.indexes.delete(
+            index_name=index_name,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def create_index(self, index, **kwargs):
@@ -181,7 +188,6 @@ class SearchIndexesClient(HeadersMixin):
         index_name,
         index,
         allow_index_downtime=None,
-        match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
         # type: (str, Index, bool, MatchConditions, **Any) -> Index
@@ -197,8 +203,8 @@ class SearchIndexesClient(HeadersMixin):
          the index can be impaired for several minutes after the index is updated, or longer for very
          large indexes.
         :type allow_index_downtime: bool
-        :param match_condition: The match condition to use upon the etag
-        :type match_condition: `~azure.core.MatchConditions`
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: :class:`~azure.search.documents.Index`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -216,22 +222,10 @@ class SearchIndexesClient(HeadersMixin):
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map = {404: ResourceNotFoundError}  # type: Dict[int, Any]
-        access_condition = None
-        if index.e_tag:
-            access_condition = AccessCondition()
-            access_condition.if_match = prep_if_match(index.e_tag, match_condition)
-            access_condition.if_none_match = prep_if_none_match(
-                index.e_tag, match_condition
-            )
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+        error_map, access_condition = get_access_conditions(
+            index,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)
         result = await self._client.indexes.create_or_update(
@@ -239,6 +233,7 @@ class SearchIndexesClient(HeadersMixin):
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )
         return result

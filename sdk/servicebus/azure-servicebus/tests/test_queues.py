@@ -20,11 +20,11 @@ from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSendFailed,
-    MessageSettleFailed)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
@@ -710,11 +710,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             too_large = "A" * 256 * 1024
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
+                with pytest.raises(MessageContentTooLarge):
                     sender.send(Message(too_large))
 
                 half_too_large = "A" * int((1024 * 256) / 2)
-                with pytest.raises(ValueError):
+                with pytest.raises(MessageContentTooLarge):
                     sender.send([Message(half_too_large), Message(half_too_large)])
     
 
@@ -1084,7 +1084,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send(message)
     
                 messages = receiver.receive(max_wait_time=120)
@@ -1103,7 +1103,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     raise Exception("Failed to receive schdeduled message.")
             
 
-    @pytest.mark.skip("Pending message scheduling functionality")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1125,11 +1124,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content)
                     message_b.properties.message_id = message_id_b
-                    tokens = sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
     
-                messages = receiver.fetch_next(timeout=120)
-                messages.extend(receiver.fetch_next(timeout=5))
+                messages = receiver.receive(max_wait_time=120)
+                messages.extend(receiver.receive(max_wait_time=5))
                 if messages:
                     try:
                         data = str(messages[0])
@@ -1145,7 +1144,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     raise Exception("Failed to receive schdeduled message.")
             
 
-    @pytest.mark.skip(reason="Pending message scheduling functionality")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1161,10 +1159,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
                     message_b = Message("Test scheduled message")
-                    tokens = sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
     
-                    sender.cancel_scheduled_messages(*tokens)
+                    sender.cancel_scheduled_messages(tokens)
     
                 messages = receiver.receive(max_wait_time=120)
                 try:

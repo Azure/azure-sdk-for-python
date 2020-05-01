@@ -11,6 +11,14 @@ Azure Cognitive Search is a fully managed cloud search service that provides a r
 
 ## Getting started
 
+### Install the package
+
+Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install azure-search-documents --pre
+```
+
 ### Prerequisites
 
 * Python 2.7, or 3.5 or later is required to use this package.
@@ -26,15 +34,6 @@ az search service create --resource-group <your-resource-group-name> --name <you
 ```
 
 The above creates a resource with the "Standard" pricing tier. See [choosing a pricing tier](https://docs.microsoft.com/en-us/azure/search/search-sku-tier) for more information.
-
-
-### Install the package
-
-Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
-
-```bash
-pip install azure-search-documents --pre
-```
 
 ### Authenticate the client
 
@@ -78,6 +77,17 @@ credential = AzureKeyCredential("<api key>")
 
 client = SearchServiceClient(endpoint="<service endpoint>"
                              credential=credential)
+```
+
+### Send your first search request
+
+You can use the `SearchClient` you created in the first section above to make a basic search request:
+```python
+results = client.search(query="spa")
+
+print("Hotels containing 'spa' in the name (or other fields):")
+for result in results:
+    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
 ```
 
 ## Key concepts
@@ -209,7 +219,7 @@ This library uses the standard [logging][python_logging] library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
-etailed DEBUG level logging, including request/response bodies and unredacted
+Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` keyword argument:
 ```python
 import sys

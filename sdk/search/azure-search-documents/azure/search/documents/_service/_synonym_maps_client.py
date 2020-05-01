@@ -5,18 +5,19 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import SynonymMap
-from ._utils import listize_synonyms
+from ._utils import listize_synonyms, get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from ._generated.models import Skill
-    from typing import Any, Dict, List, Sequence
+    from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -104,12 +105,18 @@ class SearchSynonymMapsClient(HeadersMixin):
         return listize_synonyms(result.as_dict())
 
     @distributed_trace
-    def delete_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Synonym Map in an Azure Search service
+    def delete_synonym_map(self, synonym_map, **kwargs):
+        # type: (Union[str, SynonymMap], **Any) -> None
+        """Delete a named Synonym Map in an Azure Search service. To use access conditions,
+        the SynonymMap model must be provided instead of the name. It is enough to provide
+        the name of the synonym map to delete unconditionally.
 
-        :param name: The name of the Synonym Map to delete
-        :type name: str
+        :param name: The Synonym Map to delete
+        :type name: str or ~search.models.SynonymMap
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -122,7 +129,20 @@ class SearchSynonymMapsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.synonym_maps.delete(name, **kwargs)
+        error_map, access_condition = get_access_conditions(
+            synonym_map,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
+        try:
+            name = synonym_map.name
+        except AttributeError:
+            name = synonym_map
+        self._client.synonym_maps.delete(
+            synonym_map_name=name,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace
     def create_synonym_map(self, name, synonyms, **kwargs):
@@ -153,21 +173,39 @@ class SearchSynonymMapsClient(HeadersMixin):
         return listize_synonyms(result.as_dict())
 
     @distributed_trace
-    def create_or_update_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> dict
+    def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
+        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> dict
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
-        :param name: The name of the Synonym Map to create or update
-        :type name: str
+        :param synonym_map: The name of the Synonym Map to create or update
+        :type synonym_map: str or ~azure.search.documents.SynonymMap
         :param synonyms: A list of synonyms in SOLR format
         :type synonyms: List[str]
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: dict
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = self._client.synonym_maps.create_or_update(name, synonym_map, **kwargs)
+        error_map, access_condition = get_access_conditions(
+            synonym_map,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
+        try:
+            name = synonym_map.name
+            if synonyms:
+                synonym_map.synonyms = "\n".join(synonyms)
+        except AttributeError:
+            name = synonym_map
+            solr_format_synonyms = "\n".join(synonyms)
+            synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        result = self._client.synonym_maps.create_or_update(
+            synonym_map_name=name,
+            synonym_map=synonym_map,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
         return listize_synonyms(result.as_dict())

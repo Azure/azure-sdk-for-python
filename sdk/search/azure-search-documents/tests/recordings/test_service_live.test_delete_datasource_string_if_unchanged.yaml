@@ -1,0 +1,112 @@
+interactions:
+- request:
+    body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
+      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "container": {"name": "searchcontainer"}}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '319'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - 371E8B1C08DCB8B5AEF87D7E375D42AE
+    method: POST
+    uri: https://searchf0dc189a.search.windows.net/datasources?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchf0dc189a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EE1DB1EEB45B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '370'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Fri, 01 May 2020 22:19:19 GMT
+      elapsed-time:
+      - '38'
+      etag:
+      - W/"0x8D7EE1DB1EEB45B"
+      expires:
+      - '-1'
+      location:
+      - https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - ce408dc8-8bf9-11ea-9a33-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
+      "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "container": {"name": "searchcontainer"}}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '345'
+      Content-Type:
+      - application/json
+      Prefer:
+      - return=representation
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - 371E8B1C08DCB8B5AEF87D7E375D42AE
+    method: PUT
+    uri: https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchf0dc189a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EE1DB20218D0\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '375'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Fri, 01 May 2020 22:19:20 GMT
+      elapsed-time:
+      - '36'
+      etag:
+      - W/"0x8D7EE1DB20218D0"
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - ce883c4c-8bf9-11ea-b342-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

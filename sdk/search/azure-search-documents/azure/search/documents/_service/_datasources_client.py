@@ -5,16 +5,18 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from ._generated.models import DataSource
-    from typing import Any, Dict, Optional, Sequence
+    from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -80,20 +82,29 @@ class SearchDataSourcesClient(HeadersMixin):
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
         # type: (DataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
-
         :param name: The name of the datasource to create or update.
         :type name: str
         :param data_source: The definition of the datasource to create or update.
         :type data_source: ~search.models.DataSource
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created DataSource
         :rtype: dict
         """
-        # TODO: access_condition
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         if not name:
             name = data_source.name
-        result = self._client.data_sources.create_or_update(name, data_source, **kwargs)
+        result = self._client.data_sources.create_or_update(
+            data_source_name=name,
+            data_source=data_source,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
         return result
 
     @distributed_trace
@@ -141,13 +152,16 @@ class SearchDataSourcesClient(HeadersMixin):
         return result.data_sources
 
     @distributed_trace
-    def delete_datasource(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Deletes a datasource.
+    def delete_datasource(self, data_source, **kwargs):
+        # type: (Union[str, DataSource], **Any) -> None
+        """Deletes a datasource. To use access conditions, the Datasource model must be
+        provided instead of the name. It is enough to provide the name of the datasource
+        to delete unconditionally
 
-        :param name: The name of the datasource to delete.
-        :type name: str
-
+        :param data_source: The datasource to delete.
+        :type data_source: str or ~search.models.DataSource
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -161,4 +175,17 @@ class SearchDataSourcesClient(HeadersMixin):
                 :caption: Delete a DataSource
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.data_sources.delete(name, **kwargs)
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
+        try:
+            name = data_source.name
+        except AttributeError:
+            name = data_source
+        self._client.data_sources.delete(
+            data_source_name=name,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
