@@ -35,7 +35,13 @@ from ._index import (
     SuggestQuery,
     odata,
 )
-from ._service import SearchServiceClient
+from ._service import (
+    ComplexField,
+    SearchableField,
+    SimpleField,
+    SearchServiceClient,
+    edm,
+)
 from ._service._generated.models import (
     Analyzer,
     AnalyzeRequest,
@@ -65,8 +71,8 @@ from ._service._generated.models import (
     FreshnessScoringParameters,
     GetIndexStatisticsResult,
     ImageAnalysisSkill,
-    InputFieldMappingEntry,
     Index,
+    InputFieldMappingEntry,
     KeepTokenFilter,
     KeyPhraseExtractionSkill,
     KeywordMarkerTokenFilter,
@@ -136,6 +142,7 @@ __all__ = (
     "CjkBigramTokenFilter",
     "ClassicTokenizer",
     "CommonGramTokenFilter",
+    "ComplexField",
     "ConditionalSkill",
     "CorsOptions",
     "CustomAnalyzer",
@@ -190,9 +197,11 @@ __all__ = (
     "SearchItemPaged",
     "SearchQuery",
     "SearchServiceClient",
+    "SearchableField",
     "SentimentSkill",
     "ShaperSkill",
     "ShingleTokenFilter",
+    "SimpleField",
     "Skillset",
     "SnowballTokenFilter",
     "SplitSkill",
@@ -218,5 +227,6 @@ __all__ = (
     "UniqueTokenFilter",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
+    "edm",
     "odata",
 )

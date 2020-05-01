@@ -43,8 +43,8 @@ from ..exceptions import (
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired,
-    MessageSettleFailed
-)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 from .utils import utc_from_timestamp, utc_now
 
 _LOGGER = logging.getLogger(__name__)
@@ -240,6 +240,33 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.header.time_to_live = int(value) * 1000
 
     @property
+    def scheduled_enqueue_time_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """Get or set the utc scheduled enqueue time to the message.
+        This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
+        If cancelling scheduled messages is required, you should use the `ServiceBusSender.schedule` method,
+        which returns sequence numbers that can be used for future cancellation.
+        `scheduled_enqueue_time_utc` is None if not set.
+
+        :rtype: ~datetime.datetime
+        """
+        if self.message.annotations:
+            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
+            if timestamp:
+                in_seconds = timestamp/1000.0
+                return utc_from_timestamp(in_seconds)
+        return None
+
+    @scheduled_enqueue_time_utc.setter
+    def scheduled_enqueue_time_utc(self, value):
+        # type: (datetime.datetime) -> None
+        if not self.properties.message_id:
+            self.properties.message_id = str(uuid.uuid4())
+        if not self.message.annotations:
+            self.message.annotations = {}
+        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = value
+
+    @property
     def body(self):
         # type: () -> Union[bytes, Generator[bytes]]
         """The body of the Message.
@@ -247,20 +274,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         :rtype: bytes or generator[bytes]
         """
         return self.message.get_data()
-
-    def schedule(self, schedule_time_utc):
-        # type: (datetime.datetime) -> None
-        """Add a specific utc enqueue time to the message.
-
-        :param schedule_time_utc: The scheduled utc time to enqueue the message.
-        :type schedule_time_utc: ~datetime.datetime
-        :rtype: None
-        """
-        if not self.properties.message_id:
-            self.properties.message_id = str(uuid.uuid4())
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time_utc
 
 
 class BatchMessage(object):
@@ -327,7 +340,7 @@ class BatchMessage(object):
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.Message
         :rtype: None
-        :raises: :class:`ValueError`, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
         message_size = message.message.get_message_encoded_size()
 
@@ -340,8 +353,8 @@ class BatchMessage(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError(
-                "EventDataBatch has reached its size limit: {}".format(
+            raise MessageContentTooLarge(
+                "BatchMessage has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -406,20 +419,6 @@ class PeekMessage(Message):
         return None
 
     @property
-    def scheduled_enqueue_time_utc(self):
-        # type: () -> Optional[datetime.datetime]
-        """
-
-        :rtype: ~datetime.datetime
-        """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
-            if timestamp:
-                in_seconds = timestamp/1000.0
-                return utc_from_timestamp(in_seconds)
-        return None
-
-    @property
     def sequence_number(self):
         # type: () -> Optional[int]
         """
@@ -453,7 +452,7 @@ class ReceivedMessage(PeekMessage):
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
 
-    def _is_live(self, action):
+    def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
             raise MessageSettleFailed(action, "Orphan message had no open connection.")
@@ -611,7 +610,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_COMPLETE)
+        self._check_live(MESSAGE_COMPLETE)
         self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
@@ -632,7 +631,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEAD_LETTER)
+        self._check_live(MESSAGE_DEAD_LETTER)
 
         details = {
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
@@ -654,7 +653,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_ABANDON)
+        self._check_live(MESSAGE_ABANDON)
         self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
@@ -671,7 +670,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        self._is_live(MESSAGE_DEFER)
+        self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
@@ -696,7 +695,7 @@ class ReceivedMessage(PeekMessage):
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._is_live(MESSAGE_RENEW_LOCK)
+        self._check_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")

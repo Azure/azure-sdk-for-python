@@ -130,7 +130,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self
 
     def __next__(self):
-        self._can_run()
+        self._check_live()
         while True:
             try:
                 return self._do_retryable_operation(self._iter_next)
@@ -305,7 +305,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
+        if max_batch_size and self._config.prefetch < max_batch_size:
+            raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
+                             "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -334,7 +337,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive deferred messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         self._open()
@@ -381,7 +384,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Look at pending messages in the queue.
 
         """
-        self._can_run()
+        self._check_live()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

@@ -27,7 +27,7 @@ class StorageTargetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-11-01".
+    :ivar api_version: Client API version. Constant value: "2020-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class StorageTargetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-01"
+        self.api_version = "2020-03-01"
 
         self.config = config
 
@@ -47,7 +47,8 @@ class StorageTargetsOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -66,7 +67,7 @@ class StorageTargetsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+                    'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -121,8 +122,8 @@ class StorageTargetsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
-            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$'),
+            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -174,7 +175,8 @@ class StorageTargetsOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param storage_target_name: Name of Storage Target.
         :type storage_target_name: str
@@ -222,9 +224,12 @@ class StorageTargetsOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
-        :param storage_target_name: Name of the Storage Target.
+        :param storage_target_name: Name of the Storage Target. Length of name
+         must be not greater than 80 and chars must be in list of [-0-9a-zA-Z_]
+         char class.
         :type storage_target_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -241,8 +246,8 @@ class StorageTargetsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
-            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$'),
+            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -288,8 +293,8 @@ class StorageTargetsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
-            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$'),
+            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -345,9 +350,12 @@ class StorageTargetsOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
-        :param storage_target_name: Name of the Storage Target.
+        :param storage_target_name: Name of the Storage Target. Length of name
+         must be not greater than 80 and chars must be in list of [-0-9a-zA-Z_]
+         char class.
         :type storage_target_name: str
         :param storagetarget: Object containing the definition of a Storage
          Target.

@@ -16,7 +16,6 @@ from .._common.constants import (
     ASSOCIATEDLINKPROPERTYNAME
 )
 from ..exceptions import (
-    InvalidHandlerState,
     ServiceBusError,
     _create_servicebus_exception
 )
@@ -139,8 +138,6 @@ class BaseHandlerAsync(BaseHandler):
 
     async def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
         await self._open()
-        if not self._running:
-            raise InvalidHandlerState("Client connection is closed.")
 
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
