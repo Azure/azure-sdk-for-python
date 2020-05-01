@@ -28,6 +28,7 @@ class VSCodeCredential(object):
 
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
+        self._refresh_token = None
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -45,10 +46,11 @@ class VSCodeCredential(object):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        refresh_token = get_credentials()
-        if not refresh_token:
+        if not self._refresh_token:
+            self._refresh_token = get_credentials()
+        if not self._refresh_token:
             raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
         token = self._client.get_cached_access_token(scopes) or self._client.obtain_token_by_refresh_token(
-            refresh_token, scopes, **kwargs
+            self._refresh_token, scopes, **kwargs
         )
         return token
