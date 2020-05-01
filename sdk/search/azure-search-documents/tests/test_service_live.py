@@ -129,7 +129,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             cors_options=cors_options)
         result = client.create_index(index)
         etag = result.e_tag
-        # get e tag  nd update
+        # get e tag  and update
         index.scoring_profiles = []
         client.create_or_update_index(index.name, index)
 
@@ -243,7 +243,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             cors_options=cors_options)
         result = client.create_index(index)
         etag = result.e_tag
-        # get e tag  nd update
+        # get e tag  and update
         index.scoring_profiles = []
         client.create_or_update_index(index.name, index)
 
@@ -307,8 +307,8 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         etag = sm_result.e_tag
 
         client.create_or_update_synonym_map("test-syn-map", [
-                    "Washington, Wash. => WA",
-                ])
+            "Washington, Wash. => WA",
+        ])
 
         sm_result.e_tag = etag
         with pytest.raises(HttpResponseError):
@@ -598,7 +598,6 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         data_source.description = "changed"
         with pytest.raises(HttpResponseError):
             client.create_or_update_datasource(data_source, match_condition=MatchConditions.IfNotModified)
-            assert len(client.get_datasources()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
