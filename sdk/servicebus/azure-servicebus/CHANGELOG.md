@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b2 (Unreleased)
+## 7.0.0b2 (2020-05-04)
 
 **New Features**
 
@@ -10,9 +10,12 @@
     - Use `ServiceBusSender.schedule(messages, schedule_time_utc)` for scheduling messages.
     - Use `ServiceBusSender.cancel_scheduled_messages(sequence_numbers)` for scheduled messages cancellation.
 * `ServiceBusSender.send()` can now send a list of messages in one call, if they fit into a single batch.  If they do not fit a `ValueError` is thrown.
-* `BatchMessage.add()` and `ServiceBusSender.send()` raises `MessageContentTooLarge`, which is a subclass of `ValueError` if the content is over-sized.
-* `ServiceBusReceiver.receive()` raises `ValueError` if the max_batch_size is greater than the prefetch of `ServiceBusClient`.
+* `BatchMessage.add()` and `ServiceBusSender.send()` would raise `MessageContentTooLarge` if the content is over-sized.
+* `ServiceBusReceiver.receive()` raises `ValueError` if its param `max_batch_size` is greater than param `prefetch` of `ServiceBusClient`.
 * Added exception classes `MessageError`, `MessageContentTooLarge`, `ServiceBusAuthenticationError`.
+   - `MessageError`: when you send a problematic message, such as an already sent message or an over-sized message.
+   - `MessageContentTooLarge`: when you send an over-sized message. A subclass of `ValueError` and `MessageError`.
+   - `ServiceBusAuthenticationError`: on failure to be authenticated by the service.
 * Removed exception class `InvalidHandlerState`.
 
 **BugFixes**
