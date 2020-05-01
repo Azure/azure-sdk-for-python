@@ -78,7 +78,7 @@ def test_mac_keychain_valid_value():
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_mac_keychain_error():
     from msal_extensions.osx import Keychain, KeychainError
-    with mock.patch.object(Keychain, 'get_generic_password', side_effect=KeychainError()):
+    with mock.patch.object(Keychain, 'get_generic_password', side_effect=KeychainError(-1)):
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
