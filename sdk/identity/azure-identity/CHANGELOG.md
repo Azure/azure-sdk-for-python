@@ -2,7 +2,6 @@
 
 ## 1.4.0b3 (Unreleased)
 
-- Preview of `VSCodeCredential` #10840
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it

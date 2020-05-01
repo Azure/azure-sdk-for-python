@@ -9,7 +9,7 @@ from .._constants import VSCODE_CREDENTIALS_SECTION
 
 
 def _get_user_settings_path():
-    app_data_folder = os.environ["USER"]
+    app_data_folder = os.environ['USER']
     return os.path.join(app_data_folder, "Library", "Application Support", "Code", "User", "settings.json")
 
 
@@ -37,5 +37,5 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
-    except Exception:  # pylint: disable=broad-except
+    except Exception: #pylint: disable=broad-except
         return None
