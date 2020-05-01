@@ -2,6 +2,11 @@
 
 ## 1.0.0b2 (Unreleased)
 
+**Fixes and improvements**
+
+- Bug fixed where `confidence` == `0.0` was erroneously getting set to `1.0`
+- `__repr__` has been added to all of the models
+
 
 ## 1.0.0b1 (2020-04-23)
 

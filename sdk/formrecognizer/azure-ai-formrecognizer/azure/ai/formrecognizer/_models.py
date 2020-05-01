@@ -12,6 +12,14 @@ import re
 import six
 
 
+def adjust_confidence(score):
+    """Adjust confidence when not returned.
+    """
+    if score is None:
+        return 1.0
+    return score
+
+
 def get_elements(field, read_result):
     text_elements = []
 
@@ -275,7 +283,7 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=value.confidence or 1.0 if value else None,
+            confidence=adjust_confidence(value.confidence) if value else None,
             page_number=value.page if value else None,
         )
 
@@ -287,7 +295,7 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=field.confidence or 1.0,
+            confidence=adjust_confidence(field.confidence),
             page_number=page,
         )
 
@@ -427,7 +435,7 @@ class FormLine(FormContent):
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(**kwargs)
-        self.words = kwargs.get("words", None)
+        self.words = kwargs.get("words", [])
 
     @classmethod
     def _from_generated(cls, line, page):
@@ -477,7 +485,7 @@ class FormWord(FormContent):
                 Point(x=word.bounding_box[4], y=word.bounding_box[5]),
                 Point(x=word.bounding_box[6], y=word.bounding_box[7])
             ] if word.bounding_box else None,
-            confidence=word.confidence or 1.0,
+            confidence=adjust_confidence(word.confidence),
             page_number=page
         )
 
@@ -505,7 +513,7 @@ class USReceiptType(object):
     def _from_generated(cls, item):
         return cls(
             type=item.value_string,
-            confidence=item.confidence or 1.0) if item else None
+            confidence=adjust_confidence(item.confidence)) if item else None
 
     def __repr__(self):
         return "USReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
@@ -562,7 +570,7 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
-        self.cells = kwargs.get("cells", None)
+        self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
@@ -623,7 +631,7 @@ class FormTableCell(FormContent):
                 Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
                 Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
             ] if cell.bounding_box else None,
-            confidence=cell.confidence or 1.0,
+            confidence=adjust_confidence(cell.confidence),
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
@@ -666,7 +674,7 @@ class CustomFormModel(object):
         self.last_modified = kwargs.get("last_modified", None)
         self.models = kwargs.get("models", None)
         self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", None)
+        self.training_documents = kwargs.get("training_documents", [])
 
     @classmethod
     def _from_generated(cls, model):
@@ -677,7 +685,7 @@ class CustomFormModel(object):
             last_modified=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else [],
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
@@ -784,7 +792,7 @@ class TrainingDocumentInfo(object):
         self.document_name = kwargs.get("document_name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)
+        self.errors = kwargs.get("errors", [])
 
     @classmethod
     def _from_generated(cls, train_result):
