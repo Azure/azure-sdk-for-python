@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
@@ -105,15 +106,14 @@ class SearchSkillsetsClient(HeadersMixin):
     @distributed_trace_async
     async def delete_skillset(self, skillset, **kwargs):
         # type: (Union[str, Skillset], **Any) -> None
-        """Delete a named Skillset in an Azure Search service. To use only_if_unchanged,
+        """Delete a named Skillset in an Azure Search service. To use access conditions,
         the Skillset model must be provided instead of the name. It is enough to provide
         the name of the skillset to delete unconditionally
 
         :param name: The Skillset to delete
         :type name: str or ~search.models.Skillset
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed skillset.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
 
         .. admonition:: Example:
 
@@ -129,7 +129,10 @@ class SearchSkillsetsClient(HeadersMixin):
         access_condition = None
         try:
             name = skillset.name
-            access_condition = get_access_conditions(skillset, kwargs.pop('only_if_unchanged', False))
+            error_map, access_condition = get_access_conditions(
+                skillset,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
         except AttributeError:
             name = skillset
         await self._client.skillsets.delete(name, access_condition=access_condition, **kwargs)
@@ -179,9 +182,8 @@ class SearchSkillsetsClient(HeadersMixin):
         :type description: Optional[str]
         :keyword skillset: A Skillset to create or update.
         :type skillset: :class:`~azure.search.documents.Skillset`
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed skillset.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Skillset
         :rtype: dict
 
@@ -195,7 +197,10 @@ class SearchSkillsetsClient(HeadersMixin):
 
         if "skillset" in kwargs:
             skillset = kwargs.pop("skillset")
-            access_condition = get_access_conditions(skillset, kwargs.pop('only_if_unchanged', False))
+            error_map, access_condition = get_access_conditions(
+                skillset,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
             skillset = Skillset.deserialize(skillset.serialize())
             skillset.name = name
             for param in ("description", "skills"):

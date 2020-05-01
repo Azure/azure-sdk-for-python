@@ -10,6 +10,7 @@ from os.path import dirname, join, realpath
 import time
 
 import pytest
+from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureMgmtTestCase
 
@@ -151,7 +152,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_index(index, only_if_unchanged=True)
+            await client.delete_index(index, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -265,7 +266,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_index(index.name, index, only_if_unchanged=True)
+            await client.create_or_update_index(index.name, index, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -328,7 +329,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
 
         sm_result.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_synonym_map(sm_result, only_if_unchanged=True)
+            await client.delete_synonym_map(sm_result, match_condition=MatchConditions.IfNotModified)
             assert len(client.get_synonym_maps()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -431,7 +432,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         updated.e_tag = etag
 
         with pytest.raises(HttpResponseError):
-            await client.delete_skillset(updated, only_if_unchanged=True)
+            await client.delete_skillset(updated, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -512,7 +513,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 
         ss.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_skillset(name='test-ss', skills=[s], skillset=ss, only_if_unchanged=True)
+            await client.create_or_update_skillset(name='test-ss', skills=[s], skillset=ss, match_condition=MatchConditions.IfNotModified)
 
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
@@ -598,7 +599,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         data_source.e_tag = etag # reset to the original datasource
         data_source.description = "changed"
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_datasource(data_source, only_if_unchanged=True)
+            await client.create_or_update_datasource(data_source, match_condition=MatchConditions.IfNotModified)
             assert len(await client.get_datasources()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -616,5 +617,5 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         # prepare data source
         data_source.e_tag = etag # reset to the original datasource
         with pytest.raises(HttpResponseError):
-            await client.delete_datasource(data_source, only_if_unchanged=True)
+            await client.delete_datasource(data_source, match_condition=MatchConditions.IfNotModified)
             assert len(await client.get_datasources()) == 1

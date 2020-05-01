@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
@@ -84,14 +85,16 @@ class SearchDataSourcesClient(HeadersMixin):
         :type name: str
         :param data_source: The definition of the datasource to create or update.
         :type data_source: ~search.models.DataSource
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed data_source.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created DataSource
         :rtype: dict
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = get_access_conditions(data_source, kwargs.pop('only_if_unchanged', False))
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         if not name:
             name = data_source.name
         result = await self._client.data_sources.create_or_update(
@@ -105,15 +108,14 @@ class SearchDataSourcesClient(HeadersMixin):
     @distributed_trace_async
     async def delete_datasource(self, data_source, **kwargs):
         # type: (Union[str, DataSource], **Any) -> None
-        """Deletes a datasource. To use only_if_unchanged, the Datasource model must be
+        """Deletes a datasource. To use access conditions, the Datasource model must be
         provided instead of the name. It is enough to provide the name of the datasource
         to delete unconditionally
 
         :param data_source: The datasource to delete.
         :type data_source: str or ~search.models.DataSource
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed data_source.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -130,7 +132,10 @@ class SearchDataSourcesClient(HeadersMixin):
         access_condition = None
         try:
             name = data_source.name
-            access_condition = get_access_conditions(data_source, kwargs.pop('only_if_unchanged', False))
+            error_map, access_condition = get_access_conditions(
+                data_source,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
         except AttributeError:
             name = data_source
         await self._client.data_sources.delete(

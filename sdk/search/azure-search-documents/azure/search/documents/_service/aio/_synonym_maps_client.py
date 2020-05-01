@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
@@ -106,15 +107,14 @@ class SearchSynonymMapsClient(HeadersMixin):
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
         # type: (Union[str, SynonymMap], **Any) -> None
-        """Delete a named Synonym Map in an Azure Search service. To use only_if_unchanged,
+        """Delete a named Synonym Map in an Azure Search service. To use access conditions,
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
         :param name: The Synonym Map to delete
         :type name: str or ~search.models.SynonymMap
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed synonym_map.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -133,7 +133,10 @@ class SearchSynonymMapsClient(HeadersMixin):
         access_condition = None
         try:
             name = synonym_map.name
-            access_condition = get_access_conditions(synonym_map, kwargs.pop('only_if_unchanged', False))
+            error_map, access_condition = get_access_conditions(
+                synonym_map,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
         except AttributeError:
             name = synonym_map
         await self._client.synonym_maps.delete(synonym_map_name=name, access_condition=access_condition, **kwargs)
@@ -176,18 +179,20 @@ class SearchSynonymMapsClient(HeadersMixin):
         :type synonym_map: str or ~azure.search.documents.SynonymMap
         :param synonyms: A list of synonyms in SOLR format
         :type synonyms: List[str]
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed synonym_map.
-        :type only_if_unchanged: bool
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: dict
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = None, None
         try:
             name = synonym_map.name
-            access_condition = get_access_conditions(synonym_map, kwargs.pop('only_if_unchanged', False))
+            error_map, access_condition = get_access_conditions(
+                synonym_map,
+                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            )
             if synonyms:
                 synonym_map.synonyms = "\n".join(synonyms)
         except AttributeError:
