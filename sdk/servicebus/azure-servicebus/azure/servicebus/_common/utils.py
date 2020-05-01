@@ -255,7 +255,7 @@ class AutoLockRenew(object):
 class AutoComplete(object):
     """
     Provides a ContextManager to complete a message on successful exit from the scope,
-    abandoning() otherwise, for instance if an exception is thrown.
+    calling `abandon()` otherwise, for instance if an exception is thrown.
 
     :param message: The message to auto-complete or abandon.
     :type message: ~azure.servicebus.ReceivedMessage
