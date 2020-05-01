@@ -4,9 +4,8 @@
 
 - Preview of `VSCodeCredential` #10472
 
-VS code credential is to authenticate with the identity signed in to Visual 
-Studio Code's Azure extension. This credential is internal because it is 
-exposed to users only as part of an aggregate credential. 
+Now `DefaultAzureCredential` can authenticate with the identity signed in to Visual 
+Studio Code's Azure extension.
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it

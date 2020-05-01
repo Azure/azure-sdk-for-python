@@ -50,10 +50,13 @@ class VSCodeCredential(AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
+        token = self._client.get_cached_access_token(scopes)
+        if token:
+            return token
+
         refresh_token = get_credentials()
         if not refresh_token:
             raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
-        token = self._client.get_cached_access_token(scopes)
-        if not token:
-            token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
+
+        token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
         return token
