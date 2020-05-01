@@ -28,7 +28,7 @@ class MgmtPowerBIDedicatedTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtPowerBIDedicatedTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.powerbidedicated.PowerBIDedicated
+            azure.mgmt.powerbidedicated.PowerBIDedicatedManagementClient
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -37,24 +37,27 @@ class MgmtPowerBIDedicatedTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        DEDICATED_CAPACITY_NAME = "myDedicatedCapacity"
+        DEDICATED_CAPACITY_NAME = "mydedicatedcapacity"
         LOCATION = "myLocation"
 
-        # /Capacities/put/Create capacity[put]
-        SKU = {
-          "name": "A1",
-          "tier": "PBIE_Azure"
+        # /Capacities/put/Create capacity[put]i
+        BODY = {
+          "sku": {
+            "name": "A1",
+            "tier": "PBIE_Azure"
+          },
+          "tags": {
+            "test_key": "testValue"
+          },
+          "administration": {
+           "members": [
+             "user1@microsoft.com",
+             "user2@microsoft.com"
+           ]
+          },
+          "location": "eastus"
         }
-        TAGS = {
-          "test_key": "testValue"
-        }
-        ADMINISTRATION = {
-          "members": [
-            "azsdktest@microsoft.com",
-            "azsdktest2@microsoft.com"
-          ]
-        }
-        result = self.mgmt_client.capacities.create(resource_group_name=RESOURCE_GROUP, dedicated_capacity_name=DEDICATED_CAPACITY_NAME, sku= SKU, tags= TAGS, location="West US", administration= ADMINISTRATION, provisioning_state="Preparing", state="Preparing")
+        result = self.mgmt_client.capacities.create(resource_group_name=RESOURCE_GROUP, dedicated_capacity_name=DEDICATED_CAPACITY_NAME, capacity_parameters=BODY)
         result = result.result()
 
         # /Capacities/get/List eligible SKUs for an existing capacity[get]
@@ -81,24 +84,26 @@ class MgmtPowerBIDedicatedTest(AzureMgmtTestCase):
         result = result.result()
 
         # /Capacities/patch/Update capacity parameters[patch]
-        SKU = {
-          "name": "A1",
-          "tier": "PBIE_Azure"
+        BODY = {
+          "sku": {
+            "name": "A1",
+            "tier": "PBIE_Azure"
+          },
+          "tags": {
+            "test_key": "testValue"
+          },
+          "administration": {
+            "members": [
+             "user1@microsoft.com",
+             "user2@microsoft.com"
+            ]
+          }
         }
-        TAGS = {
-          "test_key": "testValue"
-        }
-        ADMINISTRATION = {
-          "members": [
-            "azsdktest@microsoft.com",
-            "azsdktest2@microsoft.com"
-          ]
-        }
-        result = self.mgmt_client.capacities.update(resource_group_name=RESOURCE_GROUP, dedicated_capacity_name=DEDICATED_CAPACITY_NAME, sku= SKU, tags= TAGS, administration= ADMINISTRATION)
+        result = self.mgmt_client.capacities.update(resource_group_name=RESOURCE_GROUP, dedicated_capacity_name=DEDICATED_CAPACITY_NAME, capacity_update_parameters=BODY)
         result = result.result()
 
         # /Capacities/post/Check name availability of a capacity[post]
-        result = self.mgmt_client.capacities.check_name_availability(location=LOCATION, name="azsdktest", type="Microsoft.PowerBIDedicated/capacities")
+        result = self.mgmt_client.capacities.check_name_availability(location="eastus", name="azsdktest", type="Microsoft.PowerBIDedicated/capacities")
 
         # /Capacities/delete/Get details of a capacity[delete]
         result = self.mgmt_client.capacities.delete(resource_group_name=RESOURCE_GROUP, dedicated_capacity_name=DEDICATED_CAPACITY_NAME)
