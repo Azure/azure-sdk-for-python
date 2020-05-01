@@ -238,7 +238,8 @@ print("Last modified: {}".format(model.last_modified))
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
 for submodel in model.models:
-    print("We have recognized the following fields: {}".format(
+    print("The submodel with form type '{}' has recognized the following fields: {}".format(
+        submodel.form_type,
         ", ".join([label for label in submodel.fields])
     ))
 

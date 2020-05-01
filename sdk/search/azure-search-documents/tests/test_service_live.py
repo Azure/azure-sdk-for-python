@@ -29,7 +29,9 @@ from azure.search.documents import(
     Skillset,
     DataSourceCredentials,
     DataSource,
-    DataContainer
+    DataContainer,
+    SimpleField,
+    edm
 )
 
 CWD = dirname(realpath(__file__))
@@ -101,16 +103,9 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-        {
-          "name": "hotelId",
-          "type": "Edm.String",
-          "key": True,
-          "searchable": False
-        },
-        {
-          "name": "baseRate",
-          "type": "Edm.Double"
-        }]
+            SimpleField(name="hotelId", type=edm.String, key=True),
+            SimpleField(name="baseRate", type=edm.Double)
+        ]
         scoring_profile = ScoringProfile(
             name="MyProfile"
         )
@@ -134,16 +129,9 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-            {
-                "name": "hotelId",
-                "type": "Edm.String",
-                "key": True,
-                "searchable": False
-            },
-            {
-                "name": "baseRate",
-                "type": "Edm.Double"
-            }]
+            SimpleField(name="hotelId", type=edm.String, key=True),
+            SimpleField(name="baseRate", type=edm.Double)
+        ]
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
         index = Index(
