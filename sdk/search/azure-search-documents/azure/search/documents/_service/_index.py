@@ -23,7 +23,7 @@ def SimpleField(
     sortable=False,
     hidden=False,
 ):
-    # type: (str, str, bool, bool, bool, bool, bool, **Any) -> Dict[str, Any]
+    # type: (str, str, bool, bool, bool, bool, bool) -> Dict[str, Any]
     """Configure a simple field for an Azure Search Index
 
     :param name: Required. The name of the field, which must be unique within the fields collection
