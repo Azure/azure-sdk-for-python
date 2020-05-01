@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import six
 from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
@@ -168,7 +167,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
         404: ResourceNotFoundError
     }
 
-    if isinstance(model, six.text_type):
+    if not hasattr(model, 'e_tag'):
         return (error_map, None)
 
     try:
