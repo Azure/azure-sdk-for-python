@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 2422055D56218F0FAF784A646729E5DA
+      - 61C29831B328077CA7F9271631F6FACD
     method: POST
     uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -72,9 +72,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Tue, 31 Mar 2020 17:35:53 GMT
+      - Wed, 29 Apr 2020 23:19:03 GMT
       elapsed-time:
-      - '178'
+      - '84'
       expires:
       - '-1'
       odata-version:
@@ -84,7 +84,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 12b61776-7376-11ea-b26b-5cf37071153c
+      - d065abc4-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 2422055D56218F0FAF784A646729E5DA
+      - 61C29831B328077CA7F9271631F6FACD
     method: POST
     uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Tue, 31 Mar 2020 17:35:53 GMT
+      - Wed, 29 Apr 2020 23:19:03 GMT
       elapsed-time:
-      - '12'
+      - '6'
       expires:
       - '-1'
       odata-version:
@@ -153,7 +153,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 13117b98-7376-11ea-a7a3-5cf37071153c
+      - d088cbea-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

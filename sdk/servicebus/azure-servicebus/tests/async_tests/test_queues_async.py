@@ -25,11 +25,11 @@ from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSendFailed,
-    MessageSettleFailed)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
@@ -541,9 +541,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         count += 1
                     messages = await receiver.receive()
 
-                with pytest.raises(InvalidHandlerState):
-                    await receiver.receive()
-
             assert count == 10
 
             async with await sb_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
@@ -727,11 +724,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             too_large = "A" * 1024 * 256
             
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
+                with pytest.raises(MessageContentTooLarge):
                     await sender.send(Message(too_large))
                     
                 half_too_large = "A" * int((1024 * 256) / 2)
-                with pytest.raises(ValueError):
+                with pytest.raises(MessageContentTooLarge):
                     await sender.send([Message(half_too_large), Message(half_too_large)])
 
 
@@ -960,7 +957,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, m)
                     await m.complete()
 
-    @pytest.mark.skip(reason="requires scheduler")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -977,7 +973,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     await sender.send(message)
 
                 messages = await receiver.receive(max_wait_time=120)
@@ -995,7 +991,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
-    @pytest.mark.skip(reason="requires scheduler")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1015,7 +1010,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content)
                     message_b.properties.message_id = message_id_b
-                    tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
                 recv = await receiver.receive(max_wait_time=120)
@@ -1051,10 +1046,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
                     message_b = Message("Test scheduled message")
-                    tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
-                    await sender.cancel_scheduled_messages(*tokens)
+                    await sender.cancel_scheduled_messages(tokens)
 
                 messages = await receiver.receive(max_wait_time=120)
                 assert len(messages) == 0

@@ -6,7 +6,14 @@
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
 * Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+* Added support for scheduling messages and scheduled message cancellation.
+    - Use `ServiceBusSender.schedule(messages, schedule_time_utc)` for scheduling messages.
+    - Use `ServiceBusSender.cancel_scheduled_messages(sequence_numbers)` for scheduled messages cancellation.
 * `ServiceBusSender.send()` can now send a list of messages in one call, if they fit into a single batch.  If they do not fit a `ValueError` is thrown.
+* `BatchMessage.add()` and `ServiceBusSender.send()` raises `MessageContentTooLarge`, which is a subclass of `ValueError` if the content is over-sized.
+* `ServiceBusReceiver.receive()` raises `ValueError` if the max_batch_size is greater than the prefetch of `ServiceBusClient`.
+* Added exception classes `MessageError`, `MessageContentTooLarge`, `ServiceBusAuthenticationError`.
+* Removed exception class `InvalidHandlerState`.
 
 **BugFixes**
 
@@ -17,6 +24,7 @@
 * Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
 * `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
 * Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
+* `ServiceBusSender.schedule()` has swapped the ordering of parameters `schedule_time_utc` and `messages` for better consistency with `send()` syntax.
 
 ## 7.0.0b1 (2020-04-06)
 

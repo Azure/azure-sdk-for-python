@@ -20,7 +20,6 @@ from uamqp.message import MessageProperties
 
 from ._common._configuration import Configuration
 from .exceptions import (
-    InvalidHandlerState,
     ServiceBusError,
     ServiceBusAuthorizationError,
     _create_servicebus_exception
@@ -236,9 +235,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
     def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
         self._open()
-        if not self._running:
-            raise InvalidHandlerState("Client connection is closed.")
-
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
         if keep_alive_associated_link:
