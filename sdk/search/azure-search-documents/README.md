@@ -209,7 +209,7 @@ This library uses the standard [logging][python_logging] library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
-etailed DEBUG level logging, including request/response bodies and unredacted
+Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` keyword argument:
 ```python
 import sys
