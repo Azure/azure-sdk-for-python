@@ -270,7 +270,6 @@ class DataLakeFileClient(PathClient):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
-        chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
 
         kwargs['properties'] = add_metadata_headers(metadata)
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
@@ -283,7 +282,6 @@ class DataLakeFileClient(PathClient):
         kwargs['length'] = length
         kwargs['validate_content'] = validate_content
         kwargs['max_concurrency'] = max_concurrency
-        kwargs['chunk_size'] = chunk_size
         kwargs['client'] = self._client.path
 
         return kwargs

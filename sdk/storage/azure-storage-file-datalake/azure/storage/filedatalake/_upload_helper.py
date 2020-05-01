@@ -32,7 +32,6 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         overwrite=None,
         validate_content=None,
         max_concurrency=None,
-        chunk_size=100 * 1024 * 1024,
         **kwargs):
     try:
         if length == 0:
@@ -40,6 +39,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         properties = kwargs.pop('properties', None)
         path_http_headers = kwargs.pop('path_http_headers', None)
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
+        chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
