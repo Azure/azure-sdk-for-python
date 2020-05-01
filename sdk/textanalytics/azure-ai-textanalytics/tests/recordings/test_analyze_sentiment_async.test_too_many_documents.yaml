@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "One", "language": "en"}, {"id": "1",
+      "text": "Two", "language": "en"}, {"id": "2", "text": "Three", "language": "en"},
+      {"id": "3", "text": "Four", "language": "en"}, {"id": "4", "text": "Five", "language":
+      "en"}, {"id": "5", "text": "Six", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '295'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/sentiment?showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+        key or wrong API endpoint. Make sure to provide a valid key for an active
+        subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      apim-request-id: 68c140f8-c5a1-4715-b5ce-48264492a66c
+      content-length: '225'
+      content-type: application/json
+      date: Fri, 01 May 2020 16:08:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      www-authenticate: AzureApiManagementKey realm="https://westus2.ppe.cognitiveservices.azure.com/text/analytics",name="Ocp-Apim-Subscription-Key",type="header"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Access Denied
+    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/sentiment?showStats=false
+version: 1
