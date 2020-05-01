@@ -14,7 +14,7 @@ from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerCl
 def test_client_secret_credential(aad_credential, live_eventhub):
     try:
         from azure.identity import EnvironmentCredential
-    except ImportError as e:
+    except:
         pytest.skip("No azure identity library")
     credential = EnvironmentCredential()
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
