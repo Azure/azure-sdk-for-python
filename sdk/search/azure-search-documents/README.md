@@ -11,6 +11,14 @@ Azure Cognitive Search is a fully managed cloud search service that provides a r
 
 ## Getting started
 
+### Install the package
+
+Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install azure-search-documents --pre
+```
+
 ### Prerequisites
 
 * Python 2.7, or 3.5 or later is required to use this package.
@@ -26,15 +34,6 @@ az search service create --resource-group <your-resource-group-name> --name <you
 ```
 
 The above creates a resource with the "Standard" pricing tier. See [choosing a pricing tier](https://docs.microsoft.com/en-us/azure/search/search-sku-tier) for more information.
-
-
-### Install the package
-
-Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
-
-```bash
-pip install azure-search-documents --pre
-```
 
 ### Authenticate the client
 
