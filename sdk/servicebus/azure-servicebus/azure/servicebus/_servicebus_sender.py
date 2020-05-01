@@ -301,10 +301,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to
-         send
+        :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
-                :class: `ValueError` if list of messages is provided and cannot fit in a batch.
+                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                  service bus frame size limit.
+                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
+                :class: ~azure.servicebus.exceptions.ServiceBusError. The parent class of above errors.
 
         .. admonition:: Example:
 
