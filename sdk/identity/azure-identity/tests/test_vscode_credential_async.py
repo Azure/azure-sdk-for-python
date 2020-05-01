@@ -69,4 +69,4 @@ async def test_redeem_token():
         credential = VSCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token is expected_token
-        token_by_refresh_token.assert_called_with('VALUE', ('scope',))
+        token_by_refresh_token.assert_called_with("VALUE", ("scope",))

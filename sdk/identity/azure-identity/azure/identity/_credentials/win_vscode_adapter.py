@@ -17,6 +17,7 @@ SUPPORTED_CREDKEYS = set(("Type", "TargetName", "Persist", "UserName", "Comment"
 
 _PBYTE = ct.POINTER(ct.c_byte)
 
+
 class _CREDENTIAL(ct.Structure):
     _fields_ = [
         ("Flags", wt.DWORD),
@@ -32,6 +33,7 @@ class _CREDENTIAL(ct.Structure):
         ("TargetAlias", ct.c_wchar_p),
         ("UserName", ct.c_wchar_p),
     ]
+
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
