@@ -193,7 +193,8 @@ class EventHubProducerClient(ClientBase):
         and then call this method to send out the batch.
 
         :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
-         in a batch.
+         in a batch. All `EventData` of the list or `EventDataBatch` will go to a single partition with one `send_batch`
+         call.
         :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[~azure.eventhub.EventData]]
         :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
@@ -205,7 +206,7 @@ class EventHubProducerClient(ClientBase):
          a particular partition of the Event Hub decided by the service.
          A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
          `EventDataBatch` itself has partition_key.
-         If both partition_id and partition_key is provided, the partition_id will take precedence.
+         If both partition_id and partition_key are provided, the partition_id will take precedence.
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -260,7 +261,7 @@ class EventHubProducerClient(ClientBase):
          will assign to all partitions using round-robin.
         :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
-         If both partition_id and partition_key is provided, the partition_id will take precedence.
+         If both partition_id and partition_key are provided, the partition_id will take precedence.
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
