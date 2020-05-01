@@ -18,7 +18,8 @@ import pytest
 @pytest.mark.asyncio
 async def test_bearer_policy_adds_header():
     """The bearer token policy should add a header containing a token from its credential"""
-    expected_token = AccessToken("expected_token", 0)
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
 
     async def verify_authorization_header(request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
@@ -35,6 +36,10 @@ async def test_bearer_policy_adds_header():
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"), context=None)
+    assert get_token_calls == 1
+
+    await pipeline.run(HttpRequest("GET", "https://spam.eggs"), context=None)
+    # Didn't need a new token
     assert get_token_calls == 1
 
 
