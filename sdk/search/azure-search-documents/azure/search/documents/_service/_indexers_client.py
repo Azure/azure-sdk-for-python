@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
@@ -89,7 +91,7 @@ class SearchIndexersClient(HeadersMixin):
         :rtype: ~azure.search.documents.Indexer
         """
         error_map, access_condition = get_access_conditions(
-            data_source,
+            indexer,
             kwargs.pop('match_condition', MatchConditions.Unconditionally)
         )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -175,7 +177,7 @@ class SearchIndexersClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
+            indexer,
             kwargs.pop('match_condition', MatchConditions.Unconditionally)
         )
         try:
