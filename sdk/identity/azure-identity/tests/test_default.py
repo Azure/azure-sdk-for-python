@@ -15,6 +15,8 @@ from azure.identity import (
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
+from azure.identity._credentials.vscode_credential import VSCodeCredential
+import pytest
 from six.moves.urllib_parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
@@ -45,12 +47,14 @@ def test_iterates_only_once():
         assert successful_credential.get_token.call_count == n + 1
 
 
-def test__authority():
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_authority(authority):
     """the credential should accept authority configuration by keyword argument or environment"""
 
-    def test_initialization(mock_credential, expect_argument):
-        authority = "localhost"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
+    def test_initialization(mock_credential, expect_argument):
         DefaultAzureCredential(authority=authority)
         assert mock_credential.call_count == 1
 
@@ -62,7 +66,9 @@ def test__authority():
 
         for _, kwargs in mock_credential.call_args_list:
             if expect_argument:
-                assert kwargs["authority"] == authority
+                actual = urlparse(kwargs["authority"])
+                assert actual.scheme == "https"
+                assert actual.netloc == expected_netloc
             else:
                 assert "authority" not in kwargs
 
@@ -115,11 +121,15 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
 
+    credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
+    assert_credentials_not_present(credential, VSCodeCredential)
+
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
     actual = {c.__class__ for c in credential.credentials}
     default = {c.__class__ for c in DefaultAzureCredential().credentials}
     assert actual - default == {InteractiveBrowserCredential}
+
 
 
 def test_shared_cache_tenant_id():

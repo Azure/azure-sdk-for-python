@@ -28,6 +28,15 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
         return len(batch)
 
 
+def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
+    quantity = int(256*1023 / args.payload)
+    send_list = []
+    for _ in range(quantity):
+        send_list.append(EventData(body=b"D" * args.payload))
+    producer.send_batch(send_list)
+    return len(send_list)
+
+
 async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
     batch = await producer.create_batch()
     try:
@@ -37,6 +46,15 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
     except ValueError:
         await producer.send_batch(batch)
         return len(batch)
+
+
+async def stress_send_list_async(producer: EventHubProducerClientAsync, args, logger):
+    quantity = int(256*1023 / args.payload)
+    send_list = []
+    for _ in range(quantity):
+        send_list.append(EventData(body=b"D" * args.payload))
+    await producer.send_batch(send_list)
+    return len(send_list)
 
 
 class StressTestRunner(object):

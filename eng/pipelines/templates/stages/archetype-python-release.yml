@@ -18,7 +18,7 @@ stages:
             environment: github
 
             pool:
-              vmImage: ubuntu-16.04
+              vmImage: ubuntu-18.04
 
             strategy:
               runOnce:
@@ -50,7 +50,7 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                vmImage: ubuntu-16.04
+                vmImage: ubuntu-18.04
 
               strategy:
                 runOnce:
@@ -132,7 +132,7 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                vmImage: ubuntu-16.04
+                vmImage: ubuntu-18.04
 
               strategy:
                 runOnce:
@@ -164,7 +164,7 @@ stages:
       variables:
         devFeedName: public/azure-sdk-for-python
       pool:
-        vmImage: ubuntu-16.04
+        vmImage: ubuntu-18.04
       steps:
       - checkout: none
       - download: current

@@ -12,23 +12,34 @@ import re
 import six
 
 
+def adjust_confidence(score):
+    """Adjust confidence when not returned.
+    """
+    if score is None:
+        return 1.0
+    return score
+
+
 def get_elements(field, read_result):
     text_elements = []
 
-    for item in field.elements:
-        nums = [int(s) for s in re.findall(r"\d+", item)]
-        read = nums[0]
-        line = nums[1]
-        if len(nums) == 3:
-            word = nums[2]
-            ocr_word = read_result[read].lines[line].words[word]
-            extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
-            text_elements.append(extracted_word)
-            continue
-        ocr_line = read_result[read].lines[line]
-        extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
-        text_elements.append(extracted_line)
-    return text_elements
+    try:
+        for item in field.elements:
+            nums = [int(s) for s in re.findall(r"\d+", item)]
+            read = nums[0]
+            line = nums[1]
+            if len(nums) == 3:
+                word = nums[2]
+                ocr_word = read_result[read].lines[line].words[word]
+                extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
+                text_elements.append(extracted_word)
+                continue
+            ocr_line = read_result[read].lines[line]
+            extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
+            text_elements.append(extracted_line)
+        return text_elements
+    except IndexError:
+        return None  # https://github.com/Azure/azure-sdk-for-python/issues/11014
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
@@ -127,10 +138,12 @@ class FormContent(object):
 
     :ivar str text: The text content of the line.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -139,18 +152,21 @@ class FormContent(object):
 
 
 class RecognizedForm(object):
-    """Represents a recognized form.
+    """Represents a form that has been recognized by a trained model.
 
-    :ivar str form_type: The type of form.
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
     :ivar fields:
-        A dictionary of the fields found on the form.
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.PageRange page_range:
         The first and last page of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        Contains page metadata such as page width, length, text angle, unit.
-        If `include_text_content=True` is passed, contains a list
-        of extracted text lines for each page in the input document.
+        A list of pages recognized from the input document. Contains lines,
+        words, tables and page metadata.
     """
     def __init__(self, **kwargs):
         self.fields = kwargs.get("fields", None)
@@ -158,9 +174,15 @@ class RecognizedForm(object):
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
 
+    def __repr__(self):
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})".format(
+            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
+        )[:1024]
+
 
 class USReceipt(object):  # pylint: disable=too-many-instance-attributes
-    """Extracted fields and values found on the input US sales receipt.
+    """Extracted fields found on the US sales receipt. Provides
+    attributes for accessing common fields present in US sales receipts.
 
     :ivar ~azure.ai.formrecognizer.FormField merchant_address:
         The address of the merchant.
@@ -173,7 +195,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     :ivar list[~azure.ai.formrecognizer.USReceiptItem] receipt_items:
         The purchased items found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField subtotal:
-        The subtotal found on the receipt.
+        The subtotal found on the receipt
     :ivar ~azure.ai.formrecognizer.FormField tax:
         The tax value found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField tip:
@@ -215,9 +237,20 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
         self.form_type = kwargs.get("form_type", None)
         self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
+    def __repr__(self):
+        return "USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, " \
+                "receipt_type={}, receipt_items={}, subtotal={}, tax={}, tip={}, total={}, "\
+                "transaction_date={}, transaction_time={}, fields={}, page_range={}, pages={}, " \
+                "form_type={}, receipt_locale={})".format(
+                    repr(self.merchant_address), repr(self.merchant_name), repr(self.merchant_phone_number),
+                    repr(self.receipt_type), repr(self.receipt_items), repr(self.subtotal), repr(self.tax),
+                    repr(self.tip), repr(self.total), repr(self.transaction_date), repr(self.transaction_time),
+                    repr(self.fields), repr(self.page_range), repr(self.pages), self.form_type, self.receipt_locale
+                )[:1024]
+
 
 class FormField(object):
-    """Represents a recognized field and its value.
+    """Represents a field recognized in an input form.
 
     :ivar ~azure.ai.formrecognizer.FieldText label_data:
         Contains the text, bounding box, and text content of the field label.
@@ -229,9 +262,10 @@ class FormField(object):
         'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
-    :ivar float confidence: Confidence score.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -249,9 +283,10 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=value.confidence or 1.0 if value else None,
+            confidence=adjust_confidence(value.confidence) if value else None,
             page_number=value.page if value else None,
         )
+
 
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
@@ -260,22 +295,31 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=field.confidence or 1.0,
+            confidence=adjust_confidence(field.confidence),
             page_number=page,
         )
 
+    def __repr__(self):
+        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={}, page_number={})".format(
+            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence, self.page_number
+        )[:1024]
+
 
 class FieldText(FormContent):
-    """Represents the properties of a field or value.
+    """Represents the text that is part of a form field. This includes
+    the location of the text in the form and a collection of the
+    elements that make up the text.
 
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     :ivar str text: The string representation of the field or value.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar text_content:
-        When `include_text_content` is set to true, a list of references to the text
+        When `include_text_content` is set to true, a list of text
         elements constituting this field or value is returned.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
@@ -314,12 +358,18 @@ class FieldText(FormContent):
             text_content=get_elements(field, read_result) if field.elements else None
         )
 
+    def __repr__(self):
+        return "FieldText(page_number={}, text={}, bounding_box={}, text_content={})".format(
+            self.page_number, self.text, self.bounding_box, repr(self.text_content)
+        )[:1024]
+
 
 class FormPage(object):
-    """Page metadata, text lines, and tables extracted from a page in the input document.
+    """Represents a page recognized from the input document. Contains lines,
+    words, tables and page metadata.
 
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     :ivar float text_angle:
         The general orientation of the text in clockwise direction, measured in
         degrees between (-180, 180].
@@ -362,23 +412,30 @@ class FormPage(object):
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None
         ) for page in read_result]
 
+    def __repr__(self):
+        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})".format(
+            self.page_number, self.text_angle, self.width, self.height, self.unit, repr(self.tables), repr(self.lines)
+        )[:1024]
+
 
 class FormLine(FormContent):
-    """An object representing an extracted text line.
+    """An object representing an extracted line of text.
 
     :ivar str text: The text content of the line.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar list[~azure.ai.formrecognizer.FormWord] words:
-        List of words in the text line.
+        A list of the words that make up the line.
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(**kwargs)
-        self.words = kwargs.get("words", None)
+        self.words = kwargs.get("words", [])
 
     @classmethod
     def _from_generated(cls, line, page):
@@ -394,17 +451,24 @@ class FormLine(FormContent):
             words=[FormWord._from_generated(word, page) for word in line.words] if line.words else None
         )
 
+    def __repr__(self):
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={})".format(
+            self.text, self.bounding_box, repr(self.words), self.page_number
+        )[:1024]
 
 class FormWord(FormContent):
-    """An object representing a word on the page.
+    """Represents a word recognized from the input document.
 
     :ivar str text: The text content of the word.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -421,9 +485,14 @@ class FormWord(FormContent):
                 Point(x=word.bounding_box[4], y=word.bounding_box[5]),
                 Point(x=word.bounding_box[6], y=word.bounding_box[7])
             ] if word.bounding_box else None,
-            confidence=word.confidence or 1.0,
+            confidence=adjust_confidence(word.confidence),
             page_number=page
         )
+
+    def __repr__(self):
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})".format(
+            self.text, self.bounding_box, self.confidence, self.page_number
+        )[:1024]
 
 
 class USReceiptType(object):
@@ -432,7 +501,8 @@ class USReceiptType(object):
 
     :ivar str type: The type of the receipt. For example, "Itemized",
         "CreditCard", "Gas", "Parking", "Gas", "Other".
-    :ivar float confidence: The confidence score of the receipt type.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     """
 
     def __init__(self, **kwargs):
@@ -443,7 +513,10 @@ class USReceiptType(object):
     def _from_generated(cls, item):
         return cls(
             type=item.value_string,
-            confidence=item.confidence or 1.0) if item else None
+            confidence=adjust_confidence(item.confidence)) if item else None
+
+    def __repr__(self):
+        return "USReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
 
 
 class USReceiptItem(object):
@@ -453,11 +526,11 @@ class USReceiptItem(object):
     :ivar ~azure.ai.formrecognizer.FormField name:
         The name of the item.
     :ivar ~azure.ai.formrecognizer.FormField quantity:
-        The quantity purchased of the item.
+        The quantity associated with this item.
     :ivar ~azure.ai.formrecognizer.FormField price:
-        The individual price of the item.
+        The price of a single unit of this item.
     :ivar ~azure.ai.formrecognizer.FormField total_price:
-        The total price of the item(s).
+        The total price of this item, taking the quantity into account.
     """
 
     def __init__(self, **kwargs):
@@ -479,6 +552,11 @@ class USReceiptItem(object):
         except AttributeError:
             return []
 
+    def __repr__(self):
+        return "USReceiptItem(name={}, quantity={}, price={}, total_price={})".format(
+            repr(self.name), repr(self.quantity), repr(self.price), repr(self.total_price)
+        )[:1024]
+
 
 class FormTable(object):
     """Information about the extracted table contained on a page.
@@ -492,13 +570,18 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
-        self.cells = kwargs.get("cells", None)
+        self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
+    def __repr__(self):
+        return "FormTable(cells={}, row_count={}, column_count={})".format(
+            repr(self.cells), self.row_count, self.column_count
+        )[:1024]
+
 
 class FormTableCell(FormContent):
-    """Information about the extracted cell in a table.
+    """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.
     :ivar int row_index: Row index of the cell.
@@ -506,16 +589,20 @@ class FormTableCell(FormContent):
     :ivar int row_span: Number of rows spanned by this cell.
     :ivar int column_span: Number of columns spanned by this cell.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the cell text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar bool is_header: Whether the current cell is a header cell.
     :ivar bool is_footer: Whether the current cell is a footer cell.
-    :ivar int page_number: The 1-based page number in the input document.
+    :ivar int page_number:
+        The 1-based number of the page in which this content is present.
     :ivar text_content:
-        When `include_text_content` is set to true, a list of references to the text
-        elements constituting this cell is returned. For calls to recognize content,
-        this list is always populated.
+        When `include_text_content` is set to true, a list of text
+        elements constituting this cell is returned.
+        For calls to recognize content, this list is always populated.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
@@ -544,29 +631,36 @@ class FormTableCell(FormContent):
                 Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
                 Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
             ] if cell.bounding_box else None,
-            confidence=cell.confidence or 1.0,
+            confidence=adjust_confidence(cell.confidence),
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
             text_content=get_elements(cell, read_result) if cell.elements else None
         )
 
+    def __repr__(self):
+        return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
+                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, text_content={})".format(
+                    self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
+                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.text_content)
+                )[:1024]
+
 
 class CustomFormModel(object):
     """Represents a model trained from custom forms.
 
-    :ivar str model_id: Model identifier.
+    :ivar str model_id: The unique identifier of this model.
     :ivar str status:
         Status indicating the model's readiness for use,
         :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when the model was created.
+        The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
     :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
-        A list of submodels, each of which extract fields from
-        a different type of form.
+        A list of submodels that are part of this model, each of
+        which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
     :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
@@ -580,7 +674,7 @@ class CustomFormModel(object):
         self.last_modified = kwargs.get("last_modified", None)
         self.models = kwargs.get("models", None)
         self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", None)
+        self.training_documents = kwargs.get("training_documents", [])
 
     @classmethod
     def _from_generated(cls, model):
@@ -591,18 +685,28 @@ class CustomFormModel(object):
             last_modified=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else [],
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
+
+    def __repr__(self):
+        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+                "errors={}, training_documents={})".format(
+                    self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
+                    repr(self.errors), repr(self.training_documents)
+                )[:1024]
 
 
 class CustomFormSubModel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
-    :ivar fields: Form fields that this submodel will extract when analyzing
-        this form type.
+    :ivar fields: A dictionary of the fields that this submodel will recognize
+        from the input document. The fields dictionary keys are the `name` of
+        the field. For models trained with labels, this is the training-time
+        label of the field. For models trained without labels, a unique name
+        is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
     """
@@ -628,13 +732,18 @@ class CustomFormSubModel(object):
             form_type="form-" + model.model_info.model_id
         )] if model.train_result else None
 
+    def __repr__(self):
+        return "CustomFormSubModel(accuracy={}, fields={}, form_type={})".format(
+            self.accuracy, repr(self.fields), self.form_type
+        )[:1024]
+
 
 class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
 
     :ivar str label: The form fields label on the form.
-    :ivar str name: Unique name of the field.
-    :ivar float accuracy: Estimated extraction accuracy for this field.
+    :ivar str name: Canonical name; uniquely identifies a field within the form.
+    :ivar float accuracy: The estimated recognition accuracy for this field.
     """
     def __init__(self, **kwargs):
         self.label = kwargs.get("label", None)
@@ -657,6 +766,11 @@ class CustomFormModelField(object):
             ) for idx, field_name in enumerate(fields)
         }
 
+    def __repr__(self):
+        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
+            self.label, self.name, self.accuracy
+        )[:1024]
+
 
 class TrainingDocumentInfo(object):
     """Report for an individual document used for training
@@ -678,7 +792,7 @@ class TrainingDocumentInfo(object):
         self.document_name = kwargs.get("document_name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)
+        self.errors = kwargs.get("errors", [])
 
     @classmethod
     def _from_generated(cls, train_result):
@@ -688,6 +802,11 @@ class TrainingDocumentInfo(object):
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
         ) for doc in train_result.training_documents] if train_result.training_documents else None
+
+    def __repr__(self):
+        return "TrainingDocumentInfo(document_name={}, status={}, page_count={}, errors={})".format(
+            self.document_name, self.status, self.page_count, repr(self.errors)
+        )[:1024]
 
 
 class FormRecognizerError(object):
@@ -705,16 +824,19 @@ class FormRecognizerError(object):
     def _from_generated(cls, err):
         return [cls(code=error.code, message=error.message) for error in err] if err else []
 
+    def __repr__(self):
+        return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
+
 
 class CustomFormModelInfo(object):
     """Custom model information.
 
-    :ivar str model_id: Model identifier.
+    :ivar str model_id: The unique identifier of the model.
     :ivar str status:
         The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when the model was created.
+        Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
     """
@@ -734,6 +856,11 @@ class CustomFormModelInfo(object):
             last_modified=model.last_updated_date_time
         )
 
+    def __repr__(self):
+        return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
+            self.model_id, self.status, self.created_on, self.last_modified
+        )[:1024]
+
 
 class AccountProperties(object):
     """Summary of all the custom models on the account.
@@ -752,3 +879,8 @@ class AccountProperties(object):
             custom_model_count=model.count,
             custom_model_limit=model.limit,
         )
+
+    def __repr__(self):
+        return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
+            self.custom_model_count, self.custom_model_limit
+        )[:1024]

@@ -1,0 +1,77 @@
+interactions:
+- request:
+    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}'''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '314'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - f4f8444d-5323-418a-97c7-880d0df117f4
+      content-length:
+      - '0'
+      date:
+      - Thu, 23 Apr 2020 22:22:33 GMT
+      location:
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/12e9a99f-37f4-4238-a8b9-3bbb938d182a
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '242'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/12e9a99f-37f4-4238-a8b9-3bbb938d182a?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"12e9a99f-37f4-4238-a8b9-3bbb938d182a","status":"ready","createdDateTime":"2020-04-23T22:22:34Z","lastUpdatedDateTime":"2020-04-23T22:22:35Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+    headers:
+      apim-request-id:
+      - d533de3a-8b08-4a94-bdef-b60a9f009464
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 23 Apr 2020 22:22:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5260'
+    status:
+      code: 200
+      message: OK
+version: 1

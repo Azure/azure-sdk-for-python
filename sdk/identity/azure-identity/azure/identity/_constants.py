@@ -5,6 +5,8 @@
 
 
 AZURE_CLI_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
+AZURE_VSCODE_CLIENT_ID = "aebc6443-996d-45c2-90f0-388ff96faa56"
+VSCODE_CREDENTIALS_SECTION = "VS Code Azure"
 
 
 class KnownAuthorities:

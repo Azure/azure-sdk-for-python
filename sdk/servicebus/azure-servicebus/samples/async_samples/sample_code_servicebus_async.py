@@ -12,6 +12,7 @@ Examples to show basic async use case of python azure-servicebus SDK, including:
     - Receive and settle deferred messages
 """
 import os
+import datetime
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import Message
@@ -35,7 +36,7 @@ def example_create_servicebus_client_async():
     # [START create_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     servicebus_client = ServiceBusClient(
@@ -65,7 +66,7 @@ async def example_create_servicebus_sender_async():
     # [START create_servicebus_sender_async]
     import os
     from azure.servicebus.aio import ServiceBusSender, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -96,7 +97,7 @@ async def example_create_servicebus_sender_async():
     topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+        topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
     # [END create_topic_sender_from_sb_client_async]
 
     return queue_sender
@@ -119,7 +120,7 @@ async def example_create_servicebus_receiver_async():
     # [START create_servicebus_receiver_async]
     import os
     from azure.servicebus.aio import ServiceBusReceiver, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -271,8 +272,24 @@ async def example_session_ops_async():
                 break
 
 
+async def example_schedule_ops_async():
+    servicebus_sender = await example_create_servicebus_sender_async()
+    # [START scheduling_messages_async]
+    async with servicebus_sender:
+        scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
+        scheduled_messages = [Message("Scheduled message") for _ in range(10)]
+        sequence_nums = await servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
+    # [END scheduling_messages_async]
+
+    # [START cancel_scheduled_messages_async]
+    async with servicebus_sender:
+        await servicebus_sender.cancel_scheduled_messages(sequence_nums)
+    # [END cancel_scheduled_messages_async]
+
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(example_send_and_receive_async())
     loop.run_until_complete(example_receive_deferred_async())
+    loop.run_until_complete(example_schedule_ops_async())
     # loop.run_until_complete(example_session_ops_async())
