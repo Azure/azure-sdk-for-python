@@ -23,7 +23,8 @@ except ImportError:
 
 def test_bearer_policy_adds_header():
     """The bearer token policy should add a header containing a token from its credential"""
-    expected_token = AccessToken("expected_token", 0)
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
 
     def verify_authorization_header(request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
@@ -31,10 +32,15 @@ def test_bearer_policy_adds_header():
     fake_credential = Mock(get_token=Mock(return_value=expected_token))
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
-    Pipeline(transport=Mock(), policies=policies).run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
 
     assert fake_credential.get_token.call_count == 1
 
+    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert fake_credential.get_token.call_count == 1
 
 def test_bearer_policy_send():
     """The bearer token policy should invoke the next policy's send method and return the result"""
