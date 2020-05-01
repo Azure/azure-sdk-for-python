@@ -60,8 +60,9 @@ class RecognizeContentSample(object):
                     ))
                     # [END recognize_content]
             for line_idx, line in enumerate(content.lines):
-                print("Line # {} has text '{}' within bounding box '{}'".format(
+                print("Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
                     line_idx,
+                    len(line.words),
                     line.text,
                     format_bounding_box(line.bounding_box)
                 ))
