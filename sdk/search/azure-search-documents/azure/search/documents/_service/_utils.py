@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
+    ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,
@@ -161,7 +162,14 @@ def listize_synonyms(synonym_map):
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
     # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], AccessCondition]
-    error_map = {404: ResourceNotFoundError}  # type: Dict[int, Any]
+    error_map = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError
+    }
+
+    if isinstance(model, str):
+        return (error_map, None)
+
     try:
         if_match = prep_if_match(model.e_tag, match_condition)
         if_none_match = prep_if_none_match(model.e_tag, match_condition)

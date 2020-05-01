@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
@@ -126,16 +127,15 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            skillset,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             name = skillset.name
-            error_map, access_condition = get_access_conditions(
-                skillset,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
-            )
         except AttributeError:
             name = skillset
-        await self._client.skillsets.delete(name, access_condition=access_condition, **kwargs)
+        await self._client.skillsets.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
 
     @distributed_trace_async
     async def create_skillset(self, name, skills, description, **kwargs):
@@ -193,6 +193,10 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError
+        }
         access_condition = None
 
         if "skillset" in kwargs:
@@ -218,5 +222,6 @@ class SearchSkillsetsClient(HeadersMixin):
             skillset_name=name,
             skillset=skillset,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )

@@ -142,16 +142,20 @@ class SearchIndexesClient(HeadersMixin):
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            index,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             index_name = index.name
-            error_map, access_condition = get_access_conditions(
-                index,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
-            )
         except AttributeError:
             index_name = index
-        await self._client.indexes.delete(index_name=index_name, access_condition=access_condition, **kwargs)
+        await self._client.indexes.delete(
+            index_name=index_name,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def create_index(self, index, **kwargs):
@@ -229,6 +233,7 @@ class SearchIndexesClient(HeadersMixin):
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )
         return result

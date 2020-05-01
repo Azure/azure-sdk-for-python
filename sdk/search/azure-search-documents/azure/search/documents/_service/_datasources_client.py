@@ -102,6 +102,7 @@ class SearchDataSourcesClient(HeadersMixin):
             data_source_name=name,
             data_source=data_source,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )
         return result
@@ -174,17 +175,17 @@ class SearchDataSourcesClient(HeadersMixin):
                 :caption: Delete a DataSource
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            data_source,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             name = data_source.name
-            error_map, access_condition = get_access_conditions(
-                data_source,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
-            )
         except AttributeError:
             name = data_source
         self._client.data_sources.delete(
             data_source_name=name,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )

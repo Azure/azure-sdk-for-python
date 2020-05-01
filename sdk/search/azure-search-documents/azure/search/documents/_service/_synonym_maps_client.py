@@ -129,16 +129,20 @@ class SearchSynonymMapsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            synonym_map,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             name = synonym_map.name
-            error_map, access_condition = get_access_conditions(
-                synonym_map,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
-            )
         except AttributeError:
             name = synonym_map
-        self._client.synonym_maps.delete(synonym_map_name=name, access_condition=access_condition, **kwargs)
+        self._client.synonym_maps.delete(
+            synonym_map_name=name,
+            access_condition=access_condition,
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace
     def create_synonym_map(self, name, synonyms, **kwargs):
@@ -185,13 +189,12 @@ class SearchSynonymMapsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        access_condition = None
+        error_map, access_condition = get_access_conditions(
+            synonym_map,
+            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+        )
         try:
             name = synonym_map.name
-            error_map, access_condition = get_access_conditions(
-                synonym_map,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
-            )
             if synonyms:
                 synonym_map.synonyms = "\n".join(synonyms)
         except AttributeError:
@@ -202,6 +205,7 @@ class SearchSynonymMapsClient(HeadersMixin):
             synonym_map_name=name,
             synonym_map=synonym_map,
             access_condition=access_condition,
+            error_map=error_map,
             **kwargs
         )
         return listize_synonyms(result.as_dict())
