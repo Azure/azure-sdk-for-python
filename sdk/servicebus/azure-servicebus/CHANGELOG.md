@@ -13,9 +13,9 @@
 * `BatchMessage.add()` and `ServiceBusSender.send()` would raise `MessageContentTooLarge` if the content is over-sized.
 * `ServiceBusReceiver.receive()` raises `ValueError` if its param `max_batch_size` is greater than param `prefetch` of `ServiceBusClient`.
 * Added exception classes `MessageError`, `MessageContentTooLarge`, `ServiceBusAuthenticationError`.
-   - `MessageError`: when you try to send a problematic message.
+   - `MessageError`: when you send a problematic message, such as an already sent message or a over-sized message.
    - `MessageContentTooLarge`: when you send an over-sized message. A subclass of `ValueError` and `MessageError`.
-   - `ServiceBusAuthenticationError`: fail to be authenticated by the service.
+   - `ServiceBusAuthenticationError`: on failure to be authenticated by the service.
 * Removed exception class `InvalidHandlerState`.
 
 **BugFixes**
