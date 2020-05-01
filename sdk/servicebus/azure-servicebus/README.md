@@ -123,6 +123,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send a message to a queue](#send-a-message-to-a-queue)
 * [Receive a message from a queue](#receive-a-message-from-a-queue)
+* [Sending and receiving a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
 * [Defer a message on receipt](#defer-a-message-on-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
@@ -160,6 +161,30 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.complete()
+```
+
+### Sending and receiving a message from a session enabled subscription
+
+Sessions provide first-in-first-out and single-receiver semantics on top of a queue or subscription.  While the actual receive syntax is the same, initialization differs slightly.
+
+```Python
+from azure.servicebus import ServiceBusClient, Message
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
+subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
+session_id = os.environ.get('SERVICE_BUS_SESSION_ID')
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_topic_sender(topic_name) as sender:
+        sender.send(Message("Session Enabled Message", session_id=session_id))
+
+    # If session_id is null here, will receive from the first available session.
+    with client.get_subscription_session_receiver(topic_name, subscription_name, session_id) as receiver:
         for msg in receiver:
             print(str(msg))
             msg.complete()
