@@ -176,7 +176,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
             error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
