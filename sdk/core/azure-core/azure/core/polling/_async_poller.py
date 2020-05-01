@@ -94,6 +94,7 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
     return await poller
 
+
 class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
     """Async poller for long running operations.
 
@@ -106,7 +107,7 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
                                      If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
-    :type polling_method: ~azure.core.polling.PollingMethod
+    :type polling_method: ~azure.core.polling.AsyncPollingMethod
     """
 
     def __init__(
