@@ -89,9 +89,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         """
         self._enforce_https(request)
 
+        # new token is needed if token is None or token is expired
         if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
-            self._update_headers(request.http_request.headers, self._token.token)
+        self._update_headers(request.http_request.headers, self._token.token)  # ignore
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
