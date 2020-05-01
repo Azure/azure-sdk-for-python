@@ -13,7 +13,7 @@ import six
 
 
 def adjust_confidence(score):
-    """Request from service team to return 1.0 if confidence is not returned.
+    """Adjust confidence when not returned.
     """
     if score is None:
         return 1.0
