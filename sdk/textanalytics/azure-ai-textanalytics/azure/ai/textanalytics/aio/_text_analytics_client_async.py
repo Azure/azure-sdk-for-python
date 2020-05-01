@@ -13,8 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._generated.models import TextAnalyticsErrorException
-from .._generated.aio._text_analytics_client_async import TextAnalyticsClient as TextAnalytics
+from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
@@ -23,8 +22,7 @@ from .._response_handlers import (
     linked_entities_result,
     key_phrases_result,
     sentiment_result,
-    language_result,
-    pii_entities_result
+    language_result
 )
 from .._models import (
     DetectLanguageInput,
@@ -34,13 +32,12 @@ from .._models import (
     RecognizeLinkedEntitiesResult,
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
-    RecognizePiiEntitiesResult,
     DocumentError,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._credential import TextAnalyticsApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -56,10 +53,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        This can be the an instance of AzureKeyCredential if using a
         cognitive services/text analytics API key or a token credential
         from :mod:`azure.identity`.
-    :type credential: :class:`~azure.ai.textanalytics.TextAnalyticsApiKeyCredential`
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
@@ -86,12 +83,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(  # type: ignore
         self,
         endpoint: str,
-        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
+        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
-        self._client = TextAnalytics(
-            endpoint=endpoint, credentials=credential, pipeline=self._pipeline
+        super(TextAnalyticsClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
@@ -127,12 +125,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResults`
-            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
+            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -153,10 +151,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=language_result,
+                cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -190,12 +188,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -216,73 +214,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=entities_result,
+                cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
-            process_batch_error(error)
-
-    @distributed_trace_async
-    async def recognize_pii_entities(  # type: ignore
-        self,
-        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
-    ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
-        """Recognize entities containing personal information for a batch of documents.
-
-        Returns a list of personal information entities ("SSN",
-        "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii.
-
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
-        for document length limits, maximum batch size, and supported text encoding.
-
-        :param documents: The set of documents to process as part of this batch.
-            If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
-            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
-            `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :keyword str language: The 2 letter ISO 639-1 representation of language for the
-            entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResults`
-            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
-            were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_recognize_pii_entities_async.py
-                :start-after: [START batch_recognize_pii_entities_async]
-                :end-before: [END batch_recognize_pii_entities_async]
-                :language: python
-                :dedent: 8
-                :caption: Recognize personally identifiable information entities in a batch of documents.
-        """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
-        try:
-            return await self._client.entities_recognition_pii(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                cls=pii_entities_result,
-                **kwargs
-            )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -317,12 +252,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResults`
-            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
+            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -343,10 +278,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=linked_entities_result,
+                cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -381,12 +316,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -407,10 +342,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=key_phrases_result,
+                cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -444,12 +379,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -470,8 +405,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=sentiment_result,
+                cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)

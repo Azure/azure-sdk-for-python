@@ -87,8 +87,14 @@ try:
     from ._models_py3 import AzureReachabilityReportLocation
     from ._models_py3 import AzureReachabilityReportParameters
     from ._models_py3 import BackendAddressPool
+    from ._models_py3 import BastionActiveSession
+    from ._models_py3 import BastionActiveSessionListResult
     from ._models_py3 import BastionHost
     from ._models_py3 import BastionHostIPConfiguration
+    from ._models_py3 import BastionSessionState
+    from ._models_py3 import BastionShareableLink
+    from ._models_py3 import BastionShareableLinkListRequest
+    from ._models_py3 import BastionShareableLinkListResult
     from ._models_py3 import BGPCommunity
     from ._models_py3 import BgpPeerStatus
     from ._models_py3 import BgpPeerStatusListResult
@@ -295,6 +301,7 @@ try:
     from ._models_py3 import ServiceTagInformation
     from ._models_py3 import ServiceTagInformationPropertiesFormat
     from ._models_py3 import ServiceTagsListResult
+    from ._models_py3 import SessionIds
     from ._models_py3 import Subnet
     from ._models_py3 import SubnetAssociation
     from ._models_py3 import SubResource
@@ -340,6 +347,7 @@ try:
     from ._models_py3 import VirtualWanSecurityProvider
     from ._models_py3 import VirtualWanSecurityProviders
     from ._models_py3 import VirtualWanVpnProfileParameters
+    from ._models_py3 import VM
     from ._models_py3 import VpnClientConfiguration
     from ._models_py3 import VpnClientConnectionHealth
     from ._models_py3 import VpnClientConnectionHealthDetail
@@ -446,8 +454,14 @@ except (SyntaxError, ImportError):
     from ._models import AzureReachabilityReportLocation
     from ._models import AzureReachabilityReportParameters
     from ._models import BackendAddressPool
+    from ._models import BastionActiveSession
+    from ._models import BastionActiveSessionListResult
     from ._models import BastionHost
     from ._models import BastionHostIPConfiguration
+    from ._models import BastionSessionState
+    from ._models import BastionShareableLink
+    from ._models import BastionShareableLinkListRequest
+    from ._models import BastionShareableLinkListResult
     from ._models import BGPCommunity
     from ._models import BgpPeerStatus
     from ._models import BgpPeerStatusListResult
@@ -654,6 +668,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceTagInformation
     from ._models import ServiceTagInformationPropertiesFormat
     from ._models import ServiceTagsListResult
+    from ._models import SessionIds
     from ._models import Subnet
     from ._models import SubnetAssociation
     from ._models import SubResource
@@ -699,6 +714,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualWanSecurityProvider
     from ._models import VirtualWanSecurityProviders
     from ._models import VirtualWanVpnProfileParameters
+    from ._models import VM
     from ._models import VpnClientConfiguration
     from ._models import VpnClientConnectionHealth
     from ._models import VpnClientConnectionHealthDetail
@@ -738,6 +754,8 @@ from ._paged_models import AzureFirewallFqdnTagPaged
 from ._paged_models import AzureFirewallPaged
 from ._paged_models import BackendAddressPoolPaged
 from ._paged_models import BastionHostPaged
+from ._paged_models import BastionSessionStatePaged
+from ._paged_models import BastionShareableLinkPaged
 from ._paged_models import BgpServiceCommunityPaged
 from ._paged_models import ConnectionMonitorResultPaged
 from ._paged_models import DdosProtectionPlanPaged
@@ -840,6 +858,7 @@ from ._network_management_client_enums import (
     AzureFirewallThreatIntelMode,
     AzureFirewallSkuName,
     AzureFirewallSkuTier,
+    BastionConnectProtocol,
     DdosCustomPolicyProtocol,
     DdosCustomPolicyTriggerSensitivityOverride,
     AuthorizationUseStatus,
@@ -1005,8 +1024,14 @@ __all__ = [
     'AzureReachabilityReportLocation',
     'AzureReachabilityReportParameters',
     'BackendAddressPool',
+    'BastionActiveSession',
+    'BastionActiveSessionListResult',
     'BastionHost',
     'BastionHostIPConfiguration',
+    'BastionSessionState',
+    'BastionShareableLink',
+    'BastionShareableLinkListRequest',
+    'BastionShareableLinkListResult',
     'BGPCommunity',
     'BgpPeerStatus',
     'BgpPeerStatusListResult',
@@ -1213,6 +1238,7 @@ __all__ = [
     'ServiceTagInformation',
     'ServiceTagInformationPropertiesFormat',
     'ServiceTagsListResult',
+    'SessionIds',
     'Subnet',
     'SubnetAssociation',
     'SubResource',
@@ -1258,6 +1284,7 @@ __all__ = [
     'VirtualWanSecurityProvider',
     'VirtualWanSecurityProviders',
     'VirtualWanVpnProfileParameters',
+    'VM',
     'VpnClientConfiguration',
     'VpnClientConnectionHealth',
     'VpnClientConnectionHealthDetail',
@@ -1294,6 +1321,8 @@ __all__ = [
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
     'BastionHostPaged',
+    'BastionShareableLinkPaged',
+    'BastionSessionStatePaged',
     'DdosProtectionPlanPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
@@ -1398,6 +1427,7 @@ __all__ = [
     'AzureFirewallThreatIntelMode',
     'AzureFirewallSkuName',
     'AzureFirewallSkuTier',
+    'BastionConnectProtocol',
     'DdosCustomPolicyProtocol',
     'DdosCustomPolicyTriggerSensitivityOverride',
     'AuthorizationUseStatus',

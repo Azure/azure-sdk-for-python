@@ -65,7 +65,9 @@ def raise_with_traceback(exception, *args, **kwargs):
     message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside a "except", exc_type will be None. Assume it will not happen
-    exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
+    if exc_type is None:
+        raise ValueError("raise_with_traceback can only be used in except clauses")
+    exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
         raise error.with_traceback(exc_traceback)
@@ -73,6 +75,22 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+class ErrorMap(object):
+    """Error Map class. To be used in map_error method, behaves like a dictionary.
+    It returns the error type if it is found in custom_error_map. Or return default_error
+
+    :param dict custom_error_map: User-defined error map, it is used to map status codes to error types.
+    :keyword error default_error: Default error type. It is returned if the status code is not found in custom_error_map
+    """
+    def __init__(self, custom_error_map=None, **kwargs):
+        self._custom_error_map = custom_error_map or {}
+        self._default_error = kwargs.pop("default_error", None)
+
+    def get(self, key):
+        ret = self._custom_error_map.get(key)
+        if ret:
+            return ret
+        return self._default_error
 
 def map_error(status_code, response, error_map):
     if not error_map:
@@ -188,7 +206,7 @@ class AzureError(Exception):
         self.exc_type = (
             self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         )
-        self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
+        self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
         super(AzureError, self).__init__(self.message, *args)
 

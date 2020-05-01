@@ -43,8 +43,8 @@ class EventHubConsumerClient(ClientBase):
     `EventHubConsumerClient`.
     If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
-    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
-    and specify the partition_id.
+    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()` or
+    `receive_batch()` and specify the partition_id.
     Load-balancing won't work in single-partition mode. But users can still save checkpoints if the checkpoint_store
     is set.
 
@@ -211,8 +211,66 @@ class EventHubConsumerClient(ClientBase):
         )
         return cls(**constructor_args)
 
+    def _receive(self, on_event, **kwargs):
+        partition_id = kwargs.get("partition_id")
+        with self._lock:
+            error = None  # type: Optional[str]
+            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from all partitions for consumer group {}.".format(
+                        self._consumer_group
+                    )
+                )
+            elif partition_id is None and any(
+                x[0] == self._consumer_group for x in self._event_processors
+            ):
+                error = (
+                    "This consumer client is already receiving events "
+                    "for consumer group {}.".format(self._consumer_group)
+                )
+            elif (self._consumer_group, partition_id) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from partition {} for consumer group {}. ".format(
+                        partition_id, self._consumer_group
+                    )
+                )
+            if error:
+                _LOGGER.warning(error)
+                raise ValueError(error)
+
+            initial_event_position = kwargs.pop("starting_position", "@latest")
+            initial_event_position_inclusive = kwargs.pop(
+                "starting_position_inclusive", False
+            )
+            event_processor = EventProcessor(
+                self,
+                self._consumer_group,
+                on_event,
+                checkpoint_store=self._checkpoint_store,
+                load_balancing_interval=self._load_balancing_interval,
+                initial_event_position=initial_event_position,
+                initial_event_position_inclusive=initial_event_position_inclusive,
+                **kwargs
+            )
+            self._event_processors[
+                (self._consumer_group, partition_id or ALL_PARTITIONS)
+            ] = event_processor
+        try:
+            event_processor.start()
+        finally:
+            event_processor.stop()
+            with self._lock:
+                try:
+                    del self._event_processors[
+                        (self._consumer_group, partition_id or ALL_PARTITIONS)
+                    ]
+                except KeyError:
+                    pass
+
     def receive(self, on_event, **kwargs):
-        #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
+        # type: (Callable[["PartitionContext", Optional["EventData"]], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -220,7 +278,11 @@ class EventHubConsumerClient(ClientBase):
          The callback function should be defined like: `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
-        :type on_event: Callable[~azure.eventhub.PartitionContext, ~azure.eventhub.EventData]
+        :type on_event: Callable[~azure.eventhub.PartitionContext, Optional[~azure.eventhub.EventData]]
+        :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before calling
+         the callback. If no events are received within this interval, the `on_event` callback will be called with
+         `None`.
+         If this value is set to `None` or 0 (the default), the callback will not be called until an event is received.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
         :keyword int owner_level: The priority for an exclusive consumer. An exclusive
@@ -280,62 +342,85 @@ class EventHubConsumerClient(ClientBase):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        partition_id = kwargs.get("partition_id")
-        with self._lock:
-            error = None  # type: Optional[str]
-            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from all partitions for consumer group {}.".format(
-                        self._consumer_group
-                    )
-                )
-            elif partition_id is None and any(
-                x[0] == self._consumer_group for x in self._event_processors
-            ):
-                error = (
-                    "This consumer client is already receiving events "
-                    "for consumer group {}.".format(self._consumer_group)
-                )
-            elif (self._consumer_group, partition_id) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from partition {} for consumer group {}. ".format(
-                        partition_id, self._consumer_group
-                    )
-                )
-            if error:
-                _LOGGER.warning(error)
-                raise ValueError(error)
 
-            initial_event_position = kwargs.pop("starting_position", "@latest")
-            initial_event_position_inclusive = kwargs.pop(
-                "starting_position_inclusive", False
-            )
-            event_processor = EventProcessor(
-                self,
-                self._consumer_group,
-                on_event,
-                checkpoint_store=self._checkpoint_store,
-                load_balancing_interval=self._load_balancing_interval,
-                initial_event_position=initial_event_position,
-                initial_event_position_inclusive=initial_event_position_inclusive,
-                **kwargs
-            )
-            self._event_processors[
-                (self._consumer_group, partition_id or ALL_PARTITIONS)
-            ] = event_processor
-        try:
-            event_processor.start()
-        finally:
-            event_processor.stop()
-            with self._lock:
-                try:
-                    del self._event_processors[
-                        (self._consumer_group, partition_id or ALL_PARTITIONS)
-                    ]
-                except KeyError:
-                    pass
+        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
+
+    def receive_batch(self, on_event_batch, **kwargs):
+        # type: (Callable[["PartitionContext", List["EventData"]], None], Any) -> None
+        """Receive events from partition(s), with optional load-balancing and checkpointing.
+
+        :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
+         parameters: `partition_context` which contains partition context and `event_batch`, which is the received
+         events. The callback function should be defined like: `on_event_batch(partition_context, event_batch)`.
+         `event_batch` could be an empty list if `max_wait_time` is not None nor 0 and no event is received
+         after `max_wait_time`.
+         For detailed partition context information, please refer to
+         :class:`PartitionContext<azure.eventhub.PartitionContext>`.
+        :type on_event_batch: Callable[~azure.eventhub.PartitionContext, List[~azure.eventhub.EventData]]
+        :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before
+         calling the callback.
+         If no events are received within this interval, the `on_event_batch` callback will be called
+         with an empty list.
+        :keyword str partition_id: If specified, the client will receive from this partition only.
+         Otherwise the client will receive from all partitions.
+        :keyword int owner_level: The priority for an exclusive consumer. An exclusive
+         consumer will be created if owner_level is set. A consumer with a higher owner_level has higher exclusive
+         priority. The owner level is also know as the 'epoch value' of the consumer.
+        :keyword int prefetch: The number of events to prefetch from the service
+         for processing. Default is 300.
+        :keyword bool track_last_enqueued_event_properties: Indicates whether the consumer should request information
+         on the last-enqueued event on its associated partition, and track that information as events are received.
+         When information about the partitions last-enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :keyword starting_position: Start receiving from this event position
+         if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
+         a dict with partition ID as the key and position as the value for individual partitions, or a single
+         value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
+         values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
+         Default value is "@latest".
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
+         not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
+         bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
+         This can also be a single bool value for all starting_position. The default value is False.
+        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :keyword on_error: The callback function that will be called when an error is raised during receiving
+         after retry attempts are exhausted, or during the process of load-balancing.
+         The callback takes two parameters: `partition_context` which contains partition information
+         and `error` being the exception. `partition_context` could be None if the error is raised during
+         the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
+         The `on_error` callback will also be called if an unhandled exception is raised during
+         the `on_event` callback.
+        :paramtype on_error: Callable[[~azure.eventhub.PartitionContext, Exception]]
+        :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
+         partition finishes initialization. It would also be called when a new internal partition consumer is created
+         to take over the receiving process for a failed and closed internal partition consumer.
+         The callback takes a single parameter: `partition_context`
+         which contains the partition information. The callback should be defined
+         like: `on_partition_initialize(partition_context)`.
+        :paramtype on_partition_initialize: Callable[[~azure.eventhub.PartitionContext]]
+        :keyword on_partition_close: The callback function that will be called after a consumer for a certain
+         partition is closed. It would be also called when error is raised during receiving after retry attempts are
+         exhausted. The callback takes two parameters: `partition_context` which contains partition
+         information and `reason` for the close. The callback should be defined like:
+         `on_partition_close(partition_context, reason)`.
+         Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
+        :paramtype on_partition_close: Callable[[~azure.eventhub.PartitionContext, ~azure.eventhub.CloseReason]]
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+                :start-after: [START eventhub_consumer_client_receive_batch_sync]
+                :end-before: [END eventhub_consumer_client_receive_batch_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive events in batches from the EventHub.
+        """
+        self._receive(on_event_batch, batch=True, **kwargs)
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]

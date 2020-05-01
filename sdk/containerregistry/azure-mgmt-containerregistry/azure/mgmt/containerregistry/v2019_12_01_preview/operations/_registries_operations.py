@@ -1020,7 +1020,7 @@ class RegistriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1058,7 +1058,7 @@ class RegistriesOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._schedule_run_initial(
             resource_group_name=resource_group_name,
@@ -1106,7 +1106,7 @@ class RegistriesOperations(object):
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceUploadDefinition
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         api_version = "2019-06-01-preview"
 
@@ -1138,7 +1138,7 @@ class RegistriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

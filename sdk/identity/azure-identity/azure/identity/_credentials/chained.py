@@ -13,7 +13,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
 
 
@@ -24,7 +24,7 @@ def _get_error_message(history):
             attempts.append("{}: {}".format(credential.__class__.__name__, error))
         else:
             attempts.append(credential.__class__.__name__)
-    return """No credential in this chain provided a token.
+    return """
 Attempted credentials:\n\t{}""".format(
         "\n\t".join(attempts)
     )
@@ -44,6 +44,8 @@ class ChainedTokenCredential(object):
         # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
+
+        self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -52,13 +54,15 @@ class ChainedTokenCredential(object):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []
         for credential in self.credentials:
             try:
-                return credential.get_token(*scopes, **kwargs)
+                token = credential.get_token(*scopes, **kwargs)
+                self._successful_credential = credential
+                return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
@@ -67,5 +71,6 @@ class ChainedTokenCredential(object):
                 history.append((credential, str(ex)))
                 break
 
-        error_message = _get_error_message(history)
-        raise ClientAuthenticationError(message=error_message)
+        attempts = _get_error_message(history)
+        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
+        raise ClientAuthenticationError(message=message)

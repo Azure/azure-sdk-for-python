@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
 
@@ -14,6 +15,15 @@ import pytest
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport
 from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
+
+
+@pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    with pytest.raises(ValueError):
+        await credential.get_token()
 
 
 @pytest.mark.asyncio
@@ -67,26 +77,35 @@ async def test_user_agent():
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-async def test_request_url(cert_path, cert_password):
-    authority = "authority.com"
+async def test_request_url(cert_path, cert_password, authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
     tenant_id = "expected_tenant"
     access_token = "***"
-
-    def validate_url(url):
-        parsed = urlparse(url)
-        assert parsed.scheme == "https"
-        assert parsed.netloc == authority
-        assert parsed.path.startswith("/" + tenant_id)
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
     async def mock_send(request, **kwargs):
-        validate_url(request.url)
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
     cred = CertificateCredential(
         tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
     )
     token = await cred.get_token("scope")
+    assert token.token == access_token
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = CertificateCredential(
+            tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send)
+        )
+        await credential.get_token("scope")
     assert token.token == access_token
 
 

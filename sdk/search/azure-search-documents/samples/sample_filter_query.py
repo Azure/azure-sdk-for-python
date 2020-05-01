@@ -28,9 +28,10 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 def filter_query():
     # [START filter_query]
-    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient, SearchQuery
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents import SearchClient, SearchQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = SearchQuery(search_text="WiFi")
     query.filter("Address/StateProvince eq 'FL' and Address/Country eq 'USA'")

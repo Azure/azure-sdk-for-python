@@ -31,6 +31,7 @@ try:
     from ._models_py3 import AppServiceEnvironmentResource
     from ._models_py3 import AppServicePlan
     from ._models_py3 import AppServicePlanPatchResource
+    from ._models_py3 import ArmIdWrapper
     from ._models_py3 import AutoHealActions
     from ._models_py3 import AutoHealCustomAction
     from ._models_py3 import AutoHealRules
@@ -116,6 +117,7 @@ try:
     from ._models_py3 import HostingEnvironmentDeploymentInfo
     from ._models_py3 import HostingEnvironmentDiagnostics
     from ._models_py3 import HostingEnvironmentProfile
+    from ._models_py3 import HostKeys
     from ._models_py3 import HostName
     from ._models_py3 import HostNameBinding
     from ._models_py3 import HostNameSslState
@@ -126,6 +128,7 @@ try:
     from ._models_py3 import Identifier
     from ._models_py3 import InboundEnvironmentEndpoint
     from ._models_py3 import IpSecurityRestriction
+    from ._models_py3 import KeyInfo
     from ._models_py3 import KeyVaultReferenceCollection
     from ._models_py3 import KeyVaultReferenceResource
     from ._models_py3 import LocalizableString
@@ -156,6 +159,12 @@ try:
     from ._models_py3 import PrivateAccess
     from ._models_py3 import PrivateAccessSubnet
     from ._models_py3 import PrivateAccessVirtualNetwork
+    from ._models_py3 import PrivateEndpointConnectionResource
+    from ._models_py3 import PrivateLinkConnectionApprovalRequestResource
+    from ._models_py3 import PrivateLinkConnectionState
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkResourcesWrapper
     from ._models_py3 import ProcessInfo
     from ._models_py3 import ProcessModuleInfo
     from ._models_py3 import ProcessThreadInfo
@@ -212,6 +221,16 @@ try:
     from ._models_py3 import StackMajorVersion
     from ._models_py3 import StackMinorVersion
     from ._models_py3 import StampCapacity
+    from ._models_py3 import StaticSiteARMResource
+    from ._models_py3 import StaticSiteBuildARMResource
+    from ._models_py3 import StaticSiteBuildProperties
+    from ._models_py3 import StaticSiteCustomDomainOverviewARMResource
+    from ._models_py3 import StaticSiteFunctionOverviewARMResource
+    from ._models_py3 import StaticSitePatchResource
+    from ._models_py3 import StaticSiteResetPropertiesARMResource
+    from ._models_py3 import StaticSiteUserARMResource
+    from ._models_py3 import StaticSiteUserInvitationRequestResource
+    from ._models_py3 import StaticSiteUserInvitationResponseResource
     from ._models_py3 import StatusCodesBasedTrigger
     from ._models_py3 import StorageMigrationOptions
     from ._models_py3 import StorageMigrationResponse
@@ -265,6 +284,7 @@ except (SyntaxError, ImportError):
     from ._models import AppServiceEnvironmentResource
     from ._models import AppServicePlan
     from ._models import AppServicePlanPatchResource
+    from ._models import ArmIdWrapper
     from ._models import AutoHealActions
     from ._models import AutoHealCustomAction
     from ._models import AutoHealRules
@@ -350,6 +370,7 @@ except (SyntaxError, ImportError):
     from ._models import HostingEnvironmentDeploymentInfo
     from ._models import HostingEnvironmentDiagnostics
     from ._models import HostingEnvironmentProfile
+    from ._models import HostKeys
     from ._models import HostName
     from ._models import HostNameBinding
     from ._models import HostNameSslState
@@ -360,6 +381,7 @@ except (SyntaxError, ImportError):
     from ._models import Identifier
     from ._models import InboundEnvironmentEndpoint
     from ._models import IpSecurityRestriction
+    from ._models import KeyInfo
     from ._models import KeyVaultReferenceCollection
     from ._models import KeyVaultReferenceResource
     from ._models import LocalizableString
@@ -390,6 +412,12 @@ except (SyntaxError, ImportError):
     from ._models import PrivateAccess
     from ._models import PrivateAccessSubnet
     from ._models import PrivateAccessVirtualNetwork
+    from ._models import PrivateEndpointConnectionResource
+    from ._models import PrivateLinkConnectionApprovalRequestResource
+    from ._models import PrivateLinkConnectionState
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkResourcesWrapper
     from ._models import ProcessInfo
     from ._models import ProcessModuleInfo
     from ._models import ProcessThreadInfo
@@ -446,6 +474,16 @@ except (SyntaxError, ImportError):
     from ._models import StackMajorVersion
     from ._models import StackMinorVersion
     from ._models import StampCapacity
+    from ._models import StaticSiteARMResource
+    from ._models import StaticSiteBuildARMResource
+    from ._models import StaticSiteBuildProperties
+    from ._models import StaticSiteCustomDomainOverviewARMResource
+    from ._models import StaticSiteFunctionOverviewARMResource
+    from ._models import StaticSitePatchResource
+    from ._models import StaticSiteResetPropertiesARMResource
+    from ._models import StaticSiteUserARMResource
+    from ._models import StaticSiteUserInvitationRequestResource
+    from ._models import StaticSiteUserInvitationResponseResource
     from ._models import StatusCodesBasedTrigger
     from ._models import StorageMigrationOptions
     from ._models import StorageMigrationResponse
@@ -523,6 +561,11 @@ from ._paged_models import SlotDifferencePaged
 from ._paged_models import SnapshotPaged
 from ._paged_models import SourceControlPaged
 from ._paged_models import StampCapacityPaged
+from ._paged_models import StaticSiteARMResourcePaged
+from ._paged_models import StaticSiteBuildARMResourcePaged
+from ._paged_models import StaticSiteCustomDomainOverviewARMResourcePaged
+from ._paged_models import StaticSiteFunctionOverviewARMResourcePaged
+from ._paged_models import StaticSiteUserARMResourcePaged
 from ._paged_models import StrPaged
 from ._paged_models import TldLegalAgreementPaged
 from ._paged_models import TopLevelDomainPaged
@@ -599,6 +642,8 @@ from ._web_site_management_client_enums import (
     SiteExtensionType,
     TriggeredWebJobStatus,
     SiteRuntimeState,
+    BuildStatus,
+    TriggerTypes,
     SkuName,
 )
 
@@ -624,6 +669,7 @@ __all__ = [
     'AppServiceEnvironmentResource',
     'AppServicePlan',
     'AppServicePlanPatchResource',
+    'ArmIdWrapper',
     'AutoHealActions',
     'AutoHealCustomAction',
     'AutoHealRules',
@@ -709,6 +755,7 @@ __all__ = [
     'HostingEnvironmentDeploymentInfo',
     'HostingEnvironmentDiagnostics',
     'HostingEnvironmentProfile',
+    'HostKeys',
     'HostName',
     'HostNameBinding',
     'HostNameSslState',
@@ -719,6 +766,7 @@ __all__ = [
     'Identifier',
     'InboundEnvironmentEndpoint',
     'IpSecurityRestriction',
+    'KeyInfo',
     'KeyVaultReferenceCollection',
     'KeyVaultReferenceResource',
     'LocalizableString',
@@ -749,6 +797,12 @@ __all__ = [
     'PrivateAccess',
     'PrivateAccessSubnet',
     'PrivateAccessVirtualNetwork',
+    'PrivateEndpointConnectionResource',
+    'PrivateLinkConnectionApprovalRequestResource',
+    'PrivateLinkConnectionState',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResourcesWrapper',
     'ProcessInfo',
     'ProcessModuleInfo',
     'ProcessThreadInfo',
@@ -805,6 +859,16 @@ __all__ = [
     'StackMajorVersion',
     'StackMinorVersion',
     'StampCapacity',
+    'StaticSiteARMResource',
+    'StaticSiteBuildARMResource',
+    'StaticSiteBuildProperties',
+    'StaticSiteCustomDomainOverviewARMResource',
+    'StaticSiteFunctionOverviewARMResource',
+    'StaticSitePatchResource',
+    'StaticSiteResetPropertiesARMResource',
+    'StaticSiteUserARMResource',
+    'StaticSiteUserInvitationRequestResource',
+    'StaticSiteUserInvitationResponseResource',
     'StatusCodesBasedTrigger',
     'StorageMigrationOptions',
     'StorageMigrationResponse',
@@ -878,6 +942,11 @@ __all__ = [
     'TriggeredJobHistoryPaged',
     'CsmUsageQuotaPaged',
     'WebJobPaged',
+    'StaticSiteARMResourcePaged',
+    'StaticSiteUserARMResourcePaged',
+    'StaticSiteBuildARMResourcePaged',
+    'StaticSiteFunctionOverviewARMResourcePaged',
+    'StaticSiteCustomDomainOverviewARMResourcePaged',
     'AppServiceEnvironmentResourcePaged',
     'StampCapacityPaged',
     'InboundEnvironmentEndpointPaged',
@@ -957,5 +1026,7 @@ __all__ = [
     'SiteExtensionType',
     'TriggeredWebJobStatus',
     'SiteRuntimeState',
+    'BuildStatus',
+    'TriggerTypes',
     'SkuName',
 ]

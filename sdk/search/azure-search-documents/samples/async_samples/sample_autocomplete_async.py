@@ -30,20 +30,20 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def autocomplete_query():
     # [START autocomplete_query_async]
-    from azure.search.documents.aio import SearchIndexClient
-    from azure.search.documents import AutocompleteQuery, SearchApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.aio import SearchClient
+    from azure.search.documents import AutocompleteQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = AutocompleteQuery(search_text="bo", suggester_name="sg")
 
-    results = await search_client.autocomplete(query=query)
+    async with search_client:
+        results = await search_client.autocomplete(query=query)
 
-    print("Autocomplete suggestions for 'bo'")
-    for result in results:
-        print("    Completion: {}".format(result["text"]))
-
-    await search_client.close()
+        print("Autocomplete suggestions for 'bo'")
+        for result in results:
+            print("    Completion: {}".format(result["text"]))
     # [END autocomplete_query_async]
 
 if __name__ == '__main__':

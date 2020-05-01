@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import datetime
 from os.path import dirname, realpath
 import time
 
@@ -19,12 +20,21 @@ from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
+TIME_TO_SLEEP = 3
 
+class SearchResourceGroupPreparer(ResourceGroupPreparer):
+    def create_resource(self, name, **kwargs):
+        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        if self.is_live and self._need_creation:
+            expiry = datetime.datetime.now() + datetime.timedelta(days=1)
+            resource_group_params = dict(tags={'DeleteAfter': expiry.isoformat()}, location=self.location)
+            self.client.resource_groups.create_or_update(name, resource_group_params)
+        return result
 
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
         self,
-        schema,
+        schema=None,
         index_batch=None,
         name_prefix="search",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -56,14 +66,17 @@ class SearchServicePreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
-        schema = json.loads(self.schema)
+        if self.schema:
+            schema = json.loads(self.schema)
+        else:
+            schema = None
         self.service_name = self.create_random_name()
         self.endpoint = "https://{}.search.windows.net".format(self.service_name)
 
         if not self.is_live:
             return {
                 "api_key": "api-key",
-                "index_name": schema["name"],
+                "index_name": schema["name"] if schema else None,
                 "endpoint": self.endpoint,
             }
 
@@ -91,8 +104,8 @@ class SearchServicePreparer(AzureMgmtPreparer):
             except Exception as ex:
                 if i == retries - 1:
                     raise
-                time.sleep(3)
-            time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
+            time.sleep(TIME_TO_SLEEP)
 
         # note the for/else here: will raise an error if we *don't* break
         # above i.e. if result.provisioning state was never "Succeeded"
@@ -103,25 +116,27 @@ class SearchServicePreparer(AzureMgmtPreparer):
             group_name, self.service_name
         ).primary_key
 
-        response = requests.post(
-            SERVICE_URL_FMT.format(self.service_name),
-            headers={"Content-Type": "application/json", "api-key": api_key},
-            data=self.schema,
-        )
-        if response.status_code != 201:
-            raise AzureTestError(
-                "Could not create a search index {}".format(response.status_code)
+        if self.schema:
+            response = requests.post(
+                SERVICE_URL_FMT.format(self.service_name),
+                headers={"Content-Type": "application/json", "api-key": api_key},
+                data=self.schema,
             )
-        self.index_name = schema["name"]
+            if response.status_code != 201:
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
+            self.index_name = schema["name"]
 
         # optionally load data into the index
-        if self.index_batch:
-            from azure.search.documents import SearchIndexClient, SearchApiKeyCredential
+        if self.index_batch and self.schema:
+            from azure.core.credentials import AzureKeyCredential
+            from azure.search.documents import SearchClient
             from azure.search.documents._index._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchIndexClient(
-                self.endpoint, self.index_name, SearchApiKeyCredential(api_key)
+            index_client = SearchClient(
+                self.endpoint, self.index_name, AzureKeyCredential(api_key)
             )
             results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
@@ -133,7 +148,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
             # this by using a constant delay between indexing and querying.
             import time
 
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         return {
             "api_key": api_key,

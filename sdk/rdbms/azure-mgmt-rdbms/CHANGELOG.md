@@ -1,20 +1,65 @@
 # Release History
 
+## 2.2.0 (2020-03-25)
+
+**Features**
+
+  - Model ServerUpdateParameters has a new parameter public_network_access
+  - Model ServerPropertiesForCreate has a new parameter public_network_access
+  - Model Server has a new parameter public_network_access
+  - Model Server has a new parameter private_endpoint_connections
+  - Model ServerPropertiesForRestore has a new parameter public_network_access
+  - Model ServerPropertiesForReplica has a new parameter public_network_access
+  - Model ServerPropertiesForDefaultCreate has a new parameter public_network_access
+  - Model ServerPropertiesForGeoRestore has a new parameter public_network_access
+
+## 2.1.0 (2020-03-23)
+
+**Features**
+
+  - Model ServerPropertiesForReplica has a new parameter infrastructure_encryption
+  - Model ServerPropertiesForReplica has a new parameter minimal_tls_version
+  - Model ServerPropertiesForReplica has a new parameter public_network_access
+  - Model ServerForCreate has a new parameter identity
+  - Model ServerUpdateParameters has a new parameter minimal_tls_version
+  - Model ServerUpdateParameters has a new parameter identity
+  - Model ServerUpdateParameters has a new parameter public_network_access
+  - Model Server has a new parameter byok_enforcement
+  - Model Server has a new parameter minimal_tls_version
+  - Model Server has a new parameter public_network_access
+  - Model Server has a new parameter infrastructure_encryption
+  - Model Server has a new parameter identity
+  - Model Server has a new parameter private_endpoint_connections
+  - Model ServerPropertiesForDefaultCreate has a new parameter infrastructure_encryption
+  - Model ServerPropertiesForDefaultCreate has a new parameter minimal_tls_version
+  - Model ServerPropertiesForDefaultCreate has a new parameter public_network_access
+  - Model ServerPropertiesForGeoRestore has a new parameter infrastructure_encryption
+  - Model ServerPropertiesForGeoRestore has a new parameter minimal_tls_version
+  - Model ServerPropertiesForGeoRestore has a new parameter public_network_access
+  - Model ServerPropertiesForCreate has a new parameter infrastructure_encryption
+  - Model ServerPropertiesForCreate has a new parameter minimal_tls_version
+  - Model ServerPropertiesForCreate has a new parameter public_network_access
+  - Model ServerPropertiesForRestore has a new parameter infrastructure_encryption
+  - Model ServerPropertiesForRestore has a new parameter minimal_tls_version
+  - Model ServerPropertiesForRestore has a new parameter public_network_access
+  - Added operation group ServerKeysOperations
+  - Added operation group ServerAdministratorsOperations
+
 ## 2.0.0 (2020-02-21)
 
 **Features**
 
-- Added operation group PrivateLinkResourcesOperations
-- Added operation group PrivateEndpointConnectionsOperations
-- Added operation group AdvisorsOperations
-- Added operation group MySQLManagementClientOperationsMixin
-- Added operation group QueryTextsOperations
-- Added operation group RecommendedActionsOperations
-- Added operation group MariaDBManagementClientOperationsMixin
-- Added operation group LocationBasedRecommendedActionSessionsOperationStatusOperations
-- Added operation group LocationBasedRecommendedActionSessionsResultOperations
-- Added operation group WaitStatisticsOperations
-- Added operation group TopQueryStatisticsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group AdvisorsOperations
+  - Added operation group MySQLManagementClientOperationsMixin
+  - Added operation group QueryTextsOperations
+  - Added operation group RecommendedActionsOperations
+  - Added operation group MariaDBManagementClientOperationsMixin
+  - Added operation group LocationBasedRecommendedActionSessionsOperationStatusOperations
+  - Added operation group LocationBasedRecommendedActionSessionsResultOperations
+  - Added operation group WaitStatisticsOperations
+  - Added operation group TopQueryStatisticsOperations
 
 **General breaking changes**
 

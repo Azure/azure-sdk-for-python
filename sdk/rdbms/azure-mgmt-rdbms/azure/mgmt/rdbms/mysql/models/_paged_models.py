@@ -90,6 +90,19 @@ class LogFilePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(LogFilePaged, self).__init__(*args, **kwargs)
+class ServerAdministratorResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerAdministratorResource <azure.mgmt.rdbms.mysql.models.ServerAdministratorResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerAdministratorResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerAdministratorResourcePaged, self).__init__(*args, **kwargs)
 class PerformanceTierPropertiesPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PerformanceTierProperties <azure.mgmt.rdbms.mysql.models.PerformanceTierProperties>` object
@@ -194,3 +207,16 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class ServerKeyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerKey <azure.mgmt.rdbms.mysql.models.ServerKey>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerKey]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerKeyPaged, self).__init__(*args, **kwargs)

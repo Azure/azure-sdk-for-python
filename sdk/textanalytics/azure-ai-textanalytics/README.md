@@ -3,7 +3,6 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 * Sentiment Analysis
 * Named Entity Recognition
-* Personally Identifiable Information (PII) Entity Recognition
 * Linked Entity Recognition
 * Language Detection
 * Key Phrase Extraction
@@ -24,7 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-### Create a Cognitive Services or Text Analytics resource
+### Authenticate the client
+#### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
 
@@ -52,7 +52,6 @@ az cognitiveservices account create \
     --yes
 ```
 
-### Authenticate the client
 Interaction with this service begins with an instance of a [client](#client "ta-client").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
@@ -78,22 +77,23 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `TextAnalyticsApiKeyCredential` or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from azure.core.credentials or as a token from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
 1. To use an [API key][cognitive_authentication_api_key],
-   pass the key as a string into an instance of `TextAnalyticsApiKeyCredential("<api_key>")`.
+   pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
    The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
     Use the key as the credential parameter to authenticate the client:
     ```python
-    from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.textanalytics import TextAnalyticsClient
 
-    credential = TextAnalyticsApiKeyCredential("<api_key>")
-    text = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+    credential = AzureKeyCredential("<api_key>")
+    text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
     ```
 
 2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
@@ -183,7 +183,6 @@ The following section provides several code snippets covering some of the most c
 
 * [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 * [Recognize Entities](#recognize-entities "Recognize entities")
-* [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
 * [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 * [Detect Language](#detect-language "Detect language")
@@ -192,9 +191,13 @@ The following section provides several code snippets covering some of the most c
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "I did not like the restaurant. The food was too spicy.",
@@ -222,9 +225,13 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 [recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -246,42 +253,19 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [named entity recognition][named_entity_recognition]
 and [supported types][named_entity_categories].
 
-### Recognize PII entities
-[recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more.
-
-```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
-
-documents = [
-    "The employee's SSN is 555-55-5555.",
-    "The employee's phone number is 555-55-5555."
-]
-
-response = text_analytics_client.recognize_pii_entities(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    for entity in doc.entities:
-        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.confidence_score)
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
-
 ### Recognize linked entities
 [recognize_linked_entities][recognize_linked_entities] recognizes and disambiguates the identity of each entity found in its input text (for example,
 determining whether an occurrence of the word Mars refers to the planet, or to the
 Roman god of war). Recognized entities are associated with URLs to a well-known knowledge base, like Wikipedia.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -310,9 +294,13 @@ and [supported types][linked_entities_categories].
 [extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -335,9 +323,13 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 [detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "This is written in English.",
@@ -392,7 +384,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+endpoint = "https://<region>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -420,7 +412,6 @@ In a batch of documents:
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
-* Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample] ([async version][recognize_pii_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 
@@ -461,11 +452,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
 [service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
 [detect_language_result]: https://aka.ms/azsdk-python-textanalytics-detectlanguageresult
 [recognize_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizeentitiesresult
-[recognize_pii_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizepiientitiesresult
 [recognize_linked_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentitiesresult
 [analyze_sentiment_result]: https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult
 [extract_key_phrases_result]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrasesresult
@@ -475,7 +466,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
 [recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
-[recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities
 [extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
 [detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
@@ -486,11 +476,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction
 [linked_entities_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 [linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
-[pii_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.2.1/azure.core.pipeline.policies.html
+[azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: ../../core/azure-core/README.md
 [azure_identity]: ../../identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html
@@ -504,8 +493,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [extract_key_phrases_sample_async]: samples/async_samples/sample_extract_key_phrases_async.py
 [recognize_entities_sample]: samples/sample_recognize_entities.py
 [recognize_entities_sample_async]: samples/async_samples/sample_recognize_entities_async.py
-[recognize_pii_entities_sample]: samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_sample_async]: samples/async_samples/sample_recognize_pii_entities_async.py
 [recognize_linked_entities_sample]: samples/sample_recognize_linked_entities.py
 [recognize_linked_entities_sample_async]: samples/async_samples/sample_recognize_linked_entities_async.py
 

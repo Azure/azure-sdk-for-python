@@ -16,14 +16,12 @@ def execute_async_smoke_tests():
     print("   AZURE TRACK 2 SDKs SMOKE TEST ASYNC")
     print("==========================================")
 
-
     async def main():
         await KeyVaultCertificates().run()
         await KeyVaultKeys().run()
         await KeyVaultSecrets().run()
         await EventHubAsync().run()
         await StorageBlobAsync().run()
-
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

@@ -6,10 +6,10 @@
 import time
 
 import azure.core
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -23,7 +23,8 @@ except ImportError:
 
 def test_bearer_policy_adds_header():
     """The bearer token policy should add a header containing a token from its credential"""
-    expected_token = AccessToken("expected_token", 0)
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
 
     def verify_authorization_header(request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
@@ -31,10 +32,15 @@ def test_bearer_policy_adds_header():
     fake_credential = Mock(get_token=Mock(return_value=expected_token))
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
-    Pipeline(transport=Mock(), policies=policies).run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
 
     assert fake_credential.get_token.call_count == 1
 
+    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert fake_credential.get_token.call_count == 1
 
 def test_bearer_policy_send():
     """The bearer token policy should invoke the next policy's send method and return the result"""
@@ -75,11 +81,56 @@ def test_bearer_policy_token_caching():
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
 
 
-def test_bearer_policy_enforces_tls():
-    credential = Mock()
-    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+def test_bearer_policy_optionally_enforces_https():
+    """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
+
+    def assert_option_popped(request, **kwargs):
+        assert "enforce_https" not in kwargs, "BearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
+
+    credential = Mock(get_token=lambda *_, **__: AccessToken("***", 42))
+    pipeline = Pipeline(
+        transport=Mock(send=assert_option_popped), policies=[BearerTokenCredentialPolicy(credential, "scope")]
+    )
+
+    # by default and when enforce_https=True, the policy should raise when given an insecure request
     with pytest.raises(ServiceRequestError):
         pipeline.run(HttpRequest("GET", "http://not.secure"))
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=True)
+
+    # when enforce_https=False, an insecure request should pass
+    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+
+    # https requests should always pass
+    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
+    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
+    pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+def test_preserves_enforce_https_opt_out():
+    """The policy should use request context to preserve an opt out from https enforcement"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
+
+    policies = [BearerTokenCredentialPolicy(credential=Mock(), scope="scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
+    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+
+
+def test_context_unmodified_by_default():
+    """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert not any(request.context), "the policy shouldn't add to the request's context"
+
+    policies = [BearerTokenCredentialPolicy(credential=Mock(), scope="scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
+    pipeline.run(HttpRequest("GET", "https://secure"))
 
 
 @pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
@@ -101,3 +152,41 @@ def test_key_vault_regression():
     policy._token = AccessToken(token, time.time() + 3600)
     assert not policy._need_new_token
     assert policy._token.token == token
+
+def test_azure_key_credential_policy():
+    """Tests to see if we can create an AzureKeyCredentialPolicy"""
+
+    key_header = "api_key"
+    api_key = "test_key"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header] == api_key
+
+    transport=Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(HttpRequest("GET", "https://test_key_credential"))
+
+def test_azure_key_credential_policy_raises():
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    api_key = 1234
+    key_header = 5678
+    with pytest.raises(TypeError):
+        credential = AzureKeyCredential(api_key)
+
+    credential = AzureKeyCredential(str(api_key))
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+def test_azure_key_credential_updates():
+    """Tests AzureKeyCredential updates"""
+    api_key = "original"
+
+    credential = AzureKeyCredential(api_key)
+    assert credential.key == api_key
+
+    api_key = "new"
+    credential.update(api_key)
+    assert credential.key == api_key

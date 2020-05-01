@@ -660,6 +660,9 @@ class PolicyMetadata(Model):
 class PolicyState(Model):
     """Policy state record.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -738,7 +741,20 @@ class PolicyState(Model):
      ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
     :param policy_definition_group_names: Policy definition group names.
     :type policy_definition_group_names: list[str]
+    :ivar policy_definition_version: Evaluated policy definition version.
+    :vartype policy_definition_version: str
+    :ivar policy_set_definition_version: Evaluated policy set definition
+     version.
+    :vartype policy_set_definition_version: str
+    :ivar policy_assignment_version: Evaluated policy assignment version.
+    :vartype policy_assignment_version: str
     """
+
+    _validation = {
+        'policy_definition_version': {'readonly': True},
+        'policy_set_definition_version': {'readonly': True},
+        'policy_assignment_version': {'readonly': True},
+    }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
@@ -772,6 +788,9 @@ class PolicyState(Model):
         'compliance_state': {'key': 'complianceState', 'type': 'str'},
         'policy_evaluation_details': {'key': 'policyEvaluationDetails', 'type': 'PolicyEvaluationDetails'},
         'policy_definition_group_names': {'key': 'policyDefinitionGroupNames', 'type': '[str]'},
+        'policy_definition_version': {'key': 'policyDefinitionVersion', 'type': 'str'},
+        'policy_set_definition_version': {'key': 'policySetDefinitionVersion', 'type': 'str'},
+        'policy_assignment_version': {'key': 'policyAssignmentVersion', 'type': 'str'},
     }
 
     def __init__(self, *, additional_properties=None, odataid: str=None, odatacontext: str=None, timestamp=None, resource_id: str=None, policy_assignment_id: str=None, policy_definition_id: str=None, effective_parameters: str=None, is_compliant: bool=None, subscription_id: str=None, resource_type: str=None, resource_location: str=None, resource_group: str=None, resource_tags: str=None, policy_assignment_name: str=None, policy_assignment_owner: str=None, policy_assignment_parameters: str=None, policy_assignment_scope: str=None, policy_definition_name: str=None, policy_definition_action: str=None, policy_definition_category: str=None, policy_set_definition_id: str=None, policy_set_definition_name: str=None, policy_set_definition_owner: str=None, policy_set_definition_category: str=None, policy_set_definition_parameters: str=None, management_group_ids: str=None, policy_definition_reference_id: str=None, compliance_state: str=None, policy_evaluation_details=None, policy_definition_group_names=None, **kwargs) -> None:
@@ -807,6 +826,9 @@ class PolicyState(Model):
         self.compliance_state = compliance_state
         self.policy_evaluation_details = policy_evaluation_details
         self.policy_definition_group_names = policy_definition_group_names
+        self.policy_definition_version = None
+        self.policy_set_definition_version = None
+        self.policy_assignment_version = None
 
 
 class PolicyStatesQueryResults(Model):

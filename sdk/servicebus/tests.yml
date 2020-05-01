@@ -11,6 +11,8 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
+      TestTimeoutInMinutes: 300
+      BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
@@ -20,7 +22,7 @@ jobs:
       Matrix:
         Linux_Python35:
           OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
+          OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
         MacOs_Python37:
           OSName: 'MacOS'
@@ -32,5 +34,5 @@ jobs:
           PythonVersion: '2.7'
         Linux_Python38:
           OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
+          OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.8'

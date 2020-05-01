@@ -14,6 +14,7 @@ except ImportError:
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from azure.core.tracing import SpanKind
 from opencensus.trace import tracer as tracer_module
+from opencensus.trace.attributes import Attributes
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
@@ -104,6 +105,20 @@ class TestOpencensusWrapper(unittest.TestCase):
             link = wrapped_class.span_instance.links[0]
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
             assert link.span_id == "231ebdc614cb9ddd"
+
+    def test_links_with_attributes(self):
+        attributes = {"attr1": 1}
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-02"}
+            wrapped_class = OpenCensusSpan()
+            OpenCensusSpan.link_from_headers(og_header, attributes)
+            assert len(wrapped_class.span_instance.links) == 1
+            link = wrapped_class.span_instance.links[0]
+            assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
+            assert link.span_id == "231ebdc614cb9ddd"
+            assert link.attributes == attributes
+            assert "attr1" in link.attributes
 
     def test_add_attribute(self):
         with ContextHelper() as ctx:

@@ -2,9 +2,15 @@
 # Release History
 
 -------------------
+## 1.0.0b4 (Unreleased)
 
-## 1.0.0b3 (Unreleased)
+- `link` and `link_from_headers` now accepts attributes.
 
+## 1.0.0b3 (2020-04-06)
+
+### Features
+
+- Pinned opentelemetry-api to version 0.6b0
 
 ## 1.0.0b2 (2020-03-09)
 

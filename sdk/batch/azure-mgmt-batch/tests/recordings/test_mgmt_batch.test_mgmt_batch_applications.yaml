@@ -19,7 +19,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -33,7 +33,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/operationResults/918bbd5e-21a4-4955-9607-e269a0642d16?api-version=2019-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/operationResults/918bbd5e-21a4-4955-9607-e269a0642d16?api-version=2020-03-01
       pragma:
       - no-cache
       server:
@@ -60,7 +60,7 @@ interactions:
       - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
         azure-mgmt-batch/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/operationResults/918bbd5e-21a4-4955-9607-e269a0642d16?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/operationResults/918bbd5e-21a4-4955-9607-e269a0642d16?api-version=2020-03-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff","name":"batch93ef11ff","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch93ef11ff.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":false,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Storage/storageAccounts/batch93ef11ff","lastKeySync":"2019-08-06T23:08:03.7821041Z"},"poolAllocationMode":"BatchService"}}'
@@ -111,7 +111,7 @@ interactions:
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/syncAutoStorageKeys?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/syncAutoStorageKeys?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -154,7 +154,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D71AC2F94CC825\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
@@ -205,7 +205,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D71AC2F94CC825\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
@@ -254,7 +254,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications?api-version=2020-03-01
   response:
     body:
       string: '{"value":[{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D71AC2F94CC825\"","properties":{"displayName":"my_application_name","allowUpdates":true}}]}'
@@ -303,7 +303,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D71AC2F9F35F71\"","properties":{"storageUrl":"https://batch93ef11ff.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-ec2f7069-8bae-4ca2-b990-193b749f8d9e?sv=2018-03-28&sr=b&sig=mAWRdMy1EVtDWOl04CDWpkwIsVsOkdm873CI08HK4oA%3D&st=2019-08-06T23%3A03%3A21Z&se=2019-08-07T03%3A08%3A21Z&sp=rw","storageUrlExpiry":"2019-08-07T03:08:21.5743196Z","state":"Pending"}}'
@@ -398,7 +398,7 @@ interactions:
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0/activate?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0/activate?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D71AC2FB1F6B6E\"","properties":{"storageUrl":"https://batch93ef11ff.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-ec2f7069-8bae-4ca2-b990-193b749f8d9e?sv=2018-03-28&sr=b&sig=q1eSJUY%2BWeCnZ1XCckRwFPuzxfjipJVyzGx2y%2Fb62hM%3D&st=2019-08-06T23%3A03%3A23Z&se=2019-08-07T03%3A08%3A23Z&sp=rw","storageUrlExpiry":"2019-08-07T03:08:23.5706989Z","state":"Active","format":"zip","lastActivationTime":"2019-08-06T23:08:23.5272786Z"}}'
@@ -454,7 +454,7 @@ interactions:
       accept-language:
       - en-US
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D71AC2FB4EE876\"","properties":{"displayName":"my_updated_name","allowUpdates":false,"defaultVersion":"v1.0"}}'
@@ -505,7 +505,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2020-03-01
   response:
     body:
       string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D71AC2FB1F6B6E\"","properties":{"storageUrl":"https://batch93ef11ff.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-ec2f7069-8bae-4ca2-b990-193b749f8d9e?sv=2018-03-28&sr=b&sig=OIoy9faSxWf3PIft83Aln6OQvGtMolgIwvejGz7ufp4%3D&st=2019-08-06T23%3A03%3A24Z&se=2019-08-07T03%3A08%3A24Z&sp=r","storageUrlExpiry":"2019-08-07T03:08:24.0635206Z","state":"Active","format":"zip","lastActivationTime":"2019-08-06T23:08:23.5272786Z"}}'
@@ -556,7 +556,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id/versions/v1.0?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -599,7 +599,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff/applications/my_application_id?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -642,7 +642,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch93ef11ff?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -656,7 +656,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch93ef11ff-4cc29555-1661-4a64-b80c-b1939fe353fc?api-version=2019-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch93ef11ff-4cc29555-1661-4a64-b80c-b1939fe353fc?api-version=2020-03-01
       pragma:
       - no-cache
       server:
@@ -683,7 +683,7 @@ interactions:
       - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
         azure-mgmt-batch/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch93ef11ff-4cc29555-1661-4a64-b80c-b1939fe353fc?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch93ef11ff-4cc29555-1661-4a64-b80c-b1939fe353fc?api-version=2020-03-01
   response:
     body:
       string: ''

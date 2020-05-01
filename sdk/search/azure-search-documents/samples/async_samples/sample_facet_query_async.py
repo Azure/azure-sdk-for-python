@@ -30,22 +30,22 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def filter_query():
     # [START facet_query_async]
-    from azure.search.documents.aio import SearchIndexClient
-    from azure.search.documents import SearchApiKeyCredential, SearchQuery
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.aio import SearchClient
+    from azure.search.documents import SearchQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
 
-    results = await search_client.search(query=query)
+    async with search_client:
+        results = await search_client.search(query=query)
 
-    facets = await results.get_facets()
+        facets = await results.get_facets()
 
-    print("Catgory facet counts for hotels:")
-    for facet in facets["Category"]:
-        print("    {}".format(facet))
-
-    await search_client.close()
+        print("Catgory facet counts for hotels:")
+        for facet in facets["Category"]:
+            print("    {}".format(facet))
     # [END facet_query_async]
 
 if __name__ == '__main__':

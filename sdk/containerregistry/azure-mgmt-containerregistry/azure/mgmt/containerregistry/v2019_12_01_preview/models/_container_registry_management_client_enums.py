@@ -18,7 +18,7 @@ class ImportMode(str, Enum):
     force = "Force"
 
 
-class Status(str, Enum):
+class ConnectionStatus(str, Enum):
 
     approved = "Approved"
     pending = "Pending"

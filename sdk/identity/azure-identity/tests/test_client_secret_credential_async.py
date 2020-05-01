@@ -4,16 +4,27 @@
 # ------------------------------------
 import asyncio
 import time
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 
 import pytest
+
+
+@pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret")
+    with pytest.raises(ValueError):
+        await credential.get_token()
 
 
 @pytest.mark.asyncio
@@ -92,6 +103,36 @@ async def test_client_secret_credential():
     ).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+async def test_request_url(authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
+    tenant_id = "expected_tenant"
+    access_token = "***"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+
+    async def mock_send(request, **kwargs):
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
+
+    credential = ClientSecretCredential(
+        tenant_id, "client-id", "secret", transport=Mock(send=mock_send), authority=authority
+    )
+    token = await credential.get_token("scope")
+    assert token.token == access_token
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = ClientSecretCredential(tenant_id, "client-id", "secret", transport=Mock(send=mock_send))
+        await credential.get_token("scope")
     assert token.token == access_token
 
 

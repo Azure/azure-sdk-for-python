@@ -45,7 +45,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-mgmt-core',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -67,7 +67,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.3.0",
+        "azure-core<2.0.0,>=1.4.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],

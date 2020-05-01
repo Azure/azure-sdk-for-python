@@ -268,7 +268,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             policies=[
                 StorageHeadersPolicy(),
                 self._credential_policy
-            ]
+            ],
+            enforce_https=False
         )
 
         pipeline_response = self._pipeline.run(

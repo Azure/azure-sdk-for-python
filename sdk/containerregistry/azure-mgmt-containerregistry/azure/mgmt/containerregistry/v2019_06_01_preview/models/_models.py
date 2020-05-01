@@ -1080,7 +1080,36 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.type = 'EncodedTask'
 
 
-class Error(Model):
+class ErrorResponse(Model):
+    """An error response from the Azure Container Registry service.
+
+    :param error: Azure container registry build API error body.
+    :type error:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class ErrorResponseBody(Model):
     """An error response from the Azure Container Registry service.
 
     All required parameters must be populated in order to send to Azure.
@@ -1102,38 +1131,9 @@ class Error(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Error, self).__init__(**kwargs)
+        super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
-
-
-class ErrorSchema(Model):
-    """An error response from the Azure Container Registry service.
-
-    :param error: Azure container registry build API error body.
-    :type error:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ErrorSchema, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
-class ErrorSchemaException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorSchema'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorSchemaException, self).__init__(deserialize, response, 'ErrorSchema', *args)
 
 
 class EventInfo(Model):

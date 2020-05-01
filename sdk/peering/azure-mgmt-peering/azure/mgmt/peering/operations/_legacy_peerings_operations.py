@@ -24,7 +24,7 @@ class LegacyPeeringsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-09-01-preview".
+    :ivar api_version: The client API version. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -34,12 +34,12 @@ class LegacyPeeringsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01-preview"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
     def list(
-            self, peering_location, kind, custom_headers=None, raw=False, **operation_config):
+            self, peering_location, kind, asn=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the legacy peerings under the given subscription matching
         the specified kind and location.
 
@@ -48,6 +48,8 @@ class LegacyPeeringsOperations(object):
         :param kind: The kind of the peering. Possible values include:
          'Direct', 'Exchange'
         :type kind: str
+        :param asn: The ASN number associated with a legacy peering.
+        :type asn: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -72,6 +74,8 @@ class LegacyPeeringsOperations(object):
                 query_parameters = {}
                 query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
                 query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
+                if asn is not None:
+                    query_parameters['asn'] = self._serialize.query("asn", asn, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

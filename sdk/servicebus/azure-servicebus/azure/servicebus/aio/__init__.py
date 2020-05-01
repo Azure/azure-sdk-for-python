@@ -3,50 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from azure.servicebus.common.errors import (
-    ServiceBusError,
-    ServiceBusResourceNotFound,
-    ServiceBusConnectionError,
-    ServiceBusAuthorizationError,
-    InvalidHandlerState,
-    NoActiveSession,
-    MessageAlreadySettled,
-    MessageSettleFailed,
-    MessageSendFailed,
-    MessageLockExpired,
-    SessionLockExpired,
-    AutoLockRenewFailed,
-    AutoLockRenewTimeout)
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.message import BatchMessage, PeekMessage
-from .async_message import Message, DeferredMessage
-from .async_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
-from .async_utils import AutoLockRenew
-
+from ._async_message import ReceivedMessage
+from ._base_handler_async import ServiceBusSharedKeyCredential
+from ._servicebus_sender_async import ServiceBusSender
+from ._servicebus_receiver_async import ServiceBusReceiver
+from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
+from ._servicebus_session_async import ServiceBusSession
+from ._servicebus_client_async import ServiceBusClient
+from ._async_utils import AutoLockRenew
 
 __all__ = [
-    'Message',
-    'AutoLockRenew',
-    'BatchMessage',
-    'PeekMessage',
-    'DeferredMessage',
+    'ReceivedMessage',
     'ServiceBusClient',
-    'QueueClient',
-    'TopicClient',
-    'SubscriptionClient',
-    'ReceiveSettleMode',
-    'NEXT_AVAILABLE',
-    'ServiceBusError',
-    'ServiceBusResourceNotFound',
-    'ServiceBusConnectionError',
-    'ServiceBusAuthorizationError',
-    'InvalidHandlerState',
-    'NoActiveSession',
-    'MessageAlreadySettled',
-    'MessageSettleFailed',
-    'MessageSendFailed',
-    'MessageLockExpired',
-    'SessionLockExpired',
-    'AutoLockRenewFailed',
-    'AutoLockRenewTimeout']
+    'ServiceBusSender',
+    'ServiceBusReceiver',
+    'ServiceBusSessionReceiver',
+    'ServiceBusSharedKeyCredential',
+    'AutoLockRenew',
+    'ServiceBusSession'
+]

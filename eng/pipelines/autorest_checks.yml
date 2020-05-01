@@ -17,15 +17,16 @@ variables:
   NodeVersion: '10.x'
   PythonVersion: '3.6'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
-  repo_branch: 'azure-core'
-  source_path: 'sdk/core/azure-core'
+  repo_branch: 'autorestv3'
+  source_path_azure_core: 'sdk/core/azure-core'
+  source_path_azure_mgmt_core: 'sdk/core/azure-mgmt-core'
 
 jobs:
   - job: 'Run_AutoRest'
     displayName: 'Run AutoRest'
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
     steps:
       - task: NodeTool@0
@@ -38,13 +39,26 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: pip install pytest pytest-cov pytest-asyncio isodate msrest aiohttp $(Build.SourcesDirectory)/$(source_path)
-        displayName: 'Prepare Environment'
-
       - script: |
-          git clone --recursive $(auto_rest_clone_url)
+          pip install -r eng/autorest_req.txt
+          git clone $(auto_rest_clone_url)
           cd autorest.python
           git checkout $(repo_branch)
           npm install
-          pytest test/vanilla
-        displayName: 'Run Test'
+        displayName: 'Prepare Environment'
+
+      - script: |
+          cd $(Build.SourcesDirectory)/autorest.python/test/vanilla
+          pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
+          pip install -r requirements.txt
+          pip freeze
+          pytest $(Build.SourcesDirectory)/autorest.python/test/vanilla
+        displayName: 'Install azure-core and Test Vanilla'
+
+      - script: |
+          cd $(Build.SourcesDirectory)/autorest.python/test/azure          
+          pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)          
+          pip install -r requirements.txt
+          pip freeze
+          pytest $(Build.SourcesDirectory)/autorest.python/test/azure
+        displayName: 'Install azure-mgmt-core and Test Azure'

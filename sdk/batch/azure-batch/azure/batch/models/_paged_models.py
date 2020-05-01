@@ -23,9 +23,7 @@ class ApplicationSummaryPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(ApplicationSummaryPaged, self).__init__(*args, **kwargs)
-
 
 class PoolUsageMetricsPaged(Paged):
     """
@@ -38,9 +36,7 @@ class PoolUsageMetricsPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(PoolUsageMetricsPaged, self).__init__(*args, **kwargs)
-
 
 class CloudPoolPaged(Paged):
     """
@@ -53,9 +49,7 @@ class CloudPoolPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(CloudPoolPaged, self).__init__(*args, **kwargs)
-
 
 class ImageInformationPaged(Paged):
     """
@@ -68,9 +62,7 @@ class ImageInformationPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(ImageInformationPaged, self).__init__(*args, **kwargs)
-
 
 class PoolNodeCountsPaged(Paged):
     """
@@ -83,9 +75,7 @@ class PoolNodeCountsPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(PoolNodeCountsPaged, self).__init__(*args, **kwargs)
-
 
 class CloudJobPaged(Paged):
     """
@@ -98,9 +88,7 @@ class CloudJobPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(CloudJobPaged, self).__init__(*args, **kwargs)
-
 
 class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
     """
@@ -113,9 +101,7 @@ class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(JobPreparationAndReleaseTaskExecutionInformationPaged, self).__init__(*args, **kwargs)
-
 
 class CertificatePaged(Paged):
     """
@@ -128,9 +114,7 @@ class CertificatePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(CertificatePaged, self).__init__(*args, **kwargs)
-
 
 class NodeFilePaged(Paged):
     """
@@ -143,9 +127,7 @@ class NodeFilePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(NodeFilePaged, self).__init__(*args, **kwargs)
-
 
 class CloudJobSchedulePaged(Paged):
     """
@@ -158,9 +140,7 @@ class CloudJobSchedulePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(CloudJobSchedulePaged, self).__init__(*args, **kwargs)
-
 
 class CloudTaskPaged(Paged):
     """
@@ -173,9 +153,7 @@ class CloudTaskPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(CloudTaskPaged, self).__init__(*args, **kwargs)
-
 
 class ComputeNodePaged(Paged):
     """
@@ -188,5 +166,4 @@ class ComputeNodePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-
         super(ComputeNodePaged, self).__init__(*args, **kwargs)

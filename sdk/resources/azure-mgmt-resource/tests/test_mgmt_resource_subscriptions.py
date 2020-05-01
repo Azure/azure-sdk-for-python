@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
+
 import azure.mgmt.resource.subscriptions.models
 from devtools_testutils import AzureMgmtTestCase
 

@@ -15,7 +15,6 @@ from ._models import (
     CategorizedEntity,
     TextDocumentStatistics,
     RecognizeLinkedEntitiesResult,
-    RecognizePiiEntitiesResult,
     LinkedEntity,
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
@@ -24,8 +23,7 @@ from ._models import (
     DetectedLanguage,
     DocumentError,
     SentimentConfidenceScores,
-    TextAnalyticsError,
-    PiiEntity
+    TextAnalyticsError
 )
 
 
@@ -56,7 +54,7 @@ def order_results(response, combined):
     :param combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
     """
-    request = json.loads(response.request.body)["documents"]
+    request = json.loads(response.http_response.request.body)["documents"]
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
@@ -99,15 +97,6 @@ def entities_result(entity):
 
 
 @prepare_result
-def pii_entities_result(entity):
-    return RecognizePiiEntitiesResult(
-        id=entity.id,
-        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
-    )
-
-
-@prepare_result
 def linked_entities_result(entity):
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
@@ -129,7 +118,7 @@ def key_phrases_result(phrases):
 def sentiment_result(sentiment):
     return AnalyzeSentimentResult(
         id=sentiment.id,
-        sentiment=sentiment.sentiment.value,
+        sentiment=sentiment.sentiment,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access

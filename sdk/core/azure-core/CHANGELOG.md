@@ -1,8 +1,28 @@
 
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.5.0 (Unreleased)
 
+### Features
+
+- Support "x-ms-retry-after-ms" in response header   #10743
+- `link` and `link_from_headers` now accepts attributes   #10765
+
+### Bug fixes
+
+- Not retry if the status code is less than 400 #10778
+- "x-ms-request-id" is not considered safe header for logging #10967
+
+## 1.4.0 (2020-04-06)
+
+### Features
+
+- Support a default error type in map_error #9773
+- Added `AzureKeyCredential` and its respective policy. #10509
+- Added `azure.core.polling.base_polling` module with a "Microsoft One API" polling implementation #10090
+  Also contains the async version in `azure.core.polling.async_base_polling`
+- Support kwarg `enforce_https` to disable HTTPS check on authentication #9821
+- Support additional kwargs in `HttpRequest.set_multipart_mixed` that will be passed into pipeline context.
 
 ## 1.3.0 (2020-03-09)
 

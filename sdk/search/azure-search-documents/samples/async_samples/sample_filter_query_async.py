@@ -30,23 +30,23 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def filter_query():
     # [START filter_query_async]
-    from azure.search.documents.aio import SearchIndexClient
-    from azure.search.documents import SearchApiKeyCredential, SearchQuery
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.aio import SearchClient
+    from azure.search.documents import SearchQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = SearchQuery(search_text="WiFi")
     query.filter("Address/StateProvince eq 'FL' and Address/Country eq 'USA'")
     query.select("HotelName", "Rating")
     query.order_by("Rating desc")
 
-    results = await search_client.search(query=query)
+    async with search_client:
+        results = await search_client.search(query=query)
 
-    print("Florida hotels containing 'WiFi', sorted by Rating:")
-    async for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
-
-    await search_client.close()
+        print("Florida hotels containing 'WiFi', sorted by Rating:")
+        async for result in results:
+            print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END filter_query_async]
 
 if __name__ == '__main__':

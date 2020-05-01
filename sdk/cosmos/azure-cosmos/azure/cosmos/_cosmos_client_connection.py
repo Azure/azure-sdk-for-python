@@ -24,7 +24,9 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from typing import Dict, Any, Optional
+# https://github.com/PyCQA/pylint/issues/3112
+# Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
+from typing import Dict, Any, Optional # pylint: disable=unused-import
 import six
 from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore

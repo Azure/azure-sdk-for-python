@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+import six
 
 from . import SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -16,7 +17,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
 
 
@@ -37,9 +38,19 @@ class _BearerTokenCredentialPolicyBase(object):
         self._token = None  # type: Optional[AccessToken]
 
     @staticmethod
-    def _enforce_tls(request):
+    def _enforce_https(request):
         # type: (PipelineRequest) -> None
-        if not request.http_request.url.lower().startswith("https"):
+
+        # move 'enforce_https' from options to context so it persists
+        # across retries but isn't passed to a transport implementation
+        option = request.context.options.pop("enforce_https", None)
+
+        # True is the default setting; we needn't preserve an explicit opt in to the default behavior
+        if option is False:
+            request.context["enforce_https"] = option
+
+        enforce_https = request.context.get("enforce_https", True)
+        if enforce_https and not request.http_request.url.lower().startswith("https"):
             raise ServiceRequestError(
                 "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
             )
@@ -76,8 +87,30 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        self._enforce_tls(request)
+        self._enforce_https(request)
 
-        if self._need_new_token:
+        if self._token is None or self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+        self._update_headers(request.http_request.headers, self._token.token)
+
+
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
+    """Adds a key header for the provided credential.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param str name: The name of the key header used for the credential.
+    :raises: ValueError or TypeError
+    """
+    def __init__(self, credential, name):
+        # type: (AzureKeyCredential, str) -> None
+        super(AzureKeyCredentialPolicy, self).__init__()
+        self._credential = credential
+        if not name:
+            raise ValueError("name can not be None or empty")
+        if not isinstance(name, six.string_types):
+            raise TypeError("name must be a string.")
+        self._name = name
+
+    def on_request(self, request):
+        request.http_request.headers[self._name] = self._credential.key

@@ -12,7 +12,7 @@ import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace,SBSku,SkuName,SBQueue,SBAuthorizationRule,AccessRights,AccessKeys
 from azure.common.credentials import ServicePrincipalCredentials
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtServiceBusTest(AzureMgmtTestCase):
@@ -24,7 +24,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_sb_queue_curd(self, resource_group, location):
         # List all topic types
         resource_group_name = resource_group.name

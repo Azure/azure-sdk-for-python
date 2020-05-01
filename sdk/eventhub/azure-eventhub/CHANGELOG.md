@@ -1,7 +1,23 @@
 # Release History
 
-## 5.0.2 (Unreleased)
+## 5.1.0 (2020-05-04)
 
+**New Features**
+
+- `EventHubProducerClient.send_batch` accepts either an `EventDataBatch` or a finite list of `EventData`. #9181
+- Added enqueueTime to span links of distributed tracing. #9599
+
+**Bug fixes**
+- Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
+
+## 5.1.0b1 (2020-04-06)
+
+**New Features**
+- Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
+- `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
+`on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
+- Param event of `PartitionContext.update_checkpoint` is now optional. The last received event is used when param event is not passed in.
+- `EventData.system_properties` has added missing properties when consuming messages from IotHub. #10408
 
 ## 5.0.1 (2020-03-09)
 

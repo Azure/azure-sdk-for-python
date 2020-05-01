@@ -23,6 +23,7 @@ class SeverityLevel(str, Enum):
     minimal = "minimal"
     moderate = "moderate"
     critical = "critical"
+    highestcriticalimpact = "highestcriticalimpact"
 
 
 class PreferredContactMethod(str, Enum):
@@ -41,3 +42,9 @@ class CommunicationDirection(str, Enum):
 
     inbound = "inbound"
     outbound = "outbound"
+
+
+class Status(str, Enum):
+
+    open = "open"
+    closed = "closed"

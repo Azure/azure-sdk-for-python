@@ -5,15 +5,15 @@
 import logging
 import os
 
-from azure.core.exceptions import ClientAuthenticationError
-
-from .._constants import EnvironmentVariables, KnownAuthorities
+from .._constants import EnvironmentVariables
+from .._internal import get_default_authority, normalize_authority
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
+from .vscode_credential import VSCodeCredential
 
 
 try:
@@ -40,7 +40,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    4. The identity currently logged in to the Azure CLI.
+    4. The user currently signed in to Visual Studio Code.
+    5. The identity currently logged in to the Azure CLI.
 
     This default behavior is configurable with keyword arguments.
 
@@ -51,6 +52,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
+        Defaults to **False**.
+    :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
@@ -63,7 +66,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
-        authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        authority = kwargs.pop("authority", None)
+        authority = normalize_authority(authority) if authority else get_default_authority()
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -73,6 +77,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
 
@@ -91,6 +96,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+        if not exclude_visual_studio_code_credential:
+            credentials.append(VSCodeCredential())
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_interactive_browser_credential:
@@ -104,18 +111,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
-        try:
-            return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                message="""
-{}\n\nPlease visit the documentation at
-https://aka.ms/python-sdk-identity#defaultazurecredential
-to learn what options DefaultAzureCredential supports""".format(
-                    e.message
-                )
-            )
+        if self._successful_credential:
+            return self._successful_credential.get_token(*scopes, **kwargs)
+
+        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
