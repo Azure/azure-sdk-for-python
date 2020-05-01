@@ -187,7 +187,7 @@ class EventHubProducerClient(ClientBase):
         # type: (Union[EventDataBatch, List[EventData]], Any) -> None
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
-        If you're sending a finite list of `EventData` and you know it's within the size limit of the event hub
+        If you're sending a finite list of `EventData` and you know it's within the event hub
         frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
         to create `EventDataBatch` and add `EventData` into the batch one by one until the size limit,
         and then call this method to send out the batch.
@@ -254,12 +254,13 @@ class EventHubProducerClient(ClientBase):
         # type:(Any) -> EventDataBatch
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
-        The max_size should be no greater than the max allowed message size defined by the service.
+        The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
 
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
         :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
+         If both partition_id and partition_key is provided, the partition_id will take precedence.
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
