@@ -15,6 +15,7 @@ except (IOError, ValueError):
 
 SUPPORTED_CREDKEYS = set(("Type", "TargetName", "Persist", "UserName", "Comment", "CredentialBlob"))
 
+_PBYTE = ct.POINTER(ct.c_byte)
 
 class _CREDENTIAL(ct.Structure):
     _fields_ = [
@@ -24,14 +25,13 @@ class _CREDENTIAL(ct.Structure):
         ("Comment", ct.c_wchar_p),
         ("LastWritten", wt.FILETIME),
         ("CredentialBlobSize", wt.DWORD),
-        ("CredentialBlob", wt.LPBYTE),
+        ("CredentialBlob", _PBYTE),
         ("Persist", wt.DWORD),
         ("AttributeCount", wt.DWORD),
         ("Attributes", ct.c_void_p),
         ("TargetAlias", ct.c_wchar_p),
         ("UserName", ct.c_wchar_p),
     ]
-
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
