@@ -37,6 +37,7 @@ from azure.search.documents import(
     SynonymMap
 )
 from azure.search.documents.aio import SearchServiceClient
+from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
@@ -277,13 +278,6 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         assert len(result.tokens) == 2
 
 class SearchSynonymMapsClientTest(AzureMgmtTestCase):
-    def _build_synonym_map_from_dict(self, synonym_map):
-        sm = SynonymMap(name=synonym_map["name"], synonyms=synonym_map["synonyms"])
-        for k, v in synonym_map.items():
-            setattr(sm, k, v)
-        
-        return sm
-
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
@@ -320,7 +314,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        sm_result = self._build_synonym_map_from_dict(result)
+        sm_result = build_synonym_map_from_dict(result)
         etag = sm_result.e_tag
 
         await client.create_or_update_synonym_map("test-syn-map", [

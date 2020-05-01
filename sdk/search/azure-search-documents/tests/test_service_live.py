@@ -33,6 +33,7 @@ from azure.search.documents import(
     DataContainer,
     SynonymMap
 )
+from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
@@ -260,13 +261,6 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         assert len(result.tokens) == 2
 
 class SearchSynonymMapsClientTest(AzureMgmtTestCase):
-    def _build_synonym_map_from_dict(self, synonym_map):
-        sm = SynonymMap(name=synonym_map["name"], synonyms=synonym_map["synonyms"])
-        for k, v in synonym_map.items():
-            setattr(sm, k, v)
-        
-        return sm
-
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
@@ -303,7 +297,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        sm_result = self._build_synonym_map_from_dict(result)
+        sm_result = build_synonym_map_from_dict(result)
         etag = sm_result.e_tag
 
         client.create_or_update_synonym_map("test-syn-map", [
@@ -370,7 +364,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
-        result = self._build_synonym_map_from_dict(client.create_synonym_map("test-syn-map", [
+        result = build_synonym_map_from_dict(client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
         ]))
         etag = result.e_tag
