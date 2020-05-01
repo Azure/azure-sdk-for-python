@@ -224,8 +224,7 @@ class EventHubProducerClient(ClientBaseAsync):
         and then call this method to send out the batch.
 
         :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
-         in a batch. All `EventData` of the list or `EventDataBatch` will go to a single partition with one `send_batch`
-         call.
+         in a batch. All `EventData` in the list or `EventDataBatch` will land on the same partition.
         :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[~azure.eventhub.EventData]]
         :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
