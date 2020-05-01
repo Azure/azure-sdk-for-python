@@ -68,8 +68,7 @@ def prepare_result(func):
         # special case for now if there are too many documents in the request
         # they may change id to empty string, but currently it is "All"
         too_many_documents_errors = [
-            error for error in obj.errors
-            if error.id == "All" and _get_error_code_and_message(error)[0] == "InvalidDocumentBatch"
+            error for error in obj.errors if error.id == "All"
         ]
         if too_many_documents_errors:
             too_many_documents_error = too_many_documents_errors[0]
