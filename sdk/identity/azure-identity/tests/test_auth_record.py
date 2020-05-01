@@ -13,13 +13,12 @@ def test_serialization():
     attrs = ("authority", "client_id","home_account_id", "tenant_id", "username")
     nums = (n for n in range(len(attrs)))
     record_values = {attr: next(nums) for attr in attrs}
-    additional_data = {"foo": "bar", "bar": "foo"}
 
     record = AuthenticationRecord(**record_values)
-    serialized = record.serialize(**additional_data)
+    serialized = record.serialize()
 
-    # AuthenticationRecord's fields and the additional data should have been serialized
-    assert json.loads(serialized) == dict(record_values, **additional_data)
+    # AuthenticationRecord's fields should have been serialized
+    assert json.loads(serialized) == record_values
 
     deserialized = AuthenticationRecord.deserialize(serialized)
 
@@ -28,6 +27,3 @@ def test_serialization():
 
     # the constructed and deserialized records should have the same values
     assert all(getattr(deserialized, attr) == record_values[attr] for attr in attrs)
-
-    # deserialized record should expose additional data like a dictionary
-    assert all(deserialized[key] == additional_data[key] for key in additional_data)
