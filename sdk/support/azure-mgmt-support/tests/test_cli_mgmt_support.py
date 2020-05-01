@@ -37,8 +37,8 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        SERVICE_NAME = "myService"
-        PROBLEM_CLASSIFICATION_NAME = "myProblemClassification"
+        SERVICE_NAME = "06bfd9d3-516b-d5c6-5802-169c800dec89"
+        PROBLEM_CLASSIFICATION_NAME = "831b2fb3-4db3-3d32-af35-bbb3d3eaeba2"
         SUPPORT_TICKET_NAME = "mySupportTicket"
         VIRTUAL_MACHINE_NAME = "myVirtualMachine"
         COMMUNICATION_NAME = "myCommunication"
