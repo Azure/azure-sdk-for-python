@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-
+import six
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -167,7 +167,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
         404: ResourceNotFoundError
     }
 
-    if not hasattr(model, 'e_tag'):
+    if isinstance(model, six.string_types):
         return (error_map, None)
 
     try:
