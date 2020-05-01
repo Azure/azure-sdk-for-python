@@ -1,10 +1,11 @@
 # Release History
 
-## 5.1.0b2 (Unreleased)
+## 5.1.0 (2020-05-04)
 
 **New Features**
 
 - `EventHubProducerClient.send_batch` accepts either an `EventDataBatch` or a finite list of `EventData`. #9181
+- Added enqueueTime to span links of distributed tracing. #9599
 
 ## 5.1.0b1 (2020-04-06)
 

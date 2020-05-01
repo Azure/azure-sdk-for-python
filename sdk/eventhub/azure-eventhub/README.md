@@ -13,7 +13,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.1.0b1) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
 ## Getting started
 
 ### Prerequisites
@@ -423,7 +423,7 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html).
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html).
 
 ### Provide Feedback
 
