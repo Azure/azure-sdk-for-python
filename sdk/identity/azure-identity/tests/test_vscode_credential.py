@@ -70,6 +70,37 @@ def test_redeem_token():
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
+def test_cache_refresh_token():
+    expected_token = AccessToken("token", 42)
+
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
+    mock_get_credentials = mock.Mock(return_value="VALUE")
+
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", mock_get_credentials):
+        credential = VSCodeCredential(_client=mock_client)
+        token = credential.get_token("scope")
+        assert token is expected_token
+        assert mock_get_credentials.call_count == 1
+        token = credential.get_token("scope")
+        assert token is expected_token
+        assert mock_get_credentials.call_count == 1
+
+
+def test_no_obtain_token_if_cached():
+    expected_token = AccessToken("token", 42)
+
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value='VALUE')
+
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+        credential = VSCodeCredential(_client=mock_client)
+        token = credential.get_token("scope")
+        assert mock_client.obtain_token_by_refresh_token.call_count == 0
+
+
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
     with mock.patch("msal_extensions.osx.Keychain.get_generic_password", return_value="VALUE"):
