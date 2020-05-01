@@ -249,7 +249,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
                   service bus frame size limit.
                 :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
-                :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happens.
+                :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
+                 error, authentication error, and any unexpected errors.
                  It's also the top-level root class of above errors.
 
         .. admonition:: Example:
