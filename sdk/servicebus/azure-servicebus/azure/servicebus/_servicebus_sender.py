@@ -307,7 +307,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                   service bus frame size limit.
                 :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
                 :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happens.
-                 It's also the parent class of above errors.
+                 It's also the top-level root class of above errors.
 
         .. admonition:: Example:
 
