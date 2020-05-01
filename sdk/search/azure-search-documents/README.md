@@ -79,6 +79,17 @@ client = SearchServiceClient(endpoint="<service endpoint>"
                              credential=credential)
 ```
 
+### Send your first search request
+
+You can use the `SearchClient` you created in the first section above to make a basic search request:
+```python
+results = client.search(query="spa")
+
+print("Hotels containing 'spa' in the name (or other fields):")
+for result in results:
+    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+```
+
 ## Key concepts
 
 Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains
