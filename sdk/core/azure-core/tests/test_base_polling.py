@@ -43,7 +43,7 @@ from msrest import Deserializer
 from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
-from azure.core.pipeline import PipelineResponse, Pipeline
+from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling
@@ -87,6 +87,12 @@ CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 
 @pytest.fixture
+def client():
+    # The poller itself don't use it, so we don't need something functionnal
+    return PipelineClient("https://baseurl")
+
+
+@pytest.fixture
 def pipeline_client_builder():
     """Build a client that use the "send" callback as final transport layer
 
@@ -116,6 +122,7 @@ def deserialization_cb():
         return json.loads(pipeline_response.http_response.text())
     return cb
 
+
 @pytest.fixture
 def polling_response():
     polling = LROBasePolling()
@@ -123,6 +130,7 @@ def polling_response():
 
     response = Response()
     response.headers = headers
+    response.status_code = 200
 
     polling._pipeline_response = PipelineResponse(
         None,
@@ -130,9 +138,26 @@ def polling_response():
             None,
             response,
         ),
-        None  # context
+        PipelineContext(None)
     )
+    polling._initial_response = polling._pipeline_response
     return polling, headers
+
+
+def test_base_polling_continuation_token(client, polling_response):
+    polling, _ = polling_response
+
+    continuation_token = polling.get_continuation_token()
+    assert isinstance(continuation_token, str)
+
+    polling_args = LROBasePolling.from_continuation_token(
+        continuation_token,
+        deserialization_callback="deserialization_callback",
+        client=client,
+    )
+    new_polling = LROBasePolling()
+    new_polling.initialize(*polling_args)
+
 
 def test_delay_extraction_int(polling_response):
     polling, headers = polling_response

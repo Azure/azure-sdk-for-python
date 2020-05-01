@@ -118,6 +118,7 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
             polling_method: AsyncPollingMethod[PollingReturnType]
         ):
         self._polling_method = polling_method
+        self._done = False
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
@@ -126,15 +127,6 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
             pass
 
         self._polling_method.initialize(client, initial_response, deserialization_callback)
-
-    async def _start(self):
-        """Start the long running operation.
-        """
-        await self._polling_method.run()
-        return self._polling_method.resource()
-
-    def __await__(self):
-        return self._start().__await__()
 
     def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
@@ -163,3 +155,31 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
         :rtype: str
         """
         return self._polling_method.status()
+
+    async def result(self) -> PollingReturnType:
+        """Return the result of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        await self.wait()
+        return self._polling_method.resource()
+
+    def __await__(self) -> PollingReturnType:
+        return self.result().__await__()
+
+    async def wait(self) -> None:
+        """Wait on the long running operation.
+
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        await self._polling_method.run()
+        self._done = True
+
+    def done(self) -> bool:
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
+        return self._done
