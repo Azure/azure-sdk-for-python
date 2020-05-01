@@ -55,13 +55,13 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def create_indexer(self, indexer, **kwargs):
-        # type: (Indexer, **Any) -> Dict[str, Any]
+        # type: (Indexer, **Any) -> Indexer
         """Creates a new Indexers.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~search.models.Indexer
+        :type indexer: ~~azure.search.documents.Indexer
         :return: The created Indexer
-        :rtype: dict
+        :rtype: ~azure.search.documents.Indexer
 
         .. admonition:: Example:
 
@@ -78,15 +78,15 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_indexer(self, indexer, name=None, **kwargs):
-        # type: (Indexer, Optional[str], **Any) -> Dict[str, Any]
+        # type: (Indexer, Optional[str], **Any) -> Indexer
         """Creates a new indexer or updates a indexer if it already exists.
 
         :param name: The name of the indexer to create or update.
         :type name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~search.models.Indexer
+        :type indexer: ~azure.search.documents.Indexer
         :return: The created Indexer
-        :rtype: dict
+        :rtype: ~azure.search.documents.Indexer
         """
         # TODO: access_condition
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -98,13 +98,13 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def get_indexer(self, name, **kwargs):
-        # type: (str, **Any) -> Dict[str, Any]
+        # type: (str, **Any) -> Indexer
         """Retrieves a indexer definition.
 
         :param name: The name of the indexer to retrieve.
         :type name: str
         :return: The Indexer that is fetched.
-        :rtype: dict
+        :rtype: ~azure.search.documents.Indexer
 
         .. admonition:: Example:
 
@@ -143,15 +143,14 @@ class SearchIndexersClient(HeadersMixin):
     @distributed_trace
     def delete_indexer(self, indexer, **kwargs):
         # type: (Union[str, Indexer], **Any) -> None
-        """Deletes an indexer. To use only_if_unchanged, the Indexer model
+        """Deletes an indexer. To use access conditions, the Indexer model
         must be provided instead of the name. It is enough to provide
         the name of the indexer to delete unconditionally.
 
-        :param name: The name of the indexer to delete.
-        :type name: str
-        :keyword only_if_unchanged: If set to true, the operation is performed only if the
-        e_tag on the server matches the e_tag value of the passed synonym_map.
-        :type only_if_unchanged: bool
+        :param indexer: The indexer to delete.
+        :type indexer: str or ~azure.search.documents.Indexer
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
 
         :return: None
         :rtype: None
