@@ -10,6 +10,7 @@ from ._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
+from ._common._servicebus_connection import ServiceBusConnection
 from ._common._configuration import Configuration
 from ._common.utils import create_authentication
 
@@ -67,7 +68,7 @@ class ServiceBusClient(object):
         if self._entity_name:
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
-        self._connection_sharing = False
+        self._connection_sharing = True
 
     def __enter__(self):
         if self._connection_sharing:
@@ -79,11 +80,7 @@ class ServiceBusClient(object):
 
     def _create_uamqp_connection(self):
         auth = create_authentication(self)
-        self._connection = uamqp.Connection(
-            hostname=self.fully_qualified_namespace,
-            sasl=auth,
-            debug=self._config.logging_enable
-        )
+        self._connection = ServiceBusConnection(self.fully_qualified_namespace, auth, self._config.logging_enable)
 
     def close(self):
         # type: () -> None
@@ -93,7 +90,7 @@ class ServiceBusClient(object):
         :return: None
         """
         if self._connection_sharing and self._connection:
-            self._connection.destroy()
+            self._connection.close()
 
     @classmethod
     def from_connection_string(

@@ -9,7 +9,7 @@ import logging
 from typing import Any, TYPE_CHECKING, List, Union
 
 from uamqp import ReceiveClientAsync, types
-from uamqp.constants import SenderSettleMode
+from uamqp.constants import SenderSettleMode, LinkCreationMode
 
 from ._base_handler_async import BaseHandlerAsync
 from ._async_message import ReceivedMessage
@@ -140,6 +140,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         return message
 
     def _create_handler(self, auth):
+        link_creation_mode = LinkCreationMode.CreateLinkOnNewSession\
+            if self._connection else LinkCreationMode.TryCreateLinkOnExistingCbsSession
         self._handler = ReceiveClientAsync(
             self._get_source(),
             auth=auth,
@@ -153,7 +155,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._config.prefetch
+            prefetch=self._config.prefetch,
+            link_creation_mode=link_creation_mode
         )
 
     async def _open(self):
@@ -164,7 +167,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
-            await self._handler.open_async(connection=self._connection)
+            connection = (await self._connection.get_connection()) if self._connection else None
+            await self._handler.open_async(connection=connection)
             self._message_iter = self._handler.receive_messages_iter_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)

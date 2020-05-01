@@ -8,7 +8,7 @@ import functools
 from typing import Any, List, TYPE_CHECKING, Optional, Union
 
 from uamqp import ReceiveClient, Source, types
-from uamqp.constants import SenderSettleMode
+from uamqp.constants import SenderSettleMode, LinkCreationMode
 
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
@@ -147,6 +147,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return message
 
     def _create_handler(self, auth):
+        link_creation_mode = LinkCreationMode.CreateLinkOnNewSession\
+            if self._connection else LinkCreationMode.TryCreateLinkOnExistingCbsSession
         self._handler = ReceiveClient(
             self._get_source(),
             auth=auth,
@@ -160,7 +162,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._config.prefetch
+            prefetch=self._config.prefetch,
+            link_creation_mode=link_creation_mode
         )
 
     def _open(self):
@@ -172,7 +175,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
-            self._handler.open(connection=self._connection)
+            self._handler.open(connection=(self._connection.get_connection() if self._connection else None))
             self._message_iter = self._handler.receive_messages_iter()
             while not self._handler.client_ready():
                 time.sleep(0.05)

@@ -9,6 +9,7 @@ from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClient, types
+from uamqp.constants import LinkCreationMode
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -152,6 +153,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
+        link_creation_mode = LinkCreationMode.CreateLinkOnNewSession\
+            if self._connection else LinkCreationMode.TryCreateLinkOnExistingCbsSession
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
@@ -159,7 +162,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
-            encoding=self._config.encoding
+            encoding=self._config.encoding,
+            link_creation_mode=link_creation_mode
         )
 
     def _open(self):
@@ -172,7 +176,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
-            self._handler.open(connection=self._connection)
+            self._handler.open(connection=(self._connection.get_connection() if self._connection else None))
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True

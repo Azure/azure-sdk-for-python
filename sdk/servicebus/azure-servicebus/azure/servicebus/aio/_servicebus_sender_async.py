@@ -8,6 +8,7 @@ from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClientAsync, types
+from uamqp.constants import LinkCreationMode
 
 from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
@@ -99,6 +100,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
+        link_creation_mode = LinkCreationMode.CreateLinkOnNewSession\
+            if self._connection else LinkCreationMode.TryCreateLinkOnExistingCbsSession
         self._handler = SendClientAsync(
             self._entity_uri,
             auth=auth,
@@ -106,7 +109,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
-            encoding=self._config.encoding
+            encoding=self._config.encoding,
+            link_creation_mode=link_creation_mode
         )
 
     async def _open(self):
@@ -118,7 +122,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
-            await self._handler.open_async(connection=self._connection)
+            connection = (await self._connection.get_connection()) if self._connection else None
+            await self._handler.open_async(connection=connection)
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True

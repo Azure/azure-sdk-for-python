@@ -11,6 +11,7 @@ from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
+from ._servicebus_connection import ServiceBusConnection
 from .._common._configuration import Configuration
 from ._async_utils import create_authentication
 
@@ -68,7 +69,7 @@ class ServiceBusClient(object):
         if self._entity_name:
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
-        self._connection_sharing = False
+        self._connection_sharing = True
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -80,11 +81,7 @@ class ServiceBusClient(object):
 
     async def _create_uamqp_connection(self):
         auth = await create_authentication(self)
-        self._connection = uamqp.ConnectionAsync(
-            hostname=self.fully_qualified_namespace,
-            sasl=auth,
-            debug=self._config.logging_enable
-        )
+        self._connection = ServiceBusConnection(self.fully_qualified_namespace, auth, self._config.logging_enable)
 
     @classmethod
     def from_connection_string(
@@ -134,7 +131,7 @@ class ServiceBusClient(object):
         :return: None
         """
         if self._connection_sharing and self._connection:
-            await self._connection.destroy_async()
+            await self._connection.close()
 
     def get_queue_sender(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
