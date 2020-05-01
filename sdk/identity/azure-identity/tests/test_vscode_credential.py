@@ -71,7 +71,7 @@ def test_redeem_token():
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
-    with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
+    with mock.patch('msal_extensions.osx.Keychain.get_generic_password', return_value="VALUE"):
         assert get_credentials() == "VALUE"
 
 
