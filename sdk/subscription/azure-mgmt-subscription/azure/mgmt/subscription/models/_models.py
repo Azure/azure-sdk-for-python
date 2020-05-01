@@ -121,55 +121,6 @@ class ErrorResponseException(HttpOperationError):
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
-class Location(Model):
-    """Location information.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The fully qualified ID of the location. For example,
-     /subscriptions/00000000-0000-0000-0000-000000000000/locations/westus.
-    :vartype id: str
-    :ivar subscription_id: The subscription ID.
-    :vartype subscription_id: str
-    :ivar name: The location name.
-    :vartype name: str
-    :ivar display_name: The display name of the location.
-    :vartype display_name: str
-    :ivar latitude: The latitude of the location.
-    :vartype latitude: str
-    :ivar longitude: The longitude of the location.
-    :vartype longitude: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'latitude': {'readonly': True},
-        'longitude': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'latitude': {'key': 'latitude', 'type': 'str'},
-        'longitude': {'key': 'longitude', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Location, self).__init__(**kwargs)
-        self.id = None
-        self.subscription_id = None
-        self.name = None
-        self.display_name = None
-        self.latitude = None
-        self.longitude = None
-
-
 class ModernCspSubscriptionCreationParameters(Model):
     """The parameters required to create a new CSP subscription.
 
@@ -184,8 +135,6 @@ class ModernCspSubscriptionCreationParameters(Model):
     :type sku_id: str
     :param reseller_id: Reseller ID, basically MPN Id.
     :type reseller_id: str
-    :param service_provider_id: Service provider ID, basically MPN Id.
-    :type service_provider_id: str
     """
 
     _validation = {
@@ -197,7 +146,6 @@ class ModernCspSubscriptionCreationParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
         'reseller_id': {'key': 'resellerId', 'type': 'str'},
-        'service_provider_id': {'key': 'serviceProviderId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -205,7 +153,6 @@ class ModernCspSubscriptionCreationParameters(Model):
         self.display_name = kwargs.get('display_name', None)
         self.sku_id = kwargs.get('sku_id', None)
         self.reseller_id = kwargs.get('reseller_id', None)
-        self.service_provider_id = kwargs.get('service_provider_id', None)
 
 
 class ModernSubscriptionCreationParameters(Model):
@@ -215,9 +162,6 @@ class ModernSubscriptionCreationParameters(Model):
 
     :param display_name: Required. The friendly name of the subscription.
     :type display_name: str
-    :param billing_profile_id: Required. The ARM ID of the billing profile for
-     which you want to create the subscription.
-    :type billing_profile_id: str
     :param sku_id: Required. The SKU ID of the Azure plan. Azure plan
      determines the pricing and service-level agreement of the subscription.
      Use 001 for Microsoft Azure Plan and 002 for Microsoft Azure Plan for
@@ -240,13 +184,11 @@ class ModernSubscriptionCreationParameters(Model):
 
     _validation = {
         'display_name': {'required': True},
-        'billing_profile_id': {'required': True},
         'sku_id': {'required': True},
     }
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
         'cost_center': {'key': 'costCenter', 'type': 'str'},
         'owner': {'key': 'owner', 'type': 'AdPrincipal'},
@@ -257,7 +199,6 @@ class ModernSubscriptionCreationParameters(Model):
     def __init__(self, **kwargs):
         super(ModernSubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
-        self.billing_profile_id = kwargs.get('billing_profile_id', None)
         self.sku_id = kwargs.get('sku_id', None)
         self.cost_center = kwargs.get('cost_center', None)
         self.owner = kwargs.get('owner', None)
@@ -355,64 +296,14 @@ class RenamedSubscriptionId(Model):
         self.value = None
 
 
-class Subscription(Model):
-    """Subscription information.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The fully qualified ID for the subscription. For example,
-     /subscriptions/00000000-0000-0000-0000-000000000000.
-    :vartype id: str
-    :ivar subscription_id: The subscription ID.
-    :vartype subscription_id: str
-    :ivar display_name: The subscription display name.
-    :vartype display_name: str
-    :ivar state: The subscription state. Possible values are Enabled, Warned,
-     PastDue, Disabled, and Deleted. Possible values include: 'Enabled',
-     'Warned', 'PastDue', 'Disabled', 'Deleted'
-    :vartype state: str or ~azure.mgmt.subscription.models.SubscriptionState
-    :param subscription_policies: The subscription policies.
-    :type subscription_policies:
-     ~azure.mgmt.subscription.models.SubscriptionPolicies
-    :param authorization_source: The authorization source of the request.
-     Valid values are one or more combinations of Legacy, RoleBased, Bypassed,
-     Direct and Management. For example, 'Legacy, RoleBased'.
-    :type authorization_source: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'display_name': {'readonly': True},
-        'state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'SubscriptionState'},
-        'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
-        'authorization_source': {'key': 'authorizationSource', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Subscription, self).__init__(**kwargs)
-        self.id = None
-        self.subscription_id = None
-        self.display_name = None
-        self.state = None
-        self.subscription_policies = kwargs.get('subscription_policies', None)
-        self.authorization_source = kwargs.get('authorization_source', None)
-
-
 class SubscriptionCreationParameters(Model):
     """Subscription Creation Parameters required to create a new Azure
     subscription.
 
     :param display_name: The display name of the subscription.
     :type display_name: str
+    :param management_group_id: The Management Group Id.
+    :type management_group_id: str
     :param owners: The list of principals that should be granted Owner access
      on the subscription. Principals should be of type User, Service Principal
      or Security Group.
@@ -430,6 +321,7 @@ class SubscriptionCreationParameters(Model):
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
         'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
         'offer_type': {'key': 'offerType', 'type': 'str'},
         'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
@@ -438,6 +330,7 @@ class SubscriptionCreationParameters(Model):
     def __init__(self, **kwargs):
         super(SubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
+        self.management_group_id = kwargs.get('management_group_id', None)
         self.owners = kwargs.get('owners', None)
         self.offer_type = kwargs.get('offer_type', None)
         self.additional_parameters = kwargs.get('additional_parameters', None)
@@ -474,118 +367,3 @@ class SubscriptionName(Model):
     def __init__(self, **kwargs):
         super(SubscriptionName, self).__init__(**kwargs)
         self.subscription_name = kwargs.get('subscription_name', None)
-
-
-class SubscriptionOperation(Model):
-    """status of the subscription POST operation.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The operation Id.
-    :vartype id: str
-    :param status: Status of the pending subscription
-    :type status: str
-    :param status_detail: Status Detail of the pending subscription
-    :type status_detail: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_detail': {'key': 'statusDetail', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperation, self).__init__(**kwargs)
-        self.id = None
-        self.status = kwargs.get('status', None)
-        self.status_detail = kwargs.get('status_detail', None)
-
-
-class SubscriptionOperationListResult(Model):
-    """A list of pending subscription operations.
-
-    :param value: A list of pending SubscriptionOperations
-    :type value: list[~azure.mgmt.subscription.models.SubscriptionOperation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubscriptionOperation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
-class SubscriptionPolicies(Model):
-    """Subscription policies.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar location_placement_id: The subscription location placement ID. The
-     ID indicates which regions are visible for a subscription. For example, a
-     subscription with a location placement Id of Public_2014-09-01 has access
-     to Azure public regions.
-    :vartype location_placement_id: str
-    :ivar quota_id: The subscription quota ID.
-    :vartype quota_id: str
-    :ivar spending_limit: The subscription spending limit. Possible values
-     include: 'On', 'Off', 'CurrentPeriodOff'
-    :vartype spending_limit: str or
-     ~azure.mgmt.subscription.models.SpendingLimit
-    """
-
-    _validation = {
-        'location_placement_id': {'readonly': True},
-        'quota_id': {'readonly': True},
-        'spending_limit': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
-        'quota_id': {'key': 'quotaId', 'type': 'str'},
-        'spending_limit': {'key': 'spendingLimit', 'type': 'SpendingLimit'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionPolicies, self).__init__(**kwargs)
-        self.location_placement_id = None
-        self.quota_id = None
-        self.spending_limit = None
-
-
-class TenantIdDescription(Model):
-    """Tenant Id information.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The fully qualified ID of the tenant. For example,
-     /tenants/00000000-0000-0000-0000-000000000000.
-    :vartype id: str
-    :ivar tenant_id: The tenant ID. For example,
-     00000000-0000-0000-0000-000000000000.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TenantIdDescription, self).__init__(**kwargs)
-        self.id = None
-        self.tenant_id = None

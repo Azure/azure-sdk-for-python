@@ -16,19 +16,3 @@ class OfferType(str, Enum):
 
     ms_azr_0017_p = "MS-AZR-0017P"
     ms_azr_0148_p = "MS-AZR-0148P"
-
-
-class SubscriptionState(str, Enum):
-
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class SpendingLimit(str, Enum):
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
