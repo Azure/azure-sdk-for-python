@@ -227,8 +227,7 @@ async def run(args):
             tasks = [asyncio.ensure_future(
                 clients[0].receive_batch(
                     on_event_batch_received,
-                    prefetch=args.link_credit,
-                    max_batch_size=args.max_batch_size
+                    **kwargs_dict
                 ) if args.max_batch_size else clients[0].receive(
                     on_event_received,
                     **kwargs_dict
