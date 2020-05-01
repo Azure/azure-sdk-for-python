@@ -564,7 +564,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         assert result.name == "sample-datasource"
         assert result.description == "updated"
 
-     @SearchResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
