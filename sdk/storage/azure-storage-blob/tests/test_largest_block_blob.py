@@ -66,6 +66,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
 
     # --Test cases for block blobs --------------------------------------------
     @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="This takes really long time")
     @GlobalStorageAccountPreparer()
     def test_put_block_bytes_largest(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -123,6 +124,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="This takes really long time")
     @GlobalStorageAccountPreparer()
     def test_put_block_stream_largest(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -184,6 +186,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="This takes really long time")
     @GlobalStorageAccountPreparer()
     def test_create_largest_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
