@@ -2,10 +2,8 @@
 
 ## 1.4.0b3 (Unreleased)
 
-- Preview of `VSCodeCredential` #10472
-
-Now `DefaultAzureCredential` can authenticate with the identity signed in to Visual 
-Studio Code's Azure extension.
+- Now `DefaultAzureCredential` can authenticate with the identity signed in to Visual 
+Studio Code's Azure extension. #10472
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it
