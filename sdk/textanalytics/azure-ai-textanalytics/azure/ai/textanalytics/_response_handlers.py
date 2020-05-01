@@ -59,23 +59,24 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
+    def _get_error_code_and_message(error):
+        if hasattr(error.error, 'innererror') and error.error.innererror:
+            return error.error.innererror.code, error.error.innererror.message
+        else:
+            return error.error.code, error.error.message
+
     def _deal_with_too_many_documents(response, obj):
         # special case for now if there are too many documents in the request
         # they may change id to empty string, but currently it is "All"
         too_many_documents_errors = [
             error for error in obj.errors
-            if error.id == "All" and error.error.innererror.code == "InvalidDocumentBatch"
+            if error.id == "All" and _get_error_code_and_message(error)[0] == "InvalidDocumentBatch"
         ]
         if too_many_documents_errors:
             too_many_documents_error = too_many_documents_errors[0]
             response.status_code = 400
             response.reason = "Bad Request"
-            if hasattr(too_many_documents_error.error, 'innererror') and too_many_documents_error.error.innererror:
-                code = too_many_documents_error.error.innererror.code
-                message = too_many_documents_error.error.innererror.message
-            else:
-                code = too_many_documents_error.error.code
-                message = too_many_documents_error.error.message
+            code, message = _get_error_code_and_message(too_many_documents_error)
             raise HttpResponseError(
                 message="({}) {}".format(code, message),
                 response=response
