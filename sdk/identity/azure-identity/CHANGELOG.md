@@ -3,8 +3,8 @@
 ## 1.4.0b3 (Unreleased)
 - First preview of new API for authenticating users with `DeviceCodeCredential`
   and `InteractiveBrowserCredential`
-  - new method `authenticate` authenticates a user, returns a serializable
-    `AuthenticationRecord`
+  - new method `authenticate` interactively authenticates a user, returns a
+    serializable `AuthenticationRecord`
   - new constructor keyword arguments
     - `authentication_record` enables initializing a credential with an
       `AuthenticationRecord` from a prior authentication
