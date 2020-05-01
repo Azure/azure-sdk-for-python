@@ -8,7 +8,7 @@
 - Added enqueueTime to span links of distributed tracing. #9599
 
 **Bug fixes**
-- Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` to an exclusive receiver when it has no checkpoint store. #11181
+- Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
 
 ## 5.1.0b1 (2020-04-06)
 
