@@ -340,7 +340,7 @@ class BatchMessage(object):
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.Message
         :rtype: None
-        :raises: :class:`ValueError`, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
         message_size = message.message.get_message_encoded_size()
 
