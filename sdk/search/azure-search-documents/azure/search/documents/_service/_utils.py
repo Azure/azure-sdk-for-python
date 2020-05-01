@@ -167,7 +167,11 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
         404: ResourceNotFoundError
     }
 
-    if not hasattr(model, 'e_tag'):
+    try:
+        _unicode_type = unicode
+    except NameError:
+        _unicode_type = str
+    if isinstance(model, _unicode_type):
         return (error_map, None)
 
     try:
