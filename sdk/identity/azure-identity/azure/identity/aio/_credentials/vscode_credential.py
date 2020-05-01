@@ -22,6 +22,7 @@ class VSCodeCredential(AsyncCredentialBase):
 
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
+        self._refresh_token = None
 
     async def __aenter__(self):
         if self._client:
@@ -54,9 +55,10 @@ class VSCodeCredential(AsyncCredentialBase):
         if token:
             return token
 
-        refresh_token = get_credentials()
-        if not refresh_token:
+        if not self._refresh_token:
+            self._refresh_token = get_credentials()
+        if not self._refresh_token:
             raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
 
-        token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
+        token = await self._client.obtain_token_by_refresh_token(self._refresh_token, scopes, **kwargs)
         return token
