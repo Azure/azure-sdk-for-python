@@ -70,10 +70,14 @@ def prepare_result(func):
             too_many_documents_error = too_many_documents_errors[0]
             response.status_code = 400
             response.reason = "Bad Request"
+            if hasattr(too_many_documents_error.error, 'innererror') and too_many_documents_error.error.innererror:
+                code = too_many_documents_error.error.innererror.code
+                message = too_many_documents_error.error.innererror.message
+            else:
+                code = too_many_documents_error.error.code
+                message = too_many_documents_error.error.message
             raise HttpResponseError(
-                message="({}) {}".format(
-                    too_many_documents_error.error.innererror.code, too_many_documents_error.error.innererror.message
-                ),
+                message="({}) {}".format(code, message),
                 response=response
             )
 
