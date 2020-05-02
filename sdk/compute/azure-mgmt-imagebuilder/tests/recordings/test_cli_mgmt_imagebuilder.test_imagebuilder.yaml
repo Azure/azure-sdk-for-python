@@ -5,9 +5,9 @@ interactions:
       "offer": "UbuntuServer", "sku": "16.04.0-LTS", "version": "latest"}, "customize":
       [{"name": "Shell Customizer Example", "type": "Shell", "scriptUri": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh"}],
       "distribute": [{"runOutputName": "image_it_pir_1", "artifactTags": {"tag_name":
-      "value"}, "type": "ManagedImage", "imageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Compute/images/MyImage",
+      "value"}, "type": "ManagedImage", "imageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.Compute/images/MyImage",
       "location": "eastus"}]}, "identity": {"type": "UserAssigned", "userAssignedIdentities":
-      {"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486":
+      {"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486":
       {}}}}\'''''
     headers:
       Accept:
@@ -26,7 +26,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
   response:
     body:
       string: "{\n \"properties\": {\n  \"source\": {\n   \"offer\": \"UbuntuServer\",\n
@@ -34,12 +34,12 @@ interactions:
         \"PlatformImage\",\n   \"version\": \"latest\"\n  },\n  \"customize\": [\n
         \  {\n    \"name\": \"Shell Customizer Example\",\n    \"scriptUri\": \"https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh\",\n
         \   \"type\": \"Shell\"\n   }\n  ],\n  \"distribute\": [\n   {\n    \"artifactTags\":
-        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Compute/images/MyImage\",\n
+        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.Compute/images/MyImage\",\n
         \   \"location\": \"eastus\",\n    \"runOutputName\": \"image_it_pir_1\",\n
         \   \"type\": \"ManagedImage\"\n   }\n  ],\n  \"provisioningState\": \"Creating\",\n
         \ \"buildTimeoutInMinutes\": 0\n },\n \"identity\": {\n  \"type\": \"UserAssigned\",\n
-        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
-        {}\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
+        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
+        {}\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
         \"name\": \"MyImageTemplate\",\n \"type\": \"Microsoft.VirtualMachineImages/imageTemplates\",\n
         \"location\": \"eastus\",\n \"tags\": {\n  \"imagetemplate_tag1\": \"IT_T1\",\n
         \ \"imagetemplate_tag2\": \"IT_T2\"\n }\n}"
@@ -127,7 +127,7 @@ interactions:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
         azure-mgmt-imagebuilder/0.4.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
   response:
     body:
       string: "{\n \"properties\": {\n  \"source\": {\n   \"offer\": \"UbuntuServer\",\n
@@ -136,13 +136,13 @@ interactions:
         [\n   {\n    \"name\": \"Shell Customizer Example\",\n    \"scriptUri\": \"https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh\",\n
         \   \"sha256Checksum\": \"6b1547639e28dd406aa3ab89b5fc156b88c8818ab831394050c37df792030752\",\n
         \   \"type\": \"Shell\"\n   }\n  ],\n  \"distribute\": [\n   {\n    \"artifactTags\":
-        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Compute/images/MyImage\",\n
+        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.Compute/images/MyImage\",\n
         \   \"location\": \"eastus\",\n    \"runOutputName\": \"image_it_pir_1\",\n
         \   \"type\": \"ManagedImage\"\n   }\n  ],\n  \"provisioningState\": \"Succeeded\",\n
         \ \"buildTimeoutInMinutes\": 0\n },\n \"identity\": {\n  \"type\": \"UserAssigned\",\n
-        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
+        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
         {\n    \"principalId\": \"760da34a-927f-4a26-bc5e-6c8c30f850cd\",\n    \"clientId\":
-        \"42b9d16f-302f-4c6c-95c3-dfe38076152a\"\n   }\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
+        \"42b9d16f-302f-4c6c-95c3-dfe38076152a\"\n   }\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
         \"name\": \"MyImageTemplate\",\n \"type\": \"Microsoft.VirtualMachineImages/imageTemplates\",\n
         \"location\": \"eastus\",\n \"tags\": {\n  \"imagetemplate_tag1\": \"IT_T1\",\n
         \ \"imagetemplate_tag2\": \"IT_T2\"\n }\n}"
@@ -187,7 +187,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
   response:
     body:
       string: "{\n \"properties\": {\n  \"source\": {\n   \"offer\": \"UbuntuServer\",\n
@@ -196,13 +196,13 @@ interactions:
         [\n   {\n    \"name\": \"Shell Customizer Example\",\n    \"scriptUri\": \"https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh\",\n
         \   \"sha256Checksum\": \"6b1547639e28dd406aa3ab89b5fc156b88c8818ab831394050c37df792030752\",\n
         \   \"type\": \"Shell\"\n   }\n  ],\n  \"distribute\": [\n   {\n    \"artifactTags\":
-        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Compute/images/MyImage\",\n
+        {\n     \"tag_name\": \"value\"\n    },\n    \"imageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.Compute/images/MyImage\",\n
         \   \"location\": \"eastus\",\n    \"runOutputName\": \"image_it_pir_1\",\n
         \   \"type\": \"ManagedImage\"\n   }\n  ],\n  \"provisioningState\": \"Succeeded\",\n
         \ \"buildTimeoutInMinutes\": 0\n },\n \"identity\": {\n  \"type\": \"UserAssigned\",\n
-        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
+        \ \"userAssignedIdentities\": {\n   \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1588309486\":
         {\n    \"principalId\": \"760da34a-927f-4a26-bc5e-6c8c30f850cd\",\n    \"clientId\":
-        \"42b9d16f-302f-4c6c-95c3-dfe38076152a\"\n   }\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
+        \"42b9d16f-302f-4c6c-95c3-dfe38076152a\"\n   }\n  }\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate\",\n
         \"name\": \"MyImageTemplate\",\n \"type\": \"Microsoft.VirtualMachineImages/imageTemplates\",\n
         \"location\": \"eastus\",\n \"tags\": {\n  \"imagetemplate_tag1\": \"IT_T1\",\n
         \ \"imagetemplate_tag2\": \"IT_T2\"\n }\n}"
@@ -249,7 +249,7 @@ interactions:
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/run?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/run?api-version=2020-02-14
   response:
     body:
       string: ''
@@ -911,11 +911,11 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/runOutputs/image_it_pir_1?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/runOutputs/image_it_pir_1?api-version=2020-02-14
   response:
     body:
-      string: "{\n \"properties\": {\n  \"artifactId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Compute/images/MyImage\",\n
-        \ \"provisioningState\": \"Succeeded\"\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/runOutputs/image_it_pir_1\",\n
+      string: "{\n \"properties\": {\n  \"artifactId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.Compute/images/MyImage\",\n
+        \ \"provisioningState\": \"Succeeded\"\n },\n \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate/runOutputs/image_it_pir_1\",\n
         \"name\": \"image_it_pir_1\",\n \"type\": \"Microsoft.VirtualMachineImages/imageTemplates/runOutputs\"\n}"
     headers:
       cache-control:
@@ -960,7 +960,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_imagebuilder_test_imagebuilder94cb11ec/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate?api-version=2020-02-14
   response:
     body:
       string: ''
