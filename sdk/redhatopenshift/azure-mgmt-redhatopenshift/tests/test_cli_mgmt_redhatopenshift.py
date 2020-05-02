@@ -39,7 +39,10 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             self.authorization_client = self.create_mgmt_client(
                 AuthorizationManagementClient
             )
-
+            from azure.mgmt.containerregistry import ContainerRegistryClient
+            self.acr_client = self.create_mgmt_client(
+                ContainerRegistryClient
+            )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
@@ -86,8 +89,19 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             "principal_type": "ServicePrincipal"
         }
         result = self.authorization_client.role_assignments.create(scope, role_assignment_name=name, parameters=BODY)
+        
+    def create_acr(self, group_name, registry_name, location):
+        registry = self.acr_client.registries.create(
+            resource_group_name=group_name,
+            registry_name=registry_name,
+            registry=Registry(
+                location=location,
+                sku=Sku(
+                    name="Premium"
+                )
+            )
+        )
 
-        print(str(result))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_redhatopenshift(self, resource_group):
@@ -111,6 +125,8 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
                          "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
                          "1fa638dc-b769-420d-b822-340abb216e77",
                          "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
+        self.create_acr(RESOURCE_GROUP, "acdr27837", "eastaustralia")
+        
         # /OpenShiftClusters/put/Creates or updates a OpenShift cluster with the specified subscription, resource group and resource name.[put]
         BODY = {
           "location": "australiaeast",
