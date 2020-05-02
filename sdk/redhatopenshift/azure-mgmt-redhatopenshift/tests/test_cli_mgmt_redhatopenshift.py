@@ -32,11 +32,14 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_v2020_04_30(self, resource_group):
+    def test_redhatopenshift(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "myResource"
+        VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
+        SUBNET_NAME = "mySubnet"
 
         # /OpenShiftClusters/put/Creates or updates a OpenShift cluster with the specified subscription, resource group and resource name.[put]
         BODY = {
@@ -59,14 +62,14 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           },
           "master_profile": {
             "vm_size": "Standard_D8s_v3",
-            "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworksvnet/subnetsmaster"
+            "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
           },
           "worker_profiles": [
             {
               "name": "worker",
               "vm_size": "Standard_D2s_v3",
               "disk_size_gb": "128",
-              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworksvnet/subnetsworker",
+              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + "",
               "count": "3"
             }
           ],
@@ -118,14 +121,14 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           },
           "master_profile": {
             "vm_size": "Standard_D8s_v3",
-            "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworksvnet/subnetsmaster"
+            "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
           },
           "worker_profiles": [
             {
               "name": "worker",
               "vm_size": "Standard_D2s_v3",
               "disk_size_gb": "128",
-              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworksvnet/subnetsworker",
+              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + "",
               "count": "3"
             }
           ],
