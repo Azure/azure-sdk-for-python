@@ -30,6 +30,16 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.redhatopenshift.AzureRedHatOpenShiftClient
         )
+        if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(
+                NetworkManagementClient
+            )
+            from azure.mgmt.authorization import AuthorizationManagementClient
+            self.authorization_client = self.create_mgmt_client(
+                AuthorizationManagementClient
+            )
+
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
@@ -49,11 +59,35 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           group_name,
           network_name,
           subnet_name,
-          {'address_prefix': '10.0.0.0/24'}
+          {'address_prefix': '10.0.0.0/24', "private_link_service_network_policies": "Disabled" }
       )
       subnet_info = async_subnet_creation.result()
       
       return subnet_info
+
+    def create_subnet(self, group_name, location, network_name, subnet_name):
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            group_name,
+            network_name,
+            subnet_name,
+            {'address_prefix': '10.0.1.0/24', "private_link_service_network_policies": "Disabled" }
+        )
+        subnet_info = async_subnet_creation.result()
+        return subnet_info
+
+    def assign_role(self,
+                    service_principal_id,
+                    scope,
+                    name,
+                    full_id):
+        BODY = {
+            "role_definition_id": full_id,
+            "principal_id": service_principal_id,
+            "principal_type": "ServicePrincipal"
+        }
+        result = self.authorization_client.role_assignments.create(scope, role_assignment_name=name, parameters=BODY)
+
+        print(str(result))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_redhatopenshift(self, resource_group):
@@ -64,23 +98,33 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         RESOURCE_NAME = "myResource"
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
+        SUBNET_NAME_2 = "mySubnet2"
 
-        SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
-
+        SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
+        SUBNET_2 = self.create_subnet(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME_2)
+        
+        self.assign_role(self.settings.SERVICE_PRINCIPAL_ID, # SP Object ID
+                         "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
+                         "1fa638dc-b769-420d-b822-340abb216e78",
+                         "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
+        self.assign_role(self.settings.ARO_SERVICE_PRINCIPAL_ID,
+                         "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
+                         "1fa638dc-b769-420d-b822-340abb216e77",
+                         "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
         # /OpenShiftClusters/put/Creates or updates a OpenShift cluster with the specified subscription, resource group and resource name.[put]
         BODY = {
-          "location": "location",
+          "location": "australiaeast",
           "tags": {
             "key": "value"
           },
           "cluster_profile": {
             "pull_secret": "{\"auths\":{\"registry.connect.redhat.com\":{\"auth\":\"\"},\"registry.redhat.io\":{\"auth\":\"\"}}}",
-            "domain": "cluster.location.aroapp.io",
+            "domain": "cluster.australiaeast.aroapp.io",
             "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + ""
           },
           "service_principal_profile": {
-            "client_id": "clientId",
-            "client_secret": "clientSecret"
+            "client_id": self.settings.CLIENT_ID,
+            "client_secret": self.settings.CLIENT_SECRET
           },
           "network_profile": {
             "pod_cidr": "10.128.0.0/14",
@@ -88,14 +132,14 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           },
           "master_profile": {
             "vm_size": "Standard_D8s_v3",
-            "subnet_id": SUBNET.id # "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
+            "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
           },
           "worker_profiles": [
             {
               "name": "worker",
-              "vm_size": "Standard_D2s_v3",
+              "vm_size": "Standard_D8s_v3",
               "disk_size_gb": "128",
-              "subnet_id": SUBNET.id # "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + "",
+              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME_2 + "",
               "count": "3"
             }
           ],
