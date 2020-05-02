@@ -644,7 +644,7 @@ class ReceivedMessage(PeekMessage):
         # type: () -> None
         """Abandon the message.
 
-        This message will be returned to the queue to be reprocessed.
+        This message will be returned to the queue and made available to be received again.
 
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
@@ -661,8 +661,8 @@ class ReceivedMessage(PeekMessage):
         # type: () -> None
         """Defer the message.
 
-        This message will remain in the queue but must be received
-        specifically by its sequence number in order to be processed.
+        This message will remain in the queue but must be requested
+        specifically by its sequence number in order to be received.
 
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.

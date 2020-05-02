@@ -94,7 +94,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
     async def abandon(self):
         # type: () -> None
-        """Abandon the message. This message will be returned to the queue and made available for re-receipt.
+        """Abandon the message. 
+        
+        This message will be returned to the queue and made available to be received again.
 
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
@@ -108,7 +110,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
     async def defer(self):
         # type: () -> None
-        """Defers the message, to be received via ~azure.servicebus.ServiceBusReceiver.receive_deferred_messages by sequence number
+        """Defers the message.
+        
+        This message will remain in the queue but must be requested
+        specifically by its sequence number in order to be received.
 
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
