@@ -6,7 +6,7 @@
 
 from uamqp import SendClientAsync
 from uamqp import authentication
-from uamqp import constants, types
+from uamqp import constants, types, errors
 
 from azure.servicebus.common.errors import MessageSendFailed
 from azure.servicebus.common import mgmt_handlers, mixins
@@ -93,8 +93,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
             message.properties.group_id = self.session_id
         try:
             await self._handler.send_message_async(message.message)
-        except Exception as e:  # pylint: disable=broad-except
-            raise MessageSendFailed(e)
+        except (errors.ConnectionClose,
+                errors.AuthenticationException,
+                errors.MessageHandlerError):
+            try:
+                await self.reconnect()
+            except Exception as e:  # pylint: disable=broad-except
+                raise MessageSendFailed(e)
 
     async def schedule(self, schedule_time, *messages):
         """Send one or more messages to be enqueued at a specific time.

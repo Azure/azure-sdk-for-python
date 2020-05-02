@@ -8,7 +8,7 @@ import logging
 
 from uamqp import SendClient
 from uamqp import authentication
-from uamqp import constants, types
+from uamqp import constants, types, errors
 
 from azure.servicebus.base_handler import BaseHandler
 from azure.servicebus.common.errors import MessageSendFailed
@@ -64,6 +64,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             connection=None, encoding='UTF-8', debug=False, **kwargs):
         self.name = "SBSender-{}".format(handler_id)
         self.session_id = session
+        self._retry_total = kwargs.get('retry_total', 3)
         super(Sender, self).__init__(
             target, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
 
@@ -101,10 +102,16 @@ class Sender(BaseHandler, mixins.SenderMixin):
             self.open()
         if self.session_id and not message.properties.group_id:
             message.properties.group_id = self.session_id
+
         try:
             self._handler.send_message(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        except (errors.ConnectionClose,
+                errors.AuthenticationException,
+                errors.MessageHandlerError):
+            try:
+                self.reconnect()
+            except Exception as e:  # pylint: disable=broad-except
+                raise MessageSendFailed(e)
 
     def schedule(self, schedule_time, *messages):
         """Send one or more messages to be enqueued at a specific time.

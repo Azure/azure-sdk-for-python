@@ -1195,3 +1195,27 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             messages = await receiver.fetch_next(timeout=120)
             assert len(messages) == 0
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_github_uamqp_issue_135(self, servicebus_namespace, servicebus_namespace_key_name,
+                                    servicebus_namespace_primary_key, servicebus_queue, **kwargs):
+        client = ServiceBusClient(
+            service_namespace=servicebus_namespace.name,
+            shared_access_key_name=servicebus_namespace_key_name,
+            shared_access_key_value=servicebus_namespace_primary_key,
+            debug=False)
+        queue_client = client.get_queue(servicebus_queue.name)
+        async with queue_client.get_sender() as sender:
+            await sender.send(Message("Test message"))
+            time.sleep(620)
+            await sender.send(Message("Test message"))
+
+        async with queue_client.get_receiver(prefetch=20) as receiver:
+            messages = await receiver.fetch_next(timeout=10)
+            assert len(messages) == 2
+            await messages[0].complete()
+            await messages[1].complete()

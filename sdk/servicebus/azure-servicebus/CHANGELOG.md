@@ -1,5 +1,12 @@
 # Release History
 
+## 0.50.3b1 (unreleased)
+
+**Features**
+
+* Added support for retry sending if connection gets closed due to long time inactivity.
+
+
 ## 0.50.2 (2019-12-9)
 
 **Features**
