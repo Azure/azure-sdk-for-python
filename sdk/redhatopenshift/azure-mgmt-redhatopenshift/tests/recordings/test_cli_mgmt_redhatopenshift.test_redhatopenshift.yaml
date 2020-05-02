@@ -1,0 +1,872 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "properties": {"addressSpace": {"addressPrefixes":
+      ["10.0.0.0/16"]}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '92'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
+        ,\r\n  \"etag\": \"W/\\\"97d42e78-4549-4dba-8105-8fb45483cb92\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
+        \   \"resourceGuid\": \"d932fc42-24e0-4baa-baee-1a8951a905d0\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
+        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
+        : false\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b688fdd9-48cf-479d-87f4-72b36f736a7b?api-version=2020-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '701'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - c3ae824f-2ad1-49f2-b474-ba63c3b5ac32
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b688fdd9-48cf-479d-87f4-72b36f736a7b?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 97137738-5b23-4cf7-8a82-1b0e67be05cc
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
+        ,\r\n  \"etag\": \"W/\\\"dc8d1134-7a65-4f84-b3f7-fcf71ec6191d\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"d932fc42-24e0-4baa-baee-1a8951a905d0\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
+        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
+        : false\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '702'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:42 GMT
+      etag:
+      - W/"dc8d1134-7a65-4f84-b3f7-fcf71ec6191d"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 99f3edb2-6593-40f0-b59c-355a7b03cda8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"addressPrefix": "10.0.0.0/24", "serviceEndpoints": [{"service":
+      "Microsoft.ContainerRegistry"}], "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Disabled"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
+        ,\r\n  \"etag\": \"W/\\\"1745488e-6185-4cac-95a2-8aed9e98c819\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
+        addressPrefix\": \"10.0.0.0/24\",\r\n    \"serviceEndpoints\": [\r\n     \
+        \ {\r\n        \"provisioningState\": \"Updating\",\r\n        \"service\"\
+        : \"Microsoft.ContainerRegistry\",\r\n        \"locations\": [\r\n       \
+        \   \"*\"\r\n        ]\r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n\
+        \    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\"\
+        : \"Disabled\"\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b0925f4c-5ce5-4ee6-878c-5b843fedf1a3?api-version=2020-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '778'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 4c4d5450-5719-4481-a549-3d09ca6c2324
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b0925f4c-5ce5-4ee6-878c-5b843fedf1a3?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 2dae9e5c-7a5d-4e09-b217-34afa0520630
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
+        ,\r\n  \"etag\": \"W/\\\"aa5a15f5-2fdb-4572-bfdb-163d08a7c347\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.0.0.0/24\",\r\n    \"serviceEndpoints\": [\r\n     \
+        \ {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"service\"\
+        : \"Microsoft.ContainerRegistry\",\r\n        \"locations\": [\r\n       \
+        \   \"*\"\r\n        ]\r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n\
+        \    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\"\
+        : \"Disabled\"\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '780'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:46 GMT
+      etag:
+      - W/"aa5a15f5-2fdb-4572-bfdb-163d08a7c347"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 6af714a0-8e1f-45f2-868a-d0ea0c4db0c8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"addressPrefix": "10.0.1.0/24", "serviceEndpoints": [{"service":
+      "Microsoft.ContainerRegistry"}], "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Disabled"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"mySubnet2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2\"\
+        ,\r\n  \"etag\": \"W/\\\"6b23e630-4c16-45d6-aa26-04fd3e781fef\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
+        addressPrefix\": \"10.0.1.0/24\",\r\n    \"serviceEndpoints\": [\r\n     \
+        \ {\r\n        \"provisioningState\": \"Updating\",\r\n        \"service\"\
+        : \"Microsoft.ContainerRegistry\",\r\n        \"locations\": [\r\n       \
+        \   \"*\"\r\n        ]\r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n\
+        \    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\"\
+        : \"Disabled\"\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7e6adbcb-6c72-4dc6-95cb-5562399fbe75?api-version=2020-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '780'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - ccbc5746-e5b3-474d-a0e4-b5e0063652fb
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7e6adbcb-6c72-4dc6-95cb-5562399fbe75?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - bba7aa20-a058-4f94-8b88-d91c326a7e0c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"mySubnet2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2\"\
+        ,\r\n  \"etag\": \"W/\\\"3e5155c9-4b8a-43f6-836f-645808d441fc\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.0.1.0/24\",\r\n    \"serviceEndpoints\": [\r\n     \
+        \ {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"service\"\
+        : \"Microsoft.ContainerRegistry\",\r\n        \"locations\": [\r\n       \
+        \   \"*\"\r\n        ]\r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n\
+        \    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\"\
+        : \"Disabled\"\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '782'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:51 GMT
+      etag:
+      - W/"3e5155c9-4b8a-43f6-836f-645808d441fc"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 7aa2afff-c852-40c4-a6e2-43808802d6e0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2?api-version=2020-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"mySubnet2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2\"\
+        ,\r\n  \"etag\": \"W/\\\"3e5155c9-4b8a-43f6-836f-645808d441fc\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.0.1.0/24\",\r\n    \"serviceEndpoints\": [\r\n     \
+        \ {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"service\"\
+        : \"Microsoft.ContainerRegistry\",\r\n        \"locations\": [\r\n       \
+        \   \"*\"\r\n        ]\r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n\
+        \    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\"\
+        : \"Disabled\"\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '782'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:51 GMT
+      etag:
+      - W/"3e5155c9-4b8a-43f6-836f-645808d441fc"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - ecda22d8-1b8b-40e0-bb04-ee3ba41b200d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"properties": {"roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "principalId": "20d81029-94cd-4923-a766-994415ff73bd", "principalType": "ServicePrincipal"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '270'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-authorization/0.52.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/providers/Microsoft.Authorization/roleAssignments/1fa638dc-b769-420d-b822-340abb216e78?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"20d81029-94cd-4923-a766-994415ff73bd","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork","createdOn":"2020-05-02T15:04:52.8410481Z","updatedOn":"2020-05-02T15:04:52.8410481Z","createdBy":null,"updatedBy":"20d81029-94cd-4923-a766-994415ff73bd"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/providers/Microsoft.Authorization/roleAssignments/1fa638dc-b769-420d-b822-340abb216e78","type":"Microsoft.Authorization/roleAssignments","name":"1fa638dc-b769-420d-b822-340abb216e78"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '989'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:04:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; SameSite=None; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: 'b''{"properties": {"roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "principalId": "50c17c64-bc11-4fdd-a339-0ecd396bf911", "principalType": "ServicePrincipal"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '270'
+      Content-Type:
+      - application/json; charset=utf-8
+      Cookie:
+      - x-ms-gateway-slice=Production
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-authorization/0.52.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/providers/Microsoft.Authorization/roleAssignments/1fa638dc-b769-420d-b822-340abb216e77?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"50c17c64-bc11-4fdd-a339-0ecd396bf911","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork","createdOn":"2020-05-02T15:04:58.4811469Z","updatedOn":"2020-05-02T15:04:58.4811469Z","createdBy":null,"updatedBy":"20d81029-94cd-4923-a766-994415ff73bd"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/providers/Microsoft.Authorization/roleAssignments/1fa638dc-b769-420d-b822-340abb216e77","type":"Microsoft.Authorization/roleAssignments","name":"1fa638dc-b769-420d-b822-340abb216e77"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '989'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:05:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; HttpOnly; SameSite=None
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"location": "westus", "sku": {"name": "Premium"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc7 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.ContainerRegistry/registries/acdr27837?api-version=2019-05-01
+  response:
+    body:
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.ContainerRegistry/registries/acdr27837","name":"acdr27837","location":"westus","tags":{},"properties":{"loginServer":"acdr27837.azurecr.io","creationDate":"2020-05-02T15:05:14.3601113Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2020-05-02T15:05:16.2931867+00:00","status":"disabled"}},"dataEndpointHostNames":[],"privateEndpointConnections":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '835'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 02 May 2020 15:05:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"tags": {"key": "value"}, "location": "australiaeast", "properties":
+      {"clusterProfile": {"pullSecret": "{\\"auths\\":{\\"registry.connect.redhat.com\\":{\\"auth\\":\\"\\"},\\"registry.redhat.io\\":{\\"auth\\":\\"\\"}}}",
+      "domain": "cluster.australiaeast.aroapp.io", "resourceGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8"},
+      "servicePrincipalProfile": {"clientId": "5f27a805-7ee7-4f96-a47e-ae04821aef22",
+      "clientSecret": "uGd1C5fkykm90LJTxHgIb8v1RhZRkdXP532XzBaAgaE="}, "networkProfile":
+      {"podCidr": "10.128.0.0/14", "serviceCidr": "172.30.0.0/16"}, "masterProfile":
+      {"vmSize": "Standard_D8s_v3", "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet"},
+      "workerProfiles": [{"name": "worker", "vmSize": "Standard_D8s_v3", "diskSizeGB":
+      128, "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2",
+      "count": 3}], "apiserverProfile": {"visibility": "Public"}, "ingressProfiles":
+      [{"name": "default", "visibility": "Public"}]}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1323'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-redhatopenshift/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.RedHatOpenShift/openShiftClusters/myResource?api-version=2020-04-30
+  response:
+    body:
+      string: "{\n    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.RedHatOpenShift/openShiftClusters/myResource\"\
+        ,\n    \"name\": \"myResource\",\n    \"type\": \"Microsoft.RedHatOpenShift/openShiftClusters\"\
+        ,\n    \"location\": \"australiaeast\",\n    \"tags\": {\n        \"key\"\
+        : \"value\"\n    },\n    \"properties\": {\n        \"provisioningState\"\
+        : \"Creating\",\n        \"clusterProfile\": {\n            \"domain\": \"\
+        cluster.australiaeast.aroapp.io\",\n            \"version\": \"4.3.13\",\n\
+        \            \"resourceGroupId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8\"\
+        \n        },\n        \"consoleProfile\": {},\n        \"servicePrincipalProfile\"\
+        : {\n            \"clientId\": \"5f27a805-7ee7-4f96-a47e-ae04821aef22\"\n\
+        \        },\n        \"networkProfile\": {\n            \"podCidr\": \"10.128.0.0/14\"\
+        ,\n            \"serviceCidr\": \"172.30.0.0/16\"\n        },\n        \"\
+        masterProfile\": {\n            \"vmSize\": \"Standard_D8s_v3\",\n       \
+        \     \"subnetId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
+        \n        },\n        \"workerProfiles\": [\n            {\n             \
+        \   \"name\": \"worker\",\n                \"vmSize\": \"Standard_D8s_v3\"\
+        ,\n                \"diskSizeGB\": 128,\n                \"subnetId\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet2\"\
+        ,\n                \"count\": 3\n            }\n        ],\n        \"apiserverProfile\"\
+        : {\n            \"visibility\": \"Public\"\n        },\n        \"ingressProfiles\"\
+        : [\n            {\n                \"name\": \"default\",\n             \
+        \   \"visibility\": \"Public\"\n            }\n        ]\n    }\n}\n"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.redhatopenshift/locations/australiaeast/operationsstatus/f76f6a23-7a42-4150-8137-d12cd7a901ff?api-version=2020-04-30
+      cache-control:
+      - no-cache
+      content-length:
+      - '1954'
+      content-type:
+      - application/json
+      date:
+      - Sat, 02 May 2020 15:05:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-redhatopenshift/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.redhatopenshift/locations/australiaeast/operationsstatus/f76f6a23-7a42-4150-8137-d12cd7a901ff?api-version=2020-04-30
+  response:
+    body:
+      string: "{\n    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.redhatopenshift/locations/australiaeast/operationsstatus/f76f6a23-7a42-4150-8137-d12cd7a901ff\"\
+        ,\n    \"name\": \"f76f6a23-7a42-4150-8137-d12cd7a901ff\",\n    \"startTime\"\
+        : \"2020-05-02T15:05:24.914701634Z\",\n    \"status\": \"Creating\"\n}\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '311'
+      content-type:
+      - application/json
+      date:
+      - Sat, 02 May 2020 15:05:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-redhatopenshift/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.redhatopenshift/locations/australiaeast/operationsstatus/f76f6a23-7a42-4150-8137-d12cd7a901ff?api-version=2020-04-30
+  response:
+    body:
+      string: "{\n    \"endTime\": \"2020-05-02T15:05:58.573585889Z\",\n    \"error\"\
+        : {\n        \"code\": \"InternalServerError\",\n        \"message\": \"Internal\
+        \ server error.\"\n    },\n    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.redhatopenshift/locations/australiaeast/operationsstatus/f76f6a23-7a42-4150-8137-d12cd7a901ff\"\
+        ,\n    \"name\": \"f76f6a23-7a42-4150-8137-d12cd7a901ff\",\n    \"startTime\"\
+        : \"2020-05-02T15:05:24.914701634Z\",\n    \"status\": \"Failed\"\n}\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '463'
+      content-type:
+      - application/json
+      date:
+      - Sat, 02 May 2020 15:06:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
