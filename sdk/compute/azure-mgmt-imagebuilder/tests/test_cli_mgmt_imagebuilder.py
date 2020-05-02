@@ -27,6 +27,10 @@ IMAGE_TEMPLATE_NAME = "MyImageTemplate"
 IMAGE_NAME = 'MyImage'
 RUN_OUTPUT_NAME = 'image_it_pir_1'
 
+# make sure to create user identity with this doc before running live test: https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#step-2--permissions-create-user-idenity-and-role-for-aib
+IDENTITY_NAME = 'aibIdentity1588309486'
+IDENTITY_PRINCIPAL_ID = "760da34a-927f-4a26-bc5e-6c8c30f850cd"
+
 class MgmtImageBuilderClientTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -37,13 +41,17 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_imagebuilder(self, resource_group):
-
         # Create an Image Template.[put]
+        
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "tags": {
             "imagetemplate_tag1": "IT_T1",
             "imagetemplate_tag2": "IT_T2"
+          },
+          "identity": {
+            "type": "UserAssigned",
+            "user_assigned_identities": { "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{}".format(self.settings.SUBSCRIPTION_ID, resource_group.name, IDENTITY_NAME): {"principalId": IDENTITY_PRINCIPAL_ID}}
           },
           "properties": {
             "source": {
@@ -83,14 +91,14 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
 
         # Create an Image Template with a user assigned identity configured[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "tags": {
             "imagetemplate_tag1": "IT_T1",
             "imagetemplate_tag2": "IT_T2"
           },
           "identity": {
             "type": "UserAssigned",
-            "user_assigned_identities": {}
+            "user_assigned_identities": {"principalId": "760da34a-927f-4a26-bc5e-6c8c30f850cd"}
           },
           "properties": {
             "source": {
