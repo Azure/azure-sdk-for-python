@@ -12,6 +12,45 @@
 from enum import Enum
 
 
+class IPAction(str, Enum):
+
+    accept = "Accept"
+    reject = "Reject"
+
+
+class SkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class SkuTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class KeySource(str, Enum):
+
+    microsoft_key_vault = "Microsoft.KeyVault"
+
+
+class NetworkRuleIPAction(str, Enum):
+
+    allow = "Allow"
+
+
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class AccessRights(str, Enum):
 
     manage = "Manage"
@@ -66,26 +105,3 @@ class EntityStatus(str, Enum):
     deleting = "Deleting"
     renaming = "Renaming"
     unknown = "Unknown"
-
-
-class SkuName(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class SkuTier(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class NetworkRuleIPAction(str, Enum):
-
-    allow = "Allow"
-
-
-class DefaultAction(str, Enum):
-
-    allow = "Allow"
-    deny = "Deny"
