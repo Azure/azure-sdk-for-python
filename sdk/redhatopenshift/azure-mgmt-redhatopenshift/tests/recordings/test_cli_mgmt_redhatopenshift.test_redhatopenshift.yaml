@@ -657,8 +657,8 @@ interactions:
     body: 'b''{"tags": {"key": "value"}, "location": "australiaeast", "properties":
       {"clusterProfile": {"pullSecret": "", "domain": "ab0176mx", "resourceGroupId":
       "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx"},
-      "servicePrincipalProfile": {"clientId": "5f27a805-7ee7-4f96-a47e-ae04821aef22",
-      "clientSecret": "xxx"}, "networkProfile":
+      "servicePrincipalProfile": {"clientId": "00000000-0000-0000-000000000000",
+      "clientSecret": "xxxxxxxx"}, "networkProfile":
       {"podCidr": "10.128.0.0/14", "serviceCidr": "172.30.0.0/16"}, "masterProfile":
       {"vmSize": "Standard_D8s_v3", "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet"},
       "workerProfiles": [{"name": "worker", "vmSize": "Standard_D4s_v3", "diskSizeGB":
@@ -693,7 +693,7 @@ interactions:
         ab0176mx\",\n            \"version\": \"4.3.13\",\n            \"resourceGroupId\"\
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx\"\
         \n        },\n        \"consoleProfile\": {},\n        \"servicePrincipalProfile\"\
-        : {\n            \"clientId\": \"5f27a805-7ee7-4f96-a47e-ae04821aef22\"\n\
+        : {\n            \"clientId\": \"00000000-0000-0000-000000000000\"\n\
         \        },\n        \"networkProfile\": {\n            \"podCidr\": \"10.128.0.0/14\"\
         ,\n            \"serviceCidr\": \"172.30.0.0/16\"\n        },\n        \"\
         masterProfile\": {\n            \"vmSize\": \"Standard_D8s_v3\",\n       \
@@ -3551,7 +3551,7 @@ interactions:
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx\"\
         \n        },\n        \"consoleProfile\": {\n            \"url\": \"https://console-openshift-console.apps.ab0176mx.australiaeast.aroapp.io/\"\
         \n        },\n        \"servicePrincipalProfile\": {\n            \"clientId\"\
-        : \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n        },\n        \"networkProfile\"\
+        : \"00000000-0000-0000-000000000000\"\n        },\n        \"networkProfile\"\
         : {\n            \"podCidr\": \"10.128.0.0/14\",\n            \"serviceCidr\"\
         : \"172.30.0.0/16\"\n        },\n        \"masterProfile\": {\n          \
         \  \"vmSize\": \"Standard_D8s_v3\",\n            \"subnetId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet\"\
@@ -3616,7 +3616,7 @@ interactions:
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx\"\
         \n        },\n        \"consoleProfile\": {\n            \"url\": \"https://console-openshift-console.apps.ab0176mx.australiaeast.aroapp.io/\"\
         \n        },\n        \"servicePrincipalProfile\": {\n            \"clientId\"\
-        : \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n        },\n        \"networkProfile\"\
+        : \"00000000-0000-0000-000000000000\"\n        },\n        \"networkProfile\"\
         : {\n            \"podCidr\": \"10.128.0.0/14\",\n            \"serviceCidr\"\
         : \"172.30.0.0/16\"\n        },\n        \"masterProfile\": {\n          \
         \  \"vmSize\": \"Standard_D8s_v3\",\n            \"subnetId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet\"\
@@ -3705,8 +3705,8 @@ interactions:
 - request:
     body: 'b''{"tags": {"key": "value"}, "properties": {"clusterProfile": {"pullSecret":
       "", "domain": "ab0176mx", "resourceGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx"},
-      "servicePrincipalProfile": {"clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-      "clientSecret": "xxx"}, "networkProfile":
+      "servicePrincipalProfile": {"clientId": "00000000-0000-0000-000000000000",
+      "clientSecret": "xxxxxxxx"}, "networkProfile":
       {"podCidr": "10.128.0.0/14", "serviceCidr": "172.30.0.0/16"}, "masterProfile":
       {"vmSize": "Standard_D8s_v3", "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet"},
       "workerProfiles": [{"vmSize": "Standard_D4s_v3", "diskSizeGB": 128, "subnetId":
@@ -3742,7 +3742,7 @@ interactions:
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx\"\
         \n        },\n        \"consoleProfile\": {\n            \"url\": \"https://console-openshift-console.apps.ab0176mx.australiaeast.aroapp.io/\"\
         \n        },\n        \"servicePrincipalProfile\": {\n            \"clientId\"\
-        : \"5f27a805-7ee7-4f96-a47e-ae04821aef22\"\n        },\n        \"networkProfile\"\
+        : \"00000000-0000-0000-000000000000\"\n        },\n        \"networkProfile\"\
         : {\n            \"podCidr\": \"10.128.0.0/14\",\n            \"serviceCidr\"\
         : \"172.30.0.0/16\"\n        },\n        \"masterProfile\": {\n          \
         \  \"vmSize\": \"Standard_D8s_v3\",\n            \"subnetId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet\"\
@@ -3853,7 +3853,7 @@ interactions:
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aro-ab0176mx\"\
         \n        },\n        \"consoleProfile\": {\n            \"url\": \"https://console-openshift-console.apps.ab0176mx.australiaeast.aroapp.io/\"\
         \n        },\n        \"servicePrincipalProfile\": {\n            \"clientId\"\
-        : \"5f27a805-7ee7-4f96-a47e-ae04821aef22\"\n        },\n        \"networkProfile\"\
+        : \"00000000-0000-0000-000000000000\"\n        },\n        \"networkProfile\"\
         : {\n            \"podCidr\": \"10.128.0.0/14\",\n            \"serviceCidr\"\
         : \"172.30.0.0/16\"\n        },\n        \"masterProfile\": {\n          \
         \  \"vmSize\": \"Standard_D8s_v3\",\n            \"subnetId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_redhatopenshift_test_redhatopenshifte6314a8/providers/Microsoft.Network/virtualNetworks/myvirtualnetwork/subnets/mysubnet\"\

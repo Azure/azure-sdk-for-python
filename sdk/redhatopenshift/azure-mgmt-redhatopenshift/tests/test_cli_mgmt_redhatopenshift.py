@@ -109,17 +109,24 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         SUBNET_NAME = "mysubnet"
         SUBNET_NAME_2 = "mysubnet2"
 
-        SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
-        SUBNET_2 = self.create_subnet(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME_2)
-        
-        self.assign_role(self.settings.SERVICE_PRINCIPAL_ID, # SP Object ID
-                         "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
-                         "1fa638dc-b769-420d-b822-340abb216e78",
-                         "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
-        self.assign_role(self.settings.ARO_SERVICE_PRINCIPAL_ID,
-                         "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
-                         "1fa638dc-b769-420d-b822-340abb216e77",
-                         "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
+        if self.is_live:
+          SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
+          SUBNET_2 = self.create_subnet(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME_2)
+          
+          self.assign_role(self.settings.SERVICE_PRINCIPAL_ID, # SP Object ID
+                          "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
+                          "1fa638dc-b769-420d-b822-340abb216e78",
+                          "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
+          self.assign_role(self.settings.ARO_SERVICE_PRINCIPAL_ID,
+                          "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME,
+                          "1fa638dc-b769-420d-b822-340abb216e77",
+                          "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
+          CLIENT_ID = self.settings.CLIENT_ID
+          CLIENT_SECRET = self.settings.CLIENT_SECRET
+          self.be_careful_with_service_principal
+        else:
+          CLIENT_ID = "00000000-0000-0000-0000-000000000000"
+          CLIENT_SECRET = "xxxxxxxx"
 
         # /OpenShiftClusters/put/Creates or updates a OpenShift cluster with the specified subscription, resource group and resource name.[put]
         BODY = {
@@ -133,8 +140,8 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + "aro-ab0176mx"
           },
           "service_principal_profile": {
-            "client_id": self.settings.CLIENT_ID,
-            "client_secret": self.settings.CLIENT_SECRET
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
           },
           "network_profile": {
             "pod_cidr": "10.128.0.0/14",
@@ -192,8 +199,8 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + "aro-ab0176mx"
           },
           "service_principal_profile": {
-            "client_id": self.settings.CLIENT_ID,
-            "client_secret": self.settings.CLIENT_SECRET
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
           },
           "network_profile": {
             "pod_cidr": "10.128.0.0/14",
