@@ -97,117 +97,6 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         }
         result = self.authorization_client.role_assignments.create(scope, role_assignment_name=name, parameters=BODY)
 
-    def create_private_endpoint(self, subscription_id, group_name, name, vnet_name, subnet_name, registry_name):
-
-        # Create load balancer
-        LOAD_BALANCER = "testlb"
-        BODY = {
-          "location": AZURE_LOCATION,
-          "sku": {
-            "name": "Standard"
-          },
-            "frontend_ip_configurations": [
-              {
-                "name": "fipconfig",
-                  "subnet": {
-                    "id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/virtualNetworks/" + vnet_name + "/subnets/" + subnet_name
-                  }
-              }
-            ],
-        }
-
-        result = self.network_client.load_balancers.create_or_update(group_name, LOAD_BALANCER, BODY)
-        result.result()
-
-        
-        # Create private link services
-        PRIVATE_LINK_SERVICES = "privatelinkservice"
-        BODY = {
-          "location": AZURE_LOCATION,
-          "visibility": {
-            "subscriptions": [
-              subscription_id
-            ]
-          },
-          "auto_approval": {
-            "subscriptions": [
-              subscription_id
-            ]
-          },
-          "fqdns": [
-            # "fqdn1",
-            # "fqdn2",
-            # "fqdn3"
-          ],
-          "load_balancer_frontend_ip_configurations": [
-             {
-               "id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + "fipconfig",
-             }
-           ],
-          "ip_configurations": [
-            {
-              "name": "configname",
-              "properties": {
-                "private_ip_address": "10.0.0.5",
-                "private_ip_allocation_method": "Static",
-                "private_ip_address_version": "IPv4",
-                "subnet": {
-                  "id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/virtualNetworks/" + vnet_name + "/subnets/" + subnet_name
-                }
-              }
-            }
-          ]
-        }
-        result = self.network_client.private_link_services.create_or_update(group_name, PRIVATE_LINK_SERVICES, BODY)
-
-        
-        BODY = {
-          "location": AZURE_LOCATION,
-          # "private_link_service_connections": [
-          #  #{
-          #  #  "name": "privatelinkservices",
-          #  #  # TODO: This is needed, but was not showed in swagger.
-          #  #  "private_link_service_id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/privateLinkServices/" + PRIVATE_LINK_SERVICES,
-          #  #},
-          #  {
-          #    "name": "acrconnection",
-          #    "private_link_service_id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.ContainerRegistry/registries/" + registry_name + "",
-          #    "group_ids": [ "xxxxxxxxxxx" ]
-          #  }
-          #],
-          "subnet": {
-            "id": "/subscriptions/" + subscription_id + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/virtualNetworks/" + vnet_name + "/subnets/" + subnet_name
-          }
-        }
-
-        endpoint = self.network_client.private_endpoints.create_or_update(
-                resource_group_name=group_name,
-                private_endpoint_name=name,
-                parameters=BODY
-        )
-
-        return endpoint.id
-
-        
-    def create_acr(self, group_name, registry_name, location, private_endpoint_id):
-        registry = self.acr_client.registries.create(
-            resource_group_name=group_name,
-            registry_name=registry_name,
-            registry={
-              "location": location,
-              "sku": {
-                "name": "Premium"
-              }
-            }
-        )
-
-        #private_endpoint = self.acr_client.private_endpoint_connections.create_or_update(
-        #        group_name,
-        #        registry_name,
-        #        endpoint_name,
-        #        { "id": private_endpoint_id }
-        #)
-
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_redhatopenshift(self, resource_group):
@@ -215,10 +104,10 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        RESOURCE_NAME = "myResource"
-        VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
-        SUBNET_NAME = "mySubnet"
-        SUBNET_NAME_2 = "mySubnet2"
+        RESOURCE_NAME = "zimsclusterxx"
+        VIRTUAL_NETWORK_NAME = "myvirtualnetwork"
+        SUBNET_NAME = "mysubnet"
+        SUBNET_NAME_2 = "mysubnet2"
 
         SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
         SUBNET_2 = self.create_subnet(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME_2)
@@ -232,15 +121,6 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
                          "1fa638dc-b769-420d-b822-340abb216e77",
                          "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + "b24988ac-6180-42a0-ab88-20f7382dd24c")
 
-        self.create_acr(RESOURCE_GROUP, "acdr27837", "westus", None) #endpoint_id)
-        #endpoint_id = self.create_private_endpoint(SUBSCRIPTION_ID,
-        #                                           RESOURCE_GROUP,
-        #                                           "endpoint123",
-        #                                           VIRTUAL_NETWORK_NAME,
-        #                                           SUBNET_NAME_2,
-        #                                           "acdr27837")
-        # self.create_acr(RESOURCE_GROUP, "acdr27837", "westus", endpoint_id)
-        
         # /OpenShiftClusters/put/Creates or updates a OpenShift cluster with the specified subscription, resource group and resource name.[put]
         BODY = {
           "location": "australiaeast",
@@ -248,9 +128,9 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             "key": "value"
           },
           "cluster_profile": {
-            "pull_secret": "{\"auths\":{\"registry.connect.redhat.com\":{\"auth\":\"\"},\"registry.redhat.io\":{\"auth\":\"\"}}}",
-            "domain": "cluster.australiaeast.aroapp.io",
-            "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + ""
+            "pull_secret": "",
+            "domain": "ab0176mx",
+            "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + "aro-ab0176mx"
           },
           "service_principal_profile": {
             "client_id": self.settings.CLIENT_ID,
@@ -267,7 +147,7 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           "worker_profiles": [
             {
               "name": "worker",
-              "vm_size": "Standard_D8s_v3",
+              "vm_size": "Standard_D4s_v3",
               "disk_size_gb": "128",
               "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME_2 + "",
               "count": "3"
@@ -328,7 +208,7 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
               "name": "worker",
               "vm_size": "Standard_D2s_v3",
               "disk_size_gb": "128",
-              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + "",
+              "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME_2 + "",
               "count": "3"
             }
           ],
