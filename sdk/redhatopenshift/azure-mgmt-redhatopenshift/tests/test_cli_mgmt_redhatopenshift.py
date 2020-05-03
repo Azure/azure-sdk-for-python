@@ -21,7 +21,7 @@ import unittest
 import azure.mgmt.redhatopenshift
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'australiaeast'
 
 class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
 
@@ -187,13 +187,13 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
             "key": "value"
           },
           "cluster_profile": {
-            "pull_secret": "{\"auths\":{\"registry.connect.redhat.com\":{\"auth\":\"\"},\"registry.redhat.io\":{\"auth\":\"\"}}}",
-            "domain": "cluster.location.aroapp.io",
-            "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + ""
+            "pull_secret": "",
+            "domain": "ab0176mx",
+            "resource_group_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + "aro-ab0176mx"
           },
           "service_principal_profile": {
-            "client_id": "clientId",
-            "client_secret": "clientSecret"
+            "client_id": self.settings.CLIENT_ID,
+            "client_secret": self.settings.CLIENT_SECRET
           },
           "network_profile": {
             "pod_cidr": "10.128.0.0/14",
@@ -205,8 +205,8 @@ class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
           },
           "worker_profiles": [
             {
-              "name": "worker",
-              "vm_size": "Standard_D2s_v3",
+              # "name": "worker",
+              "vm_size": "Standard_D4s_v3",
               "disk_size_gb": "128",
               "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME_2 + "",
               "count": "3"
