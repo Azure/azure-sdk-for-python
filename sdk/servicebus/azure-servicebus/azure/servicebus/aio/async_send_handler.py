@@ -100,6 +100,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
                 await self.reconnect()
             except Exception as e:  # pylint: disable=broad-except
                 raise MessageSendFailed(e)
+        except Exception as e:  # pylint: disable=broad-except
+            raise MessageSendFailed(e)
 
     async def schedule(self, schedule_time, *messages):
         """Send one or more messages to be enqueued at a specific time.
