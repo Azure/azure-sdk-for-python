@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b6 (05-04-2020)
 
 - `link` and `link_from_headers` now accept attributes.
 
