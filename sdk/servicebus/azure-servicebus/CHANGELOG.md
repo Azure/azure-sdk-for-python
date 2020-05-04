@@ -23,7 +23,7 @@
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 * Updated uAMQP dependency to 1.2.7.
     * Fixed bug in setting certificate of tlsio on MacOS. #7201
-    * Fixed bug that caused segmentation fault in logging when setting `logging_enable` to `True` in `ServiceBusClient` on MacOS.
+    * Fixed bug that caused segmentation fault in network tacking when setting `logging_enable` to `True` in `ServiceBusClient` on MacOS.
 
 **Breaking Changes**
 
