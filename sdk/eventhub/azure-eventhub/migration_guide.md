@@ -53,8 +53,8 @@ The process of building event batches is more transparent with `send_batch` of V
 ## Migration samples
 
 * [Receiving events](#migrating-code-from-eventhubclient-and-asyncreceiver-to-eventhubconsumerclient-for-receiving-events)
-* [Receiving events with checkpointing](#migrating-code-from-eventhubclient-and-asyncsender-to-eventhubproducerclient-for-sending-events)
-* [Sending events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
+* [Receiving events with checkpointing](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
+* [Sending events](#migrating-code-from-eventhubclient-and-asyncsender-to-eventhubproducerclient-for-sending-events)
 
 ### Migrating code from `EventHubClient` and `AsyncReceiver` to `EventHubConsumerClient` for receiving events
 
