@@ -41,14 +41,17 @@ class SignalROperations(object):
         self.config = config
 
     def check_name_availability(
-            self, location, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, location, type, name, custom_headers=None, raw=False, **operation_config):
         """Checks that the SignalR name is valid and is not already in use.
 
         :param location: the region
         :type location: str
-        :param parameters: Parameters supplied to the operation.
-        :type parameters:
-         ~azure.mgmt.signalr.models.NameAvailabilityParameters
+        :param type: The resource type. Should be always
+         "Microsoft.SignalRService/SignalR".
+        :type type: str
+        :param name: The SignalR service name to validate.
+         e.g."my-signalR-name-here"
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -60,6 +63,10 @@ class SignalROperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.signalr.models.ErrorResponseException>`
         """
+        parameters = None
+        if type is not None or name is not None:
+            parameters = models.NameAvailabilityParameters(type=type, name=name)
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -306,7 +313,11 @@ class SignalROperations(object):
 
 
     def _regenerate_key_initial(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, key_type=None, custom_headers=None, raw=False, **operation_config):
+        parameters = None
+        if key_type is not None:
+            parameters = models.RegenerateKeyParameters(key_type=key_type)
+
         # Construct URL
         url = self.regenerate_key.metadata['url']
         path_format_arguments = {
@@ -356,7 +367,7 @@ class SignalROperations(object):
         return deserialized
 
     def regenerate_key(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, key_type=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Regenerate SignalR service access key. PrimaryKey and SecondaryKey
         cannot be regenerated at the same time.
 
@@ -366,9 +377,10 @@ class SignalROperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the SignalR resource.
         :type resource_name: str
-        :param parameters: Parameter that describes the Regenerate Key
-         Operation.
-        :type parameters: ~azure.mgmt.signalr.models.RegenerateKeyParameters
+        :param key_type: The keyType to regenerate. Must be either 'primary'
+         or 'secondary'(case-insensitive). Possible values include: 'Primary',
+         'Secondary'
+        :type key_type: str or ~azure.mgmt.signalr.models.KeyType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -386,7 +398,7 @@ class SignalROperations(object):
         raw_result = self._regenerate_key_initial(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            parameters=parameters,
+            key_type=key_type,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
