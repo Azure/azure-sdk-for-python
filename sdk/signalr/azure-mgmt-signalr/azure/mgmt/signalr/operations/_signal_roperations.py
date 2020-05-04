@@ -41,17 +41,14 @@ class SignalROperations(object):
         self.config = config
 
     def check_name_availability(
-            self, location, type, name, custom_headers=None, raw=False, **operation_config):
+            self, location, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Checks that the SignalR name is valid and is not already in use.
 
         :param location: the region
         :type location: str
-        :param type: The resource type. Should be always
-         "Microsoft.SignalRService/SignalR".
-        :type type: str
-        :param name: The SignalR service name to validate.
-         e.g."my-signalR-name-here"
-        :type name: str
+        :param parameters: Parameters supplied to the operation.
+        :type parameters:
+         ~azure.mgmt.signalr.models.NameAvailabilityParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -63,10 +60,6 @@ class SignalROperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.signalr.models.ErrorResponseException>`
         """
-        parameters = None
-        if type is not None or name is not None:
-            parameters = models.NameAvailabilityParameters(type=type, name=name)
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
