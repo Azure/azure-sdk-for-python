@@ -12,10 +12,10 @@ the latest version improves on several areas from V1.
 
 ### Specific clients for sending and receiving
 In V5 we've simplified the API surface, making two distinct clients, rather than having a single `EventHubClient`:
-* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
-* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
+* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
+* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
 
 We've also merged the functionality from `EventProcessorHost` into 
 `EventHubConsumerClient`, allowing `EventHubConsumerClient` to be the single
