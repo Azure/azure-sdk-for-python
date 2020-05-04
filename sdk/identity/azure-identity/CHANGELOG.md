@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.0b4 (Unreleased)
+
+
 ## 1.4.0b3 (2020-05-04)
 - `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`
 with the value of `AZURE_TENANT_ID` 
