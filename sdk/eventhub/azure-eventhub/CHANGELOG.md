@@ -10,6 +10,10 @@
 **Bug fixes**
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
 
+**Breaking changes**
+- Updated uAMQP dependency to 1.2.7.
+
+
 ## 5.1.0b1 (2020-04-06)
 
 **New Features**

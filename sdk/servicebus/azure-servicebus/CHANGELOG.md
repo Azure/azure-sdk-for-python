@@ -28,6 +28,7 @@
 * `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
 * Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
 * `ServiceBusSender.schedule()` has swapped the ordering of parameters `schedule_time_utc` and `messages` for better consistency with `send()` syntax.
+* Updated uAMQP dependency to 1.2.7.
 
 ## 7.0.0b1 (2020-04-06)
 
