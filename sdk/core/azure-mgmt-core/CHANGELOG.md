@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.1.0 (unreleased)
+## 1.1.0 (04-05-2020)
 
 ### Features
 
