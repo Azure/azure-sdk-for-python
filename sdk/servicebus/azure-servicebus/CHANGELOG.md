@@ -21,6 +21,9 @@
 **BugFixes**
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Updated uAMQP dependency to 1.2.7.
+    * Fixed bug in setting certificate of tlsio on MacOS. #7201
+    * Fixed seg fault in logging networking tracing on MacOS.
 
 **Breaking Changes**
 
@@ -28,7 +31,6 @@
 * `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
 * Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
 * `ServiceBusSender.schedule()` has swapped the ordering of parameters `schedule_time_utc` and `messages` for better consistency with `send()` syntax.
-* Updated uAMQP dependency to 1.2.7.
 
 ## 7.0.0b1 (2020-04-06)
 

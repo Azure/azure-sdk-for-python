@@ -9,10 +9,9 @@
 
 **Bug fixes**
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
-
-**Breaking changes**
 - Updated uAMQP dependency to 1.2.7.
-
+  - Fixed bug in setting certificate of tlsio on MacOS. #7201
+  - Fixed seg fault in logging networking tracing on MacOS.
 
 ## 5.1.0b1 (2020-04-06)
 
