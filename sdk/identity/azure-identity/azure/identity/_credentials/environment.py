@@ -7,7 +7,7 @@ import os
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
-from .user import UsernamePasswordCredential
+from .user_password import UsernamePasswordCredential
 
 
 try:

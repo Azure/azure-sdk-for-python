@@ -11,7 +11,8 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .user import DeviceCodeCredential, UsernamePasswordCredential
+from .device_code import DeviceCodeCredential
+from .user_password import UsernamePasswordCredential
 
 
 __all__ = [
