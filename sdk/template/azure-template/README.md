@@ -6,7 +6,7 @@ This template package matches necessary patterns that the development team has e
 
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 amd 3.8
 
-For a more complete set of Azure libraries, see the https://aka.ms/azsdk/python/all
+For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
 # Getting started
 
