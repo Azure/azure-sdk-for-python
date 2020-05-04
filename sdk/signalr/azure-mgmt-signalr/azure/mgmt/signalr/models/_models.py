@@ -459,9 +459,14 @@ class SignalRCorsSettings(Model):
         self.allowed_origins = kwargs.get('allowed_origins', None)
 
 
-class SignalRCreateOrUpdateProperties(Model):
-    """Settings used to provision or configure the resource.
+class SignalRUpdateParameters(Model):
+    """Parameters for SignalR service update operation.
 
+    :param tags: A list of key value pairs that describe the resource.
+    :type tags: dict[str, str]
+    :param sku: The billing information of the resource.(e.g. basic vs.
+     standard)
+    :type sku: ~azure.mgmt.signalr.models.ResourceSku
     :param host_name_prefix: Prefix for the hostName of the SignalR service.
      Retained for future use.
      The hostname will be of format:
@@ -481,42 +486,20 @@ class SignalRCreateOrUpdateProperties(Model):
     """
 
     _attribute_map = {
-        'host_name_prefix': {'key': 'hostNamePrefix', 'type': 'str'},
-        'features': {'key': 'features', 'type': '[SignalRFeature]'},
-        'cors': {'key': 'cors', 'type': 'SignalRCorsSettings'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SignalRCreateOrUpdateProperties, self).__init__(**kwargs)
-        self.host_name_prefix = kwargs.get('host_name_prefix', None)
-        self.features = kwargs.get('features', None)
-        self.cors = kwargs.get('cors', None)
-
-
-class SignalRUpdateParameters(Model):
-    """Parameters for SignalR service update operation.
-
-    :param tags: A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
-    :param sku: The billing information of the resource.(e.g. basic vs.
-     standard)
-    :type sku: ~azure.mgmt.signalr.models.ResourceSku
-    :param properties: Settings used to provision or configure the resource
-    :type properties:
-     ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
-    """
-
-    _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'properties': {'key': 'properties', 'type': 'SignalRCreateOrUpdateProperties'},
+        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
+        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
     }
 
     def __init__(self, **kwargs):
         super(SignalRUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
+        self.host_name_prefix = kwargs.get('host_name_prefix', None)
+        self.features = kwargs.get('features', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class SignalRCreateParameters(SignalRUpdateParameters):
@@ -530,9 +513,22 @@ class SignalRCreateParameters(SignalRUpdateParameters):
     :param sku: The billing information of the resource.(e.g. basic vs.
      standard)
     :type sku: ~azure.mgmt.signalr.models.ResourceSku
-    :param properties: Settings used to provision or configure the resource
-    :type properties:
-     ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
+    :param host_name_prefix: Prefix for the hostName of the SignalR service.
+     Retained for future use.
+     The hostname will be of format:
+     &lt;hostNamePrefix&gt;.service.signalr.net.
+    :type host_name_prefix: str
+    :param features: List of SignalR featureFlags. e.g. ServiceMode.
+     FeatureFlags that are not included in the parameters for the update
+     operation will not be modified.
+     And the response will only include featureFlags that are explicitly set.
+     When a featureFlag is not explicitly set, SignalR service will use its
+     globally default value.
+     But keep in mind, the default value doesn't mean "false". It varies in
+     terms of different FeatureFlags.
+    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
+    :param cors: Cross-Origin Resource Sharing (CORS) settings.
+    :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
     :param location: Required. Azure GEO region: e.g. West US | East US |
      North Central US | South Central US | West Europe | North Europe | East
      Asia | Southeast Asia | etc.
@@ -547,7 +543,9 @@ class SignalRCreateParameters(SignalRUpdateParameters):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'properties': {'key': 'properties', 'type': 'SignalRCreateOrUpdateProperties'},
+        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
+        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
         'location': {'key': 'location', 'type': 'str'},
     }
 

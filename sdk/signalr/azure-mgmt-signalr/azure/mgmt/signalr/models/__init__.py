@@ -25,7 +25,6 @@ try:
     from ._models_py3 import ResourceSku
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import SignalRCorsSettings
-    from ._models_py3 import SignalRCreateOrUpdateProperties
     from ._models_py3 import SignalRCreateParameters
     from ._models_py3 import SignalRFeature
     from ._models_py3 import SignalRKeys
@@ -50,7 +49,6 @@ except (SyntaxError, ImportError):
     from ._models import ResourceSku
     from ._models import ServiceSpecification
     from ._models import SignalRCorsSettings
-    from ._models import SignalRCreateOrUpdateProperties
     from ._models import SignalRCreateParameters
     from ._models import SignalRFeature
     from ._models import SignalRKeys
@@ -85,7 +83,6 @@ __all__ = [
     'ResourceSku',
     'ServiceSpecification',
     'SignalRCorsSettings',
-    'SignalRCreateOrUpdateProperties',
     'SignalRCreateParameters',
     'SignalRFeature',
     'SignalRKeys',
