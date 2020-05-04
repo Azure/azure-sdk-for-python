@@ -486,7 +486,11 @@ class SignalROperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, sku=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = None
+        if tags is not None or sku is not None or properties is not None or location is not None:
+            parameters = models.SignalRCreateParameters(tags=tags, sku=sku, properties=properties, location=location)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -538,7 +542,7 @@ class SignalROperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, sku=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new SignalR service and update an exiting SignalR service.
 
         :param resource_group_name: The name of the resource group that
@@ -547,8 +551,20 @@ class SignalROperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the SignalR resource.
         :type resource_name: str
-        :param parameters: Parameters for the create or update operation
-        :type parameters: ~azure.mgmt.signalr.models.SignalRCreateParameters
+        :param location: Azure GEO region: e.g. West US | East US | North
+         Central US | South Central US | West Europe | North Europe | East Asia
+         | Southeast Asia | etc.
+         The geo region of a resource never changes after it is created.
+        :type location: str
+        :param tags: A list of key value pairs that describe the resource.
+        :type tags: dict[str, str]
+        :param sku: The billing information of the resource.(e.g. basic vs.
+         standard)
+        :type sku: ~azure.mgmt.signalr.models.ResourceSku
+        :param properties: Settings used to provision or configure the
+         resource
+        :type properties:
+         ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -566,7 +582,10 @@ class SignalROperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            parameters=parameters,
+            location=location,
+            tags=tags,
+            sku=sku,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -672,7 +691,11 @@ class SignalROperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, tags=None, sku=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = None
+        if tags is not None or sku is not None or properties is not None:
+            parameters = models.SignalRUpdateParameters(tags=tags, sku=sku, properties=properties)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -722,7 +745,7 @@ class SignalROperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, resource_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, tags=None, sku=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting SignalR service.
 
         :param resource_group_name: The name of the resource group that
@@ -731,8 +754,15 @@ class SignalROperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the SignalR resource.
         :type resource_name: str
-        :param parameters: Parameters for the update operation
-        :type parameters: ~azure.mgmt.signalr.models.SignalRUpdateParameters
+        :param tags: A list of key value pairs that describe the resource.
+        :type tags: dict[str, str]
+        :param sku: The billing information of the resource.(e.g. basic vs.
+         standard)
+        :type sku: ~azure.mgmt.signalr.models.ResourceSku
+        :param properties: Settings used to provision or configure the
+         resource
+        :type properties:
+         ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -750,7 +780,9 @@ class SignalROperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            parameters=parameters,
+            tags=tags,
+            sku=sku,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
