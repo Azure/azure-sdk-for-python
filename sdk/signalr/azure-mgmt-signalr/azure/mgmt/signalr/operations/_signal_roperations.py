@@ -486,10 +486,10 @@ class SignalROperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, resource_name, location, tags=None, sku=None, host_name_prefix=None, features=None, cors=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, sku=None, properties=None, custom_headers=None, raw=False, **operation_config):
         parameters = None
-        if tags is not None or sku is not None or host_name_prefix is not None or features is not None or cors is not None or location is not None:
-            parameters = models.SignalRCreateParameters(tags=tags, sku=sku, host_name_prefix=host_name_prefix, features=features, cors=cors, location=location)
+        if tags is not None or sku is not None or properties is not None or location is not None:
+            parameters = models.SignalRCreateParameters(tags=tags, sku=sku, properties=properties, location=location)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -542,7 +542,7 @@ class SignalROperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, location, tags=None, sku=None, host_name_prefix=None, features=None, cors=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, sku=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new SignalR service and update an exiting SignalR service.
 
         :param resource_group_name: The name of the resource group that
@@ -561,23 +561,10 @@ class SignalROperations(object):
         :param sku: The billing information of the resource.(e.g. basic vs.
          standard)
         :type sku: ~azure.mgmt.signalr.models.ResourceSku
-        :param host_name_prefix: Prefix for the hostName of the SignalR
-         service. Retained for future use.
-         The hostname will be of format:
-         &lt;hostNamePrefix&gt;.service.signalr.net.
-        :type host_name_prefix: str
-        :param features: List of SignalR featureFlags. e.g. ServiceMode.
-         FeatureFlags that are not included in the parameters for the update
-         operation will not be modified.
-         And the response will only include featureFlags that are explicitly
-         set.
-         When a featureFlag is not explicitly set, SignalR service will use its
-         globally default value.
-         But keep in mind, the default value doesn't mean "false". It varies in
-         terms of different FeatureFlags.
-        :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
-        :param cors: Cross-Origin Resource Sharing (CORS) settings.
-        :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
+        :param properties: Settings used to provision or configure the
+         resource
+        :type properties:
+         ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -598,9 +585,7 @@ class SignalROperations(object):
             location=location,
             tags=tags,
             sku=sku,
-            host_name_prefix=host_name_prefix,
-            features=features,
-            cors=cors,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -706,10 +691,10 @@ class SignalROperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, resource_name, tags=None, sku=None, host_name_prefix=None, features=None, cors=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, tags=None, sku=None, properties=None, custom_headers=None, raw=False, **operation_config):
         parameters = None
-        if tags is not None or sku is not None or host_name_prefix is not None or features is not None or cors is not None:
-            parameters = models.SignalRUpdateParameters(tags=tags, sku=sku, host_name_prefix=host_name_prefix, features=features, cors=cors)
+        if tags is not None or sku is not None or properties is not None:
+            parameters = models.SignalRUpdateParameters(tags=tags, sku=sku, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -760,7 +745,7 @@ class SignalROperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, resource_name, tags=None, sku=None, host_name_prefix=None, features=None, cors=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, tags=None, sku=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting SignalR service.
 
         :param resource_group_name: The name of the resource group that
@@ -774,23 +759,10 @@ class SignalROperations(object):
         :param sku: The billing information of the resource.(e.g. basic vs.
          standard)
         :type sku: ~azure.mgmt.signalr.models.ResourceSku
-        :param host_name_prefix: Prefix for the hostName of the SignalR
-         service. Retained for future use.
-         The hostname will be of format:
-         &lt;hostNamePrefix&gt;.service.signalr.net.
-        :type host_name_prefix: str
-        :param features: List of SignalR featureFlags. e.g. ServiceMode.
-         FeatureFlags that are not included in the parameters for the update
-         operation will not be modified.
-         And the response will only include featureFlags that are explicitly
-         set.
-         When a featureFlag is not explicitly set, SignalR service will use its
-         globally default value.
-         But keep in mind, the default value doesn't mean "false". It varies in
-         terms of different FeatureFlags.
-        :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
-        :param cors: Cross-Origin Resource Sharing (CORS) settings.
-        :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
+        :param properties: Settings used to provision or configure the
+         resource
+        :type properties:
+         ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -810,9 +782,7 @@ class SignalROperations(object):
             resource_name=resource_name,
             tags=tags,
             sku=sku,
-            host_name_prefix=host_name_prefix,
-            features=features,
-            cors=cors,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
