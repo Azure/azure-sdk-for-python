@@ -1,8 +1,16 @@
 # Release History
 
-## 1.4.0b3 (Unreleased)
+## 1.4.0b3 (2020-05-04)
+- `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`
+with the value of `AZURE_TENANT_ID` 
+([#11127](https://github.com/Azure/azure-sdk-for-python/pull/11127))
+- Values for the constructor keyword argument `authority` and
+`AZURE_AUTHORITY_HOST` may optionally specify an "https" scheme. For example,
+"https://login.microsoftonline.us" and "login.microsoftonline.us" are both valid.
+([#10819](https://github.com/Azure/azure-sdk-for-python/issues/10819))
 - First preview of new API for authenticating users with `DeviceCodeCredential`
   and `InteractiveBrowserCredential`
+  ([#10612](https://github.com/Azure/azure-sdk-for-python/pull/10612))
   - new method `authenticate` interactively authenticates a user, returns a
     serializable `AuthenticationRecord`
   - new constructor keyword arguments
@@ -14,9 +22,9 @@
     - `enable_persistent_cache=True` configures these credentials to use a
     persistent cache on supported platforms (in this release, Windows only).
     By default they cache in memory only.
-
-- Now `DefaultAzureCredential` can authenticate with the identity signed in to Visual 
-Studio Code's Azure extension. ([#10472](https://github.com/Azure/azure-sdk-for-python/issues/10472))
+- Now `DefaultAzureCredential` can authenticate with the identity signed in to 
+Visual Studio Code's Azure extension.
+([#10472](https://github.com/Azure/azure-sdk-for-python/issues/10472))
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it
