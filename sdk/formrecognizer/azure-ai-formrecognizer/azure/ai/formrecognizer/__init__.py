@@ -33,7 +33,9 @@ from ._models import (
     FormWord,
     CustomFormModel,
     CustomFormSubModel,
-    CustomFormModelField
+    CustomFormModelField,
+    CopyAuthorizationResult,
+    CopyModelResult
 )
 
 
@@ -64,7 +66,9 @@ __all__ = [
     'FormWord',
     'CustomFormModel',
     'CustomFormSubModel',
-    'CustomFormModelField'
+    'CustomFormModelField',
+    'CopyAuthorizationResult',
+    'CopyModelResult'
 ]
 
 __VERSION__ = VERSION

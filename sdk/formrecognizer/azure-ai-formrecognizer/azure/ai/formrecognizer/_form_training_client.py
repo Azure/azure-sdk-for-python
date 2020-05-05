@@ -16,14 +16,15 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from ._generated.models import Model
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
-from ._generated.models import TrainRequest, TrainSourceFilter
+from ._generated.models import TrainRequest, TrainSourceFilter, CopyRequest, Model, CopyOperationResult
 from ._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
-    CustomFormModel
+    CustomFormModel,
+    CopyAuthorizationResult,
+    CopyModelResult
 )
 from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
@@ -223,6 +224,73 @@ class FormTrainingClient(object):
         """
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
         return CustomFormModel._from_generated(response)
+
+    @distributed_trace
+    def generate_model_copy_authorization(self, **kwargs):
+        # type: (Any) -> CopyAuthorizationResult
+        """Generate authorization to copy a model into the target Form Recognizer resource.
+
+        Generate Copy Authorization.
+
+        :return: CopyAuthorizationResult
+        :rtype: ~azure.ai.formrecognizer.CopyAuthorizationResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        response = self._client.generate_model_copy_authorization(  # type: ignore
+            cls=lambda pipeline_response, deserialized, response_headers: deserialized,
+            error_map=error_map,
+            **kwargs
+        )
+
+        return CopyAuthorizationResult._from_generated(response)
+
+    @distributed_trace
+    def begin_copy_model(
+        self,
+        source_model_id,  # type: str
+        target_resource_id,  # type: str
+        target_resource_region,  # type: str
+        copy_authorization,  # type: CopyAuthorizationResult
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller
+        """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
+
+        Copy Custom Model.
+
+        :param source_model_id: Model identifier.
+        :type source_model_id: str
+        :param str target_resource_id: Azure Resource Id of the target Form Recognizer resource
+            where the model is copied to.
+        :param str target_resource_region: Location of the target Azure resource. A valid Azure
+            region name supported by Cognitive Services.
+        :param copy_authorization: Entity that encodes claims to authorize the copy request.
+        :type copy_authorization: ~azure.ai.formrecognizer.CopyAuthorizationResult
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+            no Retry-After header is present.
+        :return: An instance of LROPoller
+        :rtype: ~azure.core.polling.LROPoller[CopyModelResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+
+        def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            copy_result = self._client._deserialize(CopyOperationResult, raw_response)
+            return CopyModelResult._from_generated(copy_result.copy_result)
+
+        return self._client.begin_copy_custom_model(  # type: ignore
+            model_id=source_model_id,
+            copy_request=CopyRequest(
+                target_resource_id=target_resource_id,
+                target_resource_region=target_resource_region,
+                copy_authorization=copy_authorization
+            ),
+            cls=kwargs.pop("cls", _copy_callback),
+            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
+            **kwargs
+        )
 
     def close(self):
         # type: () -> None
