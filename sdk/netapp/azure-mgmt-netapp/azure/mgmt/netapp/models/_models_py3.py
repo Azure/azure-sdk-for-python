@@ -413,6 +413,72 @@ class MountTarget(Model):
         self.smb_server_fqdn = smb_server_fqdn
 
 
+class MountTargetProperties(Model):
+    """Mount target properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mount_target_id: mountTargetId. UUID v4 used to identify the
+     MountTarget
+    :vartype mount_target_id: str
+    :param file_system_id: Required. fileSystemId. UUID v4 used to identify
+     the MountTarget
+    :type file_system_id: str
+    :ivar ip_address: ipAddress. The mount target's IPv4 address
+    :vartype ip_address: str
+    :param subnet: subnet. The subnet
+    :type subnet: str
+    :param start_ip: startIp. The start of IPv4 address range to use when
+     creating a new mount target
+    :type start_ip: str
+    :param end_ip: endIp. The end of IPv4 address range to use when creating a
+     new mount target
+    :type end_ip: str
+    :param gateway: gateway. The gateway of the IPv4 address range to use when
+     creating a new mount target
+    :type gateway: str
+    :param netmask: netmask. The netmask of the IPv4 address range to use when
+     creating a new mount target
+    :type netmask: str
+    :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
+     Domain Name, FQDN
+    :type smb_server_fqdn: str
+    """
+
+    _validation = {
+        'mount_target_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'ip_address': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'mount_target_id': {'key': 'mountTargetId', 'type': 'str'},
+        'file_system_id': {'key': 'fileSystemId', 'type': 'str'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+        'start_ip': {'key': 'startIp', 'type': 'str'},
+        'end_ip': {'key': 'endIp', 'type': 'str'},
+        'gateway': {'key': 'gateway', 'type': 'str'},
+        'netmask': {'key': 'netmask', 'type': 'str'},
+        'smb_server_fqdn': {'key': 'smbServerFqdn', 'type': 'str'},
+    }
+
+    def __init__(self, *, file_system_id: str, subnet: str=None, start_ip: str=None, end_ip: str=None, gateway: str=None, netmask: str=None, smb_server_fqdn: str=None, **kwargs) -> None:
+        super(MountTargetProperties, self).__init__(**kwargs)
+        self.mount_target_id = None
+        self.file_system_id = file_system_id
+        self.ip_address = None
+        self.subnet = subnet
+        self.start_ip = start_ip
+        self.end_ip = end_ip
+        self.gateway = gateway
+        self.netmask = netmask
+        self.smb_server_fqdn = smb_server_fqdn
+
+
 class NetAppAccount(Model):
     """NetApp account resource.
 
@@ -851,7 +917,7 @@ class Volume(Model):
      Must have the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
     :param mount_targets: mountTargets. List of mount targets
-    :type mount_targets: list[~azure.mgmt.netapp.models.MountTarget]
+    :type mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :param volume_type: What type of volume is this
     :type volume_type: str
     :param data_protection: DataProtection. DataProtection type volumes
@@ -892,7 +958,7 @@ class Volume(Model):
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTarget]'},
+        'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTargetProperties]'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
         'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
