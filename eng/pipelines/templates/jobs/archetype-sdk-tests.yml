@@ -50,7 +50,7 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
-      - template: ../../../common/pipelines/templates/steps/bypass-local-dns.yml
+      - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
       - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
         - pwsh: |
