@@ -10,6 +10,10 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Alert
+    from ._models_py3 import AlertPropertiesDefinition
+    from ._models_py3 import AlertPropertiesDetails
+    from ._models_py3 import AlertsResult
     from ._models_py3 import CommonExportProperties
     from ._models_py3 import Dimension
     from ._models_py3 import ErrorDetails
@@ -22,6 +26,7 @@ try:
     from ._models_py3 import ExportListResult
     from ._models_py3 import ExportRecurrencePeriod
     from ._models_py3 import ExportSchedule
+    from ._models_py3 import ForecastDefinition
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import QueryAggregation
@@ -36,6 +41,10 @@ try:
     from ._models_py3 import QueryTimePeriod
     from ._models_py3 import Resource
 except (SyntaxError, ImportError):
+    from ._models import Alert
+    from ._models import AlertPropertiesDefinition
+    from ._models import AlertPropertiesDetails
+    from ._models import AlertsResult
     from ._models import CommonExportProperties
     from ._models import Dimension
     from ._models import ErrorDetails
@@ -48,6 +57,7 @@ except (SyntaxError, ImportError):
     from ._models import ExportListResult
     from ._models import ExportRecurrencePeriod
     from ._models import ExportSchedule
+    from ._models import ForecastDefinition
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import QueryAggregation
@@ -64,18 +74,25 @@ except (SyntaxError, ImportError):
 from ._paged_models import DimensionPaged
 from ._paged_models import OperationPaged
 from ._cost_management_client_enums import (
-    ExportType,
-    TimeframeType,
+    ForecastType,
+    ForecastTimeframeType,
     GranularityType,
     QueryColumnType,
+    ExportType,
+    TimeframeType,
     StatusType,
     RecurrenceType,
     FormatType,
     ExecutionType,
     ExecutionStatus,
+    ExternalCloudProviderType,
 )
 
 __all__ = [
+    'Alert',
+    'AlertPropertiesDefinition',
+    'AlertPropertiesDetails',
+    'AlertsResult',
     'CommonExportProperties',
     'Dimension',
     'ErrorDetails',
@@ -88,6 +105,7 @@ __all__ = [
     'ExportListResult',
     'ExportRecurrencePeriod',
     'ExportSchedule',
+    'ForecastDefinition',
     'Operation',
     'OperationDisplay',
     'QueryAggregation',
@@ -103,13 +121,16 @@ __all__ = [
     'Resource',
     'DimensionPaged',
     'OperationPaged',
-    'ExportType',
-    'TimeframeType',
+    'ForecastType',
+    'ForecastTimeframeType',
     'GranularityType',
     'QueryColumnType',
+    'ExportType',
+    'TimeframeType',
     'StatusType',
     'RecurrenceType',
     'FormatType',
     'ExecutionType',
     'ExecutionStatus',
+    'ExternalCloudProviderType',
 ]

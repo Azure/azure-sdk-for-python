@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class QueryOperations(object):
-    """QueryOperations operations.
+class AlertsOperations(object):
+    """AlertsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,13 +38,12 @@ class QueryOperations(object):
 
         self.config = config
 
-    def usage(
-            self, scope, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for scope defined.
+    def list(
+            self, scope, custom_headers=None, raw=False, **operation_config):
+        """Lists the alerts for scope defined.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with alerts operations. This
+         includes '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -62,22 +61,19 @@ class QueryOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
         :type scope: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query
-         Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: QueryResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.costmanagement.models.QueryResult or
+        :return: AlertsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.costmanagement.models.AlertsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.usage.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
@@ -90,7 +86,6 @@ class QueryOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -98,11 +93,8 @@ class QueryOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -110,18 +102,18 @@ class QueryOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('QueryResult', response)
+            deserialized = self._deserialize('AlertsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/alerts'}
 
-    def usage_by_external_cloud_provider_type(
-            self, external_cloud_provider_type, external_cloud_provider_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for external cloud provider type defined.
+    def list_external(
+            self, external_cloud_provider_type, external_cloud_provider_id, custom_headers=None, raw=False, **operation_config):
+        """Lists the Alerts for external cloud provider type defined.
 
         :param external_cloud_provider_type: The external cloud provider type
          associated with dimension/query operations. This includes
@@ -135,22 +127,19 @@ class QueryOperations(object):
          '{externalBillingAccountId}' for consolidated account used with
          dimension/query operations.
         :type external_cloud_provider_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query
-         Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: QueryResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.costmanagement.models.QueryResult or
+        :return: AlertsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.costmanagement.models.AlertsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.usage_by_external_cloud_provider_type.metadata['url']
+        url = self.list_external.metadata['url']
         path_format_arguments = {
             'externalCloudProviderType': self._serialize.url("external_cloud_provider_type", external_cloud_provider_type, 'str'),
             'externalCloudProviderId': self._serialize.url("external_cloud_provider_id", external_cloud_provider_id, 'str')
@@ -164,7 +153,6 @@ class QueryOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -172,11 +160,8 @@ class QueryOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -184,11 +169,11 @@ class QueryOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('QueryResult', response)
+            deserialized = self._deserialize('AlertsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    usage_by_external_cloud_provider_type.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/query'}
+    list_external.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/alerts'}
