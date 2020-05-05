@@ -12,14 +12,14 @@
 from enum import Enum
 
 
-class ExportType(str, Enum):
+class ForecastType(str, Enum):
 
     usage = "Usage"
     actual_cost = "ActualCost"
     amortized_cost = "AmortizedCost"
 
 
-class TimeframeType(str, Enum):
+class ForecastTimeframeType(str, Enum):
 
     month_to_date = "MonthToDate"
     billing_month_to_date = "BillingMonthToDate"
@@ -38,6 +38,23 @@ class QueryColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
+
+
+class ExportType(str, Enum):
+
+    usage = "Usage"
+    actual_cost = "ActualCost"
+    amortized_cost = "AmortizedCost"
+
+
+class TimeframeType(str, Enum):
+
+    month_to_date = "MonthToDate"
+    billing_month_to_date = "BillingMonthToDate"
+    the_last_month = "TheLastMonth"
+    the_last_billing_month = "TheLastBillingMonth"
+    week_to_date = "WeekToDate"
+    custom = "Custom"
 
 
 class StatusType(str, Enum):
@@ -74,3 +91,9 @@ class ExecutionStatus(str, Enum):
     timeout = "Timeout"
     new_data_not_available = "NewDataNotAvailable"
     data_not_available = "DataNotAvailable"
+
+
+class ExternalCloudProviderType(str, Enum):
+
+    external_subscriptions = "externalSubscriptions"
+    external_billing_accounts = "externalBillingAccounts"

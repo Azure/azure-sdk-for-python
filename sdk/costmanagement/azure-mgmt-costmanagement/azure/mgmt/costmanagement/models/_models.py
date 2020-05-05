@@ -13,6 +13,254 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = None
+
+
+class Alert(Resource):
+    """An individual alert.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param definition: defines the type of alert
+    :type definition:
+     ~azure.mgmt.costmanagement.models.AlertPropertiesDefinition
+    :param description: Alert description
+    :type description: str
+    :param source: Source of alert
+    :type source: str
+    :param details: Alert details
+    :type details: ~azure.mgmt.costmanagement.models.AlertPropertiesDetails
+    :param cost_entity_id: related budget
+    :type cost_entity_id: str
+    :param status: alert status
+    :type status: str
+    :param creation_time: dateTime in which alert was created
+    :type creation_time: str
+    :param close_time: dateTime in which alert was closed
+    :type close_time: str
+    :param modification_time: dateTime in which alert was last modified
+    :type modification_time: str
+    :param status_modification_user_name:
+    :type status_modification_user_name: str
+    :param status_modification_time: dateTime in which the alert status was
+     last modified
+    :type status_modification_time: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'definition': {'key': 'properties.definition', 'type': 'AlertPropertiesDefinition'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'details': {'key': 'properties.details', 'type': 'AlertPropertiesDetails'},
+        'cost_entity_id': {'key': 'properties.costEntityId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'str'},
+        'close_time': {'key': 'properties.closeTime', 'type': 'str'},
+        'modification_time': {'key': 'properties.modificationTime', 'type': 'str'},
+        'status_modification_user_name': {'key': 'properties.statusModificationUserName', 'type': 'str'},
+        'status_modification_time': {'key': 'properties.statusModificationTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Alert, self).__init__(**kwargs)
+        self.definition = kwargs.get('definition', None)
+        self.description = kwargs.get('description', None)
+        self.source = kwargs.get('source', None)
+        self.details = kwargs.get('details', None)
+        self.cost_entity_id = kwargs.get('cost_entity_id', None)
+        self.status = kwargs.get('status', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.close_time = kwargs.get('close_time', None)
+        self.modification_time = kwargs.get('modification_time', None)
+        self.status_modification_user_name = kwargs.get('status_modification_user_name', None)
+        self.status_modification_time = kwargs.get('status_modification_time', None)
+
+
+class AlertPropertiesDefinition(Model):
+    """defines the type of alert.
+
+    :param type: type of alert
+    :type type: str
+    :param category: Alert category
+    :type category: str
+    :param criteria: Criteria that triggered alert
+    :type criteria: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'criteria': {'key': 'criteria', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertPropertiesDefinition, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.category = kwargs.get('category', None)
+        self.criteria = kwargs.get('criteria', None)
+
+
+class AlertPropertiesDetails(Model):
+    """Alert details.
+
+    :param time_grain_type: Type of timegrain cadence
+    :type time_grain_type: str
+    :param period_start_date: datetime of periodStartDate
+    :type period_start_date: str
+    :param triggered_by: notificationId that triggered this alert
+    :type triggered_by: str
+    :param resource_group_filter: array of resourceGroups to filter by
+    :type resource_group_filter: list[object]
+    :param resource_filter: array of resources to filter by
+    :type resource_filter: list[object]
+    :param meter_filter: array of meters to filter by
+    :type meter_filter: list[object]
+    :param tag_filter: tags to filter by
+    :type tag_filter: object
+    :param threshold: notification threshold percentage as a decimal which
+     activated this alert
+    :type threshold: decimal.Decimal
+    :param operator: operator used to compare currentSpend with amount
+    :type operator: str
+    :param amount: budget threshold amount
+    :type amount: decimal.Decimal
+    :param unit: unit of currency being used
+    :type unit: str
+    :param current_spend: current spend
+    :type current_spend: decimal.Decimal
+    :param contact_emails: list of emails to contact
+    :type contact_emails: list[str]
+    :param contact_groups: list of action groups to broadcast to
+    :type contact_groups: list[str]
+    :param contact_roles: list of contact roles
+    :type contact_roles: list[str]
+    :param overriding_alert: overriding alert
+    :type overriding_alert: str
+    """
+
+    _attribute_map = {
+        'time_grain_type': {'key': 'timeGrainType', 'type': 'str'},
+        'period_start_date': {'key': 'periodStartDate', 'type': 'str'},
+        'triggered_by': {'key': 'triggeredBy', 'type': 'str'},
+        'resource_group_filter': {'key': 'resourceGroupFilter', 'type': '[object]'},
+        'resource_filter': {'key': 'resourceFilter', 'type': '[object]'},
+        'meter_filter': {'key': 'meterFilter', 'type': '[object]'},
+        'tag_filter': {'key': 'tagFilter', 'type': 'object'},
+        'threshold': {'key': 'threshold', 'type': 'decimal'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'decimal'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'current_spend': {'key': 'currentSpend', 'type': 'decimal'},
+        'contact_emails': {'key': 'contactEmails', 'type': '[str]'},
+        'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
+        'contact_roles': {'key': 'contactRoles', 'type': '[str]'},
+        'overriding_alert': {'key': 'overridingAlert', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertPropertiesDetails, self).__init__(**kwargs)
+        self.time_grain_type = kwargs.get('time_grain_type', None)
+        self.period_start_date = kwargs.get('period_start_date', None)
+        self.triggered_by = kwargs.get('triggered_by', None)
+        self.resource_group_filter = kwargs.get('resource_group_filter', None)
+        self.resource_filter = kwargs.get('resource_filter', None)
+        self.meter_filter = kwargs.get('meter_filter', None)
+        self.tag_filter = kwargs.get('tag_filter', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.operator = kwargs.get('operator', None)
+        self.amount = kwargs.get('amount', None)
+        self.unit = kwargs.get('unit', None)
+        self.current_spend = kwargs.get('current_spend', None)
+        self.contact_emails = kwargs.get('contact_emails', None)
+        self.contact_groups = kwargs.get('contact_groups', None)
+        self.contact_roles = kwargs.get('contact_roles', None)
+        self.overriding_alert = kwargs.get('overriding_alert', None)
+
+
+class AlertsResult(Model):
+    """Result of alerts.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of alerts.
+    :vartype value: list[~azure.mgmt.costmanagement.models.Alert]
+    :ivar next_link: URL to get the next set of alerts results if there are
+     any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Alert]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertsResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -51,44 +299,6 @@ class CommonExportProperties(Model):
         self.format = kwargs.get('format', None)
         self.delivery_info = kwargs.get('delivery_info', None)
         self.definition = kwargs.get('definition', None)
-
-
-class Resource(Model):
-    """The Resource model definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
 
 
 class Dimension(Resource):
@@ -200,6 +410,12 @@ class ErrorDetails(Model):
 class ErrorResponse(Model):
     """Error response indicates that the service is not able to process the
     incoming request. The reason is provided in the error message.
+    Some Error responses:
+    * 429 TooManyRequests - Request is throttled. Retry after waiting for the
+    time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after"
+    header.
+    * 503 ServiceUnavailable - Service is temporarily unavailable. Retry after
+    waiting for the time specified in the "Retry-After" header.
 
     :param error: The details of the error.
     :type error: ~azure.mgmt.costmanagement.models.ErrorDetails
@@ -527,6 +743,56 @@ class ExportSchedule(Model):
         self.status = kwargs.get('status', None)
         self.recurrence = kwargs.get('recurrence', None)
         self.recurrence_period = kwargs.get('recurrence_period', None)
+
+
+class ForecastDefinition(Model):
+    """The definition of a forecast.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the forecast. Possible values include:
+     'Usage', 'ActualCost', 'AmortizedCost'
+    :type type: str or ~azure.mgmt.costmanagement.models.ForecastType
+    :param timeframe: Required. The time frame for pulling data for the
+     forecast. If custom, then a specific time period must be provided.
+     Possible values include: 'MonthToDate', 'BillingMonthToDate',
+     'TheLastMonth', 'TheLastBillingMonth', 'WeekToDate', 'Custom'
+    :type timeframe: str or
+     ~azure.mgmt.costmanagement.models.ForecastTimeframeType
+    :param time_period: Has time period for pulling data for the forecast.
+    :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
+    :param dataset: Has definition for data in this forecast.
+    :type dataset: ~azure.mgmt.costmanagement.models.QueryDataset
+    :param include_actual_cost: a boolean determining if actualCost will be
+     included
+    :type include_actual_cost: bool
+    :param include_fresh_partial_cost: a boolean determining if
+     FreshPartialCost will be included
+    :type include_fresh_partial_cost: bool
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'timeframe': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'timeframe': {'key': 'timeframe', 'type': 'str'},
+        'time_period': {'key': 'timePeriod', 'type': 'QueryTimePeriod'},
+        'dataset': {'key': 'dataset', 'type': 'QueryDataset'},
+        'include_actual_cost': {'key': 'includeActualCost', 'type': 'bool'},
+        'include_fresh_partial_cost': {'key': 'includeFreshPartialCost', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ForecastDefinition, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.timeframe = kwargs.get('timeframe', None)
+        self.time_period = kwargs.get('time_period', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.include_actual_cost = kwargs.get('include_actual_cost', None)
+        self.include_fresh_partial_cost = kwargs.get('include_fresh_partial_cost', None)
 
 
 class Operation(Model):
