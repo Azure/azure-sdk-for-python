@@ -197,6 +197,8 @@ class SearchSynonymMapsClient(HeadersMixin):
                 synonym_map.synonyms = "\n".join(synonyms)
         else:
             name = synonym_map
+            if synonyms is None:
+                synonyms = []
             solr_format_synonyms = "\n".join(synonyms)
             synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = self._client.synonym_maps.create_or_update(
