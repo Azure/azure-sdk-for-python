@@ -109,7 +109,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_labels(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -131,7 +131,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage_with_labels(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -162,7 +162,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, use_labels=True, cls=callback)
+        model = await client.train_model(container_sas_url, use_training_labels=True, cls=callback)
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -180,7 +180,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, use_labels=True, cls=callback)
+        model = await client.train_model(container_sas_url, use_training_labels=True, cls=callback)
         raw_model = raw_response[0]
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model)

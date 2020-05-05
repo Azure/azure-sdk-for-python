@@ -119,7 +119,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await training_client.train_model(container_sas_url, use_training_labels=True)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -141,7 +141,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
         model = await training_client.train_model(
             container_sas_url,
-            use_labels=True
+            use_training_labels=True
         )
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
@@ -242,7 +242,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await training_client.train_model(container_sas_url, use_training_labels=True)
 
         responses = []
 
@@ -278,7 +278,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await training_client.train_model(container_sas_url, use_training_labels=True)
 
         responses = []
 
