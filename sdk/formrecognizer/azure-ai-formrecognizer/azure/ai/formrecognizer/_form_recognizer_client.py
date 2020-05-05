@@ -70,15 +70,15 @@ class FormRecognizerClient(object):
         return prepare_us_receipt(analyze_result)
 
     @distributed_trace
-    def begin_recognize_receipts(self, stream, **kwargs):
+    def begin_recognize_receipts(self, receipt_file_stream, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :param receipt_file_stream: .pdf, .jpg, .png or .tiff type file stream.
              Currently only supports US sales receipts.
-        :type stream: stream
+        :type receipt_file_stream: stream
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -109,10 +109,10 @@ class FormRecognizerClient(object):
         include_text_content = kwargs.pop("include_text_content", False)
 
         if content_type is None:
-            content_type = get_content_type(stream)
+            content_type = get_content_type(receipt_file_stream)
 
         return self._client.begin_analyze_receipt_async(
-            file_stream=stream,
+            file_stream=receipt_file_stream,
             content_type=content_type,
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
@@ -122,13 +122,13 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, url, **kwargs):
+    def begin_recognize_receipts_from_url(self, receipt_file_url, **kwargs):
         # type: (str, Any) -> LROPoller
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
-        :param url: The url of the receipt. Currently only supports US sales receipts.
-        :type url: str
+        :param receipt_file_url: The url of the receipt. Currently only supports US sales receipts.
+        :type receipt_file_url: str
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -152,7 +152,7 @@ class FormRecognizerClient(object):
         include_text_content = kwargs.pop("include_text_content", False)
 
         return self._client.begin_analyze_receipt_async(
-            file_stream={"source": url},
+            file_stream={"source": receipt_file_url},
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
@@ -165,14 +165,14 @@ class FormRecognizerClient(object):
         return prepare_content_result(analyze_result)
 
     @distributed_trace
-    def begin_recognize_content(self, stream, **kwargs):
+    def begin_recognize_content(self, form_file_stream, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :param form_file_stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type form_file_stream: stream
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -199,10 +199,10 @@ class FormRecognizerClient(object):
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
 
         if content_type is None:
-            content_type = get_content_type(stream)
+            content_type = get_content_type(form_file_stream)
 
         return self._client.begin_analyze_layout_async(
-            file_stream=stream,
+            file_stream=form_file_stream,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
@@ -211,13 +211,13 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace
-    def begin_recognize_content_from_url(self, url, **kwargs):
+    def begin_recognize_content_from_url(self, form_file_url, **kwargs):
         # type: (str, Any) -> LROPoller
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param url: The url of the document.
-        :type url: str
+        :param form_file_url: The url of the document.
+        :type form_file_url: str
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
@@ -229,7 +229,7 @@ class FormRecognizerClient(object):
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
         return self._client.begin_analyze_layout_async(
-            file_stream={"source": url},
+            file_stream={"source": form_file_url},
             cls=kwargs.pop("cls", self._content_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
@@ -237,7 +237,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace
-    def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
+    def begin_recognize_custom_forms(self, model_id, form_file_stream, **kwargs):
         # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
@@ -245,8 +245,8 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param str model_id: Custom model identifier.
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :param form_file_stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type form_file_stream: stream
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -277,7 +277,7 @@ class FormRecognizerClient(object):
 
         include_text_content = kwargs.pop("include_text_content", False)
         if content_type is None:
-            content_type = get_content_type(stream)
+            content_type = get_content_type(form_file_stream)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -285,7 +285,7 @@ class FormRecognizerClient(object):
 
         deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(
-            file_stream=stream,
+            file_stream=form_file_stream,
             model_id=model_id,
             include_text_details=include_text_content,
             content_type=content_type,
@@ -296,15 +296,15 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace
-    def begin_recognize_custom_forms_from_url(self, model_id, url, **kwargs):
+    def begin_recognize_custom_forms_from_url(self, model_id, form_file_url, **kwargs):
         # type: (str, str, Any) -> LROPoller
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.
 
         :param str model_id: Custom model identifier.
-        :param url: The url of the document.
-        :type url: str
+        :param form_file_url: The url of the document.
+        :type form_file_url: str
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -325,7 +325,7 @@ class FormRecognizerClient(object):
 
         deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(
-            file_stream={"source": url},
+            file_stream={"source": form_file_url},
             model_id=model_id,
             include_text_details=include_text_content,
             cls=deserialization_callback,

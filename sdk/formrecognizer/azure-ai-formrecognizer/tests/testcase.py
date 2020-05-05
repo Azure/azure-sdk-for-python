@@ -128,7 +128,6 @@ class FormRecognizerTest(AzureTestCase):
         b = form_fields
         for label, a in actual_fields.items():
             self.assertEqual(label, b[label].name)
-            self.assertEqual(a.page, b[label].page_number)
             self.assertEqual(a.confidence, b[label].confidence if a.confidence is not None else 1.0)
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
@@ -194,7 +193,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
         self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
-        self.assertEqual(receipt_field.page_number, actual_field.page)
+
         if read_results:
             self.assertTextContentTransformCorrect(
                 receipt_field.value_data.text_content,

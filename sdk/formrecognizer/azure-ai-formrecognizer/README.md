@@ -140,7 +140,7 @@ model_id = "<your custom model id>"
 with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
-poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, stream=form)
+poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, form_file_stream=form)
 result = poller.result()
 
 for recognized_form in result:

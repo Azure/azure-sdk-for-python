@@ -47,7 +47,7 @@ class RecognizeCustomFormsSampleAsync(object):
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, stream=f.read()
+                    model_id=self.model_id, form_file_stream=f.read()
                 )
 
             for idx, form in enumerate(forms):

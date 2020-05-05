@@ -49,10 +49,10 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
             with open("sample_forms/forms/Form_1.jpg", "rb") as f:
                 stream = f.read()
             forms_with_labeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_with_labels_id, stream=stream
+                model_id=self.model_trained_with_labels_id, form_file_stream=stream
             )
             forms_with_unlabeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_without_labels_id, stream=stream
+                model_id=self.model_trained_without_labels_id, form_file_stream=stream
             )
 
             # With a form recognized by a model trained with labels, this 'name' key will be its

@@ -27,20 +27,20 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.recognize_custom_forms(model_id="xx", stream=myfile)
+            result = await client.recognize_custom_forms(model_id="xx", form_file_stream=myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.recognize_custom_forms(model_id="xx", stream=b"xx", content_type="image/jpeg")
+            result = await client.recognize_custom_forms(model_id="xx", form_file_stream=b"xx", content_type="image/jpeg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            result = await client.recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
+            result = await client.recognize_custom_forms(model_id="xx", form_file_stream="https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -52,7 +52,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ValueError):
             poller = await client.recognize_custom_forms(
                 model_id="xxx",
-                stream=myfile,
+                form_file_stream=myfile,
             )
 
     @GlobalFormRecognizerAccountPreparer()
@@ -85,7 +85,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.label_data.text)
@@ -111,7 +110,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.label_data.text)
@@ -133,7 +131,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -162,7 +159,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -199,8 +195,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.page_results[0].key_value_pairs
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -236,8 +232,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results, bug_skip_text_content=True)
 
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page, actual.page)
-            self.assertEqual(form.page_range.last_page, actual.page)
+            self.assertEqual(form.page_range.first_page_number, actual.page)
+            self.assertEqual(form.page_range.last_page_number, actual.page)
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
 
 
@@ -273,8 +269,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.document_results[0].fields
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -309,7 +305,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page, actual.page_range[1])
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "form-"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)

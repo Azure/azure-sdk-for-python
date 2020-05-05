@@ -41,7 +41,7 @@ class RecognizeReceiptsSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                receipts = await form_recognizer_client.recognize_receipts(stream=f.read())
+                receipts = await form_recognizer_client.recognize_receipts(receipt_file_stream=f.read())
 
             for idx, receipt in enumerate(receipts):
                 print("--------Recognizing receipt #{}--------".format(idx))

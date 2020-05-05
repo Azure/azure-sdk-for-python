@@ -15,7 +15,7 @@ from ._models import (
     FormLine,
     FormTable,
     FormTableCell,
-    PageRange,
+    FormPageRange,
     RecognizedForm
 )
 
@@ -29,7 +29,7 @@ def prepare_us_receipt(response):
     for page in document_result:
         if page.fields is None:
             receipt = USReceipt(
-                page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
+                page_range=FormPageRange(first_page_number=page.page_range[0], last_page_number=page.page_range[1]),
                 pages=form_page[page.page_range[0]-1:page.page_range[1]],
                 form_type=page.doc_type,
             )
@@ -65,8 +65,8 @@ def prepare_us_receipt(response):
             transaction_time=FormField._from_generated(
                 "TransactionTime", page.fields.get("TransactionTime"), read_result
             ),
-            page_range=PageRange(
-                first_page=page.page_range[0], last_page=page.page_range[1]
+            page_range=FormPageRange(
+                first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),
             pages=form_page[page.page_range[0]-1:page.page_range[1]],
             form_type=page.doc_type,
@@ -132,9 +132,9 @@ def prepare_unlabeled_result(response):
         if unlabeled_fields:
             unlabeled_fields = {field.name: field for field in unlabeled_fields}
         form = RecognizedForm(
-            page_range=PageRange(
-                first_page=page.page,
-                last_page=page.page
+            page_range=FormPageRange(
+                first_page_number=page.page,
+                last_page_number=page.page
             ),
             fields=unlabeled_fields,
             form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
@@ -152,9 +152,9 @@ def prepare_labeled_result(response, model_id):
     result = []
     for doc in response.analyze_result.document_results:
         form = RecognizedForm(
-            page_range=PageRange(
-                first_page=doc.page_range[0],
-                last_page=doc.page_range[1]
+            page_range=FormPageRange(
+                first_page_number=doc.page_range[0],
+                last_page_number=doc.page_range[1]
             ),
             fields={
                 label: FormField._from_generated(label, value, read_result)

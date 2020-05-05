@@ -48,7 +48,7 @@ class RecognizeContentSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                contents = await form_recognizer_client.recognize_content(stream=f.read())
+                contents = await form_recognizer_client.recognize_content(form_file_stream=f.read())
 
             for idx, content in enumerate(contents):
                 print("----Recognizing content from page #{}----".format(idx))

@@ -120,17 +120,17 @@ class Point(namedtuple("Point", "x y")):
         return super(Point, cls).__new__(cls, x, y)
 
 
-class PageRange(namedtuple("PageRange", "first_page last_page")):
+class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the document.
 
-    :ivar int first_page: The first page number of the document.
-    :ivar int last_page: The last page number of the document.
+    :ivar int first_page_number: The first page number of the document.
+    :ivar int last_page_number: The last page number of the document.
     """
 
     __slots__ = ()
 
-    def __new__(cls, first_page, last_page):
-        return super(PageRange, cls).__new__(cls, first_page, last_page)
+    def __new__(cls, first_page_number, last_page_number):
+        return super(FormPageRange, cls).__new__(cls, first_page_number, last_page_number)
 
 
 class FormContent(object):
@@ -264,8 +264,6 @@ class FormField(object):
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
-    :ivar int page_number:
-        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -274,7 +272,6 @@ class FormField(object):
         self.name = kwargs.get("name", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
-        self.page_number = kwargs.get("page_number", None)
 
     @classmethod
     def _from_generated(cls, field, value, read_result):
@@ -283,10 +280,8 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=adjust_confidence(value.confidence) if value else None,
-            page_number=value.page if value else None,
+            confidence=adjust_confidence(value.confidence) if value else None
         )
-
 
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
@@ -295,14 +290,12 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=adjust_confidence(field.confidence),
-            page_number=page,
+            confidence=adjust_confidence(field.confidence)
         )
 
     def __repr__(self):
-        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={}, page_number={})".format(
-            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence, self.page_number
-        )[:1024]
+        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={})".format(
+            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence)[:1024]
 
 
 class FieldText(FormContent):
