@@ -857,6 +857,15 @@ class CustomFormModelInfo(object):
             last_modified=model.last_updated_date_time
         )
 
+    @classmethod
+    def _from_generated_copy(cls, copy, model_id):
+        return cls(
+            model_id=model_id,
+            status=copy.status,
+            created_on=copy.created_date_time,
+            last_modified=copy.last_updated_date_time
+        )
+
     def __repr__(self):
         return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
             self.model_id, self.status, self.created_on, self.last_modified
@@ -885,61 +894,3 @@ class AccountProperties(object):
         return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
             self.custom_model_count, self.custom_model_limit
         )[:1024]
-
-
-class CopyAuthorizationResult(GeneratedCopyAuthorizationResult):
-    """Request parameter that contains authorization claims for copy operation.
-
-    :ivar str model_id: Model identifier.
-    :ivar str access_token: Required. Token claim used to authorize the request.
-    :ivar int expiration_date_time_ticks: The time when the access token expires. The date
-        is represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopyAuthorizationResult, self).__init__(**kwargs)
-        self.model_id = kwargs.get('model_id', None)
-        self.access_token = kwargs.get('access_token', None)
-        self.expiration_date_time_ticks = kwargs.get('expiration_date_time_ticks', None)
-
-    @classmethod
-    def _from_generated(cls, copy):
-        return cls(
-            model_id=copy.model_id,
-            access_token=copy.access_token,
-            expiration_date_time_ticks=copy.expiration_date_time_ticks
-        )
-
-    def __repr__(self):
-        return "CopyAuthorizationResult(model_id={}, access_token={}, expiration_date_time_ticks={})".format(
-            self.model_id, self.access_token, self.expiration_date_time_ticks
-        )[:1024]
-
-
-class CopyModelResult(object):
-    """Custom model copy result.
-
-    :ivar str model_id: Identifier of the target model.
-    :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
-        Errors returned during the copy operation.
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.model_id = kwargs.get('model_id', None)
-        self.errors = kwargs.get('errors', None)
-
-    @classmethod
-    def _from_generated(cls, copy):
-        return cls(
-            model_id=copy.model_id if copy else None,
-            errors=FormRecognizerError._from_generated(copy.errors) if copy else None
-        )
-
-    def __repr__(self):
-        return "CopyModelResult(model_id={}, errors={})".format(self.model_id, self.errors)[:1024]

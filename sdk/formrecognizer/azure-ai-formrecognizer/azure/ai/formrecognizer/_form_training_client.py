@@ -23,14 +23,13 @@ from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel,
-    CopyAuthorizationResult,
-    CopyModelResult
 )
 from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.pipeline.transport import HttpResponse
+    from ._generated.models import CopyAuthorizationResult
     PipelineResponseType = HttpResponse
 
 
@@ -226,24 +225,20 @@ class FormTrainingClient(object):
         return CustomFormModel._from_generated(response)
 
     @distributed_trace
-    def generate_model_copy_authorization(self, **kwargs):
+    def _generate_model_copy_authorization(self, **kwargs):
         # type: (Any) -> CopyAuthorizationResult
         """Generate authorization to copy a model into the target Form Recognizer resource.
-
-        Generate Copy Authorization.
 
         :return: CopyAuthorizationResult
         :rtype: ~azure.ai.formrecognizer.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        response = self._client.generate_model_copy_authorization(  # type: ignore
+        return self._client.generate_model_copy_authorization(  # type: ignore
             cls=lambda pipeline_response, deserialized, response_headers: deserialized,
             error_map=error_map,
             **kwargs
         )
-
-        return CopyAuthorizationResult._from_generated(response)
 
     @distributed_trace
     def begin_copy_model(
@@ -251,7 +246,8 @@ class FormTrainingClient(object):
         source_model_id,  # type: str
         target_resource_id,  # type: str
         target_resource_region,  # type: str
-        copy_authorization,  # type: CopyAuthorizationResult
+        target_endpoint,  # type: str
+        target_credential,  # type: AzureKeyCredential
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
@@ -265,19 +261,23 @@ class FormTrainingClient(object):
             where the model is copied to.
         :param str target_resource_region: Location of the target Azure resource. A valid Azure
             region name supported by Cognitive Services.
-        :param copy_authorization: Entity that encodes claims to authorize the copy request.
-        :type copy_authorization: ~azure.ai.formrecognizer.CopyAuthorizationResult
+        :param str target_endpoint: The target endpoint to transfer the copied model.
+        :param ~azure.core.credentials.AzureKeyCredential target_credential:
+            The credential for the target resource.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
         :return: An instance of LROPoller
-        :rtype: ~azure.core.polling.LROPoller[CopyModelResult]
+        :rtype: ~azure.core.polling.LROPoller[CustomFormModelInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
+        target_client = self._get_form_training_client(target_endpoint, target_credential)
+        copy_authorization = target_client._generate_model_copy_authorization()
+
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
-            return CopyModelResult._from_generated(copy_result.copy_result)
+            return CustomFormModelInfo._from_generated_copy(copy_result, copy_authorization.model_id)
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=source_model_id,
@@ -291,6 +291,10 @@ class FormTrainingClient(object):
             error_map=error_map,
             **kwargs
         )
+
+    @classmethod
+    def _get_form_training_client(cls, endpoint, credential):
+        return cls(endpoint, credential)
 
     def close(self):
         # type: () -> None
