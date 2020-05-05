@@ -130,8 +130,7 @@ class SearchSynonymMapsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            synonym_map,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             name = synonym_map.name
@@ -190,8 +189,7 @@ class SearchSynonymMapsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            synonym_map,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             name = synonym_map.name

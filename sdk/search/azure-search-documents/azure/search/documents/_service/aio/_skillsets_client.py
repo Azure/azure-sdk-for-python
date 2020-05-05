@@ -128,14 +128,15 @@ class SearchSkillsetsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            skillset,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             name = skillset.name
         except AttributeError:
             name = skillset
-        await self._client.skillsets.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
+        await self._client.skillsets.delete(
+            name, access_condition=access_condition, error_map=error_map, **kwargs
+        )
 
     @distributed_trace_async
     async def create_skillset(self, name, skills, description, **kwargs):
@@ -193,17 +194,13 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         access_condition = None
 
         if "skillset" in kwargs:
             skillset = kwargs.pop("skillset")
             error_map, access_condition = get_access_conditions(
-                skillset,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+                skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
             )
             skillset = Skillset.deserialize(skillset.serialize())
             skillset.name = name

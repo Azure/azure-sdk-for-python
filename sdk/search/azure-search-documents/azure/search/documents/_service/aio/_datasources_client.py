@@ -92,8 +92,7 @@ class SearchDataSourcesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         if not name:
             name = data_source.name
@@ -131,8 +130,7 @@ class SearchDataSourcesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             name = data_source.name

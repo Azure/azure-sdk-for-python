@@ -91,8 +91,7 @@ class SearchIndexersClient(HeadersMixin):
         :rtype: dict
         """
         error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
@@ -177,14 +176,15 @@ class SearchIndexersClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             name = indexer.name
         except AttributeError:
             name = indexer
-        await self._client.indexers.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
+        await self._client.indexers.delete(
+            name, access_condition=access_condition, error_map=error_map, **kwargs
+        )
 
     @distributed_trace_async
     async def run_indexer(self, name, **kwargs):

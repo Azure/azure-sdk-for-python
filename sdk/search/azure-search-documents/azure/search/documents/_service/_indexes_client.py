@@ -13,7 +13,7 @@ from ._generated import SearchServiceClient as _SearchServiceClient
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    get_access_conditions
+    get_access_conditions,
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
@@ -144,8 +144,7 @@ class SearchIndexesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         try:
             index_name = index.name
@@ -185,11 +184,7 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_index(
-        self,
-        index_name,
-        index,
-        allow_index_downtime=None,
-        **kwargs
+        self, index_name, index, allow_index_downtime=None, **kwargs
     ):
         # type: (str, Index, bool, **Any) -> Index
         """Creates a new search index or updates an index if it already exists.
@@ -224,8 +219,7 @@ class SearchIndexesClient(HeadersMixin):
                 :caption: Update an index.
         """
         error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)
