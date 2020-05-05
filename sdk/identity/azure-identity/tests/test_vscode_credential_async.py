@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
 import pytest
 from azure.core.credentials import AccessToken
 from azure.identity._internal.user_agent import USER_AGENT
@@ -71,6 +70,7 @@ async def test_redeem_token():
         assert token is expected_token
         token_by_refresh_token.assert_called_with("VALUE", ("scope",))
 
+
 @pytest.mark.asyncio
 async def test_cache_refresh_token():
     expected_token = AccessToken("token", 42)
@@ -96,7 +96,7 @@ async def test_no_obtain_token_if_cached():
     mock_client = mock.Mock(spec=object)
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
-    mock_client.get_cached_access_token = mock.Mock(return_value='VALUE')
+    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
 
     with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(_client=mock_client)

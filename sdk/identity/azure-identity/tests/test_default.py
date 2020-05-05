@@ -9,7 +9,6 @@ from azure.identity import (
     CredentialUnavailableError,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
-    KnownAuthorities,
     SharedTokenCacheCredential,
 )
 from azure.identity._constants import EnvironmentVariables
@@ -131,7 +130,6 @@ def test_exclude_options():
     assert actual - default == {InteractiveBrowserCredential}
 
 
-
 def test_shared_cache_tenant_id():
     expected_access_token = "expected-access-token"
     refresh_token_a = "refresh-token-a"
@@ -221,6 +219,25 @@ def test_shared_cache_username():
         credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
     token = credential.get_token("scope")
     assert token.token == expected_access_token
+
+
+@patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential")
+def test_default_credential_shared_cache_use(mock_credential):
+    mock_credential.supported = Mock(return_value=False)
+
+    # unsupported platform -> default credential shouldn't use shared cache
+    credential = DefaultAzureCredential()
+    assert mock_credential.call_count == 0
+    assert mock_credential.supported.call_count == 1
+    mock_credential.supported.reset_mock()
+
+    mock_credential.supported = Mock(return_value=True)
+
+    # supported platform -> default credential should use shared cache
+    credential = DefaultAzureCredential()
+    assert mock_credential.call_count == 1
+    assert mock_credential.supported.call_count == 1
+    mock_credential.supported.reset_mock()
 
 
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):
