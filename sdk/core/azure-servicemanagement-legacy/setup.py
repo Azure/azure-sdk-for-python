@@ -43,6 +43,7 @@ setup(
     version='0.20.7',
     description='Microsoft Azure Legacy Service Management Client Library for Python',
     long_description=open('README.md', 'r').read(),
+    long_description_content_type='text/markdown',
     license='Apache License 2.0',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
