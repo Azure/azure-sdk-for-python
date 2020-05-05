@@ -1,5 +1,24 @@
 # Release History
 
+## 0.12.0 (2020-05-05)
+
+  **Features**
+
+  - New API version 2020-03-01
+  - Model IotHubProperties has a new parameter minTlsVersion
+  - Added PrivateLinkResources and PrivateEndpointConnections operations
+  - Models RoutingStorageContainerProperties, RoutingEventHubProperties,
+    RoutingServiceBusQueueEndpointProperties, and RoutingServiceBusTopicEndpointProperties 
+    each have parameters to support identity-based authentication types
+    (authentication_type, endpoint_uri, entity_path)
+  - Model StorageEndpointProperties has new parameter authentication_type to support
+    identity-based authentication
+
+  **Breaking Changes**
+
+  - Device import and export methods have new signatures, requiring the use of new models
+    ImportDevicesRequest and ExportDevicesRequest
+
 ## 0.11.0 (2020-03-17)
 
   - Preview API versions 2018-12-01-preview, 2019-03-22-preview, 2019-07-01-preview included
