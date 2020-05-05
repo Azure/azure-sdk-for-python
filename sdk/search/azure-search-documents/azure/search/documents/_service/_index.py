@@ -14,16 +14,8 @@ if TYPE_CHECKING:
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-def SimpleField(
-    name,
-    type,  # pylint:disable=redefined-builtin
-    key=False,
-    filterable=False,
-    facetable=False,
-    sortable=False,
-    hidden=False,
-):
-    # type: (str, str, bool, bool, bool, bool, bool) -> Dict[str, Any]
+def SimpleField(**kw):
+    # type: (**Any) -> Dict[str, Any]
     """Configure a simple field for an Azure Search Index
 
     :param name: Required. The name of the field, which must be unique within the fields collection
@@ -68,31 +60,18 @@ def SimpleField(
      Default is False.
     :type facetable: bool
     """
-    result = {"name": name, "type": type}  # type: Dict[str, Any]
-    result["key"] = key
+    result = {"name": kw.get("name"), "type": kw.get("type")}  # type: Dict[str, Any]
+    result["key"] = kw.get("key", False)
     result["searchable"] = False
-    result["filterable"] = filterable
-    result["facetable"] = facetable
-    result["sortable"] = sortable
-    result["retrievable"] = not hidden
+    result["filterable"] = kw.get("filterable", False)
+    result["facetable"] = kw.get("facetable", False)
+    result["sortable"] = kw.get("sortable", False)
+    result["retrievable"] = not kw.get("hidden", False)
     return Field(**result)
 
 
-def SearchableField(
-    name,
-    type,  # pylint:disable=redefined-builtin
-    key=False,
-    searchable=True,
-    filterable=False,
-    facetable=False,
-    sortable=False,
-    hidden=False,
-    analyzer=None,
-    search_analyzer=None,
-    index_analyzer=None,
-    synonym_maps=None,
-):
-    # type: (str, str, bool, bool, bool, bool, bool, str, str, str, List[str]) -> Dict[str, Any]
+def SearchableField(**kw):
+    # type: (**Any) -> Dict[str, Any]
     """Configure a searchable text field for an Azure Search Index
 
     :param name: Required. The name of the field, which must be unique within the fields collection
@@ -210,26 +189,26 @@ def SearchableField(
     :type synonym_maps: list[str]
 
     """
-    result = {"name": name, "type": type}  # type: Dict[str, Any]
-    result["key"] = key
-    result["searchable"] = searchable
-    result["filterable"] = filterable
-    result["facetable"] = facetable
-    result["sortable"] = sortable
-    result["retrievable"] = not hidden
-    if analyzer:
-        result["analyzer"] = analyzer
-    if search_analyzer:
-        result["search_analyzer"] = search_analyzer
-    if index_analyzer:
-        result["index_analyzer"] = index_analyzer
-    if synonym_maps:
-        result["synonym_maps"] = synonym_maps
+    result = {"name": kw.get("name"), "type": kw.get("type")}  # type: Dict[str, Any]
+    result["key"] = kw.get("key", False)
+    result["searchable"] = kw.get("searchable", True)
+    result["filterable"] = kw.get("filterable", False)
+    result["facetable"] = kw.get("facetable", False)
+    result["sortable"] = kw.get("sortable", False)
+    result["retrievable"] = not kw.get("hidden", False)
+    if "analyzer" in kw:
+        result["analyzer"] = kw["analyzer"]
+    if "search_analyzer" in kw:
+        result["search_analyzer"] = kw["search_analyzer"]
+    if "index_analyzer" in kw:
+        result["index_analyzer"] = kw["index_analyzer"]
+    if "synonym_maps" in kw:
+        result["synonym_maps"] = kw["synonym_maps"]
     return Field(**result)
 
 
-def ComplexField(name, fields, collection=False):
-    # type: (str, List[Dict[str, Any]], bool) -> Dict[str, Any]
+def ComplexField(**kw):
+    # type: (**Any) -> Dict[str, Any]
     """Configure a Complex or Complex collection field for an Azure Search
     Index
 
@@ -243,7 +222,7 @@ def ComplexField(name, fields, collection=False):
     :type fields: list[~search_service_client.models.Field]
 
     """
-    typ = Collection(ComplexType) if collection else ComplexType
-    result = {"name": name, "type": typ}  # type: Dict[str, Any]
-    result["fields"] = fields
+    typ = Collection(ComplexType) if kw.get("collection", False) else ComplexType
+    result = {"name": kw.get("name"), "type": typ}  # type: Dict[str, Any]
+    result["fields"] = kw.get("fields")
     return Field(**result)
