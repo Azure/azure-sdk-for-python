@@ -10,6 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import Index
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
@@ -20,7 +21,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import AnalyzeRequest, AnalyzeResult, Index
+    from ._generated.models import AnalyzeRequest, AnalyzeResult
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -146,9 +147,9 @@ class SearchIndexesClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(index, Index):
             index_name = index.name
-        except AttributeError:
+        else:
             index_name = index
         self._client.indexes.delete(
             index_name=index_name,

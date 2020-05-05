@@ -9,14 +9,15 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import Indexer
 from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import Indexer, IndexerExecutionInfo
-    from typing import Any, Dict, Optional, Sequence
+    from ._generated.models import IndexerExecutionInfo
+    from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -178,9 +179,9 @@ class SearchIndexersClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(indexer, Indexer):
             name = indexer.name
-        except AttributeError:
+        else:
             name = indexer
         self._client.indexers.delete(
             name, access_condition=access_condition, error_map=error_map, **kwargs

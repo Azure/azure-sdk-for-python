@@ -130,9 +130,9 @@ class SearchSkillsetsClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(skillset, Skillset):
             name = skillset.name
-        except AttributeError:
+        else:
             name = skillset
         self._client.skillsets.delete(
             name, access_condition=access_condition, error_map=error_map, **kwargs

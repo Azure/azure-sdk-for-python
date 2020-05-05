@@ -23,7 +23,7 @@ from ._models import PatternAnalyzer, PatternTokenizer
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Optional
+    from typing import Any, Dict, Optional, Tuple
     from ._generated.models import Skillset
 
 DELIMITER = "|"
@@ -162,7 +162,7 @@ def listize_synonyms(synonym_map):
 
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
-    # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], AccessCondition]
+    # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], Optional[AccessCondition]]
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
     if isinstance(model, six.string_types):

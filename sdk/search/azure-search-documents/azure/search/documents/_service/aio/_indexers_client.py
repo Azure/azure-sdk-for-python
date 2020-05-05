@@ -9,14 +9,15 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from .._generated.models import Indexer
 from .._utils import get_access_conditions
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import Indexer, IndexerExecutionInfo
-    from typing import Any, Dict, Optional, Sequence
+    from .._generated.models import IndexerExecutionInfo
+    from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -39,17 +40,17 @@ class SearchIndexersClient(HeadersMixin):
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
 
-    def __enter__(self):
+    def __aenter__(self):
         # type: () -> SearchIndexersClient
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__aenter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        return self._client.__exit__(*args)  # pylint:disable=no-member
+    def __aexit__(self, *args):
+        # type: (*Any) -> Any
+        return self._client.__aexit__(*args)  # pylint:disable=no-member
 
     def close(self):
-        # type: () -> None
+        # type: () -> Any
         """Close the :class:`~azure.search.documents.SearchIndexersClient` session.
 
         """
@@ -178,9 +179,9 @@ class SearchIndexersClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(indexer, Indexer):
             name = indexer.name
-        except AttributeError:
+        else:
             name = indexer
         await self._client.indexers.delete(
             name, access_condition=access_condition, error_map=error_map, **kwargs

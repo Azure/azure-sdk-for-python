@@ -132,9 +132,9 @@ class SearchSynonymMapsClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(synonym_map, SynonymMap):
             name = synonym_map.name
-        except AttributeError:
+        else:
             name = synonym_map
         self._client.synonym_maps.delete(
             synonym_map_name=name,
@@ -191,11 +191,11 @@ class SearchSynonymMapsClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(synonym_map, SynonymMap):
             name = synonym_map.name
             if synonyms:
                 synonym_map.synonyms = "\n".join(synonyms)
-        except AttributeError:
+        else:
             name = synonym_map
             solr_format_synonyms = "\n".join(synonyms)
             synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)

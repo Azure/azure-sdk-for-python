@@ -9,6 +9,7 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from .._generated.models import Index
 from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
@@ -19,7 +20,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeRequest, AnalyzeResult, Index
+    from .._generated.models import AnalyzeRequest, AnalyzeResult
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -145,9 +146,9 @@ class SearchIndexesClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(index, Index):
             index_name = index.name
-        except AttributeError:
+        else:
             index_name = index
         await self._client.indexes.delete(
             index_name=index_name,
@@ -185,7 +186,7 @@ class SearchIndexesClient(HeadersMixin):
     async def create_or_update_index(
         self, index_name, index, allow_index_downtime=None, **kwargs
     ):
-        # type: (str, Index, bool, MatchConditions, **Any) -> Index
+        # type: (str, Index, bool, **Any) -> Index
         """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.

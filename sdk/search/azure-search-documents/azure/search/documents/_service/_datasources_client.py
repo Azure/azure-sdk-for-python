@@ -9,13 +9,13 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import DataSource
 from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import DataSource
     from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -177,9 +177,9 @@ class SearchDataSourcesClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
-        try:
+        if isinstance(data_source, DataSource):
             name = data_source.name
-        except AttributeError:
+        else:
             name = data_source
         self._client.data_sources.delete(
             data_source_name=name,
