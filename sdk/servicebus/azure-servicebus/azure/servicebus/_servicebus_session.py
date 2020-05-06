@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import time
 import logging
-from typing import Any, List, TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Union
 import six
 
 from ._common.utils import utc_from_timestamp, utc_now

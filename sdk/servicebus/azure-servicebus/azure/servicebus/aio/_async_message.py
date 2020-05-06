@@ -16,7 +16,8 @@ from .._common.constants import (
     MESSAGE_DEFER,
     MESSAGE_RENEW_LOCK
 )
-from .._common.utils import get_running_loop, utc_from_timestamp
+from .._common.utils import utc_from_timestamp
+from ._async_utils import get_running_loop
 from ..exceptions import MessageSettleFailed
 
 _LOGGER = logging.getLogger(__name__)
@@ -94,8 +95,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
     async def abandon(self):
         # type: () -> None
-        """Abandon the message. 
-        
+        """Abandon the message.
+
         This message will be returned to the queue and made available to be received again.
 
         :rtype: None
@@ -111,7 +112,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
     async def defer(self):
         # type: () -> None
         """Defers the message.
-        
+
         This message will remain in the queue but must be requested
         specifically by its sequence number in order to be received.
 

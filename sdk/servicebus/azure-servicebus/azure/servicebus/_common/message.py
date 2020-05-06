@@ -8,10 +8,10 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Generator
+from typing import Optional, List, Union, Generator, TYPE_CHECKING
 
 import uamqp
-from uamqp import types, errors
+from uamqp import types
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -46,6 +46,9 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge)
 from .utils import utc_from_timestamp, utc_now
+if TYPE_CHECKING:
+    from .._servicebus_receiver import ServiceBusReceiver
+    from .._servicebus_session_receiver import ServiceBusSessionReceiver
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,8 +89,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._annotations = {}
         self._app_properties = {}
 
-        self._expiry = None
-        self._receiver = None
         self.session_id = kwargs.get("session_id", None)
         if 'message' in kwargs:
             self.message = kwargs['message']
@@ -317,7 +318,8 @@ class BatchMessage(object):
     def _from_list(self, messages):
         for each in messages:
             if not isinstance(each, Message):
-                raise ValueError("Populating a message batch only supports iterables containing Message Objects.  Received instead: {}".format(each.__class__.__name__))
+                raise ValueError("Populating a message batch only supports iterables containing Message Objects.  "
+                                 "Received instead: {}".format(each.__class__.__name__))
             self.add(each)
 
     @property
@@ -451,6 +453,8 @@ class ReceivedMessage(PeekMessage):
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
+        self._receiver = None  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
+        self._expiry = None
 
     def _check_live(self, action):
         # pylint: disable=no-member
@@ -519,7 +523,10 @@ class ReceivedMessage(PeekMessage):
             )
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
+        # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
+        # should be accepted. Will revisit this later.
+        # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(self.message.accept)
         if settle_operation == MESSAGE_ABANDON:
@@ -700,5 +707,5 @@ class ReceivedMessage(PeekMessage):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access
+        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access no-member
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)

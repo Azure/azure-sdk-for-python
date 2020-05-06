@@ -402,4 +402,3 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             **kwargs
         )
-

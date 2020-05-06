@@ -136,7 +136,9 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
+    async def _mgmt_request_response(
+            self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs
+    ):
         await self._open()
 
         application_properties = {}

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Union
 import six
 
 from .._servicebus_session import ServiceBusSession as BaseSession

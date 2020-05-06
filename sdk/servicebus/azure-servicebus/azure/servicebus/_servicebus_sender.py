@@ -322,7 +322,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         try:
             batch = self.create_batch()
-            batch._from_list(message)
+            batch._from_list(message)  # pylint: disable=protected-access
             message = batch
         except TypeError:  # Message was not a list or generator.
             pass

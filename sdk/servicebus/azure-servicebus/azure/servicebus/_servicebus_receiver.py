@@ -5,9 +5,9 @@
 import time
 import logging
 import functools
-from typing import Any, List, TYPE_CHECKING, Optional, Union
+from typing import Any, List, TYPE_CHECKING, Optional
 
-from uamqp import ReceiveClient, Source, types
+from uamqp import ReceiveClient, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler import BaseHandler
