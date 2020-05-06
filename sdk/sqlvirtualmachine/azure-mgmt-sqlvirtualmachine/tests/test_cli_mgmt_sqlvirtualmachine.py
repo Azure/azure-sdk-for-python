@@ -39,6 +39,10 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             self.network_client = self.create_mgmt_client(
                 NetworkManagementClient
             )
+            from azure.mgmt.storage import StorageManagementClient
+            self.storage_client = self.create_mgmt_client(
+                StorageManagementClient
+            )
 
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
@@ -137,7 +141,40 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         result = self.compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
         result = result.result()
 
+    def create_storage_account(self, group_name, location, storage_name):
+        BODY = {
+          "sku": {
+            "name": "Standard_GRS"
+          },
+          "kind": "StorageV2",
+          "location": AZURE_LOCATION,
+          "encryption": {
+            "services": {
+              "file": {
+                "key_type": "Account",
+                "enabled": True
+              },
+              "blob": {
+                "key_type": "Account",
+                "enabled": True
+              }
+            },
+            "key_source": "Microsoft.Storage"
+          }
+        }
+        result_create = self.storage_client.storage_accounts.create(
+            group_name,
+            storage_name,
+            BODY
+        )
+        result = result_create.result()
+        print(result)
     
+    def get_storage_key(group_name, storage_name):
+        result = self.mgmt_client.storage_accounts.list_keys(group_name, result)
+        print(result)
+
+ 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sqlvirtualmachine(self, resource_group):
 
@@ -156,6 +193,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             subnet = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, "myVirtualNetwork", "mySubnet")
             nic_id = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, "myNetworkInterface", subnet.id)
             self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, nic_id)
+            self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, "tempstorageaccount")
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {
