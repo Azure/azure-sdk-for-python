@@ -5,17 +5,25 @@
 import logging
 import threading
 from typing import TYPE_CHECKING
-from ._common import EventData
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
-from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
     import datetime
     from azure.core.credentials import TokenCredential
-    from typing import Union, Any, Dict, Tuple, Callable, List, Optional
+    from typing import(
+        Union,
+        Any,
+        Dict,
+        Tuple,
+        Callable,
+        List,
+        Optional
+    )
+    from ._common import EventData
+    from ._eventprocessor.partition_context import PartitionContext
 
 _LOGGER = logging.getLogger(__name__)
 
