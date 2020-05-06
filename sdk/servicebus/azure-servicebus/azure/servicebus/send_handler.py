@@ -107,7 +107,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
             self._handler.send_message(message.message)
         except (errors.ConnectionClose,
                 errors.AuthenticationException,
-                errors.MessageHandlerError):
+                errors.MessageHandlerError,
+                errors.LinkDetach):
             try:
                 self.reconnect()
             except Exception as e:  # pylint: disable=broad-except
