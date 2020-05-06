@@ -66,9 +66,8 @@ def prepare_result(func):
 
     def _deal_with_too_many_documents(response, obj):
         # special case for now if there are too many documents in the request
-        # they may change id to empty string, but currently it is "All"
         too_many_documents_errors = [
-            error for error in obj.errors if error.id == "All"
+            error for error in obj.errors if error.id == ""
         ]
         if too_many_documents_errors:
             too_many_documents_error = too_many_documents_errors[0]
