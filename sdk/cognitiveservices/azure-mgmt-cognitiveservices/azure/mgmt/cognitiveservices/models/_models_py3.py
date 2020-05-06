@@ -327,6 +327,10 @@ class CognitiveServicesAccountProperties(Model):
     :vartype endpoint: str
     :ivar internal_id: The internal identifier.
     :vartype internal_id: str
+    :ivar capabilities: Gets the capabilities of the cognitive services
+     account. Each item indicates a specific feature is supported by this
+     account. The value is read only and for reference only.
+    :vartype capabilities: list[str]
     :param custom_sub_domain_name: Optional subdomain name used for
      token-based authentication.
     :type custom_sub_domain_name: str
@@ -347,12 +351,14 @@ class CognitiveServicesAccountProperties(Model):
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
         'internal_id': {'readonly': True},
+        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
         'internal_id': {'key': 'internalId', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[str]'},
         'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
         'encryption': {'key': 'encryption', 'type': 'Encryption'},
@@ -365,6 +371,7 @@ class CognitiveServicesAccountProperties(Model):
         self.provisioning_state = None
         self.endpoint = None
         self.internal_id = None
+        self.capabilities = None
         self.custom_sub_domain_name = custom_sub_domain_name
         self.network_acls = network_acls
         self.encryption = encryption
