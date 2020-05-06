@@ -28,7 +28,6 @@ RUN_OUTPUT_NAME = 'image_it_pir_1'
 
 # make sure to create user identity with this doc before running live test: https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#step-2--permissions-create-user-idenity-and-role-for-aib
 IDENTITY_NAME = 'aibIdentity1588309486'
-IDENTITY_PRINCIPAL_ID = "760da34a-927f-4a26-bc5e-6c8c30f850cd"
 
 class MgmtImageBuilderClientTest(AzureMgmtTestCase):
 
@@ -50,7 +49,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
           },
           "identity": {
             "type": "UserAssigned",
-            "user_assigned_identities": { "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{}".format(self.settings.SUBSCRIPTION_ID, resource_group.name, IDENTITY_NAME): {"principalId": IDENTITY_PRINCIPAL_ID}}
+            "user_assigned_identities": { "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{}".format(self.settings.SUBSCRIPTION_ID, resource_group.name, IDENTITY_NAME): {}}
           },
           "properties": {
             "source": {
