@@ -1201,7 +1201,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_github_uamqp_issue_135(self, servicebus_namespace, servicebus_namespace_key_name,
+    async def test_async_queue_reconnect_send_after_long_wait(self, servicebus_namespace, servicebus_namespace_key_name,
                                     servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
             service_namespace=servicebus_namespace.name,
