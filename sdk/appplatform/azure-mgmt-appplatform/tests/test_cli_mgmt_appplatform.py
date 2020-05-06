@@ -12,8 +12,8 @@
 # Methods Total   : 43
 # Methods Covered : 43
 # Examples Total  : 43
-# Examples Tested : 43
-# Coverage %      : 100
+# Examples Tested : 19
+# Coverage %      : 44
 # ----------------------
 
 import unittest
@@ -91,6 +91,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         result = self.mgmt_client.apps.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, properties= PROPERTIES, location="eastus")
         result = result.result()
 
+        # Not available/tested yet
         # /Certificates/put/Certificates_CreateOrUpdate[put]
         PROPERTIES = {
           "vault_uri": "https://myvault.vault.azure.net",
@@ -99,6 +100,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.certificates.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, certificate_name=CERTIFICATE_NAME, properties= PROPERTIES)
 
+        # Not available/tested yet
         # /CustomDomains/put/CustomDomains_CreateOrUpdate[put]
         PROPERTIES = {
           "thumbprint": "934367bf1c97033f877db0f15cb1b586957d3133",
@@ -107,6 +109,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.custom_domains.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, domain_name=DOMAIN_NAME, properties= PROPERTIES)
 
+        # Not available/tested yet
         # /Bindings/put/Bindings_CreateOrUpdate[put]
         PROPERTIES = {
           "resource_name": "my-cosmosdb-1",
@@ -120,6 +123,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.bindings.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, binding_name=BINDING_NAME, properties= PROPERTIES)
 
+        # Not available/tested yet
         # /Deployments/put/Deployments_CreateOrUpdate[put]
         PROPERTIES = {
           "source": {
@@ -142,15 +146,19 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # result = self.mgmt_client.deployments.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME, properties= PROPERTIES)
         # result = result.result()
 
+        # Not available/tested yet
         # /Deployments/get/Deployments_Get[get]
         # result = self.mgmt_client.deployments.get(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
 
+        # Not available/tested yet
         # /Bindings/get/Bindings_Get[get]
         # result = self.mgmt_client.bindings.get(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, binding_name=BINDING_NAME)
 
+        # Not available/tested yet
         # /CustomDomains/get/CustomDomains_Get[get]
         # result = self.mgmt_client.custom_domains.get(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, domain_name=DOMAIN_NAME)
 
+        # Not available/tested yet
         # /Certificates/get/Certificates_Get[get]
         # result = self.mgmt_client.certificates.get(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, certificate_name=CERTIFICATE_NAME)
 
@@ -160,12 +168,14 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # /Bindings/get/Bindings_List[get]
         result = self.mgmt_client.bindings.list(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME)
 
+        # Not available/tested yet
         # /CustomDomains/get/CustomDomains_List[get]
         # result = self.mgmt_client.custom_domains.list(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME)
 
         # /Apps/get/Apps_Get[get]
         result = self.mgmt_client.apps.get(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME)
 
+        # Not available/tested yet
         # /Certificates/get/Certificates_List[get]
         # result = self.mgmt_client.certificates.list(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME)
 
@@ -187,21 +197,26 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # /Operations/get/Operations_List[get]
         result = self.mgmt_client.operations.list()
 
+        # Not available/tested yet
         # /Deployments/post/Deployments_GetLogFileUrl[post]
         # result = self.mgmt_client.deployments.get_log_file_url(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
 
+        # Not available/tested yet
         # /Deployments/post/Deployments_Restart[post]
         # result = self.mgmt_client.deployments.restart(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
         # result = result.result()
 
+        # Not available/tested yet
         # /Deployments/post/Deployments_Start[post]
         # result = self.mgmt_client.deployments.start(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
         # result = result.result()
 
+        # Not available/tested yet
         # /Deployments/post/Deployments_Stop[post]
-        #result = self.mgmt_client.deployments.stop(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
+        # result = self.mgmt_client.deployments.stop(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
         # result = result.result()
 
+        # Not available/tested yet
         # /Deployments/patch/Deployments_Update[patch]
         PROPERTIES = {
           "source": {
@@ -214,6 +229,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # result = self.mgmt_client.deployments.update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME, properties= PROPERTIES)
         # result = result.result()
 
+        # Not available/tested yet
         # /Bindings/patch/Bindings_Update[patch]
         PROPERTIES = {
           "key": "xxxx",
@@ -224,6 +240,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.bindings.update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, binding_name=BINDING_NAME, properties= PROPERTIES)
 
+        # Not available/tested yet
         # /CustomDomains/patch/CustomDomains_Patch[patch]
         PROPERTIES = {
           "thumbprint": "934367bf1c97033f877db0f15cb1b586957d3133",
@@ -232,12 +249,14 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.custom_domains.patch(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, domain_name=DOMAIN_NAME, properties= PROPERTIES)
 
+        # Not available/tested yet
         # /CustomDomains/post/CustomDomains_Validate[post]
         # result = self.mgmt_client.custom_domains.validate(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, domain_name=DOMAIN_NAME, name="mydomain.io")
 
         # /Apps/post/Apps_GetResourceUploadUrl[post]
         result = self.mgmt_client.apps.get_resource_upload_url(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME)
 
+        # Not available/tested yet
         # /Apps/patch/Apps_Update[patch]
         PROPERTIES = {
           "public": True,
@@ -268,42 +287,46 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # /Services/post/Services_ListTestKeys[post]
         result = self.mgmt_client.services.list_test_keys(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME)
 
+        # Not available/tested yet
         # /Services/patch/Services_Update[patch]
-        PROPERTIES = {
-          "config_server_properties": {
-            "config_server": {
-              "git_property": {
-                "uri": "https://github.com/fake-user/fake-repository.git",
-                "label": "master",
-                "search_paths": [
-                  "/"
-                ]
+        BODY = {
+          "properties": {
+            "config_server_properties": {
+              "config_server": {
+                "git_property": {
+                  "uri": "https://github.com/fake-user/fake-repository.git",
+                  "label": "master",
+                  "search_paths": [
+                    "/"
+                  ]
+                }
               }
+            },
+            "trace": {
+              "enabled": True,
+              "app_insight_instrumentation_key": "00000000-0000-0000-0000-000000000000"
             }
           },
-          "trace": {
-            "enabled": True,
-            "app_insight_instrumentation_key": "00000000-0000-0000-0000-000000000000"
+          "location": "eastus",
+          "tags": {
+            "key1": "value1"
           }
         }
-        TAGS = {
-          "key1": "value1"
-        }
-        # result = self.mgmt_client.services.update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, properties= PROPERTIES, location="eastus", tags= TAGS)
+        # result = self.mgmt_client.services.update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, resource=BODY)
         # result = result.result()
 
         # /Services/post/Services_CheckNameAvailability[post]
-        result = self.mgmt_client.services.check_name_availability(location="eastus", type="Microsoft.AppPlatform/Spring", name="myservice")
+        result = self.mgmt_client.services.check_name_availability(azure_location=AZURE_LOCATION, type="Microsoft.AppPlatform/Spring", name="myservice")
 
-        # /Deployments/delete/Deployments_Delete[delete]
-        # result = self.mgmt_client.deployments.delete(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, deployment_name=DEPLOYMENT_NAME)
-
+        # Not available/tested yet
         # /Bindings/delete/Bindings_Delete[delete]
         # result = self.mgmt_client.bindings.delete(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, binding_name=BINDING_NAME)
 
+        # Not available/tested yet
         # /CustomDomains/delete/CustomDomains_Delete[delete]
         # result = self.mgmt_client.custom_domains.delete(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, domain_name=DOMAIN_NAME)
 
+        # Not available/tested yet
         # /Certificates/delete/Certificates_Delete[delete]
         # result = self.mgmt_client.certificates.delete(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, certificate_name=CERTIFICATE_NAME)
 
