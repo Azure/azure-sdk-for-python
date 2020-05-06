@@ -12,8 +12,8 @@
 # Methods Total   : 18
 # Methods Covered : 18
 # Examples Total  : 18
-# Examples Tested : 18
-# Coverage %      : 100
+# Examples Tested : 11
+# Coverage %      : 61
 # ----------------------
 
 import unittest
@@ -62,9 +62,11 @@ class MgmtIotDpsClientTest(AzureMgmtTestCase):
         }
         # result = self.mgmt_client.dps_certificate.create_or_update(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, certificate_name=CERTIFICATE_NAME, certificate_description=BODY)
 
+        # Certificates not tested yet
         # /DpsCertificate/get/DPSGetCertificate[get]
         # result = self.mgmt_client.dps_certificate.get(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, certificate_name=CERTIFICATE_NAME)
 
+        # Certificates not tested yet
         # /IotDpsResource/get/DPSGetOperationResult[get]
         # result = self.mgmt_client.iot_dps_resource.get_operation_result(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, operation_id=OPERATION_ID, asyncinfo="1508265712453")
 
@@ -86,15 +88,18 @@ class MgmtIotDpsClientTest(AzureMgmtTestCase):
         # /Operations/get/DPSOperations[get]
         result = self.mgmt_client.operations.list()
 
+        # Certificates not tested yet
         # /DpsCertificate/post/DPSGenerateVerificationCode[post]
         # result = self.mgmt_client.dps_certificate.generate_verification_code(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, certificate_name=CERTIFICATE_NAME)
 
+        # Certificates not tested yet
         # /DpsCertificate/post/DPSVerifyCertificate[post]
         BODY = {
           "certificate": "#####################################"
         }
         # result = self.mgmt_client.dps_certificate.verify_certificate(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, certificate_name=CERTIFICATE_NAME, request=BODY)
 
+        # Certificates not tested yet
         # /IotDpsResource/post/DPSGetKey[post]
         # result = self.mgmt_client.iot_dps_resource.list_keys_for_key_name(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, key_name=KEY_NAME)
 
@@ -116,6 +121,7 @@ class MgmtIotDpsClientTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.iot_dps_resource.check_provisioning_service_name_availability(name="test213123")
 
+        # Certificates not tested yet
         # /DpsCertificate/delete/DPSDeleteCertificate[delete]
         # result = self.mgmt_client.dps_certificate.delete(resource_group_name=RESOURCE_GROUP, provisioning_service_name=PROVISIONING_SERVICE_NAME, certificate_name=CERTIFICATE_NAME)
 
