@@ -4,15 +4,13 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import TYPE_CHECKING
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import datetime
-    from azure.core.credentials import TokenCredential
     from typing import(
         Union,
         Any,
@@ -22,6 +20,8 @@ if TYPE_CHECKING:
         List,
         Optional
     )
+    import datetime
+    from azure.core.credentials import TokenCredential
     from ._common import EventData
     from ._eventprocessor.partition_context import PartitionContext
 
