@@ -91,7 +91,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           },
           "storage_profile": {
             "image_reference": {
-              "sku": "sqldev",
+              "sku": "enterprise",
               "publisher": "microsoftsqlserver",
               "version": "latest",
               "offer": "sql2019-ws2019"
@@ -144,7 +144,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        SQL_VIRTUAL_MACHINE_GROUP_NAME = "mySqlVirtualMachineGroup"
+        SQL_VIRTUAL_MACHINE_GROUP_NAME = "mySqlVMGroup"
         AVAILABILITY_GROUP_LISTENER_NAME = "myAvailabilityGroupListener"
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
@@ -251,8 +251,9 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             "log_backup_frequency": "10"
           }
         }
-        result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        result = result.result()
+        # ---- storage access key must be valid
+        # result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
+        # result = result.result()
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine with min parameters.[put]
         BODY = {
