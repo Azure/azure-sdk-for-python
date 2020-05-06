@@ -1,6 +1,6 @@
 # Release History
 
-## 0.50.3b1 (unreleased)
+## 0.50.3 (unreleased)
 
 **Features**
 

@@ -1203,6 +1203,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     async def test_async_queue_reconnect_send_after_long_wait(self, servicebus_namespace, servicebus_namespace_key_name,
                                     servicebus_namespace_primary_key, servicebus_queue, **kwargs):
+        # https://github.com/Azure/azure-uamqp-python/issues/135
         client = ServiceBusClient(
             service_namespace=servicebus_namespace.name,
             shared_access_key_name=servicebus_namespace_key_name,

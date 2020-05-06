@@ -64,7 +64,6 @@ class Sender(BaseHandler, mixins.SenderMixin):
             connection=None, encoding='UTF-8', debug=False, **kwargs):
         self.name = "SBSender-{}".format(handler_id)
         self.session_id = session
-        self._retry_total = kwargs.get('retry_total', 3)
         super(Sender, self).__init__(
             target, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
 
