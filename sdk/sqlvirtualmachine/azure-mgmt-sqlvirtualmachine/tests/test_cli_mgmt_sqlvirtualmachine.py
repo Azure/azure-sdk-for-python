@@ -36,6 +36,107 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
                 ComputeManagementClient
             )
 
+
+    def create_virtual_network(self, group_name, location, network_name, subnet_name):
+      
+      azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+          group_name,
+          network_name,
+          {
+              'location': location,
+              'address_space': {
+                  'address_prefixes': ['10.0.0.0/16']
+              }
+          },
+      )
+      result_create = azure_operation_poller.result()
+
+      async_subnet_creation = self.network_client.subnets.create_or_update(
+          group_name,
+          network_name,
+          subnet_name,
+          {'address_prefix': '10.0.0.0/24'}
+      )
+      subnet_info = async_subnet_creation.result()
+      
+      return subnet_info
+
+    def create_network_interface(self, group_name, location, nic_name, subnet):
+        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+            group_name,
+            nic_name,
+            {
+                'location': location,
+                'ip_configurations': [{
+                    'name': 'MyIpConfig',
+                    'subnet': {
+                        'id': subnet.id
+                    }
+                }]
+            }
+        )
+        nic_info = async_nic_creation.result()
+        return nic_info.id
+
+    def create_vm(self, group_name, location, vm_name, nic_id):
+        # Create a vm with empty data disks.[put]
+        BODY = {
+          "location": location,
+          "hardware_profile": {
+            "vm_size": "Standard_D2_v2"
+          },
+          "storage_profile": {
+            "image_reference": {
+              "sku": "2016-Datacenter",
+              "publisher": "MicrosoftWindowsServer",
+              "version": "latest",
+              "offer": "WindowsServer"
+            },
+            "os_disk": {
+              "caching": "ReadWrite",
+              "managed_disk": {
+                "storage_account_type": "Standard_LRS"
+              },
+              "name": "myVMosdisk",
+              "create_option": "FromImage"
+            },
+            "data_disks": [
+              {
+                "disk_size_gb": "1023",
+                "create_option": "Empty",
+                "lun": "0"
+              },
+              {
+                "disk_size_gb": "1023",
+                "create_option": "Empty",
+                "lun": "1"
+              }
+            ]
+          },
+          "os_profile": {
+            "admin_username": "testuser",
+            "computer_name": "myVM",
+            "admin_password": "Aa1!zyx_",
+            "windows_configuration": {
+              "enable_automatic_updates": True  # need automatic update for reimage
+            }
+          },
+          "network_profile": {
+            "network_interfaces": [
+              {
+                # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NIC_ID + "",
+                "id": NIC_ID,
+                "properties": {
+                  "primary": True
+                }
+              }
+            ]
+          }
+        }
+        result = self.compute_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
+        result = result.result()
+
+    
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sqlvirtualmachine(self, resource_group):
 
@@ -50,10 +151,10 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         SQL_VIRTUAL_MACHINE_NAME = "myVirtualMachine"
         VIRTUAL_MACHINE_NAME = "myVirtualMachine"
 
-
         if self.is_live:
-
-
+            subnet = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, "myVirtualNetwork", "mySubnet")
+            nic_id = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, "myNetworkInterface", subnet.id)
+            self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, nic_id)
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {
