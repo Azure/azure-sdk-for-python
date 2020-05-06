@@ -4,11 +4,11 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
+from typing import TYPE_CHECKING
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import(
