@@ -32,8 +32,12 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         )
         if self.is_live:
             from azure.mgmt.compute import ComputeManagementClient
-                self.compute_client = self.create_mgmt_client(
+            self.compute_client = self.create_mgmt_client(
                 ComputeManagementClient
+            )
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(
+                NetworkManagementClient
             )
 
 
@@ -61,7 +65,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
       
       return subnet_info
 
-    def create_network_interface(self, group_name, location, nic_name, subnet):
+    def create_network_interface(self, group_name, location, nic_name, subnet_id):
         async_nic_creation = self.network_client.network_interfaces.create_or_update(
             group_name,
             nic_name,
@@ -70,7 +74,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
                 'ip_configurations': [{
                     'name': 'MyIpConfig',
                     'subnet': {
-                        'id': subnet.id
+                        'id': subnet_id
                     }
                 }]
             }
@@ -87,10 +91,10 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           },
           "storage_profile": {
             "image_reference": {
-              "sku": "2016-Datacenter",
-              "publisher": "MicrosoftWindowsServer",
+              "sku": "sqldev",
+              "publisher": "microsoftsqlserver",
               "version": "latest",
-              "offer": "WindowsServer"
+              "offer": "sql2019-ws2019"
             },
             "os_disk": {
               "caching": "ReadWrite",
@@ -115,17 +119,14 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           },
           "os_profile": {
             "admin_username": "testuser",
-            "computer_name": "myVM",
-            "admin_password": "Aa1!zyx_",
-            "windows_configuration": {
-              "enable_automatic_updates": True  # need automatic update for reimage
-            }
+            "admin_password": "Password1!!!",
+            "computer_name" : "myvm"
           },
           "network_profile": {
             "network_interfaces": [
               {
                 # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NIC_ID + "",
-                "id": NIC_ID,
+                "id": nic_id,
                 "properties": {
                   "primary": True
                 }
@@ -133,7 +134,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.compute_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
+        result = self.compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
         result = result.result()
 
     
@@ -158,7 +159,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
+          "sql_server_license_type": "PAYG",
           "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
           "storage_configuration_settings": {
             "disk_configuration_type": "EXTEND",
@@ -174,7 +176,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to NEW Data, Log and TempDB storage pool.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
           "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
           "storage_configuration_settings": {
             "disk_configuration_type": "NEW",
@@ -201,7 +203,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine and joins it to a SQL virtual machine group.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
           "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
           "sql_virtual_machine_group_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/" + SQL_VIRTUAL_MACHINE_GROUP_NAME + "",
           "wsfc_domain_credentials": {
@@ -215,7 +217,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine with max parameters.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
           "sql_server_license_type": "PAYG",
           "sql_image_sku": "Enterprise",
           "sql_management": "Full",
@@ -268,7 +270,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine with min parameters.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
           "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
         }
         result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
@@ -276,7 +278,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
 
         # /SqlVirtualMachineGroups/put/Creates or updates a SQL virtual machine group.[put]
         BODY = {
-          "location": "northeurope",
+          "location": AZURE_LOCATION,
           "tags": {
             "mytag": "myval"
           },
