@@ -28,11 +28,12 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
+    from typing import Callable, Any, Dict, Optional, List, Union, Type
     from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
