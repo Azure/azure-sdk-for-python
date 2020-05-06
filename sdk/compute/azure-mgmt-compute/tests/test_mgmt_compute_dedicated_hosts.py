@@ -6,18 +6,11 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import unittest
-# coding: utf-8
-
-#-------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-#--------------------------------------------------------------------------
-
 # covered ops:
 #   dedicated_hosts: 5/5
 #   dedicated_host_groups: 6/6
+
+import unittest
 
 import azure.mgmt.compute
 # import azure.mgmt.network
