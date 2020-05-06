@@ -30,6 +30,7 @@ from typing import Any, Union, List, Generic, TypeVar, Dict
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._base import verify_kwargs
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -111,6 +112,8 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        verify_kwargs(**request.context.options)
+
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),

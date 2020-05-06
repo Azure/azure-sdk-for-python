@@ -42,6 +42,25 @@ HttpTransportType = TypeVar("HttpTransportType")
 _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
+_ALLOWED_KWARGS = set([
+    "connection_timeout",
+    "read_timeout",
+    "connection_verify",
+    "connection_cert",
+    "proxies",
+    "cookies",
+    "stream",
+    "request_id",
+    "connection_data_block_size",
+])
+
+
+def verify_kwargs(**kwargs):
+    if not kwargs:
+        return
+    for key in kwargs.keys():
+        if key.lower() not in _ALLOWED_KWARGS:
+            raise ValueError("{} is not allowed".format(key))
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
@@ -98,6 +117,7 @@ class _TransportRunner(HTTPPolicy):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        verify_kwargs(**request.context.options)
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
