@@ -8,7 +8,7 @@ import logging
 
 from uamqp import SendClient
 from uamqp import authentication
-from uamqp import constants, types
+from uamqp import constants, types, errors
 
 from azure.servicebus.base_handler import BaseHandler
 from azure.servicebus.common.errors import MessageSendFailed
@@ -101,9 +101,18 @@ class Sender(BaseHandler, mixins.SenderMixin):
             self.open()
         if self.session_id and not message.properties.group_id:
             message.properties.group_id = self.session_id
+
         try:
             self._handler.send_message(message.message)
-        except Exception as e:
+        except (errors.ConnectionClose,
+                errors.AuthenticationException,
+                errors.MessageHandlerError,
+                errors.LinkDetach):
+            try:
+                self.reconnect()
+            except Exception as e:  # pylint: disable=broad-except
+                raise MessageSendFailed(e)
+        except Exception as e:  # pylint: disable=broad-except
             raise MessageSendFailed(e)
 
     def schedule(self, schedule_time, *messages):
