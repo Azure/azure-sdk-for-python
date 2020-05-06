@@ -30,7 +30,12 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.sqlvirtualmachine.SqlVirtualMachineManagementClient
         )
-    
+        if self.is_live:
+            from azure.mgmt.compute import ComputeManagementClient
+                self.compute_client = self.create_mgmt_client(
+                ComputeManagementClient
+            )
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sqlvirtualmachine(self, resource_group):
 
@@ -42,8 +47,13 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
         LOAD_BALANCER_NAME = "myLoadBalancer"
-        SQL_VIRTUAL_MACHINE_NAME = "mySqlVirtualMachine"
+        SQL_VIRTUAL_MACHINE_NAME = "myVirtualMachine"
         VIRTUAL_MACHINE_NAME = "myVirtualMachine"
+
+
+        if self.is_live:
+
+
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {

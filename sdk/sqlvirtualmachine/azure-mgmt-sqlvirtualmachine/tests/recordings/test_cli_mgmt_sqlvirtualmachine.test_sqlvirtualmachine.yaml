@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: 'b''{"location": "northeurope", "properties": {"virtualMachineResourceId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_sqlvirtualmachine_test_sqlvirtualmachine6ae51670/providers/Microsoft.Compute/virtualMachines/myVirtualMachine"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '265'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-sqlvirtualmachine/0.4.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_sqlvirtualmachine_test_sqlvirtualmachine6ae51670/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/myVirtualMachine?api-version=2017-03-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"ResourceDoesNotExist","message":"Resource ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_sqlvirtualmachine_test_sqlvirtualmachine6ae51670/providers/Microsoft.Compute/virtualMachines/myVirtualMachine''
+        does not exist."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '271'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 06 May 2020 13:46:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 404
+      message: Not Found
+version: 1
