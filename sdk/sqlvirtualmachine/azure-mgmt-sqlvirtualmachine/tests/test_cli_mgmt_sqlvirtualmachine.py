@@ -201,20 +201,6 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
         result = result.result()
 
-        # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine and joins it to a SQL virtual machine group.[put]
-        BODY = {
-          "location": AZURE_LOCATION,
-          "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
-          "sql_virtual_machine_group_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/" + SQL_VIRTUAL_MACHINE_GROUP_NAME + "",
-          "wsfc_domain_credentials": {
-            "cluster_bootstrap_account_password": "<Password>",
-            "cluster_operator_account_password": "<Password>",
-            "sql_service_account_password": "<Password>"
-          }
-        }
-        result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        result = result.result()
-
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine with max parameters.[put]
         BODY = {
           "location": AZURE_LOCATION,
@@ -295,6 +281,20 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.sql_virtual_machine_groups.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, parameters=BODY)
+        result = result.result()
+
+        # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine and joins it to a SQL virtual machine group.[put]
+        BODY = {
+          "location": AZURE_LOCATION,
+          "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
+          "sql_virtual_machine_group_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/" + SQL_VIRTUAL_MACHINE_GROUP_NAME + "",
+          "wsfc_domain_credentials": {
+            "cluster_bootstrap_account_password": "<Password>",
+            "cluster_operator_account_password": "<Password>",
+            "sql_service_account_password": "<Password>"
+          }
+        }
+        result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
         result = result.result()
 
         # /AvailabilityGroupListeners/put/Creates or updates an availability group listener.[put]
