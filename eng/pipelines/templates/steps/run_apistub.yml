@@ -10,6 +10,10 @@ steps:
     inputs:
      versionSpec: '3.7'
 
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+
   - task: PythonScript@0
     displayName: 'Run apistubgen'
     inputs:
