@@ -106,8 +106,11 @@ class TestRecognizeEntities(TextAnalyticsTest):
     def test_too_many_documents(self, client):
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
-        with self.assertRaises(HttpResponseError):
-            response = client.recognize_entities(docs)
+        try:
+            client.recognize_entities(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})

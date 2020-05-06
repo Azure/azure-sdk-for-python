@@ -18,19 +18,19 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[{"id":"All","error":{"code":"InvalidArgument","message":"The
-        request contains a warning.","innererror":{"code":"InvalidDocumentBatch","message":"The
+      string: '{"documents":[{"id":"0","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
+        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
         number of documents in the request have exceeded the data limitations. See
         https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: da8df0dd-8966-4c46-808e-7850f5efd6ad
+      apim-request-id: 2952815e-d270-440e-975b-0eea1d80d377
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
-      date: Thu, 30 Apr 2020 18:38:29 GMT
+      date: Wed, 06 May 2020 17:50:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '32'
+      x-envoy-upstream-service-time: '591'
     status:
       code: 200
       message: OK

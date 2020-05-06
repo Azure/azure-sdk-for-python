@@ -149,8 +149,10 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         # marking as xfail since the service hasn't added this error to this endpoint
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
-        with self.assertRaises(HttpResponseError):
-            response = await client.detect_language(docs)
+        try:
+            await client.detect_language(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})

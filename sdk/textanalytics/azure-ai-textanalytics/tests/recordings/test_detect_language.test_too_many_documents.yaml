@@ -22,25 +22,25 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
+      string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"4","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"5","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - fa964233-6518-4347-ac78-2e5496fff910
-      content-length:
-      - '225'
+      - 665f34a6-d0d7-4e1e-836a-0022b2e7c355
       content-type:
-      - application/json
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=6
       date:
-      - Fri, 01 May 2020 16:08:28 GMT
+      - Wed, 06 May 2020 17:50:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      www-authenticate:
-      - AzureApiManagementKey realm="https://westus2.ppe.cognitiveservices.azure.com/text/analytics",name="Ocp-Apim-Subscription-Key",type="header"
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
+      x-envoy-upstream-service-time:
+      - '17'
     status:
-      code: 401
-      message: Access Denied
+      code: 200
+      message: OK
 version: 1
