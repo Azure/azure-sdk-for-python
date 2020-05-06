@@ -8,6 +8,8 @@
 
 **Breaking changes**
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
+- Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
+- `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
 ## 1.0.0b4 (2020-04-07)
 
