@@ -22,13 +22,13 @@
 #   activity_logs: 1/1
 #   autoscale_settings: 6/6
 #   baselines: 1/1
-#   alert_rule_incidents: 0/2
-#   alert_rules: 0/6
-#   baseline: 0/1
+#   alert_rule_incidents: 0/2  # TODO: cannot test it in this sub
+#   alert_rules: 0/6  # TODO: cannot test it in this sub
+#   baseline: 0/1  # TODO: need check whether it is outdated
 #   diagnostic_settings: 4/4
 #   diagnostic_settings_category: 2/2
-#   guest_diagnostics_settings: 0/6  TODO: InvalidResourceType
-#   guest_diagnostics_settings_association: 0/6  TODO: InvalidResourceType
+#   guest_diagnostics_settings: 0/6  TODO: InvalidResourceType, it seems like outdated
+#   guest_diagnostics_settings_association: 0/6  TODO: InvalidResourceType, it seems like outdated
 #   event_categories: 1/1
 #   log_profiles: 5/5
 #   metric_alerts: 6/6
@@ -39,24 +39,15 @@
 #   metrics: 1/1
 #   operations: 1/1
 #   scheduled_query_rules: 6/6
-#   service_diagnostic_settings: 0/3 TODO: deprecated in future releases
+#   service_diagnostic_settings: 0/3 TODO: InvalidResourceType, it seems like outdated
 #   tenant_activity_logs: 1/1
 #   vm_insights: 1/1
 
 
 import unittest
 
-# import azure.mgmt.applicationinsights
-# import azure.mgmt.compute
-# import azure.mgmt.eventhub
-# import azure.mgmt.loganalytics
-# import azure.mgmt.logic
-# import azure.mgmt.logic.models
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
-# import azure.mgmt.network
-# import azure.mgmt.storage
-# import azure.mgmt.web
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -70,29 +61,37 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         )
 
         if self.is_live:
+            from azure.mgmt.storage import StorageManagementClient
             self.storage_client = self.create_mgmt_client(
-                azure.mgmt.storage.StorageManagementClient
+                StorageManagementClient
             )
+            from azure.mgmt.eventhub import EventHubManagementClient
             self.eventhub_client = self.create_mgmt_client(
                 azure.mgmt.eventhub.EventHubManagementClient
             )
+            from azure.mgmt.loganalytics import LogAnalyticsManagementClient
             self.loganalytics_client = self.create_mgmt_client(
-                azure.mgmt.loganalytics.LogAnalyticsManagementClient
+                LogAnalyticsManagementClient
             )
+            from azure.mgmt.web import WebSiteManagementClient
             self.web_client = self.create_mgmt_client(
-                azure.mgmt.web.WebSiteManagementClient
+                WebSiteManagementClient
             )
+            from azure.mgmt.compute import ComputeManagementClient
             self.vm_client = self.create_mgmt_client(
-                azure.mgmt.compute.ComputeManagementClient
+                ComputeManagementClient
             )
+            from azure.mgmt.network import NetworkManagementClient
             self.network_client = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient
+                NetworkManagementClient
             )
+            from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
             self.insight_client = self.create_mgmt_client(
-                azure.mgmt.applicationinsights.ApplicationInsightsManagementClient
+                ApplicationInsightsManagementClient
             )
+            from azure.mgmt.logic import LogicManagementClient
             self.logic_client = self.create_mgmt_client(
-                azure.mgmt.logic.LogicManagementClient
+                LogicManagementClient
             )
 
     def create_workflow(self, group_name, location, workflow_name):
@@ -119,9 +118,10 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         location,
         storage_name
     ):
-        params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
-            kind=azure.mgmt.storage.models.Kind.storage,
+        from azure.mgmt.storage import models
+        params_create = models.StorageAccountCreateParameters(
+            sku=models.Sku(name=models.SkuName.standard_lrs),
+            kind=models.Kind.storage,
             location=location
         )
         result_create = self.storage_client.storage_accounts.create(
@@ -132,7 +132,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         account = result_create.result()
         return account.id
 
-    # use eventhub track 2 verison
+    # use eventhub track 1 verison
     def create_event_hub_authorization_rule(
         self,
         group_name,
@@ -154,7 +154,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "tag2": "value2"
           }
         }
-        result = self.eventhub_client.namespaces.begin_create_or_update(group_name, name_space, BODY)
+        result = self.eventhub_client.namespaces.create_or_update(group_name, name_space, BODY)
         result.result()
 
         # NameSpaceAuthorizationRuleCreate[put]
@@ -779,8 +779,8 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Get metric baselines[get]
         result = self.mgmt_client.baselines.list(RESOURCE_URI, INSIGHT_NAME)
 
-        # TODO: fix later
-        # # Get metric baseline[get]
+        # TODO: outdated
+        # Get metric baseline[get]
         # result = self.mgmt_client.baseline.get(RESOURCE_URI)
 
         # Get Metric for data[get]
