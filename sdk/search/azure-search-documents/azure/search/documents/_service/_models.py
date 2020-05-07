@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._generated.models import LexicalAnalyzer, Tokenizer
+from ._generated.models import LexicalAnalyzer, LexicalTokenizer
 
 
 class PatternAnalyzer(LexicalAnalyzer):
@@ -49,7 +49,7 @@ class PatternAnalyzer(LexicalAnalyzer):
         self.stopwords = kwargs.get("stopwords", None)
 
 
-class PatternTokenizer(Tokenizer):
+class PatternTokenizer(LexicalTokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
     This tokenizer is implemented using Apache Lucene.
 
