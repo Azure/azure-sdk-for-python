@@ -78,6 +78,9 @@ class MsalTransportAdapter:
         if params:
             request.format_parameters(params)
 
+        # msal passes auth=None, which we don't want to pass along to pipeline.run
+        kwargs.pop("auth", None)
+
         future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
@@ -103,6 +106,9 @@ class MsalTransportAdapter:
         if data:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
             request.set_formdata_body(data)
+
+        # msal passes auth=None, which we don't want to pass along to pipeline.run
+        kwargs.pop("auth", None)
 
         future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop

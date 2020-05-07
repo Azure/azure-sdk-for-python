@@ -106,6 +106,10 @@ class MsalTransportAdapter(object):
         request = HttpRequest("GET", url, headers=headers)
         if params:
             request.format_parameters(params)
+
+        # msal passes auth=None, which we don't want to pass along to pipeline.run
+        kwargs.pop("auth", None)
+
         response = self._pipeline.run(
             request, stream=False, connection_timeout=timeout, connection_verify=verify, **kwargs
         )
@@ -128,6 +132,10 @@ class MsalTransportAdapter(object):
         if data:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
             request.set_formdata_body(data)
+
+        # msal passes auth=None, which we don't want to pass along to pipeline.run
+        kwargs.pop("auth", None)
+
         response = self._pipeline.run(
             request, stream=False, connection_timeout=timeout, connection_verify=verify, **kwargs
         )
