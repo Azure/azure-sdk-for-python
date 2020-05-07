@@ -25,7 +25,49 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSession(object):
+class BaseSession(object):
+    def __init__(self, session_id, receiver, encoding="UTF-8"):
+        self._session_id = session_id
+        self._receiver = receiver
+        self._encoding = encoding
+        self._session_start = None
+        self._locked_until_utc = None
+        self.auto_renew_error = None
+
+    @property
+    def session_id(self):
+        # type: () -> str
+        """
+        Session id of the current session.
+
+        :rtype: str
+        """
+        return self._session_id
+
+    @property
+    def expired(self):
+        # type: () -> bool
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
+        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
+
+    @property
+    def locked_until_utc(self):
+        # type: () -> datetime.datetime
+        """The time at which this session's lock will expire.
+
+        :rtype: datetime.datetime
+        """
+        return self._locked_until_utc
+
+    def _check_live(self):
+        if self.expired:
+            raise SessionLockExpired(inner_exception=self.auto_renew_error)
+
+
+class ServiceBusSession(BaseSession):
     """
     The ServiceBusSession is used for manage session states and lock renewal.
 
@@ -44,17 +86,6 @@ class ServiceBusSession(object):
             :dedent: 4
             :caption: Get session from a receiver
     """
-    def __init__(self, session_id, receiver, encoding="UTF-8"):
-        self._session_id = session_id
-        self._receiver = receiver
-        self._encoding = encoding
-        self._session_start = None
-        self._locked_until_utc = None
-        self.auto_renew_error = None
-
-    def _check_live(self):
-        if self.expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
 
     def get_session_state(self):
         # type: () -> str
@@ -134,31 +165,3 @@ class ServiceBusSession(object):
             mgmt_handlers.default
         )
         self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
-
-    @property
-    def session_id(self):
-        # type: () -> str
-        """
-        Session id of the current session.
-
-        :rtype: str
-        """
-        return self._session_id
-
-    @property
-    def expired(self):
-        # type: () -> bool
-        """Whether the receivers lock on a particular session has expired.
-
-        :rtype: bool
-        """
-        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
-
-    @property
-    def locked_until_utc(self):
-        # type: () -> datetime.datetime
-        """The time at which this session's lock will expire.
-
-        :rtype: datetime.datetime
-        """
-        return self._locked_until_utc
