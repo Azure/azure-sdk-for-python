@@ -170,8 +170,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
         result = result_create.result()
         print(result)
     
-    def get_storage_key(group_name, storage_name):
-        result = self.mgmt_client.storage_accounts.list_keys(group_name, result)
+    def get_storage_key(self, group_name, storage_name):
+        result = self.storage_client.storage_accounts.list_keys(group_name, storage_name)
         print(result)
 
  
@@ -193,7 +193,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             subnet = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, "myVirtualNetwork", "mySubnet")
             nic_id = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, "myNetworkInterface", subnet.id)
             self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, nic_id)
-            self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, "tempstorageaccount")
+            self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, "tempstorageaccountxysdtr")
+            self.get_storage_key(RESOURCE_GROUP, "tempstorageaccountxysdtr")
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {
