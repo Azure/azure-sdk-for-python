@@ -9,6 +9,7 @@
 from typing import (
     Optional,
     Any,
+    Union,
     AsyncIterable,
     TYPE_CHECKING,
 )
@@ -16,12 +17,10 @@ from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import TrainRequest, TrainSourceFilter
 from .._generated.models import Model
-from .._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -29,6 +28,9 @@ from .._models import (
 )
 from .._user_agent import USER_AGENT
 from .._polling import TrainingPolling
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class FormTrainingClient(object):
@@ -42,7 +44,8 @@ class FormTrainingClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key or a token
         credential from :mod:`azure.identity`.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        or :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     .. admonition:: Example:
 
@@ -57,21 +60,11 @@ class FormTrainingClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: "AzureKeyCredential",
+            credential: Union[AzureKeyCredential, AsyncTokenCredential],
             **kwargs: Any
     ) -> None:
 
-        authentication_policy = None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if isinstance(credential, AzureKeyCredential):
-            authentication_policy = AzureKeyCredentialPolicy(
-                name=COGNITIVE_KEY_HEADER, credential=credential
-            )
-        elif credential is not None and not hasattr(credential, "get_token"):
-            raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
-                            "or a token credential from azure.identity".format(type(credential)))
-
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
