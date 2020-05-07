@@ -125,6 +125,18 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.analyze_sentiment(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     def test_document_warnings(self, client):
         # No warnings actually returned for analyze_sentiment. Will update when they add
         docs = [

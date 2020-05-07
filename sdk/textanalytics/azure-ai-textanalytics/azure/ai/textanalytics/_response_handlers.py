@@ -59,8 +59,29 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
+    def _get_error_code_and_message(error):
+        if hasattr(error.error, 'innererror') and error.error.innererror:
+            return error.error.innererror.code, error.error.innererror.message
+        return error.error.code, error.error.message
+
+    def _deal_with_too_many_documents(response, obj):
+        # special case for now if there are too many documents in the request
+        too_many_documents_errors = [
+            error for error in obj.errors if error.id == ""
+        ]
+        if too_many_documents_errors:
+            too_many_documents_error = too_many_documents_errors[0]
+            response.status_code = 400
+            response.reason = "Bad Request"
+            code, message = _get_error_code_and_message(too_many_documents_error)
+            raise HttpResponseError(
+                message="({}) {}".format(code, message),
+                response=response
+            )
+
     def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
         if obj.errors:
+            _deal_with_too_many_documents(response.http_response, obj)
             combined = obj.documents + obj.errors
             results = order_results(response, combined)
         else:

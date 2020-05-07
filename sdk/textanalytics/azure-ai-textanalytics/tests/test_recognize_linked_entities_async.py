@@ -123,6 +123,17 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_too_many_documents(self, client):
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            await client.recognize_linked_entities(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
