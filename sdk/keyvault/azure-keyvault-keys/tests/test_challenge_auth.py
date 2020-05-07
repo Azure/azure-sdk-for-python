@@ -279,7 +279,7 @@ def test_preserves_options_and_headers():
 
 def get_policies_for_request_mutation_test(challenge_policy):
     # create mock policies to add, remove, and verify an option and header
-    key = "foo"
+    key = "request_id"
     value = "bar"
     do_not_handle = lambda _: False
 
