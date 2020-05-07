@@ -110,7 +110,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
+class BaseHandler(object):
     def __init__(
         self,
         fully_qualified_namespace,
@@ -131,22 +131,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._handler = None
         self._auth_uri = None
         self._properties = create_properties()
-
-    def __enter__(self):
-        self._open_with_retry()
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-
-    def _handle_exception(self, exception):
-        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
-        if error_need_close_handler:
-            self._close_handler()
-        if error_need_raise:
-            raise error
-
-        return error
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
@@ -172,6 +156,24 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
         return kwargs
+
+
+class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attributes
+    def __enter__(self):
+        self._open_with_retry()
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def _handle_exception(self, exception):
+        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+        if error_need_close_handler:
+            self._close_handler()
+        if error_need_raise:
+            raise error
+
+        return error
 
     def _backoff(
         self,

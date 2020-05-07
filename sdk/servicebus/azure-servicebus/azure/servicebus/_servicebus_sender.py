@@ -10,7 +10,7 @@ from typing import Any, TYPE_CHECKING, Union, List
 import uamqp
 from uamqp import SendClient, types
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandlerSync
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
@@ -81,7 +81,7 @@ class SenderMixin(object):
         return request_body
 
 
-class ServiceBusSender(BaseHandler, SenderMixin):
+class ServiceBusSender(BaseHandlerSync, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 

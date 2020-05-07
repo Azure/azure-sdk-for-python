@@ -45,21 +45,6 @@ class ServiceBusSharedKeyCredential(object):
 
 
 class BaseHandlerAsync(BaseHandler):
-    def __init__(
-        self,
-        fully_qualified_namespace: str,
-        entity_name: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        self._loop = kwargs.pop("loop", None)
-        super(BaseHandlerAsync, self).__init__(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=entity_name,
-            credential=credential,
-            **kwargs
-        )
-
     async def __aenter__(self):
         await self._open_with_retry()
         return self

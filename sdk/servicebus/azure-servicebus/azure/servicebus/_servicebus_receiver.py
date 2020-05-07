@@ -10,7 +10,7 @@ from typing import Any, List, TYPE_CHECKING, Optional
 from uamqp import ReceiveClient, types
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandlerSync
 from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
+class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
