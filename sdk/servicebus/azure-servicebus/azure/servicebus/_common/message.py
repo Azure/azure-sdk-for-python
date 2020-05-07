@@ -10,7 +10,7 @@ import functools
 import logging
 from typing import Optional, List, Union, Generator, TYPE_CHECKING
 
-import uamqp
+import uamqp.message
 from uamqp import types
 
 from .constants import (
@@ -432,112 +432,14 @@ class PeekMessage(Message):
         return None
 
 
-class ReceivedMessage(PeekMessage):
-    """
-    A Service Bus Message received from service side.
-
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
-    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message.
-    """
+class _ReceivedMessageBase(PeekMessage):
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
-        super(ReceivedMessage, self).__init__(message=message)
+        super(_ReceivedMessageBase, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
         self._receiver = None  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
         self._expiry = None
-
-    def _check_live(self, action):
-        # pylint: disable=no-member
-        if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
-        if self.settled:
-            raise MessageAlreadySettled(action)
-        try:
-            if self.expired:
-                raise MessageLockExpired(inner_exception=self.auto_renew_error)
-        except TypeError:
-            pass
-        try:
-            if self._receiver.session.expired:
-                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
-        except AttributeError:
-            pass
-
-    def _settle_message(
-            self,
-            settle_operation,
-            dead_letter_details=None
-    ):
-        try:
-            if not self._is_deferred_message:
-                try:
-                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
-                    return
-                except RuntimeError as exception:
-                    _LOGGER.info(
-                        "Message settling: %r has encountered an exception (%r)."
-                        "Trying to settle through management link",
-                        settle_operation,
-                        exception
-                    )
-            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
-
-    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
-        # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return functools.partial(
-                self._receiver._settle_message,
-                SETTLEMENT_COMPLETE,
-                [self.lock_token],
-            )
-        if settle_operation == MESSAGE_ABANDON:
-            return functools.partial(
-                self._receiver._settle_message,
-                SETTLEMENT_ABANDON,
-                [self.lock_token],
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return functools.partial(
-                self._receiver._settle_message,
-                SETTLEMENT_DEADLETTER,
-                [self.lock_token],
-                dead_letter_details=dead_letter_details
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return functools.partial(
-                self._receiver._settle_message,
-                SETTLEMENT_DEFER,
-                [self.lock_token],
-            )
-        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
-
-    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
-        # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
-        # should be accepted. Will revisit this later.
-        # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
-        if settle_operation == MESSAGE_COMPLETE:
-            return functools.partial(self.message.accept)
-        if settle_operation == MESSAGE_ABANDON:
-            return functools.partial(self.message.modify, True, False)
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            # note: message.reject() can not set reason and description properly due to the issue
-            # https://github.com/Azure/azure-uamqp-python/issues/155
-            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
-        if settle_operation == MESSAGE_DEFER:
-            return functools.partial(self.message.modify, True, True)
-        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
     @property
     def settled(self):
@@ -603,6 +505,111 @@ class ReceivedMessage(PeekMessage):
         if delivery_annotations:
             return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
+
+    def _check_live(self, action):
+        # pylint: disable=no-member
+        if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
+            raise MessageSettleFailed(action, "Orphan message had no open connection.")
+        if self.settled:
+            raise MessageAlreadySettled(action)
+        try:
+            if self.expired:
+                raise MessageLockExpired(inner_exception=self.auto_renew_error)
+        except TypeError:
+            pass
+        try:
+            if self._receiver.session.expired:
+                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+        except AttributeError:
+            pass
+
+    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
+        # pylint: disable=protected-access
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_COMPLETE,
+                [self.lock_token],
+            )
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_ABANDON,
+                [self.lock_token],
+            )
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_DEADLETTER,
+                [self.lock_token],
+                dead_letter_details=dead_letter_details
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_DEFER,
+                [self.lock_token],
+            )
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
+
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
+        # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
+        # should be accepted. Will revisit this later.
+        # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
+        # TODO: to make dead_letter_details useful
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(self.message.accept)
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(self.message.modify, True, False)
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            # note: message.reject() can not set reason and description properly due to the issue
+            # https://github.com/Azure/azure-uamqp-python/issues/155
+            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(self.message.modify, True, True)
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
+
+
+class ReceivedMessage(_ReceivedMessageBase):
+    """
+    A Service Bus Message received from service side.
+
+    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message.
+    """
+
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
+        super(ReceivedMessage, self).__init__(message, mode=mode, **kwargs)
+
+    def _settle_message(
+            self,
+            settle_operation,
+            dead_letter_details=None
+    ):
+        try:
+            if not self._is_deferred_message:
+                try:
+                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
+                    return
+                except RuntimeError as exception:
+                    _LOGGER.info(
+                        "Message settling: %r has encountered an exception (%r)."
+                        "Trying to settle through management link",
+                        settle_operation,
+                        exception
+                    )
+            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+        except Exception as e:
+            raise MessageSettleFailed(settle_operation, e)
 
     def complete(self):
         # type: () -> None

@@ -6,7 +6,7 @@
 import logging
 from typing import Optional
 
-from .._common import message as sync_message
+from .._common.message import _ReceivedMessageBase
 from .._common.constants import (
     ReceiveSettleMode,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
@@ -23,13 +23,12 @@ from ..exceptions import MessageSettleFailed
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceivedMessage(sync_message.ReceivedMessage):
+class ReceivedMessage(_ReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """
 
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, loop=None, **kwargs):
-        self._loop = loop or get_running_loop()
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
         super(ReceivedMessage, self).__init__(message=message, mode=mode, **kwargs)
 
     async def _settle_message(
@@ -40,7 +39,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         try:
             if not self._is_deferred_message:
                 try:
-                    await self._loop.run_in_executor(
+                    await get_running_loop().run_in_executor(
                         None,
                         self._settle_via_receiver_link(settle_operation, dead_letter_details)
                     )
@@ -73,7 +72,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         await self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
-    async def dead_letter(self, reason=None, description=None):
+    async def dead_letter(self, reason=None, description=None):  # pylint: disable=unused-argument  # TODO: to use them
         # type: (Optional[str], Optional[str]) -> None
         """Move the message to the Dead Letter queue.
 
