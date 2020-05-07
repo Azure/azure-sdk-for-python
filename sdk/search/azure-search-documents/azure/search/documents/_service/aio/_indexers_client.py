@@ -15,7 +15,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import Indexer, IndexerExecutionInfo
+    from .._generated.models import Indexer, SearchIndexerStatus
     from typing import Any, Dict, Optional, Sequence
     from azure.core.credentials import AzureKeyCredential
 
@@ -234,14 +234,14 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_indexer_status(self, name, **kwargs):
-        # type: (str, **Any) -> IndexerExecutionInfo
+        # type: (str, **Any) -> SearchIndexerStatus
         """Get the status of the indexer.
 
         :param name: The name of the indexer to fetch the status.
         :type name: str
 
-        :return: IndexerExecutionInfo
-        :rtype: IndexerExecutionInfo
+        :return: SearchIndexerStatus
+        :rtype: SearchIndexerStatus
 
         .. admonition:: Example:
 
