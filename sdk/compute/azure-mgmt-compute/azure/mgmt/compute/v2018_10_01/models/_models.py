@@ -208,7 +208,7 @@ class AutomaticRepairsPolicy(Model):
      state change has completed. This helps avoid premature or accidental
      repairs. The time duration should be specified in ISO 8601 format. The
      minimum allowed grace period is 30 minutes (PT30M), which is also the
-     default value.
+     default value. The maximum allowed grace period is 90 minutes (PT90M).
     :type grace_period: str
     """
 
@@ -1006,7 +1006,8 @@ class ImageReference(SubResource):
     about platform images, marketplace images, or virtual machine images. This
     element is required when you want to use a platform image, marketplace
     image, or virtual machine image, but is not used in other creation
-    operations.
+    operations. NOTE: Image reference publisher and offer can only be set when
+    you create the scale set.
 
     :param id: Resource Id
     :type id: str
@@ -2343,7 +2344,9 @@ class RunCommandResult(Model):
 
 
 class Sku(Model):
-    """Describes a virtual machine scale set sku.
+    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not
+    supported on the hardware the scale set is currently on, you need to
+    deallocate the VMs in the scale set before you modify the SKU name.
 
     :param name: The sku name.
     :type name: str
@@ -3684,7 +3687,8 @@ class VirtualMachineScaleSet(Resource):
      configured.
     :type identity:
      ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetIdentity
-    :param zones: The virtual machine scale set zones.
+    :param zones: The virtual machine scale set zones. NOTE: Availability
+     zones can only be set when you create the scale set.
     :type zones: list[str]
     """
 
@@ -4656,7 +4660,9 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      not run on the extra overprovisioned VMs.
     :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines.
+     single placement group, of max size 100 virtual machines. NOTE: If
+     singlePlacementGroup is true, it may be modified to false. However, if
+     singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine scale set should be
