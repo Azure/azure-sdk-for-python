@@ -2,7 +2,6 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
-  EnvVars: {}
 
 steps:
   - task: UsePythonVersion@0
@@ -25,4 +24,3 @@ steps:
         --toxenv="apistub"
         --disablecov
         --omit-management
-    env: ${{ parameters.EnvVars }}
