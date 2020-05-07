@@ -10,7 +10,11 @@ import uuid
 import uamqp
 from uamqp import types
 
-from azure.servicebus.common.constants import DEADLETTERNAME
+from azure.servicebus.common.constants import (
+    DEADLETTERNAME,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION
+)
 from azure.servicebus.common.errors import (
     MessageAlreadySettled,
     MessageSettleFailed,
@@ -328,7 +332,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         except Exception as e:
             raise MessageSettleFailed("complete", e)
 
-    def dead_letter(self, description=None):
+    def dead_letter(self, description=None, reason=None):
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -337,16 +341,29 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
         `SubscriptionClient.get_deadletter_receiver()`.
 
-        :param description: The reason for dead-lettering the message.
-        :type description: str
+        :param str description: The error description for dead-lettering the message.
+        :param str reason: The reason for dead-lettering the message. If `reason` is not set while `description` is
+         set, then `reason` would be set the same as `description`.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('reject')
+
+        info = None
+        if description:
+            info = {
+                RECEIVER_LINK_DEAD_LETTER_REASON: reason if reason else description,
+                RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
+            }
+        elif reason:
+            info = {
+                RECEIVER_LINK_DEAD_LETTER_REASON: reason
+            }
+
         try:
-            self.message.reject(condition=DEADLETTERNAME, description=description)
+            self.message.reject(condition=DEADLETTERNAME, description=description, info=info)
         except Exception as e:
             raise MessageSettleFailed("reject", e)
 
@@ -444,7 +461,7 @@ class PeekMessage(Message):
         """A PeekMessage cannot be completed Raises `TypeError`."""
         raise TypeError("Peeked message cannot be completed.")
 
-    def dead_letter(self, description=None):
+    def dead_letter(self, description=None, reason=None):
         """A PeekMessage cannot be dead-lettered. Raises `TypeError`."""
         raise TypeError("Peeked message cannot be dead-lettered.")
 
@@ -501,7 +518,7 @@ class DeferredMessage(Message):
         self._receiver._settle_deferred('completed', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
-    def dead_letter(self, description=None):
+    def dead_letter(self, description=None, reason=None):
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -510,8 +527,9 @@ class DeferredMessage(Message):
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
         `SubscriptionClient.get_deadletter_receiver()`.
 
-        :param description: The reason for dead-lettering the message.
-        :type description: str
+        :param str description: The error description for dead-lettering the message.
+        :param str reason: The reason for dead-lettering the message. If `reason` is not set while `description` is
+         set, then `reason` would be set the same as `description`.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
@@ -519,7 +537,7 @@ class DeferredMessage(Message):
         """
         self._is_live('dead-letter')
         details = {
-            'deadletter-reason': str(description) if description else "",
+            'deadletter-reason': str(reason) if reason else (str(description) if description else ""),
             'deadletter-description': str(description) if description else ""}
         self._receiver._settle_deferred(  # pylint: disable=protected-access
             'suspended', [self.lock_token], dead_letter_details=details)

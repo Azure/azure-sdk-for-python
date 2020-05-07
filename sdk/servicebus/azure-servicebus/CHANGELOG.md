@@ -5,7 +5,11 @@
 **Features**
 
 * Added support for retry sending if connection gets closed due to long time inactivity.
+* Added support for `message.dead_letter` accepting `reason`.
 
+**BugFixes**
+
+* Fixed bug in setting `description` when dead lettering messages (issue #9242).
 
 ## 0.50.2 (2019-12-9)
 
