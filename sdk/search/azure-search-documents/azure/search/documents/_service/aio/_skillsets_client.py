@@ -17,7 +17,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import Skill
+    from .._generated.models import SearchIndexerSkill
     from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -139,13 +139,13 @@ class SearchSkillsetsClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> SearchIndexerSkillset
+        # type: (str, Sequence[SearchIndexerSkill], str, **Any) -> SearchIndexerSkillset
         """Create a new SearchIndexerSkillset in an Azure Search service
 
         :param name: The name of the SearchIndexerSkillset to create
         :type name: str
         :param skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[Skill]]
+        :type skills: List[SearchIndexerSkill]]
         :param description: A description for the SearchIndexerSkillset
         :type description: Optional[str]
         :return: The created SearchIndexerSkillset
@@ -177,7 +177,7 @@ class SearchSkillsetsClient(HeadersMixin):
         :param name: The name of the SearchIndexerSkillset to create or update
         :type name: str
         :keyword skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[Skill]
+        :type skills: List[SearchIndexerSkill]
         :keyword description: A description for the SearchIndexerSkillset
         :type description: Optional[str]
         :keyword skillset: A SearchIndexerSkillset to create or update.
