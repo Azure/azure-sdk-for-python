@@ -16,7 +16,6 @@
 import unittest
 
 import azure.mgmt.compute
-# import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -30,8 +29,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
         if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
             self.network_client = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient
+                NetworkManagementClient
             )
 
     def create_snapshot(self, group_name, disk_name, snapshot_name):
@@ -79,7 +79,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         SNAPSHOT_NAME = self.get_resource_name("snapshotname")
         VERSION_NAME = "1.0.0"
 
-        self.create_snapshot(RESOURCE_GROUP, DISK_NAME, SNAPSHOT_NAME)
+        if self.is_live:
+            self.create_snapshot(RESOURCE_GROUP, DISK_NAME, SNAPSHOT_NAME)
 
         # Create or update a simple gallery.[put]
         BODY = {
@@ -101,7 +102,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_applications.begin_create_or_update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, BODY)
         result = result.result()
 
-        # TODO: NEED STORAGE ACCOUNT
+        # TODO: NEED CREATE BLOB
         # # Create or update a simple gallery Application Version.[put]
         # BODY = {
         #   "location": "eastus",
@@ -298,7 +299,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_applications.begin_delete(resource_group.name, GALLERY_NAME, APPLICATION_NAME)
         result = result.result()
 
-        self.delete_snapshot(RESOURCE_GROUP, SNAPSHOT_NAME)
+        if self.is_live:
+            self.delete_snapshot(RESOURCE_GROUP, SNAPSHOT_NAME)
 
         # Delete a gallery image.[delete]
         result = self.mgmt_client.gallery_images.begin_delete(resource_group.name, GALLERY_NAME, IMAGE_NAME)

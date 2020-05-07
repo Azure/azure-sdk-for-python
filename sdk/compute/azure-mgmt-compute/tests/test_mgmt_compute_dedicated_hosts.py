@@ -6,23 +6,13 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import unittest
-# coding: utf-8
-
-#-------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-#--------------------------------------------------------------------------
-
 # covered ops:
 #   dedicated_hosts: 5/5
 #   dedicated_host_groups: 6/6
 
+import unittest
+
 import azure.mgmt.compute
-# import azure.mgmt.network
-# import azure.mgmt.keyvault
-# from azure.keyvault.keys import KeyClient
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -34,13 +24,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        # self.keyvault_client = self.create_mgmt_client(
-        #     azure.mgmt.keyvault.KeyVaultManagementClient
-        # )
-        if self.is_live:
-            self.network_client = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient
-            )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_dedicated_hosts(self, resource_group):

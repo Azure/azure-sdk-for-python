@@ -9,7 +9,7 @@
 # covered ops:
 #   snapshots: 8/8
 #   disks: 8/8
-#   disk_encryption_sets: 2/6
+#   disk_encryption_sets: 6/6
 #   images: 6/6
 
 import unittest
@@ -112,35 +112,109 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        # self.keyvault_client = self.create_mgmt_client(
-        #     azure.mgmt.keyvault.KeyVaultManagementClient
-        # )
-        # self.network_client = self.create_mgmt_client(
-        #     azure.mgmt.network.NetworkManagementClient
-        # )
+        if self.is_live:
+            from azure.mgmt.keyvault import KeyVaultManagementClient
+            self.keyvault_client = self.create_mgmt_client(
+                KeyVaultManagementClient
+            )
+            # self.network_client = self.create_mgmt_client(
+            #     azure.mgmt.network.NetworkManagementClient
+            # )
+
+    def create_key(self, group_name, location, key_vault, tenant_id, object_id):
+        if self.is_live:
+            result = self.keyvault_client.vaults.create_or_update(
+                group_name,
+                key_vault,
+                {
+                  'location': location,
+                  'properties': {
+                    'sku': {
+                      'name': 'standard'
+                    },
+                    'tenant_id': tenant_id,
+                    "access_policies": [
+                      {
+                        "tenant_id": tenant_id,
+                        "object_id": "123743cc-88ef-49ee-920e-13958fe5697d",
+                        "permissions": {
+                          "keys": [
+                            "encrypt",
+                            "decrypt",
+                            "wrapKey",
+                            "unwrapKey",
+                            "sign",
+                            "verify",
+                            "get",
+                            "list",
+                            "create",
+                            "update",
+                            "import",
+                            "delete",
+                            "backup",
+                            "restore",
+                            "recover",
+                            "purge"
+                          ]
+                        }
+                      }
+                    ],
+                    'enabled_for_disk_encryption': True,
+                  }
+                }
+            ).result()
+            vault_url = result.properties.vault_uri
+            vault_id = result.id
+
+            from azure.keyvault.keys import KeyClient
+            credentials = self.settings.get_azure_core_credentials()
+            key_client = KeyClient(vault_url, credentials)
+
+            # [START create_key]
+            from dateutil import parser as date_parse
+            expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
+
+            key = key_client.create_key(
+              "testkey",
+              "RSA",
+              size=2048,
+              expires_on=expires_on
+            )
+            return (vault_id, key.id)
+        else:
+            return ('000', '000')
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_disk_encryption(self, resource_group):
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
+        CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
+        RESOURCE_GROUP = resource_group.name
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultx")
+        DISK_ENCRYPTION_SET_NAME = self.get_resource_name("diskencryptionset")
+
+        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID)
+
         # Create a disk encryption set.[put]
-        # BODY = {
-        #   "location": "eastus",
-        #   "identity": {
-        #     "type": "SystemAssigned"
-        #   },
-        #   "active_key": {
-        #     "source_vault": {
-        #       # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-        #       "id": VAULT_ID
-        #     },
-        #     # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
-        #     "key_url": VAULT_URI + "/keys/" + KEY_NAME
-        #   }
-        # }
-        # result = self.mgmt_client.disk_encryption_sets.create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
-        # result = result.result()
+        BODY = {
+          "location": "eastus",
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "active_key": {
+            "source_vault": {
+              # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+              "id": VAULT_ID
+            },
+            # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
+            "key_url": KEY_URI
+          }
+        }
+        result = self.mgmt_client.disk_encryption_sets.begin_create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
+        result = result.result()
 
         # # Get information about a disk encryption set.[get]
-        # result = self.mgmt_client.disk_encryption_sets.get(resource_group.name, DISK_ENCRYPTION_SET_NAME)
+        result = self.mgmt_client.disk_encryption_sets.get(resource_group.name, DISK_ENCRYPTION_SET_NAME)
 
         # List all disk encryption sets in a resource group.[get]
         result = self.mgmt_client.disk_encryption_sets.list_by_resource_group(resource_group.name)
@@ -148,29 +222,27 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List all disk encryption sets in a subscription.[get]
         result = self.mgmt_client.disk_encryption_sets.list()
 
-        # TODO: NEED KEYVAULT
         # Update a disk encryption set.[patch]
-        # BODY = {
-        #   # "properties": {
-        #   #   "active_key": {
-        #   #     "source_vault": {
-        #   #       "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-        #   #     },
-        #   #     "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
-        #   #   }
-        #   # },
-        #   "tags": {
-        #     "department": "Development",
-        #     "project": "Encryption"
-        #   }
-        # }
-        # result = self.mgmt_client.disk_encryption_sets.update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
-        # result = result.result()
+        BODY = {
+          "active_key": {
+            "source_vault": {
+              # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+              "id": VAULT_ID
+            },
+            "key_url": KEY_URI
+            # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
+          },
+          "tags": {
+            "department": "Development",
+            "project": "Encryption"
+          }
+        }
+        result = self.mgmt_client.disk_encryption_sets.begin_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
+        result = result.result()
 
-        # TODO: NEED ENCRYPTION SET
         # # Delete a disk encryption set.[delete]
-        # result = self.mgmt_client.disk_encryption_sets.delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
-        # result = result.result()
+        result = self.mgmt_client.disk_encryption_sets.begin_delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
+        result = result.result()
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_shot(self, resource_group):
