@@ -195,6 +195,7 @@ from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
 from ._paged_models import UsagePaged
@@ -338,6 +339,7 @@ __all__ = [
     'SkuInformationPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'PrivateEndpointConnectionPaged',
     'ObjectReplicationPolicyPaged',
     'EncryptionScopePaged',
     'BlobServicePropertiesPaged',
