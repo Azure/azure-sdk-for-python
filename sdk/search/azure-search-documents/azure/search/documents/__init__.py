@@ -45,6 +45,7 @@ from ._service import (
 from ._service._generated.models import (
     AnalyzeRequest,
     AnalyzeResult,
+    AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
     AzureActiveDirectoryApplicationCredentials,
     CharFilter,
@@ -118,7 +119,6 @@ from ._service._generated.models import (
     TextTranslationSkill,
     TextWeights,
     TokenFilter,
-    TokenInfo,
     Tokenizer,
     TruncateTokenFilter,
     UaxUrlEmailTokenizer,
@@ -135,6 +135,7 @@ __version__ = VERSION
 __all__ = (
     "AnalyzeRequest",
     "AnalyzeResult",
+    "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
     "AutocompleteQuery",
     "AzureActiveDirectoryApplicationCredentials",
@@ -222,7 +223,6 @@ __all__ = (
     "TextTranslationSkill",
     "TextWeights",
     "TokenFilter",
-    "TokenInfo",
     "Tokenizer",
     "TruncateTokenFilter",
     "UaxUrlEmailTokenizer",
