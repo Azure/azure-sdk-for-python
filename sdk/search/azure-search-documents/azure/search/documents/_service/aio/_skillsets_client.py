@@ -10,7 +10,7 @@ from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundErr
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import Skillset
+from .._generated.models import SearchIndexerSkillset
 from .._utils import get_access_conditions
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
@@ -59,10 +59,10 @@ class SearchSkillsetsClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_skillsets(self, **kwargs):
-        # type: (**Any) -> List[Skillset]
-        """List the Skillsets in an Azure Search service.
+        # type: (**Any) -> List[SearchIndexerSkillset]
+        """List the SearchIndexerSkillsets in an Azure Search service.
 
-        :return: List of Skillsets
+        :return: List of SearchIndexerSkillsets
         :rtype: list[dict]
         :raises: ~azure.core.exceptions.HttpResponseError
 
@@ -73,7 +73,7 @@ class SearchSkillsetsClient(HeadersMixin):
                 :end-before: [END get_skillsets]
                 :language: python
                 :dedent: 4
-                :caption: List Skillsets
+                :caption: List SearchIndexerSkillsets
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -82,12 +82,12 @@ class SearchSkillsetsClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> Skillset
-        """Retrieve a named Skillset in an Azure Search service
+        # type: (str, **Any) -> SearchIndexerSkillset
+        """Retrieve a named SearchIndexerSkillset in an Azure Search service
 
-        :param name: The name of the Skillset to get
+        :param name: The name of the SearchIndexerSkillset to get
         :type name: str
-        :return: The retrieved Skillset
+        :return: The retrieved SearchIndexerSkillset
         :rtype: dict
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -98,7 +98,7 @@ class SearchSkillsetsClient(HeadersMixin):
                 :end-before: [END get_skillset]
                 :language: python
                 :dedent: 4
-                :caption: Get a Skillset
+                :caption: Get a SearchIndexerSkillset
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -106,13 +106,13 @@ class SearchSkillsetsClient(HeadersMixin):
 
     @distributed_trace_async
     async def delete_skillset(self, skillset, **kwargs):
-        # type: (Union[str, Skillset], **Any) -> None
-        """Delete a named Skillset in an Azure Search service. To use access conditions,
-        the Skillset model must be provided instead of the name. It is enough to provide
+        # type: (Union[str, SearchIndexerSkillset], **Any) -> None
+        """Delete a named SearchIndexerSkillset in an Azure Search service. To use access conditions,
+        the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
         the name of the skillset to delete unconditionally
 
-        :param name: The Skillset to delete
-        :type name: str or ~search.models.Skillset
+        :param name: The SearchIndexerSkillset to delete
+        :type name: str or ~search.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -123,7 +123,7 @@ class SearchSkillsetsClient(HeadersMixin):
                 :end-before: [END delete_skillset]
                 :language: python
                 :dedent: 4
-                :caption: Delete a Skillset
+                :caption: Delete a SearchIndexerSkillset
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -139,16 +139,16 @@ class SearchSkillsetsClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> Skillset
-        """Create a new Skillset in an Azure Search service
+        # type: (str, Sequence[Skill], str, **Any) -> SearchIndexerSkillset
+        """Create a new SearchIndexerSkillset in an Azure Search service
 
-        :param name: The name of the Skillset to create
+        :param name: The name of the SearchIndexerSkillset to create
         :type name: str
-        :param skills: A list of Skill objects to include in the Skillset
+        :param skills: A list of Skill objects to include in the SearchIndexerSkillset
         :type skills: List[Skill]]
-        :param description: A description for the Skillset
+        :param description: A description for the SearchIndexerSkillset
         :type description: Optional[str]
-        :return: The created Skillset
+        :return: The created SearchIndexerSkillset
         :rtype: dict
 
         .. admonition:: Example:
@@ -158,33 +158,33 @@ class SearchSkillsetsClient(HeadersMixin):
                 :end-before: [END create_skillset]
                 :language: python
                 :dedent: 4
-                :caption: Create a Skillset
+                :caption: Create a SearchIndexerSkillset
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        skillset = Skillset(name=name, skills=list(skills), description=description)
+        skillset = SearchIndexerSkillset(name=name, skills=list(skills), description=description)
 
         return await self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace_async
     async def create_or_update_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> Skillset
-        """Create a new Skillset in an Azure Search service, or update an
+        # type: (str, **Any) -> SearchIndexerSkillset
+        """Create a new SearchIndexerSkillset in an Azure Search service, or update an
         existing one. The skillset param must be provided to perform the
         operation with access conditions.
 
-        :param name: The name of the Skillset to create or update
+        :param name: The name of the SearchIndexerSkillset to create or update
         :type name: str
-        :keyword skills: A list of Skill objects to include in the Skillset
+        :keyword skills: A list of Skill objects to include in the SearchIndexerSkillset
         :type skills: List[Skill]
-        :keyword description: A description for the Skillset
+        :keyword description: A description for the SearchIndexerSkillset
         :type description: Optional[str]
-        :keyword skillset: A Skillset to create or update.
-        :type skillset: :class:`~azure.search.documents.Skillset`
+        :keyword skillset: A SearchIndexerSkillset to create or update.
+        :type skillset: :class:`~azure.search.documents.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :return: The created or updated Skillset
+        :return: The created or updated SearchIndexerSkillset
         :rtype: dict
 
         If a `skillset` is passed in, any optional `skills`, or
@@ -205,14 +205,14 @@ class SearchSkillsetsClient(HeadersMixin):
                 skillset,
                 kwargs.pop('match_condition', MatchConditions.Unconditionally)
             )
-            skillset = Skillset.deserialize(skillset.serialize())
+            skillset = SearchIndexerSkillset.deserialize(skillset.serialize())
             skillset.name = name
             for param in ("description", "skills"):
                 if param in kwargs:
                     setattr(skillset, param, kwargs.pop(param))
         else:
 
-            skillset = Skillset(
+            skillset = SearchIndexerSkillset(
                 name=name,
                 description=kwargs.pop("description", None),
                 skills=kwargs.pop("skills", None),
