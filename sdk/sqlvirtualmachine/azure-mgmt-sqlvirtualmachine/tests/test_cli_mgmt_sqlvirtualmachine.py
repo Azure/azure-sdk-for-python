@@ -173,6 +173,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
     def get_storage_key(self, group_name, storage_name):
         result = self.storage_client.storage_accounts.list_keys(group_name, storage_name)
         print(result)
+        return result['keys'][0]['value']
 
  
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -194,7 +195,28 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             nic_id = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, "myNetworkInterface", subnet.id)
             self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, nic_id)
             self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, "tempstorageaccountxysdtr")
-            self.get_storage_key(RESOURCE_GROUP, "tempstorageaccountxysdtr")
+            storage_key = self.get_storage_key(RESOURCE_GROUP, "tempstorageaccountxysdtr")
+
+        # /SqlVirtualMachineGroups/put/Creates or updates a SQL virtual machine group.[put]
+        BODY = {
+          "location": AZURE_LOCATION,
+          "tags": {
+            "mytag": "myval"
+          },
+          "sql_image_offer": "SQL2016-WS2016",
+          "sql_image_sku": "Enterprise",
+          "wsfc_domain_profile": {
+            "domain_fqdn": "testdomain.com",
+            "ou_path": "OU=WSCluster,DC=testdomain,DC=com",
+            "cluster_bootstrap_account": "testrpadmin",
+            "cluster_operator_account": "testrp@testdomain.com",
+            "sql_service_account": "sqlservice@testdomain.com",
+            "storage_account_url": "https://" + "tempstorageaccountxysdtr" + ".blob.core.windows.net/",
+            "storage_account_primary_key": storage_key
+          }
+        }
+        result = self.mgmt_client.sql_virtual_machine_groups.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, parameters=BODY)
+        result = result.result()
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine for Storage Configuration Settings to EXTEND Data, Log or TempDB storage pool.[put]
         BODY = {
@@ -300,27 +322,6 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           "virtual_machine_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
         }
         result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        result = result.result()
-
-        # /SqlVirtualMachineGroups/put/Creates or updates a SQL virtual machine group.[put]
-        BODY = {
-          "location": AZURE_LOCATION,
-          "tags": {
-            "mytag": "myval"
-          },
-          "sql_image_offer": "SQL2016-WS2016",
-          "sql_image_sku": "Enterprise",
-          "wsfc_domain_profile": {
-            "domain_fqdn": "testdomain.com",
-            "ou_path": "OU=WSCluster,DC=testdomain,DC=com",
-            "cluster_bootstrap_account": "testrpadmin",
-            "cluster_operator_account": "testrp@testdomain.com",
-            "sql_service_account": "sqlservice@testdomain.com",
-            "storage_account_url": "https://storgact.blob.core.windows.net/",
-            "storage_account_primary_key": "<primary storage access key>"
-          }
-        }
-        result = self.mgmt_client.sql_virtual_machine_groups.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, parameters=BODY)
         result = result.result()
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine and joins it to a SQL virtual machine group.[put]
