@@ -27,7 +27,7 @@ class CachesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-11-01".
+    :ivar api_version: Client API version. Constant value: "2020-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class CachesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-01"
+        self.api_version = "2020-03-01"
 
         self.config = config
 
@@ -183,7 +183,7 @@ class CachesOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -232,7 +232,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -277,7 +278,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -293,7 +295,7 @@ class CachesOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -340,7 +342,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -393,7 +395,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the
          new Cache. If read-only properties are included, they must match the
@@ -445,7 +448,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the
          Cache. If read-only properties are included, they must match the
@@ -466,7 +470,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -519,7 +523,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -569,7 +573,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -602,7 +607,7 @@ class CachesOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
@@ -616,7 +621,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -664,7 +669,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -697,7 +703,7 @@ class CachesOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
@@ -711,7 +717,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -759,7 +765,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -792,7 +799,7 @@ class CachesOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
@@ -806,7 +813,7 @@ class CachesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,80}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -855,7 +862,8 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of Cache.
+        :param cache_name: Name of Cache. Length of name must be not greater
+         than 80 and chars must be in list of [-0-9a-zA-Z_] char class.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -888,7 +896,7 @@ class CachesOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)

@@ -27,24 +27,18 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchServiceClient
-from azure.search.documents import CorsOptions, Index, ScoringProfile
+from azure.search.documents import CorsOptions, Index, ScoringProfile, edm, SimpleField, SearchableField
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_indexes_client()
 
 async def create_index():
     # [START create_index_async]
     name = "hotels"
     fields = [
-        {
-            "name": "hotelId",
-            "type": "Edm.String",
-            "key": True,
-            "searchable": False
-        },
-        {
-            "name": "baseRate",
-            "type": "Edm.Double"
-        }]
+        SimpleField(name="hotelId", type=edm.String, key=True),
+        SimpleField(name="baseRate", type=edm.Double)
+    ]
+
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
     index = Index(
@@ -53,29 +47,24 @@ async def create_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await service_client.create_index(index)
+    result = await client.create_index(index)
     # [END create_index_async]
 
 async def get_index():
     # [START get_index_async]
     name = "hotels"
-    result = await service_client.get_index(name)
+    result = await client.get_index(name)
     # [END get_index_async]
 
 async def update_index():
     # [START update_index_async]
     name = "hotels"
-    fields = [
-        {
-            "name": "hotelId",
-            "type": "Edm.String",
-            "key": True,
-            "searchable": False
-        },
-        {
-            "name": "baseRate",
-            "type": "Edm.Double"
-        }]
+    fields = fields = [
+        SimpleField(name="hotelId", type=edm.String, key=True),
+        SimpleField(name="baseRate", type=edm.Double),
+        SearchableField(name="hotelName", type=edm.String)
+    ]
+
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profile = ScoringProfile(
         name="MyProfile"
@@ -88,13 +77,13 @@ async def update_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await service_client.create_or_update_index(index_name=index.name, index=index)
+    result = await client.create_or_update_index(index_name=index.name, index=index)
     # [END update_index_async]
 
 async def delete_index():
     # [START delete_index_async]
     name = "hotels"
-    await service_client.delete_index(name)
+    await client.delete_index(name)
     # [END delete_index_async]
 
 async def main():
@@ -102,7 +91,7 @@ async def main():
     await get_index()
     await update_index()
     await delete_index()
-    await service_client.close()
+    await client.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

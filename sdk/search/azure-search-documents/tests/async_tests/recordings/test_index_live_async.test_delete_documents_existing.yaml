@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 178C3F32307E7393DDE449A358E6D4DC
+      - 2786DDE4C12B551D17578A94A8CAD1CC
     method: POST
     uri: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
@@ -23,35 +23,28 @@ interactions:
       content-encoding: gzip
       content-length: '190'
       content-type: application/json; odata.metadata=none
-      date: Tue, 31 Mar 2020 17:41:02 GMT
-      elapsed-time: '185'
+      date: Wed, 29 Apr 2020 23:26:44 GMT
+      elapsed-time: '77'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ca7a3fa6-7376-11ea-9b93-5cf37071153c
+      request-id: e30156a6-8a70-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search37b1157f.search.windows.net
-        - /indexes('drgqefsg')/docs/search.index
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 178C3F32307E7393DDE449A358E6D4DC
+      - 2786DDE4C12B551D17578A94A8CAD1CC
     method: GET
     uri: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -62,35 +55,28 @@ interactions:
       content-encoding: gzip
       content-length: '126'
       content-type: text/plain
-      date: Tue, 31 Mar 2020 17:41:05 GMT
-      elapsed-time: '3'
+      date: Wed, 29 Apr 2020 23:26:46 GMT
+      elapsed-time: '2'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: cc8afa2e-7376-11ea-8e7b-5cf37071153c
+      request-id: e4e804f6-8a70-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search37b1157f.search.windows.net
-        - /indexes('drgqefsg')/docs/$count
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 178C3F32307E7393DDE449A358E6D4DC
+      - 2786DDE4C12B551D17578A94A8CAD1CC
     method: GET
     uri: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
   response:
@@ -99,32 +85,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 31 Mar 2020 17:41:05 GMT
-      elapsed-time: '41'
+      date: Wed, 29 Apr 2020 23:26:46 GMT
+      elapsed-time: '4'
       expires: '-1'
       pragma: no-cache
-      request-id: cc96e112-7376-11ea-8e25-5cf37071153c
+      request-id: e4ec7fc2-8a70-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404
       message: Not Found
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search37b1157f.search.windows.net
-        - /indexes('drgqefsg')/docs('3')
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 178C3F32307E7393DDE449A358E6D4DC
+      - 2786DDE4C12B551D17578A94A8CAD1CC
     method: GET
     uri: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
@@ -133,21 +112,14 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 31 Mar 2020 17:41:05 GMT
-      elapsed-time: '4'
+      date: Wed, 29 Apr 2020 23:26:46 GMT
+      elapsed-time: '3'
       expires: '-1'
       pragma: no-cache
-      request-id: cca75bc2-7376-11ea-84bc-5cf37071153c
+      request-id: e4f0cc26-8a70-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404
       message: Not Found
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search37b1157f.search.windows.net
-        - /indexes('drgqefsg')/docs('4')
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search37b1157f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
 version: 1

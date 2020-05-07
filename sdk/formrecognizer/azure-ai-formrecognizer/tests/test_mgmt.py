@@ -9,7 +9,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import FormTrainingClient, FormRecognizerClient
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 
 
@@ -52,7 +52,7 @@ class TestManagement(FormRecognizerTest):
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_labeled(self, client, container_sas_url):
 
@@ -88,7 +88,7 @@ class TestManagement(FormRecognizerTest):
         with self.assertRaises(ResourceNotFoundError):
             client.get_custom_model(labeled_model_from_train.model_id)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_unlabeled(self, client, container_sas_url):
 

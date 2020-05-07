@@ -16,6 +16,7 @@ import asyncio
 import os
 
 from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub.exceptions import EventHubError
 from azure.eventhub import EventData
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
@@ -70,6 +71,22 @@ async def send_event_data_batch_with_properties(producer):
     await producer.send_batch(event_data_batch)
 
 
+async def send_event_data_list(producer):
+    # If you know beforehand that the list of events you have will not exceed the
+    # size limits, you can use the `send_batch()` api directly without creating an EventDataBatch
+
+    # Without specifying partition_id or partition_key
+    # the events will be distributed to available partitions via round-robin.
+
+    event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
+    try:
+        await producer.send_batch(event_data_list)
+    except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
+        print("Size of the event data list exceeds the size limit of a single send")
+    except EventHubError as eh_err:
+        print("Sending error: ", eh_err)
+
+
 async def run():
 
     producer = EventHubProducerClient.from_connection_string(
@@ -82,6 +99,7 @@ async def run():
         await send_event_data_batch_with_partition_key(producer)
         await send_event_data_batch_with_partition_id(producer)
         await send_event_data_batch_with_properties(producer)
+        await send_event_data_list(producer)
 
 
 loop = asyncio.get_event_loop()

@@ -1,0 +1,765 @@
+interactions:
+- request:
+    body: '{"tags": {"key1": "value1"}, "sku": {"name": "Standard_S1", "tier": "Standard",
+      "capacity": 1}, "properties": {"features": [{"flag": "ServiceMode", "value":
+      "Serverless"}], "cors": {"allowedOrigins": ["https://foo.com", "https://bar.com"]}},
+      "location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '263'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_S1","tier":"Standard","size":"S1","capacity":1},"properties":{"provisioningState":"Creating","externalIP":null,"hostName":"myresource.service.signalr.net","publicPort":443,"serverPort":443,"version":"1.0-preview","privateEndpointConnections":[],"hostNamePrefix":"myresource","features":[{"flag":"ServiceMode","value":"Serverless","properties":{}},{"flag":"EnableConnectivityLogs","value":"False","properties":{}},{"flag":"EnableMessagingLogs","value":"False","properties":{}}],"cors":{"allowedOrigins":["https://foo.com","https://bar.com"]},"upstream":{"templates":null},"networkACLs":{"defaultAction":"Deny","publicNetwork":{"allow":["ServerConnection","ClientConnection","RESTAPI"],"deny":null},"privateEndpoints":[]}},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/SignalR/myResource","name":"myResource","type":"Microsoft.SignalRService/SignalR","kind":"SignalR"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87?api-version=2018-10-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1041'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:24:40 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationResults/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87/SignalR/myResource?api-version=2018-10-01
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","name":"99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","status":"Running","startTime":"2020-04-30T14:24:39.4587136Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '356'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:25:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","name":"99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","status":"Running","startTime":"2020-04-30T14:24:39.4587136Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '356'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:25:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","name":"99e0f7b7-a4f7-476b-9869-0f7de5b4ea87","status":"Succeeded","startTime":"2020-04-30T14:24:39.4587136Z","endTime":"2020-04-30T14:25:56.4099109Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '399'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:26:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_S1","tier":"Standard","size":"S1","capacity":1},"properties":{"provisioningState":"Succeeded","externalIP":"40.71.15.7","hostName":"myresource.service.signalr.net","publicPort":443,"serverPort":443,"version":"1.0","privateEndpointConnections":[],"hostNamePrefix":"myresource","features":[{"flag":"ServiceMode","value":"Serverless","properties":{}},{"flag":"EnableConnectivityLogs","value":"False","properties":{}},{"flag":"EnableMessagingLogs","value":"False","properties":{}}],"cors":{"allowedOrigins":["https://foo.com","https://bar.com"]},"upstream":{"templates":null},"networkACLs":{"defaultAction":"Deny","publicNetwork":{"allow":["ServerConnection","ClientConnection","RESTAPI"],"deny":null},"privateEndpoints":[]}},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/SignalR/myResource","name":"myResource","type":"Microsoft.SignalRService/SignalR","kind":"SignalR"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1042'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:26:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_S1","tier":"Standard","size":"S1","capacity":1},"properties":{"provisioningState":"Succeeded","externalIP":"40.71.15.7","hostName":"myresource.service.signalr.net","publicPort":443,"serverPort":443,"version":"1.0","privateEndpointConnections":[],"hostNamePrefix":"myresource","features":[{"flag":"ServiceMode","value":"Serverless","properties":{}},{"flag":"EnableConnectivityLogs","value":"False","properties":{}},{"flag":"EnableMessagingLogs","value":"False","properties":{}}],"cors":{"allowedOrigins":["https://foo.com","https://bar.com"]},"upstream":{"templates":null},"networkACLs":{"defaultAction":"Deny","publicNetwork":{"allow":["ServerConnection","ClientConnection","RESTAPI"],"deny":null},"privateEndpoints":[]}},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/SignalR/myResource","name":"myResource","type":"Microsoft.SignalRService/SignalR","kind":"SignalR"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1042'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:26:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/SignalR/myResource/listKeys?api-version=2018-10-01
+  response:
+    body:
+      string: '{"primaryKey":"Nj4VNIHZNdwAKU32mM22ureU/yo4JamK79FQiOzvGik=","secondaryKey":"aWqFqjyYds8z+LBCeRlmHlsS8IVN8JYh1UXPpk30a04=","primaryConnectionString":"Endpoint=https://myresource.service.signalr.net;AccessKey=Nj4VNIHZNdwAKU32mM22ureU/yo4JamK79FQiOzvGik=;Version=1.0;","secondaryConnectionString":"Endpoint=https://myresource.service.signalr.net;AccessKey=aWqFqjyYds8z+LBCeRlmHlsS8IVN8JYh1UXPpk30a04=;Version=1.0;"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '413'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:26:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource/restart?api-version=2018-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/3296660b-933d-4664-bfd4-8aebcd21cbdf?api-version=2018-10-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 30 Apr 2020 14:26:18 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationResults/3296660b-933d-4664-bfd4-8aebcd21cbdf/SignalR/myResource?api-version=2018-10-01
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/3296660b-933d-4664-bfd4-8aebcd21cbdf?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/3296660b-933d-4664-bfd4-8aebcd21cbdf","name":"3296660b-933d-4664-bfd4-8aebcd21cbdf","status":"Running","startTime":"2020-04-30T14:26:19.0976905Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '356'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:26:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/3296660b-933d-4664-bfd4-8aebcd21cbdf?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/3296660b-933d-4664-bfd4-8aebcd21cbdf","name":"3296660b-933d-4664-bfd4-8aebcd21cbdf","status":"Succeeded","startTime":"2020-04-30T14:26:19.0976905Z","endTime":"2020-04-30T14:26:50.9934575Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '399'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:27:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"key1": "value1"}, "sku": {"name": "Standard_S1", "tier": "Standard",
+      "capacity": 1}, "properties": {"features": [{"flag": "ServiceMode", "value":
+      "Serverless"}], "cors": {"allowedOrigins": ["https://foo.com", "https://bar.com"]}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '241'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/46b1bca0-2afd-4469-9bd8-98dc39c0f8ec?api-version=2018-10-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 30 Apr 2020 14:27:23 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationResults/46b1bca0-2afd-4469-9bd8-98dc39c0f8ec/SignalR/myResource?api-version=2018-10-01
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/46b1bca0-2afd-4469-9bd8-98dc39c0f8ec?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/46b1bca0-2afd-4469-9bd8-98dc39c0f8ec","name":"46b1bca0-2afd-4469-9bd8-98dc39c0f8ec","status":"Succeeded","startTime":"2020-04-30T14:27:23.7689885Z","endTime":"2020-04-30T14:27:37.0229322Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '399'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:27:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_S1","tier":"Standard","size":"S1","capacity":1},"properties":{"provisioningState":"Succeeded","externalIP":"40.71.15.7","hostName":"myresource.service.signalr.net","publicPort":443,"serverPort":443,"version":"1.0","privateEndpointConnections":[],"hostNamePrefix":"myresource","features":[{"flag":"ServiceMode","value":"Serverless","properties":{}},{"flag":"EnableConnectivityLogs","value":"False","properties":{}},{"flag":"EnableMessagingLogs","value":"False","properties":{}}],"cors":{"allowedOrigins":["https://foo.com","https://bar.com"]},"upstream":{"templates":null},"networkACLs":{"defaultAction":"Deny","publicNetwork":{"allow":["ServerConnection","ClientConnection","RESTAPI"],"deny":null},"privateEndpoints":[]}},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/SignalR/myResource","name":"myResource","type":"Microsoft.SignalRService/SignalR","kind":"SignalR"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1042'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:27:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "Microsoft.SignalRService/SignalR", "name": "my-signalr-service"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SignalRService/locations/eastus/checkNameAvailability?api-version=2018-10-01
+  response:
+    body:
+      string: '{"nameAvailable":true}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:27:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/signalR/myResource?api-version=2018-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/c486d4b5-e2f6-48ca-99a1-042e94b19d60?api-version=2018-10-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 30 Apr 2020 14:27:58 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationResults/c486d4b5-e2f6-48ca-99a1-042e94b19d60/SignalR/myResource?api-version=2018-10-01
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-signalr/0.3.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/c486d4b5-e2f6-48ca-99a1-042e94b19d60?api-version=2018-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_signalr_test_signalrf5150df8/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/myResource/operationId/c486d4b5-e2f6-48ca-99a1-042e94b19d60","name":"c486d4b5-e2f6-48ca-99a1-042e94b19d60","status":"Succeeded","startTime":"2020-04-30T14:27:58.2535948Z","endTime":"2020-04-30T14:28:06.539984Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '398'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 14:28:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - afd9a794-0c74-4d7a-9baf-5982aa7d2e8c
+    status:
+      code: 200
+      message: OK
+version: 1
