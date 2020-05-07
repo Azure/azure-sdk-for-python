@@ -28,33 +28,34 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchServiceClient, DataSource, DataContainer, DataSourceCredentials
 
 service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+client = service_client.get_datasources_client()
 
 def create_data_source():
     # [START create_data_source]
     credentials = DataSourceCredentials(connection_string=connection_string)
     container = DataContainer(name='searchcontainer')
     data_source = DataSource(name="sample-datasource", type="azureblob", credentials=credentials, container=container)
-    result = service_client.create_datasource(data_source)
+    result = client.create_datasource(data_source)
     print(result)
     print("Create new Data Source - sample-datasource")
     # [END create_data_source]
 
 def list_data_sources():
     # [START list_data_source]
-    result = service_client.get_datasources()
+    result = client.get_datasources()
     names = [ds.name for ds in result]
     print("Found {} Data Sources in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source]
 
 def get_data_source():
     # [START get_data_source]
-    result = service_client.get_datasource("sample-datasource")
+    result = client.get_datasource("sample-datasource")
     print("Retrived Data Source 'sample-datasource'")
     # [END get_data_source]
 
 def delete_data_source():
     # [START delete_data_source]
-    service_client.delete_datasource("sample-datasource")
+    client.delete_datasource("sample-datasource")
     print("Data Source 'sample-datasource' successfully deleted")
     # [END delete_data_source]
 
