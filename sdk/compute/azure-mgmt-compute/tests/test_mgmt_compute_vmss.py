@@ -7,17 +7,17 @@
 #--------------------------------------------------------------------------
 
 # covered ops:
-#   virtual_machine_scale_sets: 17/22
-#   virtual_machine_scale_set_vms: 13/14
+#   virtual_machine_scale_sets: 20/22
+#   virtual_machine_scale_set_vms: 14/14
 #   virtual_machine_scale_set_vm_extensions: 0/5
-#   virtual_machine_scale_set_rolling_upgrades: 2/4
+#   virtual_machine_scale_set_rolling_upgrades: 4/4
 #   virtual_machine_scale_set_extensions: 5/5
 
 import time
 import unittest
 
 import azure.mgmt.compute
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -227,36 +227,28 @@ class MgmtComputeTest(AzureMgmtTestCase):
             }
           },
           "upgrade_policy": {
-            "mode": "Manual"
+            "mode": "Manual",
+            "rolling_upgrade_policy": {
+              "max_unhealthy_upgraded_instance_percent": 100,
+              "max_unhealthy_instance_percent": 100
+            }
           },
           "upgrade_mode": "Manual"
         }
         result = self.mgmt_client.virtual_machine_scale_sets.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
 
-        # TODO: The entity was not found in this Azure location.
-        # Get virtual machine scale set latest rolling upgrade (TODO: need swagger file)
-        # try 4 times
-        # for i in range(4):
-        #     try:
-        #         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.get_latest(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        #     except HttpResponseError:
-        #         if i >= 3:
-        #             raise Exception("response error.")
-        #         else:
-        #             time.sleep(60)
-        #     else:
-        #         break
-
         # # Start an extension rolling upgrade.[post]
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
-        # TODO:msrestazure.azure_exceptions.CloudError: Azure Error: MaxUnhealthyInstancePercentExceededInRollingUpgrade
         # Message: Rolling Upgrade failed after exceeding the MaxUnhealthyInstancePercent value defined in the RollingUpgradePolicy. 100% of instances are in an unhealthy state after being upgraded - more than the threshold of 20% configured in the RollingUpgradePolicy. The most impactful error is:  Instance found to be unhealthy or unreachable. For details on rolling upgrades, use http://aka.ms/AzureVMSSRollingUpgrade
         # Start vmss os upgrade (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        result = result.result()
+        # result = result.result()  # Don't need result here
+
+        # Get virtual machine scale set latest rolling upgrade (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.get_latest(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
 
         # Cancel vmss upgrade (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_cancel(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
@@ -968,10 +960,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
-    @unittest.skip("""
-    can not test it, see: 
-    https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
-    """)
+    # @unittest.skip("""
+    # can not test it, see: 
+    # https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
+    # """)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_perform_maintenance(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -1056,22 +1048,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 break
         INSTANCE_ID = instance_id
 
-        BODY = {
-          "location": "eastus",
-          "tags": {
-            "department": "HR"
-          }
-        }
-        result = self.mgmt_client.virtual_machine_scale_set_vms.begin_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, BODY)
-        result = result.result()
-
         # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
         # Perform maintenance virtual machine scale set (TODO: need swagger file)
         try:
             result = self.mgmt_client.virtual_machine_scale_sets.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % VIRTUAL_MACHINE_SCALE_SET_NAME)
+            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s_%d' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_SCALE_SET_NAME, instance_id))
 
         # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
         # Perform maintenance virtual machine scale set vms (TODO: need swagger file)
@@ -1079,7 +1062,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machine_scale_set_vms.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % VIRTUAL_MACHINE_SCALE_SET_NAME)
+            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s_%d' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_SCALE_SET_NAME, instance_id))
 
         # Delete virtual machine set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)

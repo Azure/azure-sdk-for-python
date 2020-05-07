@@ -13,9 +13,6 @@
 import unittest
 
 import azure.mgmt.compute
-# import azure.mgmt.network
-# import azure.mgmt.keyvault
-# from azure.keyvault.keys import KeyClient
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -27,13 +24,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        # self.keyvault_client = self.create_mgmt_client(
-        #     azure.mgmt.keyvault.KeyVaultManagementClient
-        # )
-        if self.is_live:
-            self.network_client = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient
-            )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_dedicated_hosts(self, resource_group):
