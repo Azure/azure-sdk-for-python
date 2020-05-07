@@ -8,7 +8,7 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Generator, TYPE_CHECKING
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING
 
 import uamqp.message
 from uamqp import types
@@ -269,10 +269,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def body(self):
-        # type: () -> Union[bytes, Generator[bytes]]
+        # type: () -> Union[bytes, Iterable[bytes]]
         """The body of the Message.
 
-        :rtype: bytes or generator[bytes]
+        :rtype: bytes or Iterable[bytes]
         """
         return self.message.get_data()
 
@@ -438,7 +438,7 @@ class _ReceivedMessageBase(PeekMessage):
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
-        self._receiver = None  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
+        self._receiver = None  # type: ignore
         self._expiry = None
 
     @property

@@ -87,7 +87,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         cls,
         conn_str: str,
         **kwargs: Any
-    ) -> "ServiceBusReceiver":
+    ) -> "ServiceBusSessionReceiver":
         """Create a ServiceBusSessionReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -133,7 +133,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)
+        constructor_args = super(ServiceBusSessionReceiver, cls)._from_connection_string(conn_str, **kwargs)
+        return cls(**constructor_args)
 
 
     @property
