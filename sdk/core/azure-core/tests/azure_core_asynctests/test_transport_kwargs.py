@@ -48,7 +48,8 @@ async def test_valid_kwargs():
                        cookies='cookie',
                        stream=False,
                        request_id='request_id',
-                       connection_data_block_size=1024)
+                       connection_data_block_size=1024,
+                       auth='auth')
 
 
 @pytest.mark.asyncio

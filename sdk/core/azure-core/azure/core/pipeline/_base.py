@@ -52,15 +52,16 @@ _ALLOWED_KWARGS = set([
     "stream",
     "request_id",
     "connection_data_block_size",
+    "auth",
 ])
 
 
 def verify_kwargs(**kwargs):
     if not kwargs:
         return
-    for key in kwargs.keys():
+    for key in kwargs:
         if key.lower() not in _ALLOWED_KWARGS:
-            raise ValueError("{} is not allowed".format(key))
+            raise ValueError("'{}' is not allowed".format(key))
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.

@@ -43,7 +43,8 @@ def test_valid_kwargs():
                  cookies='cookie',
                  stream=False,
                  request_id='request_id',
-                 connection_data_block_size=1024)
+                 connection_data_block_size=1024,
+                 auth='auth')
 
 def test_invalid_kwargs():
     transport = mock.MagicMock()
