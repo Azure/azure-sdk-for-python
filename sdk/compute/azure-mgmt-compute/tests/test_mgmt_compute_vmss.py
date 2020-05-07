@@ -7,8 +7,8 @@
 #--------------------------------------------------------------------------
 
 # covered ops:
-#   virtual_machine_scale_sets: 15/21
-#   virtual_machine_scale_set_vms: 10/14
+#   virtual_machine_scale_sets: 17/22
+#   virtual_machine_scale_set_vms: 13/14
 #   virtual_machine_scale_set_vm_extensions: 0/5
 #   virtual_machine_scale_set_rolling_upgrades: 2/4
 #   virtual_machine_scale_set_extensions: 5/5
@@ -60,6 +60,109 @@ class MgmtComputeTest(AzureMgmtTestCase):
         
         return subnet_info
 
+    def create_public_ip_address(self, group_name, location, public_ip_address_name):
+        # Create public IP address defaults[put]
+        BODY = {
+          "public_ip_allocation_method": "Static",
+          "idle_timeout_in_minutes": 10,
+          "public_ip_address_version": "IPv4",
+          "location": location,
+          "sku": {
+            "name": "Standard"
+          }
+        }
+        result = self.network_client.public_ip_addresses.create_or_update(group_name, public_ip_address_name, BODY)
+        result = result.result()
+
+    def create_load_balance_probe(self, group_name, location):
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = group_name
+        PUBLIC_IP_ADDRESS_NAME = "public_ip_address_name"
+        LOAD_BALANCER_NAME = "myLoadBalancer"
+        INBOUND_NAT_RULE_NAME = "myInboundNatRule"
+        FRONTEND_IPCONFIGURATION_NAME = "myFrontendIpconfiguration"
+        BACKEND_ADDRESS_POOL_NAME = "myBackendAddressPool"
+        LOAD_BALANCING_RULE_NAME = "myLoadBalancingRule"
+        OUTBOUND_RULE_NAME = "myOutboundRule"
+        PROBE_NAME = "myProbe"
+
+        self.create_public_ip_address(RESOURCE_GROUP, location, PUBLIC_IP_ADDRESS_NAME)
+
+        # Create load balancer
+        BODY = {
+          "location": location,
+          "sku": {
+            "name": "Standard"
+          },
+          "frontendIPConfigurations": [
+            {
+              "name": FRONTEND_IPCONFIGURATION_NAME,
+              # "subnet": {
+              #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME
+              # }
+              "public_ip_address": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/publicIPAddresses/" + PUBLIC_IP_ADDRESS_NAME 
+              }
+            }
+          ],
+          "backend_address_pools": [
+            {
+              "name": BACKEND_ADDRESS_POOL_NAME
+            }
+          ],
+          "load_balancing_rules": [
+            {
+              "name": LOAD_BALANCING_RULE_NAME,
+              "frontend_ip_configuration": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/frontendIPConfigurations/" + FRONTEND_IPCONFIGURATION_NAME
+              },
+              "frontend_port": "80",
+              "backend_port": "80",
+              "enable_floating_ip": True,
+              "idle_timeout_in_minutes": "15",
+              "protocol": "Tcp",
+              "load_distribution": "Default",
+              "disable_outbound_snat": True,
+              "backend_address_pool": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/backendAddressPools/" + BACKEND_ADDRESS_POOL_NAME
+              },
+              "probe": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/probes/" + PROBE_NAME
+              }
+            }
+          ],
+          "probes": [
+            {
+              "name": PROBE_NAME,
+              "protocol": "Http",
+              "port": "80",
+              "request_path": "healthcheck.aspx",
+              "interval_in_seconds": "15",
+              "number_of_probes": "2"
+            }
+          ],
+          "outbound_rules": [
+            {
+              "name": OUTBOUND_RULE_NAME,
+              "backend_address_pool": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/backendAddressPools/" + BACKEND_ADDRESS_POOL_NAME
+              },
+              "frontend_ip_configurations": [
+                {
+                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/frontendIPConfigurations/" + FRONTEND_IPCONFIGURATION_NAME
+                }
+              ],
+              "protocol": "All"
+            }
+          ]
+        }
+        result = self.network_client.load_balancers.create_or_update(resource_group_name=RESOURCE_GROUP, load_balancer_name=LOAD_BALANCER_NAME, parameters=BODY)
+        result = result.result()
+        return (
+          "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/probes/myProbe",
+          "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/backendAddressPools/" + BACKEND_ADDRESS_POOL_NAME
+        )
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_rolling_upgrades(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -70,6 +173,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         if self.is_live:
             SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+        else:
+            SUBNET = "subneturi"
 
         BODY = {
           "sku": {
@@ -81,19 +186,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "overprovision": True,
           "virtual_machine_profile": {
             "storage_profile": {
-              # "image_reference": {
-              #   "sku": "2016-Datacenter",
-              #   "publisher": "MicrosoftWindowsServer",
-              #   "version": "latest",
-              #   "offer": "WindowsServer"
-              # },
               "image_reference": {
-                  # "offer": "UbuntuServer",
-                  # "publisher": "Canonical",
-                  # "sku": "18.04-LTS",
-                  # "urn": "Canonical:UbuntuServer:18.04-LTS:latest",
-                  # "urnAlias": "UbuntuLTS",
-                  # "version": "latest"
                   "sku": "2016-Datacenter",
                   "publisher": "MicrosoftWindowsServer",
                   "version": "latest",
@@ -107,18 +200,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 "create_option": "FromImage",
                 "disk_size_gb": "512"
               },
-              # "data_disks": [
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "0"
-              #   },
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "1"
-              #   }
-              # ]
             },
             "os_profile": {
               "computer_name_prefix": "testPC",
@@ -155,23 +236,37 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # TODO: The entity was not found in this Azure location.
         # Get virtual machine scale set latest rolling upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.get_latest(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        # try 4 times
+        # for i in range(4):
+        #     try:
+        #         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.get_latest(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        #     except HttpResponseError:
+        #         if i >= 3:
+        #             raise Exception("response error.")
+        #         else:
+        #             time.sleep(60)
+        #     else:
+        #         break
 
         # # Start an extension rolling upgrade.[post]
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
+        result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # TODO:msrestazure.azure_exceptions.CloudError: Azure Error: MaxUnhealthyInstancePercentExceededInRollingUpgrade
         # Message: Rolling Upgrade failed after exceeding the MaxUnhealthyInstancePercent value defined in the RollingUpgradePolicy. 100% of instances are in an unhealthy state after being upgraded - more than the threshold of 20% configured in the RollingUpgradePolicy. The most impactful error is:  Instance found to be unhealthy or unreachable. For details on rolling upgrades, use http://aka.ms/AzureVMSSRollingUpgrade
         # Start vmss os upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
+        result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # Cancel vmss upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.cancel(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
-        
+        result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_cancel(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
+        # Delete virtual machine set (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
+        
+    @unittest.skip("The entity was not found in this Azure location.")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_extension(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -188,7 +283,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         BODY = {
           "sku": {
             "tier": "Standard",
-            "capacity": "2",
+            "capacity": "1",
             "name": "Standard_D1_v2"
           },
           "location": "eastus",
@@ -201,14 +296,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 "version": "latest",
                 "offer": "WindowsServer"
               },
-              # "image_reference": {
-              #     "offer": "UbuntuServer",
-              #     "publisher": "Canonical",
-              #     "sku": "18.04-LTS",
-              #     # "urn": "Canonical:UbuntuServer:18.04-LTS:latest",
-              #     # "urnAlias": "UbuntuLTS",
-              #     "version": "latest"
-              # },
               "os_disk": {
                 "caching": "ReadWrite",
                 "managed_disk": {
@@ -217,18 +304,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 "create_option": "FromImage",
                 "disk_size_gb": "512"
               },
-              # "data_disks": [
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "0"
-              #   },
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "1"
-              #   }
-              # ]
             },
             "os_profile": {
               "computer_name_prefix": "testPC",
@@ -344,19 +419,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "overprovision": True,
           "virtual_machine_profile": {
             "storage_profile": {
-              # "image_reference": {
-              #   "sku": "2016-Datacenter",
-              #   "publisher": "MicrosoftWindowsServer",
-              #   "version": "latest",
-              #   "offer": "WindowsServer"
-              # },
               "image_reference": {
-                  # "offer": "UbuntuServer",
-                  # "publisher": "Canonical",
-                  # "sku": "18.04-LTS",
-                  # "urn": "Canonical:UbuntuServer:18.04-LTS:latest",
-                  # "urnAlias": "UbuntuLTS",
-                  # "version": "latest"
                   "sku": "2016-Datacenter",
                   "publisher": "MicrosoftWindowsServer",
                   "version": "latest",
@@ -369,19 +432,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 },
                 "create_option": "FromImage",
                 "disk_size_gb": "512"
-              },
-              # "data_disks": [
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "0"
-              #   },
-              #   {
-              #     "disk_size_gb": "1023",
-              #     "create_option": "Empty",
-              #     "lun": "1"
-              #   }
-              # ]
+              }
             },
             "os_profile": {
               "computer_name_prefix": "testPC",
@@ -471,28 +522,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_set_vms.begin_run_command(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, BODY)
         result = result.result()
 
-        # Redeploy virtual machine scale set vm (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_vms.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
-        # result = result.result()
-
-        # Perform maintenance virtual machine scale set vms (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_vms.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
-        # result = result.result()
-
-        # Reimage a virtual machine scale set vm (TODO: need swagger file)
-        # BODY = {
-        #   "temp_disk": True
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_set_vms.begin_reimage(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
-        # result = result.result()
-
-        # Reimage all virtual machine scale sets vm (TODO: need swagger file)
-        # BODY = {
-        #   "temp_disk": True
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_set_vms.begin_reimage_all(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
-        # result = result.result()
-
         # Update instances of machine scale set (TODO: need swagger file)
         BODY = {
           "instance_ids": [
@@ -522,6 +551,116 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete virtual machine set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_compute_vmss_vm_2(self, resource_group):
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
+        NETWORK_NAME = self.get_resource_name("networknamex")
+        SUBNET_NAME = self.get_resource_name("subnetnamex")
+
+        if self.is_live:
+            SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+
+        BODY = {
+          "sku": {
+            "tier": "Standard",
+            "capacity": "1",
+            "name": "Standard_D1_v2"
+          },
+          "location": "eastus",
+          "overprovision": True,
+          "virtual_machine_profile": {
+            "storage_profile": {
+              "image_reference": {
+                  "sku": "2016-Datacenter",
+                  "publisher": "MicrosoftWindowsServer",
+                  "version": "latest",
+                  "offer": "WindowsServer"
+              },
+              "os_disk": {
+                "caching": "ReadWrite",
+                "managed_disk": {
+                  "storage_account_type": "Standard_LRS"
+                },
+                "create_option": "FromImage",
+                "disk_size_gb": "512"
+              }
+            },
+            "os_profile": {
+              "computer_name_prefix": "testPC",
+              "admin_username": "testuser",
+              "admin_password": "Aa!1()-xyz"
+            },
+            "network_profile": {
+              "network_interface_configurations": [
+                {
+                  "name": "testPC",
+                  "primary": True,
+                  "enable_ipforwarding": True,
+                  "ip_configurations": [
+                    {
+                      "name": "testPC",
+                      "properties": {
+                        "subnet": {
+                          "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "upgrade_policy": {
+            "mode": "Manual"
+          },
+          "upgrade_mode": "Manual"
+        }
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
+        result = result.result()
+
+        # Get virtual machine scale set vm instance view (TODO: need swagger file)
+        if self.is_live:
+            time.sleep(180)
+
+        for i in range(4):
+            instance_id = i
+            try:
+                result = self.mgmt_client.virtual_machine_scale_set_vms.get_instance_view(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, instance_id)
+            except HttpResponseError:
+                if instance_id >= 3:
+                    raise Exception("Can not get instance_id")
+            else:
+                break
+        INSTANCE_ID = instance_id
+
+        # it isn't in vmss vm
+        # # Simulate eviction
+        # self.mgmt_client.virtual_machine_scale_set_vms.simulate_eviction(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
+
+        # Redeploy virtual machine scale set vm (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_set_vms.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
+        result = result.result()
+
+        # Reimage a virtual machine scale set vm (TODO: need swagger file)
+        BODY = {
+          "temp_disk": True
+        }
+        result = self.mgmt_client.virtual_machine_scale_set_vms.begin_reimage(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
+        result = result.result()
+
+        # Reimage all virtual machine scale sets vm (TODO: need swagger file)
+        BODY = {
+          "temp_disk": True
+        }
+        result = self.mgmt_client.virtual_machine_scale_set_vms.begin_reimage_all(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
+        result = result.result()
+
+        # Delete virtual machine set (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result() 
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
@@ -638,16 +777,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get instance view of virtual machine scale set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.get_instance_view(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
 
-        # TODO: The entity was not found in this Azure location.
-        # Get virtual machine scale set latest rolling upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.get_latest(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-
-        # Get VMSS vm extension (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_vm_extensions.get(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, VIRTUAL_MACHINE_EXTENSION_NAME)
-
-        # List VMSS vm extensions (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_vm_extensions.list(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
-
         # List virtual machine scale sets in a resource group (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.list(resource_group.name)
 
@@ -660,30 +789,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List virtual machine scale sets skus (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.list_skus(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
 
-        # Create VMSS vm extension (TODO: need swagger file)
-        # BODY = {
-        #   "location": "eastus",
-        #   "auto_upgrade_minor_version": True,
-        #   "publisher": "Microsoft.Azure.NetworkWatcher",
-        #   "virtual_machine_extension_type": "NetworkWatcherAgentWindows",
-        #   "type_handler_version": "1.4",
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_set_vm_extensions.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
-        # result = result.result()
-
         # Start an extension rolling upgrade.[post]
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
-
-        # TODO:msrestazure.azure_exceptions.CloudError: Azure Error: MaxUnhealthyInstancePercentExceededInRollingUpgrade
-        # Message: Rolling Upgrade failed after exceeding the MaxUnhealthyInstancePercent value defined in the RollingUpgradePolicy. 100% of instances are in an unhealthy state after being upgraded - more than the threshold of 20% configured in the RollingUpgradePolicy. The most impactful error is:  Instance found to be unhealthy or unreachable. For details on rolling upgrades, use http://aka.ms/AzureVMSSRollingUpgrade
-        # Start vmss os upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
-
-        # Cancel vmss upgrade (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.cancel(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
 
         # Update a virtual machine scale set (TODO: need a swagger file)
         BODY = {
@@ -712,18 +820,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_start(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
-        # Update VMSS vm extension (TODO: need swagger file)
-        # BODY = {
-        #   "auto_upgrade_minor_version": True,
-        #   "publisher": "Microsoft.Azure.NetworkWatcher",
-        #   "virtual_machine_extension_type": "NetworkWatcherAgentWindows",
-        #   "type_handler_version": "1.4",
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_set_vm_extensions.update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
-
-        # Delete VMSS vm exnteison (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_set_vm_extensions.delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, VIRTUAL_MACHINE_EXTENSION_NAME)
-
         # VirtualMachineScaleSet stop againe.
         result = self.mgmt_client.virtual_machine_scale_sets.begin_power_off(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
@@ -743,34 +839,247 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
-        # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
-        # Perform maintenance virtual machine scale set (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_sets.perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
+        # Deallocate virtual machine scale set (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_deallocate(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
+
+        # Delete virtual machine set (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_compute_vmss_base_2(self, resource_group):
+
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
+        VMSS_EXTENSION_NAME = self.get_resource_name("vmssextension")
+        NETWORK_NAME = self.get_resource_name("networknamex")
+        SUBNET_NAME = self.get_resource_name("subnetnamex")
+        
+        if self.is_live:
+            SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+            probe_uri, backed_pools_uri = self.create_load_balance_probe(RESOURCE_GROUP, AZURE_LOCATION)
+        else:
+            SUBNET = "subneturi"
+            probe_uri = "probe_uri"
+            backed_pools_uri = "backed_pools_uri"
+
+
+        # Create a scale set with empty data disks on each vm.[put]
+        BODY = {
+          "sku": {
+            "tier": "Standard",
+            "capacity": "2",
+            "name": "Standard_D1_v2"
+          },
+          "location": "eastus",
+          "overprovision": True,
+          "virtual_machine_profile": {
+            "extension_profile": {
+            },
+            "storage_profile": {
+              "image_reference": {
+                "offer": "UbuntuServer",
+                "publisher": "Canonical",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "os_disk": {
+                "caching": "ReadWrite",
+                "managed_disk": {
+                  "storage_account_type": "Standard_LRS"
+                },
+                "create_option": "FromImage",
+                "disk_size_gb": "512"
+              }
+            },
+            "os_profile": {
+              "computer_name_prefix": "testPC",
+              "admin_username": "testuser",
+              "admin_password": "Aa!1()-xyz"
+            },
+            "network_profile": {
+              "network_interface_configurations": [
+                {
+                  "name": "testPC",
+                  "primary": True,
+                  "enable_ipforwarding": True,
+                  "ip_configurations": [
+                    {
+                      "name": "testPC",
+                      "subnet": {
+                        "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
+                      },
+                      "load_balancer_backend_address_pools": [
+                        {
+                          "id": backed_pools_uri
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "health_probe": {
+                "id": probe_uri
+              }
+            }
+          },
+          "upgrade_policy": {
+            "mode": "Manual"
+          },
+          "upgrade_mode": "Manual",
+          "automatic_repairs_policy": {
+            "enabled": True,
+            "grace_period": "PT30M"
+          }
+        }
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
+        result = result.result()
+
+        # Set orchestration service state (TODO: need example)
+        BODY = {
+          "action": "Suspend",
+          "service_name": "AutomaticRepairs"
+        }
+        self.mgmt_client.virtual_machine_scale_sets.begin_set_orchestration_service_state(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
 
         # Reimage a virtual machine scale set (TODO: need swagger file)
-        # BODY = {
-        #   "temp_disk": True
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_sets.reimage(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
+        BODY = {
+          "temp_disk": True
+        }
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_reimage(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # Reimage all virtual machine scale sets (TODO: need swagger file)
-        # BODY = {
-        #   "temp_disk": True
-        # }
-        # result = self.mgmt_client.virtual_machine_scale_sets.reimage_all(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        # result = result.result()
+        BODY = {
+          "temp_disk": True
+        }
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_reimage_all(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # Force recovery service fabric platform update domain walk (TODO: need swagger file)
-        # result = self.mgmt_client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        # result = self.mgmt_client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, 1)
 
         # Convert to single placement virtual machine scale sets (TODO: need swagger file)
         # result = self.mgmt_client.virtual_machine_scale_sets.convert_to_single_placement_group(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
 
-        # Deallocate virtual machine scale set (TODO: need swagger file)
-        result = self.mgmt_client.virtual_machine_scale_sets.begin_deallocate(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        # Delete virtual machine set (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
+
+    @unittest.skip("""
+    can not test it, see: 
+    https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
+    """)
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_compute_vmss_perform_maintenance(self, resource_group):
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
+        NETWORK_NAME = self.get_resource_name("networknamex")
+        SUBNET_NAME = self.get_resource_name("subnetnamex")
+
+        if self.is_live:
+            SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+
+        BODY = {
+          "sku": {
+            "tier": "Standard",
+            "capacity": "1",
+            "name": "Standard_D1_v2"
+          },
+          "location": "eastus",
+          "overprovision": True,
+          "virtual_machine_profile": {
+            "storage_profile": {
+              "image_reference": {
+                  "sku": "2016-Datacenter",
+                  "publisher": "MicrosoftWindowsServer",
+                  "version": "latest",
+                  "offer": "WindowsServer"
+              },
+              "os_disk": {
+                "caching": "ReadWrite",
+                "managed_disk": {
+                  "storage_account_type": "Standard_LRS"
+                },
+                "create_option": "FromImage",
+                "disk_size_gb": "512"
+              }
+            },
+            "os_profile": {
+              "computer_name_prefix": "testPC",
+              "admin_username": "testuser",
+              "admin_password": "Aa!1()-xyz"
+            },
+            "network_profile": {
+              "network_interface_configurations": [
+                {
+                  "name": "testPC",
+                  "primary": True,
+                  "enable_ipforwarding": True,
+                  "ip_configurations": [
+                    {
+                      "name": "testPC",
+                      "properties": {
+                        "subnet": {
+                          "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "upgrade_policy": {
+            "mode": "Manual"
+          },
+          "upgrade_mode": "Manual"
+        }
+        result = self.mgmt_client.virtual_machine_scale_sets.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
+        result = result.result()
+
+        # Get virtual machine scale set vm instance view (TODO: need swagger file)
+        if self.is_live:
+            time.sleep(180)
+
+        for i in range(4):
+            instance_id = i
+            try:
+                result = self.mgmt_client.virtual_machine_scale_set_vms.get_instance_view(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, instance_id)
+            except HttpResponseError:
+                if instance_id >= 3:
+                    raise Exception("Can not get instance_id")
+            else:
+                break
+        INSTANCE_ID = instance_id
+
+        BODY = {
+          "location": "eastus",
+          "tags": {
+            "department": "HR"
+          }
+        }
+        result = self.mgmt_client.virtual_machine_scale_set_vms.begin_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID, BODY)
+        result = result.result()
+
+        # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
+        # Perform maintenance virtual machine scale set (TODO: need swagger file)
+        try:
+            result = self.mgmt_client.virtual_machine_scale_sets.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+            result = result.result()
+        except ResourceExistsError as e:
+            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % VIRTUAL_MACHINE_SCALE_SET_NAME)
+
+        # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
+        # Perform maintenance virtual machine scale set vms (TODO: need swagger file)
+        try:
+            result = self.mgmt_client.virtual_machine_scale_set_vms.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
+            result = result.result()
+        except ResourceExistsError as e:
+            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % VIRTUAL_MACHINE_SCALE_SET_NAME)
 
         # Delete virtual machine set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)

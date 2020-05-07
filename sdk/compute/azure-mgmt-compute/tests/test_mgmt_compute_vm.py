@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 
 # covered ops:
-#   virtual_machines: 17/21
+#   virtual_machines: 21/21
 #   virtual_machine_size: 1/1
 #   virtual_machine_run_commands: 2/2
 #   virtual_machine_images: 5/5
@@ -17,6 +17,7 @@
 import unittest
 
 import azure.mgmt.compute
+from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -285,6 +286,101 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Deallocate virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.begin_deallocate(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
+
+        # Delete virtual machine (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_compute_vm_2(self, resource_group):
+        
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        VIRTUAL_MACHINE_NAME = self.get_resource_name("virtualmachinex")
+        SUBNET_NAME = self.get_resource_name("subnetx")
+        INTERFACE_NAME = self.get_resource_name("interfacex")
+        NETWORK_NAME = self.get_resource_name("networknamex")
+        VIRTUAL_MACHINE_EXTENSION_NAME = self.get_resource_name("virtualmachineextensionx")
+
+        # create network
+        if self.is_live:
+            SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+            NIC_ID = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, INTERFACE_NAME, SUBNET)
+
+        # Create a vm with empty data disks.[put]
+        BODY = {
+          "location": "eastus",
+          "hardware_profile": {
+            "vm_size": "Standard_D2_v2"
+          },
+          "storage_profile": {
+            "image_reference": {
+              "sku": "2016-Datacenter",
+              "publisher": "MicrosoftWindowsServer",
+              "version": "latest",
+              "offer": "WindowsServer"
+            },
+            "os_disk": {
+              "caching": "ReadWrite",
+              "name": "myVMosdisk",
+              "create_option": "FromImage"
+            }
+          },
+          "os_profile": {
+            "admin_username": "testuser",
+            "computer_name": "myVM",
+            "admin_password": "Aa1!zyx_",
+            "windows_configuration": {
+              "enable_automatic_updates": True  # need automatic update for reimage
+            }
+          },
+          "network_profile": {
+            "network_interfaces": [
+              {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + INTERFACE_NAME + "",
+                "properties": {
+                  "primary": True
+                }
+              }
+            ]
+          },
+          "eviction_policy": "Deallocate",
+          "billing_profile": {
+            "max_price": 1
+          },
+          "priority": "Spot"
+        }
+        result = self.mgmt_client.virtual_machines.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
+        result = result.result()
+
+        # Simulate eviction (TODO: need example)
+        self.mgmt_client.virtual_machines.simulate_eviction(resource_group.name, VIRTUAL_MACHINE_NAME, )
+
+        # TODO: cannot use it successfully, see:     https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
+        # Perform maintenance the virtual machine (TODO: need swagger file)
+        try:
+            result = self.mgmt_client.virtual_machines.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_NAME)
+            result = result.result()
+        except ResourceExistsError as e:
+            self.assertEquals(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_NAME))
+
+        # VirtualMachine convert to managed disks (TODO: need swagger file)
+        try:
+            result = self.mgmt_client.virtual_machines.begin_convert_to_managed_disks(resource_group.name, VIRTUAL_MACHINE_NAME)
+            result = result.result()
+        except ResourceExistsError as e:
+            self.assertEquals(str(e), "(OperationNotAllowed) VM '%s' is already using managed disks." % (VIRTUAL_MACHINE_NAME))
+
+        # TODO: Message: The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.
+        # Reimage a Virtual Machine.[post]
+        try:
+            BODY = {
+              "temp_disk": True
+            }
+            result = self.mgmt_client.virtual_machines.begin_reimage(resource_group.name, VIRTUAL_MACHINE_NAME)
+            result = result.result()
+        except ResourceExistsError as e:
+            self.assertEquals(str(e), "(OperationNotAllowed) The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.")
 
         # Delete virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
