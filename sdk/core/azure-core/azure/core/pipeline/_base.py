@@ -53,6 +53,7 @@ _ALLOWED_KWARGS = set([
     "request_id",
     "connection_data_block_size",
     "auth",
+    "passthrough"
 ])
 
 

@@ -49,7 +49,8 @@ async def test_valid_kwargs():
                        stream=False,
                        request_id='request_id',
                        connection_data_block_size=1024,
-                       auth='auth')
+                       auth='auth',
+                       passthrough=True)
 
 
 @pytest.mark.asyncio
