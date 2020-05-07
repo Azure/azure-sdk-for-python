@@ -154,35 +154,35 @@ class IndexersOperations:
     async def create_or_update(
         self,
         indexer_name: str,
-        indexer: "models.Indexer",
+        indexer: "models.SearchIndexer",
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         request_options: Optional["models.RequestOptions"] = None,
-        access_condition: Optional["models.AccessCondition"] = None,
         **kwargs
-    ) -> "models.Indexer":
+    ) -> "models.SearchIndexer":
         """Creates a new indexer or updates an indexer if it already exists.
 
         :param indexer_name: The name of the indexer to create or update.
         :type indexer_name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~search_service_client.models.Indexer
+        :type indexer: ~search_service_client.models.SearchIndexer
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Indexer or the result of cls(response)
-        :rtype: ~search_service_client.models.Indexer or ~search_service_client.models.Indexer
+        :return: SearchIndexer or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexer or ~search_service_client.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Indexer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
@@ -204,17 +204,17 @@ class IndexersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(indexer, 'Indexer')
+        body_content = self._serialize.body(indexer, 'SearchIndexer')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -228,10 +228,10 @@ class IndexersOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Indexer', pipeline_response)
+            deserialized = self._deserialize('SearchIndexer', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Indexer', pipeline_response)
+            deserialized = self._deserialize('SearchIndexer', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -242,18 +242,23 @@ class IndexersOperations:
     async def delete(
         self,
         indexer_name: str,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         request_options: Optional["models.RequestOptions"] = None,
-        access_condition: Optional["models.AccessCondition"] = None,
         **kwargs
     ) -> None:
         """Deletes an indexer.
 
         :param indexer_name: The name of the indexer to delete.
         :type indexer_name: str
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -263,11 +268,6 @@ class IndexersOperations:
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
@@ -288,10 +288,10 @@ class IndexersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -313,7 +313,7 @@ class IndexersOperations:
         indexer_name: str,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.Indexer":
+    ) -> "models.SearchIndexer":
         """Retrieves an indexer definition.
 
         :param indexer_name: The name of the indexer to retrieve.
@@ -321,11 +321,11 @@ class IndexersOperations:
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Indexer or the result of cls(response)
-        :rtype: ~search_service_client.models.Indexer
+        :return: SearchIndexer or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Indexer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -361,7 +361,7 @@ class IndexersOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Indexer', pipeline_response)
+        deserialized = self._deserialize('SearchIndexer', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -435,22 +435,22 @@ class IndexersOperations:
 
     async def create(
         self,
-        indexer: "models.Indexer",
+        indexer: "models.SearchIndexer",
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.Indexer":
+    ) -> "models.SearchIndexer":
         """Creates a new indexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~search_service_client.models.Indexer
+        :type indexer: ~search_service_client.models.SearchIndexer
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Indexer or the result of cls(response)
-        :rtype: ~search_service_client.models.Indexer
+        :return: SearchIndexer or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Indexer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -478,7 +478,7 @@ class IndexersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(indexer, 'Indexer')
+        body_content = self._serialize.body(indexer, 'SearchIndexer')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -490,7 +490,7 @@ class IndexersOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Indexer', pipeline_response)
+        deserialized = self._deserialize('SearchIndexer', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -503,7 +503,7 @@ class IndexersOperations:
         indexer_name: str,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.IndexerExecutionInfo":
+    ) -> "models.SearchIndexerStatus":
         """Returns the current status and execution history of an indexer.
 
         :param indexer_name: The name of the indexer for which to retrieve status.
@@ -511,11 +511,11 @@ class IndexersOperations:
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IndexerExecutionInfo or the result of cls(response)
-        :rtype: ~search_service_client.models.IndexerExecutionInfo
+        :return: SearchIndexerStatus or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IndexerExecutionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerStatus"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -551,7 +551,7 @@ class IndexersOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('IndexerExecutionInfo', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerStatus', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})

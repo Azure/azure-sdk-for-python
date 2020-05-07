@@ -40,37 +40,37 @@ class SkillsetsOperations(object):
     def create_or_update(
         self,
         skillset_name,  # type: str
-        skillset,  # type: "models.Skillset"
+        skillset,  # type: "models.SearchIndexerSkillset"
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Skillset"
+        # type: (...) -> "models.SearchIndexerSkillset"
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         :param skillset_name: The name of the skillset to create or update.
         :type skillset_name: str
         :param skillset: The skillset containing one or more skills to create or update in a search
          service.
-        :type skillset: ~search_service_client.models.Skillset
+        :type skillset: ~search_service_client.models.SearchIndexerSkillset
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Skillset or the result of cls(response)
-        :rtype: ~search_service_client.models.Skillset or ~search_service_client.models.Skillset
+        :return: SearchIndexerSkillset or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerSkillset or ~search_service_client.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Skillset"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
@@ -92,17 +92,17 @@ class SkillsetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(skillset, 'Skillset')
+        body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -116,10 +116,10 @@ class SkillsetsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Skillset', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Skillset', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -130,8 +130,9 @@ class SkillsetsOperations(object):
     def delete(
         self,
         skillset_name,  # type: str
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -139,10 +140,14 @@ class SkillsetsOperations(object):
 
         :param skillset_name: The name of the skillset to delete.
         :type skillset_name: str
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -152,11 +157,6 @@ class SkillsetsOperations(object):
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
@@ -177,10 +177,10 @@ class SkillsetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -203,7 +203,7 @@ class SkillsetsOperations(object):
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Skillset"
+        # type: (...) -> "models.SearchIndexerSkillset"
         """Retrieves a skillset in a search service.
 
         :param skillset_name: The name of the skillset to retrieve.
@@ -211,11 +211,11 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Skillset or the result of cls(response)
-        :rtype: ~search_service_client.models.Skillset
+        :return: SearchIndexerSkillset or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Skillset"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -251,7 +251,7 @@ class SkillsetsOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Skillset', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -326,23 +326,23 @@ class SkillsetsOperations(object):
 
     def create(
         self,
-        skillset,  # type: "models.Skillset"
+        skillset,  # type: "models.SearchIndexerSkillset"
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Skillset"
+        # type: (...) -> "models.SearchIndexerSkillset"
         """Creates a new skillset in a search service.
 
         :param skillset: The skillset containing one or more skills to create in a search service.
-        :type skillset: ~search_service_client.models.Skillset
+        :type skillset: ~search_service_client.models.SearchIndexerSkillset
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Skillset or the result of cls(response)
-        :rtype: ~search_service_client.models.Skillset
+        :return: SearchIndexerSkillset or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Skillset"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -370,7 +370,7 @@ class SkillsetsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(skillset, 'Skillset')
+        body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -382,7 +382,7 @@ class SkillsetsOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Skillset', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})

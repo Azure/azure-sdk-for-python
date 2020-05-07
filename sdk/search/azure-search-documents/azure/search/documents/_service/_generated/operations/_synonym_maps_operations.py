@@ -41,8 +41,9 @@ class SynonymMapsOperations(object):
         self,
         synonym_map_name,  # type: str
         synonym_map,  # type: "models.SynonymMap"
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SynonymMap"
@@ -52,10 +53,14 @@ class SynonymMapsOperations(object):
         :type synonym_map_name: str
         :param synonym_map: The definition of the synonym map to create or update.
         :type synonym_map: ~search_service_client.models.SynonymMap
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap or the result of cls(response)
         :rtype: ~search_service_client.models.SynonymMap or ~search_service_client.models.SynonymMap
@@ -65,11 +70,6 @@ class SynonymMapsOperations(object):
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
@@ -91,10 +91,10 @@ class SynonymMapsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
@@ -129,8 +129,9 @@ class SynonymMapsOperations(object):
     def delete(
         self,
         synonym_map_name,  # type: str
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -138,10 +139,14 @@ class SynonymMapsOperations(object):
 
         :param synonym_map_name: The name of the synonym map to delete.
         :type synonym_map_name: str
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -151,11 +156,6 @@ class SynonymMapsOperations(object):
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
@@ -176,10 +176,10 @@ class SynonymMapsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)

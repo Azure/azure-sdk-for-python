@@ -40,36 +40,36 @@ class DataSourcesOperations(object):
     def create_or_update(
         self,
         data_source_name,  # type: str
-        data_source,  # type: "models.DataSource"
+        data_source,  # type: "models.SearchIndexerDataSource"
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataSource"
+        # type: (...) -> "models.SearchIndexerDataSource"
         """Creates a new datasource or updates a datasource if it already exists.
 
         :param data_source_name: The name of the datasource to create or update.
         :type data_source_name: str
         :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~search_service_client.models.DataSource
+        :type data_source: ~search_service_client.models.SearchIndexerDataSource
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataSource or the result of cls(response)
-        :rtype: ~search_service_client.models.DataSource or ~search_service_client.models.DataSource
+        :return: SearchIndexerDataSource or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerDataSource or ~search_service_client.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
@@ -91,17 +91,17 @@ class DataSourcesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(data_source, 'DataSource')
+        body_content = self._serialize.body(data_source, 'SearchIndexerDataSource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -115,10 +115,10 @@ class DataSourcesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DataSource', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('DataSource', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -129,8 +129,9 @@ class DataSourcesOperations(object):
     def delete(
         self,
         data_source_name,  # type: str
+        if_match=None,  # type: Optional[str]
+        if_none_match=None,  # type: Optional[str]
         request_options=None,  # type: Optional["models.RequestOptions"]
-        access_condition=None,  # type: Optional["models.AccessCondition"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -138,10 +139,14 @@ class DataSourcesOperations(object):
 
         :param data_source_name: The name of the datasource to delete.
         :type data_source_name: str
+        :param if_match: Defines the If-Match condition. The operation will be performed only if the
+         ETag on the server matches this value.
+        :type if_match: str
+        :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
+         if the ETag on the server does not match this value.
+        :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
-        :param access_condition: Parameter group.
-        :type access_condition: ~search_service_client.models.AccessCondition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -151,11 +156,6 @@ class DataSourcesOperations(object):
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
-        _if_match = None
-        _if_none_match = None
-        if access_condition is not None:
-            _if_match = access_condition.if_match
-            _if_none_match = access_condition.if_none_match
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
@@ -176,10 +176,10 @@ class DataSourcesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -202,7 +202,7 @@ class DataSourcesOperations(object):
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataSource"
+        # type: (...) -> "models.SearchIndexerDataSource"
         """Retrieves a datasource definition.
 
         :param data_source_name: The name of the datasource to retrieve.
@@ -210,11 +210,11 @@ class DataSourcesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataSource or the result of cls(response)
-        :rtype: ~search_service_client.models.DataSource
+        :return: SearchIndexerDataSource or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -250,7 +250,7 @@ class DataSourcesOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataSource', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
@@ -325,23 +325,23 @@ class DataSourcesOperations(object):
 
     def create(
         self,
-        data_source,  # type: "models.DataSource"
+        data_source,  # type: "models.SearchIndexerDataSource"
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataSource"
+        # type: (...) -> "models.SearchIndexerDataSource"
         """Creates a new datasource.
 
         :param data_source: The definition of the datasource to create.
-        :type data_source: ~search_service_client.models.DataSource
+        :type data_source: ~search_service_client.models.SearchIndexerDataSource
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataSource or the result of cls(response)
-        :rtype: ~search_service_client.models.DataSource
+        :return: SearchIndexerDataSource or the result of cls(response)
+        :rtype: ~search_service_client.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         
         _x_ms_client_request_id = None
@@ -369,7 +369,7 @@ class DataSourcesOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(data_source, 'DataSource')
+        body_content = self._serialize.body(data_source, 'SearchIndexerDataSource')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -381,7 +381,7 @@ class DataSourcesOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataSource', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})

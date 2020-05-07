@@ -8,69 +8,49 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class AccessCondition(msrest.serialization.Model):
-    """Parameter group.
+class AnalyzedTokenInfo(msrest.serialization.Model):
+    """Information about a token returned by an analyzer.
 
-    :param if_match: Defines the If-Match condition. The operation will be performed only if the
-     ETag on the server matches this value.
-    :type if_match: str
-    :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
-     if the ETag on the server does not match this value.
-    :type if_none_match: str
-    """
-
-    _attribute_map = {
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AccessCondition, self).__init__(**kwargs)
-        self.if_match = kwargs.get('if_match', None)
-        self.if_none_match = kwargs.get('if_none_match', None)
-
-
-class Analyzer(msrest.serialization.Model):
-    """Base type for analyzers.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomAnalyzer, PatternAnalyzer, StandardAnalyzer, StopAnalyzer.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
+    :ivar token: Required. The token returned by the analyzer.
+    :vartype token: str
+    :ivar start_offset: Required. The index of the first character of the token in the input text.
+    :vartype start_offset: int
+    :ivar end_offset: Required. The index of the last character of the token in the input text.
+    :vartype end_offset: int
+    :ivar position: Required. The position of the token in the input text relative to other tokens.
+     The first token in the input text has position 0, the next has position 1, and so on. Depending
+     on the analyzer used, some tokens might have the same position, for example if they are
+     synonyms of each other.
+    :vartype position: int
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
+        'token': {'required': True, 'readonly': True},
+        'start_offset': {'required': True, 'readonly': True},
+        'end_offset': {'required': True, 'readonly': True},
+        'position': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.CustomAnalyzer': 'CustomAnalyzer', '#Microsoft.Azure.Search.PatternAnalyzer': 'PatternAnalyzer', '#Microsoft.Azure.Search.StandardAnalyzer': 'StandardAnalyzer', '#Microsoft.Azure.Search.StopAnalyzer': 'StopAnalyzer'}
+        'token': {'key': 'token', 'type': 'str'},
+        'start_offset': {'key': 'startOffset', 'type': 'int'},
+        'end_offset': {'key': 'endOffset', 'type': 'int'},
+        'position': {'key': 'position', 'type': 'int'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Analyzer, self).__init__(**kwargs)
-        self.odata_type = None
-        self.name = kwargs.get('name', None)
+        super(AnalyzedTokenInfo, self).__init__(**kwargs)
+        self.token = None
+        self.start_offset = None
+        self.end_offset = None
+        self.position = None
 
 
 class AnalyzeRequest(msrest.serialization.Model):
@@ -99,13 +79,13 @@ class AnalyzeRequest(msrest.serialization.Model):
      'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
      'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
      'simple', 'stop', 'whitespace'.
-    :type analyzer: str or ~search_service_client.models.AnalyzerName
+    :type analyzer: str or ~search_service_client.models.LexicalAnalyzerName
     :param tokenizer: The name of the tokenizer to use to break the given text. If this parameter
      is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
      are mutually exclusive. Possible values include: 'classic', 'edgeNGram', 'keyword_v2',
      'letter', 'lowercase', 'microsoft_language_tokenizer', 'microsoft_language_stemming_tokenizer',
      'nGram', 'path_hierarchy_v2', 'pattern', 'standard_v2', 'uax_url_email', 'whitespace'.
-    :type tokenizer: str or ~search_service_client.models.TokenizerName
+    :type tokenizer: str or ~search_service_client.models.LexicalTokenizerName
     :param token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :type token_filters: list[str or ~search_service_client.models.TokenFilterName]
@@ -144,7 +124,7 @@ class AnalyzeResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param tokens: Required. The list of tokens returned by the analyzer specified in the request.
-    :type tokens: list[~search_service_client.models.TokenInfo]
+    :type tokens: list[~search_service_client.models.AnalyzedTokenInfo]
     """
 
     _validation = {
@@ -152,7 +132,7 @@ class AnalyzeResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'tokens': {'key': 'tokens', 'type': '[TokenInfo]'},
+        'tokens': {'key': 'tokens', 'type': '[AnalyzedTokenInfo]'},
     }
 
     def __init__(
@@ -271,6 +251,75 @@ class AzureActiveDirectoryApplicationCredentials(msrest.serialization.Model):
         self.application_secret = kwargs.get('application_secret', None)
 
 
+class Similarity(msrest.serialization.Model):
+    """Base type for similarity algorithms. Similarity algorithms are used to calculate scores that tie queries to documents. The higher the score, the more relevant the document is to that specific query. Those scores are used to rank the search results.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BM25Similarity, ClassicSimilarity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Constant filled by server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Azure.Search.BM25Similarity': 'BM25Similarity', '#Microsoft.Azure.Search.ClassicSimilarity': 'ClassicSimilarity'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Similarity, self).__init__(**kwargs)
+        self.odata_type = None
+
+
+class BM25Similarity(Similarity):
+    """Ranking function based on the Okapi BM25 similarity algorithm. BM25 is a TF-IDF-like algorithm that includes length normalization (controlled by the 'b' parameter) as well as term frequency saturation (controlled by the 'k1' parameter).
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Constant filled by server.
+    :type odata_type: str
+    :param k1: This property controls the scaling function between the term frequency of each
+     matching terms and the final relevance score of a document-query pair. By default, a value of
+     1.2 is used. A value of 0.0 means the score does not scale with an increase in term frequency.
+    :type k1: float
+    :param b: This property controls how the length of a document affects the relevance score. By
+     default, a value of 0.75 is used. A value of 0.0 means no length normalization is applied,
+     while a value of 1.0 means the score is fully normalized by the length of the document.
+    :type b: float
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'k1': {'key': 'k1', 'type': 'float'},
+        'b': {'key': 'b', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BM25Similarity, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.BM25Similarity'
+        self.k1 = kwargs.get('k1', None)
+        self.b = kwargs.get('b', None)
+
+
 class CharFilter(msrest.serialization.Model):
     """Base type for character filters.
 
@@ -312,7 +361,7 @@ class CharFilter(msrest.serialization.Model):
 
 
 class CjkBigramTokenFilter(TokenFilter):
-    """Forms bigrams of CJK terms that are generated from StandardTokenizer. This token filter is implemented using Apache Lucene.
+    """Forms bigrams of CJK terms that are generated from the standard tokenizer. This token filter is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -352,11 +401,36 @@ class CjkBigramTokenFilter(TokenFilter):
         self.output_unigrams = kwargs.get('output_unigrams', False)
 
 
-class Tokenizer(msrest.serialization.Model):
+class ClassicSimilarity(Similarity):
+    """Legacy similarity algorithm which uses the Lucene TFIDFSimilarity implementation of TF-IDF. This variation of TF-IDF introduces static document length normalization as well as coordinating factors that penalize documents that only partially match the searched queries.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Constant filled by server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClassicSimilarity, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.ClassicSimilarity'
+
+
+class LexicalTokenizer(msrest.serialization.Model):
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer, StandardTokenizer, StandardTokenizerV2, UaxUrlEmailTokenizer.
+    sub-classes are: ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2, UaxUrlEmailTokenizer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -380,19 +454,19 @@ class Tokenizer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.ClassicTokenizer': 'ClassicTokenizer', '#Microsoft.Azure.Search.EdgeNGramTokenizer': 'EdgeNGramTokenizer', '#Microsoft.Azure.Search.KeywordTokenizer': 'KeywordTokenizer', '#Microsoft.Azure.Search.KeywordTokenizerV2': 'KeywordTokenizerV2', '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer': 'MicrosoftLanguageStemmingTokenizer', '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer': 'MicrosoftLanguageTokenizer', '#Microsoft.Azure.Search.NGramTokenizer': 'NGramTokenizer', '#Microsoft.Azure.Search.PathHierarchyTokenizerV2': 'PathHierarchyTokenizerV2', '#Microsoft.Azure.Search.PatternTokenizer': 'PatternTokenizer', '#Microsoft.Azure.Search.StandardTokenizer': 'StandardTokenizer', '#Microsoft.Azure.Search.StandardTokenizerV2': 'StandardTokenizerV2', '#Microsoft.Azure.Search.UaxUrlEmailTokenizer': 'UaxUrlEmailTokenizer'}
+        'odata_type': {'#Microsoft.Azure.Search.ClassicTokenizer': 'ClassicTokenizer', '#Microsoft.Azure.Search.EdgeNGramTokenizer': 'EdgeNGramTokenizer', '#Microsoft.Azure.Search.KeywordTokenizer': 'KeywordTokenizer', '#Microsoft.Azure.Search.KeywordTokenizerV2': 'KeywordTokenizerV2', '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer': 'MicrosoftLanguageStemmingTokenizer', '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer': 'MicrosoftLanguageTokenizer', '#Microsoft.Azure.Search.NGramTokenizer': 'NGramTokenizer', '#Microsoft.Azure.Search.PathHierarchyTokenizerV2': 'PathHierarchyTokenizerV2', '#Microsoft.Azure.Search.PatternTokenizer': 'PatternTokenizer', '#Microsoft.Azure.Search.StandardTokenizer': 'LuceneStandardTokenizer', '#Microsoft.Azure.Search.StandardTokenizerV2': 'LuceneStandardTokenizerV2', '#Microsoft.Azure.Search.UaxUrlEmailTokenizer': 'UaxUrlEmailTokenizer'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Tokenizer, self).__init__(**kwargs)
+        super(LexicalTokenizer, self).__init__(**kwargs)
         self.odata_type = None
         self.name = kwargs.get('name', None)
 
 
-class ClassicTokenizer(Tokenizer):
+class ClassicTokenizer(LexicalTokenizer):
     """Grammar-based tokenizer that is suitable for processing most European-language documents. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -550,7 +624,7 @@ class CommonGramTokenFilter(TokenFilter):
         self.use_query_mode = kwargs.get('use_query_mode', False)
 
 
-class Skill(msrest.serialization.Model):
+class SearchIndexerSkill(msrest.serialization.Model):
     """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -602,7 +676,7 @@ class Skill(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(Skill, self).__init__(**kwargs)
+        super(SearchIndexerSkill, self).__init__(**kwargs)
         self.odata_type = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
@@ -611,7 +685,7 @@ class Skill(msrest.serialization.Model):
         self.outputs = kwargs.get('outputs', None)
 
 
-class ConditionalSkill(Skill):
+class ConditionalSkill(SearchIndexerSkill):
     """A skill that enables scenarios that require a Boolean operation to determine the data to assign to an output.
 
     All required parameters must be populated in order to send to Azure.
@@ -692,7 +766,47 @@ class CorsOptions(msrest.serialization.Model):
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
 
 
-class CustomAnalyzer(Analyzer):
+class LexicalAnalyzer(msrest.serialization.Model):
+    """Base type for analyzers.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomAnalyzer, PatternAnalyzer, LuceneStandardAnalyzer, StopAnalyzer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
+     128 characters.
+    :type name: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Azure.Search.CustomAnalyzer': 'CustomAnalyzer', '#Microsoft.Azure.Search.PatternAnalyzer': 'PatternAnalyzer', '#Microsoft.Azure.Search.StandardAnalyzer': 'LuceneStandardAnalyzer', '#Microsoft.Azure.Search.StopAnalyzer': 'StopAnalyzer'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LexicalAnalyzer, self).__init__(**kwargs)
+        self.odata_type = None
+        self.name = kwargs.get('name', None)
+
+
+class CustomAnalyzer(LexicalAnalyzer):
     """Allows you to take control over the process of converting text into indexable/searchable tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters. The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens emitted by the tokenizer.
 
     All required parameters must be populated in order to send to Azure.
@@ -709,7 +823,7 @@ class CustomAnalyzer(Analyzer):
      'edgeNGram', 'keyword_v2', 'letter', 'lowercase', 'microsoft_language_tokenizer',
      'microsoft_language_stemming_tokenizer', 'nGram', 'path_hierarchy_v2', 'pattern',
      'standard_v2', 'uax_url_email', 'whitespace'.
-    :type tokenizer: str or ~search_service_client.models.TokenizerName
+    :type tokenizer: str or ~search_service_client.models.LexicalTokenizerName
     :param token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
@@ -778,37 +892,6 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
         self.odata_type = None
 
 
-class DataContainer(msrest.serialization.Model):
-    """Represents information about the entity (such as Azure SQL table or CosmosDB collection) that will be indexed.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the table or view (for Azure SQL data source) or collection
-     (for CosmosDB data source) that will be indexed.
-    :type name: str
-    :param query: A query that is applied to this data container. The syntax and meaning of this
-     parameter is datasource-specific. Not supported by Azure SQL datasources.
-    :type query: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataContainer, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.query = kwargs.get('query', None)
-
-
 class DataDeletionDetectionPolicy(msrest.serialization.Model):
     """Base type for data deletion detection policies.
 
@@ -840,63 +923,6 @@ class DataDeletionDetectionPolicy(msrest.serialization.Model):
     ):
         super(DataDeletionDetectionPolicy, self).__init__(**kwargs)
         self.odata_type = None
-
-
-class DataSource(msrest.serialization.Model):
-    """Represents a datasource definition, which can be used to configure an indexer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the datasource.
-    :type name: str
-    :param description: The description of the datasource.
-    :type description: str
-    :param type: Required. The type of the datasource. Possible values include: 'azuresql',
-     'cosmosdb', 'azureblob', 'azuretable', 'mysql'.
-    :type type: str or ~search_service_client.models.DataSourceType
-    :param credentials: Required. Credentials for the datasource.
-    :type credentials: ~search_service_client.models.DataSourceCredentials
-    :param container: Required. The data container for the datasource.
-    :type container: ~search_service_client.models.DataContainer
-    :param data_change_detection_policy: The data change detection policy for the datasource.
-    :type data_change_detection_policy: ~search_service_client.models.DataChangeDetectionPolicy
-    :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
-    :type data_deletion_detection_policy: ~search_service_client.models.DataDeletionDetectionPolicy
-    :param e_tag: The ETag of the DataSource.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'container': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'DataSourceCredentials'},
-        'container': {'key': 'container', 'type': 'DataContainer'},
-        'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
-        'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataSource, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.type = kwargs.get('type', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.container = kwargs.get('container', None)
-        self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
-        self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
-        self.e_tag = kwargs.get('e_tag', None)
 
 
 class DataSourceCredentials(msrest.serialization.Model):
@@ -1228,7 +1254,7 @@ class EdgeNGramTokenFilterV2(TokenFilter):
         self.side = kwargs.get('side', None)
 
 
-class EdgeNGramTokenizer(Tokenizer):
+class EdgeNGramTokenizer(LexicalTokenizer):
     """Tokenizes the input from an edge into n-grams of the given size(s). This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -1311,52 +1337,7 @@ class ElisionTokenFilter(TokenFilter):
         self.articles = kwargs.get('articles', None)
 
 
-class EncryptionKey(msrest.serialization.Model):
-    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param key_vault_key_name: Required. The name of your Azure Key Vault key to be used to encrypt
-     your data at rest.
-    :type key_vault_key_name: str
-    :param key_vault_key_version: Required. The version of your Azure Key Vault key to be used to
-     encrypt your data at rest.
-    :type key_vault_key_version: str
-    :param key_vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name,
-     that contains the key to be used to encrypt your data at rest. An example URI might be
-     https://my-keyvault-name.vault.azure.net.
-    :type key_vault_uri: str
-    :param access_credentials: Optional Azure Active Directory credentials used for accessing your
-     Azure Key Vault. Not required if using managed identity instead.
-    :type access_credentials:
-     ~search_service_client.models.AzureActiveDirectoryApplicationCredentials
-    """
-
-    _validation = {
-        'key_vault_key_name': {'required': True},
-        'key_vault_key_version': {'required': True},
-        'key_vault_uri': {'required': True},
-    }
-
-    _attribute_map = {
-        'key_vault_key_name': {'key': 'keyVaultKeyName', 'type': 'str'},
-        'key_vault_key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'access_credentials': {'key': 'accessCredentials', 'type': 'AzureActiveDirectoryApplicationCredentials'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EncryptionKey, self).__init__(**kwargs)
-        self.key_vault_key_name = kwargs.get('key_vault_key_name', None)
-        self.key_vault_key_version = kwargs.get('key_vault_key_version', None)
-        self.key_vault_uri = kwargs.get('key_vault_uri', None)
-        self.access_credentials = kwargs.get('access_credentials', None)
-
-
-class EntityRecognitionSkill(Skill):
+class EntityRecognitionSkill(SearchIndexerSkill):
     """Text analytics entity recognition.
 
     All required parameters must be populated in order to send to Azure.
@@ -1427,184 +1408,6 @@ class EntityRecognitionSkill(Skill):
         self.default_language_code = kwargs.get('default_language_code', None)
         self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
         self.minimum_precision = kwargs.get('minimum_precision', None)
-
-
-class Field(msrest.serialization.Model):
-    """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the field, which must be unique within the fields collection
-     of the index or parent field.
-    :type name: str
-    :param type: Required. The data type of the field. Possible values include: 'Edm.String',
-     'Edm.Int32', 'Edm.Int64', 'Edm.Double', 'Edm.Boolean', 'Edm.DateTimeOffset',
-     'Edm.GeographyPoint', 'Edm.ComplexType'.
-    :type type: str or ~search_service_client.models.DataType
-    :param key: A value indicating whether the field uniquely identifies documents in the index.
-     Exactly one top-level field in each index must be chosen as the key field and it must be of
-     type Edm.String. Key fields can be used to look up documents directly and update or delete
-     specific documents. Default is false for simple fields and null for complex fields.
-    :type key: bool
-    :param retrievable: A value indicating whether the field can be returned in a search result.
-     You can disable this option if you want to use a field (for example, margin) as a filter,
-     sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-     property must be true for key fields, and it must be null for complex fields. This property can
-     be changed on existing fields. Enabling this property does not cause any increase in index
-     storage requirements. Default is true for simple fields and null for complex fields.
-    :type retrievable: bool
-    :param searchable: A value indicating whether the field is full-text searchable. This means it
-     will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
-     value like "sunny day", internally it will be split into the individual tokens "sunny" and
-     "day". This enables full-text searches for these terms. Fields of type Edm.String or
-     Collection(Edm.String) are searchable by default. This property must be false for simple fields
-     of other non-string data types, and it must be null for complex fields. Note: searchable fields
-     consume extra space in your index since Azure Cognitive Search will store an additional
-     tokenized version of the field value for full-text searches. If you want to save space in your
-     index and you don't need a field to be included in searches, set searchable to false.
-    :type searchable: bool
-    :param filterable: A value indicating whether to enable the field to be referenced in $filter
-     queries. filterable differs from searchable in how strings are handled. Fields of type
-     Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
-     comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
-     $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property
-     must be null for complex fields. Default is true for simple fields and null for complex fields.
-    :type filterable: bool
-    :param sortable: A value indicating whether to enable the field to be referenced in $orderby
-     expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
-     users will want to sort by fields in the documents. A simple field can be sortable only if it
-     is single-valued (it has a single value in the scope of the parent document). Simple collection
-     fields cannot be sortable, since they are multi-valued. Simple sub-fields of complex
-     collections are also multi-valued, and therefore cannot be sortable. This is true whether it's
-     an immediate parent field, or an ancestor field, that's the complex collection. Complex fields
-     cannot be sortable and the sortable property must be null for such fields. The default for
-     sortable is true for single-valued simple fields, false for multi-valued simple fields, and
-     null for complex fields.
-    :type sortable: bool
-    :param facetable: A value indicating whether to enable the field to be referenced in facet
-     queries. Typically used in a presentation of search results that includes hit count by category
-     (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
-     on). This property must be null for complex fields. Fields of type Edm.GeographyPoint or
-     Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
-     fields.
-    :type facetable: bool
-    :param analyzer: The name of the analyzer to use for the field. This option can be used only
-     with searchable fields and it can't be set together with either searchAnalyzer or
-     indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
-     for complex fields. Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene',
-     'bn.microsoft', 'eu.lucene', 'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-
-     Hans.microsoft', 'zh-Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft',
-     'cs.microsoft', 'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft', 'nl.lucene',
-     'en.microsoft', 'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene', 'fr.microsoft',
-     'fr.lucene', 'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft', 'el.lucene',
-     'gu.microsoft', 'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft', 'hu.lucene',
-     'is.microsoft', 'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft', 'it.lucene',
-     'ja.microsoft', 'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene', 'lv.microsoft',
-     'lv.lucene', 'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft', 'nb.microsoft',
-     'no.lucene', 'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-
-     PT.microsoft', 'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft',
-     'ru.lucene', 'sr-cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft',
-     'es.microsoft', 'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft',
-     'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
-     'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
-     'simple', 'stop', 'whitespace'.
-    :type analyzer: str or ~search_service_client.models.AnalyzerName
-    :param search_analyzer: The name of the analyzer used at search time for the field. This option
-     can be used only with searchable fields. It must be set together with indexAnalyzer and it
-     cannot be set together with the analyzer option. This property cannot be set to the name of a
-     language analyzer; use the analyzer property instead if you need a language analyzer. This
-     analyzer can be updated on an existing field. Must be null for complex fields. Possible values
-     include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene', 'bg.microsoft',
-     'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-Hans.lucene', 'zh-
-     Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft', 'cs.lucene', 'da.microsoft',
-     'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft', 'en.lucene', 'et.microsoft',
-     'fi.microsoft', 'fi.lucene', 'fr.microsoft', 'fr.lucene', 'gl.lucene', 'de.microsoft',
-     'de.lucene', 'el.microsoft', 'el.lucene', 'gu.microsoft', 'he.microsoft', 'hi.microsoft',
-     'hi.lucene', 'hu.microsoft', 'hu.lucene', 'is.microsoft', 'id.microsoft', 'id.lucene',
-     'ga.lucene', 'it.microsoft', 'it.lucene', 'ja.microsoft', 'ja.lucene', 'kn.microsoft',
-     'ko.microsoft', 'ko.lucene', 'lv.microsoft', 'lv.lucene', 'lt.microsoft', 'ml.microsoft',
-     'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene', 'fa.lucene', 'pl.microsoft',
-     'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft', 'pt-PT.lucene',
-     'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
-     cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
-     'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
-     'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
-     'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
-     'whitespace'.
-    :type search_analyzer: str or ~search_service_client.models.AnalyzerName
-    :param index_analyzer: The name of the analyzer used at indexing time for the field. This
-     option can be used only with searchable fields. It must be set together with searchAnalyzer and
-     it cannot be set together with the analyzer option.  This property cannot be set to the name of
-     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
-     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
-     Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene',
-     'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-
-     Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft',
-     'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft',
-     'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene', 'fr.microsoft', 'fr.lucene',
-     'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft', 'el.lucene', 'gu.microsoft',
-     'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft', 'hu.lucene', 'is.microsoft',
-     'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft', 'it.lucene', 'ja.microsoft',
-     'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene', 'lv.microsoft', 'lv.lucene',
-     'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene',
-     'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft',
-     'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
-     cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
-     'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
-     'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
-     'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
-     'whitespace'.
-    :type index_analyzer: str or ~search_service_client.models.AnalyzerName
-    :param synonym_maps: A list of the names of synonym maps to associate with this field. This
-     option can be used only with searchable fields. Currently only one synonym map per field is
-     supported. Assigning a synonym map to a field ensures that query terms targeting that field are
-     expanded at query-time using the rules in the synonym map. This attribute can be changed on
-     existing fields. Must be null or an empty collection for complex fields.
-    :type synonym_maps: list[str]
-    :param fields: A list of sub-fields if this is a field of type Edm.ComplexType or
-     Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :type fields: list[~search_service_client.models.Field]
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'bool'},
-        'retrievable': {'key': 'retrievable', 'type': 'bool'},
-        'searchable': {'key': 'searchable', 'type': 'bool'},
-        'filterable': {'key': 'filterable', 'type': 'bool'},
-        'sortable': {'key': 'sortable', 'type': 'bool'},
-        'facetable': {'key': 'facetable', 'type': 'bool'},
-        'analyzer': {'key': 'analyzer', 'type': 'str'},
-        'search_analyzer': {'key': 'searchAnalyzer', 'type': 'str'},
-        'index_analyzer': {'key': 'indexAnalyzer', 'type': 'str'},
-        'synonym_maps': {'key': 'synonymMaps', 'type': '[str]'},
-        'fields': {'key': 'fields', 'type': '[Field]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Field, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.key = kwargs.get('key', None)
-        self.retrievable = kwargs.get('retrievable', None)
-        self.searchable = kwargs.get('searchable', None)
-        self.filterable = kwargs.get('filterable', None)
-        self.sortable = kwargs.get('sortable', None)
-        self.facetable = kwargs.get('facetable', None)
-        self.analyzer = kwargs.get('analyzer', None)
-        self.search_analyzer = kwargs.get('search_analyzer', None)
-        self.index_analyzer = kwargs.get('index_analyzer', None)
-        self.synonym_maps = kwargs.get('synonym_maps', None)
-        self.fields = kwargs.get('fields', None)
 
 
 class FieldMapping(msrest.serialization.Model):
@@ -1805,7 +1608,7 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
         self.high_water_mark_column_name = kwargs.get('high_water_mark_column_name', None)
 
 
-class ImageAnalysisSkill(Skill):
+class ImageAnalysisSkill(SearchIndexerSkill):
     """A skill that analyzes image files. It extracts a rich set of visual features based on the image content.
 
     All required parameters must be populated in order to send to Azure.
@@ -1867,199 +1670,6 @@ class ImageAnalysisSkill(Skill):
         self.details = kwargs.get('details', None)
 
 
-class Index(msrest.serialization.Model):
-    """Represents a search index definition, which describes the fields and search behavior of an index.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the index.
-    :type name: str
-    :param fields: Required. The fields of the index.
-    :type fields: list[~search_service_client.models.Field]
-    :param scoring_profiles: The scoring profiles for the index.
-    :type scoring_profiles: list[~search_service_client.models.ScoringProfile]
-    :param default_scoring_profile: The name of the scoring profile to use if none is specified in
-     the query. If this property is not set and no scoring profile is specified in the query, then
-     default scoring (tf-idf) will be used.
-    :type default_scoring_profile: str
-    :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-    :type cors_options: ~search_service_client.models.CorsOptions
-    :param suggesters: The suggesters for the index.
-    :type suggesters: list[~search_service_client.models.Suggester]
-    :param analyzers: The analyzers for the index.
-    :type analyzers: list[~search_service_client.models.Analyzer]
-    :param tokenizers: The tokenizers for the index.
-    :type tokenizers: list[~search_service_client.models.Tokenizer]
-    :param token_filters: The token filters for the index.
-    :type token_filters: list[~search_service_client.models.TokenFilter]
-    :param char_filters: The character filters for the index.
-    :type char_filters: list[~search_service_client.models.CharFilter]
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your data when you
-     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
-     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
-     Search will ignore attempts to set this property to null. You can change this property as
-     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
-     customer-managed keys is not available for free search services, and is only available for paid
-     services created on or after January 1, 2019.
-    :type encryption_key: ~search_service_client.models.EncryptionKey
-    :param e_tag: The ETag of the index.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'fields': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'fields': {'key': 'fields', 'type': '[Field]'},
-        'scoring_profiles': {'key': 'scoringProfiles', 'type': '[ScoringProfile]'},
-        'default_scoring_profile': {'key': 'defaultScoringProfile', 'type': 'str'},
-        'cors_options': {'key': 'corsOptions', 'type': 'CorsOptions'},
-        'suggesters': {'key': 'suggesters', 'type': '[Suggester]'},
-        'analyzers': {'key': 'analyzers', 'type': '[Analyzer]'},
-        'tokenizers': {'key': 'tokenizers', 'type': '[Tokenizer]'},
-        'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
-        'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
-        'encryption_key': {'key': 'encryptionKey', 'type': 'EncryptionKey'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Index, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.fields = kwargs.get('fields', None)
-        self.scoring_profiles = kwargs.get('scoring_profiles', None)
-        self.default_scoring_profile = kwargs.get('default_scoring_profile', None)
-        self.cors_options = kwargs.get('cors_options', None)
-        self.suggesters = kwargs.get('suggesters', None)
-        self.analyzers = kwargs.get('analyzers', None)
-        self.tokenizers = kwargs.get('tokenizers', None)
-        self.token_filters = kwargs.get('token_filters', None)
-        self.char_filters = kwargs.get('char_filters', None)
-        self.encryption_key = kwargs.get('encryption_key', None)
-        self.e_tag = kwargs.get('e_tag', None)
-
-
-class Indexer(msrest.serialization.Model):
-    """Represents an indexer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the indexer.
-    :type name: str
-    :param description: The description of the indexer.
-    :type description: str
-    :param data_source_name: Required. The name of the datasource from which this indexer reads
-     data.
-    :type data_source_name: str
-    :param skillset_name: The name of the skillset executing with this indexer.
-    :type skillset_name: str
-    :param target_index_name: Required. The name of the index to which this indexer writes data.
-    :type target_index_name: str
-    :param schedule: The schedule for this indexer.
-    :type schedule: ~search_service_client.models.IndexingSchedule
-    :param parameters: Parameters for indexer execution.
-    :type parameters: ~search_service_client.models.IndexingParameters
-    :param field_mappings: Defines mappings between fields in the data source and corresponding
-     target fields in the index.
-    :type field_mappings: list[~search_service_client.models.FieldMapping]
-    :param output_field_mappings: Output field mappings are applied after enrichment and
-     immediately before indexing.
-    :type output_field_mappings: list[~search_service_client.models.FieldMapping]
-    :param is_disabled: A value indicating whether the indexer is disabled. Default is false.
-    :type is_disabled: bool
-    :param e_tag: The ETag of the Indexer.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'data_source_name': {'required': True},
-        'target_index_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'data_source_name': {'key': 'dataSourceName', 'type': 'str'},
-        'skillset_name': {'key': 'skillsetName', 'type': 'str'},
-        'target_index_name': {'key': 'targetIndexName', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'IndexingSchedule'},
-        'parameters': {'key': 'parameters', 'type': 'IndexingParameters'},
-        'field_mappings': {'key': 'fieldMappings', 'type': '[FieldMapping]'},
-        'output_field_mappings': {'key': 'outputFieldMappings', 'type': '[FieldMapping]'},
-        'is_disabled': {'key': 'disabled', 'type': 'bool'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Indexer, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.data_source_name = kwargs.get('data_source_name', None)
-        self.skillset_name = kwargs.get('skillset_name', None)
-        self.target_index_name = kwargs.get('target_index_name', None)
-        self.schedule = kwargs.get('schedule', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.field_mappings = kwargs.get('field_mappings', None)
-        self.output_field_mappings = kwargs.get('output_field_mappings', None)
-        self.is_disabled = kwargs.get('is_disabled', False)
-        self.e_tag = kwargs.get('e_tag', None)
-
-
-class IndexerExecutionInfo(msrest.serialization.Model):
-    """Represents the current status and execution history of an indexer.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar status: Required. Overall indexer status. Possible values include: 'unknown', 'error',
-     'running'.
-    :vartype status: str or ~search_service_client.models.IndexerStatus
-    :ivar last_result: The result of the most recent or an in-progress indexer execution.
-    :vartype last_result: ~search_service_client.models.IndexerExecutionResult
-    :ivar execution_history: Required. History of the recent indexer executions, sorted in reverse
-     chronological order.
-    :vartype execution_history: list[~search_service_client.models.IndexerExecutionResult]
-    :ivar limits: Required. The execution limits for the indexer.
-    :vartype limits: ~search_service_client.models.IndexerLimits
-    """
-
-    _validation = {
-        'status': {'required': True, 'readonly': True},
-        'last_result': {'readonly': True},
-        'execution_history': {'required': True, 'readonly': True},
-        'limits': {'required': True, 'readonly': True},
-    }
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'last_result': {'key': 'lastResult', 'type': 'IndexerExecutionResult'},
-        'execution_history': {'key': 'executionHistory', 'type': '[IndexerExecutionResult]'},
-        'limits': {'key': 'limits', 'type': 'IndexerLimits'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(IndexerExecutionInfo, self).__init__(**kwargs)
-        self.status = None
-        self.last_result = None
-        self.execution_history = None
-        self.limits = None
-
-
 class IndexerExecutionResult(msrest.serialization.Model):
     """Represents the result of an individual indexer execution.
 
@@ -2077,9 +1687,9 @@ class IndexerExecutionResult(msrest.serialization.Model):
     :ivar end_time: The end time of this indexer execution, if the execution has already completed.
     :vartype end_time: ~datetime.datetime
     :ivar errors: Required. The item-level indexing errors.
-    :vartype errors: list[~search_service_client.models.ItemError]
+    :vartype errors: list[~search_service_client.models.SearchIndexerError]
     :ivar warnings: Required. The item-level indexing warnings.
-    :vartype warnings: list[~search_service_client.models.ItemWarning]
+    :vartype warnings: list[~search_service_client.models.SearchIndexerWarning]
     :ivar item_count: Required. The number of items that were processed during this indexer
      execution. This includes both successfully processed items and items where indexing was
      attempted but failed.
@@ -2111,8 +1721,8 @@ class IndexerExecutionResult(msrest.serialization.Model):
         'error_message': {'key': 'errorMessage', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'errors': {'key': 'errors', 'type': '[ItemError]'},
-        'warnings': {'key': 'warnings', 'type': '[ItemWarning]'},
+        'errors': {'key': 'errors', 'type': '[SearchIndexerError]'},
+        'warnings': {'key': 'warnings', 'type': '[SearchIndexerWarning]'},
         'item_count': {'key': 'itemsProcessed', 'type': 'int'},
         'failed_item_count': {'key': 'itemsFailed', 'type': 'int'},
         'initial_tracking_state': {'key': 'initialTrackingState', 'type': 'str'},
@@ -2134,44 +1744,6 @@ class IndexerExecutionResult(msrest.serialization.Model):
         self.failed_item_count = None
         self.initial_tracking_state = None
         self.final_tracking_state = None
-
-
-class IndexerLimits(msrest.serialization.Model):
-    """IndexerLimits.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar max_run_time: The maximum duration that the indexer is permitted to run for one
-     execution.
-    :vartype max_run_time: ~datetime.timedelta
-    :ivar max_document_extraction_size: The maximum size of a document, in bytes, which will be
-     considered valid for indexing.
-    :vartype max_document_extraction_size: long
-    :ivar max_document_content_characters_to_extract: The maximum number of characters that will be
-     extracted from a document picked up for indexing.
-    :vartype max_document_content_characters_to_extract: long
-    """
-
-    _validation = {
-        'max_run_time': {'readonly': True},
-        'max_document_extraction_size': {'readonly': True},
-        'max_document_content_characters_to_extract': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'max_run_time': {'key': 'maxRunTime', 'type': 'duration'},
-        'max_document_extraction_size': {'key': 'maxDocumentExtractionSize', 'type': 'long'},
-        'max_document_content_characters_to_extract': {'key': 'maxDocumentContentCharactersToExtract', 'type': 'long'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(IndexerLimits, self).__init__(**kwargs)
-        self.max_run_time = None
-        self.max_document_extraction_size = None
-        self.max_document_content_characters_to_extract = None
 
 
 class IndexingParameters(msrest.serialization.Model):
@@ -2275,116 +1847,6 @@ class InputFieldMappingEntry(msrest.serialization.Model):
         self.inputs = kwargs.get('inputs', None)
 
 
-class ItemError(msrest.serialization.Model):
-    """Represents an item- or document-level indexing error.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key: The key of the item for which indexing failed.
-    :vartype key: str
-    :ivar error_message: Required. The message describing the error that occurred while processing
-     the item.
-    :vartype error_message: str
-    :ivar status_code: Required. The status code indicating why the indexing operation failed.
-     Possible values include: 400 for a malformed input document, 404 for document not found, 409
-     for a version conflict, 422 when the index is temporarily unavailable, or 503 for when the
-     service is too busy.
-    :vartype status_code: int
-    :ivar name: The name of the source at which the error originated. For example, this could refer
-     to a particular skill in the attached skillset. This may not be always available.
-    :vartype name: str
-    :ivar details: Additional, verbose details about the error to assist in debugging the indexer.
-     This may not be always available.
-    :vartype details: str
-    :ivar documentation_link: A link to a troubleshooting guide for these classes of errors. This
-     may not be always available.
-    :vartype documentation_link: str
-    """
-
-    _validation = {
-        'key': {'readonly': True},
-        'error_message': {'required': True, 'readonly': True},
-        'status_code': {'required': True, 'readonly': True},
-        'name': {'readonly': True},
-        'details': {'readonly': True},
-        'documentation_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
-        'documentation_link': {'key': 'documentationLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ItemError, self).__init__(**kwargs)
-        self.key = None
-        self.error_message = None
-        self.status_code = None
-        self.name = None
-        self.details = None
-        self.documentation_link = None
-
-
-class ItemWarning(msrest.serialization.Model):
-    """Represents an item-level warning.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key: The key of the item which generated a warning.
-    :vartype key: str
-    :ivar message: Required. The message describing the warning that occurred while processing the
-     item.
-    :vartype message: str
-    :ivar name: The name of the source at which the warning originated. For example, this could
-     refer to a particular skill in the attached skillset. This may not be always available.
-    :vartype name: str
-    :ivar details: Additional, verbose details about the warning to assist in debugging the
-     indexer. This may not be always available.
-    :vartype details: str
-    :ivar documentation_link: A link to a troubleshooting guide for these classes of warnings. This
-     may not be always available.
-    :vartype documentation_link: str
-    """
-
-    _validation = {
-        'key': {'readonly': True},
-        'message': {'required': True, 'readonly': True},
-        'name': {'readonly': True},
-        'details': {'readonly': True},
-        'documentation_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
-        'documentation_link': {'key': 'documentationLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ItemWarning, self).__init__(**kwargs)
-        self.key = None
-        self.message = None
-        self.name = None
-        self.details = None
-        self.documentation_link = None
-
-
 class KeepTokenFilter(TokenFilter):
     """A token filter that only keeps tokens with text contained in a specified list of words. This token filter is implemented using Apache Lucene.
 
@@ -2427,7 +1889,7 @@ class KeepTokenFilter(TokenFilter):
         self.lower_case_keep_words = kwargs.get('lower_case_keep_words', False)
 
 
-class KeyPhraseExtractionSkill(Skill):
+class KeyPhraseExtractionSkill(SearchIndexerSkill):
     """A skill that uses text analytics for key phrase extraction.
 
     All required parameters must be populated in order to send to Azure.
@@ -2530,7 +1992,7 @@ class KeywordMarkerTokenFilter(TokenFilter):
         self.ignore_case = kwargs.get('ignore_case', False)
 
 
-class KeywordTokenizer(Tokenizer):
+class KeywordTokenizer(LexicalTokenizer):
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -2566,7 +2028,7 @@ class KeywordTokenizer(Tokenizer):
         self.buffer_size = kwargs.get('buffer_size', 256)
 
 
-class KeywordTokenizerV2(Tokenizer):
+class KeywordTokenizerV2(LexicalTokenizer):
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -2604,7 +2066,7 @@ class KeywordTokenizerV2(Tokenizer):
         self.max_token_length = kwargs.get('max_token_length', 256)
 
 
-class LanguageDetectionSkill(Skill):
+class LanguageDetectionSkill(SearchIndexerSkill):
     """A skill that detects the language of input text and reports a single language code for every document submitted on the request. The language code is paired with a score indicating the confidence of the analysis.
 
     All required parameters must be populated in order to send to Azure.
@@ -2665,25 +2127,25 @@ class LengthTokenFilter(TokenFilter):
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
     :type name: str
-    :param min: The minimum length in characters. Default is 0. Maximum is 300. Must be less than
-     the value of max.
-    :type min: int
-    :param max: The maximum length in characters. Default and maximum is 300.
-    :type max: int
+    :param min_length: The minimum length in characters. Default is 0. Maximum is 300. Must be less
+     than the value of max.
+    :type min_length: int
+    :param max_length: The maximum length in characters. Default and maximum is 300.
+    :type max_length: int
     """
 
     _validation = {
         'odata_type': {'required': True},
         'name': {'required': True},
-        'min': {'maximum': 300},
-        'max': {'maximum': 300},
+        'min_length': {'maximum': 300},
+        'max_length': {'maximum': 300},
     }
 
     _attribute_map = {
         'odata_type': {'key': '@odata\\.type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+        'min_length': {'key': 'min', 'type': 'int'},
+        'max_length': {'key': 'max', 'type': 'int'},
     }
 
     def __init__(
@@ -2692,8 +2154,8 @@ class LengthTokenFilter(TokenFilter):
     ):
         super(LengthTokenFilter, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Azure.Search.LengthTokenFilter'
-        self.min = kwargs.get('min', 0)
-        self.max = kwargs.get('max', 300)
+        self.min_length = kwargs.get('min_length', 0)
+        self.max_length = kwargs.get('max_length', 300)
 
 
 class LimitTokenFilter(TokenFilter):
@@ -2745,7 +2207,7 @@ class ListDataSourcesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_sources: Required. The datasources in the Search service.
-    :vartype data_sources: list[~search_service_client.models.DataSource]
+    :vartype data_sources: list[~search_service_client.models.SearchIndexerDataSource]
     """
 
     _validation = {
@@ -2753,7 +2215,7 @@ class ListDataSourcesResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'data_sources': {'key': 'value', 'type': '[DataSource]'},
+        'data_sources': {'key': 'value', 'type': '[SearchIndexerDataSource]'},
     }
 
     def __init__(
@@ -2772,7 +2234,7 @@ class ListIndexersResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar indexers: Required. The indexers in the Search service.
-    :vartype indexers: list[~search_service_client.models.Indexer]
+    :vartype indexers: list[~search_service_client.models.SearchIndexer]
     """
 
     _validation = {
@@ -2780,7 +2242,7 @@ class ListIndexersResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'indexers': {'key': 'value', 'type': '[Indexer]'},
+        'indexers': {'key': 'value', 'type': '[SearchIndexer]'},
     }
 
     def __init__(
@@ -2799,7 +2261,7 @@ class ListIndexesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar indexes: Required. The indexes in the Search service.
-    :vartype indexes: list[~search_service_client.models.Index]
+    :vartype indexes: list[~search_service_client.models.SearchIndex]
     """
 
     _validation = {
@@ -2807,7 +2269,7 @@ class ListIndexesResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'indexes': {'key': 'value', 'type': '[Index]'},
+        'indexes': {'key': 'value', 'type': '[SearchIndex]'},
     }
 
     def __init__(
@@ -2819,14 +2281,14 @@ class ListIndexesResult(msrest.serialization.Model):
 
 
 class ListSkillsetsResult(msrest.serialization.Model):
-    """Response from a list Skillset request. If successful, it includes the full definitions of all skillsets.
+    """Response from a list skillset request. If successful, it includes the full definitions of all skillsets.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar skillsets: Required. The skillsets defined in the Search service.
-    :vartype skillsets: list[~search_service_client.models.Skillset]
+    :vartype skillsets: list[~search_service_client.models.SearchIndexerSkillset]
     """
 
     _validation = {
@@ -2834,7 +2296,7 @@ class ListSkillsetsResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'skillsets': {'key': 'value', 'type': '[Skillset]'},
+        'skillsets': {'key': 'value', 'type': '[SearchIndexerSkillset]'},
     }
 
     def __init__(
@@ -2870,6 +2332,123 @@ class ListSynonymMapsResult(msrest.serialization.Model):
     ):
         super(ListSynonymMapsResult, self).__init__(**kwargs)
         self.synonym_maps = None
+
+
+class LuceneStandardAnalyzer(LexicalAnalyzer):
+    """Standard Apache Lucene analyzer; Composed of the standard tokenizer, lowercase filter and stop filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
+     128 characters.
+    :type name: str
+    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+     maximum length are split. The maximum token length that can be used is 300 characters.
+    :type max_token_length: int
+    :param stopwords: A list of stopwords.
+    :type stopwords: list[str]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+        'max_token_length': {'maximum': 300},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
+        'stopwords': {'key': 'stopwords', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LuceneStandardAnalyzer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.StandardAnalyzer'
+        self.max_token_length = kwargs.get('max_token_length', 255)
+        self.stopwords = kwargs.get('stopwords', None)
+
+
+class LuceneStandardTokenizer(LexicalTokenizer):
+    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using Apache Lucene.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
+     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
+     128 characters.
+    :type name: str
+    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+     maximum length are split.
+    :type max_token_length: int
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LuceneStandardTokenizer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizer'
+        self.max_token_length = kwargs.get('max_token_length', 255)
+
+
+class LuceneStandardTokenizerV2(LexicalTokenizer):
+    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using Apache Lucene.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
+     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
+     128 characters.
+    :type name: str
+    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+     maximum length are split. The maximum token length that can be used is 300 characters.
+    :type max_token_length: int
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+        'max_token_length': {'maximum': 300},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LuceneStandardTokenizerV2, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizerV2'
+        self.max_token_length = kwargs.get('max_token_length', 255)
 
 
 class MagnitudeScoringFunction(ScoringFunction):
@@ -2990,7 +2569,7 @@ class MappingCharFilter(CharFilter):
         self.mappings = kwargs.get('mappings', None)
 
 
-class MergeSkill(Skill):
+class MergeSkill(SearchIndexerSkill):
     """A skill for merging two or more strings into a single unified string, with an optional user-defined delimiter separating each component part.
 
     All required parameters must be populated in order to send to Azure.
@@ -3049,7 +2628,7 @@ class MergeSkill(Skill):
         self.insert_post_tag = kwargs.get('insert_post_tag', " ")
 
 
-class MicrosoftLanguageStemmingTokenizer(Tokenizer):
+class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
     """Divides text using language-specific rules and reduces words to their base forms.
 
     All required parameters must be populated in order to send to Azure.
@@ -3104,7 +2683,7 @@ class MicrosoftLanguageStemmingTokenizer(Tokenizer):
         self.language = kwargs.get('language', None)
 
 
-class MicrosoftLanguageTokenizer(Tokenizer):
+class MicrosoftLanguageTokenizer(LexicalTokenizer):
     """Divides text using language-specific rules.
 
     All required parameters must be populated in order to send to Azure.
@@ -3243,7 +2822,7 @@ class NGramTokenFilterV2(TokenFilter):
         self.max_gram = kwargs.get('max_gram', 2)
 
 
-class NGramTokenizer(Tokenizer):
+class NGramTokenizer(LexicalTokenizer):
     """Tokenizes the input into n-grams of the given size(s). This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -3290,7 +2869,7 @@ class NGramTokenizer(Tokenizer):
         self.token_chars = kwargs.get('token_chars', None)
 
 
-class OcrSkill(Skill):
+class OcrSkill(SearchIndexerSkill):
     """A skill that extracts text from image files.
 
     All required parameters must be populated in order to send to Azure.
@@ -3385,7 +2964,7 @@ class OutputFieldMappingEntry(msrest.serialization.Model):
         self.target_name = kwargs.get('target_name', None)
 
 
-class PathHierarchyTokenizerV2(Tokenizer):
+class PathHierarchyTokenizerV2(LexicalTokenizer):
     """Tokenizer for path-like hierarchies. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -3439,7 +3018,7 @@ class PathHierarchyTokenizerV2(Tokenizer):
         self.number_of_tokens_to_skip = kwargs.get('number_of_tokens_to_skip', 0)
 
 
-class PatternAnalyzer(Analyzer):
+class PatternAnalyzer(LexicalAnalyzer):
     """Flexibly separates text into terms via a regular expression pattern. This analyzer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -3455,7 +3034,7 @@ class PatternAnalyzer(Analyzer):
      true.
     :type lower_case_terms: bool
     :param pattern: A regular expression pattern to match token separators. Default is an
-     expression that matches one or more whitespace characters.
+     expression that matches one or more non-word characters.
     :type pattern: str
     :param flags: Regular expression flags. Possible values include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
@@ -3616,7 +3195,7 @@ class PatternReplaceTokenFilter(TokenFilter):
         self.replacement = kwargs.get('replacement', None)
 
 
-class PatternTokenizer(Tokenizer):
+class PatternTokenizer(LexicalTokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -3629,7 +3208,7 @@ class PatternTokenizer(Tokenizer):
      128 characters.
     :type name: str
     :param pattern: A regular expression pattern to match token separators. Default is an
-     expression that matches one or more whitespace characters.
+     expression that matches one or more non-word characters.
     :type pattern: str
     :param flags: Regular expression flags. Possible values include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
@@ -3832,7 +3411,710 @@ class SearchError(msrest.serialization.Model):
         self.details = None
 
 
-class SentimentSkill(Skill):
+class SearchField(msrest.serialization.Model):
+    """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the field, which must be unique within the fields collection
+     of the index or parent field.
+    :type name: str
+    :param type: Required. The data type of the field. Possible values include: 'Edm.String',
+     'Edm.Int32', 'Edm.Int64', 'Edm.Double', 'Edm.Boolean', 'Edm.DateTimeOffset',
+     'Edm.GeographyPoint', 'Edm.ComplexType'.
+    :type type: str or ~search_service_client.models.SearchFieldDataType
+    :param key: A value indicating whether the field uniquely identifies documents in the index.
+     Exactly one top-level field in each index must be chosen as the key field and it must be of
+     type Edm.String. Key fields can be used to look up documents directly and update or delete
+     specific documents. Default is false for simple fields and null for complex fields.
+    :type key: bool
+    :param retrievable: A value indicating whether the field can be returned in a search result.
+     You can disable this option if you want to use a field (for example, margin) as a filter,
+     sorting, or scoring mechanism but do not want the field to be visible to the end user. This
+     property must be true for key fields, and it must be null for complex fields. This property can
+     be changed on existing fields. Enabling this property does not cause any increase in index
+     storage requirements. Default is true for simple fields and null for complex fields.
+    :type retrievable: bool
+    :param searchable: A value indicating whether the field is full-text searchable. This means it
+     will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
+     value like "sunny day", internally it will be split into the individual tokens "sunny" and
+     "day". This enables full-text searches for these terms. Fields of type Edm.String or
+     Collection(Edm.String) are searchable by default. This property must be false for simple fields
+     of other non-string data types, and it must be null for complex fields. Note: searchable fields
+     consume extra space in your index since Azure Cognitive Search will store an additional
+     tokenized version of the field value for full-text searches. If you want to save space in your
+     index and you don't need a field to be included in searches, set searchable to false.
+    :type searchable: bool
+    :param filterable: A value indicating whether to enable the field to be referenced in $filter
+     queries. filterable differs from searchable in how strings are handled. Fields of type
+     Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
+     comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
+     $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property
+     must be null for complex fields. Default is true for simple fields and null for complex fields.
+    :type filterable: bool
+    :param sortable: A value indicating whether to enable the field to be referenced in $orderby
+     expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
+     users will want to sort by fields in the documents. A simple field can be sortable only if it
+     is single-valued (it has a single value in the scope of the parent document). Simple collection
+     fields cannot be sortable, since they are multi-valued. Simple sub-fields of complex
+     collections are also multi-valued, and therefore cannot be sortable. This is true whether it's
+     an immediate parent field, or an ancestor field, that's the complex collection. Complex fields
+     cannot be sortable and the sortable property must be null for such fields. The default for
+     sortable is true for single-valued simple fields, false for multi-valued simple fields, and
+     null for complex fields.
+    :type sortable: bool
+    :param facetable: A value indicating whether to enable the field to be referenced in facet
+     queries. Typically used in a presentation of search results that includes hit count by category
+     (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
+     on). This property must be null for complex fields. Fields of type Edm.GeographyPoint or
+     Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
+     fields.
+    :type facetable: bool
+    :param analyzer: The name of the analyzer to use for the field. This option can be used only
+     with searchable fields and it can't be set together with either searchAnalyzer or
+     indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
+     for complex fields. Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene',
+     'bn.microsoft', 'eu.lucene', 'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-
+     Hans.microsoft', 'zh-Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft',
+     'cs.microsoft', 'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft', 'nl.lucene',
+     'en.microsoft', 'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene', 'fr.microsoft',
+     'fr.lucene', 'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft', 'el.lucene',
+     'gu.microsoft', 'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft', 'hu.lucene',
+     'is.microsoft', 'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft', 'it.lucene',
+     'ja.microsoft', 'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene', 'lv.microsoft',
+     'lv.lucene', 'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft', 'nb.microsoft',
+     'no.lucene', 'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-
+     PT.microsoft', 'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft',
+     'ru.lucene', 'sr-cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft',
+     'es.microsoft', 'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft',
+     'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
+     'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
+     'simple', 'stop', 'whitespace'.
+    :type analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+    :param search_analyzer: The name of the analyzer used at search time for the field. This option
+     can be used only with searchable fields. It must be set together with indexAnalyzer and it
+     cannot be set together with the analyzer option. This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. This
+     analyzer can be updated on an existing field. Must be null for complex fields. Possible values
+     include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene', 'bg.microsoft',
+     'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-Hans.lucene', 'zh-
+     Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft', 'cs.lucene', 'da.microsoft',
+     'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft', 'en.lucene', 'et.microsoft',
+     'fi.microsoft', 'fi.lucene', 'fr.microsoft', 'fr.lucene', 'gl.lucene', 'de.microsoft',
+     'de.lucene', 'el.microsoft', 'el.lucene', 'gu.microsoft', 'he.microsoft', 'hi.microsoft',
+     'hi.lucene', 'hu.microsoft', 'hu.lucene', 'is.microsoft', 'id.microsoft', 'id.lucene',
+     'ga.lucene', 'it.microsoft', 'it.lucene', 'ja.microsoft', 'ja.lucene', 'kn.microsoft',
+     'ko.microsoft', 'ko.lucene', 'lv.microsoft', 'lv.lucene', 'lt.microsoft', 'ml.microsoft',
+     'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene', 'fa.lucene', 'pl.microsoft',
+     'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft', 'pt-PT.lucene',
+     'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
+     cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
+     'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
+     'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
+     'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
+     'whitespace'.
+    :type search_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+    :param index_analyzer: The name of the analyzer used at indexing time for the field. This
+     option can be used only with searchable fields. It must be set together with searchAnalyzer and
+     it cannot be set together with the analyzer option.  This property cannot be set to the name of
+     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
+     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
+     Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene',
+     'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-
+     Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft',
+     'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft',
+     'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene', 'fr.microsoft', 'fr.lucene',
+     'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft', 'el.lucene', 'gu.microsoft',
+     'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft', 'hu.lucene', 'is.microsoft',
+     'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft', 'it.lucene', 'ja.microsoft',
+     'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene', 'lv.microsoft', 'lv.lucene',
+     'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene',
+     'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft',
+     'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
+     cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
+     'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
+     'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
+     'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
+     'whitespace'.
+    :type index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+    :param synonym_maps: A list of the names of synonym maps to associate with this field. This
+     option can be used only with searchable fields. Currently only one synonym map per field is
+     supported. Assigning a synonym map to a field ensures that query terms targeting that field are
+     expanded at query-time using the rules in the synonym map. This attribute can be changed on
+     existing fields. Must be null or an empty collection for complex fields.
+    :type synonym_maps: list[str]
+    :param fields: A list of sub-fields if this is a field of type Edm.ComplexType or
+     Collection(Edm.ComplexType). Must be null or empty for simple fields.
+    :type fields: list[~search_service_client.models.SearchField]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'bool'},
+        'retrievable': {'key': 'retrievable', 'type': 'bool'},
+        'searchable': {'key': 'searchable', 'type': 'bool'},
+        'filterable': {'key': 'filterable', 'type': 'bool'},
+        'sortable': {'key': 'sortable', 'type': 'bool'},
+        'facetable': {'key': 'facetable', 'type': 'bool'},
+        'analyzer': {'key': 'analyzer', 'type': 'str'},
+        'search_analyzer': {'key': 'searchAnalyzer', 'type': 'str'},
+        'index_analyzer': {'key': 'indexAnalyzer', 'type': 'str'},
+        'synonym_maps': {'key': 'synonymMaps', 'type': '[str]'},
+        'fields': {'key': 'fields', 'type': '[SearchField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchField, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.key = kwargs.get('key', None)
+        self.retrievable = kwargs.get('retrievable', None)
+        self.searchable = kwargs.get('searchable', None)
+        self.filterable = kwargs.get('filterable', None)
+        self.sortable = kwargs.get('sortable', None)
+        self.facetable = kwargs.get('facetable', None)
+        self.analyzer = kwargs.get('analyzer', None)
+        self.search_analyzer = kwargs.get('search_analyzer', None)
+        self.index_analyzer = kwargs.get('index_analyzer', None)
+        self.synonym_maps = kwargs.get('synonym_maps', None)
+        self.fields = kwargs.get('fields', None)
+
+
+class SearchIndex(msrest.serialization.Model):
+    """Represents a search index definition, which describes the fields and search behavior of an index.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the index.
+    :type name: str
+    :param fields: Required. The fields of the index.
+    :type fields: list[~search_service_client.models.SearchField]
+    :param scoring_profiles: The scoring profiles for the index.
+    :type scoring_profiles: list[~search_service_client.models.ScoringProfile]
+    :param default_scoring_profile: The name of the scoring profile to use if none is specified in
+     the query. If this property is not set and no scoring profile is specified in the query, then
+     default scoring (tf-idf) will be used.
+    :type default_scoring_profile: str
+    :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+    :type cors_options: ~search_service_client.models.CorsOptions
+    :param suggesters: The suggesters for the index.
+    :type suggesters: list[~search_service_client.models.Suggester]
+    :param analyzers: The analyzers for the index.
+    :type analyzers: list[~search_service_client.models.LexicalAnalyzer]
+    :param tokenizers: The tokenizers for the index.
+    :type tokenizers: list[~search_service_client.models.LexicalTokenizer]
+    :param token_filters: The token filters for the index.
+    :type token_filters: list[~search_service_client.models.TokenFilter]
+    :param char_filters: The character filters for the index.
+    :type char_filters: list[~search_service_client.models.CharFilter]
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your data when you
+     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+     Search will ignore attempts to set this property to null. You can change this property as
+     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+     customer-managed keys is not available for free search services, and is only available for paid
+     services created on or after January 1, 2019.
+    :type encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
+    :param similarity: The type of similarity algorithm to be used when scoring and ranking the
+     documents matching a search query. The similarity algorithm can only be defined at index
+     creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
+     algorithm is used.
+    :type similarity: ~search_service_client.models.Similarity
+    :param e_tag: The ETag of the index.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'fields': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'fields': {'key': 'fields', 'type': '[SearchField]'},
+        'scoring_profiles': {'key': 'scoringProfiles', 'type': '[ScoringProfile]'},
+        'default_scoring_profile': {'key': 'defaultScoringProfile', 'type': 'str'},
+        'cors_options': {'key': 'corsOptions', 'type': 'CorsOptions'},
+        'suggesters': {'key': 'suggesters', 'type': '[Suggester]'},
+        'analyzers': {'key': 'analyzers', 'type': '[LexicalAnalyzer]'},
+        'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
+        'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
+        'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
+        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'similarity': {'key': 'similarity', 'type': 'Similarity'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndex, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.fields = kwargs.get('fields', None)
+        self.scoring_profiles = kwargs.get('scoring_profiles', None)
+        self.default_scoring_profile = kwargs.get('default_scoring_profile', None)
+        self.cors_options = kwargs.get('cors_options', None)
+        self.suggesters = kwargs.get('suggesters', None)
+        self.analyzers = kwargs.get('analyzers', None)
+        self.tokenizers = kwargs.get('tokenizers', None)
+        self.token_filters = kwargs.get('token_filters', None)
+        self.char_filters = kwargs.get('char_filters', None)
+        self.encryption_key = kwargs.get('encryption_key', None)
+        self.similarity = kwargs.get('similarity', None)
+        self.e_tag = kwargs.get('e_tag', None)
+
+
+class SearchIndexer(msrest.serialization.Model):
+    """Represents an indexer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the indexer.
+    :type name: str
+    :param description: The description of the indexer.
+    :type description: str
+    :param data_source_name: Required. The name of the datasource from which this indexer reads
+     data.
+    :type data_source_name: str
+    :param skillset_name: The name of the skillset executing with this indexer.
+    :type skillset_name: str
+    :param target_index_name: Required. The name of the index to which this indexer writes data.
+    :type target_index_name: str
+    :param schedule: The schedule for this indexer.
+    :type schedule: ~search_service_client.models.IndexingSchedule
+    :param parameters: Parameters for indexer execution.
+    :type parameters: ~search_service_client.models.IndexingParameters
+    :param field_mappings: Defines mappings between fields in the data source and corresponding
+     target fields in the index.
+    :type field_mappings: list[~search_service_client.models.FieldMapping]
+    :param output_field_mappings: Output field mappings are applied after enrichment and
+     immediately before indexing.
+    :type output_field_mappings: list[~search_service_client.models.FieldMapping]
+    :param is_disabled: A value indicating whether the indexer is disabled. Default is false.
+    :type is_disabled: bool
+    :param e_tag: The ETag of the indexer.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'data_source_name': {'required': True},
+        'target_index_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'data_source_name': {'key': 'dataSourceName', 'type': 'str'},
+        'skillset_name': {'key': 'skillsetName', 'type': 'str'},
+        'target_index_name': {'key': 'targetIndexName', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'IndexingSchedule'},
+        'parameters': {'key': 'parameters', 'type': 'IndexingParameters'},
+        'field_mappings': {'key': 'fieldMappings', 'type': '[FieldMapping]'},
+        'output_field_mappings': {'key': 'outputFieldMappings', 'type': '[FieldMapping]'},
+        'is_disabled': {'key': 'disabled', 'type': 'bool'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexer, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.data_source_name = kwargs.get('data_source_name', None)
+        self.skillset_name = kwargs.get('skillset_name', None)
+        self.target_index_name = kwargs.get('target_index_name', None)
+        self.schedule = kwargs.get('schedule', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.field_mappings = kwargs.get('field_mappings', None)
+        self.output_field_mappings = kwargs.get('output_field_mappings', None)
+        self.is_disabled = kwargs.get('is_disabled', False)
+        self.e_tag = kwargs.get('e_tag', None)
+
+
+class SearchIndexerDataContainer(msrest.serialization.Model):
+    """Represents information about the entity (such as Azure SQL table or CosmosDB collection) that will be indexed.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the table or view (for Azure SQL data source) or collection
+     (for CosmosDB data source) that will be indexed.
+    :type name: str
+    :param query: A query that is applied to this data container. The syntax and meaning of this
+     parameter is datasource-specific. Not supported by Azure SQL datasources.
+    :type query: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerDataContainer, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.query = kwargs.get('query', None)
+
+
+class SearchIndexerDataSource(msrest.serialization.Model):
+    """Represents a datasource definition, which can be used to configure an indexer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the datasource.
+    :type name: str
+    :param description: The description of the datasource.
+    :type description: str
+    :param type: Required. The type of the datasource. Possible values include: 'azuresql',
+     'cosmosdb', 'azureblob', 'azuretable', 'mysql'.
+    :type type: str or ~search_service_client.models.SearchIndexerDataSourceType
+    :param credentials: Required. Credentials for the datasource.
+    :type credentials: ~search_service_client.models.DataSourceCredentials
+    :param container: Required. The data container for the datasource.
+    :type container: ~search_service_client.models.SearchIndexerDataContainer
+    :param data_change_detection_policy: The data change detection policy for the datasource.
+    :type data_change_detection_policy: ~search_service_client.models.DataChangeDetectionPolicy
+    :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
+    :type data_deletion_detection_policy: ~search_service_client.models.DataDeletionDetectionPolicy
+    :param e_tag: The ETag of the data source.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'credentials': {'required': True},
+        'container': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'DataSourceCredentials'},
+        'container': {'key': 'container', 'type': 'SearchIndexerDataContainer'},
+        'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
+        'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerDataSource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.type = kwargs.get('type', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.container = kwargs.get('container', None)
+        self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
+        self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
+        self.e_tag = kwargs.get('e_tag', None)
+
+
+class SearchIndexerError(msrest.serialization.Model):
+    """Represents an item- or document-level indexing error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: The key of the item for which indexing failed.
+    :vartype key: str
+    :ivar error_message: Required. The message describing the error that occurred while processing
+     the item.
+    :vartype error_message: str
+    :ivar status_code: Required. The status code indicating why the indexing operation failed.
+     Possible values include: 400 for a malformed input document, 404 for document not found, 409
+     for a version conflict, 422 when the index is temporarily unavailable, or 503 for when the
+     service is too busy.
+    :vartype status_code: int
+    :ivar name: The name of the source at which the error originated. For example, this could refer
+     to a particular skill in the attached skillset. This may not be always available.
+    :vartype name: str
+    :ivar details: Additional, verbose details about the error to assist in debugging the indexer.
+     This may not be always available.
+    :vartype details: str
+    :ivar documentation_link: A link to a troubleshooting guide for these classes of errors. This
+     may not be always available.
+    :vartype documentation_link: str
+    """
+
+    _validation = {
+        'key': {'readonly': True},
+        'error_message': {'required': True, 'readonly': True},
+        'status_code': {'required': True, 'readonly': True},
+        'name': {'readonly': True},
+        'details': {'readonly': True},
+        'documentation_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'str'},
+        'documentation_link': {'key': 'documentationLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerError, self).__init__(**kwargs)
+        self.key = None
+        self.error_message = None
+        self.status_code = None
+        self.name = None
+        self.details = None
+        self.documentation_link = None
+
+
+class SearchIndexerLimits(msrest.serialization.Model):
+    """SearchIndexerLimits.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar max_run_time: The maximum duration that the indexer is permitted to run for one
+     execution.
+    :vartype max_run_time: ~datetime.timedelta
+    :ivar max_document_extraction_size: The maximum size of a document, in bytes, which will be
+     considered valid for indexing.
+    :vartype max_document_extraction_size: long
+    :ivar max_document_content_characters_to_extract: The maximum number of characters that will be
+     extracted from a document picked up for indexing.
+    :vartype max_document_content_characters_to_extract: long
+    """
+
+    _validation = {
+        'max_run_time': {'readonly': True},
+        'max_document_extraction_size': {'readonly': True},
+        'max_document_content_characters_to_extract': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_run_time': {'key': 'maxRunTime', 'type': 'duration'},
+        'max_document_extraction_size': {'key': 'maxDocumentExtractionSize', 'type': 'long'},
+        'max_document_content_characters_to_extract': {'key': 'maxDocumentContentCharactersToExtract', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerLimits, self).__init__(**kwargs)
+        self.max_run_time = None
+        self.max_document_extraction_size = None
+        self.max_document_content_characters_to_extract = None
+
+
+class SearchIndexerSkillset(msrest.serialization.Model):
+    """A list of skills.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the skillset.
+    :type name: str
+    :param description: Required. The description of the skillset.
+    :type description: str
+    :param skills: Required. A list of skills in the skillset.
+    :type skills: list[~search_service_client.models.SearchIndexerSkill]
+    :param cognitive_services_account: Details about cognitive services to be used when running
+     skills.
+    :type cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
+    :param e_tag: The ETag of the skillset.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'description': {'required': True},
+        'skills': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'skills': {'key': 'skills', 'type': '[SearchIndexerSkill]'},
+        'cognitive_services_account': {'key': 'cognitiveServices', 'type': 'CognitiveServicesAccount'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerSkillset, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.skills = kwargs.get('skills', None)
+        self.cognitive_services_account = kwargs.get('cognitive_services_account', None)
+        self.e_tag = kwargs.get('e_tag', None)
+
+
+class SearchIndexerStatus(msrest.serialization.Model):
+    """Represents the current status and execution history of an indexer.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar status: Required. Overall indexer status. Possible values include: 'unknown', 'error',
+     'running'.
+    :vartype status: str or ~search_service_client.models.IndexerStatus
+    :ivar last_result: The result of the most recent or an in-progress indexer execution.
+    :vartype last_result: ~search_service_client.models.IndexerExecutionResult
+    :ivar execution_history: Required. History of the recent indexer executions, sorted in reverse
+     chronological order.
+    :vartype execution_history: list[~search_service_client.models.IndexerExecutionResult]
+    :ivar limits: Required. The execution limits for the indexer.
+    :vartype limits: ~search_service_client.models.SearchIndexerLimits
+    """
+
+    _validation = {
+        'status': {'required': True, 'readonly': True},
+        'last_result': {'readonly': True},
+        'execution_history': {'required': True, 'readonly': True},
+        'limits': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'last_result': {'key': 'lastResult', 'type': 'IndexerExecutionResult'},
+        'execution_history': {'key': 'executionHistory', 'type': '[IndexerExecutionResult]'},
+        'limits': {'key': 'limits', 'type': 'SearchIndexerLimits'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerStatus, self).__init__(**kwargs)
+        self.status = None
+        self.last_result = None
+        self.execution_history = None
+        self.limits = None
+
+
+class SearchIndexerWarning(msrest.serialization.Model):
+    """Represents an item-level warning.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: The key of the item which generated a warning.
+    :vartype key: str
+    :ivar message: Required. The message describing the warning that occurred while processing the
+     item.
+    :vartype message: str
+    :ivar name: The name of the source at which the warning originated. For example, this could
+     refer to a particular skill in the attached skillset. This may not be always available.
+    :vartype name: str
+    :ivar details: Additional, verbose details about the warning to assist in debugging the
+     indexer. This may not be always available.
+    :vartype details: str
+    :ivar documentation_link: A link to a troubleshooting guide for these classes of warnings. This
+     may not be always available.
+    :vartype documentation_link: str
+    """
+
+    _validation = {
+        'key': {'readonly': True},
+        'message': {'required': True, 'readonly': True},
+        'name': {'readonly': True},
+        'details': {'readonly': True},
+        'documentation_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'str'},
+        'documentation_link': {'key': 'documentationLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerWarning, self).__init__(**kwargs)
+        self.key = None
+        self.message = None
+        self.name = None
+        self.details = None
+        self.documentation_link = None
+
+
+class SearchResourceEncryptionKey(msrest.serialization.Model):
+    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
+     at rest.
+    :type key_name: str
+    :param key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+     your data at rest.
+    :type key_version: str
+    :param vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
+     contains the key to be used to encrypt your data at rest. An example URI might be https://my-
+     keyvault-name.vault.azure.net.
+    :type vault_uri: str
+    :param access_credentials: Optional Azure Active Directory credentials used for accessing your
+     Azure Key Vault. Not required if using managed identity instead.
+    :type access_credentials:
+     ~search_service_client.models.AzureActiveDirectoryApplicationCredentials
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+        'vault_uri': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyVaultKeyName', 'type': 'str'},
+        'key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
+        'vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+        'access_credentials': {'key': 'accessCredentials', 'type': 'AzureActiveDirectoryApplicationCredentials'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchResourceEncryptionKey, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+        self.vault_uri = kwargs.get('vault_uri', None)
+        self.access_credentials = kwargs.get('access_credentials', None)
+
+
+class SentimentSkill(SearchIndexerSkill):
     """Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero to 1.
 
     All required parameters must be populated in order to send to Azure.
@@ -4006,7 +4288,7 @@ class ServiceStatistics(msrest.serialization.Model):
         self.limits = kwargs.get('limits', None)
 
 
-class ShaperSkill(Skill):
+class ShaperSkill(SearchIndexerSkill):
     """A skill for reshaping the outputs. It creates a complex type to support composite fields (also known as multipart fields).
 
     All required parameters must be populated in order to send to Azure.
@@ -4119,50 +4401,6 @@ class ShingleTokenFilter(TokenFilter):
         self.filter_token = kwargs.get('filter_token', "_")
 
 
-class Skillset(msrest.serialization.Model):
-    """A list of skills.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the skillset.
-    :type name: str
-    :param description: Required. The description of the skillset.
-    :type description: str
-    :param skills: Required. A list of skills in the skillset.
-    :type skills: list[~search_service_client.models.Skill]
-    :param cognitive_services_account: Details about cognitive services to be used when running
-     skills.
-    :type cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
-    :param e_tag: The ETag of the skillset.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'description': {'required': True},
-        'skills': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'skills': {'key': 'skills', 'type': '[Skill]'},
-        'cognitive_services_account': {'key': 'cognitiveServices', 'type': 'CognitiveServicesAccount'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Skillset, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.skills = kwargs.get('skills', None)
-        self.cognitive_services_account = kwargs.get('cognitive_services_account', None)
-        self.e_tag = kwargs.get('e_tag', None)
-
-
 class SnowballTokenFilter(TokenFilter):
     """A filter that stems words using a Snowball-generated stemmer. This token filter is implemented using Apache Lucene.
 
@@ -4237,7 +4475,7 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
         self.soft_delete_marker_value = kwargs.get('soft_delete_marker_value', None)
 
 
-class SplitSkill(Skill):
+class SplitSkill(SearchIndexerSkill):
     """A skill to split a string into chunks of text.
 
     All required parameters must be populated in order to send to Azure.
@@ -4326,123 +4564,6 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
         self.odata_type = '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy'
 
 
-class StandardAnalyzer(Analyzer):
-    """Standard Apache Lucene analyzer; Composed of the standard tokenizer, lowercase filter and stop filter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
-     maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
-    :param stopwords: A list of stopwords.
-    :type stopwords: list[str]
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-        'max_token_length': {'maximum': 300},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
-        'stopwords': {'key': 'stopwords', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StandardAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardAnalyzer'
-        self.max_token_length = kwargs.get('max_token_length', 255)
-        self.stopwords = kwargs.get('stopwords', None)
-
-
-class StandardTokenizer(Tokenizer):
-    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using Apache Lucene.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
-     maximum length are split.
-    :type max_token_length: int
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StandardTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizer'
-        self.max_token_length = kwargs.get('max_token_length', 255)
-
-
-class StandardTokenizerV2(Tokenizer):
-    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using Apache Lucene.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
-     maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-        'max_token_length': {'maximum': 300},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'max_token_length': {'key': 'maxTokenLength', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StandardTokenizerV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizerV2'
-        self.max_token_length = kwargs.get('max_token_length', 255)
-
-
 class StemmerOverrideTokenFilter(TokenFilter):
     """Provides the ability to override other stemming filters with custom dictionary-based stemming. Any dictionary-stemmed terms will be marked as keywords so that they will not be stemmed with stemmers down the chain. Must be placed before any stemming filters. This token filter is implemented using Apache Lucene.
 
@@ -4526,7 +4647,7 @@ class StemmerTokenFilter(TokenFilter):
         self.language = kwargs.get('language', None)
 
 
-class StopAnalyzer(Analyzer):
+class StopAnalyzer(LexicalAnalyzer):
     """Divides text at non-letters; Applies the lowercase and stopword token filters. This analyzer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -4681,7 +4802,7 @@ class SynonymMap(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~search_service_client.models.EncryptionKey
+    :type encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     :param e_tag: The ETag of the synonym map.
     :type e_tag: str
     """
@@ -4696,7 +4817,7 @@ class SynonymMap(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'format': {'key': 'format', 'type': 'str'},
         'synonyms': {'key': 'synonyms', 'type': 'str'},
-        'encryption_key': {'key': 'encryptionKey', 'type': 'EncryptionKey'},
+        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 
@@ -4840,7 +4961,7 @@ class TagScoringParameters(msrest.serialization.Model):
         self.tags_parameter = kwargs.get('tags_parameter', None)
 
 
-class TextTranslationSkill(Skill):
+class TextTranslationSkill(SearchIndexerSkill):
     """A skill to translate text from one language to another.
 
     All required parameters must be populated in order to send to Azure.
@@ -4949,51 +5070,6 @@ class TextWeights(msrest.serialization.Model):
         self.weights = kwargs.get('weights', None)
 
 
-class TokenInfo(msrest.serialization.Model):
-    """Information about a token returned by an analyzer.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar token: Required. The token returned by the analyzer.
-    :vartype token: str
-    :ivar start_offset: Required. The index of the first character of the token in the input text.
-    :vartype start_offset: int
-    :ivar end_offset: Required. The index of the last character of the token in the input text.
-    :vartype end_offset: int
-    :ivar position: Required. The position of the token in the input text relative to other tokens.
-     The first token in the input text has position 0, the next has position 1, and so on. Depending
-     on the analyzer used, some tokens might have the same position, for example if they are
-     synonyms of each other.
-    :vartype position: int
-    """
-
-    _validation = {
-        'token': {'required': True, 'readonly': True},
-        'start_offset': {'required': True, 'readonly': True},
-        'end_offset': {'required': True, 'readonly': True},
-        'position': {'required': True, 'readonly': True},
-    }
-
-    _attribute_map = {
-        'token': {'key': 'token', 'type': 'str'},
-        'start_offset': {'key': 'startOffset', 'type': 'int'},
-        'end_offset': {'key': 'endOffset', 'type': 'int'},
-        'position': {'key': 'position', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TokenInfo, self).__init__(**kwargs)
-        self.token = None
-        self.start_offset = None
-        self.end_offset = None
-        self.position = None
-
-
 class TruncateTokenFilter(TokenFilter):
     """Truncates the terms to a specific length. This token filter is implemented using Apache Lucene.
 
@@ -5031,7 +5107,7 @@ class TruncateTokenFilter(TokenFilter):
         self.length = kwargs.get('length', 300)
 
 
-class UaxUrlEmailTokenizer(Tokenizer):
+class UaxUrlEmailTokenizer(LexicalTokenizer):
     """Tokenizes urls and emails as one token. This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
@@ -5106,7 +5182,7 @@ class UniqueTokenFilter(TokenFilter):
         self.only_on_same_position = kwargs.get('only_on_same_position', False)
 
 
-class WebApiSkill(Skill):
+class WebApiSkill(SearchIndexerSkill):
     """A skill that can call a Web API endpoint, allowing you to extend a skillset by having it call your custom code.
 
     All required parameters must be populated in order to send to Azure.
