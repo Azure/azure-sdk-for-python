@@ -43,7 +43,6 @@ from ._service import (
     edm,
 )
 from ._service._generated.models import (
-    Analyzer,
     AnalyzeRequest,
     AnalyzeResult,
     AsciiFoldingTokenFilter,
@@ -80,6 +79,7 @@ from ._service._generated.models import (
     KeywordTokenizer,
     LanguageDetectionSkill,
     LengthTokenFilter,
+    LexicalAnalyzer,
     LimitTokenFilter,
     MagnitudeScoringFunction,
     MagnitudeScoringParameters,
@@ -135,7 +135,6 @@ __version__ = VERSION
 __all__ = (
     "AnalyzeRequest",
     "AnalyzeResult",
-    "Analyzer",
     "AsciiFoldingTokenFilter",
     "AutocompleteQuery",
     "AzureActiveDirectoryApplicationCredentials",
@@ -175,6 +174,7 @@ __all__ = (
     "KeywordTokenizer",
     "LanguageDetectionSkill",
     "LengthTokenFilter",
+    "LexicalAnalyzer",
     "LimitTokenFilter",
     "MagnitudeScoringFunction",
     "MagnitudeScoringParameters",
