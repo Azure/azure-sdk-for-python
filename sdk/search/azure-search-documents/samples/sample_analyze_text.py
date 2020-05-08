@@ -31,10 +31,11 @@ def simple_analyze_text():
     from azure.search.documents import SearchServiceClient, AnalyzeRequest
 
     service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+    client = service_client.get_indexes_client()
 
     analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
 
-    result = service_client.analyze_text(index_name, analyze_request)
+    result = client.analyze_text(index_name, analyze_request)
     print(result.as_dict())
     # [END simple_analyze_text]
 
