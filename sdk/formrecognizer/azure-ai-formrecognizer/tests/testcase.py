@@ -55,7 +55,7 @@ class FormRecognizerTest(AzureTestCase):
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("COGNITIVE_AAD_ENDPOINT")
+        return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
