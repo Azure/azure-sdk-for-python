@@ -45,6 +45,14 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
+        try:
+            if endpoint.lower().startswith('http') and not endpoint.lower().startswith('https'):
+                raise ValueError("Endpoint should be secure. Use https.")
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Endpoint must be a string")
+
         self._endpoint = endpoint  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
