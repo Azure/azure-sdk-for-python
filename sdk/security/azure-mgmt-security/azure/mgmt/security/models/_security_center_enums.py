@@ -34,10 +34,10 @@ class ReportedSeverity(str, Enum):
     high = "High"
 
 
-class SettingKind(str, Enum):
+class ValueType(str, Enum):
 
-    data_export_setting = "DataExportSetting"
-    alert_suppression_setting = "AlertSuppressionSetting"
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
 
 
 class SecuritySolutionStatus(str, Enum):
@@ -82,26 +82,148 @@ class RecommendationConfigStatus(str, Enum):
     enabled = "Enabled"
 
 
-class SecurityFamily(str, Enum):
+class UnmaskedIpLoggingStatus(str, Enum):
 
-    waf = "Waf"
-    ngfw = "Ngfw"
-    saas_waf = "SaasWaf"
-    va = "Va"
+    disabled = "Disabled"  #: Unmasked IP logging is disabled
+    enabled = "Enabled"  #: Unmasked IP logging is enabled
 
 
-class AadConnectivityState(str, Enum):
+class AutoProvision(str, Enum):
 
-    discovered = "Discovered"
-    not_licensed = "NotLicensed"
-    connected = "Connected"
+    on = "On"  #: Install missing security agent on VMs automatically
+    off = "Off"  #: Do not install security agent on the VMs automatically
 
 
-class ExternalSecuritySolutionKind(str, Enum):
+class Rank(str, Enum):
 
-    cef = "CEF"
-    ata = "ATA"
-    aad = "AAD"
+    none = "None"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+    critical = "Critical"
+
+
+class AlertNotifications(str, Enum):
+
+    on = "On"  #: Get notifications on new alerts
+    off = "Off"  #: Don't get notifications on new alerts
+
+
+class AlertsToAdmins(str, Enum):
+
+    on = "On"  #: Send notification on new alerts to the subscription's admins
+    off = "Off"  #: Don't send notification on new alerts to the subscription's admins
+
+
+class State(str, Enum):
+
+    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
+    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
+    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
+    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
+class SubAssessmentStatusCode(str, Enum):
+
+    healthy = "Healthy"  #: The resource is healthy
+    unhealthy = "Unhealthy"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
+class Severity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class EventSource(str, Enum):
+
+    assessments = "Assessments"
+    alerts = "Alerts"
+
+
+class PropertyType(str, Enum):
+
+    string = "String"
+    integer = "Integer"
+    number = "Number"
+    boolean = "Boolean"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+    lesser_than = "LesserThan"
+    lesser_than_or_equal_to = "LesserThanOrEqualTo"
+    not_equals = "NotEquals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+
+
+class Category(str, Enum):
+
+    compute = "Compute"
+    networking = "Networking"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class UserImpact(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class ImplementationEffort(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class Threats(str, Enum):
+
+    account_breach = "accountBreach"
+    data_exfiltration = "dataExfiltration"
+    data_spillage = "dataSpillage"
+    malicious_insider = "maliciousInsider"
+    elevation_of_privilege = "elevationOfPrivilege"
+    threat_resistance = "threatResistance"
+    missing_coverage = "missingCoverage"
+    denial_of_service = "denialOfService"
+
+
+class AssessmentType(str, Enum):
+
+    built_in = "BuiltIn"  #: Azure Security Center managed assessments
+    custom_policy = "CustomPolicy"  #: User defined policies that are automatically ingested from Azure Policy to Azure Security Center
+    customer_managed = "CustomerManaged"  #: User assessments pushed directly by the user or other third party to Azure Security Center
+    verified_partner = "VerifiedPartner"  #: An assessment that was created by a verified 3rd party if the user connected it to ASC
+
+
+class AssessmentStatusCode(str, Enum):
+
+    healthy = "Healthy"  #: The resource is healthy
+    unhealthy = "Unhealthy"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
+class Direction(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class TransportProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
 
 
 class Protocol(str, Enum):
@@ -124,30 +246,32 @@ class StatusReason(str, Enum):
     newer_request_initiated = "NewerRequestInitiated"
 
 
-class AutoProvision(str, Enum):
+class SecurityFamily(str, Enum):
 
-    on = "On"  #: Install missing security agent on VMs automatically
-    off = "Off"  #: Do not install security agent on the VMs automatically
-
-
-class AlertNotifications(str, Enum):
-
-    on = "On"  #: Get notifications on new alerts
-    off = "Off"  #: Don't get notifications on new alerts
+    waf = "Waf"
+    ngfw = "Ngfw"
+    saas_waf = "SaasWaf"
+    va = "Va"
 
 
-class AlertsToAdmins(str, Enum):
+class AadConnectivityState(str, Enum):
 
-    on = "On"  #: Send notification on new alerts to the subscription's admins
-    off = "Off"  #: Don't send notification on new alerts to the subscription's admins
+    discovered = "Discovered"
+    not_licensed = "NotLicensed"
+    connected = "Connected"
 
 
-class State(str, Enum):
+class ExternalSecuritySolutionKind(str, Enum):
 
-    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
-    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
-    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
-    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+    cef = "CEF"
+    ata = "ATA"
+    aad = "AAD"
+
+
+class ExpandEnum(str, Enum):
+
+    links = "links"  #: All links associated with an assessment
+    metadata = "metadata"  #: Assessment metadata
 
 
 class ConnectionType(str, Enum):
