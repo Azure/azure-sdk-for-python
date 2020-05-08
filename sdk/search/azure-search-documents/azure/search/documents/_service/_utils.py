@@ -166,7 +166,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
     if isinstance(model, six.string_types):
         if match_condition is not MatchConditions.Unconditionally:
             raise ValueError("A model must be passed to use access conditions")
-        return (error_map, None)
+        return (error_map, {})
 
     try:
         if_match = prep_if_match(model.e_tag, match_condition)
