@@ -196,6 +196,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, nic_id)
             self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, "tempstorageaccountxysdtr")
             storage_key = self.get_storage_key(RESOURCE_GROUP, "tempstorageaccountxysdtr")
+        else:
+            storage_key = "xxxx"
 
         # /SqlVirtualMachineGroups/put/Creates or updates a SQL virtual machine group.[put]
         BODY = {
