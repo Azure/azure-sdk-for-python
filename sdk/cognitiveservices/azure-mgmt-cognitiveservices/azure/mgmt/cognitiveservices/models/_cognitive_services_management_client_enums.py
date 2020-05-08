@@ -41,6 +41,20 @@ class KeySource(str, Enum):
     microsoft_key_vault = "Microsoft.KeyVault"
 
 
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class IdentityType(str, Enum):
 
     none = "None"
