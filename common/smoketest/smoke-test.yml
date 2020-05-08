@@ -79,7 +79,9 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: pip --version
+      - script: |
+          python -m pip install pip==20.0.2
+          pip --version
         displayName: pip --version
 
       - script: pip install packaging pkginfo
