@@ -1277,7 +1277,7 @@ class FileShare(AzureEntityResource):
     :ivar share_usage_bytes: The approximate size of the data stored on the
      share. Note that this value may not include all recently created or
      recently resized files.
-    :vartype share_usage_bytes: int
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1313,7 +1313,7 @@ class FileShare(AzureEntityResource):
         'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
         'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
         'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
-        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'int'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -1393,7 +1393,7 @@ class FileShareItem(AzureEntityResource):
     :ivar share_usage_bytes: The approximate size of the data stored on the
      share. Note that this value may not include all recently created or
      recently resized files.
-    :vartype share_usage_bytes: int
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1429,7 +1429,7 @@ class FileShareItem(AzureEntityResource):
         'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
         'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
         'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
-        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'int'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
