@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import (
+from typing import (  # pylint: disable=unused-import
     Any,
     Union,
     Dict,
@@ -13,14 +13,14 @@ from typing import (
     Callable,
     List,
     Optional,
-)  # pylint: disable=unused-import
+)
 
 from ._common import EventData
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
-from ._eventprocessor.partition_context import PartitionContext
+from ._eventprocessor.partition_context import PartitionContext  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     import datetime
