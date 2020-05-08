@@ -14,7 +14,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._generated.models import (
-    Index,
+    SearchIndex,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
     AccessCondition
@@ -117,7 +117,7 @@ def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
 
 
 def delistize_flags_for_index(index):
-    # type: (Index) -> Index
+    # type: (SearchIndex) -> SearchIndex
     if index.analyzers:
         index.analyzers = [
             delistize_flags_for_pattern_analyzer(x)  # type: ignore
@@ -136,7 +136,7 @@ def delistize_flags_for_index(index):
 
 
 def listize_flags_for_index(index):
-    # type: (Index) -> Index
+    # type: (SearchIndex) -> SearchIndex
     if index.analyzers:
         index.analyzers = [
             listize_flags_for_pattern_analyzer(x)  # type: ignore

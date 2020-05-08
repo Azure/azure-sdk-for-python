@@ -19,7 +19,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeRequest, AnalyzeResult, Index
+    from .._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -61,11 +61,11 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace_async
     async def list_indexes(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[Index]
+        # type: (**Any) -> AsyncItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
-        :rtype: list[~azure.search.documents.Index]
+        :rtype: list[~azure.search.documents.SearchIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -81,13 +81,13 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_index(self, index_name, **kwargs):
-        # type: (str, **Any) -> Index
+        # type: (str, **Any) -> SearchIndex
         """
 
         :param index_name: The name of the index to retrieve.
         :type index_name: str
-        :return: Index object
-        :rtype: ~azure.search.documents.Index
+        :return: SearchIndex object
+        :rtype: ~azure.search.documents.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -122,12 +122,12 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace_async
     async def delete_index(self, index, **kwargs):
-        # type: (Union[str, Index], **Any) -> None
+        # type: (Union[str, SearchIndex], **Any) -> None
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions
 
         :param index: The index to retrieve.
-        :type index: str or ~search.models.Index
+        :type index: str or ~search.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -159,13 +159,13 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_index(self, index, **kwargs):
-        # type: (Index, **Any) -> Index
+        # type: (SearchIndex, **Any) -> SearchIndex
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: ~azure.search.documents.Index
+        :type index: ~azure.search.documents.SearchIndex
         :return: The index created
-        :rtype: ~azure.search.documents.Index
+        :rtype: ~azure.search.documents.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -190,13 +190,13 @@ class SearchIndexesClient(HeadersMixin):
         allow_index_downtime=None,
         **kwargs
     ):
-        # type: (str, Index, bool, MatchConditions, **Any) -> Index
+        # type: (str, SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.
         :type index_name: str
         :param index: The index object.
-        :type index: ~azure.search.documents.Index
+        :type index: ~azure.search.documents.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -206,7 +206,7 @@ class SearchIndexesClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.Index`
+        :rtype: :class:`~azure.search.documents.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
