@@ -80,7 +80,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          python -m pip install pip == 20.1
+          python -m pip install pip==20.0.2
           pip --version
         displayName: pip --version
 
