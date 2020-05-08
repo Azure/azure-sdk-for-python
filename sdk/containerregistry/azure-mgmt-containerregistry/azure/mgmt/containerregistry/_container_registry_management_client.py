@@ -170,6 +170,32 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def export_pipelines(self):
+        """Instance depends on the API version:
+
+           * 2019-12-01-preview: :class:`ExportPipelinesOperations<azure.mgmt.containerregistry.v2019_12_01_preview.operations.ExportPipelinesOperations>`
+        """
+        api_version = self._get_api_version('export_pipelines')
+        if api_version == '2019-12-01-preview':
+            from .v2019_12_01_preview.operations import ExportPipelinesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def import_pipelines(self):
+        """Instance depends on the API version:
+
+           * 2019-12-01-preview: :class:`ImportPipelinesOperations<azure.mgmt.containerregistry.v2019_12_01_preview.operations.ImportPipelinesOperations>`
+        """
+        api_version = self._get_api_version('import_pipelines')
+        if api_version == '2019-12-01-preview':
+            from .v2019_12_01_preview.operations import ImportPipelinesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def operations(self):
         """Instance depends on the API version:
 
@@ -202,6 +228,19 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01_preview.operations import Operations as OperationClass
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def pipeline_runs(self):
+        """Instance depends on the API version:
+
+           * 2019-12-01-preview: :class:`PipelineRunsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.operations.PipelineRunsOperations>`
+        """
+        api_version = self._get_api_version('pipeline_runs')
+        if api_version == '2019-12-01-preview':
+            from .v2019_12_01_preview.operations import PipelineRunsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
