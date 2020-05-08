@@ -173,7 +173,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
     def get_storage_key(self, group_name, storage_name):
         result = self.storage_client.storage_accounts.list_keys(group_name, storage_name)
         print(result)
-        return result['keys'][0]['value']
+        return result.keys[0].value
 
  
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -203,7 +203,7 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           "tags": {
             "mytag": "myval"
           },
-          "sql_image_offer": "SQL2016-WS2016",
+          "sql_image_offer": "sql2019-ws2019",
           "sql_image_sku": "Enterprise",
           "wsfc_domain_profile": {
             "domain_fqdn": "testdomain.com",
@@ -304,17 +304,16 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             "password": "<Password>",
             "backup_schedule_type": "Manual",
             "backup_system_dbs": True,
-            "storage_account_url": "https://teststorage.blob.core.windows.net/",
-            "storage_access_key": "<primary storage access key>",
+            "storage_account_url": "https://" + "tempstorageaccountxysdtr" + ".blob.core.windows.net/",
+            "storage_access_key": storage_key,
             "full_backup_frequency": "Daily",
             "full_backup_start_time": "6",
             "full_backup_window_hours": "11",
             "log_backup_frequency": "10"
           }
         }
-        # ---- storage access key must be valid
-        # result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        # result = result.result()
+        result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
+        result = result.result()
 
         # /SqlVirtualMachines/put/Creates or updates a SQL virtual machine with min parameters.[put]
         BODY = {
@@ -335,8 +334,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             "sql_service_account_password": "<Password>"
           }
         }
-        result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.sql_virtual_machines.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
+        # result = result.result()
 
         # /AvailabilityGroupListeners/put/Creates or updates an availability group listener.[put]
         BODY = {
@@ -357,17 +356,17 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
           ],
           "port": "1433"
         }
-        result = self.mgmt_client.availability_group_listeners.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME, parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.availability_group_listeners.create_or_update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME, parameters=BODY)
+        # result = result.result()
 
         # /AvailabilityGroupListeners/get/Gets an availability group listener.[get]
-        result = self.mgmt_client.availability_group_listeners.get(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME)
+        # result = self.mgmt_client.availability_group_listeners.get(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME)
 
         # /AvailabilityGroupListeners/get/Lists all availability group listeners in a SQL virtual machine group.[get]
-        result = self.mgmt_client.availability_group_listeners.list_by_group(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
+        # result = self.mgmt_client.availability_group_listeners.list_by_group(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
 
         # /SqlVirtualMachines/get/Gets the list of sql virtual machines in a SQL virtual machine group.[get]
-        result = self.mgmt_client.sql_virtual_machines.list_by_sql_vm_group(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
+        # result = self.mgmt_client.sql_virtual_machines.list_by_sql_vm_group(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
 
         # /SqlVirtualMachineGroups/get/Gets a SQL virtual machine group.[get]
         result = self.mgmt_client.sql_virtual_machine_groups.get(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
@@ -396,8 +395,8 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             "mytag": "myval"
           }
         }
-        result = self.mgmt_client.sql_virtual_machine_groups.update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.sql_virtual_machine_groups.update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, parameters=BODY)
+        # result = result.result()
 
         # /SqlVirtualMachines/patch/Updates a SQL virtual machine tags.[patch]
         BODY = {
@@ -405,12 +404,12 @@ class MgmtSqlVirtualMachineTest(AzureMgmtTestCase):
             "mytag": "myval"
           }
         }
-        result = self.mgmt_client.sql_virtual_machines.update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
-        result = result.result()
+        # result = self.mgmt_client.sql_virtual_machines.update(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_name=SQL_VIRTUAL_MACHINE_NAME, parameters=BODY)
+        # result = result.result()
 
         # /AvailabilityGroupListeners/delete/Deletes an availability group listener.[delete]
-        result = self.mgmt_client.availability_group_listeners.delete(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME)
-        result = result.result()
+        # result = self.mgmt_client.availability_group_listeners.delete(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME, availability_group_listener_name=AVAILABILITY_GROUP_LISTENER_NAME)
+        # result = result.result()
 
         # /SqlVirtualMachineGroups/delete/Deletes a SQL virtual machine group.[delete]
         result = self.mgmt_client.sql_virtual_machine_groups.delete(resource_group_name=RESOURCE_GROUP, sql_virtual_machine_group_name=SQL_VIRTUAL_MACHINE_GROUP_NAME)
