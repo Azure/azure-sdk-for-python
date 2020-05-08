@@ -65,6 +65,8 @@ class RecognizeContentSample(object):
                     line.text,
                     format_bounding_box(line.bounding_box)
                 ))
+                for word in line.words:
+                    print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
             print("----------------------------------------")
 
 
