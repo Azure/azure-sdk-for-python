@@ -90,20 +90,15 @@ class SearchIndexersClient(HeadersMixin):
         :return: The created IndexSearchIndexerer
         :rtype: ~azure.search.documents.SearchIndexer
         """
-        error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
-        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        error_map, access_condition = get_access_conditions(
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
         if not name:
             name = indexer.name
         result = self._client.indexers.create_or_update(
-            indexer_name=name,
-            indexer=indexer,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
         )
         return result
 
@@ -177,14 +172,14 @@ class SearchIndexersClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = indexer.name
         except AttributeError:
             name = indexer
-        self._client.indexers.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
+        self._client.indexers.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def run_indexer(self, name, **kwargs):

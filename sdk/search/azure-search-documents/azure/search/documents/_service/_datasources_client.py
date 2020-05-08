@@ -93,15 +93,14 @@ class SearchDataSourcesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         if not name:
             name = data_source.name
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=data_source,
-            access_condition=access_condition,
             error_map=error_map,
             **kwargs
         )
@@ -176,16 +175,13 @@ class SearchDataSourcesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = data_source.name
         except AttributeError:
             name = data_source
         self._client.data_sources.delete(
-            data_source_name=name,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            data_source_name=name, error_map=error_map, **kwargs
         )

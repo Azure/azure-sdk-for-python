@@ -13,7 +13,7 @@ from ._generated import SearchServiceClient as _SearchServiceClient
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    get_access_conditions
+    get_access_conditions,
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
@@ -144,18 +144,15 @@ class SearchIndexesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             index_name = index.name
         except AttributeError:
             index_name = index
         self._client.indexes.delete(
-            index_name=index_name,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            index_name=index_name, error_map=error_map, **kwargs
         )
 
     @distributed_trace
@@ -185,11 +182,7 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_index(
-        self,
-        index_name,
-        index,
-        allow_index_downtime=None,
-        **kwargs
+        self, index_name, index, allow_index_downtime=None, **kwargs
     ):
         # type: (str, SearchIndex, bool, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
@@ -223,17 +216,16 @@ class SearchIndexesClient(HeadersMixin):
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
-        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
         patched_index = delistize_flags_for_index(index)
         result = self._client.indexes.create_or_update(
             index_name=index_name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
-            access_condition=access_condition,
             error_map=error_map,
             **kwargs
         )

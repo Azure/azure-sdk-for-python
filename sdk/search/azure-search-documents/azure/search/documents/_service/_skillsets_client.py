@@ -128,14 +128,14 @@ class SearchSkillsetsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            skillset,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = skillset.name
         except AttributeError:
             name = skillset
-        self._client.skillsets.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
+        self._client.skillsets.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_skillset(self, name, skills, description, **kwargs):
@@ -163,7 +163,9 @@ class SearchSkillsetsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        skillset = SearchIndexerSkillset(name=name, skills=list(skills), description=description)
+        skillset = SearchIndexerSkillset(
+            name=name, skills=list(skills), description=description
+        )
 
         return self._client.skillsets.create(skillset, **kwargs)
 
@@ -192,18 +194,15 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         access_condition = None
 
         if "skillset" in kwargs:
             skillset = kwargs.pop("skillset")
             error_map, access_condition = get_access_conditions(
-                skillset,
-                kwargs.pop('match_condition', MatchConditions.Unconditionally)
+                skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
             )
+            kwargs.update(access_condition)
             skillset = SearchIndexerSkillset.deserialize(skillset.serialize())
             skillset.name = name
             for param in ("description", "skills"):
@@ -218,9 +217,5 @@ class SearchSkillsetsClient(HeadersMixin):
             )
 
         return self._client.skillsets.create_or_update(
-            skillset_name=name,
-            skillset=skillset,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            skillset_name=name, skillset=skillset, error_map=error_map, **kwargs
         )

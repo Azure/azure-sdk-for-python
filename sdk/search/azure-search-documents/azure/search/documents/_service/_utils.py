@@ -17,7 +17,6 @@ from ._generated.models import (
     SearchIndex,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
-    AccessCondition
 )
 from ._models import PatternAnalyzer, PatternTokenizer
 
@@ -159,12 +158,10 @@ def listize_synonyms(synonym_map):
     synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
     return synonym_map
 
+
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
-    # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], AccessCondition]
-    error_map = {
-        401: ClientAuthenticationError,
-        404: ResourceNotFoundError
-    }
+    # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], Dict[str, bool]]
+    error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
     if isinstance(model, six.string_types):
         if match_condition is not MatchConditions.Unconditionally:
@@ -183,6 +180,6 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
             error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
-        return (error_map, AccessCondition(if_match=if_match, if_none_match=if_none_match))
+        return (error_map, dict(if_match=if_match, if_none_match=if_none_match))
     except AttributeError:
         raise ValueError("Unable to get e_tag from the model")
