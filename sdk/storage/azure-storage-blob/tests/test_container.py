@@ -5,6 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
+import uuid
+
 import pytest
 import unittest
 import re
@@ -26,8 +29,8 @@ from azure.storage.blob import (
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
-    PartialBatchErrorException
-)
+    PartialBatchErrorException,
+    generate_account_sas, ResourceTypes, AccountSasPermissions)
 from azure.identity import ClientSecretCredential
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
@@ -726,6 +729,61 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(deleted)
         with self.assertRaises(ResourceNotFoundError):
             container.get_container_properties()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_client = self._create_container(bsc)
+
+        # Act
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        restored_version = 0
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = bsc.get_container_client("restored" + str(restored_version))
+                restored_version += 1
+                restored_ctn_client.undelete_container(container.name, container.version)
+
+                # to make sure the deleted container is restored
+                props = restored_ctn_client.get_container_properties()
+                self.assertIsNotNone(props)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # get an existing container
+        existing_container_client = self._create_container(bsc, prefix="existing")
+        container_client = self._create_container(bsc)
+
+        # Act
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = bsc.get_container_client(existing_container_client.container_name)
+                with self.assertRaises(HttpResponseError):
+                    restored_ctn_client.undelete_container(container.name, container.version)
 
     @GlobalStorageAccountPreparer()
     def test_list_names(self, resource_group, location, storage_account, storage_account_key):

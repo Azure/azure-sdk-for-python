@@ -344,6 +344,40 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
+    def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
+        # type: (**Any) -> None
+        """Restores soft-deleted container.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        :param str deleted_container_name:
+            Specifies the name of the deleted container to restore.
+            Servivce Version 2019-12-12 and laster.
+        :param str deleted_container_version:
+            Specifies the version of the deleted container to restore.
+            Servivce Version 2019-12-12 and laster.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_common.py
+                :start-after: [START undelete_blob]
+                :end-before: [END undelete_blob]
+                :language: python
+                :dedent: 8
+                :caption: Undeleting a blob.
+        """
+        try:
+            self._client.container.restore(deleted_container_name=deleted_container_name,
+                                           deleted_container_version=deleted_container_version,
+                                           timeout=kwargs.pop('timeout', None), **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
