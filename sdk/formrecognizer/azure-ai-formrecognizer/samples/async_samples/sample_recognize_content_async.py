@@ -39,7 +39,6 @@ class RecognizeContentSampleAsync(object):
     async def recognize_content(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Invoice_1.pdf")
-        from azure.ai.formrecognizer import FormWord, FormLine
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient

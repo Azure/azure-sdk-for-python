@@ -33,7 +33,6 @@ class RecognizeContentSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_content(self):
-        from azure.ai.formrecognizer import FormWord, FormLine
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
