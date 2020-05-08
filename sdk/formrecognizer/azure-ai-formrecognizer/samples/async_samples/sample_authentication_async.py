@@ -20,7 +20,7 @@ DESCRIPTION:
     https://docs.microsoft.com/azure/cognitive-services/authentication
 
 USAGE:
-    python sample_authentication.py
+    python sample_authentication_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
