@@ -49,12 +49,19 @@ class FormTrainingClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_train_model_with_labels_async.py
-            :start-after: [START create_form_training_client_async]
-            :end-before: [END create_form_training_client_async]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ft_client_with_key_async]
+            :end-before: [END create_ft_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ft_client_with_aad_async]
+            :end-before: [END create_ft_client_with_aad_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormTrainingClient with a token credential.
     """
 
     def __init__(
