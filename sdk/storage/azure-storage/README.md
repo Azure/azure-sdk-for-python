@@ -2,7 +2,7 @@
 
 This package was the Microsoft Azure Storage bundle.
 
-Starting with v0.37, this package is deprecated. Please install the service specific packages prefixed by `azure-storgae` needed for your application.
+Starting with v0.37.0, this package is deprecated. Please install the service specific packages prefixed by `azure-storgae` needed for your application.
 
 The complete list of available packages can be found at:
 https://aka.ms/azsdk/python/all

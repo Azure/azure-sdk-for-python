@@ -12,7 +12,7 @@ import sys
 
 message = """
 
-Starting with v0.37, the 'azure-storage' meta-package is deprecated and cannot be installed anymore.
+Starting with v0.37.0, the 'azure-storage' meta-package is deprecated and cannot be installed anymore.
 Please install the service specific packages prefixed by `azure` needed for your application.
 
 The complete list of available packages can be found at:
