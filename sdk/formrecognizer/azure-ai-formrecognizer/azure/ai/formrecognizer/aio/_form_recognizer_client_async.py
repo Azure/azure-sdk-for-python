@@ -63,7 +63,7 @@ class FormRecognizerClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: Union[AzureKeyCredential, AsyncTokenCredential],
+            credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
             **kwargs: Any
     ) -> None:
 
