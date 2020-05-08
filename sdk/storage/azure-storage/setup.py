@@ -29,7 +29,7 @@ Here's a non-exhaustive list of common packages:
 if "sdist" in sys.argv:
     setup(
         name='azure-storage',
-        version='0.37',
+        version='0.37.0',
         description='Microsoft Azure Storage SDK for Python',
         long_description=open('README.md', 'r').read(),
         long_description_content_type='text/markdown',
