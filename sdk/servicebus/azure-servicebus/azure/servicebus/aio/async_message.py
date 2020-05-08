@@ -107,7 +107,7 @@ class Message(message.Message):
         info = None
         if description:
             info = {
-                RECEIVER_LINK_DEAD_LETTER_REASON: reason if reason else description,
+                RECEIVER_LINK_DEAD_LETTER_REASON: reason or description,
                 RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
             }
         elif reason:
