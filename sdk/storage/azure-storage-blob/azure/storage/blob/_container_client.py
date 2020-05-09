@@ -345,7 +345,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
-        # type: (**Any) -> None
+        # type: (str, str, **Any) -> None
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -360,15 +360,6 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_common.py
-                :start-after: [START undelete_blob]
-                :end-before: [END undelete_blob]
-                :language: python
-                :dedent: 8
-                :caption: Undeleting a blob.
         """
         try:
             self._client.container.restore(deleted_container_name=deleted_container_name,

@@ -785,6 +785,40 @@ class StorageContainerTest(StorageTestCase):
                 with self.assertRaises(HttpResponseError):
                     restored_ctn_client.undelete_container(container.name, container.version)
 
+    @pytest.mark.live_test_only  # sas token is dynamically generated
+    @pytest.mark.playback_test_only  # we need container soft delete enabled account
+    @GlobalStorageAccountPreparer()
+    def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        token = generate_account_sas(
+            storage_account.name,
+            storage_account_key,
+            ResourceTypes(service=True, container=True),
+            AccountSasPermissions(read=True, write=True, list=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), token)
+        container_client = self._create_container(bsc)
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        restored_version = 0
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = bsc.get_container_client("restored" + str(restored_version))
+                restored_version += 1
+                restored_ctn_client.undelete_container(container.name, container.version)
+
+                # to make sure the deleted container is restored
+                props = restored_ctn_client.get_container_properties()
+                self.assertIsNotNone(props)
+
     @GlobalStorageAccountPreparer()
     def test_list_names(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
