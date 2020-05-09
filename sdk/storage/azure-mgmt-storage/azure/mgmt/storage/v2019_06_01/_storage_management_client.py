@@ -20,6 +20,7 @@ from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ObjectReplicationPoliciesOperations
 from .operations import EncryptionScopesOperations
 from .operations import BlobServicesOperations
 from .operations import BlobContainersOperations
@@ -48,6 +49,8 @@ class StorageManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.storage.v2019_06_01.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.storage.v2019_06_01.operations.PrivateLinkResourcesOperations
+    :ivar object_replication_policies: ObjectReplicationPolicies operations
+    :vartype object_replication_policies: azure.mgmt.storage.v2019_06_01.operations.ObjectReplicationPoliciesOperations
     :ivar encryption_scopes: EncryptionScopes operations
     :vartype encryption_scopes: azure.mgmt.storage.v2019_06_01.operations.EncryptionScopesOperations
     :ivar blob_services: BlobServices operations
@@ -91,6 +94,8 @@ class StorageManagementClient(SDKClient):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.object_replication_policies = ObjectReplicationPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.encryption_scopes = EncryptionScopesOperations(
             self._client, self.config, self._serialize, self._deserialize)
