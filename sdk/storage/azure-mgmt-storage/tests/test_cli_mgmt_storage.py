@@ -25,7 +25,7 @@ import azure.mgmt.storage
 # import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'westeurope'
+AZURE_LOCATION = 'eastus'
 ZERO = dt.timedelta(0)
 
 class UTC(dt.tzinfo):
@@ -223,7 +223,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
           "tags": {
             "key1": "value1",
             "key2": "value2"
-          }
+          },
+          "enable_https_traffic_only": True
         }
         result = self.mgmt_client.storage_accounts.create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         result = result.result()
@@ -362,7 +363,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             "enabled": True,
             "days": "300"
           },
-          "is_versioning_enabled": True,
+          "is_versioning_enabled": False,
           # TODO: unsupport
           # "change_feed": {
           #   "enabled": True
@@ -417,7 +418,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
         # PutShares[put]
-        result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        BODY = {}
+        result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
 
         """TODO: not found
         # PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
@@ -433,19 +435,19 @@ class MgmtStorageTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
         """
-        blob_container = azure.mgmt.storage.models.BlobContainer(public_access=None, metadata=None)
+        blob_container = azure.mgmt.storage.models.BlobContainer(public_access=azure.mgmt.storage.models.PublicAccess.none, metadata=None)
         # PutContainers[put]
         result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, blob_container)
 
         # CreateOrUpdateImmutabilityPolicy[put]
-        # BODY = {
-        #   "properties": {
-        #     "immutability_period_since_creation_in_days": "3",
-        #     "allow_protected_append_writes": True
-        #   }
-        # }
+        #BODY = {
+        #  "properties": {
+        #    "immutability_period_since_creation_in_days": "3",
+        #    "allow_protected_append_writes": True
+        #  }
+        #}
         DAYS = 3
-        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, None, DAYS)
         ETAG = result.etag
 
         # DeleteImmutabilityPolicy[delete]
@@ -453,7 +455,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         # CreateOrUpdateImmutabilityPolicy[put] again
         DAYS = 3
-        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, None, DAYS)
         ETAG = result.etag
 
         # GetImmutabilityPolicy[get]

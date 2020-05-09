@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+class ObjectReplicationPoliciesOperations(object):
+    """ObjectReplicationPoliciesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -41,7 +40,7 @@ class PrivateEndpointConnectionsOperations(object):
 
     def list(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """List all the private endpoint connections associated with the storage
+        """List the object replication policies associated with the storage
         account.
 
         :param resource_group_name: The name of the resource group within the
@@ -56,10 +55,11 @@ class PrivateEndpointConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PrivateEndpointConnection
+        :return: An iterator like instance of ObjectReplicationPolicy
         :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnectionPaged[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyPaged[~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -100,9 +100,7 @@ class PrivateEndpointConnectionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -110,15 +108,14 @@ class PrivateEndpointConnectionsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PrivateEndpointConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ObjectReplicationPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies'}
 
     def get(
-            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified private endpoint connection associated with the
-        storage account.
+            self, resource_group_name, account_name, object_replication_policy_id, custom_headers=None, raw=False, **operation_config):
+        """Get the object replication policy of the storage account by policy ID.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -127,18 +124,17 @@ class PrivateEndpointConnectionsOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection associated with the Storage Account
-        :type private_endpoint_connection_name: str
+        :param object_replication_policy_id: The ID of object replication
+         policy or 'default' if the policy ID is unknown.
+        :type object_replication_policy_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ObjectReplicationPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
@@ -148,7 +144,7 @@ class PrivateEndpointConnectionsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'objectReplicationPolicyId': self._serialize.url("object_replication_policy_id", object_replication_policy_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -175,19 +171,18 @@ class PrivateEndpointConnectionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('ObjectReplicationPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies/{objectReplicationPolicyId}'}
 
-    def put(
-            self, resource_group_name, account_name, private_endpoint_connection_name, properties, custom_headers=None, raw=False, **operation_config):
-        """Update the state of specified private endpoint connection associated
-        with the storage account.
+    def create_or_update(
+            self, resource_group_name, account_name, object_replication_policy_id, properties, custom_headers=None, raw=False, **operation_config):
+        """Create or update the object replication policy of the storage account.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -196,31 +191,31 @@ class PrivateEndpointConnectionsOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection associated with the Storage Account
-        :type private_endpoint_connection_name: str
-        :param properties: The private endpoint connection properties.
+        :param object_replication_policy_id: The ID of object replication
+         policy or 'default' if the policy ID is unknown.
+        :type object_replication_policy_id: str
+        :param properties: The object replication policy set to a storage
+         account. A unique policy ID will be created if absent.
         :type properties:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection
+         ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ObjectReplicationPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.put.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'objectReplicationPolicyId': self._serialize.url("object_replication_policy_id", object_replication_policy_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -240,7 +235,7 @@ class PrivateEndpointConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(properties, 'PrivateEndpointConnection')
+        body_content = self._serialize.body(properties, 'ObjectReplicationPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -251,18 +246,18 @@ class PrivateEndpointConnectionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('ObjectReplicationPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies/{objectReplicationPolicyId}'}
 
     def delete(
-            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified private endpoint connection associated with the
+            self, resource_group_name, account_name, object_replication_policy_id, custom_headers=None, raw=False, **operation_config):
+        """Deletes the object replication policy associated with the specified
         storage account.
 
         :param resource_group_name: The name of the resource group within the
@@ -272,9 +267,9 @@ class PrivateEndpointConnectionsOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection associated with the Storage Account
-        :type private_endpoint_connection_name: str
+        :param object_replication_policy_id: The ID of object replication
+         policy or 'default' if the policy ID is unknown.
+        :type object_replication_policy_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -291,7 +286,7 @@ class PrivateEndpointConnectionsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'objectReplicationPolicyId': self._serialize.url("object_replication_policy_id", object_replication_policy_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -318,4 +313,4 @@ class PrivateEndpointConnectionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies/{objectReplicationPolicyId}'}
