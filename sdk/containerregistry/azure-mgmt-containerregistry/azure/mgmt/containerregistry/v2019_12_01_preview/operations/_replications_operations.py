@@ -109,9 +109,7 @@ class ReplicationsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, registry_name, replication_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
-        replication = models.Replication(location=location, tags=tags)
-
+            self, resource_group_name, registry_name, replication_name, replication, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -163,7 +161,7 @@ class ReplicationsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, registry_name, replication_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, registry_name, replication_name, replication, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a replication for a container registry with the specified
         parameters.
 
@@ -174,11 +172,9 @@ class ReplicationsOperations(object):
         :type registry_name: str
         :param replication_name: The name of the replication.
         :type replication_name: str
-        :param location: The location of the resource. This cannot be changed
-         after the resource is created.
-        :type location: str
-        :param tags: The tags of the resource.
-        :type tags: dict[str, str]
+        :param replication: The parameters for creating a replication.
+        :type replication:
+         ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Replication
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -196,8 +192,7 @@ class ReplicationsOperations(object):
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             replication_name=replication_name,
-            location=location,
-            tags=tags,
+            replication=replication,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -307,8 +302,8 @@ class ReplicationsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, registry_name, replication_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        replication_update_parameters = models.ReplicationUpdateParameters(tags=tags)
+            self, resource_group_name, registry_name, replication_name, tags=None, region_endpoint_enabled=None, custom_headers=None, raw=False, **operation_config):
+        replication_update_parameters = models.ReplicationUpdateParameters(tags=tags, region_endpoint_enabled=region_endpoint_enabled)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -361,7 +356,7 @@ class ReplicationsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, registry_name, replication_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, registry_name, replication_name, tags=None, region_endpoint_enabled=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a replication for a container registry with the specified
         parameters.
 
@@ -374,6 +369,11 @@ class ReplicationsOperations(object):
         :type replication_name: str
         :param tags: The tags for the replication.
         :type tags: dict[str, str]
+        :param region_endpoint_enabled: Specifies whether the replication's
+         regional endpoint is enabled. Requests will not be routed to a
+         replication whose regional endpoint is disabled, however its data will
+         continue to be synced with other replications.
+        :type region_endpoint_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -392,6 +392,7 @@ class ReplicationsOperations(object):
             registry_name=registry_name,
             replication_name=replication_name,
             tags=tags,
+            region_endpoint_enabled=region_endpoint_enabled,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
