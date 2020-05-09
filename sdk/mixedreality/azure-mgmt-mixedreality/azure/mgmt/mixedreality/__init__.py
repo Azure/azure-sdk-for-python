@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .mixed_reality_client import MixedRealityClient
-from .version import VERSION
+from ._configuration import MixedRealityClientConfiguration
+from ._mixed_reality_client import MixedRealityClient
+__all__ = ['MixedRealityClient', 'MixedRealityClientConfiguration']
 
-__all__ = ['MixedRealityClient']
+from .version import VERSION
 
 __version__ = VERSION
 

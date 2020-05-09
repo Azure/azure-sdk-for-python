@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .spatial_anchors_accounts_operations import SpatialAnchorsAccountsOperations
+from ._operations import Operations
+from ._spatial_anchors_accounts_operations import SpatialAnchorsAccountsOperations
+from ._mixed_reality_client_operations import MixedRealityClientOperationsMixin
 
 __all__ = [
     'Operations',
     'SpatialAnchorsAccountsOperations',
+    'MixedRealityClientOperationsMixin',
 ]
