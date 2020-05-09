@@ -597,8 +597,10 @@ class Database(TrackedResource):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -802,8 +804,17 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -1233,8 +1244,10 @@ class DatabaseUpdate(Model):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -2671,8 +2684,17 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -2831,8 +2853,17 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -7778,8 +7809,17 @@ class ServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -9607,6 +9647,23 @@ class TransparentDataEncryptionActivity(ProxyResource):
         self.location = None
         self.status = None
         self.percent_complete = None
+
+
+class UnlinkParameters(Model):
+    """Represents the parameters for Unlink Replication Link request.
+
+    :param forced_termination: Determines whether link will be terminated in a
+     forced or a friendly way.
+    :type forced_termination: bool
+    """
+
+    _attribute_map = {
+        'forced_termination': {'key': 'forcedTermination', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlinkParameters, self).__init__(**kwargs)
+        self.forced_termination = kwargs.get('forced_termination', None)
 
 
 class Usage(Model):
