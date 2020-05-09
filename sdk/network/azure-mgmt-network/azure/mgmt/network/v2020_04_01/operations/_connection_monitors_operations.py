@@ -26,7 +26,7 @@ class ConnectionMonitorsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-09-01".
+    :ivar api_version: Client API version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ConnectionMonitorsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01"
+        self.api_version = "2020-04-01"
 
         self.config = config
 
@@ -105,7 +105,7 @@ class ConnectionMonitorsOperations(object):
         :param parameters: Parameters that define the operation to create a
          connection monitor.
         :type parameters:
-         ~azure.mgmt.network.v2019_09_01.models.ConnectionMonitor
+         ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitor
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -114,11 +114,11 @@ class ConnectionMonitorsOperations(object):
         :return: An instance of LROPoller that returns ConnectionMonitorResult
          or ClientRawResponse<ConnectionMonitorResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResult]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -165,10 +165,10 @@ class ConnectionMonitorsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionMonitorResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResult
+        :rtype: ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -270,7 +270,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -313,10 +313,10 @@ class ConnectionMonitorsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionMonitorResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResult
+        :rtype: ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         parameters = models.TagsObject(tags=tags)
 
@@ -424,7 +424,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         raw_result = self._stop_initial(
             resource_group_name=resource_group_name,
@@ -507,7 +507,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         raw_result = self._start_initial(
             resource_group_name=resource_group_name,
@@ -600,11 +600,11 @@ class ConnectionMonitorsOperations(object):
          ConnectionMonitorQueryResult or
          ClientRawResponse<ConnectionMonitorQueryResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorQueryResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorQueryResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorQueryResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorQueryResult]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         raw_result = self._query_initial(
             resource_group_name=resource_group_name,
@@ -649,9 +649,9 @@ class ConnectionMonitorsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ConnectionMonitorResult
         :rtype:
-         ~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResultPaged[~azure.mgmt.network.v2019_09_01.models.ConnectionMonitorResult]
+         ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResultPaged[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorResult]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_09_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.network.v2020_04_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
