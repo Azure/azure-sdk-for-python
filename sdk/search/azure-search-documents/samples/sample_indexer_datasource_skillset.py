@@ -84,8 +84,8 @@ def _create_datasource():
 
 def _create_skillset():
     client = service_client.get_skillsets_client()
-    inp = InputFieldMappingEntry(name="text", source="/document/dateannounced")
-    output = OutputFieldMappingEntry(name="dateTimes", target_name="Date")
+    inp = InputFieldMappingEntry(name="text", source="/document/lastRenovationDate")
+    output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
     result = client.create_skillset(name='hotel-data-skill', skills=[s], description="example skillset")
