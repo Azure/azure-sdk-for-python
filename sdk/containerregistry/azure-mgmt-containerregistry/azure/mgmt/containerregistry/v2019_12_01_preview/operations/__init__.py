@@ -9,8 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._export_pipelines_operations import ExportPipelinesOperations
 from ._registries_operations import RegistriesOperations
+from ._import_pipelines_operations import ImportPipelinesOperations
 from ._operations import Operations
+from ._pipeline_runs_operations import PipelineRunsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._replications_operations import ReplicationsOperations
 from ._webhooks_operations import WebhooksOperations
@@ -22,8 +25,11 @@ from ._scope_maps_operations import ScopeMapsOperations
 from ._tokens_operations import TokensOperations
 
 __all__ = [
+    'ExportPipelinesOperations',
     'RegistriesOperations',
+    'ImportPipelinesOperations',
     'Operations',
+    'PipelineRunsOperations',
     'PrivateEndpointConnectionsOperations',
     'ReplicationsOperations',
     'WebhooksOperations',

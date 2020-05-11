@@ -79,7 +79,9 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: pip --version
+      - script: |
+          python -m pip install pip==20.0.2
+          pip --version
         displayName: pip --version
 
       - script: pip install packaging pkginfo
@@ -95,7 +97,7 @@ jobs:
       - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt
         displayName: "Install dev dependencies from feed"
 
-      - template: ../common/TestResources/deploy-test-resources.yml
+      - template: /eng/common/TestResources/deploy-test-resources.yml
         parameters:
           ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
           CloudType: $(CloudType)
@@ -105,6 +107,6 @@ jobs:
       - script: python ./common/smoketest/program.py
         displayName: "Run Smoke Test"
 
-      - template: ../common/TestResources/remove-test-resources.yml
+      - template: /eng/common/TestResources/remove-test-resources.yml
         parameters:
           ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
