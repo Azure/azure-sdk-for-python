@@ -34,13 +34,6 @@ service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
 indexers_client = service_client.get_indexers_client()
 
 def create_indexer():
-    # create a datasource
-    ds_client = service_client.get_datasources_client()
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    ds = DataSource(name="indexer-datasource", type="azureblob", credentials=credentials, container=container)
-    data_source = ds_client.create_datasource(ds)
-
     # create an index
     index_name = "indexer-hotels"
     fields = [
@@ -52,6 +45,14 @@ def create_indexer():
     index = ind_client.create_index(index)
 
     # [START create_indexer]
+    # create a datasource
+    ds_client = service_client.get_datasources_client()
+    credentials = DataSourceCredentials(connection_string=connection_string)
+    container = DataContainer(name='searchcontainer')
+    ds = DataSource(name="indexer-datasource", type="azureblob", credentials=credentials, container=container)
+    data_source = ds_client.create_datasource(ds)
+
+    # create an indexer
     indexer = Indexer(name="sample-indexer", data_source_name="indexer-datasource", target_index_name="hotels")
     result = indexers_client.create_indexer(indexer)
     print("Create new Indexer - sample-indexer")
