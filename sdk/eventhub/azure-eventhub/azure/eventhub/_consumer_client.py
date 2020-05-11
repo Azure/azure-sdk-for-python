@@ -5,25 +5,27 @@
 import logging
 import threading
 from typing import TYPE_CHECKING
+
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
 
+
 if TYPE_CHECKING:
-    from typing import(
-        Union,
+    import datetime
+    from azure.core.credentials import TokenCredential
+    from typing import (  # pylint: disable=ungrouped-imports
         Any,
+        Union,
         Dict,
         Tuple,
         Callable,
         List,
-        Optional
+        Optional,
     )
-    import datetime
-    from azure.core.credentials import TokenCredential
-    from ._common import EventData
     from ._eventprocessor.partition_context import PartitionContext
+    from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
 

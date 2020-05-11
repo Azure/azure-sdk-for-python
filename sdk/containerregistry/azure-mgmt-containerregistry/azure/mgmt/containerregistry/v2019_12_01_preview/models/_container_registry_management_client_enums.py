@@ -12,10 +12,57 @@
 from enum import Enum
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
+class PipelineOptions(str, Enum):
+
+    overwrite_tags = "OverwriteTags"
+    overwrite_blobs = "OverwriteBlobs"
+    delete_source_blob_on_success = "DeleteSourceBlobOnSuccess"
+    continue_on_errors = "ContinueOnErrors"
+
+
+class ProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
 class ImportMode(str, Enum):
 
     no_force = "NoForce"
     force = "Force"
+
+
+class PipelineSourceType(str, Enum):
+
+    azure_storage_blob_container = "AzureStorageBlobContainer"
+
+
+class TriggerStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class PipelineRunSourceType(str, Enum):
+
+    azure_storage_blob = "AzureStorageBlob"
+
+
+class PipelineRunTargetType(str, Enum):
+
+    azure_storage_blob = "AzureStorageBlob"
 
 
 class ConnectionStatus(str, Enum):
@@ -32,16 +79,6 @@ class ActionsRequired(str, Enum):
     recreate = "Recreate"
 
 
-class ProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-
-
 class SkuName(str, Enum):
 
     classic = "Classic"
@@ -56,14 +93,6 @@ class SkuTier(str, Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
-
-
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
 
 
 class DefaultAction(str, Enum):
@@ -92,6 +121,12 @@ class EncryptionStatus(str, Enum):
 
     enabled = "enabled"
     disabled = "disabled"
+
+
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class PasswordName(str, Enum):
@@ -173,12 +208,6 @@ class BaseImageDependencyType(str, Enum):
 
     build_time = "BuildTime"
     run_time = "RunTime"
-
-
-class TriggerStatus(str, Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
 
 
 class SourceControlType(str, Enum):
