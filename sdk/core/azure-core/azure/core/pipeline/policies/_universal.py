@@ -31,10 +31,10 @@ import json
 import logging
 import os
 import platform
-import defusedxml.ElementTree as ET
 import types
 import re
 import uuid
+import defusedxml.ElementTree as ET
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
 from six.moves import urllib
