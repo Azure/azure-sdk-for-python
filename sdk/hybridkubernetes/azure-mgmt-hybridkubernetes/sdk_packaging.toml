@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-hybridkubernetes"
+package_pprint_name = "Hybridkubernetes Management"
+package_doc_id = "Hybridkubernetes"
+is_stable = true
