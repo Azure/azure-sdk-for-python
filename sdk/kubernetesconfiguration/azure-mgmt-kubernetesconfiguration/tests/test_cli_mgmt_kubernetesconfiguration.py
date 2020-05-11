@@ -82,16 +82,16 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.source_control_configurations.create_or_update(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2019-11-01-preview", source_control_configuration=BODY)
 
         # /SourceControlConfigurations/get/Get Source Control Configuration[get]
-        result = self.mgmt_client.source_control_configurations.get(resource_group_name=RESOURCE_GROUP, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME)
+        result = self.mgmt_client.source_control_configurations.get(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2019-11-01-preview")
 
         # /SourceControlConfigurations/get/List Source Control Configuration[get]
-        result = self.mgmt_client.source_control_configurations.list(resource_group_name=RESOURCE_GROUP, cluster_name=CLUSTER_NAME)
+        result = self.mgmt_client.source_control_configurations.list(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, api_version="2019-11-01-preview")
 
         # /Operations/get/BatchAccountDelete[get]
         result = self.mgmt_client.operations.list()
 
         # /SourceControlConfigurations/delete/Delete Source Control Configuration[delete]
-        result = self.mgmt_client.source_control_configurations.delete(resource_group_name=RESOURCE_GROUP, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME)
+        result = self.mgmt_client.source_control_configurations.delete(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2019-11-01-preview")
         result = result.result()
 
 
