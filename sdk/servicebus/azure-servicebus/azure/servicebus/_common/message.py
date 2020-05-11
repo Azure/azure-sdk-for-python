@@ -714,5 +714,5 @@ class ReceivedMessage(_ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access no-member
+        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access,no-member
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
