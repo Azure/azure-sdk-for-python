@@ -88,7 +88,7 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.source_control_configurations.list(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, api_version="2019-11-01-preview")
 
         # /Operations/get/BatchAccountDelete[get]
-        result = self.mgmt_client.operations.list()
+        result = self.mgmt_client.operations.list(api_version="2019-11-01-preview")
 
         # /SourceControlConfigurations/delete/Delete Source Control Configuration[delete]
         result = self.mgmt_client.source_control_configurations.delete(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2019-11-01-preview")
