@@ -28,8 +28,11 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
         try:
             producer.send_batch(batch)
         except EventHubError as e:
-            logger.warning("Sync send failed due to error: %r. Retrying...", e)
-            return 0
+            if args.ignore_send_failure:
+                logger.warning("Sync send failed due to error: %r.", e)
+                return 0
+            else:
+                raise
         else:
             return len(batch)
 
@@ -39,8 +42,16 @@ def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
     send_list = []
     for _ in range(quantity):
         send_list.append(EventData(body=b"D" * args.payload))
-    producer.send_batch(send_list)
-    return len(send_list)
+    try:
+        producer.send_batch(send_list)
+    except EventHubError as e:
+        if args.ignore_send_failure:
+            logger.warning("Sync send failed due to error: %r.", e)
+            return 0
+        else:
+            raise
+    else:
+        return len(send_list)
 
 
 async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
@@ -53,8 +64,11 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
         try:
             await producer.send_batch(batch)
         except EventHubError as e:
-            logger.warning("Async send failed due to error: %r. Retrying...", e)
-            return 0
+            if args.ignore_send_failure:
+                logger.warning("ASync send failed due to error: %r.", e)
+                return 0
+            else:
+                raise
         else:
             return len(batch)
 
@@ -64,8 +78,16 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, lo
     send_list = []
     for _ in range(quantity):
         send_list.append(EventData(body=b"D" * args.payload))
-    await producer.send_batch(send_list)
-    return len(send_list)
+    try:
+        await producer.send_batch(send_list)
+    except EventHubError as e:
+        if args.ignore_send_failure:
+            logger.warning("ASync send failed due to error: %r.", e)
+            return 0
+        else:
+            raise
+    else:
+        return len(send_list)
 
 
 class StressTestRunner(object):
@@ -123,6 +145,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--retry_total", type=int, default=3)
         self.argument_parser.add_argument("--retry_backoff_factor", type=float, default=0.8)
         self.argument_parser.add_argument("--retry_backoff_max", type=float, default=120)
+        self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
