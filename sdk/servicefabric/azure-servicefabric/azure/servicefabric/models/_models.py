@@ -1545,10 +1545,10 @@ class ApplicationLoadInfo(Model):
      For applications that do not have application capacity defined this value
      will be zero.
     :type node_count: long
-    :param application_load_metric_information: List of application capacity
-     metric description.
+    :param application_load_metric_information: List of application load
+     metric information.
     :type application_load_metric_information:
-     list[~azure.servicefabric.models.ApplicationMetricDescription]
+     list[~azure.servicefabric.models.ApplicationLoadMetricInformation]
     """
 
     _attribute_map = {
@@ -1556,7 +1556,7 @@ class ApplicationLoadInfo(Model):
         'minimum_nodes': {'key': 'MinimumNodes', 'type': 'long'},
         'maximum_nodes': {'key': 'MaximumNodes', 'type': 'long'},
         'node_count': {'key': 'NodeCount', 'type': 'long'},
-        'application_load_metric_information': {'key': 'ApplicationLoadMetricInformation', 'type': '[ApplicationMetricDescription]'},
+        'application_load_metric_information': {'key': 'ApplicationLoadMetricInformation', 'type': '[ApplicationLoadMetricInformation]'},
     }
 
     def __init__(self, **kwargs):
@@ -1566,6 +1566,44 @@ class ApplicationLoadInfo(Model):
         self.maximum_nodes = kwargs.get('maximum_nodes', None)
         self.node_count = kwargs.get('node_count', None)
         self.application_load_metric_information = kwargs.get('application_load_metric_information', None)
+
+
+class ApplicationLoadMetricInformation(Model):
+    """Describes load information for a custom resource balancing metric. This can
+    be used to limit the total consumption of this metric by the services of
+    this application.
+
+    :param name: The name of the metric.
+    :type name: str
+    :param reservation_capacity: This is the capacity reserved in the cluster
+     for the application.
+     It's the product of NodeReservationCapacity and MinimumNodes.
+     If set to zero, no capacity is reserved for this metric.
+     When setting application capacity or when updating application capacity
+     this value must be smaller than or equal to MaximumCapacity for each
+     metric.
+    :type reservation_capacity: long
+    :param application_capacity: Total capacity for this metric in this
+     application instance.
+    :type application_capacity: long
+    :param application_load: Current load for this metric in this application
+     instance.
+    :type application_load: long
+    """
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+        'reservation_capacity': {'key': 'ReservationCapacity', 'type': 'long'},
+        'application_capacity': {'key': 'ApplicationCapacity', 'type': 'long'},
+        'application_load': {'key': 'ApplicationLoad', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationLoadMetricInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.reservation_capacity = kwargs.get('reservation_capacity', None)
+        self.application_capacity = kwargs.get('application_capacity', None)
+        self.application_load = kwargs.get('application_load', None)
 
 
 class ApplicationMetricDescription(Model):
@@ -6873,8 +6911,8 @@ class ContainerCodePackageProperties(Model):
     :param image_registry_credential: Image registry credential.
     :type image_registry_credential:
      ~azure.servicefabric.models.ImageRegistryCredential
-    :param entrypoint: Override for the default entry point in the container.
-    :type entrypoint: str
+    :param entry_point: Override for the default entry point in the container.
+    :type entry_point: str
     :param commands: Command array to execute within the container in exec
      form.
     :type commands: list[str]
@@ -6927,7 +6965,7 @@ class ContainerCodePackageProperties(Model):
         'name': {'key': 'name', 'type': 'str'},
         'image': {'key': 'image', 'type': 'str'},
         'image_registry_credential': {'key': 'imageRegistryCredential', 'type': 'ImageRegistryCredential'},
-        'entrypoint': {'key': 'entrypoint', 'type': 'str'},
+        'entry_point': {'key': 'entryPoint', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[str]'},
         'environment_variables': {'key': 'environmentVariables', 'type': '[EnvironmentVariable]'},
         'settings': {'key': 'settings', 'type': '[Setting]'},
@@ -6948,7 +6986,7 @@ class ContainerCodePackageProperties(Model):
         self.name = kwargs.get('name', None)
         self.image = kwargs.get('image', None)
         self.image_registry_credential = kwargs.get('image_registry_credential', None)
-        self.entrypoint = kwargs.get('entrypoint', None)
+        self.entry_point = kwargs.get('entry_point', None)
         self.commands = kwargs.get('commands', None)
         self.environment_variables = kwargs.get('environment_variables', None)
         self.settings = kwargs.get('settings', None)
@@ -7214,6 +7252,57 @@ class DeactivationIntentDescription(Model):
     def __init__(self, **kwargs):
         super(DeactivationIntentDescription, self).__init__(**kwargs)
         self.deactivation_intent = kwargs.get('deactivation_intent', None)
+
+
+class ExecutionPolicy(Model):
+    """The execution policy of the service.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DefaultExecutionPolicy, RunToCompletionExecutionPolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Default': 'DefaultExecutionPolicy', 'RunToCompletion': 'RunToCompletionExecutionPolicy'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ExecutionPolicy, self).__init__(**kwargs)
+        self.type = None
+
+
+class DefaultExecutionPolicy(ExecutionPolicy):
+    """The default execution policy. Always restart the service if an exit occurs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DefaultExecutionPolicy, self).__init__(**kwargs)
+        self.type = 'Default'
 
 
 class DeletePropertyBatchOperation(PropertyBatchOperation):
@@ -9569,35 +9658,6 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
         self.kind = 'ExecutingFaults'
 
 
-class ExecutionPolicy(Model):
-    """The execution policy of the service.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RunToCompletionExecutionPolicy
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'runToCompletion': 'RunToCompletionExecutionPolicy'}
-    }
-
-    def __init__(self, **kwargs):
-        super(ExecutionPolicy, self).__init__(**kwargs)
-        self.type = None
-
-
 class ProvisionApplicationTypeDescriptionBase(Model):
     """Represents the type of registration or provision requested, and if the
     operation needs to be asynchronous or not. Supported types of provision
@@ -11153,14 +11213,14 @@ class ImageStoreInfo(Model):
     :type used_by_staging: ~azure.servicefabric.models.UsageInfo
     :param used_by_copy: the ImageStore's file system usage for copied
      application and cluster packages. [Removing application and cluster
-     packages](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-deleteimagestorecontent)
+     packages](https://docs.microsoft.com/rest/api/servicefabric/sfclient-api-deleteimagestorecontent)
      will free up this space.
     :type used_by_copy: ~azure.servicefabric.models.UsageInfo
     :param used_by_register: the ImageStore's file system usage for registered
      and cluster packages. [Unregistering
-     application](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
+     application](https://docs.microsoft.com/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
      and [cluster
-     packages](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
+     packages](https://docs.microsoft.com/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
      will free up this space.
     :type used_by_register: ~azure.servicefabric.models.UsageInfo
     """
@@ -15488,18 +15548,19 @@ class Probe(Model):
     """Probes have a number of fields that you can use to control their behavior.
 
     :param initial_delay_seconds: The initial delay in seconds to start
-     executing probe once code package has started.
+     executing probe once codepackage has started. Default value: 0 .
     :type initial_delay_seconds: int
-    :param period_seconds: Periodic seconds to execute probe.
+    :param period_seconds: Periodic seconds to execute probe. Default value:
+     10 .
     :type period_seconds: int
     :param timeout_seconds: Period after which probe is considered as failed
-     if it hasn't completed successfully.
+     if it hasn't completed successfully. Default value: 1 .
     :type timeout_seconds: int
     :param success_threshold: The count of successful probe executions after
-     which probe is considered success.
+     which probe is considered success. Default value: 1 .
     :type success_threshold: int
     :param failure_threshold: The count of failures after which probe is
-     considered failed.
+     considered failed. Default value: 3 .
     :type failure_threshold: int
     :param exec_property: Exec command to run inside the container.
     :type exec_property: ~azure.servicefabric.models.ProbeExec
@@ -15522,11 +15583,11 @@ class Probe(Model):
 
     def __init__(self, **kwargs):
         super(Probe, self).__init__(**kwargs)
-        self.initial_delay_seconds = kwargs.get('initial_delay_seconds', None)
-        self.period_seconds = kwargs.get('period_seconds', None)
-        self.timeout_seconds = kwargs.get('timeout_seconds', None)
-        self.success_threshold = kwargs.get('success_threshold', None)
-        self.failure_threshold = kwargs.get('failure_threshold', None)
+        self.initial_delay_seconds = kwargs.get('initial_delay_seconds', 0)
+        self.period_seconds = kwargs.get('period_seconds', 10)
+        self.timeout_seconds = kwargs.get('timeout_seconds', 1)
+        self.success_threshold = kwargs.get('success_threshold', 1)
+        self.failure_threshold = kwargs.get('failure_threshold', 3)
         self.exec_property = kwargs.get('exec_property', None)
         self.http_get = kwargs.get('http_get', None)
         self.tcp_socket = kwargs.get('tcp_socket', None)
@@ -17391,15 +17452,19 @@ class RollingUpgradeUpdateDescription(Model):
 
 
 class RunToCompletionExecutionPolicy(ExecutionPolicy):
-    """The run to completion execution policy.
+    """The run to completion execution policy, the service will perform its
+    desired operation and complete successfully. If the service encounters
+    failure, it will restarted based on restart policy specified. If the
+    service completes its operation successfully, it will not be restarted
+    again.
 
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Constant filled by server.
     :type type: str
     :param restart: Required. Enumerates the restart policy for
-     RunToCompletionExecutionPolicy. Possible values include: 'onFailure',
-     'never'
+     RunToCompletionExecutionPolicy. Possible values include: 'OnFailure',
+     'Never'
     :type restart: str or ~azure.servicefabric.models.RestartPolicy
     """
 
@@ -17416,7 +17481,7 @@ class RunToCompletionExecutionPolicy(ExecutionPolicy):
     def __init__(self, **kwargs):
         super(RunToCompletionExecutionPolicy, self).__init__(**kwargs)
         self.restart = kwargs.get('restart', None)
-        self.type = 'runToCompletion'
+        self.type = 'RunToCompletion'
 
 
 class SafetyCheckWrapper(Model):
@@ -21105,7 +21170,7 @@ class StatelessServiceDescription(ServiceDescription):
      The endpoint exposed on this instance is removed prior to starting the
      delay, which prevents new connections to this instance.
      In addition, clients that have subscribed to service endpoint change
-     events(https://docs.microsoft.com/en-us/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
+     events(https://docs.microsoft.com/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
      can do
      the following upon receiving the endpoint removal notification:
      - Stop sending new requests to this instance.
@@ -21582,7 +21647,7 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      The endpoint exposed on this instance is removed prior to starting the
      delay, which prevents new connections to this instance.
      In addition, clients that have subscribed to service endpoint change
-     events(https://docs.microsoft.com/en-us/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
+     events(https://docs.microsoft.com/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
      can do
      the following upon receiving the endpoint removal notification:
      - Stop sending new requests to this instance.
