@@ -44,7 +44,7 @@ async def create_indexer():
     index = Index(name=index_name, fields=fields)
     ind_client = service_client.get_indexes_client()
     async with ind_client:
-        index = await ind_client.create_index(index)
+        await ind_client.create_index(index)
 
     # [START create_indexer_async]
     # create a datasource

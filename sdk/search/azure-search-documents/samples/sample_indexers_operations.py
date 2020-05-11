@@ -42,7 +42,7 @@ def create_indexer():
     ]
     index = Index(name=index_name, fields=fields)
     ind_client = service_client.get_indexes_client()
-    index = ind_client.create_index(index)
+    ind_client.create_index(index)
 
     # [START create_indexer]
     # create a datasource

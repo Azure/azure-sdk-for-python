@@ -15,7 +15,7 @@ DESCRIPTION:
     the indexer status.
 
     The datasource used in this sample is stored as metadata for empty blobs in "searchcontainer".
-    The json file can be found in samples/files folder named patient_data.json has the metdata of
+    The json file can be found in samples/files folder named hotel_small.json has the metdata of
     each blob.
 USAGE:
     python sample_indexer_datasource_skillset.py
@@ -38,7 +38,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import (
     DataSource, DataContainer, DataSourceCredentials, Index, Indexer, SimpleField, edm,
     EntityRecognitionSkill, InputFieldMappingEntry, OutputFieldMappingEntry, Skillset,
-    CorsOptions, IndexingSchedule
+    CorsOptions, IndexingSchedule, SearchableField, IndexingParameters
 )
 from azure.search.documents import SearchServiceClient
 
@@ -46,25 +46,20 @@ from azure.search.documents import SearchServiceClient
 service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
 
 def _create_index():
-    name = "patient-index"
+    name = "hotel-index"
 
     # Here we create an index with listed fields.
     fields = [
-        SimpleField(name="agebracket", type=edm.String, filterable=True, sortable=True),
-        SimpleField(name="backupnotes", type=edm.String),
-        SimpleField(name="contractedfromwhichpatientsuspected", type=edm.String),
-        SimpleField(name="currentstatus", type=edm.String, filterable=True),
-        SimpleField(name="dateannounced", type=edm.String),
-        SimpleField(name="detectedcity", type=edm.String),
-        SimpleField(name="detecteddistrict", type=edm.String),
-        SimpleField(name="detectedstate", type=edm.String),
-        SimpleField(name="estimatedonsetdate", type=edm.String),
-        SimpleField(name="gender", type=edm.String, filterable=True),
-        SimpleField(name="nationality", type=edm.String),
-        SimpleField(name="notes", type=edm.String),
-        SimpleField(name="patientnumber", type=edm.String, key=True, filterable=True),
-        SimpleField(name="statecode", type=edm.String),
-        SimpleField(name="typeoftransmission", type=edm.String),
+        SimpleField(name="hotelId", type=edm.String, filterable=True, sortable=True),
+        SearchableField(name="hotelName", type=edm.String),
+        SimpleField(name="description", type=edm.String),
+        SimpleField(name="descriptionFr", type=edm.String),
+        SimpleField(name="category", type=edm.String),
+        SimpleField(name="parkingIncluded", type=edm.Boolean, filterable=True),
+        SimpleField(name="smokingAllowed", type=edm.Boolean, , filterable=True),
+        SimpleField(name="lastRenovationDate", type=edm.String),
+        SimpleField(name="rating", type=edm.Int64, sortable=True),
+        SimpleField(name="location", type=edm.GeographyPoint),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 
@@ -83,7 +78,7 @@ def _create_datasource():
     ds_client = service_client.get_datasources_client()
     credentials = DataSourceCredentials(connection_string=connection_string)
     container = DataContainer(name='searchcontainer')
-    ds = DataSource(name="patient-datasource", type="azureblob", credentials=credentials, container=container)
+    ds = DataSource(name="hotel-datasource", type="azureblob", credentials=credentials, container=container)
     data_source = ds_client.create_datasource(ds)
     return data_source
 
@@ -93,7 +88,7 @@ def _create_skillset():
     output = OutputFieldMappingEntry(name="dateTimes", target_name="Date")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    result = client.create_skillset(name='patient-data-skill', skills=[s], description="example skillset")
+    result = client.create_skillset(name='hotel-data-skill', skills=[s], description="example skillset")
     return result
 
 def sample_indexer_workflow():
@@ -109,18 +104,20 @@ def sample_indexer_workflow():
     print("Index is created")
 
     # we pass the data source, skillsets and targeted index to build an indexer
+    parameters = IndexingParameters(configuration={"parsingMode": "jsonArray"})
     indexer = Indexer(
-        name="patient-data-indexer",
+        name="hotel-data-indexer",
         data_source_name=ds_name,
         target_index_name=ind_name,
-        skillset_name=skillset_name
+        skillset_name=skillset_name,
+        parameters=parameters
     )
 
     indexer_client = service_client.get_indexers_client()
     indexer_client.create_indexer(indexer) # create the indexer
 
     # to get an indexer
-    result = indexer_client.get_indexer("patient-data-indexer")
+    result = indexer_client.get_indexer("hotel-data-indexer")
     print(result)
 
     # To run an indexer, we can use run_indexer()
