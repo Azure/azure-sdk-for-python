@@ -49,7 +49,7 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
             "server_app_id": "45c27b16-e262-4c55-b572-b3b8f7788eb8"
           }
         }
-        result = self.mgmt_client.connected_cluster.create(resource_group_name=group_name, cluster_name=cluster_name, connected_cluster=BODY)
+        result = self.kubernetes_client.connected_cluster.create(resource_group_name=group_name, cluster_name=cluster_name, connected_cluster=BODY)
         result = result.result()
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
