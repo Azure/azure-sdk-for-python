@@ -3,6 +3,8 @@
 
 ## 1.5.1 (Unreleased)
 
+### Features
+- Create multiapi base client   #10179
 
 ## 1.5.0 (2020-05-04)
 
@@ -10,7 +12,6 @@
 
 - Support "x-ms-retry-after-ms" in response header   #10743
 - `link` and `link_from_headers` now accepts attributes   #10765
-- Create multiapi base client   #10179
 
 ### Bug fixes
 
