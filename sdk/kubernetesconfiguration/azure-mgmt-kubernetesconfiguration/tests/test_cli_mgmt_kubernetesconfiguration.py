@@ -79,7 +79,7 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
             "chart_values": "--set git.ssh.secretName=flux-git-deploy --set tillerNamespace=kube-system"
           }
         }
-        result = self.mgmt_client.source_control_configurations.create_or_update(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2019-11-01-preview", source_control_configuration=BODY)
+        result = self.mgmt_client.source_control_configurations.create_or_update(resource_group_name=RESOURCE_GROUP, cluster_rp=CLUSTER_RP, cluster_resource_name=CLUSTER_RESOURCE_NAME, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME, api_version="2020-01-01-preview", source_control_configuration=BODY)
 
         # /SourceControlConfigurations/get/Get Source Control Configuration[get]
         result = self.mgmt_client.source_control_configurations.get(resource_group_name=RESOURCE_GROUP, cluster_name=CLUSTER_NAME, source_control_configuration_name=SOURCE_CONTROL_CONFIGURATION_NAME)
