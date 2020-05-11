@@ -34,10 +34,10 @@ import platform
 import types
 import re
 import uuid
-import defusedxml.ElementTree as ET
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
 from six.moves import urllib
+import defusedxml.ElementTree as ET
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
