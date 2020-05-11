@@ -39,21 +39,21 @@ class SearchIndexersClient(HeadersMixin):
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
 
-    def __enter__(self):
+    async def __aenter__(self):
         # type: () -> SearchIndexersClient
-        self._client.__enter__()  # pylint:disable=no-member
+        await self._client.__aenter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
+    async def __aexit__(self, *args):
         # type: (*Any) -> None
-        return self._client.__exit__(*args)  # pylint:disable=no-member
+        return await self._client.__aexit__(*args)  # pylint:disable=no-member
 
-    def close(self):
+    async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchIndexersClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchIndexersClient` session.
 
         """
-        return self._client.close()
+        return await self._client.close()
 
     @distributed_trace_async
     async def create_indexer(self, indexer, **kwargs):
