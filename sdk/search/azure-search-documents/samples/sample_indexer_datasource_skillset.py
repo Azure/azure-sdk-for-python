@@ -50,13 +50,13 @@ def _create_index():
 
     # Here we create an index with listed fields.
     fields = [
-        SimpleField(name="hotelId", type=edm.String, filterable=True, sortable=True),
+        SimpleField(name="hotelId", type=edm.String, filterable=True, sortable=True, key=True),
         SearchableField(name="hotelName", type=edm.String),
         SimpleField(name="description", type=edm.String),
         SimpleField(name="descriptionFr", type=edm.String),
         SimpleField(name="category", type=edm.String),
         SimpleField(name="parkingIncluded", type=edm.Boolean, filterable=True),
-        SimpleField(name="smokingAllowed", type=edm.Boolean, , filterable=True),
+        SimpleField(name="smokingAllowed", type=edm.Boolean, filterable=True),
         SimpleField(name="lastRenovationDate", type=edm.String),
         SimpleField(name="rating", type=edm.Int64, sortable=True),
         SimpleField(name="location", type=edm.GeographyPoint),

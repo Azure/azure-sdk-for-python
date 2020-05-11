@@ -1,5 +1,4 @@
-{
-  "value": [
+[
     {
       "@search.action": "upload",
       "hotelId": "1",
@@ -250,5 +249,4 @@
         }
       ]
     }
-  ]
-}
+]
