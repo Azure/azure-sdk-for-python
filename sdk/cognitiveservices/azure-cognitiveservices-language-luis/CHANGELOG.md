@@ -1,5 +1,24 @@
 # Release History
 
+## 0.6.0 (2020-05-11)
+
+*Authoring*
+
+**Features**
+
+  - Added operation AppsOperations.import_v2_app
+  - Added operation AppsOperations.import_lu_format
+  - Added operation VersionsOperations.import_v2_app
+  - Added operation VersionsOperations.export_lu_format
+  - Added operation VersionsOperations.import_lu_format
+
+**Breaking changes**
+
+  - Operation AzureAccountsOperations.get_assigned has a new signature (added arm_token parameter)
+  - Operation AzureAccountsOperations.assign_to_app has a new signature (added arm_token parameter)
+  - Operation AzureAccountsOperations.remove_from_app has a new signature (added arm_token parameter)
+  - Operation AzureAccountsOperations.list_user_luis_accounts has a new signature (added arm_token parameter)
+
 ## 0.5.0 (2019-11-08)
 
 *Authoring*
