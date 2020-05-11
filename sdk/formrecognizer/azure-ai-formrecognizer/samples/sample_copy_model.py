@@ -39,21 +39,39 @@ class CopyModelSample(object):
     target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
     target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
-    def begin_copy_model(self):
+    def copy_model_with_target_credentials(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormTrainingClient
 
         source_client = FormTrainingClient(endpoint=self.source_endpoint, credential=AzureKeyCredential(self.source_key))
         target_client = FormTrainingClient(endpoint=self.target_endpoint, credential=AzureKeyCredential(self.target_key))
 
-        poller = source_client.begin_copy_model(
+        copy = source_client.begin_copy_model(
             source_model_id=self.source_model_id,
             target_resource_region=self.target_region,
             target_resource_id=self.target_resource_id,
             target_endpoint=self.target_endpoint,
             target_credential=AzureKeyCredential(self.target_key)
         )
-        copy = poller.result()
+
+        copied_over_model = target_client.get_custom_model(copy.model_id)
+        print(copied_over_model)
+
+    def copy_model_from_copy_auth(self):
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+
+        source_client = FormTrainingClient(endpoint=self.source_endpoint, credential=AzureKeyCredential(self.source_key))
+        target_client = FormTrainingClient(endpoint=self.target_endpoint, credential=AzureKeyCredential(self.target_key))
+
+        copy_auth = target_client.get_model_copy_authorization()
+
+        copy = source_client.begin_copy_model(
+            source_model_id=self.source_model_id,
+            target_resource_region=self.target_region,
+            target_resource_id=self.target_resource_id,
+            copy_authorization=copy_auth
+        )
 
         copied_over_model = target_client.get_custom_model(copy.model_id)
         print(copied_over_model)
@@ -61,4 +79,5 @@ class CopyModelSample(object):
 
 if __name__ == '__main__':
     sample = CopyModelSample()
-    sample.begin_copy_model()
+    sample.copy_model_with_target_credentials()
+    sample.copy_model_from_copy_auth()

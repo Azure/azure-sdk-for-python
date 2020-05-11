@@ -29,13 +29,13 @@ from .._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
-    CustomFormModel
+    CustomFormModel,
+    CopyAuthorization
 )
 from .._user_agent import USER_AGENT
 from .._polling import TrainingPolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
-    from .._generated.models import CopyAuthorizationResult
 
 
 class FormTrainingClient(object):
@@ -237,19 +237,20 @@ class FormTrainingClient(object):
         return CustomFormModel._from_generated(response)
 
     @distributed_trace_async
-    async def _generate_model_copy_authorization(self, **kwargs: Any) -> "CopyAuthorizationResult":
+    async def get_model_copy_authorization(self, **kwargs: Any) -> "CopyAuthorization":
         """Generate authorization to copy a model into the target Form Recognizer resource.
 
-        :return: CopyAuthorizationResult
-        :rtype: ~azure.ai.formrecognizer.CopyAuthorizationResult
+        :return: CopyAuthorization
+        :rtype: ~azure.ai.formrecognizer.CopyAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        return await self._client.generate_model_copy_authorization(  # type: ignore
+        response = await self._client.generate_model_copy_authorization(  # type: ignore
             cls=lambda pipeline_response, deserialized, response_headers: deserialized,
             error_map=error_map,
             **kwargs
         )
+        return CopyAuthorization._from_generated(response)
 
     @distributed_trace_async
     async def copy_model(
@@ -257,8 +258,9 @@ class FormTrainingClient(object):
         source_model_id: str,
         target_resource_id: str,
         target_resource_region: str,
-        target_endpoint: str,
-        target_credential: "AzureKeyCredential",
+        copy_authorization: Optional["CopyAuthorization"] = None,
+        target_endpoint_url: Optional[str] = None,
+        target_credential: Optional["AzureKeyCredential"] = None,
         **kwargs: Any
     ) -> CustomFormModelInfo:
         """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
@@ -271,7 +273,11 @@ class FormTrainingClient(object):
             where the model is copied to.
         :param str target_resource_region: Location of the target Azure resource. A valid Azure
             region name supported by Cognitive Services.
-        :param str target_endpoint: The target endpoint to transfer the copied model.
+        :param ~azure.ai.formrecognizer.CopyAuthorization copy_authorization:
+            The copy authorization generated from the target resource's call to
+            :func:`~get_model_copy_authorization()`. You must pass either copy_authorization
+            or `target_credential` and `target_endpoint_url`.
+        :param str target_endpoint_url: The target endpoint to transfer the copied model.
         :param ~azure.core.credentials.AzureKeyCredential target_credential:
             The credential for the target resource.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
@@ -282,8 +288,11 @@ class FormTrainingClient(object):
         """
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
-        target_client = self._get_form_training_client(target_endpoint, target_credential)
-        copy_authorization = await target_client._generate_model_copy_authorization()
+        if target_endpoint_url and target_credential:
+            target_client = self._get_form_training_client(target_endpoint_url, target_credential)
+            copy_authorization = await target_client.get_model_copy_authorization()
+        elif copy_authorization is None:
+            raise ValueError("Pass only copy_authorization or target_endpoint_url and target_credential.")
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)

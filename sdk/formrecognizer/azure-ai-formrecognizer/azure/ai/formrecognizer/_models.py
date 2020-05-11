@@ -10,7 +10,7 @@ from enum import Enum
 from collections import namedtuple
 import re
 import six
-from ._generated.models import CopyAuthorizationResult as GeneratedCopyAuthorizationResult
+from ._generated.models import CopyAuthorizationResult
 
 
 def adjust_confidence(score):
@@ -893,4 +893,36 @@ class AccountProperties(object):
     def __repr__(self):
         return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
             self.custom_model_count, self.custom_model_limit
+        )[:1024]
+
+
+class CopyAuthorization(CopyAuthorizationResult):
+    """Request parameter that contains authorization claims for copy operation.
+
+    :ivar str model_id: Model identifier.
+    :ivar str access_token: Required. Token claim used to authorize the request.
+    :ivar int expiration_date_time_ticks: The time when the access token expires. The date
+        is represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CopyAuthorization, self).__init__(**kwargs)
+        self.model_id = kwargs.get('model_id', None)
+        self.access_token = kwargs.get('access_token', None)
+        self.expiration_date_time_ticks = kwargs.get('expiration_date_time_ticks', None)
+
+    @classmethod
+    def _from_generated(cls, copy):
+        return cls(
+            model_id=copy.model_id,
+            access_token=copy.access_token,
+            expiration_date_time_ticks=copy.expiration_date_time_ticks
+        )
+
+    def __repr__(self):
+        return "CopyAuthorization(model_id={}, access_token={}, expiration_date_time_ticks={})".format(
+            self.model_id, self.access_token, self.expiration_date_time_ticks
         )[:1024]

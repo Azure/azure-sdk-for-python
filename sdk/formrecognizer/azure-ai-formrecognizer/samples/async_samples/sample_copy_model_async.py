@@ -40,7 +40,7 @@ class CopyModelSampleAsync(object):
     target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
     target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
-    async def copy_model(self):
+    async def copy_model_with_target_credentials(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormTrainingClient
 
@@ -58,10 +58,30 @@ class CopyModelSampleAsync(object):
         copied_over_model = await target_client.get_custom_model(copy.model_id)
         print(copied_over_model)
 
+    async def copy_model_from_copy_auth(self):
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer.aio import FormTrainingClient
+
+        source_client = FormTrainingClient(endpoint=self.source_endpoint, credential=AzureKeyCredential(self.source_key))
+        target_client = FormTrainingClient(endpoint=self.target_endpoint, credential=AzureKeyCredential(self.target_key))
+
+        copy_auth = await target_client.get_model_copy_authorization()
+
+        copy = await source_client.copy_model(
+            source_model_id=self.source_model_id,
+            target_resource_region=self.target_region,
+            target_resource_id=self.target_resource_id,
+            copy_authorization=copy_auth
+        )
+
+        copied_over_model = await target_client.get_custom_model(copy.model_id)
+        print(copied_over_model)
+
 
 async def main():
     sample = CopyModelSampleAsync()
-    await sample.copy_model()
+    await sample.copy_model_with_target_credentials()
+    await sample.copy_model_from_copy_auth()
 
 
 if __name__ == '__main__':
