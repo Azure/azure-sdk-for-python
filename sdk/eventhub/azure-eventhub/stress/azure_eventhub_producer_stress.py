@@ -33,8 +33,7 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
                 return 0
             else:
                 raise
-        else:
-            return len(batch)
+    return len(batch)
 
 
 def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
@@ -50,8 +49,7 @@ def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
             return 0
         else:
             raise
-    else:
-        return len(send_list)
+    return len(send_list)
 
 
 async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
@@ -69,8 +67,7 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
                 return 0
             else:
                 raise
-        else:
-            return len(batch)
+    return len(batch)
 
 
 async def stress_send_list_async(producer: EventHubProducerClientAsync, args, logger):
@@ -86,8 +83,7 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, lo
             return 0
         else:
             raise
-    else:
-        return len(send_list)
+    return len(send_list)
 
 
 class StressTestRunner(object):
