@@ -27,7 +27,7 @@ nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Meta-packages to ignore
-meta_package = ['azure-keyvault', 'azure-mgmt', 'azure']
+meta_package = ['azure-keyvault', 'azure-mgmt', 'azure', 'azure-storage']
 
 # content packages are packages that are not meta nor nspkg
 content_package = sorted([p for p in packages.keys() if p not in meta_package+nspkg_packages])
