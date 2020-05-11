@@ -1,5 +1,8 @@
 # Release History
 
+## 5.1.1 (Unreleased)
+
+
 ## 5.1.0 (2020-05-04)
 
 **New Features**
@@ -9,6 +12,9 @@
 
 **Bug fixes**
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
+- Updated uAMQP dependency to 1.2.7.
+  - Fixed bug in setting certificate of tlsio on MacOS. #7201
+  - Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `EventHubConsumerClient` and `EventHubProducerClient`.
 
 ## 5.1.0b1 (2020-04-06)
 

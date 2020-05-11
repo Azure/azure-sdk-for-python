@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ExportPipelinePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExportPipeline <azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipeline>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExportPipeline]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExportPipelinePaged, self).__init__(*args, **kwargs)
 class RegistryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2019_12_01_preview.models.Registry>` object
@@ -38,6 +51,19 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class ImportPipelinePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ImportPipeline <azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipeline>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ImportPipeline]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ImportPipelinePaged, self).__init__(*args, **kwargs)
 class OperationDefinitionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`OperationDefinition <azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDefinition>` object
@@ -51,6 +77,19 @@ class OperationDefinitionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationDefinitionPaged, self).__init__(*args, **kwargs)
+class PipelineRunPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PipelineRun <azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRun>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PipelineRun]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PipelineRunPaged, self).__init__(*args, **kwargs)
 class PrivateEndpointConnectionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection>` object

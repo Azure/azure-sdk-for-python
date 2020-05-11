@@ -1,5 +1,8 @@
 # Release History
 
+## 7.0.0b3 (Unreleased)
+
+
 ## 7.0.0b2 (2020-05-04)
 
 **New Features**
@@ -21,6 +24,9 @@
 **BugFixes**
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Updated uAMQP dependency to 1.2.7.
+    * Fixed bug in setting certificate of tlsio on MacOS. #7201
+    * Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `ServiceBusClient`.
 
 **Breaking Changes**
 
