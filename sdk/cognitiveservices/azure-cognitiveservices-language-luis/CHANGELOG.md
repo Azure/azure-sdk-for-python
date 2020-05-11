@@ -1,5 +1,8 @@
 # Release History
 
+## 0.6.1 (Unreleased)
+
+
 ## 0.6.0 (2020-05-11)
 
 *Authoring*
