@@ -5,10 +5,11 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List
+from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClient, types
+from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandlerSync
 from ._common import mgmt_handlers
@@ -137,9 +138,9 @@ class ServiceBusSender(BaseHandlerSync, SenderMixin):
             topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError("Queue/Topic name can not be specified simultaneously.")
-            if not (queue_name or topic_name):
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
+            if not entity_name:
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -152,6 +153,7 @@ class ServiceBusSender(BaseHandlerSync, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
@@ -183,6 +185,7 @@ class ServiceBusSender(BaseHandlerSync, SenderMixin):
             raise
 
     def _send(self, message, timeout=None, last_exception=None):
+        # type: (Message, Optional[float], Exception) -> None
         self._open()
         self._set_msg_timeout(timeout, last_exception)
         self._handler.send_message(message.message)

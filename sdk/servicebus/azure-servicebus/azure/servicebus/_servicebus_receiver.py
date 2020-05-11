@@ -5,10 +5,11 @@
 import time
 import logging
 import functools
-from typing import Any, List, TYPE_CHECKING, Optional
+from typing import Any, List, TYPE_CHECKING, Optional, Dict
 
 from uamqp import ReceiveClient, types
 from uamqp.constants import SenderSettleMode
+from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandlerSync
 from ._common.utils import create_authentication
@@ -103,17 +104,16 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
+            queue_name = kwargs.get("queue_name")  # type: Optional[str]
+            topic_name = kwargs.get("topic_name")  # type: Optional[str]
             subscription_name = kwargs.get("subscription_name")
             if queue_name and topic_name:
                 raise ValueError("Queue/Topic name can not be specified simultaneously.")
-            if not (queue_name or topic_name):
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             if topic_name and not subscription_name:
                 raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
-
             entity_name = queue_name or topic_name
+            if not entity_name:
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
 
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -147,6 +147,7 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
         return message
 
     def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
         self._handler = ReceiveClient(
             self._get_source(),
             auth=auth,
@@ -182,6 +183,7 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
             raise
 
     def _receive(self, max_batch_size=None, timeout=None):
+        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
@@ -194,6 +196,7 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
         return [self._build_message(message) for message in batch]
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
+        # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -210,6 +213,7 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
         )
 
     def _renew_locks(self, *lock_tokens):
+        # type: (*str) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,

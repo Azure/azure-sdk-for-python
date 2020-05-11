@@ -8,7 +8,7 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Dict, Any
 
 import uamqp.message
 from uamqp import types
@@ -524,6 +524,7 @@ class _ReceivedMessageBase(PeekMessage):
             pass
 
     def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
+        # type: (str, Dict[str, Any]) -> Callable
         # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
@@ -553,6 +554,7 @@ class _ReceivedMessageBase(PeekMessage):
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
     def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
+        # type: (str, Dict[str, Any]) -> Callable
         # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
         # should be accepted. Will revisit this later.
         # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
@@ -587,14 +589,12 @@ class ReceivedMessage(_ReceivedMessageBase):
             :caption: Checking the properties on a received message.
     """
 
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
-        super(ReceivedMessage, self).__init__(message, mode=mode, **kwargs)
-
     def _settle_message(
             self,
             settle_operation,
             dead_letter_details=None
     ):
+        # type: (str, Dict[str, Any]) -> None
         try:
             if not self._is_deferred_message:
                 try:

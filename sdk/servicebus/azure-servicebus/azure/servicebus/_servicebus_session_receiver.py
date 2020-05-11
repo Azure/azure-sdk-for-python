@@ -150,5 +150,4 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = super(ServiceBusSessionReceiver, cls)._from_connection_string(conn_str, **kwargs)
-        return cls(**constructor_args)
+        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore

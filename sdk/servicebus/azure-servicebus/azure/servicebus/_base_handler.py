@@ -7,7 +7,7 @@ import logging
 import uuid
 import time
 from datetime import timedelta
-from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any
+from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
 
 try:
     from urllib import quote_plus  # type: ignore
@@ -118,6 +118,7 @@ class BaseHandler(object):
         credential,
         **kwargs
     ):
+        # type: (str, str, TokenCredential, Any) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
 
@@ -128,7 +129,7 @@ class BaseHandler(object):
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None
+        self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties()
 
@@ -167,6 +168,7 @@ class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attribut
         self.close()
 
     def _handle_exception(self, exception):
+        # type: (BaseException) -> ServiceBusError
         error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
         if error_need_close_handler:
             self._close_handler()
@@ -182,6 +184,7 @@ class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attribut
         timeout=None,
         entity_name=None
     ):
+        # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
@@ -202,16 +205,14 @@ class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attribut
             raise last_exception
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
-        last_exception = None
         max_retries = self._config.retry_total
 
         while retried_times <= max_retries:
             try:
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return operation(**kwargs)
@@ -219,23 +220,24 @@ class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attribut
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
                 retried_times += 1
                 if retried_times > max_retries:
-                    break
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
 
-        _LOGGER.info(
-            "%r operation has exhausted retry. Last exception: %r.",
-            self._container_id,
-            last_exception,
-        )
-        raise last_exception
-
     def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
+        # type: (str, uamqp.Message, Callable, bool, Any) -> uamqp.Message
         self._open()
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
@@ -267,6 +269,7 @@ class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attribut
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,

@@ -8,7 +8,6 @@ from typing import Optional
 
 from .._common.message import _ReceivedMessageBase
 from .._common.constants import (
-    ReceiveSettleMode,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MESSAGE_COMPLETE,
     MESSAGE_DEAD_LETTER,
@@ -27,9 +26,6 @@ class ReceivedMessage(_ReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """
-
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
-        super(ReceivedMessage, self).__init__(message=message, mode=mode, **kwargs)
 
     async def _settle_message(
             self,

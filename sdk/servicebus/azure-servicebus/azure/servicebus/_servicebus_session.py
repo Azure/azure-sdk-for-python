@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, Optional
 import six
 
 from ._common.utils import utc_from_timestamp, utc_now
@@ -21,17 +21,20 @@ from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
     import datetime
+    from ._servicebus_session_receiver import ServiceBusSessionReceiver
+    from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
     def __init__(self, session_id, receiver, encoding="UTF-8"):
+        # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding
         self._session_start = None
-        self._locked_until_utc = None
+        self._locked_until_utc = None  # type: Optional[datetime.datetime]
         self.auto_renew_error = None
 
     @property
@@ -55,7 +58,7 @@ class BaseSession(object):
 
     @property
     def locked_until_utc(self):
-        # type: () -> datetime.datetime
+        # type: () -> Optional[datetime.datetime]
         """The time at which this session's lock will expire.
 
         :rtype: datetime.datetime
