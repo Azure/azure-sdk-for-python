@@ -68,6 +68,7 @@ setup(
     install_requires=[
         'requests>=2.18.4',
         'six>=1.6',
+        'defusedxml'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

@@ -31,7 +31,7 @@ import json
 import logging
 import os
 import platform
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import types
 import re
 import uuid
