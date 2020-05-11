@@ -44,7 +44,7 @@ try:
 except ImportError:
     binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
-import defusedxml.ElementTree as ET
+import xml.etree.ElementTree as ET
 
 from typing import (
     TYPE_CHECKING,
