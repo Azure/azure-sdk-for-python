@@ -185,7 +185,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - job: 'RunApiStubGen'
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApuStubGen'], 'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'], 'true'))
     displayName: 'Run api stub generator'
     variables:
     - template: ../variables/globals.yml
