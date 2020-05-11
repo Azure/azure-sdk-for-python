@@ -144,3 +144,4 @@ opentelemetry-api==0.6b0
 #override azure-appconfiguration msrest>=0.6.10
 #override azure-servicebus uamqp>=1.2.7,<2.0.0
 #override azure-search-documents msrest>=0.6.10
+defusedxml
