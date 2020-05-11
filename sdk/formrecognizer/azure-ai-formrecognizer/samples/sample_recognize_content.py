@@ -33,13 +33,12 @@ class RecognizeContentSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_content(self):
-        from azure.ai.formrecognizer import FormWord, FormLine
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         with open("sample_forms/forms/Invoice_1.pdf", "rb") as f:
-            poller = form_recognizer_client.begin_recognize_content(stream=f.read())
+            poller = form_recognizer_client.begin_recognize_content(stream=f)
         contents = poller.result()
 
         for idx, content in enumerate(contents):
@@ -66,6 +65,8 @@ class RecognizeContentSample(object):
                     line.text,
                     format_bounding_box(line.bounding_box)
                 ))
+                for word in line.words:
+                    print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
             print("----------------------------------------")
 
 
