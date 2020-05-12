@@ -361,6 +361,33 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
+    def undelete_share(self, deleted_share_name, deleted_share_version, **kwargs):
+        # type: (str, str, **Any) -> None
+        """Restores soft-deleted share.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        :param str deleted_share_name:
+            Specifies the name of the deleted share to restore.
+            Service Version 2019-12-12 and later.
+        :param str deleted_share_version:
+            Specifies the version of the deleted share to restore.
+            Service Version 2019-12-12 and later.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        if deleted_share_name != self.share_name:
+            raise ValueError("Current service version doesn't support restoring to a different share name")
+        try:
+            self._client.share.restore(deleted_share_name=deleted_share_name,
+                                       deleted_share_version=deleted_share_version,
+                                       timeout=kwargs.pop('timeout', None), **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def get_share_properties(self, **kwargs):
         # type: (Any) -> ShareProperties
         """Returns all user-defined metadata and system properties for the

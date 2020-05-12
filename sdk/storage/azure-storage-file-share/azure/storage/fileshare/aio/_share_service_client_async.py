@@ -186,6 +186,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
             Specifies that share snapshot be returned in the response.
+        :keyword bool include_deleted:
+            Specifies that deleted shares be returned in the response.
+            This is only for share soft delete enabled account.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
@@ -206,6 +209,10 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             include.append('metadata')
         if include_snapshots:
             include.append('snapshots')
+        include_deleted = kwargs.pop('include_deleted', None)
+        if include_deleted:
+            include.append("deleted")
+
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_shares_segment,
