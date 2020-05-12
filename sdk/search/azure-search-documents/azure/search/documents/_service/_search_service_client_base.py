@@ -39,7 +39,7 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential):
-        # type: (str, AzureKeyCredential, **Any) -> None
+        # type: (str, AzureKeyCredential) -> None
 
         try:
             if endpoint.lower().startswith('http') and not endpoint.lower().startswith('https'):
