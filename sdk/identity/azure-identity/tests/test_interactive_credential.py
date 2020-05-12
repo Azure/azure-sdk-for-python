@@ -203,25 +203,66 @@ def test_enable_persistent_cache():
     """the credential should use the persistent cache only when given enable_persistent_cache=True"""
 
     class TestCredential(InteractiveCredential):
+        def __init__(self, **kwargs):
+            super(TestCredential, self).__init__(client_id="...", **kwargs)
+
         def _request_token(self, *_, **__):
             pass
 
-    expected_cache = Mock()
-    persistent_cache_loader = InteractiveCredential.__module__ + "._load_persistent_cache"
+    in_memory_cache = Mock()
+
+    persistent_cache = "azure.identity._internal.persistent_cache"
 
     # credential should default to an in memory cache
     raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
-    with patch(persistent_cache_loader, raise_when_called):
-        with patch(InteractiveCredential.__module__ + ".msal.TokenCache", lambda: expected_cache):
-            credential = TestCredential(client_id="...")
-    assert credential._cache is expected_cache
+    with patch(persistent_cache + ".load_persistent_cache", raise_when_called):
+        with patch(InteractiveCredential.__module__ + ".msal.TokenCache", lambda: in_memory_cache):
+            credential = TestCredential()
+            assert credential._cache is in_memory_cache
+
+            # allowing an unencrypted cache doesn't count as opting in to the persistent cache
+            credential = TestCredential(allow_unencrypted_cache=True)
+            assert credential._cache is in_memory_cache
 
     # keyword argument opts in to persistent cache
-    with patch(persistent_cache_loader, lambda: expected_cache):
-        credential = TestCredential(client_id="...", enable_persistent_cache=True)
-    assert credential._cache is expected_cache
+    with patch(persistent_cache + ".msal_extensions") as mock_extensions:
+        TestCredential(enable_persistent_cache=True)
+    assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
-    with patch(InteractiveCredential.__module__ + ".sys.platform", "commodore64"):
+    with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            TestCredential(client_id="...", enable_persistent_cache=True)
+            TestCredential(enable_persistent_cache=True)
+        with pytest.raises(NotImplementedError):
+            TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+
+
+@patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
+@patch("azure.identity._internal.persistent_cache.msal_extensions")
+def test_persistent_cache_linux(mock_extensions):
+    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly opts in.
+
+    This test was written when Linux was the only platform on which encryption may not be available.
+    """
+
+    class TestCredential(InteractiveCredential):
+        def __init__(self, **kwargs):
+            super(TestCredential, self).__init__(client_id="...", **kwargs)
+
+        def _request_token(self, *_, **__):
+            pass
+
+    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
+    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
+    mock_extensions.PersistedTokenCache.reset_mock()
+
+    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
+    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
+
+    # encryption unavailable, no opt in to unencrypted cache -> credential should raise
+    with pytest.raises(ValueError):
+        TestCredential(enable_persistent_cache=True)
+
+    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
