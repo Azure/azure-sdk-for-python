@@ -37,7 +37,6 @@ import uuid
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
 from six.moves import urllib
-import defusedxml.ElementTree as ET
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
@@ -472,6 +471,18 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict or XML tree, depending of the mime_type
         """
+        try:
+            import defusedxml
+
+            defusedxml.defuse_stdlib()
+        except ImportError:
+            logging.warning(
+                "defusedxml not found! It is recommended that you install defusedxml "
+                "to avoid vulnerabilities related to XML parsing. For more details see "
+                "https://pypi.python.org/pypi/defusedxml/"
+            )
+        import xml.etree.ElementTree as ET  #nosec
+
         if not data:
             return None
 
