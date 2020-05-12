@@ -29,7 +29,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(training_files_url=container_sas_url)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -81,7 +81,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, cls=callback)
+        model = await client.train_model(training_files_url=container_sas_url, cls=callback)
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -109,7 +109,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_labels(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(training_files_url=container_sas_url, use_labels=True)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -162,7 +162,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, use_labels=True, cls=callback)
+        model = await client.train_model(training_files_url=container_sas_url, use_labels=True, cls=callback)
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -189,7 +189,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_files_filter(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, include_sub_folders=True)
+        model = await client.train_model(training_files_url=container_sas_url, include_sub_folders=True)
         self.assertEqual(len(model.training_documents), 6)
         self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders
 
@@ -197,5 +197,5 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
-        model = await client.train_model(container_sas_url, prefix="xxx")
+        model = await client.train_model(training_files_url=container_sas_url, prefix="xxx")
         self.assertEqual(model.status, "invalid")  # prefix doesn't include any files so training fails
