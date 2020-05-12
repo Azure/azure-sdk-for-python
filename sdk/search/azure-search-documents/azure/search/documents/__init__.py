@@ -129,6 +129,11 @@ from ._service._generated.models import (
     WordDelimiterTokenFilter,
 )
 from ._service._models import PatternAnalyzer, PatternTokenizer
+from ._service._datasources_client import SearchDataSourcesClient
+from ._service._indexers_client import SearchIndexersClient
+from ._service._indexes_client import SearchIndexesClient
+from ._service._skillsets_client import SearchSkillsetsClient
+from ._service._synonym_maps_client import SearchSynonymMapsClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -200,6 +205,11 @@ __all__ = (
     "ScoringFunction",
     "ScoringProfile",
     "SearchClient",
+    "SearchDataSourcesClient",
+    "SearchIndexersClient",
+    "SearchIndexesClient",
+    "SearchSkillsetsClient",
+    "SearchSynonymMapsClient",
     "SearchItemPaged",
     "SearchQuery",
     "SearchServiceClient",
