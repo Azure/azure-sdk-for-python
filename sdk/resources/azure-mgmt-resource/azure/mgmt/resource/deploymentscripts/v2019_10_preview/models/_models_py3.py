@@ -145,6 +145,9 @@ class AzureCliScript(DeploymentScript):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
@@ -216,6 +219,7 @@ class AzureCliScript(DeploymentScript):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'properties.storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
@@ -231,9 +235,10 @@ class AzureCliScript(DeploymentScript):
         'az_cli_version': {'key': 'properties.azCliVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, identity, location: str, retention_interval, az_cli_version: str, tags=None, container_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, *, identity, location: str, retention_interval, az_cli_version: str, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
         super(AzureCliScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.container_settings = container_settings
+        self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
         self.provisioning_state = None
         self.status = None
@@ -281,6 +286,9 @@ class AzurePowerShellScript(DeploymentScript):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
@@ -353,6 +361,7 @@ class AzurePowerShellScript(DeploymentScript):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'properties.storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
@@ -368,9 +377,10 @@ class AzurePowerShellScript(DeploymentScript):
         'az_power_shell_version': {'key': 'properties.azPowerShellVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, identity, location: str, retention_interval, az_power_shell_version: str, tags=None, container_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, *, identity, location: str, retention_interval, az_power_shell_version: str, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
         super(AzurePowerShellScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.container_settings = container_settings
+        self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
         self.provisioning_state = None
         self.status = None
@@ -435,6 +445,9 @@ class DeploymentScriptPropertiesBase(Model):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
@@ -460,19 +473,50 @@ class DeploymentScriptPropertiesBase(Model):
 
     _attribute_map = {
         'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
         'outputs': {'key': 'outputs', 'type': '{object}'},
     }
 
-    def __init__(self, *, container_settings=None, cleanup_preference=None, **kwargs) -> None:
+    def __init__(self, *, container_settings=None, storage_account_settings=None, cleanup_preference=None, **kwargs) -> None:
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
         self.container_settings = container_settings
+        self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
         self.provisioning_state = None
         self.status = None
         self.outputs = None
+
+
+class DeploymentScriptsError(Model):
+    """Deployment scripts error response.
+
+    :param error:
+    :type error:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(DeploymentScriptsError, self).__init__(**kwargs)
+        self.error = error
+
+
+class DeploymentScriptsErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'DeploymentScriptsError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(DeploymentScriptsErrorException, self).__init__(deserialize, response, 'DeploymentScriptsError', *args)
 
 
 class DeploymentScriptUpdateParameter(AzureResourceBase):
@@ -507,35 +551,6 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(DeploymentScriptUpdateParameter, self).__init__(**kwargs)
         self.tags = tags
-
-
-class DeploymentScriptsError(Model):
-    """Deployment scripts error response.
-
-    :param error:
-    :type error:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(DeploymentScriptsError, self).__init__(**kwargs)
-        self.error = error
-
-
-class DeploymentScriptsErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'DeploymentScriptsError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(DeploymentScriptsErrorException, self).__init__(deserialize, response, 'DeploymentScriptsError', *args)
 
 
 class EnvironmentVariable(Model):
@@ -826,6 +841,27 @@ class ScriptStatus(Model):
         self.end_time = None
         self.expiration_time = None
         self.error = error
+
+
+class StorageAccountConfiguration(Model):
+    """Settings to use an existing storage account. Valid storage account kinds
+    are: Storage, StorageV2 and FileStorage.
+
+    :param storage_account_name: The storage account name.
+    :type storage_account_name: str
+    :param storage_account_key: The storage account access key.
+    :type storage_account_key: str
+    """
+
+    _attribute_map = {
+        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
+        'storage_account_key': {'key': 'storageAccountKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, storage_account_name: str=None, storage_account_key: str=None, **kwargs) -> None:
+        super(StorageAccountConfiguration, self).__init__(**kwargs)
+        self.storage_account_name = storage_account_name
+        self.storage_account_key = storage_account_key
 
 
 class SystemData(Model):

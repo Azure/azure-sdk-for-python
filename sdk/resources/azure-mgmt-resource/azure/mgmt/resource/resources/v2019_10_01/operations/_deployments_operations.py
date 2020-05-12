@@ -47,7 +47,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.delete_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -150,7 +150,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.check_existence_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -190,7 +190,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.create_or_update_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -311,7 +311,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.get_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -376,7 +376,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.cancel_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -408,33 +408,13 @@ class DeploymentsOperations(object):
             return client_raw_response
     cancel_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate_at_scope(
-            self, scope, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
 
-        :param scope: The resource scope.
-        :type scope: str
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param parameters: Parameters to validate.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DeploymentValidateResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _validate_at_scope_initial(
+            self, scope, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.validate_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -461,12 +441,13 @@ class DeploymentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 202, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
@@ -477,6 +458,58 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def validate_at_scope(
+            self, scope, deployment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
+
+        :param scope: The resource scope.
+        :type scope: str
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param parameters: Parameters to validate.
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DeploymentValidateResult or
+         ClientRawResponse<DeploymentValidateResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._validate_at_scope_initial(
+            scope=scope,
+            deployment_name=deployment_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DeploymentValidateResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     validate_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
     def export_template_at_scope(
@@ -501,7 +534,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.export_template_at_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -567,7 +600,7 @@ class DeploymentsOperations(object):
                 # Construct URL
                 url = self.list_at_scope.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -968,27 +1001,9 @@ class DeploymentsOperations(object):
             return client_raw_response
     cancel_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate_at_tenant_scope(
-            self, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
 
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param parameters: Parameters to validate.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DeploymentValidateResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _validate_at_tenant_scope_initial(
+            self, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.validate_at_tenant_scope.metadata['url']
         path_format_arguments = {
@@ -1018,12 +1033,13 @@ class DeploymentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 202, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
@@ -1034,6 +1050,55 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def validate_at_tenant_scope(
+            self, deployment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
+
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param parameters: Parameters to validate.
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DeploymentValidateResult or
+         ClientRawResponse<DeploymentValidateResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._validate_at_tenant_scope_initial(
+            deployment_name=deployment_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DeploymentValidateResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     validate_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
     def export_template_at_tenant_scope(
@@ -1533,29 +1598,9 @@ class DeploymentsOperations(object):
             return client_raw_response
     cancel_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate_at_management_group_scope(
-            self, group_id, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
 
-        :param group_id: The management group ID.
-        :type group_id: str
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param parameters: Parameters to validate.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DeploymentValidateResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _validate_at_management_group_scope_initial(
+            self, group_id, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.validate_at_management_group_scope.metadata['url']
         path_format_arguments = {
@@ -1586,12 +1631,13 @@ class DeploymentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 202, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
@@ -1602,6 +1648,58 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def validate_at_management_group_scope(
+            self, group_id, deployment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
+
+        :param group_id: The management group ID.
+        :type group_id: str
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param parameters: Parameters to validate.
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DeploymentValidateResult or
+         ClientRawResponse<DeploymentValidateResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._validate_at_management_group_scope_initial(
+            group_id=group_id,
+            deployment_name=deployment_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DeploymentValidateResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     validate_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
     def export_template_at_management_group_scope(
@@ -2098,27 +2196,9 @@ class DeploymentsOperations(object):
             return client_raw_response
     cancel_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate_at_subscription_scope(
-            self, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
 
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param parameters: Parameters to validate.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DeploymentValidateResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _validate_at_subscription_scope_initial(
+            self, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.validate_at_subscription_scope.metadata['url']
         path_format_arguments = {
@@ -2149,12 +2229,13 @@ class DeploymentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 202, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
@@ -2165,6 +2246,55 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def validate_at_subscription_scope(
+            self, deployment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
+
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param parameters: Parameters to validate.
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DeploymentValidateResult or
+         ClientRawResponse<DeploymentValidateResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._validate_at_subscription_scope_initial(
+            deployment_name=deployment_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DeploymentValidateResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     validate_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
 
@@ -2795,30 +2925,9 @@ class DeploymentsOperations(object):
             return client_raw_response
     cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate(
-            self, resource_group_name, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
 
-        :param resource_group_name: The name of the resource group the
-         template will be deployed to. The name is case insensitive.
-        :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param parameters: Parameters to validate.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DeploymentValidateResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _validate_initial(
+            self, resource_group_name, deployment_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.validate.metadata['url']
         path_format_arguments = {
@@ -2850,12 +2959,13 @@ class DeploymentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 202, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
@@ -2866,6 +2976,59 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def validate(
+            self, resource_group_name, deployment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
+
+        :param resource_group_name: The name of the resource group the
+         template will be deployed to. The name is case insensitive.
+        :type resource_group_name: str
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param parameters: Parameters to validate.
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DeploymentValidateResult or
+         ClientRawResponse<DeploymentValidateResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._validate_initial(
+            resource_group_name=resource_group_name,
+            deployment_name=deployment_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DeploymentValidateResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
 
