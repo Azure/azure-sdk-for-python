@@ -57,7 +57,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        labeled_model_from_train = await client.train_model(container_sas_url, use_labels=True)
+        labeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=True)
 
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 

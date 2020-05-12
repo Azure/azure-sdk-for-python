@@ -56,7 +56,7 @@ class TestManagement(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         labeled_model_from_train = poller.result()
 
         labeled_model_from_get = client.get_custom_model(labeled_model_from_train.model_id)

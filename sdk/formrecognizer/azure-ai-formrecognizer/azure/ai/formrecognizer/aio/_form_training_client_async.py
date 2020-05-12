@@ -72,7 +72,7 @@ class FormTrainingClient(object):
     async def train_model(
             self,
             training_files_url: str,
-            use_labels: Optional[bool] = False,
+            use_training_labels: Optional[bool] = False,
             **kwargs: Any
     ) -> CustomFormModel:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
@@ -81,7 +81,7 @@ class FormTrainingClient(object):
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI.
-        :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
+        :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.
             Use `prefix` to filter documents themselves, or to restrict sub folders for training
@@ -110,7 +110,7 @@ class FormTrainingClient(object):
         response = await self._client.train_custom_model_async(
             train_request=TrainRequest(
                 source=training_files_url,
-                use_label_file=use_labels,
+                use_label_file=use_training_labels,
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_sub_folders", False)

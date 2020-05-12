@@ -113,7 +113,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_training_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_labels=True)
+        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -137,7 +137,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_training_multipage_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -169,7 +169,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_labels=True, cls=callback)
+        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -188,7 +188,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True, cls=callback)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
