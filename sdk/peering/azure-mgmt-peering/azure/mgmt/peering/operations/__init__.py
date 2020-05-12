@@ -16,6 +16,7 @@ from ._peering_locations_operations import PeeringLocationsOperations
 from ._registered_asns_operations import RegisteredAsnsOperations
 from ._registered_prefixes_operations import RegisteredPrefixesOperations
 from ._peerings_operations import PeeringsOperations
+from ._received_routes_operations import ReceivedRoutesOperations
 from ._peering_service_countries_operations import PeeringServiceCountriesOperations
 from ._peering_service_locations_operations import PeeringServiceLocationsOperations
 from ._prefixes_operations import PrefixesOperations
@@ -31,6 +32,7 @@ __all__ = [
     'RegisteredAsnsOperations',
     'RegisteredPrefixesOperations',
     'PeeringsOperations',
+    'ReceivedRoutesOperations',
     'PeeringServiceCountriesOperations',
     'PeeringServiceLocationsOperations',
     'PrefixesOperations',

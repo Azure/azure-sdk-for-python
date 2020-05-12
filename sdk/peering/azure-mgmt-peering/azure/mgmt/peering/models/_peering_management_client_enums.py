@@ -109,6 +109,7 @@ class Role(str, Enum):
     policy = "Policy"
     technical = "Technical"
     service = "Service"
+    escalation = "Escalation"
     other = "Other"
 
 

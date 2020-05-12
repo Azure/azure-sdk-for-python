@@ -125,7 +125,7 @@ class ContactDetail(Model):
     """The contact detail class.
 
     :param role: The role of the contact. Possible values include: 'Noc',
-     'Policy', 'Technical', 'Service', 'Other'
+     'Policy', 'Technical', 'Service', 'Escalation', 'Other'
     :type role: str or ~azure.mgmt.peering.models.Role
     :param email: The e-mail address of the contact.
     :type email: str
@@ -244,8 +244,8 @@ class DirectPeeringFacility(Model):
         self.peering_db_facility_link = peering_db_facility_link
 
 
-class ErrorResponse(Model):
-    """The error response that indicates why an operation has failed.
+class ErrorDetail(Model):
+    """The error detail that describes why an operation has failed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -267,9 +267,25 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
+
+
+class ErrorResponse(Model):
+    """The error response that indicates why an operation has failed.
+
+    :param error: The error detail that describes why an operation has failed.
+    :type error: ~azure.mgmt.peering.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class ErrorResponseException(HttpOperationError):
@@ -787,6 +803,63 @@ class PeeringPropertiesExchange(Model):
         super(PeeringPropertiesExchange, self).__init__(**kwargs)
         self.connections = connections
         self.peer_asn = peer_asn
+
+
+class PeeringReceivedRoute(Model):
+    """The properties that define a received route.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar prefix: The prefix.
+    :vartype prefix: str
+    :ivar next_hop: The next hop for the prefix.
+    :vartype next_hop: str
+    :ivar as_path: The AS path for the prefix.
+    :vartype as_path: str
+    :ivar origin_as_validation_state: The origin AS change information for the
+     prefix.
+    :vartype origin_as_validation_state: str
+    :ivar rpki_validation_state: The RPKI validation state for the prefix and
+     origin AS that's listed in the AS path.
+    :vartype rpki_validation_state: str
+    :ivar trust_anchor: The authority which holds the Route Origin
+     Authorization record for the prefix, if any.
+    :vartype trust_anchor: str
+    :ivar received_timestamp: The received timestamp associated with the
+     prefix.
+    :vartype received_timestamp: str
+    """
+
+    _validation = {
+        'prefix': {'readonly': True},
+        'next_hop': {'readonly': True},
+        'as_path': {'readonly': True},
+        'origin_as_validation_state': {'readonly': True},
+        'rpki_validation_state': {'readonly': True},
+        'trust_anchor': {'readonly': True},
+        'received_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'prefix': {'key': 'prefix', 'type': 'str'},
+        'next_hop': {'key': 'nextHop', 'type': 'str'},
+        'as_path': {'key': 'asPath', 'type': 'str'},
+        'origin_as_validation_state': {'key': 'originAsValidationState', 'type': 'str'},
+        'rpki_validation_state': {'key': 'rpkiValidationState', 'type': 'str'},
+        'trust_anchor': {'key': 'trustAnchor', 'type': 'str'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PeeringReceivedRoute, self).__init__(**kwargs)
+        self.prefix = None
+        self.next_hop = None
+        self.as_path = None
+        self.origin_as_validation_state = None
+        self.rpki_validation_state = None
+        self.trust_anchor = None
+        self.received_timestamp = None
 
 
 class PeeringRegisteredAsn(Resource):
