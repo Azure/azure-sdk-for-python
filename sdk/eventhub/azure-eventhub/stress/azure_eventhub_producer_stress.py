@@ -31,8 +31,7 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
             if args.ignore_send_failure:
                 logger.warning("Sync send failed due to error: %r.", e)
                 return 0
-            else:
-                raise
+            raise
     return len(batch)
 
 
@@ -47,8 +46,7 @@ def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
         if args.ignore_send_failure:
             logger.warning("Sync send failed due to error: %r.", e)
             return 0
-        else:
-            raise
+        raise
     return len(send_list)
 
 
@@ -65,8 +63,7 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
             if args.ignore_send_failure:
                 logger.warning("ASync send failed due to error: %r.", e)
                 return 0
-            else:
-                raise
+            raise
     return len(batch)
 
 
@@ -81,8 +78,7 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, lo
         if args.ignore_send_failure:
             logger.warning("ASync send failed due to error: %r.", e)
             return 0
-        else:
-            raise
+        raise
     return len(send_list)
 
 
