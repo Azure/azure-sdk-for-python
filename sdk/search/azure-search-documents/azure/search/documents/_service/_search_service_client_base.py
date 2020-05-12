@@ -42,10 +42,10 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
         # type: (str, AzureKeyCredential) -> None
 
         try:
-            if endpoint.lower().startswith('http') and not endpoint.lower().startswith('https'):
-                raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
+            elif not endpoint.lower().startswith('https'):
+                raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
         except AttributeError:
             raise ValueError("Endpoint must be a string.")
 
