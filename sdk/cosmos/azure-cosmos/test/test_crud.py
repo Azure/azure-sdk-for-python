@@ -44,11 +44,9 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
@@ -916,59 +914,6 @@ class CRUDTests(unittest.TestCase):
                                            created_collection.read_item,
                                            replaced_document['id'],
                                            replaced_document['id'])
-
-    def test_murmur_hash(self):
-        str = 'afdgdd'
-        bytes = bytearray(str, encoding='utf-8')
-
-        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
-        self.assertEqual(1099701186, hash_value)
-
-        num = 374.0
-        bytes = bytearray(pack('d', num))
-
-        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
-        self.assertEqual(3717946798, hash_value)
-
-        self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326)
-        self._validate_bytes("1", 0xE82562E4, bytearray(b'\xD0\x92\x24\xED'), 3978597072)
-        self._validate_bytes("00", 0xB4C39035, bytearray(b'\xFA\x09\x64\x1B'), 459540986)
-        self._validate_bytes("eyetooth", 0x8161BD86, bytearray(b'\x98\x62\x1C\x6F'), 1864131224)
-        self._validate_bytes("acid", 0x4DFFEAD7, bytearray(b'\x36\x92\xC0\xB9'), 3116405302)
-        self._validate_bytes("elevation", 0x1A9E1828, bytearray(b'\xA9\xB6\x40\xDF'), 3745560233)
-        self._validate_bytes("dent", 0xE73C4579, bytearray(b'\xD4\x59\xE1\xD3'), 3554761172)
-        self._validate_bytes("homeland", 0xB3DA72CA, bytearray(b'\x06\x4D\x72\xBB'), 3144830214)
-        self._validate_bytes("glamor", 0x8078A01B, bytearray(b'\x89\x89\xA2\xA7'), 2812447113)
-        self._validate_bytes("flags", 0x4D16CD6C, bytearray(b'\x52\x87\x66\x02'), 40273746)
-        self._validate_bytes("democracy", 0x19B4FABD, bytearray(b'\xE4\x55\xD6\xB0'), 2966836708)
-        self._validate_bytes("bumble", 0xE653280E, bytearray(b'\xFE\xD7\xC3\x0C'), 214161406)
-        self._validate_bytes("catch", 0xB2F1555F, bytearray(b'\x98\x4B\xB6\xCD'), 3451276184)
-        self._validate_bytes("omnomnomnivore", 0x7F8F82B0, bytearray(b'\x38\xC4\xCD\xFF'), 4291675192)
-        self._validate_bytes("The quick brown fox jumps over the lazy dog", 0x4C2DB001, bytearray(b'\x6D\xAB\x8D\xC9'),
-                             3381504877)
-
-    def _validate_bytes(self, str, seed, expected_hash_bytes, expected_value):
-        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
-        bytes = bytearray(pack('I', hash_value))
-        self.assertEqual(expected_value, hash_value)
-        self.assertEqual(expected_hash_bytes, bytes)
-
-    def test_get_bytes(self):
-        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("documentdb")
-        expected_bytes = bytearray(b'\x64\x6F\x63\x75\x6D\x65\x6E\x74\x64\x62')
-        self.assertEqual(expected_bytes, actual_bytes)
-
-        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("azure")
-        expected_bytes = bytearray(b'\x61\x7A\x75\x72\x65')
-        self.assertEqual(expected_bytes, actual_bytes)
-
-        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("json")
-        expected_bytes = bytearray(b'\x6A\x73\x6F\x6E')
-        self.assertEqual(expected_bytes, actual_bytes)
-
-        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("nosql")
-        expected_bytes = bytearray(b'\x6E\x6F\x73\x71\x6C')
-        self.assertEqual(expected_bytes, actual_bytes)
 
     def test_document_upsert(self):
         # create database
