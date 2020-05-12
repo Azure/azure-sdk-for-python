@@ -30,7 +30,7 @@ If you need to create the resource, you can use the [Azure Portal][azure_portal]
 If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-resource-name>` with your own unique names:
 
 ```PowerShell
-az search service create --resource-group <your-resource-group-name> --name <your-resource-name> --sku S
+az search service create --resource-group <your-resource-group-name> --name <your-resource-name> --sku Standard
 ```
 
 The above creates a resource with the "Standard" pricing tier. See [choosing a pricing tier](https://docs.microsoft.com/en-us/azure/search/search-sku-tier) for more information.
