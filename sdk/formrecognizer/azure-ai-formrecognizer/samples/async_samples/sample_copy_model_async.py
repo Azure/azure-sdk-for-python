@@ -44,22 +44,30 @@ class CopyModelSampleAsync(object):
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
+        # [START generate_copy_auth_async]
+        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
+
+        async with target_client:
+            target = await target_client.generate_copy_authorization(
+                resource_region=target_region,
+                resource_id=target_resource_id
+            )
+        # [END generate_copy_auth_async]
+
+        # [START copy_model_async]
         source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
-        target = await target_client.generate_copy_authorization(
-            resource_region=target_region,
-            resource_id=target_resource_id
-        )
+        async with source_client:
+            copy = await source_client.copy_model(
+                model_id=source_model_id,
+                target=target
+            )
 
-        copy = await source_client.copy_model(
-            model_id=source_model_id,
-            target=target
-        )
-
-        copied_over_model = target_client.get_custom_model(copy.model_id)
-        print(copied_over_model)
-
+        async with target_client:
+            copied_over_model = await target_client.get_custom_model(copy.model_id)
+            print(copied_over_model)
+        # [END copy_model_async]
 
 async def main():
     sample = CopyModelSampleAsync()

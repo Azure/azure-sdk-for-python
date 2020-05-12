@@ -43,13 +43,18 @@ class CopyModelSample(object):
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
-        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
+        # [START generate_copy_auth]
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         target = target_client.generate_copy_authorization(
             resource_region=target_region,
             resource_id=target_resource_id
         )
+        # [END generate_copy_auth]
+
+        # [START begin_copy_model]
+        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
+        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         poller = source_client.begin_copy_model(
             model_id=source_model_id,
@@ -59,7 +64,7 @@ class CopyModelSample(object):
 
         copied_over_model = target_client.get_custom_model(copy.model_id)
         print(copied_over_model)
-
+        # [END begin_copy_model]
 
 if __name__ == '__main__':
     sample = CopyModelSample()

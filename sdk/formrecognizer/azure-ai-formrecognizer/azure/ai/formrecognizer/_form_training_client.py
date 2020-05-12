@@ -235,6 +235,8 @@ class FormTrainingClient(object):
     def generate_copy_authorization(self, resource_id, resource_region, **kwargs):
         # type: (str, str, Any) -> TargetInformation
         """Generate authorization to copy a model into the target Form Recognizer resource.
+        This should be called by the target resource (where the model will be copied to)
+        and the output can be passed into :func:`~begin_copy_model()`
 
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
@@ -242,7 +244,16 @@ class FormTrainingClient(object):
             region name supported by Cognitive Services.
         :return: TargetInformation
         :rtype: ~azure.ai.formrecognizer.TargetInformation
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_copy_model.py
+                :start-after: [START generate_copy_auth]
+                :end-before: [END generate_copy_auth]
+                :language: python
+                :dedent: 8
+                :caption: Generate copy authorization with the target resource
         """
 
         response = self._client.generate_model_copy_authorization(  # type: ignore
@@ -261,8 +272,9 @@ class FormTrainingClient(object):
     ):
         # type: (...) -> LROPoller
         """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
-
-        Copy Custom Model.
+        This should be called with the source Form Recognizer resource (with model that is intended to be copied).
+        The `target` parameter should be supplied from the target resource's output from calling the
+        :func:`~generate_copy_authorization()` method.
 
         :param model_id: Model identifier of the model to copy to target resource.
         :type model_id: str
@@ -274,6 +286,15 @@ class FormTrainingClient(object):
         :return: An instance of LROPoller
         :rtype: ~azure.core.polling.LROPoller[CustomFormModelInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_copy_model.py
+                :start-after: [START begin_copy_model]
+                :end-before: [END begin_copy_model]
+                :language: python
+                :dedent: 8
+                :caption: Copy a model from the source resource to the target resource
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
