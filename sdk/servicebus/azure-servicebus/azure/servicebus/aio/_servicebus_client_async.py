@@ -80,8 +80,7 @@ class ServiceBusClient(object):
         await self.close()
 
     async def _create_uamqp_connection(self):
-        auth = await create_authentication(self)
-        self._connection = ServiceBusConnection(self.fully_qualified_namespace, auth, self._config.logging_enable)
+        self._connection = ServiceBusConnection(self)
 
     @classmethod
     def from_connection_string(

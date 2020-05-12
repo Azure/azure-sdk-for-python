@@ -79,8 +79,7 @@ class ServiceBusClient(object):
         self.close()
 
     def _create_uamqp_connection(self):
-        auth = create_authentication(self)
-        self._connection = ServiceBusConnection(self.fully_qualified_namespace, auth, self._config.logging_enable)
+        self._connection = ServiceBusConnection(self)
 
     def close(self):
         # type: () -> None

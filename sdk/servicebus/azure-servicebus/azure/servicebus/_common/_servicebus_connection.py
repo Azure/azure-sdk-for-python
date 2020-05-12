@@ -6,28 +6,35 @@ from threading import RLock
 
 from uamqp import Connection, c_uamqp
 
+from .utils import create_authentication
+
 
 class ServiceBusConnection(object):
-    def __init__(self, host, auth, logging_enable=False):
+    def __init__(self, client):
         self._conn = None
-        self._host = host
-        self._auth = auth
-        self._logging_enable = logging_enable
+        self._client = client
         self._lock = RLock()
 
     def get_connection(self):
+        # pylint:disable=c-extension-no-member
         with self._lock:
             if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_RCVD,
+                c_uamqp.ConnectionState.CLOSE_SENT,
+                c_uamqp.ConnectionState.DISCARDING,
+                c_uamqp.ConnectionState.END,
+                c_uamqp.ConnectionState.ERROR
             ):
                 self._conn.destroy()
                 self._conn = None
 
             if not self._conn:
-                self._conn = Connection(self._host, self._auth, debug=self._logging_enable)
+                auth = create_authentication(self._client)
+                self._conn = Connection(
+                    self._client.fully_qualified_namespace,
+                    auth,
+                    debug=self._client._config.logging_enable  # pylint:disable=protected-access
+                )
 
             return self._conn
 

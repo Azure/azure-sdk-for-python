@@ -68,10 +68,10 @@ class BaseHandlerAsync(BaseHandler):
         await self.close()
 
     async def _handle_exception(self, exception):
-        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+        error, error_need_close_handler, error_need_retry = _create_servicebus_exception(_LOGGER, exception, self)
         if error_need_close_handler:
             await self._close_handler()
-        if error_need_raise:
+        if not error_need_retry:
             raise error
 
         return error
