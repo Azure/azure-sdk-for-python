@@ -270,7 +270,7 @@ print("Our account has {} custom models, and we can have at most {} custom model
 ))
 
 # Here we get a paged list of all of our custom models
-custom_models = form_training_client.list_model_infos()
+custom_models = form_training_client.list_custom_models()
 print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in custom_models])
 ))

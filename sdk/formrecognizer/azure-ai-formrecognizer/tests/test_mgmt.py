@@ -34,7 +34,7 @@ class TestManagement(FormRecognizerTest):
     def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = client.list_model_infos()
+            result = client.list_custom_models()
             for res in result:
                 test = res
 
@@ -76,7 +76,7 @@ class TestManagement(FormRecognizerTest):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -111,7 +111,7 @@ class TestManagement(FormRecognizerTest):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")

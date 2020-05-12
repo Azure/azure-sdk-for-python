@@ -159,7 +159,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_model_infos(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
+    def list_custom_models(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
@@ -170,8 +170,8 @@ class FormTrainingClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_manage_custom_models_async.py
-                :start-after: [START list_model_infos_async]
-                :end-before: [END list_model_infos_async]
+                :start-after: [START list_custom_models_async]
+                :end-before: [END list_custom_models_async]
                 :language: python
                 :dedent: 12
                 :caption: List model information for each model on the account.

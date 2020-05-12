@@ -155,7 +155,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_model_infos(self, **kwargs):
+    def list_custom_models(self, **kwargs):
         # type: (Any) -> Iterable[CustomFormModelInfo]
         """List information for each model, including model id,
         model status, and when it was created and last modified.
@@ -167,8 +167,8 @@ class FormTrainingClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_manage_custom_models.py
-                :start-after: [START list_model_infos]
-                :end-before: [END list_model_infos]
+                :start-after: [START list_custom_models]
+                :end-before: [END list_custom_models]
                 :language: python
                 :dedent: 8
                 :caption: List model information for each model on the account.
