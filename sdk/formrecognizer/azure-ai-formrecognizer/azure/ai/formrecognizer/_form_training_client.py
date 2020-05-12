@@ -32,7 +32,7 @@ from ._models import (
     CustomFormModel,
     TargetInformation
 )
-from ._polling import TrainingPolling
+from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -294,7 +294,7 @@ class FormTrainingClient(object):
                 )
             ),
             cls=kwargs.pop("cls", _copy_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             error_map=error_map,
             **kwargs
         )
