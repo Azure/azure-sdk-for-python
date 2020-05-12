@@ -4,7 +4,7 @@ Azure Cognitive Search is a fully managed cloud search service that provides a r
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents) |
 [Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
-[API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/1.0.0b3/index.html) |
+[API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html) |
 [Product documentation](https://docs.microsoft.com/en-us/azure/search/search-what-is-azure-search) |
 [Samples](samples)
 
