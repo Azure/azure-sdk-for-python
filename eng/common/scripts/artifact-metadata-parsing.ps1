@@ -113,7 +113,7 @@ function IsMavenPackageVersionPublished($pkgId, $pkgVersion, $groupId) {
   try {
 
     $uri = "https://oss.sonatype.org/content/repositories/releases/$groupId/$pkgId/$pkgVersion/$pkgId-$pkgVersion.pom"
-    $pomContent = Invoke-WebRequest-WithHandling -Method "GET" -url $uri
+    $pomContent = Invoke-RestMethod -MaximumRetryCount 3 -Method "GET" -uri $uri
 
     if ($pomContent -ne $null -or $pomContent.Length -eq 0) {
       return $true
@@ -239,7 +239,7 @@ function IsNugetPackageVersionPublished($pkgId, $pkgVersion) {
   $nugetUri = "https://api.nuget.org/v3-flatcontainer/$($pkgId.ToLowerInvariant())/index.json"
 
   try {
-    $nugetVersions = Invoke-WebRequest-WithHandling -url $nugetUri -Method "GET"
+    $nugetVersions = Invoke-RestMethod -MaximumRetryCount 3 -uri $nugetUri -Method "GET"
 
     return $nugetVersions.versions.Contains($pkgVersion)
   }
@@ -314,7 +314,7 @@ function ParseCArtifact($pkg, $workingDirectory) {
 # Returns the pypi publish status of a package id and version.
 function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
   try {
-    $existingVersion = (Invoke-WebRequest-WithHandling -Method "Get" -url "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
+    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
 
     # if existingVersion exists, then it's already been published
     return $True
