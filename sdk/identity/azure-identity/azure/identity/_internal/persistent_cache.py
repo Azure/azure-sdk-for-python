@@ -48,6 +48,6 @@ def load_persistent_cache(allow_unencrypted):
                 )
             persistence = msal_extensions.FilePersistence(file_path)
     else:
-        raise NotImplementedError("A persistent cache is not available on this platform.")
+        raise NotImplementedError("A persistent cache is not available in this environment.")
 
     return msal_extensions.PersistedTokenCache(persistence)
