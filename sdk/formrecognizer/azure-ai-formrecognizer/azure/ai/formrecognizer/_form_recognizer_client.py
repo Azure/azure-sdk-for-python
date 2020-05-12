@@ -78,7 +78,7 @@ class FormRecognizerClient(object):
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
              Currently only supports US sales receipts.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -172,7 +172,7 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -246,7 +246,7 @@ class FormRecognizerClient(object):
 
         :param str model_id: Custom model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
