@@ -8,6 +8,12 @@
 - `use_labels` parameter of `begin_train_model` is renamed to `use_training_labels`
 - `list_model_infos` method has been renamed to `list_custom_models`
 
+**New features**
+
+- Authentication using `azure-identity` credentials now supported
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+
+
 ## 1.0.0b2 (2020-05-06)
 
 **Fixes and improvements**

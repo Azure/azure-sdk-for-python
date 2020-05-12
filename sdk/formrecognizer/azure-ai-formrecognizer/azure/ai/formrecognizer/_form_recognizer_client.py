@@ -10,12 +10,11 @@ from typing import (
     Any,
     IO,
     Union,
-    TYPE_CHECKING,
+    TYPE_CHECKING
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
     prepare_us_receipt,
@@ -23,12 +22,12 @@ from ._response_handlers import (
     prepare_form_result
 )
 from ._generated.models import AnalyzeOperationResult
-from ._helpers import get_content_type, error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 from ._form_training_client import FormTrainingClient
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class FormRecognizerClient(object):
@@ -40,28 +39,39 @@ class FormRecognizerClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of AzureKeyCredential if using an API key.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+        This is an instance of AzureKeyCredential if using an API key or a token
+        credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_get_bounding_boxes.py
-            :start-after: [START create_form_recognizer_client]
-            :end-before: [END create_form_recognizer_client]
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_fr_client_with_key]
+            :end-before: [END create_fr_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_fr_client_with_aad]
+            :end-before: [END create_fr_client_with_aad]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormRecognizerClient with a token credential.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, AzureKeyCredential, Any) -> None
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
+
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,
             sdk_moniker=USER_AGENT,
-            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
