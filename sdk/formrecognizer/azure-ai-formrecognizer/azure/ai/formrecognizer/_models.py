@@ -10,7 +10,6 @@ from enum import Enum
 from collections import namedtuple
 import re
 import six
-from ._generated.models import CopyAuthorizationResult
 
 
 def adjust_confidence(score):
@@ -896,11 +895,16 @@ class AccountProperties(object):
         )[:1024]
 
 
-class CopyAuthorization(CopyAuthorizationResult):
-    """Request parameter that contains authorization claims for copy operation.
+class TargetInformation(object):
+    """Information about target Form Recognizer resource that contains
+    authorization claims for copy operation.
 
     :ivar str model_id: Model identifier.
-    :ivar str access_token: Required. Token claim used to authorize the request.
+    :ivar str access_token: Token claim used to authorize the request.
+    :ivar str resource_id: Azure Resource Id of the target Form Recognizer resource
+        where the model will be copied to.
+    :ivar str resource_region: Location of the target Azure resource. A valid Azure
+        region name supported by Cognitive Services.
     :ivar int expiration_date_time_ticks: The time when the access token expires. The date
         is represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
     """
@@ -909,20 +913,24 @@ class CopyAuthorization(CopyAuthorizationResult):
         self,
         **kwargs
     ):
-        super(CopyAuthorization, self).__init__(**kwargs)
         self.model_id = kwargs.get('model_id', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_region = kwargs.get('resource_region', None)
         self.access_token = kwargs.get('access_token', None)
         self.expiration_date_time_ticks = kwargs.get('expiration_date_time_ticks', None)
 
     @classmethod
-    def _from_generated(cls, copy):
+    def _from_generated(cls, copy, resource_id, resource_region):
         return cls(
             model_id=copy.model_id,
+            resource_id=resource_id,
+            resource_region=resource_region,
             access_token=copy.access_token,
             expiration_date_time_ticks=copy.expiration_date_time_ticks
         )
 
     def __repr__(self):
-        return "CopyAuthorization(model_id={}, access_token={}, expiration_date_time_ticks={})".format(
-            self.model_id, self.access_token, self.expiration_date_time_ticks
-        )[:1024]
+        return "TargetInformation(model_id={}, resource_id={}, resource_region={}, access_token={}, " \
+               "expiration_date_time_ticks={})".format(
+                self.model_id, self.resource_id, self.resource_region, self.access_token,
+                self.expiration_date_time_ticks)[:1024]
