@@ -107,8 +107,68 @@ There are several types of operations that can be executed against the service:
 
 ## Examples
 
+The following sections contain snippets for some common operations:
+
+* [Perform a simple text search](#perform-a-simple-text-search-on-documents)
+* [Retrieve a specific document](#retrieve-a-specific-document-from-an-index)
+* [Get search suggestions](#get-search-suggestions)
+* [Create an index](#create-an-index)
+* [Upload documents to an index](#upload-documents-to-an-index)
+
+More examples, covering topics such as indexers, skillets, and synonym maps can be found in the [Samples directory](samples).
+
+### Perform a simple text search on documents
+Search the entire index or documents matching a simple search text, e.g. find
+hotels with the text "spa":
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+
+results = client.search(query="spa")
+
+print("Hotels containing 'spa' in the name (or other fields):")
+for result in results:
+    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+```
+
+### Retrieve a specific document from an index
+Get a specific document from the index, e.f. obtain the document for hotel "23":
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+
+result = client.get_document(key="23")
+
+print("Details for hotel '23' are:")
+print("        Name: {}".format(result["HotelName"]))
+print("      Rating: {}".format(result["Rating"]))
+print("    Category: {}".format(result["Category"]))
+```
+
+### Get search suggestions
+
+Get search suggestions for related terms, e.g. find search suggestions for
+the term "coffee":
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient, SuggestQuery
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+
+query = SuggestQuery(search_text="coffee", suggester_name="sg")
+
+results = client.suggest(query=query)
+
+print("Search suggestions for 'coffee'")
+for result in results:
+    hotel = client.get_document(key=result["HotelId"])
+    print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
+```
+
+
 ### Create an index
-Create a new index
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchServiceClient, CorsOptions, Index, ScoringProfile
@@ -139,7 +199,9 @@ result = client.create_index(index)
 ```
 
 ### Upload documents to an index
+
 Add documents (or update existing ones), e.g add a new document for a new hotel:
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -156,55 +218,6 @@ DOCUMENT = {
 result = client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
-```
-
-### Retrieve a specific document from an index
-Get a specific document from the index, e.f. obtain the document for hotel "23":
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
-
-result = client.get_document(key="23")
-
-print("Details for hotel '23' are:")
-print("        Name: {}".format(result["HotelName"]))
-print("      Rating: {}".format(result["Rating"]))
-print("    Category: {}".format(result["Category"]))
-```
-
-### Perform a simple text search on documents
-Search the entire index or documents matching a simple search text, e.g. find
-hotels with the text "spa":
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
-
-results = client.search(query="spa")
-
-print("Hotels containing 'spa' in the name (or other fields):")
-for result in results:
-    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
-```
-
-### Get search suggestions
-
-Get search suggestions for related terms, e.g. find search suggestions for
-the term "coffee":
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient, SuggestQuery
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
-
-query = SuggestQuery(search_text="coffee", suggester_name="sg")
-
-results = client.suggest(query=query)
-
-print("Search suggestions for 'coffee'")
-for result in results:
-    hotel = client.get_document(key=result["HotelId"])
-    print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
 ```
 
 ## Troubleshooting
@@ -273,6 +286,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_sub]: https://azure.microsoft.com/free/
 [search_resource]: https://docs.microsoft.com/en-us/azure/search/search-create-service-portal
 [azure_portal]: https://portal.azure.com
+
+[create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
+[create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
+[create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
 
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
