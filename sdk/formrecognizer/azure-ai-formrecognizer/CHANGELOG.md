@@ -2,6 +2,11 @@
 
 ## 1.0.0b3 (Unreleased)
 
+**New features**
+
+- Authentication using `azure-identity` credentials now supported
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+
 
 ## 1.0.0b2 (2020-05-06)
 
