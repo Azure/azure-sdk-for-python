@@ -34,7 +34,7 @@ from ._models import (
     CustomFormModel,
     CustomFormSubModel,
     CustomFormModelField,
-    TargetInformation
+    CopyTarget
 )
 
 
@@ -66,7 +66,7 @@ __all__ = [
     'CustomFormModel',
     'CustomFormSubModel',
     'CustomFormModelField',
-    'TargetInformation'
+    'CopyTarget'
 ]
 
 __VERSION__ = VERSION

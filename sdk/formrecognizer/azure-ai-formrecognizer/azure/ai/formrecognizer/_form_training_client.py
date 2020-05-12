@@ -30,7 +30,7 @@ from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel,
-    TargetInformation
+    CopyTarget
 )
 from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
@@ -232,8 +232,8 @@ class FormTrainingClient(object):
         return CustomFormModel._from_generated(response)
 
     @distributed_trace
-    def generate_copy_authorization(self, resource_id, resource_region, **kwargs):
-        # type: (str, str, Any) -> TargetInformation
+    def authorize_copy_target(self, resource_id, resource_region, **kwargs):
+        # type: (str, str, Any) -> CopyTarget
         """Generate authorization to copy a model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed into :func:`~begin_copy_model()`
@@ -242,8 +242,8 @@ class FormTrainingClient(object):
             where the model will be copied to.
         :param str resource_region: Location of the target Azure resource. A valid Azure
             region name supported by Cognitive Services.
-        :return: TargetInformation
-        :rtype: ~azure.ai.formrecognizer.TargetInformation
+        :return: CopyTarget
+        :rtype: ~azure.ai.formrecognizer.CopyTarget
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -261,26 +261,26 @@ class FormTrainingClient(object):
             error_map=error_map,
             **kwargs
         )
-        return TargetInformation._from_generated(response, resource_id=resource_id, resource_region=resource_region)
+        return CopyTarget._from_generated(response, resource_id=resource_id, resource_region=resource_region)
 
     @distributed_trace
     def begin_copy_model(
         self,
         model_id,  # type: str
-        target,  # type: TargetInformation
+        target,  # type: CopyTarget
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
         """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
         This should be called with the source Form Recognizer resource (with model that is intended to be copied).
         The `target` parameter should be supplied from the target resource's output from calling the
-        :func:`~generate_copy_authorization()` method.
+        :func:`~authorize_copy_target()` method.
 
         :param model_id: Model identifier of the model to copy to target resource.
         :type model_id: str
-        :param ~azure.ai.formrecognizer.TargetInformation target:
+        :param ~azure.ai.formrecognizer.CopyTarget target:
             The copy authorization generated from the target resource's call to
-            :func:`~generate_copy_authorization()`.
+            :func:`~authorize_copy_target()`.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
         :return: An instance of LROPoller

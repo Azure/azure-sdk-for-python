@@ -895,7 +895,7 @@ class AccountProperties(object):
         )[:1024]
 
 
-class TargetInformation(object):
+class CopyTarget(object):
     """Information about target Form Recognizer resource that contains
     authorization claims for copy operation.
 
@@ -930,7 +930,7 @@ class TargetInformation(object):
         )
 
     def __repr__(self):
-        return "TargetInformation(model_id={}, resource_id={}, resource_region={}, access_token={}, " \
+        return "CopyTarget(model_id={}, resource_id={}, resource_region={}, access_token={}, " \
                "expiration_date_time_ticks={})".format(
                 self.model_id, self.resource_id, self.resource_region, self.access_token,
                 self.expiration_date_time_ticks)[:1024]

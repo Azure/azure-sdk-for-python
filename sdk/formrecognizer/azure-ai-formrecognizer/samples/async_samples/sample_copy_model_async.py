@@ -48,7 +48,7 @@ class CopyModelSampleAsync(object):
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         async with target_client:
-            target = await target_client.generate_copy_authorization(
+            target = await target_client.authorize_copy_target(
                 resource_region=target_region,
                 resource_id=target_resource_id
             )
@@ -68,6 +68,7 @@ class CopyModelSampleAsync(object):
             copied_over_model = await target_client.get_custom_model(copy.model_id)
             print(copied_over_model)
         # [END copy_model_async]
+
 
 async def main():
     sample = CopyModelSampleAsync()
