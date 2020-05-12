@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -15,6 +16,17 @@ from asynctestcase import AsyncFormRecognizerTest
 
 
 class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
+
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_active_directory_auth_async(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = FormRecognizerClient(endpoint, token)
+        result = await client.recognize_receipts_from_url(
+            self.receipt_url_jpg
+        )
+        self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
