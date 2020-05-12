@@ -329,7 +329,7 @@ class ServiceBusSender(BaseHandlerSync, SenderMixin):
             message = batch
         except TypeError:  # Message was not a list or generator.
             pass
-        if isinstance(message, BatchMessage) and len(message) == 0:
+        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
         self._do_retryable_operation(
