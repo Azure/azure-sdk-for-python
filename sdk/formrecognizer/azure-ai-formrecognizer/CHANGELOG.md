@@ -2,6 +2,9 @@
 
 ## 1.0.0b3 (Unreleased)
 
+**New features**
+
+- Copy API is now supported to copy a model from one Form Recognizer resource to another
 
 ## 1.0.0b2 (2020-05-06)
 
