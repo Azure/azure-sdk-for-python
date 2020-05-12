@@ -4,6 +4,8 @@ parameters:
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: public/azure-sdk-for-python
+  TargetDocRepoOwner: ''
+  TargetDocRepoName: ''
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -42,6 +44,44 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
+                        
+          - deployment: PublishDocs
+            displayName: "Docs.MS Release"
+            condition: ne(variables['Skip.PublishDocs'], 'true')
+            environment: githubio
+
+            pool:
+              vmImage: ubuntu-18.04
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - pwsh: |
+                        Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                        New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
+                        $underscorePrefix = "${{artifact.name}}"
+                        $dashPrefix = "${{artifact.name}}".Replace("_", "-")
+                        Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+                        Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+                        Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+                      displayName: Stage artifacts
+                    - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
+                      parameters:
+                        ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
+                        PackageRepository: PyPI
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-python
+                        WorkingDirectory: $(System.DefaultWorkingDirectory)
+                        TargetDocRepo: 'MicrosoftDocs/azure-docs-sdk-python'
+                        TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                        TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                        PRBranchName: 'smoke-test-rdme'
+                        ArtifactName: ${{parameters.ArtifactName}}
+                        Language: 'python'
+                        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                        DocRepoDestinationPath: 'docs-ref-services/' 
 
           - ${{if ne(artifact.options.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
@@ -105,7 +145,7 @@ stages:
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
           - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
-            - deployment: PublishDocs
+            - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
