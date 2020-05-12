@@ -21,11 +21,11 @@ stages:
           matrix:
             Windows_Python35:
               OSVmImage: 'windows-2019'
-              OSName: Windows
+              OSVmName: Windows
               PythonVersion: '3.5'
             Windows_Python27:
               OSVmImage: 'windows-2019'
-              OSName: Windows
+              OSVmName: Windows
               PythonVersion: '2.7'
         pool:
           vmImage: $(OSVmImage)
@@ -43,7 +43,7 @@ stages:
                 ACCOUNT_HOST: https://localhost:8081/
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PythonVersion: $(PythonVersion)
-              OSName: $(OSName)
+              OSVmName: $(OSVmName)
               ToxTestEnv: 'whl,sdist'
               BuildDocs: ${{parameters.BuildDocs}}
               InjectedPackages: ${{parameters.InjectedPackages}}

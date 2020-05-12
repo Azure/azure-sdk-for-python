@@ -46,5 +46,5 @@ jobs:
         condition: always()
         inputs:
           testResultsFiles: '**/junit/test-results.xml'
-          testRunTitle: '$(OSName) Python $(PythonVersion)'
+          testRunTitle: '$(OSVmName) Python $(PythonVersion)'
           failTaskOnFailedTests: true
