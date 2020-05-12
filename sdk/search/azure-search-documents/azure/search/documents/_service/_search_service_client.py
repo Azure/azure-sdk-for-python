@@ -7,9 +7,8 @@ from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
-from .search_service_client_base import SearchServiceClientBase
+from ._search_service_client_base import SearchServiceClientBase
 from ._generated import SearchServiceClient as _SearchServiceClient
-from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 from ._datasources_client import SearchDataSourcesClient
 from ._indexes_client import SearchIndexesClient
@@ -46,6 +45,9 @@ class SearchServiceClient(SearchServiceClientBase):  # pylint: disable=too-many-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
         super(SearchServiceClient, self).__init__(endpoint, credential, **kwargs)
+        self._client = _SearchServiceClient(
+            endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
+        )  # type: _SearchServiceClient
         self._indexes_client = SearchIndexesClient(endpoint, credential, **kwargs)
 
         self._synonym_maps_client = SearchSynonymMapsClient(

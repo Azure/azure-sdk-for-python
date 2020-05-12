@@ -5,11 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.tracing.decorator_async import distributed_trace_async
-
-from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from ..._headers_mixin import HeadersMixin
-from ..._version import SDK_MONIKER
+from .._headers_mixin import HeadersMixin
 from ._datasources_client import SearchDataSourcesClient
 from ._indexes_client import SearchIndexesClient
 from ._indexers_client import SearchIndexersClient
@@ -32,9 +28,9 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
-            :start-after: [START create_search_service_with_key_async]
-            :end-before: [END create_search_service_with_key_async]
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_search_service_with_key]
+            :end-before: [END create_search_service_with_key]
             :language: python
             :dedent: 4
             :caption: Creating the SearchServiceClient with an API key.
@@ -42,7 +38,7 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
-    def __init__(self, endpoint, credential, **kwargs):
+    def __init__(self, endpoint, credential):
         # type: (str, AzureKeyCredential, **Any) -> None
 
         try:
@@ -55,9 +51,6 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
 
         self._endpoint = endpoint  # type: str
         self._credential = credential  # type: AzureKeyCredential
-        self._client = _SearchServiceClient(
-            endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
-        )  # type: _SearchServiceClient
 
     def __repr__(self):
         # type: () -> str
