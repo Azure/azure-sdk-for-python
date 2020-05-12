@@ -25,7 +25,7 @@ pip install azure-search-documents --pre
 * You must have an [Azure subscription][azure_sub] and an existing
 [Azure Cognitive Search service][search_resource] to use this package.
 
-If you need to create the resource, you can use the [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
+If you need to create the resource, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].
 
 If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-resource-name>` with your own unique names:
 
