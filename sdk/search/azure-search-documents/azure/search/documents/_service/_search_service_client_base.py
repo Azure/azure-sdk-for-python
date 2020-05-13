@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from .._headers_mixin import HeadersMixin
+from ._utils import _normalize_endpoint
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -42,12 +43,3 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
     def __repr__(self):
         # type: () -> str
         return "<SearchServiceClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
-
-    def _normalize_endpoint(endpoint):
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-            elif not endpoint.lower().startswith('https'):
-                raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
-        except AttributeError:
-            raise ValueError("Endpoint must be a string.")
