@@ -1,5 +1,20 @@
 # Release History
 
+## 3.1.0 (2020-05-13)
+
+**Features**
+
+  - Model EHNamespace has a new parameter encryption
+  - Model EHNamespace has a new parameter identity
+  - Model EHNamespace has a new parameter cluster_arm_id
+  - Added operation NamespacesOperations.list_keys
+  - Added operation NamespacesOperations.get_authorization_rule
+  - Added operation NamespacesOperations.check_name_availability
+  - Added operation NamespacesOperations.list_authorization_rules
+  - Added operation NamespacesOperations.regenerate_keys
+  - Added operation NamespacesOperations.create_or_update_authorization_rule
+  - Added operation NamespacesOperations.delete_authorization_rule
+
 ## 3.0.0 (2019-06-18)
 
 **General Breaking changes**

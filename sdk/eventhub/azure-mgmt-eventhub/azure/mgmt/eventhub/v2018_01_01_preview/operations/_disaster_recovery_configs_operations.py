@@ -56,9 +56,9 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AuthorizationRule
         :rtype:
-         ~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRule]
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -132,10 +132,11 @@ class DisasterRecoveryConfigsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AuthorizationRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRule or
+        :rtype:
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_authorization_rule.metadata['url']
@@ -199,10 +200,10 @@ class DisasterRecoveryConfigsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AccessKeys or
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_keys.metadata['url']
@@ -265,10 +266,10 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2017_04_01.models.CheckNameAvailabilityResult or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.CheckNameAvailabilityResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.CheckNameAvailabilityParameter(name=name)
 
@@ -333,9 +334,9 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ArmDisasterRecovery
         :rtype:
-         ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecoveryPaged[~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery]
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecoveryPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -412,10 +413,11 @@ class DisasterRecoveryConfigsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ArmDisasterRecovery or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery or
+        :rtype:
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.ArmDisasterRecovery(partner_namespace=partner_namespace, alternate_name=alternate_name)
 
@@ -484,7 +486,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -539,10 +541,11 @@ class DisasterRecoveryConfigsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ArmDisasterRecovery or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery or
+        :rtype:
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -606,7 +609,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.break_pairing.metadata['url']
@@ -663,7 +666,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2017_04_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.fail_over.metadata['url']
