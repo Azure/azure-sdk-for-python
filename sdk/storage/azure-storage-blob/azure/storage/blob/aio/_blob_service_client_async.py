@@ -382,28 +382,20 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     @distributed_trace
     def filter_blobs(self, where=None, **kwargs):
         # type: (Optional[str], Optional[Any], **Any) -> AsyncItemPaged[BlobProperties]
-        """Returns a generator to list the blobs under the specified container.
-        The generator will lazily follow the continuation tokens returned by
-        the service.
+        """The Filter Blobs operation enables callers to list blobs across all
+        containers whose tags match a given search expression.  Filter blobs
+        searches across all containers within a storage account but can be
+        scoped within the expression to a single container.
 
-        :param str name_starts_with:
-            Filters the results to return only blobs whose names
-            begin with the specified prefix.
+        :param str where:
+            Filters the results to return only to return only blobs
+            whose tags match the specified expression.
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_containers.py
-                :start-after: [START list_blobs_in_container]
-                :end-before: [END list_blobs_in_container]
-                :language: python
-                :dedent: 8
-                :caption: List the blobs in the container.
         """
 
         results_per_page = kwargs.pop('results_per_page', None)

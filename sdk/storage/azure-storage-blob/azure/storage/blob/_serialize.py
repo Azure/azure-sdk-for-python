@@ -155,5 +155,4 @@ def serialize_blob_tags(tags=None):
         for tag_key, tag_value in tags.items():
             tag_list.append(BlobTag(key=tag_key, value=tag_value))
         return BlobTags(blob_tag_set=tag_list)
-    else:
-        return None
+    return None

@@ -221,11 +221,13 @@ class FilteredBlobPaged(AsyncPageIterator):
 
         return self._response.next_marker or None, self.current_page
 
-    def _build_item(self, item):
+    @staticmethod
+    def _build_item(item):
         if isinstance(item, FilterBlobItem):
             blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
             return blob
         return item
+
 
 class BlobPrefix(AsyncItemPaged, DictMixin):
     """An Iterable of Blob properties.

@@ -571,8 +571,7 @@ class BlobProperties(DictMixin):
             for blob_tag in generated_tags.blob_tag_set:
                 tag_dict[blob_tag.key] = blob_tag.value
             return tag_dict
-        else:
-            return None
+        return None
 
 
 class BlobPropertiesPaged(PageIterator):
@@ -670,10 +669,8 @@ class FilteredBlob(FilterBlobItem):
     :ivar tag_value: tag value filtered by the expression.
     :type tag_value: str
     """
-    def __init__(self, **kwargs):
-        super(FilteredBlob, self).__init__(
-            **kwargs
-        )
+    def __init__(self, **kwargs):  # pylint:disable=useless-super-delegation
+        super(FilteredBlob, self).__init__(**kwargs)
 
 
 class FilteredBlobPaged(PageIterator):
@@ -736,7 +733,8 @@ class FilteredBlobPaged(PageIterator):
 
         return self._response.next_marker or None, self.current_page
 
-    def _build_item(self, item):
+    @staticmethod
+    def _build_item(item):
         if isinstance(item, FilterBlobItem):
             blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
             return blob
