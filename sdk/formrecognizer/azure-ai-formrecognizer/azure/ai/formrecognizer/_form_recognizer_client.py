@@ -26,7 +26,6 @@ from ._generated.models import AnalyzeOperationResult
 from ._helpers import get_content_type, error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
-from ._form_training_client import FormTrainingClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
@@ -55,11 +54,9 @@ class FormRecognizerClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
         self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,
+            endpoint=endpoint,
+            credential=credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
@@ -331,19 +328,6 @@ class FormRecognizerClient(object):
             cls=deserialization_callback,
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
             error_map=error_map,
-            **kwargs
-        )
-
-    def get_form_training_client(self, **kwargs):
-        # type: (Any) -> FormTrainingClient
-        """Get an instance of a FormTrainingClient from FormRecognizerClient.
-
-        :rtype: ~azure.ai.formrecognizer.FormTrainingClient
-        :return: A FormTrainingClient
-        """
-        return FormTrainingClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
             **kwargs
         )
 

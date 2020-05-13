@@ -27,6 +27,7 @@ from ._models import (
 )
 from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
+from ._form_recognizer_client import FormRecognizerClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.pipeline.transport import HttpResponse
@@ -57,9 +58,11 @@ class FormTrainingClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, Any) -> None
+        self._endpoint = endpoint
+        self._credential = credential
         self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
@@ -223,6 +226,19 @@ class FormTrainingClient(object):
         """
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
         return CustomFormModel._from_generated(response)
+
+    def get_form_recognizer_client(self, **kwargs):
+        # type: (Any) -> FormRecognizerClient
+        """Get an instance of a FormRecognizerClient from FormTrainingClient.
+
+        :rtype: ~azure.ai.formrecognizer.FormRecognizerClient
+        :return: A FormRecognizerClient
+        """
+        return FormRecognizerClient(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            **kwargs
+        )
 
     def close(self):
         # type: () -> None

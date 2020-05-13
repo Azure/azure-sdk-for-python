@@ -7,14 +7,14 @@
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
+GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
 
 
 class TestCustomForms(FormRecognizerTest):
@@ -56,13 +56,13 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_damaged_file(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_custom_forms(
+            poller = fr_client.begin_recognize_custom_forms(
                 model.model_id,
                 b"\x25\x50\x44\x46\x55\x55\x55",
             )
@@ -71,13 +71,13 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_unlabeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as stream:
-            poller = client.begin_recognize_custom_forms(
+            poller = fr_client.begin_recognize_custom_forms(
                 model.model_id,
                 stream,
                 content_type=FormContentType.image_jpeg
@@ -97,13 +97,13 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as stream:
-            poller = client.begin_recognize_custom_forms(
+            poller = fr_client.begin_recognize_custom_forms(
                 model.model_id,
                 stream,
                 content_type=FormContentType.application_pdf
@@ -124,9 +124,9 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_labeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(
+        poller = client.begin_train_model(
             container_sas_url,
             use_labels=True
         )
@@ -135,7 +135,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
+        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
@@ -150,9 +150,9 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_custom_form_multipage_labeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(
+        poller = client.begin_train_model(
             container_sas_url,
             use_labels=True
         )
@@ -161,7 +161,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             content_type=FormContentType.application_pdf
@@ -181,15 +181,15 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -197,7 +197,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,
@@ -218,15 +218,15 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -234,7 +234,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,
@@ -256,15 +256,15 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_labeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -272,7 +272,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,
@@ -293,15 +293,15 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_custom_form_multipage_labeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -309,7 +309,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,

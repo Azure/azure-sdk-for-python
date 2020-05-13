@@ -7,14 +7,14 @@
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
-from azure.ai.formrecognizer.aio import FormRecognizerClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
+GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
 
 
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
@@ -52,12 +52,12 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_bad_url(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_labels=True)
 
         with self.assertRaises(HttpResponseError):
-            form = await client.recognize_custom_forms_from_url(
+            form = await fr_client.recognize_custom_forms_from_url(
                 model.model_id,
                 url="https://badurl.jpg"
             )
@@ -65,11 +65,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_unlabeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url)
 
-        form = await client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
@@ -84,11 +84,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url)
 
-        forms = await client.recognize_custom_forms_from_url(
+        forms = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
         )
@@ -107,11 +107,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_labeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_labels=True)
 
-        form = await client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)
@@ -125,14 +125,14 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
     async def test_form_multipage_labeled(self, client, container_sas_url, blob_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(
+        model = await client.train_model(
             container_sas_url,
             use_labels=True
         )
 
-        forms = await client.recognize_custom_forms_from_url(
+        forms = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url
         )
@@ -150,19 +150,19 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_unlabeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url)
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await client.recognize_custom_forms_from_url(
+        form = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
             include_text_content=True,
@@ -183,19 +183,19 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
     async def test_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url)
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await client.recognize_custom_forms_from_url(
+        form = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
             include_text_content=True,
@@ -216,19 +216,19 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_labeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_labels=True)
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await client.recognize_custom_forms_from_url(
+        form = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
             include_text_content=True,
@@ -249,19 +249,19 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
     async def test_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
-        training_client = client.get_form_training_client()
+        fr_client = client.get_form_recognizer_client()
 
-        model = await training_client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_labels=True)
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await client.recognize_custom_forms_from_url(
+        form = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
             include_text_content=True,

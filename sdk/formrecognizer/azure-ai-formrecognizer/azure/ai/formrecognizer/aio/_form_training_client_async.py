@@ -17,6 +17,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from ._form_recognizer_client_async import FormRecognizerClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import TrainRequest, TrainSourceFilter
 from .._generated.models import Model
@@ -60,9 +61,11 @@ class FormTrainingClient(object):
             credential: "AzureKeyCredential",
             **kwargs: Any
     ) -> None:
+        self._endpoint = endpoint
+        self._credential = credential
         self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
@@ -229,6 +232,18 @@ class FormTrainingClient(object):
             **kwargs
         )
         return CustomFormModel._from_generated(response)
+
+    def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
+        """Get an instance of a FormRecognizerClient from FormTrainingClient.
+
+        :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
+        :return: A FormRecognizerClient
+        """
+        return FormRecognizerClient(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            **kwargs
+        )
 
     async def __aenter__(self) -> "FormTrainingClient":
         await self._client.__aenter__()
