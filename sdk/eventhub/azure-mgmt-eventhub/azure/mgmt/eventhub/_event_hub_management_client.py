@@ -119,12 +119,15 @@ class EventHubManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2015-08-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2015_08_01.operations.ConsumerGroupsOperations>`
            * 2017-04-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2017_04_01.operations.ConsumerGroupsOperations>`
+           * 2018-01-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ConsumerGroupsOperations>`
         """
         api_version = self._get_api_version('consumer_groups')
         if api_version == '2015-08-01':
             from .v2015_08_01.operations import ConsumerGroupsOperations as OperationClass
         elif api_version == '2017-04-01':
             from .v2017_04_01.operations import ConsumerGroupsOperations as OperationClass
+        elif api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import ConsumerGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -134,10 +137,13 @@ class EventHubManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2017-04-01: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2017_04_01.operations.DisasterRecoveryConfigsOperations>`
+           * 2018-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.DisasterRecoveryConfigsOperations>`
         """
         api_version = self._get_api_version('disaster_recovery_configs')
         if api_version == '2017-04-01':
             from .v2017_04_01.operations import DisasterRecoveryConfigsOperations as OperationClass
+        elif api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -148,12 +154,15 @@ class EventHubManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2015-08-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2015_08_01.operations.EventHubsOperations>`
            * 2017-04-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2017_04_01.operations.EventHubsOperations>`
+           * 2018-01-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.EventHubsOperations>`
         """
         api_version = self._get_api_version('event_hubs')
         if api_version == '2015-08-01':
             from .v2015_08_01.operations import EventHubsOperations as OperationClass
         elif api_version == '2017-04-01':
             from .v2017_04_01.operations import EventHubsOperations as OperationClass
+        elif api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import EventHubsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -201,10 +210,13 @@ class EventHubManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2017-04-01: :class:`RegionsOperations<azure.mgmt.eventhub.v2017_04_01.operations.RegionsOperations>`
+           * 2018-01-01-preview: :class:`RegionsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.RegionsOperations>`
         """
         api_version = self._get_api_version('regions')
         if api_version == '2017-04-01':
             from .v2017_04_01.operations import RegionsOperations as OperationClass
+        elif api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import RegionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
