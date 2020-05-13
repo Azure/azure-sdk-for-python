@@ -61,7 +61,7 @@ class FormRecognizerClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, AzureKeyCredential, Any) -> None
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
 
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
