@@ -1,15 +1,15 @@
 parameters:
-  SourceFolder: ''
-  TargetFolder: ''
-  ArtifactName: ''
+  SourceFolder: '' # ArtifactName (aka "packages")
+  TargetFolder: '' # artifact.safename (azuretemplate)
+  PackageName: '' # artifact.name (azure-template)
   
 steps:
   - pwsh: |
-      Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-      New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-      $underscorePrefix = "${{artifact.name}}"
+      Get-ChildItem $(Pipeline.Workspace)/${{parameters.SourceFolder}}
+      New-Item -Type Directory -Name ${{parameters.TargetFolder}} -Path $(Pipeline.Workspace)
+      $underscorePrefix = "${{parameters.PackageName}}"
       $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-      Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-      Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-      Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+      Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{parameters.TargetFolder}}
+      Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{parameters.TargetFolder}}
+      Get-ChildItem $(Pipeline.Workspace)/${{parameters.TargetFolder}}
     displayName: Stage artifacts
