@@ -21,15 +21,6 @@ class SearchServiceClientBase(HeadersMixin):  # pylint: disable=too-many-public-
     :type endpoint: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials import AzureKeyCredential
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START create_search_service_with_key]
-            :end-before: [END create_search_service_with_key]
-            :language: python
-            :dedent: 4
-            :caption: Creating the SearchServiceClient with an API key.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
