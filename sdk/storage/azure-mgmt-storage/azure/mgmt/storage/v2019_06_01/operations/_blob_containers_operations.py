@@ -42,7 +42,7 @@ class BlobContainersOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, maxpagesize=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, maxpagesize=None, filter=None, include=None, custom_headers=None, raw=False, **operation_config):
         """Lists all containers and does not support a prefix like data plane.
         Also SRP today does not return continuation token.
 
@@ -59,6 +59,10 @@ class BlobContainersOperations(object):
         :param filter: Optional. When specified, only container names starting
          with the filter will be listed.
         :type filter: str
+        :param include: Optional, used to include the properties for soft
+         deleted blob containers. Possible values include: 'deleted'
+        :type include: str or
+         ~azure.mgmt.storage.v2019_06_01.models.ListContainersInclude
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -87,6 +91,8 @@ class BlobContainersOperations(object):
                     query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if include is not None:
+                    query_parameters['$include'] = self._serialize.query("include", include, 'str')
 
             else:
                 url = next_link
