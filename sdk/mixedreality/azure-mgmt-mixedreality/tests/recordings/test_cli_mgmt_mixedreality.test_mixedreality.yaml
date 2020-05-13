@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myaccountxxxxyabc?api-version=2019-02-28-preview
+  response:
+    body:
+      string: '{"error":{"code":"LocationNotAvailableForResourceType","message":"The
+        provided location ''eastus'' is not available for resource type ''Microsoft.MixedReality/spatialAnchorsAccounts''.
+        List of available regions for the resource type is ''eastus2,eastus2euap''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '257'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 11 May 2020 21:23:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 400
+      message: Bad Request
+version: 1

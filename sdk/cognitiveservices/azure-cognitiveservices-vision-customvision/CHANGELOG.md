@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0 (2020-05-14)
+
+**Features**
+
+  - Model Iteration has a new parameter training_time_in_minutes
+  - Model ProjectSettings has a new parameter image_processing_settings
+  - Model ProjectSettings has a new parameter detection_parameters
+  - Model ProjectSettings has a new parameter use_negative_set
+  - Model Project has a new parameter status
+  - Added operation CustomVisionPredictionClientOperationsMixin.detect_image_with_no_store
+  - Added operation CustomVisionPredictionClientOperationsMixin.detect_image_url
+  - Added operation CustomVisionPredictionClientOperationsMixin.classify_image_url
+  - Added operation CustomVisionPredictionClientOperationsMixin.detect_image_url_with_no_store
+  - Added operation CustomVisionPredictionClientOperationsMixin.classify_image_url_with_no_store
+  - Added operation CustomVisionPredictionClientOperationsMixin.classify_image_with_no_store
+  - Added operation CustomVisionPredictionClientOperationsMixin.classify_image
+  - Added operation CustomVisionPredictionClientOperationsMixin.detect_image
+  - Added operation group CustomVisionTrainingClientOperationsMixin
+
+
 ## 1.0.0 (2019-03-22)
 
 This is a stable release of the Cognitive Services Custom Vision SDK.
