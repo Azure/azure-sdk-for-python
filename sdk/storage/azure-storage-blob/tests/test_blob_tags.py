@@ -74,9 +74,12 @@ class StorageBlobTagsTest(StorageTestCase):
         resp = blob_client.create_page_blob(blob_tags=blob_tags, size=512)
         return blob_client, resp
 
-    def _create_container(self):
-        container_name = self.get_resource_name("container"+str(uuid.uuid4()).replace('-', ''))
-        self.bsc.create_container(container_name)
+    def _create_container(self, prefix="container"):
+        container_name = self.get_resource_name(prefix)
+        try:
+            self.bsc.create_container(container_name)
+        except:
+            pass
         return container_name
 
     #-- test cases for blob tags ----------------------------------------------
@@ -257,9 +260,9 @@ class StorageBlobTagsTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        container_name1 = self._create_container()
-        container_name2 = self._create_container()
-        container_name3 = self._create_container()
+        container_name1 = self._create_container(prefix="container1")
+        container_name2 = self._create_container(prefix="container2")
+        container_name3 = self._create_container(prefix="container3")
 
         blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         self._create_block_blob(blob_tags=blob_tags)
