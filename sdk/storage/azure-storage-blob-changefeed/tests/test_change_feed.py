@@ -97,8 +97,8 @@ class StorageChangeFeedTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_change_feed_events_in_a_time_range(self, resource_group, location, storage_account, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
-        start_time = datetime(2019, 1, 1)
-        end_time = datetime(2020, 3, 4)
+        start_time = datetime(2020, 5, 12)
+        end_time = datetime(2020, 5, 13)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=2).by_page()
 
         # print first page of events
