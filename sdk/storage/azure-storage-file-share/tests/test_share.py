@@ -161,7 +161,7 @@ class StorageShareTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             share_client.get_share_properties()
 
-        share_list = list(self.fsc.list_shares(include_deleted=True))
+        share_list = list(self.fsc.list_shares(include_deleted=True, include_snapshots=True, include_metadata=True))
         self.assertTrue(len(share_list) >= 1)
 
         for share in share_list:

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: http://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
+    uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
@@ -24,7 +24,7 @@ interactions:
     status:
       code: 409
       message: The specified share already exists.
-    url: http://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
@@ -35,7 +35,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: DELETE
-    uri: http://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
+    uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: http://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
@@ -58,7 +58,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: http://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
+    uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
@@ -73,7 +73,7 @@ interactions:
     status:
       code: 404
       message: The specified share does not exist.
-    url: http://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
@@ -86,11 +86,11 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: http://storagename.file.core.windows.net/?include=deleted&comp=list
+    uri: https://storagename.file.core.windows.net/?include=deleted&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"http://storagename.file.core.windows.net/\"><Shares><Share><Name>existing647b1102</Name><Properties><Last-Modified>Mon,
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>existing647b1102</Name><Properties><Last-Modified>Mon,
         11 May 2020 18:54:32 GMT</Last-Modified><Etag>\"0x8D7F5DCBE38249A\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/11/2020
         6:54:32 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>share647b1102</Name><Deleted>true</Deleted><Version>01D62891F1043495</Version><Properties><Last-Modified>Tue,
         12 May 2020 19:17:13 GMT</Last-Modified><Etag>\"0x8D7F6A9137AA752\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
@@ -191,7 +191,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: http://seansoftdeletecanary.file.core.windows.net/?include=deleted&comp=list
+    url: https://seansoftdeletecanary.file.core.windows.net/?include=deleted&comp=list
 - request:
     body: null
     headers:
@@ -206,7 +206,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: http://storagename.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
+    uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
   response:
     body:
       string: ''
@@ -220,7 +220,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: http://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
+    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
 - request:
     body: null
     headers:
@@ -231,7 +231,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: http://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
+    uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
       string: ''
@@ -250,5 +250,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: http://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
 version: 1
