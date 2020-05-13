@@ -283,7 +283,7 @@ class WorkspacesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, force=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -296,6 +296,8 @@ class WorkspacesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        if force is not None:
+            query_parameters['force'] = self._serialize.query("force", force, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -320,14 +322,21 @@ class WorkspacesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, workspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes a workspace instance.
+            self, resource_group_name, workspace_name, force=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a workspace resource. To recover the workspace, create it again
+        with the same name, in the same subscription, resource group and
+        location. The name is kept for 14 days and cannot be used for another
+        workspace. To remove the workspace completely and release the name, use
+        the force flag.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
+        :param force: Deletes the workspace without the recovery option. A
+         workspace that was deleted with this flag cannot be recovered.
+        :type force: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -342,6 +351,7 @@ class WorkspacesOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            force=force,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
