@@ -128,7 +128,7 @@ class TestCustomForms(FormRecognizerTest):
 
         poller = training_client.begin_train_model(
             container_sas_url,
-            use_labels=True
+            use_training_labels=True
         )
         model = poller.result()
 
@@ -154,7 +154,7 @@ class TestCustomForms(FormRecognizerTest):
 
         poller = training_client.begin_train_model(
             container_sas_url,
-            use_labels=True
+            use_training_labels=True
         )
         model = poller.result()
 
@@ -258,7 +258,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
+        poller = training_client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -295,7 +295,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
+        poller = training_client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
