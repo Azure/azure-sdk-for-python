@@ -1,0 +1,15 @@
+parameters:
+  SourceFolder: ''
+  TargetFolder: ''
+  ArtifactName: ''
+  
+steps:
+  - pwsh: |
+      Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+      New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
+      $underscorePrefix = "${{artifact.name}}"
+      $dashPrefix = "${{artifact.name}}".Replace("_", "-")
+      Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+      Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+      Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+    displayName: Stage artifacts
