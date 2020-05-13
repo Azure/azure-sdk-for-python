@@ -13,11 +13,11 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import EventHubManagementClientConfiguration
-from .operations import Operations
 from .operations import NamespacesOperations
 from .operations import DisasterRecoveryConfigsOperations
 from .operations import EventHubsOperations
 from .operations import ConsumerGroupsOperations
+from .operations import Operations
 from .operations import RegionsOperations
 from . import models
 
@@ -28,8 +28,6 @@ class EventHubManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: EventHubManagementClientConfiguration
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.eventhub.v2017_04_01.operations.Operations
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.eventhub.v2017_04_01.operations.NamespacesOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
@@ -38,6 +36,8 @@ class EventHubManagementClient(SDKClient):
     :vartype event_hubs: azure.mgmt.eventhub.v2017_04_01.operations.EventHubsOperations
     :ivar consumer_groups: ConsumerGroups operations
     :vartype consumer_groups: azure.mgmt.eventhub.v2017_04_01.operations.ConsumerGroupsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.eventhub.v2017_04_01.operations.Operations
     :ivar regions: Regions operations
     :vartype regions: azure.mgmt.eventhub.v2017_04_01.operations.RegionsOperations
 
@@ -62,8 +62,6 @@ class EventHubManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
@@ -71,6 +69,8 @@ class EventHubManagementClient(SDKClient):
         self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.consumer_groups = ConsumerGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.regions = RegionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

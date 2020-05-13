@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import EventHub2018PreviewManagementClientConfiguration
-from ._event_hub2018_preview_management_client import EventHub2018PreviewManagementClient
-__all__ = ['EventHub2018PreviewManagementClient', 'EventHub2018PreviewManagementClientConfiguration']
+from ._configuration import EventHubManagementClientConfiguration
+from ._event_hub_management_client import EventHubManagementClient
+__all__ = ['EventHubManagementClient', 'EventHubManagementClientConfiguration']
 
 from .version import VERSION
 

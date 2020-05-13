@@ -54,7 +54,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_bad_url(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         with self.assertRaises(HttpResponseError):
             form = await fr_client.recognize_custom_forms_from_url(
@@ -109,7 +109,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
@@ -129,7 +129,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         model = await client.train_model(
             container_sas_url,
-            use_labels=True
+            use_training_labels=True
         )
 
         forms = await fr_client.recognize_custom_forms_from_url(
@@ -218,7 +218,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         responses = []
 
@@ -251,7 +251,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_labels=True)
+        model = await client.train_model(container_sas_url, use_training_labels=True)
 
         responses = []
 

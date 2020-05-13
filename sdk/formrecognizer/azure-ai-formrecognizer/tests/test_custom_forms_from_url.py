@@ -54,7 +54,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_bad_url(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         with self.assertRaises(HttpResponseError):
@@ -115,7 +115,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
@@ -137,7 +137,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         poller = client.begin_train_model(
             container_sas_url,
-            use_labels=True
+            use_training_labels=True
         )
         model = poller.result()
 
@@ -233,7 +233,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -267,7 +267,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
