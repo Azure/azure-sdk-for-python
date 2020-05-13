@@ -65,7 +65,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, any, dict) -> None
+        # type: (str, Any, dict) -> None
         try:
             if not base_url.lower().startswith('http'):
                 base_url = "https://" + base_url
