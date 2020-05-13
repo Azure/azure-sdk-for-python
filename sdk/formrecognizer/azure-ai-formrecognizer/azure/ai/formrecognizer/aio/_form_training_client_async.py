@@ -6,10 +6,13 @@
 
 # pylint: disable=protected-access
 
+import json
 from typing import (
     Optional,
     Any,
     AsyncIterable,
+    Dict,
+    Union,
     TYPE_CHECKING,
 )
 from azure.core.polling import async_poller
@@ -23,19 +26,18 @@ from .._generated.models import (
     TrainSourceFilter,
     Model,
     CopyRequest,
-    CopyOperationResult,
-    CopyAuthorizationResult
+    CopyOperationResult
 )
 from .._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
-    CustomFormModel,
-    CopyTarget
+    CustomFormModel
 )
 from .._user_agent import USER_AGENT
 from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -243,7 +245,7 @@ class FormTrainingClient(object):
             resource_id: str,
             resource_region: str,
             **kwargs: Any
-    ) -> "CopyTarget":
+    ) -> Dict[str, Union[str, int]]:
         """Generate authorization to copy a model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed into :func:`~copy_model()`
@@ -252,8 +254,9 @@ class FormTrainingClient(object):
             where the model will be copied to.
         :param str resource_region: Location of the target Azure resource. A valid Azure
             region name supported by Cognitive Services.
-        :return: CopyTarget
-        :rtype: ~azure.ai.formrecognizer.CopyTarget
+        :return: A dictionary with values for the model ID, access token, resource ID,
+            resource region, and expiration datetime ticks.
+        :rtype: Dict[str, Union[str, int]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -267,17 +270,20 @@ class FormTrainingClient(object):
         """
 
         response = await self._client.generate_model_copy_authorization(  # type: ignore
-            cls=lambda pipeline_response, deserialized, response_headers: deserialized,
+            cls=lambda pipeline_response, deserialized, response_headers: pipeline_response,
             error_map=error_map,
             **kwargs
-        )
-        return CopyTarget._from_generated(response, resource_id=resource_id, resource_region=resource_region)
+        )  # type: PipelineResponse
+        target = json.loads(response.http_response.text())
+        target["resourceId"] = resource_id
+        target["resourceRegion"] = resource_region
+        return target
 
     @distributed_trace_async
     async def copy_model(
         self,
         model_id: str,
-        target: "CopyTarget",
+        target: dict,
         **kwargs: Any
     ) -> CustomFormModelInfo:
         """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
@@ -287,7 +293,7 @@ class FormTrainingClient(object):
 
         :param model_id: Model identifier of the model to copy to target resource.
         :type model_id: str
-        :param ~azure.ai.formrecognizer.CopyTarget target:
+        :param dict target:
             The copy authorization generated from the target resource's call to
             :func:`~authorize_copy_target()`.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
@@ -309,18 +315,14 @@ class FormTrainingClient(object):
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated_copy(copy_result, target.model_id)
+            return CustomFormModelInfo._from_generated_copy(copy_result, target["modelId"])
 
         return await self._client.copy_custom_model(  # type: ignore
             model_id=model_id,
             copy_request=CopyRequest(
-                target_resource_id=target.resource_id,
-                target_resource_region=target.resource_region,
-                copy_authorization=CopyAuthorizationResult(
-                    model_id=target.model_id,
-                    access_token=target.access_token,
-                    expiration_date_time_ticks=target.expiration_date_time_ticks
-                )
+                target_resource_id=target["resourceId"],
+                target_resource_region=target["resourceRegion"],
+                copy_authorization=target
             ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
