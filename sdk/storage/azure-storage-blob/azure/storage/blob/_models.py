@@ -9,6 +9,7 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator, ItemPaged
+from azure.storage.blob._generated.models import FilterBlobItem
 
 from ._shared import decode_base64_to_text
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -487,6 +488,10 @@ class BlobProperties(DictMixin):
         Dictionary<policy_id, Dictionary<rule_id, status of replication(complete,failed)>
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
+    :ivar bool tag_count:
+        Tags count on this blob.
+    :ivar dict(str, str) blob_tags:
+        Key value pair of tags on this blob.
     """
 
     def __init__(self, **kwargs):
@@ -521,6 +526,8 @@ class BlobProperties(DictMixin):
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.tag_count = kwargs.get('x-ms-tag-count')
+        self.blob_tags = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -550,7 +557,22 @@ class BlobProperties(DictMixin):
         blob.blob_tier_change_time = generated.properties.access_tier_change_time
         blob.version_id = generated.version_id
         blob.is_current_version = generated.is_current_version
+        blob.tag_count = generated.properties.tag_count
+        blob.blob_tags = blob._parse_tags(generated.blob_tags)  # pylint: disable=protected-access
         return blob
+
+    @classmethod
+    def _parse_tags(cls, generated_tags):
+        # type: (Optional[List[BlobTag]]) -> Union[Dict[str, str], None]
+        """Deserialize a list of BlobTag objects into a dict.
+        """
+        if generated_tags:
+            tag_dict = dict()
+            for blob_tag in generated_tags.blob_tag_set:
+                tag_dict[blob_tag.key] = blob_tag.value
+            return tag_dict
+        else:
+            return None
 
 
 class BlobPropertiesPaged(PageIterator):
@@ -634,6 +656,89 @@ class BlobPropertiesPaged(PageIterator):
         if isinstance(item, BlobItemInternal):
             blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
             blob.container = self.container
+            return blob
+        return item
+
+
+class FilteredBlob(FilterBlobItem):
+    """Blob info from a Filter Blobs API call.
+
+    :ivar name: Blob name
+    :type name: str
+    :ivar container_name: Container name.
+    :type container_name: str
+    :ivar tag_value: tag value filtered by the expression.
+    :type tag_value: str
+    """
+    def __init__(self, **kwargs):
+        super(FilteredBlob, self).__init__(
+            **kwargs
+        )
+
+
+class FilteredBlobPaged(PageIterator):
+    """An Iterable of Blob properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A blob name prefix being used to filter the list.
+    :ivar str marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.blob.BlobProperties)
+    :ivar str container: The container that the blobs are listed from.
+
+    :param callable command: Function to retrieve the next page of items.
+    :param str container: The name of the container.
+    :param int results_per_page: The maximum number of blobs to retrieve per
+        call.
+    :param str continuation_token: An opaque continuation token.
+    :param location_mode: Specifies the location the request should be sent to.
+        This mode only applies for RA-GRS accounts which allow secondary read access.
+        Options include 'primary' or 'secondary'.
+    """
+    def __init__(
+            self, command,
+            container=None,
+            results_per_page=None,
+            continuation_token=None,
+            location_mode=None):
+        super(FilteredBlobPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.service_endpoint = None
+        self.marker = continuation_token
+        self.results_per_page = results_per_page
+        self.container = container
+        self.current_page = None
+        self.location_mode = location_mode
+
+    def _get_next_cb(self, continuation_token):
+        try:
+            return self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.service_endpoint = self._response.service_endpoint
+        self.marker = self._response.next_marker
+        self.current_page = [self._build_item(item) for item in self._response.blobs]
+
+        return self._response.next_marker or None, self.current_page
+
+    def _build_item(self, item):
+        if isinstance(item, FilterBlobItem):
+            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
             return blob
         return item
 

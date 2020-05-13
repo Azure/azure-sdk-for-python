@@ -38,14 +38,14 @@ from ._generated.models import ( # pylint: disable=unused-import
     QueryRequest,
     CpkInfo)
 from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version, \
-    get_quick_query_serialization_info
+    serialize_blob_tags_header, serialize_blob_tags, get_quick_query_serialization_info
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._quick_query_helper import QuickQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock
+from ._models import BlobType, BlobBlock, BlobProperties
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
 
@@ -358,6 +358,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
+        kwargs['blob_tags_string'] = serialize_blob_tags_header(kwargs.pop('blob_tags', None))
         kwargs['stream'] = stream
         kwargs['length'] = length
         kwargs['overwrite'] = overwrite
@@ -399,6 +400,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword blob_tags:
+            Name-value pairs associated with the blob as tag.
+        :paramtype blob_tags: dict(str, str)
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -1103,6 +1107,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
             except AttributeError:
                 headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
+
+        blob_tags_string = serialize_blob_tags_header(kwargs.pop('blob_tags', None))
+
         options = {
             'content_length': 0,
             'blob_content_length': size,
@@ -1113,6 +1120,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'blob_tags_string': blob_tags_string,
             'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
@@ -1142,6 +1150,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword blob_tags:
+            Name-value pairs associated with the blob as tag.
+        :paramtype blob_tags: dict(str, str)
         :keyword int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
             track requests. The value of the sequence number must be between 0
@@ -1223,6 +1234,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+        blob_tags_string = serialize_blob_tags_header(kwargs.pop('blob_tags', None))
 
         options = {
             'content_length': 0,
@@ -1232,6 +1244,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'blob_tags_string': blob_tags_string,
             'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
@@ -1248,6 +1261,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword blob_tags:
+            Name-value pairs associated with the blob as tag.
+        :paramtype blob_tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1410,10 +1426,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
+        blob_tags_string = serialize_blob_tags_header(kwargs.pop('blob_tags', None))
+
         options = {
             'copy_source': source_url,
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
+            'blob_tags_string': blob_tags_string,
             'headers': headers,
             'cls': return_response_headers,
         }
@@ -1485,6 +1504,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
+        :keyword blob_tags:
+            Name-value pairs associated with the blob as tag.
+        :paramtype blob_tags: dict(str, str)
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1997,6 +2019,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         tier = kwargs.pop('standard_blob_tier', None)
+        blob_tags_string = serialize_blob_tags_header(kwargs.pop('blob_tags', None))
 
         options = {
             'blocks': block_lookup,
@@ -2009,6 +2032,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'tier': tier.value if tier else None,
+            'blob_tags_string': blob_tags_string,
             'headers': headers
         }
         options.update(kwargs)
@@ -2033,6 +2057,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
+        :keyword blob_tags:
+            Name-value pairs associated with the blob as tag.
+        :paramtype blob_tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2121,6 +2148,85 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
                 **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _set_blob_tags_options(self, blob_tags=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        headers = kwargs.pop('headers', {})
+
+        tags = serialize_blob_tags(blob_tags)
+
+        options = {
+            'tags': tags,
+            'version_id': kwargs.pop('version_id', None),
+            'timeout': kwargs.pop('timeout', None),
+            'cls': return_response_headers,
+            'headers': headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def set_blob_tags(self, blob_tags=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
+
+        :param blob_tags:
+            Blob tags
+        :type blob_tags: dict(str, str)
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+            It for service version 2019-10-10 and newer.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash of the tags content. The storage
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https, as https (the default),
+            will already validate. Note that this MD5 hash is not stored with the
+            blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Any]
+        """
+        options = self._set_blob_tags_options(blob_tags=blob_tags, **kwargs)
+        try:
+            return self._client.blob.set_tags(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _get_blob_tags_options(self, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+
+        options = {
+            'version_id': kwargs.pop('version_id', None),
+            'snapshot': self.snapshot,
+            'timeout': kwargs.pop('timeout', None),
+            'cls': return_headers_and_deserialized}
+        return options
+
+    @distributed_trace
+    def get_blob_tags(self, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
+
+        :keyword str version_id:
+            If true, calculates an MD5 hash of the tags content. The storage
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https, as https (the default),
+            will already validate. Note that this MD5 hash is not stored with the
+            blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+        options = self._get_blob_tags_options(**kwargs)
+        try:
+            _, blob_tags = self._client.blob.get_tags(**options)
+            return BlobProperties._parse_tags(blob_tags) # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 
