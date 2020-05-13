@@ -25,19 +25,6 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
-class HanaInstancePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`HanaInstance <azure.mgmt.hanaonazure.models.HanaInstance>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[HanaInstance]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(HanaInstancePaged, self).__init__(*args, **kwargs)
 class SapMonitorPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SapMonitor <azure.mgmt.hanaonazure.models.SapMonitor>` object
@@ -51,3 +38,16 @@ class SapMonitorPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SapMonitorPaged, self).__init__(*args, **kwargs)
+class ProviderInstancePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ProviderInstance <azure.mgmt.hanaonazure.models.ProviderInstance>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProviderInstance]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProviderInstancePaged, self).__init__(*args, **kwargs)
