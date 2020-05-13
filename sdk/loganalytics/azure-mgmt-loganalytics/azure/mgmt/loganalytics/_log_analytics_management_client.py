@@ -24,6 +24,7 @@ from .operations import OperationStatusesOperations
 from .operations import SharedKeysOperations
 from .operations import UsagesOperations
 from .operations import WorkspacesOperations
+from .operations import DeletedWorkspacesOperations
 from .operations import ClustersOperations
 from .operations import StorageInsightConfigsOperations
 from .operations import SavedSearchesOperations
@@ -61,6 +62,8 @@ class LogAnalyticsManagementClient(SDKClient):
     :vartype usages: azure.mgmt.loganalytics.operations.UsagesOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar deleted_workspaces: DeletedWorkspaces operations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
     :ivar storage_insight_configs: StorageInsightConfigs operations
@@ -114,6 +117,8 @@ class LogAnalyticsManagementClient(SDKClient):
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.deleted_workspaces = DeletedWorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
