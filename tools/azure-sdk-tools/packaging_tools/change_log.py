@@ -35,7 +35,6 @@ class ChangeLog:
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new operation group?
-        print(path)
         _, operation_name, *remaining_path = path
         if not remaining_path:
             if is_deletion:
