@@ -8,7 +8,7 @@ steps:
       Get-ChildItem $(Pipeline.Workspace)/${{parameters.SourceFolder}}
       New-Item -Type Directory -Name ${{parameters.TargetFolder}} -Path $(Pipeline.Workspace)
       $underscorePrefix = "${{parameters.PackageName}}"
-      $dashPrefix = "${{artifact.name}}".Replace("_", "-")
+      $dashPrefix = "${{parameters.PackageName}}".Replace("_", "-")
       Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{parameters.TargetFolder}}
       Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{parameters.TargetFolder}}
       Get-ChildItem $(Pipeline.Workspace)/${{parameters.TargetFolder}}
