@@ -12,6 +12,32 @@
 from msrest.paging import Paged
 
 
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.signalr.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
+class SignalRResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SignalRResource <azure.mgmt.signalr.models.SignalRResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SignalRResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SignalRResourcePaged, self).__init__(*args, **kwargs)
 class SignalRUsagePaged(Paged):
     """
     A paging container for iterating over a list of :class:`SignalRUsage <azure.mgmt.signalr.models.SignalRUsage>` object
