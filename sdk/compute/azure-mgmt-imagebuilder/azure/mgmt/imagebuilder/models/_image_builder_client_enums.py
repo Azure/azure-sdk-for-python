@@ -57,7 +57,6 @@ class RunSubState(str, Enum):
 class ResourceIdentityType(str, Enum):
 
     user_assigned = "UserAssigned"
-    none = "None"
 
 
 class SharedImageStorageAccountType(str, Enum):

@@ -50,6 +50,8 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
+      - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
       - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
         - pwsh: |
             $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)

@@ -4,13 +4,15 @@
 # ------------------------------------
 import itertools
 import os
+from unittest import mock
 
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport
 from test_environment_credential import ALL_VARIABLES
 
 
@@ -97,3 +99,35 @@ def test_certificate_configuration():
     assert kwargs["certificate_path"] == certificate_path
     assert kwargs["tenant_id"] == tenant_id
     assert kwargs["foo"] == bar
+
+
+@pytest.mark.asyncio
+async def test_client_secret_environment_credential():
+    client_id = "fake-client-id"
+    secret = "fake-client-secret"
+    tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = async_validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                json_payload={
+                    "token_type": "Bearer",
+                    "expires_in": 42,
+                    "ext_expires_in": 42,
+                    "access_token": access_token,
+                }
+            )
+        ],
+    )
+
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_CLIENT_SECRET: secret,
+        EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+    }
+    with mock.patch.dict("os.environ", environment, clear=True):
+        token = await EnvironmentCredential(transport=transport).get_token("scope")
+
+    assert token.token == access_token

@@ -351,9 +351,8 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
 class ImageTemplateIdentity(Model):
     """Identity for the image template.
 
-    :param type: The type of identity used for the image template. The type
-     'None' will remove any identities from the image template. Possible values
-     include: 'UserAssigned', 'None'
+    :param type: The type of identity used for the image template. Possible
+     values include: 'UserAssigned'
     :type type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the image template. The user identity dictionary key references will
@@ -723,7 +722,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         'gallery_image_id': {'key': 'galleryImageId', 'type': 'str'},
         'replication_regions': {'key': 'replicationRegions', 'type': '[str]'},
         'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'SharedImageStorageAccountType'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, *, run_output_name: str, gallery_image_id: str, replication_regions, artifact_tags=None, exclude_from_latest: bool=None, storage_account_type=None, **kwargs) -> None:
