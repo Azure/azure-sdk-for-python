@@ -40,6 +40,9 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft
 
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd
+
 # Management Plane
 /**/*mgmt*/     @zikalino
 
