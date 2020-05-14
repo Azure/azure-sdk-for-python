@@ -33,6 +33,10 @@ stages:
                         SourceFolder: ${{parameters.ArtifactName}} 
                         TargetFolder: ${{artifact.safeName}}
                         PackageName: ${{artifact.name}}
+                    - pwsh: |
+                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
+                      workingDirectory: $(Pipeline.Workspace)
+                      displayName: Output Visible Artifacts
                     - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
                       parameters:
                         ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -59,6 +63,10 @@ stages:
                         SourceFolder: ${{parameters.ArtifactName}} 
                         TargetFolder: ${{artifact.safeName}}
                         PackageName: ${{artifact.name}}
+                    - pwsh: |
+                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
+                      workingDirectory: $(Pipeline.Workspace)
+                      displayName: Output Visible Artifacts
                     - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
                       parameters:
                         ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -94,14 +102,11 @@ stages:
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
 
-                      - pwsh: |
-                          Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-                          New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-                          $underscorePrefix = "${{artifact.name}}"
-                          $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                          Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
+                          SourceFolder: ${{parameters.ArtifactName}} 
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
 
                       - task: UsePythonVersion@0
 
@@ -151,12 +156,12 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      - pwsh: |
-                          Get-ChildItem $(Pipeline.Workspace)/${{parameters.DocArtifact}}
-                          New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-                          $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.DocArtifact}}/$dashPrefix.zip $(Pipeline.Workspace)/${{artifact.safeName}}
-                        displayName: Stage artifacts
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
+                          SourceFolder: ${{parameters.DocArtifact}}
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
+                          AdditionalRegex: '.zip'
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
