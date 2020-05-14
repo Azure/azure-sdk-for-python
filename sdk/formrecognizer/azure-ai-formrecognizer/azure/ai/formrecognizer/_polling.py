@@ -17,6 +17,12 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
 
+def raise_error(errors, message):
+    for err in errors:
+        message += "({}) {}\n".format(err["code"], err["message"])
+    raise HttpResponseError(message)
+
+
 class TrainingPolling(LocationPolling):
     """Polling method overrides for training endpoints.
     """
@@ -40,6 +46,14 @@ class TrainingPolling(LocationPolling):
             status = body['modelInfo']['status']
             if not status:
                 raise BadResponse("No status found in body")
+            if status.lower() == "invalid":
+                train_result = body.get('trainResult')
+                if train_result:
+                    errors = train_result.get("errors")
+                    if errors:
+                        message = "Invalid model created with ID={}\n".format(body["modelInfo"]["modelId"])
+                        raise_error(errors, message)
+                return "Failed"
             if status.lower() != "creating":
                 return "Succeeded"
 
@@ -78,8 +92,5 @@ class AnalyzePolling(OperationResourcePolling):
             if analyze_result:
                 errors = analyze_result.get("errors")
                 if errors:
-                    message = ""
-                    for err in errors:
-                        message += "({}) {}\n".format(err.get("code"), err.get("message"))
-                    raise HttpResponseError(message)
+                    raise_error(errors, message="")
         return status

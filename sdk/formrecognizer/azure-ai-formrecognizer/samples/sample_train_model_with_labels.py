@@ -42,9 +42,6 @@ class TrainModelWithLabelsSample(object):
 
         poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=True)
         model = poller.result()
-        if model.status == "invalid":
-            form_training_client.delete_model(model.model_id)
-            exit(1)
 
         # Custom model information
         print("Model ID: {}".format(model.model_id))

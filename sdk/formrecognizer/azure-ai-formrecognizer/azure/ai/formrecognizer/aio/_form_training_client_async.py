@@ -106,6 +106,8 @@ class FormTrainingClient(object):
         :return: CustomFormModel
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises ~azure.core.exceptions.HttpResponseError:
+            Note that if the training fails, the exception is raised, but a model with an
+            "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
 
         .. admonition:: Example:
 

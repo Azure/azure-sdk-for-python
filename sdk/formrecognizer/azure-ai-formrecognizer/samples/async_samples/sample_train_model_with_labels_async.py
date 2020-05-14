@@ -45,9 +45,6 @@ class TrainModelWithLabelsSampleAsync(object):
 
         async with form_training_client:
             model = await form_training_client.train_model(self.container_sas_url, use_training_labels=True)
-            if model.status == "invalid":
-                await form_training_client.delete_model(model.model_id)
-                exit(1)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
