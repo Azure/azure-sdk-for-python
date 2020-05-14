@@ -42,6 +42,7 @@ steps:
       -DocRepoLocation "${{parameters.WorkingDirectory}}/repo" 
       -Language "${{parameters.Language}}" 
       -DocRepoContentLocation ${{ parameters.DocRepoDestinationPath }}
+      -continueOnError
     pwsh: true
   env:
     GH_TOKEN: $(azuresdk-github-pat)
