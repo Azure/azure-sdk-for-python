@@ -84,7 +84,7 @@ jobs:
           pip --version
         displayName: pip --version
 
-      - script: pip install -r .\common\smoketest\requirements.txt --pre --no-deps --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
+      - script: pip install -r ./common/smoketest/requirements.txt --pre --no-deps --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
         displayName: Install requirements from dev feed without dependencies
 
       - script: pip install -r ./common/smoketest/requirements_async.txt
