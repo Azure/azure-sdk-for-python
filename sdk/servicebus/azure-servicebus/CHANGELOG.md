@@ -2,6 +2,9 @@
 
 ## 0.50.3 (unreleased)
 
+> **NOTE**: Starting with the GA release of version 7.0.0, (Currently in preview) this package will be deprecated.
+> Users can get a head-start on transitioning by installing or upgrading via `pip install azure-servicebus --pre` and reviewing our [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/migration_guide.md)
+
 **Features**
 
 * Added support for retry sending if connection gets closed due to long time inactivity.
