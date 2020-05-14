@@ -91,7 +91,7 @@ jobs:
         displayName: "Install requirements_async.txt"
         condition: and(succeeded(), eq(variables['InstallAsyncRequirements'], 'true'))
 
-      - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt > ./common/smoketest/requirements_dependencies.txt
+      - script: python ./common/smoketest/dependencies.py -r ./common/smoketest/requirements.txt > ./common/smoketest/requirements_dependencies.txt
         displayName: Install packages from the dev feed
 
       - script: pip install -r ./common/smoketest/requirements_dependencies.txt
