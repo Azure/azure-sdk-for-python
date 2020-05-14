@@ -16,52 +16,28 @@ authentication. This document illustrates the most common scenario
 Prerequisites
 -------------
 
-| You will need the following values to authenticate to Azure 
+| You will need the following values to authenticate to Azure
+ 
+- **Subscription ID**
 - **Client ID** 
 - **Client Secret** 
 - **Tenant ID** 
-- **Subscription ID**
 
 These values can be obtained from the portal, here's the instructions:
 
 Get Subscription ID
 ^^^^^^^^^^^^^^^^^^^
 
-1. Login into your azure account
+1. Login into your Azure account
 2. Select Subscriptions in the left sidebar
 3. Select whichever subscription is needed
-4. Click on overview
+4. Click on Overview
 5. Copy the Subscription ID
 
-Get Client ID
-^^^^^^^^^^^^^
+Get Client ID / Client Secret / Tenant ID 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Login into your azure account
-2. Select azure active directory in the left sidebar
-3. Click "App Registrations"
-4. Select the application which you have created
-5. Copy "Application (client) ID"
-
-Get Client Secret
-^^^^^^^^^^^^^^^^^
-
-1. Login into your azure account
-2. Select azure active directory in the left sidebar
-3. Click "App Registrations" in the left sidebar
-4. Click "Certificates & Secrets"
-5. Click "+ New client secret"
-6. Type description and click "Add"
-7. Copy and store the key value. You won’t be able to retrieve it after
-   you leave this page.
-
-Get Tenant ID
-^^^^^^^^^^^^^
-
-1. Login into your azure account
-2. Select azure active directory in the left sidebar
-3. Click "App Registrations" in the left sidebar
-4. Select the application which you have created
-5. Copy "Directory (tenant) ID"
+For information on how to get Client ID, Client Secret, and Tenant ID, please refer to `this document <https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal>`__
 
 Setting Environment Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,6 +52,15 @@ your environment variables
 
 To set the following environment variables on your development system:
 
+Windows (Note: Administrator access is required)
+
+1. Open the Control Panel
+2. Click System Security, then System
+3. Click Advanced system settings on the left
+4. Inside the System Properties window, click the Environment Variables… button.
+5. Click on the property you would like to change, then click the Edit… button. If the property name is not listed, then click the New… button.
+
+Linux-based OS
 ::
 
     export AZURE_CLIENT_ID="__CLIENT_ID__"
@@ -83,14 +68,16 @@ To set the following environment variables on your development system:
     export AZURE_TENANT_ID="__TENANT_ID__"
     export AZURE_SUBSCRIPTION_ID="__SUBSCRIPTION_ID__"
 
-Authentication and Creating REST Client
----------------------------------------
+Authentication and Creating Resource Management Client
+------------------------------------------------------
 
 Now that the environment is setup, all you need to do is to create an
 authenticated client. Our default option is to use
-**DefaultAzureCredentials** and in this guide we have picked
-**Resource** as our target service. To authenticate to Azure and create
-a REST client, simply do the following:
+**DefaultAzureCredential** and in this guide we have picked
+**Resources** as our target service, but you can set it up similarly for any other service that you are using.
+
+To authenticate to Azure and create
+a management client, simply do the following:
 
 ::
 
@@ -103,14 +90,14 @@ a REST client, simply do the following:
     credentials = DefaultAzureCredential()
     resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credentials, subscription_id=subscription_id)
 
-More information and different authentication approaches using Azure Identity can be found at
-`here <https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python>`__
+More information and different authentication approaches using Azure Identity can be found in
+`this document <https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python>`__
 
 Managing Resources
 ------------------
 
-Now that we are authenticated, we can use our REST client to make API
-calls. Let's create a resource group and demostrate REST client's usage
+Now that we are authenticated, we can use our management client to make API
+calls. Let's create a resource group and demonstrate management client's usage
 
 **Create a resource group**
 
@@ -148,4 +135,4 @@ calls. Let's create a resource group and demostrate REST client's usage
 ::
 
     delete_async_op = resource_client.resource_groups.begin_delete(group_name)
-    delete_async_op.wait()
+    delete_async_op.wd 
