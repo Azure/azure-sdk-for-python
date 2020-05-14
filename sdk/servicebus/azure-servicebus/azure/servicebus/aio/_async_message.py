@@ -26,7 +26,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
     """A Service Bus Message received from service side.
 
     """
-    async def _settle_message(  # type: ignore  # pylint: disable=invalid-overridden-method
+    async def _settle_message(  # type: ignore
             self,
             settle_operation,
             dead_letter_details=None
@@ -50,7 +50,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
-    async def complete(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
+    async def complete(self) -> None:  # type: ignore
         """Complete the message.
 
         This removes the message from the queue.
@@ -68,7 +68,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
     async def dead_letter(  # type: ignore
             self, reason: Optional[str] = None, description: Optional[str] = None
-    ) -> None:  # pylint: disable=unused-argument,invalid-overridden-method
+    ) -> None:  # pylint: disable=unused-argument
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -87,7 +87,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         await self._settle_message(MESSAGE_DEAD_LETTER)
         self._settled = True
 
-    async def abandon(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
+    async def abandon(self) -> None:  # type: ignore
         """Abandon the message.
 
         This message will be returned to the queue and made available to be received again.
@@ -102,7 +102,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         await self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
-    async def defer(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
+    async def defer(self) -> None:  # type: ignore
         """Defers the message.
 
         This message will remain in the queue but must be requested
@@ -118,7 +118,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
+    async def renew_lock(self) -> None:  # type: ignore
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
