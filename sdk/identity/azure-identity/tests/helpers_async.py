@@ -46,4 +46,4 @@ class AsyncMockTransport(mock.MagicMock):
 
 def async_validating_transport(requests, responses):
     sync_transport = validating_transport(requests, responses)
-    return AsyncMockTransport(send=wrap_in_future(sync_transport.send))
+    return AsyncMockTransport(send=mock.Mock(wraps=wrap_in_future(sync_transport.send)))
