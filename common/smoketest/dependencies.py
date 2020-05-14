@@ -10,15 +10,16 @@ except:
     from pip._internal.req import parse_requirements
     from pip._internal.network.session import PipSession
 
-def get_freeze_string(requirement):
-    output = []
-    output.append(requirement.project_name)
-    spec_list = [s[0] + s[1] for s in requirement.specs]
+def combine_requirements(requirements):
+    name = requirements[0].project_name
+    specs = []
+    for req in requirements:
+        if len(req.specs) == 0:
+            continue
 
-    output.extend(','.join(spec_list))
+        specs.extend([s[0] + s[1] for s in req.specs])
 
-    return ''.join(output)
-
+    return name + ",".join(specs)
 
 def get_dependencies(packages):
     requirements = []
@@ -52,7 +53,13 @@ if __name__ == "__main__":
     # from dev feed
     dependencies = get_dependencies(package_names)
 
-    # TODO: Do a better job of merging these that doesn't squash earlier entries
-    final_dependencies = {d.key: get_freeze_string(d) for d in dependencies}
+    grouped_dependencies = {}
+    for dep in dependencies:
+        if dep.key in grouped_dependencies:
+            grouped_dependencies[dep.key].append(dep)
+        else:
+            grouped_dependencies[dep.key] = [dep]
 
-    print("\n".join(final_dependencies.values()))
+    final_dependencies = [combine_requirements(r) for r in grouped_dependencies.values()]
+
+    print("\n".join(final_dependencies))
