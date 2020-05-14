@@ -10,146 +10,174 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .domain_py3 import Domain
-    from .image_tag_create_entry_py3 import ImageTagCreateEntry
-    from .image_tag_create_batch_py3 import ImageTagCreateBatch
-    from .image_tag_create_summary_py3 import ImageTagCreateSummary
-    from .image_region_create_entry_py3 import ImageRegionCreateEntry
-    from .image_region_create_batch_py3 import ImageRegionCreateBatch
-    from .image_region_create_result_py3 import ImageRegionCreateResult
-    from .image_region_create_summary_py3 import ImageRegionCreateSummary
-    from .image_tag_py3 import ImageTag
-    from .image_region_py3 import ImageRegion
-    from .image_py3 import Image
-    from .image_create_result_py3 import ImageCreateResult
-    from .image_create_summary_py3 import ImageCreateSummary
-    from .region_py3 import Region
-    from .image_file_create_entry_py3 import ImageFileCreateEntry
-    from .image_file_create_batch_py3 import ImageFileCreateBatch
-    from .image_url_create_entry_py3 import ImageUrlCreateEntry
-    from .image_url_create_batch_py3 import ImageUrlCreateBatch
-    from .image_id_create_entry_py3 import ImageIdCreateEntry
-    from .image_id_create_batch_py3 import ImageIdCreateBatch
-    from .bounding_box_py3 import BoundingBox
-    from .region_proposal_py3 import RegionProposal
-    from .image_region_proposal_py3 import ImageRegionProposal
-    from .image_url_py3 import ImageUrl
-    from .prediction_py3 import Prediction
-    from .image_prediction_py3 import ImagePrediction
-    from .prediction_query_tag_py3 import PredictionQueryTag
-    from .prediction_query_token_py3 import PredictionQueryToken
-    from .stored_image_prediction_py3 import StoredImagePrediction
-    from .prediction_query_result_py3 import PredictionQueryResult
-    from .tag_performance_py3 import TagPerformance
-    from .iteration_performance_py3 import IterationPerformance
-    from .image_performance_py3 import ImagePerformance
-    from .project_settings_py3 import ProjectSettings
-    from .project_py3 import Project
-    from .iteration_py3 import Iteration
-    from .export_py3 import Export
-    from .tag_py3 import Tag
-    from .custom_vision_error_py3 import CustomVisionError, CustomVisionErrorException
+    from ._models_py3 import BoundingBox
+    from ._models_py3 import CustomVisionError, CustomVisionErrorException
+    from ._models_py3 import Domain
+    from ._models_py3 import Export
+    from ._models_py3 import Image
+    from ._models_py3 import ImageCreateResult
+    from ._models_py3 import ImageCreateSummary
+    from ._models_py3 import ImageFileCreateBatch
+    from ._models_py3 import ImageFileCreateEntry
+    from ._models_py3 import ImageIdCreateBatch
+    from ._models_py3 import ImageIdCreateEntry
+    from ._models_py3 import ImagePerformance
+    from ._models_py3 import ImagePrediction
+    from ._models_py3 import ImageProcessingSettings
+    from ._models_py3 import ImageRegion
+    from ._models_py3 import ImageRegionCreateBatch
+    from ._models_py3 import ImageRegionCreateEntry
+    from ._models_py3 import ImageRegionCreateResult
+    from ._models_py3 import ImageRegionCreateSummary
+    from ._models_py3 import ImageRegionProposal
+    from ._models_py3 import ImageTag
+    from ._models_py3 import ImageTagCreateBatch
+    from ._models_py3 import ImageTagCreateEntry
+    from ._models_py3 import ImageTagCreateSummary
+    from ._models_py3 import ImageUrl
+    from ._models_py3 import ImageUrlCreateBatch
+    from ._models_py3 import ImageUrlCreateEntry
+    from ._models_py3 import Iteration
+    from ._models_py3 import IterationPerformance
+    from ._models_py3 import Prediction
+    from ._models_py3 import PredictionQueryResult
+    from ._models_py3 import PredictionQueryTag
+    from ._models_py3 import PredictionQueryToken
+    from ._models_py3 import Project
+    from ._models_py3 import ProjectExport
+    from ._models_py3 import ProjectSettings
+    from ._models_py3 import Region
+    from ._models_py3 import RegionProposal
+    from ._models_py3 import StoredImagePrediction
+    from ._models_py3 import StoredSuggestedTagAndRegion
+    from ._models_py3 import SuggestedTagAndRegion
+    from ._models_py3 import SuggestedTagAndRegionQuery
+    from ._models_py3 import SuggestedTagAndRegionQueryToken
+    from ._models_py3 import Tag
+    from ._models_py3 import TagFilter
+    from ._models_py3 import TagPerformance
+    from ._models_py3 import TrainingParameters
 except (SyntaxError, ImportError):
-    from .domain import Domain
-    from .image_tag_create_entry import ImageTagCreateEntry
-    from .image_tag_create_batch import ImageTagCreateBatch
-    from .image_tag_create_summary import ImageTagCreateSummary
-    from .image_region_create_entry import ImageRegionCreateEntry
-    from .image_region_create_batch import ImageRegionCreateBatch
-    from .image_region_create_result import ImageRegionCreateResult
-    from .image_region_create_summary import ImageRegionCreateSummary
-    from .image_tag import ImageTag
-    from .image_region import ImageRegion
-    from .image import Image
-    from .image_create_result import ImageCreateResult
-    from .image_create_summary import ImageCreateSummary
-    from .region import Region
-    from .image_file_create_entry import ImageFileCreateEntry
-    from .image_file_create_batch import ImageFileCreateBatch
-    from .image_url_create_entry import ImageUrlCreateEntry
-    from .image_url_create_batch import ImageUrlCreateBatch
-    from .image_id_create_entry import ImageIdCreateEntry
-    from .image_id_create_batch import ImageIdCreateBatch
-    from .bounding_box import BoundingBox
-    from .region_proposal import RegionProposal
-    from .image_region_proposal import ImageRegionProposal
-    from .image_url import ImageUrl
-    from .prediction import Prediction
-    from .image_prediction import ImagePrediction
-    from .prediction_query_tag import PredictionQueryTag
-    from .prediction_query_token import PredictionQueryToken
-    from .stored_image_prediction import StoredImagePrediction
-    from .prediction_query_result import PredictionQueryResult
-    from .tag_performance import TagPerformance
-    from .iteration_performance import IterationPerformance
-    from .image_performance import ImagePerformance
-    from .project_settings import ProjectSettings
-    from .project import Project
-    from .iteration import Iteration
-    from .export import Export
-    from .tag import Tag
-    from .custom_vision_error import CustomVisionError, CustomVisionErrorException
-from .custom_vision_training_client_enums import (
-    DomainType,
-    ImageCreateStatus,
-    OrderBy,
+    from ._models import BoundingBox
+    from ._models import CustomVisionError, CustomVisionErrorException
+    from ._models import Domain
+    from ._models import Export
+    from ._models import Image
+    from ._models import ImageCreateResult
+    from ._models import ImageCreateSummary
+    from ._models import ImageFileCreateBatch
+    from ._models import ImageFileCreateEntry
+    from ._models import ImageIdCreateBatch
+    from ._models import ImageIdCreateEntry
+    from ._models import ImagePerformance
+    from ._models import ImagePrediction
+    from ._models import ImageProcessingSettings
+    from ._models import ImageRegion
+    from ._models import ImageRegionCreateBatch
+    from ._models import ImageRegionCreateEntry
+    from ._models import ImageRegionCreateResult
+    from ._models import ImageRegionCreateSummary
+    from ._models import ImageRegionProposal
+    from ._models import ImageTag
+    from ._models import ImageTagCreateBatch
+    from ._models import ImageTagCreateEntry
+    from ._models import ImageTagCreateSummary
+    from ._models import ImageUrl
+    from ._models import ImageUrlCreateBatch
+    from ._models import ImageUrlCreateEntry
+    from ._models import Iteration
+    from ._models import IterationPerformance
+    from ._models import Prediction
+    from ._models import PredictionQueryResult
+    from ._models import PredictionQueryTag
+    from ._models import PredictionQueryToken
+    from ._models import Project
+    from ._models import ProjectExport
+    from ._models import ProjectSettings
+    from ._models import Region
+    from ._models import RegionProposal
+    from ._models import StoredImagePrediction
+    from ._models import StoredSuggestedTagAndRegion
+    from ._models import SuggestedTagAndRegion
+    from ._models import SuggestedTagAndRegionQuery
+    from ._models import SuggestedTagAndRegionQueryToken
+    from ._models import Tag
+    from ._models import TagFilter
+    from ._models import TagPerformance
+    from ._models import TrainingParameters
+from ._custom_vision_training_client_enums import (
     Classifier,
-    TrainingType,
+    CustomVisionErrorCodes,
+    DomainType,
+    ExportFlavor,
     ExportPlatform,
     ExportStatus,
-    ExportFlavor,
+    ImageCreateStatus,
+    OrderBy,
+    ProjectStatus,
+    SortBy,
     TagType,
-    CustomVisionErrorCodes,
+    TrainingType,
 )
 
 __all__ = [
+    'BoundingBox',
+    'CustomVisionError', 'CustomVisionErrorException',
     'Domain',
-    'ImageTagCreateEntry',
-    'ImageTagCreateBatch',
-    'ImageTagCreateSummary',
-    'ImageRegionCreateEntry',
-    'ImageRegionCreateBatch',
-    'ImageRegionCreateResult',
-    'ImageRegionCreateSummary',
-    'ImageTag',
-    'ImageRegion',
+    'Export',
     'Image',
     'ImageCreateResult',
     'ImageCreateSummary',
-    'Region',
-    'ImageFileCreateEntry',
     'ImageFileCreateBatch',
-    'ImageUrlCreateEntry',
-    'ImageUrlCreateBatch',
-    'ImageIdCreateEntry',
+    'ImageFileCreateEntry',
     'ImageIdCreateBatch',
-    'BoundingBox',
-    'RegionProposal',
-    'ImageRegionProposal',
-    'ImageUrl',
-    'Prediction',
+    'ImageIdCreateEntry',
+    'ImagePerformance',
     'ImagePrediction',
+    'ImageProcessingSettings',
+    'ImageRegion',
+    'ImageRegionCreateBatch',
+    'ImageRegionCreateEntry',
+    'ImageRegionCreateResult',
+    'ImageRegionCreateSummary',
+    'ImageRegionProposal',
+    'ImageTag',
+    'ImageTagCreateBatch',
+    'ImageTagCreateEntry',
+    'ImageTagCreateSummary',
+    'ImageUrl',
+    'ImageUrlCreateBatch',
+    'ImageUrlCreateEntry',
+    'Iteration',
+    'IterationPerformance',
+    'Prediction',
+    'PredictionQueryResult',
     'PredictionQueryTag',
     'PredictionQueryToken',
-    'StoredImagePrediction',
-    'PredictionQueryResult',
-    'TagPerformance',
-    'IterationPerformance',
-    'ImagePerformance',
-    'ProjectSettings',
     'Project',
-    'Iteration',
-    'Export',
+    'ProjectExport',
+    'ProjectSettings',
+    'Region',
+    'RegionProposal',
+    'StoredImagePrediction',
+    'StoredSuggestedTagAndRegion',
+    'SuggestedTagAndRegion',
+    'SuggestedTagAndRegionQuery',
+    'SuggestedTagAndRegionQueryToken',
     'Tag',
-    'CustomVisionError', 'CustomVisionErrorException',
+    'TagFilter',
+    'TagPerformance',
+    'TrainingParameters',
+    'CustomVisionErrorCodes',
     'DomainType',
-    'ImageCreateStatus',
-    'OrderBy',
-    'Classifier',
-    'TrainingType',
     'ExportPlatform',
     'ExportStatus',
     'ExportFlavor',
+    'ImageCreateStatus',
+    'Classifier',
+    'TrainingType',
+    'OrderBy',
+    'ProjectStatus',
+    'SortBy',
     'TagType',
-    'CustomVisionErrorCodes',
 ]
