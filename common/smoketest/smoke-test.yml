@@ -97,6 +97,9 @@ jobs:
       - script: pip install -r ./common/smoketest/requirements_dependencies.txt
         displayName: Install dev package dependencies from PyPI
 
+      - script: pip freeze
+        displayName: Show installed packages (pip freeze)
+
       - template: /eng/common/TestResources/deploy-test-resources.yml
         parameters:
           ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
