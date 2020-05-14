@@ -43,14 +43,14 @@ class CopyModelSample(object):
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
-        # [START generate_copy_auth]
+        # [START authorize_copy_target]
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         target = target_client.authorize_copy_target(
             resource_region=target_region,
             resource_id=target_resource_id
         )
-        # [END generate_copy_auth]
+        # [END authorize_copy_target]
 
         # [START begin_copy_model]
         source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))

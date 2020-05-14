@@ -44,7 +44,7 @@ class CopyModelSampleAsync(object):
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
-        # [START generate_copy_auth_async]
+        # [START authorize_copy_target_async]
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         async with target_client:
@@ -52,7 +52,7 @@ class CopyModelSampleAsync(object):
                 resource_region=target_region,
                 resource_id=target_resource_id
             )
-        # [END generate_copy_auth_async]
+        # [END authorize_copy_target_async]
 
         # [START copy_model_async]
         source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))

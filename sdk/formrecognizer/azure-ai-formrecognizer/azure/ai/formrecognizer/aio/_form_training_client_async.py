@@ -258,27 +258,27 @@ class FormTrainingClient(object):
             resource_region: str,
             **kwargs: Any
     ) -> Dict[str, Union[str, int]]:
-        """Generate authorization to copy a model into the target Form Recognizer resource.
+        """Generate authorization for copying a model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed into :func:`~copy_model()`
+        and the output can be passed as the `target` parameter into :func:`~copy_model()`.
 
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
         :param str resource_region: Location of the target Azure resource. A valid Azure
             region name supported by Cognitive Services.
-        :return: A dictionary with values for the model ID, access token, resource ID,
-            resource region, and expiration datetime ticks.
+        :return: A dictionary with values for the copy authorization -
+            "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
         :rtype: Dict[str, Union[str, int]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_copy_model_async.py
-                :start-after: [START generate_copy_auth_async]
-                :end-before: [END generate_copy_auth_async]
+                :start-after: [START authorize_copy_target_async]
+                :end-before: [END authorize_copy_target_async]
                 :language: python
                 :dedent: 8
-                :caption: Generate copy authorization with the target resource
+                :caption: Authorize the target resource to receive the copied model
         """
 
         response = await self._client.generate_model_copy_authorization(  # type: ignore
@@ -298,19 +298,18 @@ class FormTrainingClient(object):
         target: dict,
         **kwargs: Any
     ) -> CustomFormModelInfo:
-        """Copy custom model stored in this resource (the source) to user specified target Form Recognizer resource.
-        This should be called with the source Form Recognizer resource (with model that is intended to be copied).
-        The `target` parameter should be supplied from the target resource's output from calling the
-        :func:`~authorize_copy_target()` method.
+        """Copy a custom model stored in this resource (the source) to the user specified
+        target Form Recognizer resource. This should be called with the source Form Recognizer resource
+        (with the model that is intended to be copied). The `target` parameter should be supplied from the
+        target resource's output from calling the :func:`~authorize_copy_target()` method.
 
-        :param model_id: Model identifier of the model to copy to target resource.
-        :type model_id: str
+        :param str model_id: Model identifier of the model to copy to target resource.
         :param dict target:
             The copy authorization generated from the target resource's call to
             :func:`~authorize_copy_target()`.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
-        :return: An instance of CustomFormModelInfo
+        :return: CustomFormModelInfo
         :rtype: ~azure.ai.formrecognizer.CustomFormModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
