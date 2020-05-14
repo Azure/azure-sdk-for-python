@@ -122,15 +122,15 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             await client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         transport = AioHttpTransport()
-        frc = FormRecognizerClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
 
-        async with frc:
-            result = await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+        async with ftc:
+            await ftc.get_account_properties()
             assert transport.session is not None
-            async with frc.get_form_training_client() as ftc:
+            async with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                properties = await ftc.get_account_properties()
-            result = await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+                await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+            await ftc.get_account_properties()
             assert transport.session is not None
