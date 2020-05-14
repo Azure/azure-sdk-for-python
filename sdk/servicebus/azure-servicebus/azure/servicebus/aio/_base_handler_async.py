@@ -8,11 +8,10 @@ import uuid
 from typing import TYPE_CHECKING, Any
 
 import uamqp
-from azure.servicebus._common._configuration import Configuration
-from azure.servicebus._common.utils import create_properties
 from uamqp.message import MessageProperties
-
 from .._base_handler import _generate_sas_token
+from .._common._configuration import Configuration
+from .._common.utils import create_properties
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
