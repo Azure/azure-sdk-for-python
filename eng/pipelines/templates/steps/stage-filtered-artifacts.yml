@@ -10,5 +10,5 @@ steps:
       $underscorePrefix = "${{parameters.PackageName}}"
       $dashPrefix = "${{parameters.PackageName}}".Replace("_", "-")
       Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$dashPrefix${{parameters.AdditionalRegex}} $(Pipeline.Workspace)/${{parameters.TargetFolder}}
-      Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$underscorePrefix${{parameters.AdditionalRegex}} $(Pipeline.Workspace)/${{parameters.TargetFolder}}
+      Copy-Item $(Pipeline.Workspace)/${{parameters.SourceFolder}}/$underscorePrefix${{parameters.AdditionalRegex}} $(Pipeline.Workspace)/${{parameters.TargetFolder}} -ErrorAction SilentlyContinue
     displayName: Stage artifacts
