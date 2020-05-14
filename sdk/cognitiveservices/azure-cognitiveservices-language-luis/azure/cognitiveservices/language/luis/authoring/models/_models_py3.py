@@ -862,6 +862,9 @@ class EntityLabel(Model):
     :type role: str
     :param role_id: The role id for the predicted entity.
     :type role_id: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabel]
     """
 
     _validation = {
@@ -876,15 +879,17 @@ class EntityLabel(Model):
         'end_token_index': {'key': 'endTokenIndex', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
         'role_id': {'key': 'roleId', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityLabel]'},
     }
 
-    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str=None, role_id: str=None, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str=None, role_id: str=None, children=None, **kwargs) -> None:
         super(EntityLabel, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_token_index = start_token_index
         self.end_token_index = end_token_index
         self.role = role
         self.role_id = role_id
+        self.children = children
 
 
 class EntityLabelObject(Model):
@@ -903,6 +908,9 @@ class EntityLabelObject(Model):
     :type end_char_index: int
     :param role: The role the entity plays in the utterance.
     :type role: str
+    :param children: The identified entities within the example utterance.
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabelObject]
     """
 
     _validation = {
@@ -916,14 +924,16 @@ class EntityLabelObject(Model):
         'start_char_index': {'key': 'startCharIndex', 'type': 'int'},
         'end_char_index': {'key': 'endCharIndex', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityLabelObject]'},
     }
 
-    def __init__(self, *, entity_name: str, start_char_index: int, end_char_index: int, role: str=None, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_char_index: int, end_char_index: int, role: str=None, children=None, **kwargs) -> None:
         super(EntityLabelObject, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_char_index = start_char_index
         self.end_char_index = end_char_index
         self.role = role
+        self.children = children
 
 
 class EntityModelCreateObject(Model):
@@ -1065,6 +1075,9 @@ class EntityPrediction(Model):
     :type end_token_index: int
     :param phrase: Required. The actual token(s) that comprise the entity.
     :type phrase: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityPrediction]
     """
 
     _validation = {
@@ -1079,14 +1092,16 @@ class EntityPrediction(Model):
         'start_token_index': {'key': 'startTokenIndex', 'type': 'int'},
         'end_token_index': {'key': 'endTokenIndex', 'type': 'int'},
         'phrase': {'key': 'phrase', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityPrediction]'},
     }
 
-    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, phrase: str, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, phrase: str, children=None, **kwargs) -> None:
         super(EntityPrediction, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_token_index = start_token_index
         self.end_token_index = end_token_index
         self.phrase = phrase
+        self.children = children
 
 
 class EntityRole(Model):
@@ -1618,6 +1633,9 @@ class JSONEntity(Model):
     :type entity: str
     :param role: The role the entity plays in the utterance.
     :type role: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JSONEntity]
     """
 
     _validation = {
@@ -1631,14 +1649,16 @@ class JSONEntity(Model):
         'end_pos': {'key': 'endPos', 'type': 'int'},
         'entity': {'key': 'entity', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[JSONEntity]'},
     }
 
-    def __init__(self, *, start_pos: int, end_pos: int, entity: str, role: str=None, **kwargs) -> None:
+    def __init__(self, *, start_pos: int, end_pos: int, entity: str, role: str=None, children=None, **kwargs) -> None:
         super(JSONEntity, self).__init__(**kwargs)
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.entity = entity
         self.role = role
+        self.children = children
 
 
 class JSONModelFeature(Model):
@@ -2045,17 +2065,21 @@ class ModelFeatureInformation(Model):
     :type model_name: str
     :param feature_name: The name of the feature used.
     :type feature_name: str
+    :param is_required:
+    :type is_required: bool
     """
 
     _attribute_map = {
         'model_name': {'key': 'modelName', 'type': 'str'},
         'feature_name': {'key': 'featureName', 'type': 'str'},
+        'is_required': {'key': 'isRequired', 'type': 'bool'},
     }
 
-    def __init__(self, *, model_name: str=None, feature_name: str=None, **kwargs) -> None:
+    def __init__(self, *, model_name: str=None, feature_name: str=None, is_required: bool=None, **kwargs) -> None:
         super(ModelFeatureInformation, self).__init__(**kwargs)
         self.model_name = model_name
         self.feature_name = feature_name
+        self.is_required = is_required
 
 
 class ModelInfoResponse(Model):
