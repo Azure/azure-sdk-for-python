@@ -47,7 +47,7 @@ stages:
                         
           - deployment: PublishDocs
             displayName: "Docs.MS Release"
-            condition: ne(variables['Skip.PublishDocs'], 'true')
+            condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
             environment: githubio
 
             pool:
@@ -146,7 +146,6 @@ stages:
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
-              dependsOn: PublishPackage
 
               pool:
                 vmImage: windows-2019
