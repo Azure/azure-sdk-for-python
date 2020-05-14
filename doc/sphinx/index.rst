@@ -65,6 +65,7 @@ section of the project.
 
   installation
   quickstart_authentication
+  mgmt_preview_quickstart
   multicloud
   exceptions
   Service Management (Legacy) <servicemanagement>
