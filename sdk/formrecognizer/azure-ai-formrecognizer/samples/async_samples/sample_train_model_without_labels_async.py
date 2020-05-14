@@ -44,6 +44,9 @@ class TrainModelWithoutLabelsSampleAsync(object):
 
             # Default for train_model is `use_training_labels=False`
             model = await form_training_client.train_model(self.container_sas_url)
+            if model.status == "invalid":
+                await form_training_client.delete_model(model.model_id)
+                exit(1)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
