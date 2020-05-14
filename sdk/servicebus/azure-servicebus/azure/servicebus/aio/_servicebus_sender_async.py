@@ -12,7 +12,7 @@ from uamqp import SendClientAsync, types
 from .._common.message import Message, BatchMessage
 from .._base_handler import _convert_connection_string_to_kwargs
 from .._servicebus_sender import SenderMixin
-from ._base_handler_async import BaseHandlerAsync, ServiceBusSharedKeyCredential
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSender(BaseHandlerAsync, SenderMixin):
+class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 

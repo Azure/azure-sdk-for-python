@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING, List
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler_async import BaseHandlerAsync, ServiceBusSharedKeyCredential
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from ._async_message import ReceivedMessage
 from .._base_handler import _convert_connection_string_to_kwargs
 from .._common.receiver_mixins import ReceiverMixin
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
+class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
