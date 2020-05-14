@@ -25,7 +25,8 @@ from .._generated.models import (
     TrainSourceFilter,
     Model,
     CopyRequest,
-    CopyOperationResult
+    CopyOperationResult,
+    CopyAuthorizationResult
 )
 from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
@@ -333,7 +334,11 @@ class FormTrainingClient(object):
             copy_request=CopyRequest(
                 target_resource_id=target["resourceId"],
                 target_resource_region=target["resourceRegion"],
-                copy_authorization=target
+                copy_authorization=CopyAuthorizationResult(
+                    access_token=target["accessToken"],
+                    model_id=target["modelId"],
+                    expiration_date_time_ticks=target["expirationDateTimeTicks"]
+                )
             ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
