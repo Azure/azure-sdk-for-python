@@ -28,7 +28,7 @@ def get_dependencies(packages):
         applicable_requirements = [r for r in package_info.requires() if r.marker is None or r.marker.evaluate()]
         requirements.extend(applicable_requirements)
 
-    return [get_freeze_string(r) for r in requirements]
+    return requirements
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -52,4 +52,7 @@ if __name__ == "__main__":
     # from dev feed
     dependencies = get_dependencies(package_names)
 
-    print("\n".join(dependencies))
+    # TODO: Do a better job of merging these that doesn't squash earlier entries
+    final_dependencies = {d.key: get_freeze_string(d) for d in dependencies}
+
+    print("\n".join(final_dependencies.values()))
