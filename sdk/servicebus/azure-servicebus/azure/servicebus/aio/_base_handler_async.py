@@ -161,12 +161,6 @@ class BaseHandlerAsync(BaseHandler):
             **kwargs
         )
 
-    @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
-        kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
-        return kwargs
-
     async def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")
 

@@ -7,7 +7,7 @@ import logging
 import uuid
 import time
 from datetime import timedelta
-from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
+from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Type
 
 try:
     from urllib import quote_plus  # type: ignore
@@ -90,6 +90,31 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     return _AccessToken(token=token, expires_on=abs_expiry)
 
 
+def _convert_connection_string_to_kwargs(conn_str, shared_key_credential_type, **kwargs):
+    # type: (str, Type, Any) -> Dict[str, Any]
+    host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
+    queue_name = kwargs.get("queue_name")
+    topic_name = kwargs.get("topic_name")
+    if not (queue_name or topic_name or entity_in_conn_str):
+        raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
+                         " or use a connection string including the entity information.")
+
+    if queue_name and topic_name:
+        raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
+
+    entity_in_kwargs = queue_name or topic_name
+    if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
+        raise ServiceBusAuthorizationError(
+            "Entity names do not match, the entity name in connection string is {};"
+            " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
+        )
+
+    kwargs["fully_qualified_namespace"] = host
+    kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
+    kwargs["credential"] = shared_key_credential_type(policy, key)
+    return kwargs
+
+
 class ServiceBusSharedKeyCredential(object):
     """The shared access key credential used for authentication.
 
@@ -132,31 +157,6 @@ class BaseHandler(object):
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties()
-
-    @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
-        queue_name = kwargs.get("queue_name")
-        topic_name = kwargs.get("topic_name")
-        if not (queue_name or topic_name or entity_in_conn_str):
-            raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
-                             " or use a connection string including the entity information.")
-
-        if queue_name and topic_name:
-            raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
-
-        entity_in_kwargs = queue_name or topic_name
-        if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ServiceBusAuthorizationError(
-                "Entity names do not match, the entity name in connection string is {};"
-                " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
-            )
-
-        kwargs["fully_qualified_namespace"] = host
-        kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
-        kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
-        return kwargs
 
 
 class BaseHandlerSync(BaseHandler):  # pylint:disable=too-many-instance-attributes

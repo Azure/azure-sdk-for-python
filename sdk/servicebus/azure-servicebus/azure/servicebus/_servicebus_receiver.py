@@ -11,7 +11,7 @@ from uamqp import ReceiveClient, types
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandlerSync
+from ._base_handler import BaseHandlerSync, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
 from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
@@ -269,8 +269,9 @@ class ServiceBusReceiver(BaseHandlerSync, ReceiverMixin):  # pylint: disable=too
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):

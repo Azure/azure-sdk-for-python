@@ -10,8 +10,9 @@ import uamqp
 from uamqp import SendClientAsync, types
 
 from .._common.message import Message, BatchMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._servicebus_sender import SenderMixin
-from ._base_handler_async import BaseHandlerAsync
+from ._base_handler_async import BaseHandlerAsync, ServiceBusSharedKeyCredential
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -228,8 +229,9 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         return cls(**constructor_args)
