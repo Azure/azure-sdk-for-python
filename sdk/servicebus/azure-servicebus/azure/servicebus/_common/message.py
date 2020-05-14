@@ -432,9 +432,25 @@ class PeekMessage(Message):
         return None
 
 
-class _ReceivedMessageBase(PeekMessage):
+class ReceivedMessage(PeekMessage):
+    """
+    A Service Bus Message received from service side.
+
+    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message.
+    """
+
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
-        super(_ReceivedMessageBase, self).__init__(message=message)
+        super(ReceivedMessage, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
@@ -570,24 +586,6 @@ class _ReceivedMessageBase(PeekMessage):
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
-
-
-class ReceivedMessage(_ReceivedMessageBase):
-    """
-    A Service Bus Message received from service side.
-
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
-    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message.
-    """
 
     def _settle_message(
             self,

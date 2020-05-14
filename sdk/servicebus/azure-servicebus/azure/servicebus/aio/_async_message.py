@@ -6,7 +6,7 @@
 import logging
 from typing import Optional
 
-from .._common.message import _ReceivedMessageBase
+from .._common import message as sync_message
 from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MESSAGE_COMPLETE,
@@ -22,12 +22,11 @@ from ..exceptions import MessageSettleFailed
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceivedMessage(_ReceivedMessageBase):
+class ReceivedMessage(sync_message.ReceivedMessage):
     """A Service Bus Message received from service side.
 
     """
-
-    async def _settle_message(
+    async def _settle_message(  # type: ignore  # pylint: disable=invalid-overridden-method
             self,
             settle_operation,
             dead_letter_details=None
@@ -51,8 +50,7 @@ class ReceivedMessage(_ReceivedMessageBase):
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
-    async def complete(self):
-        # type: () -> None
+    async def complete(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
         """Complete the message.
 
         This removes the message from the queue.
@@ -68,8 +66,9 @@ class ReceivedMessage(_ReceivedMessageBase):
         await self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
-    async def dead_letter(self, reason=None, description=None):  # pylint: disable=unused-argument  # TODO: to use them
-        # type: (Optional[str], Optional[str]) -> None
+    async def dead_letter(  # type: ignore
+            self, reason: Optional[str] = None, description: Optional[str] = None
+    ) -> None:  # pylint: disable=unused-argument,invalid-overridden-method
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -88,8 +87,7 @@ class ReceivedMessage(_ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEAD_LETTER)
         self._settled = True
 
-    async def abandon(self):
-        # type: () -> None
+    async def abandon(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
         """Abandon the message.
 
         This message will be returned to the queue and made available to be received again.
@@ -104,8 +102,7 @@ class ReceivedMessage(_ReceivedMessageBase):
         await self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
-    async def defer(self):
-        # type: () -> None
+    async def defer(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
         """Defers the message.
 
         This message will remain in the queue but must be requested
@@ -121,8 +118,7 @@ class ReceivedMessage(_ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self):
-        # type: () -> None
+    async def renew_lock(self) -> None:  # type: ignore  # pylint: disable=invalid-overridden-method
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
