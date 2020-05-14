@@ -49,10 +49,16 @@ if __name__ == "__main__":
     requirements = parse_requirements(args.requirements_file, session=PipSession())
     package_names = [item.req.name for item in requirements]
 
-    # Remove existing packages (that came from the public feed) and install
-    # from dev feed
     dependencies = get_dependencies(package_names)
 
+    # It may be the case that packages have multiple sets of dependency
+    # requirements, for example:
+    # Package A requires Foo>=1.0.0,<2.0.0
+    # Package B requires Foo>=1.0.0,<1.2.3
+    # This combines all required versions into one string for pip to resolve
+    # Output: Foo>=1.0.0,<2.0.0,>=1.0.0,<1.2.3
+    # Pip parses this value using the Requirement object (https://setuptools.readthedocs.io/en/latest/pkg_resources.html#requirement-objects)
+    # According to https://packaging.python.org/glossary/#term-requirement-specifier
     grouped_dependencies = {}
     for dep in dependencies:
         if dep.key in grouped_dependencies:
