@@ -124,17 +124,15 @@ class TestManagement(FormRecognizerTest):
             client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         transport = RequestsTransport()
-        frc = FormRecognizerClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
 
-        with frc:
-            poller = frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
-            result = poller.result()
+        with ftc:
+            ftc.get_account_properties()
             assert transport.session is not None
-            with frc.get_form_training_client() as ftc:
+            with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                properties = ftc.get_account_properties()
-            poller = frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
-            result = poller.result()
+                frc.begin_recognize_receipts_from_url(self.receipt_url_jpg).wait()
+            ftc.get_account_properties()
             assert transport.session is not None
