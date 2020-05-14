@@ -454,6 +454,32 @@ class VirtualNetworkRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(VirtualNetworkRulePaged, self).__init__(*args, **kwargs)
+class ExtendedDatabaseBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExtendedDatabaseBlobAuditingPolicy <azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExtendedDatabaseBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExtendedDatabaseBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class ExtendedServerBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExtendedServerBlobAuditingPolicy <azure.mgmt.sql.models.ExtendedServerBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExtendedServerBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExtendedServerBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
 class ServerBlobAuditingPolicyPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerBlobAuditingPolicy <azure.mgmt.sql.models.ServerBlobAuditingPolicy>` object
