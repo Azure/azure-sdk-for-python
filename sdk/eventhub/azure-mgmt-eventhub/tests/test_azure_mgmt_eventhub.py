@@ -58,7 +58,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
                 size_limit_in_bytes=10485763,
                 destination=Destination(
                     name="EventHubArchive.AzureBlockBlob",
-                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
+                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.Storage/storageAccounts/arjunteststorage",
                     blob_container="container",
                     archive_name_format="{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}")
             )
@@ -89,7 +89,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
                 size_limit_in_bytes=10485900,
                 destination=Destination(
                     name="EventHubArchive.AzureBlockBlob",
-                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
+                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.Storage/storageAccounts/arjunteststorage",
                     blob_container="container",
                     archive_name_format="{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}")
             )

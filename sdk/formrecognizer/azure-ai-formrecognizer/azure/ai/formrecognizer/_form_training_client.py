@@ -18,7 +18,6 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
@@ -27,7 +26,7 @@ from ._generated.models import (
     Model,
     CopyOperationResult
 )
-from ._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -36,7 +35,7 @@ from ._models import (
 from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
     PipelineResponseType = HttpResponse
@@ -51,39 +50,50 @@ class FormTrainingClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of AzureKeyCredential if using an API key.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+        This is an instance of AzureKeyCredential if using an API key or a token
+        credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_train_model_with_labels.py
-            :start-after: [START create_form_training_client]
-            :end-before: [END create_form_training_client]
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_ft_client_with_key]
+            :end-before: [END create_ft_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_ft_client_with_aad]
+            :end-before: [END create_ft_client_with_aad]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormTrainingClient with a token credential.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, AzureKeyCredential, Any) -> None
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
             sdk_moniker=USER_AGENT,
-            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
     @distributed_trace
-    def begin_train_model(self, training_files, use_labels=False, **kwargs):
+    def begin_train_model(self, training_files_url, use_training_labels=False, **kwargs):
         # type: (str, Optional[bool], Any) -> LROPoller
-        """Create and train a custom model. The request must include a `training_files` parameter that is an
+        """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files: An Azure Storage blob container's SAS URI.
-        :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
+        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.
             Use `prefix` to filter documents themselves, or to restrict sub folders for training
@@ -112,8 +122,8 @@ class FormTrainingClient(object):
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         response = self._client.train_custom_model_async(  # type: ignore
             train_request=TrainRequest(
-                source=training_files,
-                use_label_file=use_labels,
+                source=training_files_url,
+                use_label_file=use_training_labels,
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_sub_folders", False),
@@ -164,7 +174,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_model_infos(self, **kwargs):
+    def list_custom_models(self, **kwargs):
         # type: (Any) -> Iterable[CustomFormModelInfo]
         """List information for each model, including model id,
         model status, and when it was created and last modified.
@@ -176,8 +186,8 @@ class FormTrainingClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_manage_custom_models.py
-                :start-after: [START list_model_infos]
-                :end-before: [END list_model_infos]
+                :start-after: [START list_custom_models]
+                :end-before: [END list_custom_models]
                 :language: python
                 :dedent: 8
                 :caption: List model information for each model on the account.

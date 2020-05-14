@@ -40,7 +40,7 @@ class TestSearchServiceClient(object):
     def test_repr(self):
         client = SearchServiceClient("endpoint", CREDENTIAL)
         assert repr(client) == "<SearchServiceClient [endpoint={}]>".format(
-            repr("endpoint")
+            repr("https://endpoint")
         )
 
     @mock.patch(
@@ -52,3 +52,17 @@ class TestSearchServiceClient(object):
         assert mock_get_stats.called
         assert mock_get_stats.call_args[0] == ()
         assert mock_get_stats.call_args[1] == {"headers": client._headers}
+
+    def test_endpoint_https(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchServiceClient("endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        client = SearchServiceClient("https://endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        with pytest.raises(ValueError):
+            client = SearchServiceClient("http://endpoint", credential)
+
+        with pytest.raises(ValueError):
+            client = SearchServiceClient(12345, credential)

@@ -1,7 +1,15 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
-
+- The optional persistent cache for `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
+  macOS as well as Windows.
+  ([#11134](https://github.com/Azure/azure-sdk-for-python/issues/11134))
+  - On Linux, the persistent cache requires libsecret and `pygobject`. If these
+    are unavailable, or libsecret is unusable (e.g. in an SSH session), loading
+    the persistent cache will raise an error. You may optionally configure the
+    credential to fall back to an unencrypted cache by constructing it with
+    keyword argument `allow_unencrypted_cache=True`.
 
 ## 1.4.0b3 (2020-05-04)
 - `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`
