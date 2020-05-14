@@ -19,6 +19,7 @@ from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from ._form_recognizer_client_async import FormRecognizerClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
     TrainRequest,
@@ -79,11 +80,13 @@ class FormTrainingClient(object):
             credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
             **kwargs: Any
     ) -> None:
+        self._endpoint = endpoint
+        self._credential = credential
 
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             **kwargs
@@ -342,6 +345,18 @@ class FormTrainingClient(object):
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             error_map=error_map,
+            **kwargs
+        )
+
+    def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
+        """Get an instance of a FormRecognizerClient from FormTrainingClient.
+
+        :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
+        :return: A FormRecognizerClient
+        """
+        return FormRecognizerClient(
+            endpoint=self._endpoint,
+            credential=self._credential,
             **kwargs
         )
 

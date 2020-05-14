@@ -35,6 +35,7 @@ from ._models import (
 )
 from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
+from ._form_recognizer_client import FormRecognizerClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
@@ -75,11 +76,12 @@ class FormTrainingClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-
+        self._endpoint = endpoint
+        self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             **kwargs
@@ -334,6 +336,19 @@ class FormTrainingClient(object):
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             error_map=error_map,
+            **kwargs
+        )
+
+    def get_form_recognizer_client(self, **kwargs):
+        # type: (Any) -> FormRecognizerClient
+        """Get an instance of a FormRecognizerClient from FormTrainingClient.
+
+        :rtype: ~azure.ai.formrecognizer.FormRecognizerClient
+        :return: A FormRecognizerClient
+        """
+        return FormRecognizerClient(
+            endpoint=self._endpoint,
+            credential=self._credential,
             **kwargs
         )
 
