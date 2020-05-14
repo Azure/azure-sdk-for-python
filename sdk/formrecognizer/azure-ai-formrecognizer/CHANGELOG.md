@@ -7,6 +7,8 @@
 - `training_files` parameter of `begin_train_model` is renamed to `training_files_url`
 - `use_labels` parameter of `begin_train_model` is renamed to `use_training_labels`
 - `list_model_infos` method has been renamed to `list_custom_models`
+- Removed `get_form_training_client` from `FormRecognizerClient`
+- Added `get_form_recognizer_client` to `FormTrainingClient`
 
 **New features**
 
