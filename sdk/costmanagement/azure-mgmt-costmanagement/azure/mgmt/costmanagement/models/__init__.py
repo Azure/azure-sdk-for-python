@@ -10,6 +10,10 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Alert
+    from ._models_py3 import AlertPropertiesDefinition
+    from ._models_py3 import AlertPropertiesDetails
+    from ._models_py3 import AlertsResult
     from ._models_py3 import CommonExportProperties
     from ._models_py3 import Dimension
     from ._models_py3 import ErrorDetails
@@ -22,8 +26,12 @@ try:
     from ._models_py3 import ExportListResult
     from ._models_py3 import ExportRecurrencePeriod
     from ._models_py3 import ExportSchedule
+    from ._models_py3 import ForecastDefinition
+    from ._models_py3 import KpiProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import PivotProperties
+    from ._models_py3 import ProxyResource
     from ._models_py3 import QueryAggregation
     from ._models_py3 import QueryColumn
     from ._models_py3 import QueryComparisonExpression
@@ -34,8 +42,21 @@ try:
     from ._models_py3 import QueryGrouping
     from ._models_py3 import QueryResult
     from ._models_py3 import QueryTimePeriod
+    from ._models_py3 import ReportConfigAggregation
+    from ._models_py3 import ReportConfigComparisonExpression
+    from ._models_py3 import ReportConfigDataset
+    from ._models_py3 import ReportConfigDatasetConfiguration
+    from ._models_py3 import ReportConfigFilter
+    from ._models_py3 import ReportConfigGrouping
+    from ._models_py3 import ReportConfigSorting
+    from ._models_py3 import ReportConfigTimePeriod
     from ._models_py3 import Resource
+    from ._models_py3 import View
 except (SyntaxError, ImportError):
+    from ._models import Alert
+    from ._models import AlertPropertiesDefinition
+    from ._models import AlertPropertiesDetails
+    from ._models import AlertsResult
     from ._models import CommonExportProperties
     from ._models import Dimension
     from ._models import ErrorDetails
@@ -48,8 +69,12 @@ except (SyntaxError, ImportError):
     from ._models import ExportListResult
     from ._models import ExportRecurrencePeriod
     from ._models import ExportSchedule
+    from ._models import ForecastDefinition
+    from ._models import KpiProperties
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import PivotProperties
+    from ._models import ProxyResource
     from ._models import QueryAggregation
     from ._models import QueryColumn
     from ._models import QueryComparisonExpression
@@ -60,22 +85,48 @@ except (SyntaxError, ImportError):
     from ._models import QueryGrouping
     from ._models import QueryResult
     from ._models import QueryTimePeriod
+    from ._models import ReportConfigAggregation
+    from ._models import ReportConfigComparisonExpression
+    from ._models import ReportConfigDataset
+    from ._models import ReportConfigDatasetConfiguration
+    from ._models import ReportConfigFilter
+    from ._models import ReportConfigGrouping
+    from ._models import ReportConfigSorting
+    from ._models import ReportConfigTimePeriod
     from ._models import Resource
+    from ._models import View
 from ._paged_models import DimensionPaged
 from ._paged_models import OperationPaged
+from ._paged_models import ViewPaged
 from ._cost_management_client_enums import (
-    ExportType,
-    TimeframeType,
+    ReportTimeframeType,
+    ReportGranularityType,
+    ReportConfigColumnType,
+    OperatorType,
+    ChartType,
+    AccumulatedType,
+    MetricType,
+    KpiTypeType,
+    PivotTypeType,
+    ForecastType,
+    ForecastTimeframeType,
     GranularityType,
     QueryColumnType,
+    ExportType,
+    TimeframeType,
     StatusType,
     RecurrenceType,
     FormatType,
     ExecutionType,
     ExecutionStatus,
+    ExternalCloudProviderType,
 )
 
 __all__ = [
+    'Alert',
+    'AlertPropertiesDefinition',
+    'AlertPropertiesDetails',
+    'AlertsResult',
     'CommonExportProperties',
     'Dimension',
     'ErrorDetails',
@@ -88,8 +139,12 @@ __all__ = [
     'ExportListResult',
     'ExportRecurrencePeriod',
     'ExportSchedule',
+    'ForecastDefinition',
+    'KpiProperties',
     'Operation',
     'OperationDisplay',
+    'PivotProperties',
+    'ProxyResource',
     'QueryAggregation',
     'QueryColumn',
     'QueryComparisonExpression',
@@ -100,16 +155,38 @@ __all__ = [
     'QueryGrouping',
     'QueryResult',
     'QueryTimePeriod',
+    'ReportConfigAggregation',
+    'ReportConfigComparisonExpression',
+    'ReportConfigDataset',
+    'ReportConfigDatasetConfiguration',
+    'ReportConfigFilter',
+    'ReportConfigGrouping',
+    'ReportConfigSorting',
+    'ReportConfigTimePeriod',
     'Resource',
+    'View',
+    'ViewPaged',
     'DimensionPaged',
     'OperationPaged',
-    'ExportType',
-    'TimeframeType',
+    'ReportTimeframeType',
+    'ReportGranularityType',
+    'ReportConfigColumnType',
+    'OperatorType',
+    'ChartType',
+    'AccumulatedType',
+    'MetricType',
+    'KpiTypeType',
+    'PivotTypeType',
+    'ForecastType',
+    'ForecastTimeframeType',
     'GranularityType',
     'QueryColumnType',
+    'ExportType',
+    'TimeframeType',
     'StatusType',
     'RecurrenceType',
     'FormatType',
     'ExecutionType',
     'ExecutionStatus',
+    'ExternalCloudProviderType',
 ]

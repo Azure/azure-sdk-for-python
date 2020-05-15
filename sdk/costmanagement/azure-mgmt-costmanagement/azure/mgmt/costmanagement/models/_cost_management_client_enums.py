@@ -12,14 +12,74 @@
 from enum import Enum
 
 
-class ExportType(str, Enum):
+class ReportTimeframeType(str, Enum):
+
+    week_to_date = "WeekToDate"
+    month_to_date = "MonthToDate"
+    year_to_date = "YearToDate"
+    custom = "Custom"
+
+
+class ReportGranularityType(str, Enum):
+
+    daily = "Daily"
+    monthly = "Monthly"
+
+
+class ReportConfigColumnType(str, Enum):
+
+    tag = "Tag"
+    dimension = "Dimension"
+
+
+class OperatorType(str, Enum):
+
+    in_enum = "In"
+    contains = "Contains"
+
+
+class ChartType(str, Enum):
+
+    area = "Area"
+    line = "Line"
+    stacked_column = "StackedColumn"
+    grouped_column = "GroupedColumn"
+    table = "Table"
+
+
+class AccumulatedType(str, Enum):
+
+    true = "true"
+    false = "false"
+
+
+class MetricType(str, Enum):
+
+    actual_cost = "ActualCost"
+    amortized_cost = "AmortizedCost"
+    ahub = "AHUB"
+
+
+class KpiTypeType(str, Enum):
+
+    forecast = "Forecast"
+    budget = "Budget"
+
+
+class PivotTypeType(str, Enum):
+
+    dimension = "Dimension"
+    tag_key = "TagKey"
+
+
+class ForecastType(str, Enum):
 
     usage = "Usage"
     actual_cost = "ActualCost"
     amortized_cost = "AmortizedCost"
 
 
-class TimeframeType(str, Enum):
+class ForecastTimeframeType(str, Enum):
 
     month_to_date = "MonthToDate"
     billing_month_to_date = "BillingMonthToDate"
@@ -38,6 +98,23 @@ class QueryColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
+
+
+class ExportType(str, Enum):
+
+    usage = "Usage"
+    actual_cost = "ActualCost"
+    amortized_cost = "AmortizedCost"
+
+
+class TimeframeType(str, Enum):
+
+    month_to_date = "MonthToDate"
+    billing_month_to_date = "BillingMonthToDate"
+    the_last_month = "TheLastMonth"
+    the_last_billing_month = "TheLastBillingMonth"
+    week_to_date = "WeekToDate"
+    custom = "Custom"
 
 
 class StatusType(str, Enum):
@@ -74,3 +151,9 @@ class ExecutionStatus(str, Enum):
     timeout = "Timeout"
     new_data_not_available = "NewDataNotAvailable"
     data_not_available = "DataNotAvailable"
+
+
+class ExternalCloudProviderType(str, Enum):
+
+    external_subscriptions = "externalSubscriptions"
+    external_billing_accounts = "externalBillingAccounts"

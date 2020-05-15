@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ViewPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`View <azure.mgmt.costmanagement.models.View>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[View]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ViewPaged, self).__init__(*args, **kwargs)
 class DimensionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Dimension <azure.mgmt.costmanagement.models.Dimension>` object
