@@ -53,8 +53,8 @@ class AnalyzeSentimentSample(object):
                 doc.confidence_scores.neutral,
                 doc.confidence_scores.negative,
             ))
-            for idx, sentence in enumerate(doc.sentences):
-                print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
+            for sentence in doc.sentences:
+                print("Sentence '{}' has sentiment: {}".format(sentence.text, sentence.sentiment))
                 print("Sentence confidence scores: positive={}; neutral={}; negative={}".format(
                     sentence.confidence_scores.positive,
                     sentence.confidence_scores.neutral,
