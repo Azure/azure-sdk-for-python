@@ -1020,13 +1020,14 @@ class AutoScalingTriggerKind(str, Enum):
 
 class ExecutionPolicyType(str, Enum):
 
-    run_to_completion = "runToCompletion"  #: Indicates that the service will perform its desired operation and complete successfully. If the service encounters failure, it will restarted based on restart policy specified. If the service completes its operation successfully, it will not be restarted again.
+    default = "Default"  #: Indicates the default execution policy, always restart the service if an exit occurs.
+    run_to_completion = "RunToCompletion"  #: Indicates that the service will perform its desired operation and complete successfully. If the service encounters failure, it will restarted based on restart policy specified. If the service completes its operation successfully, it will not be restarted again.
 
 
 class RestartPolicy(str, Enum):
 
-    on_failure = "onFailure"  #: Service will be restarted when it encounters a failure.
-    never = "never"  #: Service will never be restarted. If the service encounters a failure, it will move to Failed state.
+    on_failure = "OnFailure"  #: Service will be restarted when it encounters a failure.
+    never = "Never"  #: Service will never be restarted. If the service encounters a failure, it will move to Failed state.
 
 
 class NodeStatusFilter(str, Enum):

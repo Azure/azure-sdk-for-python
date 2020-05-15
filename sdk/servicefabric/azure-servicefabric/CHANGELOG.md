@@ -1,5 +1,11 @@
 # Release History
 
+## 7.1.0.45 (2020-05-14)
+
+**Bugfix**
+
+  - Fix ContainerCodePackageProperties entrypoint to entry_point
+
 ## 7.0.0.0 (2019-12-13)
 
 This is re-release of 6.6.0.0 to match the actual API version used
