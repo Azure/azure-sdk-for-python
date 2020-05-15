@@ -35,7 +35,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     async def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = client.list_model_infos()
+            result = client.list_custom_models()
             async for res in result:
                 test = res
 
@@ -57,7 +57,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        labeled_model_from_train = await client.train_model(container_sas_url, use_labels=True)
+        labeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=True)
 
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
@@ -76,7 +76,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -109,7 +109,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
