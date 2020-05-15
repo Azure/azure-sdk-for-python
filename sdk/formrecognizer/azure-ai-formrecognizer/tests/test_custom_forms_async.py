@@ -85,7 +85,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.label_data.text)
@@ -111,7 +110,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.label_data.text)
@@ -133,7 +131,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -162,7 +159,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.value_data.bounding_box)
 

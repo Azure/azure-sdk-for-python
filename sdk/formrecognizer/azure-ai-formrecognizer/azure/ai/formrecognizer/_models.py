@@ -120,7 +120,7 @@ class Point(namedtuple("Point", "x y")):
         return super(Point, cls).__new__(cls, x, y)
 
 
-class PageRange(namedtuple("PageRange", "first_page last_page")):
+class FormPageRange(namedtuple("FormPageRange", "first_page last_page")):
     """The 1-based page range of the document.
 
     :ivar int first_page: The first page number of the document.
@@ -130,7 +130,7 @@ class PageRange(namedtuple("PageRange", "first_page last_page")):
     __slots__ = ()
 
     def __new__(cls, first_page, last_page):
-        return super(PageRange, cls).__new__(cls, first_page, last_page)
+        return super(FormPageRange, cls).__new__(cls, first_page, last_page)
 
 
 class FormContent(object):
@@ -162,7 +162,7 @@ class RecognizedForm(object):
         this is the training-time label of the field. For models trained
         without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.PageRange page_range:
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
         The first and last page of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
@@ -209,7 +209,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     :ivar fields:
         A dictionary of the fields found on the receipt.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.PageRange page_range:
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
         The first and last page of the input receipt.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         Contains page metadata such as page width, length, text angle, unit.
@@ -264,8 +264,6 @@ class FormField(object):
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
-    :ivar int page_number:
-        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -274,7 +272,6 @@ class FormField(object):
         self.name = kwargs.get("name", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
-        self.page_number = kwargs.get("page_number", None)
 
     @classmethod
     def _from_generated(cls, field, value, read_result):
@@ -284,7 +281,6 @@ class FormField(object):
             value=get_field_value(field, value, read_result),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
-            page_number=value.page if value else None,
         )
 
 
@@ -296,12 +292,11 @@ class FormField(object):
             value=field.value.text,
             name="field-" + str(idx),
             confidence=adjust_confidence(field.confidence),
-            page_number=page,
         )
 
     def __repr__(self):
-        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={}, page_number={})".format(
-            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence, self.page_number
+        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={})".format(
+            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
         )[:1024]
 
 

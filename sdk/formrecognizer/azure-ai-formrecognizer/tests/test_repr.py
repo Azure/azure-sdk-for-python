@@ -67,22 +67,22 @@ def field_text(bounding_box, form_word, form_line):
 
 @pytest.fixture
 def form_field_two(field_text):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0, page_number=1)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0, page_number=1)".format(field_text[1], field_text[1])[:1024]
+    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0)
+    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_text[1], field_text[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
 def form_field_one(field_text, form_field_two):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0, page_number=5)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0, page_number=5)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
+    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
+    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
 def page_range():
-    model = _models.PageRange(first_page=1, last_page=100)
-    model_repr = "PageRange(first_page=1, last_page=100)"
+    model = _models.FormPageRange(first_page=1, last_page=100)
+    model_repr = "FormPageRange(first_page=1, last_page=100)"
     assert repr(model) == model_repr
     return model, model_repr
 
