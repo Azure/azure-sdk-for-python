@@ -57,16 +57,17 @@ def test_credential_unavailable_error():
 
 def test_redeem_token():
     expected_token = AccessToken("token", 42)
+    expected_value = "value"
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=expected_value):
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
-        mock_client.obtain_token_by_refresh_token.assert_called_with("VALUE", ("scope",))
+        mock_client.obtain_token_by_refresh_token.assert_called_with(("scope",), expected_value)
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 

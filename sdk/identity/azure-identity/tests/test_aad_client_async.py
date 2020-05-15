@@ -101,7 +101,7 @@ async def test_authorization_code(secret):
 
     client = AadClient(tenant_id, client_id, transport=transport)
     token = await client.obtain_token_by_authorization_code(
-        redirect_uri=redirect_uri, code=auth_code, scopes=(scope,), client_secret=secret
+        scopes=(scope,), code=auth_code, redirect_uri=redirect_uri, client_secret=secret
     )
 
     assert token.token == access_token
@@ -126,7 +126,7 @@ async def test_refresh_token():
     transport = Mock(send=Mock(wraps=send))
 
     client = AadClient(tenant_id, client_id, transport=transport)
-    token = await client.obtain_token_by_refresh_token(refresh_token=refresh_token, scopes=(scope,))
+    token = await client.obtain_token_by_refresh_token(scopes=(scope,), refresh_token=refresh_token)
 
     assert token.token == access_token
     assert transport.send.call_count == 1
@@ -147,11 +147,11 @@ async def test_request_url(authority):
 
     client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)
 
-    await client.obtain_token_by_authorization_code("code", "uri", "scope")
-    await client.obtain_token_by_refresh_token("refresh token", "scope")
+    await client.obtain_token_by_authorization_code("scope", "code", "uri")
+    await client.obtain_token_by_refresh_token("scope", "refresh token")
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
-    await client.obtain_token_by_authorization_code("code", "uri", "scope")
-    await client.obtain_token_by_refresh_token("refresh token", "scope")
+    await client.obtain_token_by_authorization_code("scope", "code", "uri")
+    await client.obtain_token_by_refresh_token("scope", "refresh token")

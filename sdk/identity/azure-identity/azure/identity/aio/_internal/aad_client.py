@@ -44,14 +44,14 @@ class AadClient(AadClientBase):
 
     async def obtain_token_by_authorization_code(
         self,
+        scopes: "Sequence[str]",
         code: str,
         redirect_uri: str,
-        scopes: "Sequence[str]",
         client_secret: "Optional[str]" = None,
         **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_auth_code_request(
-            code=code, redirect_uri=redirect_uri, scopes=scopes, client_secret=client_secret
+            scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret
         )
         now = int(time.time())
         response = await self._pipeline.run(request, **kwargs)
@@ -59,9 +59,9 @@ class AadClient(AadClientBase):
         return self._process_response(response=content, scopes=scopes, now=now)
 
     async def obtain_token_by_refresh_token(
-        self, refresh_token: str, scopes: "Sequence[str]", **kwargs: "Any"
+        self, scopes: "Sequence[str]", refresh_token: str, **kwargs: "Any"
     ) -> "AccessToken":
-        request = self._get_refresh_token_request(refresh_token, scopes)
+        request = self._get_refresh_token_request(scopes, refresh_token)
         now = int(time.time())
         response = await self._pipeline.run(request, **kwargs)
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)

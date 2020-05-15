@@ -71,7 +71,7 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
 
         if self._authorization_code:
             token = await self._client.obtain_token_by_authorization_code(
-                code=self._authorization_code, redirect_uri=self._redirect_uri, scopes=scopes, **kwargs
+                scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
             )
 
             self._authorization_code = None  # auth codes are single-use
@@ -92,7 +92,7 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             if "secret" not in refresh_token:
                 continue
-            token = await self._client.obtain_token_by_refresh_token(refresh_token["secret"], scopes, **kwargs)
+            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
             if token:
                 return token
         return None

@@ -59,11 +59,11 @@ class AadClientBase(ABC):
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
     @abc.abstractmethod
-    def obtain_token_by_authorization_code(self, code, redirect_uri, scopes, client_secret=None, **kwargs):
+    def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
         pass
 
     @abc.abstractmethod
-    def obtain_token_by_refresh_token(self, refresh_token, scopes, **kwargs):
+    def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
         pass
 
     @abc.abstractmethod
@@ -89,7 +89,7 @@ class AadClientBase(ABC):
             )
         return AccessToken(response_copy["access_token"], expires_on)
 
-    def _get_auth_code_request(self, code, redirect_uri, scopes, client_secret=None):
+    def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
         # type: (str, str, Sequence[str], Optional[str]) -> HttpRequest
 
         data = {
@@ -108,7 +108,7 @@ class AadClientBase(ABC):
         request.set_formdata_body(data)
         return request
 
-    def _get_refresh_token_request(self, refresh_token, scopes):
+    def _get_refresh_token_request(self, scopes, refresh_token):
         # type: (str, Sequence[str]) -> HttpRequest
 
         data = {
