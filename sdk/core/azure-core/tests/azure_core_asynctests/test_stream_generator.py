@@ -13,7 +13,7 @@ from unittest import mock
 import pytest
 
 @pytest.mark.asyncio
-async def test_connetion_error_response():
+async def test_connection_error_response():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0

@@ -15,7 +15,7 @@ try:
 except ImportError:
     import mock
 
-def test_connetion_error_response():
+def test_connection_error_response():
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -41,6 +41,9 @@ def test_connetion_error_response():
     class MockInternalResponse():
         def iter_content(self, block_size):
             return MockTransport()
+
+        def close(self):
+            pass
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline = Pipeline(MockTransport())
