@@ -10,7 +10,7 @@
 FILE: sample_recognize_content.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and content information from a document
+    This sample demonstrates how to extract text and content information from a document
     given through a file.
 USAGE:
     python sample_recognize_content.py
