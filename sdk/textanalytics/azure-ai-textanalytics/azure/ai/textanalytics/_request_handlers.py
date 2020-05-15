@@ -28,12 +28,13 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
     if isinstance(documents, six.string_types):
         raise TypeError("Input documents cannot be a string.")
 
+    if isinstance(documents, dict):
+        raise TypeError("Input documents cannot be a dict")
+
     if not all(isinstance(x, six.string_types) for x in documents):
         if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
             raise TypeError("Mixing string and dictionary/object document input unsupported.")
 
-    if not isinstance(documents, list):
-        raise TypeError("`documents` parameter must be a list, not a {}".format(type(documents)))
 
     request_batch = []
     for idx, doc in enumerate(documents):

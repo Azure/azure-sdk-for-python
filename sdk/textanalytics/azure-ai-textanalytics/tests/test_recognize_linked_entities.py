@@ -445,7 +445,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.recognize_linked_entities(docs)
-        assert "`documents` parameter must be a list" in str(excinfo.value)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
