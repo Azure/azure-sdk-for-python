@@ -1,6 +1,10 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
+  optional keyword arguments `executor` or `loop`. Prior versions of the method
+  didn't use these correctly, provoking exceptions, and internal changes in this
+  version have made them obsolete.
 - The optional persistent cache for `DeviceCodeCredential` and
   `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
   macOS as well as Windows.
