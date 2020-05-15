@@ -1,7 +1,8 @@
 # Release History
 
-## 4.0.0 (unreleased)
+## 4.0.0
 
+- GA release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
 
 
