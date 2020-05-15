@@ -187,13 +187,13 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         request.prepare_multipart_body()  # type: ignore
 
     def run(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> PipelineResponse
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
         :type request: ~azure.core.pipeline.transport.HttpRequest
         :return: The PipelineResponse object
-        :rtype: ~azure.core.pipeline.PipelineResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)

@@ -199,7 +199,7 @@ class AsyncPipeline(
         :param request: The HTTP request object.
         :type request: ~azure.core.pipeline.transport.HttpRequest
         :return: The PipelineResponse object.
-        :rtype: ~azure.core.pipeline.PipelineResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)

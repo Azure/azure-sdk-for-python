@@ -175,13 +175,13 @@ class HttpTransport(
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> HttpResponse
+        # type: (PipelineRequest, Any) -> HTTPResponseType
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: The pipeline response object.
-        :rtype: ~azure.core.pipeline.PipelineResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
 
     @abc.abstractmethod
