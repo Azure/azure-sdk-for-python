@@ -501,13 +501,12 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.skip(reason="Service bug returns InvalidDocument here. Unskip after v3.0-preview.2")
     async def test_invalid_country_hint(self, client):
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
         response = await client.detect_language(docs)
-        self.assertEqual(response[0].error.code, "invalidCountryHint")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
         self.assertIsNotNone(response[0].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
