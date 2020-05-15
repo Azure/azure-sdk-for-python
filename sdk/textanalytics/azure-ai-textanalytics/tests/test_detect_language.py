@@ -15,7 +15,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextAnalyticsClient,
-    TextDocumentInput,
+    DetectLanguageInput,
     VERSION
 )
 
@@ -59,10 +59,10 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español."),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-            TextDocumentInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian"),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
         response = client.detect_language(docs)
@@ -167,7 +167,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
