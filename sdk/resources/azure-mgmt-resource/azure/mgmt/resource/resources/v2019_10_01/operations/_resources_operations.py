@@ -248,7 +248,7 @@ class ResourcesOperations(object):
         url = self.validate_move_resources.metadata['url']
         path_format_arguments = {
             'sourceResourceGroupName': self._serialize.url("source_resource_group_name", source_resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'sourceSubscriptionId': self._serialize.url("self.config.source_subscription_id", self.config.source_subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -334,7 +334,7 @@ class ResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    validate_move_resources.metadata = {'url': '/subscriptions/{sourceSubscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources'}
+    validate_move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources'}
 
     def list(
             self, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
