@@ -50,6 +50,14 @@ class AadClient(AadClientBase):
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
         return self._process_response(response=content, scopes=scopes, now=now)
 
+    def obtain_token_by_client_secret(self, scopes, secret, **kwargs):
+        # type: (Sequence[str], str, **Any) -> AccessToken
+        request = self._get_client_secret_request(scopes, secret)
+        now = int(time.time())
+        response = self._pipeline.run(request, stream=False, **kwargs)
+        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+        return self._process_response(response=content, scopes=scopes, now=now)
+
     def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
         # type: (Sequence[str], str, **Any) -> AccessToken
         request = self._get_refresh_token_request(scopes, refresh_token)
