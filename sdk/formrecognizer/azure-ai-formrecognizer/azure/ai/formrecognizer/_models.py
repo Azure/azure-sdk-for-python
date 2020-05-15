@@ -180,7 +180,7 @@ class RecognizedForm(object):
         )[:1024]
 
 
-class USReceipt(object):  # pylint: disable=too-many-instance-attributes
+class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
     """Extracted fields found on the US sales receipt. Provides
     attributes for accessing common fields present in US sales receipts.
 
@@ -220,6 +220,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(self, **kwargs):
+        super(USReceipt, self).__init__(**kwargs)
         self.merchant_address = kwargs.get("merchant_address", None)
         self.merchant_name = kwargs.get("merchant_name", None)
         self.merchant_phone_number = kwargs.get("merchant_phone_number", None)
@@ -231,10 +232,6 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
         self.total = kwargs.get("total", None)
         self.transaction_date = kwargs.get("transaction_date", None)
         self.transaction_time = kwargs.get("transaction_time", None)
-        self.fields = kwargs.get("fields", None)
-        self.page_range = kwargs.get("page_range", None)
-        self.pages = kwargs.get("pages", None)
-        self.form_type = kwargs.get("form_type", None)
         self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
     def __repr__(self):
