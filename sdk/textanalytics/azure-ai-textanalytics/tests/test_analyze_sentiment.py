@@ -139,15 +139,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = client.analyze_sentiment(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 

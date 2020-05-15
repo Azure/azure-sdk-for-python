@@ -155,15 +155,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = await client.recognize_entities(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     async def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
