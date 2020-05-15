@@ -10,12 +10,11 @@ from typing import (
     Any,
     IO,
     Union,
-    TYPE_CHECKING,
+    TYPE_CHECKING
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
     prepare_us_receipt,
@@ -23,12 +22,11 @@ from ._response_handlers import (
     prepare_form_result
 )
 from ._generated.models import AnalyzeOperationResult
-from ._helpers import get_content_type, error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
-from ._form_training_client import FormTrainingClient
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class FormRecognizerClient(object):
@@ -40,28 +38,37 @@ class FormRecognizerClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of AzureKeyCredential if using an API key.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+        This is an instance of AzureKeyCredential if using an API key or a token
+        credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_get_bounding_boxes.py
-            :start-after: [START create_form_recognizer_client]
-            :end-before: [END create_form_recognizer_client]
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_fr_client_with_key]
+            :end-before: [END create_fr_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_fr_client_with_aad]
+            :end-before: [END create_fr_client_with_aad]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormRecognizerClient with a token credential.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, AzureKeyCredential, Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,
+            endpoint=endpoint,
+            credential=credential,
             sdk_moniker=USER_AGENT,
-            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
@@ -78,7 +85,7 @@ class FormRecognizerClient(object):
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
              Currently only supports US sales receipts.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -172,7 +179,7 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -246,7 +253,7 @@ class FormRecognizerClient(object):
 
         :param str model_id: Custom model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -331,19 +338,6 @@ class FormRecognizerClient(object):
             cls=deserialization_callback,
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
             error_map=error_map,
-            **kwargs
-        )
-
-    def get_form_training_client(self, **kwargs):
-        # type: (Any) -> FormTrainingClient
-        """Get an instance of a FormTrainingClient from FormRecognizerClient.
-
-        :rtype: ~azure.ai.formrecognizer.FormTrainingClient
-        :return: A FormTrainingClient
-        """
-        return FormTrainingClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
             **kwargs
         )
 

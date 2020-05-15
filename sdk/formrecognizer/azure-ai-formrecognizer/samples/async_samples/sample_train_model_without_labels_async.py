@@ -42,7 +42,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
             self.endpoint, AzureKeyCredential(self.key)
         ) as form_training_client:
 
-            # Default for train_model is `use_labels=False`
+            # Default for train_model is `use_training_labels=False`
             model = await form_training_client.train_model(self.container_sas_url)
 
             # Custom model information
@@ -54,6 +54,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
             print("Recognized fields:")
             # Looping through the submodels, which contains the fields they were trained on
             for submodel in model.models:
+                print("...The submodel has form type '{}'".format(submodel.form_type))
                 for name, field in submodel.fields.items():
                     print("...The model found field '{}' to have label '{}'".format(
                         name, field.label

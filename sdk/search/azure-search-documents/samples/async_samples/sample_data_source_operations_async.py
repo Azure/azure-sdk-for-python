@@ -9,7 +9,7 @@
 """
 FILE: sample_data_source_operations_async.py
 DESCRIPTION:
-    This sample demonstrates how to get, create, update, or delete a Synonym Map.
+    This sample demonstrates how to get, create, update, or delete a Data Source.
 USAGE:
     python sample_data_source_operations_async.py
 
@@ -30,6 +30,7 @@ from azure.search.documents import DataSource, DataContainer, DataSourceCredenti
 from azure.search.documents.aio import SearchServiceClient
 
 service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+client = service_client.get_datasources_client()
 
 async def create_data_source():
     # [START create_data_source_async]
@@ -37,14 +38,14 @@ async def create_data_source():
     container = DataContainer(name='searchcontainer')
     data_source = DataSource(name="async-sample-datasource", type="azureblob", credentials=credentials, container=container)
     async with service_client:
-        result = await service_client.create_datasource(data_source)
+        result = await client.create_datasource(data_source)
     print("Create new Data Source - async-sample-datasource")
     # [END create_data_source_async]
 
 async def list_data_sources():
     # [START list_data_source_async]
     async with service_client:
-        result = await service_client.get_datasources()
+        result = await client.get_datasources()
     names = [x.name for x in result]
     print("Found {} Data Sources in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source_async]
@@ -52,7 +53,7 @@ async def list_data_sources():
 async def get_data_source():
     # [START get_data_source_async]
     async with service_client:
-        result = await service_client.get_datasource("async-sample-datasource")
+        result = await client.get_datasource("async-sample-datasource")
         print("Retrived Data Source 'async-sample-datasource'")
         return result
     # [END get_data_source_async]
@@ -60,7 +61,7 @@ async def get_data_source():
 async def delete_data_source():
     # [START delete_data_source_async]
     async with service_client:
-        service_client.delete_datasource("async-sample-datasource")
+        client.delete_datasource("async-sample-datasource")
     print("Data Source 'async-sample-datasource' successfully deleted")
     # [END delete_data_source_async]
 

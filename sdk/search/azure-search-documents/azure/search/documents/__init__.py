@@ -35,7 +35,13 @@ from ._index import (
     SuggestQuery,
     odata,
 )
-from ._service import SearchServiceClient
+from ._service import (
+    ComplexField,
+    SearchableField,
+    SimpleField,
+    SearchServiceClient,
+    edm,
+)
 from ._service._generated.models import (
     Analyzer,
     AnalyzeRequest,
@@ -65,8 +71,11 @@ from ._service._generated.models import (
     FreshnessScoringParameters,
     GetIndexStatisticsResult,
     ImageAnalysisSkill,
-    InputFieldMappingEntry,
     Index,
+    Indexer,
+    IndexingSchedule,
+    IndexingParameters,
+    InputFieldMappingEntry,
     KeepTokenFilter,
     KeyPhraseExtractionSkill,
     KeywordMarkerTokenFilter,
@@ -104,6 +113,7 @@ from ._service._generated.models import (
     StopAnalyzer,
     StopwordsTokenFilter,
     Suggester,
+    SynonymMap,
     SynonymTokenFilter,
     TagScoringFunction,
     TagScoringParameters,
@@ -119,6 +129,11 @@ from ._service._generated.models import (
     WordDelimiterTokenFilter,
 )
 from ._service._models import PatternAnalyzer, PatternTokenizer
+from ._service._datasources_client import SearchDataSourcesClient
+from ._service._indexers_client import SearchIndexersClient
+from ._service._indexes_client import SearchIndexesClient
+from ._service._skillsets_client import SearchSkillsetsClient
+from ._service._synonym_maps_client import SearchSynonymMapsClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -135,6 +150,7 @@ __all__ = (
     "CjkBigramTokenFilter",
     "ClassicTokenizer",
     "CommonGramTokenFilter",
+    "ComplexField",
     "ConditionalSkill",
     "CorsOptions",
     "CustomAnalyzer",
@@ -155,6 +171,9 @@ __all__ = (
     "GetIndexStatisticsResult",
     "ImageAnalysisSkill",
     "Index",
+    "Indexer",
+    "IndexingSchedule",
+    "IndexingParameters",
     "IndexAction",
     "IndexDocumentsBatch",
     "IndexingResult",
@@ -186,12 +205,19 @@ __all__ = (
     "ScoringFunction",
     "ScoringProfile",
     "SearchClient",
+    "SearchDataSourcesClient",
+    "SearchIndexersClient",
+    "SearchIndexesClient",
+    "SearchSkillsetsClient",
+    "SearchSynonymMapsClient",
     "SearchItemPaged",
     "SearchQuery",
     "SearchServiceClient",
+    "SearchableField",
     "SentimentSkill",
     "ShaperSkill",
     "ShingleTokenFilter",
+    "SimpleField",
     "Skillset",
     "SnowballTokenFilter",
     "SplitSkill",
@@ -203,6 +229,7 @@ __all__ = (
     "StopwordsTokenFilter",
     "SuggestQuery",
     "Suggester",
+    "SynonymMap",
     "SynonymTokenFilter",
     "TagScoringFunction",
     "TagScoringParameters",
@@ -216,5 +243,6 @@ __all__ = (
     "UniqueTokenFilter",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
+    "edm",
     "odata",
 )

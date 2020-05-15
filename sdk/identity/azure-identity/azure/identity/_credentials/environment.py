@@ -7,7 +7,7 @@ import os
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
-from .user import UsernamePasswordCredential
+from .user_password import UsernamePasswordCredential
 
 
 try:
@@ -71,7 +71,7 @@ class EnvironmentCredential(object):
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 username=os.environ[EnvironmentVariables.AZURE_USERNAME],
                 password=os.environ[EnvironmentVariables.AZURE_PASSWORD],
-                tenant=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
+                tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
                 **kwargs
             )
 

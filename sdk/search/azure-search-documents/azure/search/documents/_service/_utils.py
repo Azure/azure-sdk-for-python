@@ -4,12 +4,20 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-
+import six
 from azure.core import MatchConditions
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+    ResourceNotModifiedError,
+)
 from ._generated.models import (
     Index,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
+    AccessCondition
 )
 from ._models import PatternAnalyzer, PatternTokenizer
 
@@ -113,14 +121,14 @@ def delistize_flags_for_index(index):
     # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
-            delistize_flags_for_pattern_analyzer(x)
+            delistize_flags_for_pattern_analyzer(x)  # type: ignore
             if isinstance(x, PatternAnalyzer)
             else x
             for x in index.analyzers
-        ]
+        ]  # mypy: ignore
     if index.tokenizers:
         index.tokenizers = [
-            delistize_flags_for_pattern_tokenizer(x)
+            delistize_flags_for_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, PatternTokenizer)
             else x
             for x in index.tokenizers
@@ -132,14 +140,14 @@ def listize_flags_for_index(index):
     # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
-            listize_flags_for_pattern_analyzer(x)
+            listize_flags_for_pattern_analyzer(x)  # type: ignore
             if isinstance(x, _PatternAnalyzer)
             else x
             for x in index.analyzers
         ]
     if index.tokenizers:
         index.tokenizers = [
-            listize_flags_for_pattern_tokenizer(x)
+            listize_flags_for_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, _PatternTokenizer)
             else x
             for x in index.tokenizers
@@ -151,3 +159,41 @@ def listize_synonyms(synonym_map):
     # type: (dict) -> dict
     synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
     return synonym_map
+
+def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
+    # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], AccessCondition]
+    error_map = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError
+    }
+
+    if isinstance(model, six.string_types):
+        if match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        return (error_map, None)
+
+    try:
+        if_match = prep_if_match(model.e_tag, match_condition)
+        if_none_match = prep_if_none_match(model.e_tag, match_condition)
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[304] = ResourceNotModifiedError
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        return (error_map, AccessCondition(if_match=if_match, if_none_match=if_none_match))
+    except AttributeError:
+        raise ValueError("Unable to get e_tag from the model")
+
+def _normalize_endpoint(endpoint):
+    try:
+        if not endpoint.lower().startswith('http'):
+            endpoint = "https://" + endpoint
+        elif not endpoint.lower().startswith('https'):
+            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
+        return endpoint
+    except AttributeError:
+        raise ValueError("Endpoint must be a string.")

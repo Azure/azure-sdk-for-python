@@ -29,7 +29,7 @@ def verify_packages(package_file_path):
         sys.exit(1)
 
     # find installed and expected packages
-    installed = dict(p.split('==') for p in freeze.freeze() if p.startswith('azure'))
+    installed = dict(p.split('==') for p in freeze.freeze() if p.startswith('azure') and "==" in p)
     expected = dict(p.split('==') for p in packages)
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]

@@ -39,7 +39,7 @@ class TrainModelWithoutLabelsSample(object):
 
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
 
-        # Default for begin_train_model is `use_labels=False`
+        # Default for begin_train_model is `use_training_labels=False`
         poller = form_training_client.begin_train_model(self.container_sas_url)
         model = poller.result()
 
@@ -52,6 +52,7 @@ class TrainModelWithoutLabelsSample(object):
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on
         for submodel in model.models:
+            print("...The submodel has form type '{}'".format(submodel.form_type))
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have label '{}'".format(
                     name, field.label

@@ -46,7 +46,7 @@ class TrainModelWithLabelsSampleAsync(object):
         # [END create_form_training_client_async]
         async with form_training_client:
 
-            model = await form_training_client.train_model(self.container_sas_url, use_labels=True)
+            model = await form_training_client.train_model(self.container_sas_url, use_training_labels=True)
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
@@ -57,7 +57,7 @@ class TrainModelWithLabelsSampleAsync(object):
             # looping through the submodels, which contains the fields they were trained on
             # The labels are based on the ones you gave the training document.
             for submodel in model.models:
-                print("...The submodel has accuracy '{}'".format(submodel.accuracy))
+                print("...The submodel with form type {} has accuracy '{}'".format(submodel.form_type, submodel.accuracy))
                 for name, field in submodel.fields.items():
                     print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(
                         name, field.name, field.accuracy

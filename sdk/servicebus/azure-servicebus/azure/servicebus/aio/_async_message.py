@@ -62,13 +62,13 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         This removes the message from the queue.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_COMPLETE)
+        self._check_live(MESSAGE_COMPLETE)
         await self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
@@ -83,40 +83,45 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :param str reason: The reason for dead-lettering the message.
         :param str description: The detailed description for dead-lettering the message.
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEAD_LETTER)
+        self._check_live(MESSAGE_DEAD_LETTER)
         await self._settle_message(MESSAGE_DEAD_LETTER)
         self._settled = True
 
     async def abandon(self):
         # type: () -> None
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Abandon the message. 
+        
+        This message will be returned to the queue and made available to be received again.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_ABANDON)
+        self._check_live(MESSAGE_ABANDON)
         await self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
     async def defer(self):
         # type: () -> None
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Defers the message.
+        
+        This message will remain in the queue but must be requested
+        specifically by its sequence number in order to be received.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEFER)
+        self._check_live(MESSAGE_DEFER)
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
@@ -133,16 +138,16 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
         :rtype: None
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
             if self._receiver.session:  # pylint: disable=protected-access
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._is_live(MESSAGE_RENEW_LOCK)
+        self._check_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")

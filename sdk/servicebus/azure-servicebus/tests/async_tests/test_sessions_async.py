@@ -24,7 +24,6 @@ from azure.servicebus.exceptions import (
     NoActiveSession,
     SessionLockExpired,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSettleFailed)
@@ -597,7 +596,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message_id = uuid.uuid4()
                 message = Message(content, session_id=session_id)
                 message.properties.message_id = message_id
-                message.schedule(enqueue_time)
+                message.scheduled_enqueue_time_utc = enqueue_time
                 await sender.send(message)
 
             messages = []
@@ -618,7 +617,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             await renewer.shutdown()
 
 
-    @pytest.mark.skip(reason='requires scheduling functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -639,7 +637,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message_id_b = uuid.uuid4()
                 message_b = Message(content, session_id=session_id)
                 message_b.properties.message_id = message_id_b
-                tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                tokens = await sender.schedule([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
 
             renewer = AutoLockRenew()
@@ -659,7 +657,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             await renewer.shutdown()
 
 
-    @pytest.mark.skip(reasion="requires scheduling")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -674,9 +671,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message_a = Message("Test scheduled message", session_id=session_id)
                 message_b = Message("Test scheduled message", session_id=session_id)
-                tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                tokens = await sender.schedule([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
-                await sender.cancel_scheduled_messages(*tokens)
+                await sender.cancel_scheduled_messages(tokens)
 
             renewer = AutoLockRenew()
             messages = []

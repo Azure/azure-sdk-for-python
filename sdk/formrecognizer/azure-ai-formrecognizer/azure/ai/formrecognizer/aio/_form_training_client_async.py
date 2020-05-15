@@ -9,6 +9,7 @@
 from typing import (
     Optional,
     Any,
+    Union,
     AsyncIterable,
     TYPE_CHECKING,
 )
@@ -16,11 +17,11 @@ from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from ._form_recognizer_client_async import FormRecognizerClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import TrainRequest, TrainSourceFilter
 from .._generated.models import Model
-from .._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -30,6 +31,7 @@ from .._user_agent import USER_AGENT
 from .._polling import TrainingPolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class FormTrainingClient(object):
@@ -41,47 +43,60 @@ class FormTrainingClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of AzureKeyCredential if using an API key.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+        This is an instance of AzureKeyCredential if using an API key or a token
+        credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        or :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_train_model_with_labels_async.py
-            :start-after: [START create_form_training_client_async]
-            :end-before: [END create_form_training_client_async]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ft_client_with_key_async]
+            :end-before: [END create_ft_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ft_client_with_aad_async]
+            :end-before: [END create_ft_client_with_aad_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormTrainingClient with a token credential.
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: "AzureKeyCredential",
+            credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
             **kwargs: Any
     ) -> None:
+        self._endpoint = endpoint
+        self._credential = credential
+
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             sdk_moniker=USER_AGENT,
-            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
     @distributed_trace_async
     async def train_model(
             self,
-            training_files: str,
-            use_labels: Optional[bool] = False,
+            training_files_url: str,
+            use_training_labels: Optional[bool] = False,
             **kwargs: Any
     ) -> CustomFormModel:
-        """Create and train a custom model. The request must include a `training_files` parameter that is an
+        """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files: An Azure Storage blob container's SAS URI.
-        :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
+        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.
             Use `prefix` to filter documents themselves, or to restrict sub folders for training
@@ -109,8 +124,8 @@ class FormTrainingClient(object):
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         response = await self._client.train_custom_model_async(
             train_request=TrainRequest(
-                source=training_files,
-                use_label_file=use_labels,
+                source=training_files_url,
+                use_label_file=use_training_labels,
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_sub_folders", False)
@@ -159,7 +174,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_model_infos(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
+    def list_custom_models(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
@@ -170,8 +185,8 @@ class FormTrainingClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_manage_custom_models_async.py
-                :start-after: [START list_model_infos_async]
-                :end-before: [END list_model_infos_async]
+                :start-after: [START list_custom_models_async]
+                :end-before: [END list_custom_models_async]
                 :language: python
                 :dedent: 12
                 :caption: List model information for each model on the account.
@@ -229,6 +244,18 @@ class FormTrainingClient(object):
             **kwargs
         )
         return CustomFormModel._from_generated(response)
+
+    def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
+        """Get an instance of a FormRecognizerClient from FormTrainingClient.
+
+        :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
+        :return: A FormRecognizerClient
+        """
+        return FormRecognizerClient(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            **kwargs
+        )
 
     async def __aenter__(self) -> "FormTrainingClient":
         await self._client.__aenter__()

@@ -9,7 +9,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.ai.formrecognizer.aio import FormTrainingClient, FormRecognizerClient
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
@@ -35,7 +35,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     async def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = client.list_model_infos()
+            result = client.list_custom_models()
             async for res in result:
                 test = res
 
@@ -53,11 +53,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        labeled_model_from_train = await client.train_model(container_sas_url, use_labels=True)
+        labeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=True)
 
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
@@ -76,7 +76,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -88,7 +88,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ResourceNotFoundError):
             await client.get_custom_model(labeled_model_from_train.model_id)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_unlabeled(self, client, container_sas_url):
         unlabeled_model_from_train = await client.train_model(container_sas_url)
@@ -109,7 +109,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -122,15 +122,15 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             await client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         transport = AioHttpTransport()
-        frc = FormRecognizerClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
 
-        async with frc:
-            result = await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+        async with ftc:
+            await ftc.get_account_properties()
             assert transport.session is not None
-            async with frc.get_form_training_client() as ftc:
+            async with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                properties = await ftc.get_account_properties()
-            result = await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+                await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+            await ftc.get_account_properties()
             assert transport.session is not None

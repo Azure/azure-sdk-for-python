@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .custom_vision_training_client import CustomVisionTrainingClient
-from .version import VERSION
+from ._configuration import CustomVisionTrainingClientConfiguration
+from ._custom_vision_training_client import CustomVisionTrainingClient
+__all__ = ['CustomVisionTrainingClient', 'CustomVisionTrainingClientConfiguration']
 
-__all__ = ['CustomVisionTrainingClient']
+from .version import VERSION
 
 __version__ = VERSION
 

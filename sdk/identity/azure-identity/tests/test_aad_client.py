@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import json
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._constants import EnvironmentVariables
@@ -53,7 +54,7 @@ def test_error_reporting():
     error_description = "something went wrong"
     error_response = {"error": error_name, "error_description": error_description}
 
-    response = Mock(status_code=403, json=lambda: error_response)
+    response = Mock(status_code=403, json=lambda: error_response, text=json.dumps(error_response))
     transport = Mock(return_value=response)
     session = Mock(get=transport, post=transport)
     client = MockClient("tenant id", "client id", session=session)
@@ -99,15 +100,17 @@ def test_exceptions_do_not_expose_secrets():
     assert_secrets_not_exposed()
 
 
-def test_request_url():
-    authority = "authority.com"
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_request_url(authority):
     tenant_id = "expected_tenant"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
     def send(request, **_):
-        scheme, netloc, path, _, _, _ = urlparse(request.url)
-        assert scheme == "https"
-        assert netloc == authority
-        assert path.startswith("/" + tenant_id)
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
     client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)
