@@ -149,7 +149,7 @@ class FormRecognizerClient(object):
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
-        :param url: The url of the form to analyze. The input must be a valid, encoded url
+        :param url: The url of the receipt to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
             US sales receipts.
         :keyword bool include_text_content:
