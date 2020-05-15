@@ -247,11 +247,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
             template=template,
             parameters=parameters,
         )
+        deployment = azure.mgmt.resource.resources.models.Deployment(properties=deployment_params)
 
         deployment_create_result = self.resource_client.deployments.create_or_update(
             resource_group.name,
             deployment_name,
-            deployment_params,
+            deployment,
         )
         deployment_create_result = deployment_create_result.result()
         self.assertEqual(deployment_name, deployment_create_result.name)
@@ -331,11 +332,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
             template_link=template,
             parameters_link=parameters,
         )
+        deployment = azure.mgmt.resource.resources.models.Deployment(properties=deployment_params)
 
         deployment_create_result = self.resource_client.deployments.create_or_update(
             resource_group.name,
             deployment_name,
-            deployment_params,
+            deployment,
         )
         deployment_create_result = deployment_create_result.result()
         self.assertEqual(deployment_name, deployment_create_result.name)
@@ -371,12 +373,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
             template_link=template,
             parameters_link=parameters,
         )
+        deployment = azure.mgmt.resource.resources.models.Deployment(properties=deployment_params)
 
         with self.assertRaises(azure.common.exceptions.CloudError) as err:
             self.resource_client.deployments.create_or_update(
                 resource_group.name,
                 deployment_name,
-                deployment_params,
+                deployment,
             )
         cloud_error = err.exception
         self.assertTrue(cloud_error.message)
