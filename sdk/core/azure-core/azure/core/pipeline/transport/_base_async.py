@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
@@ -168,7 +168,7 @@ class AsyncHttpTransport(
 
     @abc.abstractmethod
     async def send(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> AsyncHTTPResponseType
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
 
         """Send the request using this HTTP sender.
         """
