@@ -239,7 +239,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                         raise
                     chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
-                        raise StopIteration()
+                        raise StopAsyncIteration()
                     self.downloaded += len(chunk)
                     return chunk
                 continue
