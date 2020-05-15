@@ -73,6 +73,9 @@ def test_connection_error_416():
             response.status_code = 416
             return response
 
+        def next(self):
+            self.__next__()
+
         def __next__(self):
             if self._count == 0:
                 self._count += 1

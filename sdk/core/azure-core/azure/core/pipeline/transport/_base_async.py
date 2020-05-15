@@ -168,8 +168,6 @@ class AsyncHttpTransport(
 
     @abc.abstractmethod
     async def send(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> HTTPResponseType
-
         """Send the request using this HTTP sender.
         """
 
