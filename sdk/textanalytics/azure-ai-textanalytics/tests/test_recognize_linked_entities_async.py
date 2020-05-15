@@ -469,6 +469,14 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            await client.recognize_linked_entities(docs)
+        assert "`documents` parameter must be a list" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
