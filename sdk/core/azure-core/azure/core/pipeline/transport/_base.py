@@ -175,7 +175,7 @@ class HttpTransport(
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> PipelineResponse
+        # type: (PipelineRequest, Any) -> HttpResponse
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
