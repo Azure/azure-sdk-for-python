@@ -130,6 +130,22 @@ class TestDetectLanguage(TextAnalyticsTest):
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_output_same_order_as_input(self, client):
+        docs = [
+            DetectLanguageInput(id="1", text="one"),
+            DetectLanguageInput(id="2", text="two"),
+            DetectLanguageInput(id="3", text="three"),
+            DetectLanguageInput(id="4", text="four"),
+            DetectLanguageInput(id="5", text="five")
+        ]
+
+        response = client.detect_language(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):

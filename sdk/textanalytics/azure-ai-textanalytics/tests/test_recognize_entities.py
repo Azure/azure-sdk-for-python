@@ -106,6 +106,22 @@ class TestRecognizeEntities(TextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_output_same_order_as_input(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="one"),
+            TextDocumentInput(id="2", text="two"),
+            TextDocumentInput(id="3", text="three"),
+            TextDocumentInput(id="4", text="four"),
+            TextDocumentInput(id="5", text="five")
+        ]
+
+        response = client.recognize_entities(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
