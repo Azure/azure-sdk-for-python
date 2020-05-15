@@ -481,7 +481,14 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.detect_language(docs)
-        assert "Input documents can not be empty" in str(excinfo.value)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.detect_language(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

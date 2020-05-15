@@ -23,7 +23,7 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
     :return: A list of DetectLanguageInput or TextDocumentInput
     """
     if not documents:
-        raise ValueError("Input documents can not be empty")
+        raise ValueError("Input documents can not be empty or None")
 
     if isinstance(documents, six.string_types):
         raise TypeError("Input documents cannot be a string.")
