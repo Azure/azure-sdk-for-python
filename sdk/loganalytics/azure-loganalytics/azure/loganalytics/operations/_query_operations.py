@@ -9,64 +9,33 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from . import models
+
+from .. import models
 
 
-class LogAnalyticsDataClientConfiguration(Configuration):
-    """Configuration for LogAnalyticsDataClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
+class QueryOperations(object):
+    """QueryOperations operations.
 
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
     """
 
-    def __init__(
-            self, credentials, base_url=None):
+    models = models
 
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.loganalytics.io/v1'
+    def __init__(self, client, config, serializer, deserializer):
 
-        super(LogAnalyticsDataClientConfiguration, self).__init__(base_url)
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
 
-        self.add_user_agent('azure-loganalytics/{}'.format(VERSION))
+        self.config = config
 
-        self.credentials = credentials
-
-
-class LogAnalyticsDataClient(SDKClient):
-    """Log Analytics Data Plane Client
-
-    :ivar config: Configuration for client.
-    :vartype config: LogAnalyticsDataClientConfiguration
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        self.config = LogAnalyticsDataClientConfiguration(credentials, base_url)
-        super(LogAnalyticsDataClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v1'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-
-    def query(
+    def execute(
             self, workspace_id, body, custom_headers=None, raw=False, **operation_config):
         """Execute an Analytics query.
 
@@ -93,7 +62,7 @@ class LogAnalyticsDataClient(SDKClient):
          :class:`ErrorResponseException<azure.loganalytics.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.query.metadata['url']
+        url = self.execute.metadata['url']
         path_format_arguments = {
             'workspaceId': self._serialize.url("workspace_id", workspace_id, 'str')
         }
@@ -104,6 +73,7 @@ class LogAnalyticsDataClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -112,15 +82,13 @@ class LogAnalyticsDataClient(SDKClient):
         body_content = self._serialize.body(body, 'QueryBody')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('QueryResults', response)
 
@@ -129,4 +97,4 @@ class LogAnalyticsDataClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    query.metadata = {'url': '/workspaces/{workspaceId}/query'}
+    execute.metadata = {'url': '/workspaces/{workspaceId}/query'}

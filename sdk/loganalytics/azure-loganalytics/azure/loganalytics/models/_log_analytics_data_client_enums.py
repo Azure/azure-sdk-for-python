@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import LogAnalyticsDataClientConfiguration
-from ._log_analytics_data_client import LogAnalyticsDataClient
-__all__ = ['LogAnalyticsDataClient', 'LogAnalyticsDataClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class MetadataColumnDataType(str, Enum):
 
+    bool_enum = "bool"
+    datetime_enum = "datetime"
+    dynamic = "dynamic"
+    int_enum = "int"
+    long_enum = "long"
+    real = "real"
+    string = "string"

@@ -10,28 +10,98 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .query_body_py3 import QueryBody
-    from .column_py3 import Column
-    from .table_py3 import Table
-    from .query_results_py3 import QueryResults
-    from .error_detail_py3 import ErrorDetail
-    from .error_info_py3 import ErrorInfo
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Column
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorInfo
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import MetadataApplication
+    from ._models_py3 import MetadataApplicationRelated
+    from ._models_py3 import MetadataCategory
+    from ._models_py3 import MetadataCategoryRelated
+    from ._models_py3 import MetadataFunction
+    from ._models_py3 import MetadataFunctionRelated
+    from ._models_py3 import MetadataPermissions
+    from ._models_py3 import MetadataPermissionsApplicationsItem
+    from ._models_py3 import MetadataPermissionsResourcesItem
+    from ._models_py3 import MetadataPermissionsWorkspacesItem
+    from ._models_py3 import MetadataQuery
+    from ._models_py3 import MetadataQueryRelated
+    from ._models_py3 import MetadataResourceType
+    from ._models_py3 import MetadataResourceTypeRelated
+    from ._models_py3 import MetadataResults
+    from ._models_py3 import MetadataSolution
+    from ._models_py3 import MetadataSolutionRelated
+    from ._models_py3 import MetadataTable
+    from ._models_py3 import MetadataTableColumnsItem
+    from ._models_py3 import MetadataTableRelated
+    from ._models_py3 import MetadataWorkspace
+    from ._models_py3 import MetadataWorkspaceRelated
+    from ._models_py3 import QueryBody
+    from ._models_py3 import QueryResults
+    from ._models_py3 import Table
 except (SyntaxError, ImportError):
-    from .query_body import QueryBody
-    from .column import Column
-    from .table import Table
-    from .query_results import QueryResults
-    from .error_detail import ErrorDetail
-    from .error_info import ErrorInfo
-    from .error_response import ErrorResponse, ErrorResponseException
+    from ._models import Column
+    from ._models import ErrorDetail
+    from ._models import ErrorInfo
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import MetadataApplication
+    from ._models import MetadataApplicationRelated
+    from ._models import MetadataCategory
+    from ._models import MetadataCategoryRelated
+    from ._models import MetadataFunction
+    from ._models import MetadataFunctionRelated
+    from ._models import MetadataPermissions
+    from ._models import MetadataPermissionsApplicationsItem
+    from ._models import MetadataPermissionsResourcesItem
+    from ._models import MetadataPermissionsWorkspacesItem
+    from ._models import MetadataQuery
+    from ._models import MetadataQueryRelated
+    from ._models import MetadataResourceType
+    from ._models import MetadataResourceTypeRelated
+    from ._models import MetadataResults
+    from ._models import MetadataSolution
+    from ._models import MetadataSolutionRelated
+    from ._models import MetadataTable
+    from ._models import MetadataTableColumnsItem
+    from ._models import MetadataTableRelated
+    from ._models import MetadataWorkspace
+    from ._models import MetadataWorkspaceRelated
+    from ._models import QueryBody
+    from ._models import QueryResults
+    from ._models import Table
+from ._log_analytics_data_client_enums import (
+    MetadataColumnDataType,
+)
 
 __all__ = [
-    'QueryBody',
     'Column',
-    'Table',
-    'QueryResults',
     'ErrorDetail',
     'ErrorInfo',
     'ErrorResponse', 'ErrorResponseException',
+    'MetadataApplication',
+    'MetadataApplicationRelated',
+    'MetadataCategory',
+    'MetadataCategoryRelated',
+    'MetadataFunction',
+    'MetadataFunctionRelated',
+    'MetadataPermissions',
+    'MetadataPermissionsApplicationsItem',
+    'MetadataPermissionsResourcesItem',
+    'MetadataPermissionsWorkspacesItem',
+    'MetadataQuery',
+    'MetadataQueryRelated',
+    'MetadataResourceType',
+    'MetadataResourceTypeRelated',
+    'MetadataResults',
+    'MetadataSolution',
+    'MetadataSolutionRelated',
+    'MetadataTable',
+    'MetadataTableColumnsItem',
+    'MetadataTableRelated',
+    'MetadataWorkspace',
+    'MetadataWorkspaceRelated',
+    'QueryBody',
+    'QueryResults',
+    'Table',
+    'MetadataColumnDataType',
 ]

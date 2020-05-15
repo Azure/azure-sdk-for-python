@@ -9,11 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import LogAnalyticsDataClientConfiguration
-from ._log_analytics_data_client import LogAnalyticsDataClient
-__all__ = ['LogAnalyticsDataClient', 'LogAnalyticsDataClientConfiguration']
+from ._query_operations import QueryOperations
+from ._metadata_operations import MetadataOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'QueryOperations',
+    'MetadataOperations',
+]
