@@ -184,8 +184,6 @@ class ModernCspSubscriptionCreationParameters(Model):
     :type sku_id: str
     :param reseller_id: Reseller ID, basically MPN Id.
     :type reseller_id: str
-    :param service_provider_id: Service provider ID, basically MPN Id.
-    :type service_provider_id: str
     """
 
     _validation = {
@@ -197,7 +195,6 @@ class ModernCspSubscriptionCreationParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
         'reseller_id': {'key': 'resellerId', 'type': 'str'},
-        'service_provider_id': {'key': 'serviceProviderId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -205,7 +202,6 @@ class ModernCspSubscriptionCreationParameters(Model):
         self.display_name = kwargs.get('display_name', None)
         self.sku_id = kwargs.get('sku_id', None)
         self.reseller_id = kwargs.get('reseller_id', None)
-        self.service_provider_id = kwargs.get('service_provider_id', None)
 
 
 class ModernSubscriptionCreationParameters(Model):
@@ -215,9 +211,6 @@ class ModernSubscriptionCreationParameters(Model):
 
     :param display_name: Required. The friendly name of the subscription.
     :type display_name: str
-    :param billing_profile_id: Required. The ARM ID of the billing profile for
-     which you want to create the subscription.
-    :type billing_profile_id: str
     :param sku_id: Required. The SKU ID of the Azure plan. Azure plan
      determines the pricing and service-level agreement of the subscription.
      Use 001 for Microsoft Azure Plan and 002 for Microsoft Azure Plan for
@@ -240,13 +233,11 @@ class ModernSubscriptionCreationParameters(Model):
 
     _validation = {
         'display_name': {'required': True},
-        'billing_profile_id': {'required': True},
         'sku_id': {'required': True},
     }
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
         'cost_center': {'key': 'costCenter', 'type': 'str'},
         'owner': {'key': 'owner', 'type': 'AdPrincipal'},
@@ -257,7 +248,6 @@ class ModernSubscriptionCreationParameters(Model):
     def __init__(self, **kwargs):
         super(ModernSubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
-        self.billing_profile_id = kwargs.get('billing_profile_id', None)
         self.sku_id = kwargs.get('sku_id', None)
         self.cost_center = kwargs.get('cost_center', None)
         self.owner = kwargs.get('owner', None)
@@ -413,6 +403,8 @@ class SubscriptionCreationParameters(Model):
 
     :param display_name: The display name of the subscription.
     :type display_name: str
+    :param management_group_id: The Management Group Id.
+    :type management_group_id: str
     :param owners: The list of principals that should be granted Owner access
      on the subscription. Principals should be of type User, Service Principal
      or Security Group.
@@ -430,6 +422,7 @@ class SubscriptionCreationParameters(Model):
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
         'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
         'offer_type': {'key': 'offerType', 'type': 'str'},
         'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
@@ -438,6 +431,7 @@ class SubscriptionCreationParameters(Model):
     def __init__(self, **kwargs):
         super(SubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
+        self.management_group_id = kwargs.get('management_group_id', None)
         self.owners = kwargs.get('owners', None)
         self.offer_type = kwargs.get('offer_type', None)
         self.additional_parameters = kwargs.get('additional_parameters', None)
@@ -474,53 +468,6 @@ class SubscriptionName(Model):
     def __init__(self, **kwargs):
         super(SubscriptionName, self).__init__(**kwargs)
         self.subscription_name = kwargs.get('subscription_name', None)
-
-
-class SubscriptionOperation(Model):
-    """status of the subscription POST operation.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The operation Id.
-    :vartype id: str
-    :param status: Status of the pending subscription
-    :type status: str
-    :param status_detail: Status Detail of the pending subscription
-    :type status_detail: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_detail': {'key': 'statusDetail', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperation, self).__init__(**kwargs)
-        self.id = None
-        self.status = kwargs.get('status', None)
-        self.status_detail = kwargs.get('status_detail', None)
-
-
-class SubscriptionOperationListResult(Model):
-    """A list of pending subscription operations.
-
-    :param value: A list of pending SubscriptionOperations
-    :type value: list[~azure.mgmt.subscription.models.SubscriptionOperation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubscriptionOperation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
 
 
 class SubscriptionPolicies(Model):

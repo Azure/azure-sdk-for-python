@@ -1,5 +1,26 @@
 # Release History
 
+## 0.6.0 (2020-06-05)
+
+**Features**
+
+  - Model SubscriptionCreationParameters has a new parameter management_group_id
+  - Added operation SubscriptionOperations.create_subscription_in_enrollment_account
+  - Added operation SubscriptionOperations.create_subscription
+  - Added operation SubscriptionOperations.create_csp_subscription
+  - Added operation SubscriptionOperations.cancel
+  - Added operation SubscriptionOperations.rename
+  - Added operation SubscriptionOperations.enable
+
+**Breaking changes**
+
+  - Model ModernSubscriptionCreationParameters no longer has parameter billing_profile_id
+  - Removed operation SubscriptionsOperations.cancel
+  - Removed operation SubscriptionsOperations.rename
+  - Removed operation SubscriptionsOperations.enable
+  - Removed operation SubscriptionOperations.list
+  - Removed operation group SubscriptionFactoryOperations
+
 ## 0.5.0 (2019-08-21)
 
 **Features**
