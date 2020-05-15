@@ -487,7 +487,16 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_invalid_country_hint(self, client):
+    def test_invalid_country_hint_method(self, client):
+        docs = [{"id": "1", "text": "hello world"}]
+
+        response = client.detect_language(docs, country_hint="United States")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
+        self.assertIsNotNone(response[0].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_invalid_country_hint_docs(self, client):
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
         response = client.detect_language(docs)
