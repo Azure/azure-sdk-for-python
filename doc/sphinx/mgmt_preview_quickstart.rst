@@ -84,7 +84,7 @@ a management client, simply do the following:
     import azure.mgmt.resource
     import azure.mgmt.network
     import azure.mgmt.compute
-    from azure.identity import DefaultAzureCredential;
+    from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
     credentials = DefaultAzureCredential()
@@ -125,7 +125,6 @@ calls. Let's create a resource group and demonstrate management client's usage
 
 ::
 
-    # 
     group_list = self.resource_client.resource_groups.list()
     for g in group_list:
         print_resource_group(g)
@@ -135,4 +134,15 @@ calls. Let's create a resource group and demonstrate management client's usage
 ::
 
     delete_async_op = resource_client.resource_groups.begin_delete(group_name)
-    delete_async_op.wd 
+    delete_async_op.wait()
+    
+    
+Contributing
+------------
+For details on contributing to this repository, see the contributing guide.
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
+
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
