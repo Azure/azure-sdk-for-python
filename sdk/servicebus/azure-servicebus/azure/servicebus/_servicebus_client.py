@@ -3,8 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING
+from threading import RLock
+import time
 
-import uamqp
+from uamqp import AMQPClient
+from uamqp.constants import LinkCreationMode
 
 from ._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential
 from ._servicebus_sender import ServiceBusSender
@@ -12,7 +15,6 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._common._servicebus_connection import ServiceBusConnection
 from ._common._configuration import Configuration
-from ._common.utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -69,6 +71,8 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = True
+        self._mgmt_handlers = {}
+        self._lock = RLock()
 
     def __enter__(self):
         if self._connection_sharing:
@@ -80,6 +84,28 @@ class ServiceBusClient(object):
 
     def _create_uamqp_connection(self):
         self._connection = ServiceBusConnection(self)
+
+    def _get_management_handler(self, mgmt_target):
+        with self._lock:
+            if mgmt_target not in self._mgmt_handlers:
+                mgmt_handler = AMQPClient(
+                    mgmt_target,
+                    link_creation_mode=LinkCreationMode.CreateLinkOnNewSession,
+                    debug=self._config.logging_enable
+                )
+                mgmt_handler.open(connection=self._connection.get_connection())
+                while not mgmt_handler.client_ready():
+                    time.sleep(0.05)
+
+                self._mgmt_handlers[mgmt_target] = mgmt_handler
+
+            return self._mgmt_handlers[mgmt_target]
+
+    def _close_management_handler(self, mgmt_target):
+        with self._lock:
+            if mgmt_target in self._mgmt_handlers:
+                self._mgmt_handlers[mgmt_target].close()
+                del self._mgmt_handlers[mgmt_target]
 
     def close(self):
         # type: () -> None
@@ -161,6 +187,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -207,6 +234,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -240,6 +268,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -290,6 +319,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -344,6 +374,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             session_id=session_id,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -396,6 +427,7 @@ class ServiceBusClient(object):
             session_id=session_id,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            servicebus_client=self,
             **kwargs
         )
 

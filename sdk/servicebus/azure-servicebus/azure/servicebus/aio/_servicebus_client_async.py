@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING
+import asyncio
 
-import uamqp
+from uamqp import AMQPClientAsync
+from uamqp.constants import LinkCreationMode
 
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import ServiceBusSharedKeyCredential
@@ -13,7 +15,6 @@ from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from ._servicebus_connection import ServiceBusConnection
 from .._common._configuration import Configuration
-from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -70,6 +71,8 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = True
+        self._mgmt_handlers = {}
+        self._lock = asyncio.Lock()
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -81,6 +84,29 @@ class ServiceBusClient(object):
 
     async def _create_uamqp_connection(self):
         self._connection = ServiceBusConnection(self)
+
+    async def _get_management_handler(self, mgmt_target):
+        async with self._lock:
+            if mgmt_target not in self._mgmt_handlers:
+                mgmt_handler = AMQPClientAsync(
+                    mgmt_target,
+                    link_creation_mode=LinkCreationMode.CreateLinkOnNewSession,
+                    debug=self._config.logging_enable
+                )
+                connection = (await self._connection.get_connection()) if self._connection else None
+                await mgmt_handler.open_async(connection=connection)
+                while not await mgmt_handler.client_ready_async():
+                    await asyncio.sleep(0.05)
+
+                self._mgmt_handlers[mgmt_target] = mgmt_handler
+
+            return self._mgmt_handlers[mgmt_target]
+
+    async def _close_management_handler(self, mgmt_target):
+        async with self._lock:
+            if mgmt_target in self._mgmt_handlers:
+                await self._mgmt_handlers[mgmt_target].close_async()
+                del self._mgmt_handlers[mgmt_target]
 
     @classmethod
     def from_connection_string(
@@ -162,6 +188,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -207,6 +234,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -240,6 +268,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -290,6 +319,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -344,6 +374,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             session_id=session_id,
+            servicebus_client=self,
             **kwargs
         )
 
@@ -393,5 +424,6 @@ class ServiceBusClient(object):
             session_id=session_id,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            servicebus_client=self,
             **kwargs
         )

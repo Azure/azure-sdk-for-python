@@ -67,10 +67,13 @@ class BaseHandlerAsync(BaseHandler):
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _handle_exception(self, exception):
+    async def _handle_exception(self, exception, is_mgmt_request=False):
         error, error_need_close_handler, error_need_retry = _create_servicebus_exception(_LOGGER, exception, self)
         if error_need_close_handler:
-            await self._close_handler()
+            if is_mgmt_request:
+                await self._close_management_handler()
+            else:
+                await self._close_handler()
         if not error_need_retry:
             raise error
 
@@ -105,6 +108,7 @@ class BaseHandlerAsync(BaseHandler):
     async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
+        is_mgmt_request = kwargs.pop("is_mgmt_request", False)
         retried_times = 0
         last_exception = None
         max_retries = self._config.retry_total
@@ -119,7 +123,7 @@ class BaseHandlerAsync(BaseHandler):
             except StopAsyncIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = await self._handle_exception(exception)
+                last_exception = await self._handle_exception(exception, is_mgmt_request)
                 retried_times += 1
                 if retried_times > max_retries:
                     break
@@ -136,7 +140,24 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
+    async def _get_management_handler(self):
+        if self._connection:
+            return await self._servicebus_client._get_management_handler(self._entity_uri)
+        return self._handler
+
+    async def _close_management_handler(self):
+        if self._connection:
+            await self._servicebus_client._close_management_handler(self._entity_uri)
+        else:
+            await self._close_handler()
+
+    async def _mgmt_request_response(
+        self,
+        mgmt_operation, message,
+        callback,
+        keep_alive_associated_link=True,
+        **kwargs
+    ):
         await self._open()
 
         application_properties = {}
@@ -155,7 +176,8 @@ class BaseHandlerAsync(BaseHandler):
                 **kwargs),
             application_properties=application_properties)
         try:
-            return await self._handler.mgmt_request_async(
+            mgmt_handler = await self._get_management_handler()
+            return await mgmt_handler.mgmt_request_async(
                 mgmt_msg,
                 mgmt_operation,
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -171,6 +193,7 @@ class BaseHandlerAsync(BaseHandler):
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            is_mgmt_request=True,
             **kwargs
         )
 

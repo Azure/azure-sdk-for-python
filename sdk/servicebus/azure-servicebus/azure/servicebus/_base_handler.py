@@ -130,6 +130,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._running = False
         self._handler = None
         self._auth_uri = None
+        self._connection = None
+        self._servicebus_client = kwargs.get("servicebus_client")
         self._properties = create_properties()
 
     def __enter__(self):
@@ -139,10 +141,13 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception):
+    def _handle_exception(self, exception, is_mgmt_request=False):
         error, error_need_close_handler, error_need_retry = _create_servicebus_exception(_LOGGER, exception, self)
         if error_need_close_handler:
-            self._close_handler()
+            if is_mgmt_request:
+                self._close_management_handler()
+            else:
+                self._close_handler()
         if not error_need_retry:
             raise error
 
@@ -202,6 +207,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
+        is_mgmt_request = kwargs.pop("is_mgmt_request", False)
         retried_times = 0
         last_exception = None
         max_retries = self._config.retry_total
@@ -216,7 +222,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             except StopIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._handle_exception(exception)
+                last_exception = self._handle_exception(exception, is_mgmt_request)
                 retried_times += 1
                 if retried_times > max_retries:
                     break
@@ -232,6 +238,17 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             last_exception,
         )
         raise last_exception
+
+    def _get_management_handler(self):
+        if self._connection:
+            return self._servicebus_client._get_management_handler(self._entity_uri)
+        return self._handler
+
+    def _close_management_handler(self):
+        if self._connection:
+            self._servicebus_client._close_management_handler(self._entity_uri)
+        else:
+            self._close_handler()
 
     def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
         self._open()
@@ -253,7 +270,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             application_properties=application_properties
         )
         try:
-            return self._handler.mgmt_request(
+            return self._get_management_handler().mgmt_request(
                 mgmt_msg,
                 mgmt_operation,
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -270,6 +287,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            is_mgmt_request=True,
             **kwargs
         )
 
