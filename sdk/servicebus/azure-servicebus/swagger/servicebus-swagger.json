@@ -1,0 +1,462 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ServiceBusManagementClient",
+    "description": "Azure Service Bus client for managing Queues, Topics, and Subscriptions.",
+    "x-ms-code-generation-settings": {
+      "internalConstructors": true,
+      "name": "ServiceBusManagementClient"
+    }
+  },
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{endpoint}",
+    "parameters": [
+      {
+        "$ref": "#/parameters/Endpoint"
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/atom+xml",
+    "application/xml"
+  ],
+  "consumes": [
+    "application/atom+xml",
+    "application/xml"
+  ],
+  "tags": [
+    {
+      "name": "Queue Operations"
+    },
+    {
+      "name": "Topic Operations"
+    },
+    {
+      "name": "Subscription Operations"
+    }
+  ],
+  "parameters": {
+    "Endpoint": {
+      "in": "path",
+      "name": "endpoint",
+      "description": "The Service Bus fully qualified domain name.",
+      "required": true,
+      "type": "string",
+      "x-ms-skip-url-encoding": true,
+      "x-ms-parameter-location": "client"
+    }
+  },
+  "definitions": {
+    "CountDetails": {
+      "description": "Details about the message counts in queue.",
+      "type": "object",
+      "properties": {
+        "ActiveMessageCount": {
+          "description": "Number of active messages in the queue, topic, or subscription.",
+          "type": "integer",
+          "xml": {
+            "prefix": "d2p1"
+          }
+        },
+        "DeadLetterMessageCount": {
+          "description": "Number of messages that are dead lettered.",
+          "type": "integer",
+          "xml": {
+            "prefix": "d2p1"
+          }
+        },
+        "ScheduledMessageCount": {
+          "description": "Number of scheduled messages.",
+          "type": "integer",
+          "xml": {
+            "prefix": "d2p1"
+          }
+        },
+        "TransferDeadLetterMessageCount": {
+          "description": "Number of messages transferred into dead letters.",
+          "type": "integer",
+          "xml": {
+            "prefix": "d2p1"
+          }
+        },
+        "TransferMessageCount": {
+          "description": "Number of messages transferred to another queue, topic, or subscription.",
+          "type": "integer",
+          "xml": {
+            "prefix": "d2p1"
+          }
+        }
+      },
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
+      }
+    },
+    "CreateQueueBody": {
+      "description": "The response from a CreateQueue operation.",
+      "type": "object",
+      "xml":{
+        "name": "entry"
+      },
+      "properties": {
+        "xmlns":{
+          "type":"string",
+          "xml": {
+            "attribute": true
+          },
+          "default": "http://www.w3.org/2005/Atom"
+        },
+        "title": {
+          "description": "The name of the queue",
+          "type": "string",
+          "default": ""
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string",
+          "default": "2020-05-15T05:42:02.826105+00:00"
+        },
+        "author": {
+          "description": "The author that created this resource",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "The Service Bus namespace",
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "default": ""
+        },
+        "content": {
+          "description": "TODO: Add description",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "TODO: Add description",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "QueueDescription": {
+              "$ref": "#/definitions/QueueDescription"
+            }
+          }
+        }
+      }
+    },
+    "EntityAvailabilityStatus": {
+      "description": "Availibility status of the entity",
+      "type": "string",
+      "enum": [
+        "Available",
+        "Limited",
+        "Renaming",
+        "Restoring",
+        "Unknown"
+      ]
+    },
+    "EntityStatus": {
+      "description": "Status of a Service Bus resource",
+      "type": "string",
+      "enum": [
+        "Active",
+        "Creating",
+        "Deleting",
+        "Disabled",
+        "ReceiveDisabled",
+        "Renaming",
+        "Restoring",
+        "SendDisabled",
+        "Unknown"
+      ]
+    },
+    "QueueDescriptionResponse": {
+      "description": "The response from a Queue_Get operation",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string"
+        },
+        "title": {
+          "description": "The name of the queue",
+          "type": "string"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string"
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string"
+        },
+        "author": {
+          "description": "The author that created this resource",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "The Service Bus namespace",
+              "type": "string"
+            }
+          }
+        },
+        "link": {
+          "description": "The URL link of the GET request",
+          "type": "object",
+          "properties": {
+            "href": {
+              "description": "The URL of the GET request",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "rel": {
+              "description": "What the link href is relative to",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            }
+          }
+        },
+        "content": {
+          "description": "Contents of a Queue_Get response",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "QueueDescription": {
+              "$ref": "#/definitions/QueueDescription"
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "published",
+        "created",
+        "author",
+        "link",
+        "content"
+      ],
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "QueueDescription": {
+      "description": "Description of a Service Bus queue resource.",
+      "type": "object",
+      "properties": {
+        "xmlns": {
+          "type": "string",
+          "xml": {
+            "attribute": true
+          },
+          "default": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        },
+        "AccessedAt": {
+          "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
+          "type": "string"
+        },
+        "AuthorizationRules": {
+          "description": "Authorization rules for resource.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "AutoDeleteOnIdle": {
+          "description": "ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
+          "type": "string"
+        },
+        "CountDetails": {
+          "$ref": "#/definitions/CountDetails"
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string"
+        },
+        "DeadLetteringOnMessageExpiration": {
+          "description": "A value that indicates whether this queue has dead letter support when a message expires.",
+          "type": "boolean"
+        },
+        "DefaultMessageTimeToLive": {
+          "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
+          "type": "string"
+        },
+        "DuplicateDetectionHistoryTimeWindow": {
+          "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
+          "type": "string"
+        },
+        "EntityAvailabilityStatus": {
+          "$ref": "#/definitions/EntityAvailabilityStatus"
+        },
+        "EnableBatchedOperations": {
+          "description": "Value that indicates whether server-side batched operations are enabled.",
+          "type": "boolean"
+        },
+        "EnableExpress": {
+          "description": "A value that indicates whether Express Entities are enabled. An express queue holds a message in memory temporarily before writing it to persistent storage.",
+          "type": "boolean"
+        },
+        "EnablePartitioning": {
+          "description": "A value that indicates whether the queue is to be partitioned across multiple message brokers.",
+          "type": "boolean"
+        },
+        "IsAnonymousAccessible": {
+          "description": "A value indicating if the resource can be accessed without authorization.",
+          "type": "boolean"
+        },
+        "LockDuration": {
+          "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
+          "type": "string"
+        },
+        "MaxDeliveryCount": {
+          "description": "The maximum delivery count. A message is automatically deadlettered after this number of deliveries. Default value is 10.",
+          "type": "integer"
+        },
+        "MaxSizeInMegabytes": {
+          "description": "The maximum size of the queue in megabytes, which is the size of memory allocated for the queue.",
+          "type": "number"
+        },
+        "MessageCount": {
+          "description": "The number of messages in the queue.",
+          "type": "integer"
+        },
+        "RequiresDuplicateDetection": {
+          "description": "A value indicating if this queue requires duplicate detection.",
+          "type": "boolean"
+        },
+        "RequiresSession": {
+          "description": "A value that indicates whether the queue supports the concept of sessions.",
+          "type": "boolean"
+        },
+        "SizeInBytes": {
+          "description": "The size of the queue, in bytes.",
+          "type": "integer"
+        },
+        "Status": {
+          "$ref": "#/definitions/EntityStatus"
+        },
+        "SupportOrdering": {
+          "description": "A value that indicates whether the queue supports ordering.",
+          "type": "boolean"
+        },
+        "UpdatedAt": {
+          "description": "The exact time a message was updated in the queue.",
+          "type": "string"
+        }
+      }
+    },
+    "ServiceBusError": {
+      "description": "The error response from Service Bus.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "The service error code.",
+          "type": "string"
+        },
+        "message": {
+          "description": "The service error message.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "ErrorResponse": {
+      "description": "An error occurred. The possible HTTP status, code, and message strings are listed below",
+      "headers": {
+        "x-ms-request-id": {
+          "description": "A server-generated UUID recorded in the analytics logs for troubleshooting and correlation.",
+          "pattern": "^[{(]?[0-9a-f]{8}[-]?([0-9a-f]{4}[-]?){3}[0-9a-f]{12}[)}]?$",
+          "type": "string"
+        },
+        "x-ms-version": {
+          "description": "The version of the REST protocol used to process the request.",
+          "type": "string"
+        }
+      },
+      "schema": {
+        "$ref": "#/definitions/ServiceBusError"
+      }
+    }
+  },
+  "paths": {
+    "/{queueName}/": {
+      "get": {
+        "operationId": "Queue_Get",
+        "summary": "Get Queue",
+        "description": "Get the details about the Queue with the given queueName.",
+        "tags": [
+          "Queue Operations"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/QueueDescriptionResponse"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Queue Operations"
+        ],
+        "operationId": "Queue_Create",
+        "description": "Create a new queue at the provided queuePath",
+        "parameters": [
+          {
+            "name": "parameters",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateQueueBody"
+            },
+            "required": true,
+            "description": "Parameters required to make a new queue.",
+            "x-ms-parameter-location": "method"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created -- Create Queue operation completed successfully.",
+            "schema": {
+              "$ref": "#/definitions/QueueDescriptionResponse"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "queueName",
+          "in": "path",
+          "description": "The name of the queue relative to the Service Bus namespace.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    }
+  }
+}
