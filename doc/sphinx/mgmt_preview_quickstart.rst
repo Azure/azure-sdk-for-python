@@ -138,8 +138,7 @@ calls. Let's create a resource group and demonstrate management client's usage
 
 Need help?
 ----------
-- For detailed documentation visit our Azure SDK for `Python documentation <https://aka.ms/python-docs>`__
-- File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
+- File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__ and make sure you add the "Preview" label to the issue
 - Check `previous questions <https://stackoverflow.com/questions/tagged/azure+python>`__ or ask new ones on StackOverflow using azure and python tags.
 
 Contributing
