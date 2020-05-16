@@ -19,7 +19,8 @@ The client libraries are supported on Python 2.7 and 3.5.3 or later.
 Each service might have a number of libraries available from each of the following categories:
 * [Client - New Releases](#Client-New-Releases)
 * [Client - Previous Versions](#Client-Previous-Versions)
-* [Management](#Management)
+* [Management - New Releases](#Management-New-Releases)
+* [Management - Previous Versions](#Management-Previous-Versions)
 
 ### Client: New Releases
 
@@ -42,11 +43,6 @@ You can find the list of new packages [on this page](https://azure.github.io/azu
 ### Management: Previous Versions
 For a complete list of management libraries which enable you to provision and manage Azure resources, please check [here](https://azure.github.io/azure-sdk/releases/latest/all/python.html). They might not have the same feature set as the new releases but they do offer wider coverage of services.
 Management libraries can be identified by namespaces that start with `azure-mgmt-`, e.g. `azure-mgmt-compute`
-
-
-### Management
-
-Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.
 
 ## Need help?
 
