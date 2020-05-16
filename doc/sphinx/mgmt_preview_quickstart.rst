@@ -37,7 +37,7 @@ Get Subscription ID
 Get Client ID / Client Secret / Tenant ID 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For information on how to get Client ID, Client Secret, and Tenant ID, please refer to `this document <https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal>`__
+For information on how to get Client ID, Client Secret, and Tenant ID, please refer to `this document <https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal>`__
 
 Setting Environment Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,11 +87,11 @@ a management client, simply do the following:
     from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
-    credentials = DefaultAzureCredential()
-    resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credentials, subscription_id=subscription_id)
+    credential = DefaultAzureCredential()
+    resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
 
 More information and different authentication approaches using Azure Identity can be found in
-`this document <https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python>`__
+`this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
 
 Managing Resources
 ------------------
