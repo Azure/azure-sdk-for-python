@@ -109,32 +109,6 @@
           },
           "default": "http://www.w3.org/2005/Atom"
         },
-        "title": {
-          "description": "The name of the queue",
-          "type": "string",
-          "default": ""
-        },
-        "updated": {
-          "description": "The timestamp for when this queue was last updated",
-          "type": "string",
-          "default": "2020-05-15T05:42:02.826105+00:00"
-        },
-        "author": {
-          "description": "The author that created this resource",
-          "type": "object",
-          "properties": {
-            "name": {
-              "description": "The Service Bus namespace",
-              "type": "string",
-              "default": ""
-            }
-          }
-        },
-        "id": {
-          "description": "The URL of the GET request",
-          "type": "string",
-          "default": ""
-        },
         "content": {
           "description": "TODO: Add description",
           "type": "object",
@@ -142,6 +116,7 @@
             "type": {
               "description": "TODO: Add description",
               "type": "string",
+              "default": "application/xml",
               "xml": {
                 "attribute": true
               }
