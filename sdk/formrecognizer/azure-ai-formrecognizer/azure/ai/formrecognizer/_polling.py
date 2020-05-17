@@ -17,10 +17,10 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
 
-def raise_error(errors, message):
+def raise_error(response, errors, message):
     for err in errors:
         message += "({}) {}\n".format(err["code"], err["message"])
-    raise HttpResponseError(message)
+    raise HttpResponseError(message=message, response=response)
 
 
 class TrainingPolling(LocationPolling):
@@ -52,7 +52,7 @@ class TrainingPolling(LocationPolling):
                     errors = train_result.get("errors")
                     if errors:
                         message = "Invalid model created with ID={}\n".format(body["modelInfo"]["modelId"])
-                        raise_error(errors, message)
+                        raise_error(response, errors, message)
                 return "Failed"
             if status.lower() != "creating":
                 return "Succeeded"
@@ -64,8 +64,6 @@ class TrainingPolling(LocationPolling):
 
 class AnalyzePolling(OperationResourcePolling):
     """Polling method overrides for custom analyze endpoints.
-
-    :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
     """
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
@@ -92,5 +90,5 @@ class AnalyzePolling(OperationResourcePolling):
             if analyze_result:
                 errors = analyze_result.get("errors")
                 if errors:
-                    raise_error(errors, message="")
+                    raise_error(response, errors, message="")
         return status
