@@ -6,14 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._app_configuration_management_client import AppConfigurationManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._app_configuration_management_client_async import AppConfigurationManagementClient
 __all__ = ['AppConfigurationManagementClient']
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass
