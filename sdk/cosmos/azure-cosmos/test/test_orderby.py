@@ -168,7 +168,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         
         # an order by query with top, total existing docs more than requested top count   
         query = {
-                 'query': 'SELECT top %d * FROM root r order by r.spam' % top_count
+                 'query': 'SELECT top %d * FROM root r order by r.spam' % top_count #nosec
         }    
         
         def get_order_by_key(r):
@@ -186,7 +186,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         
         # an order by query with top, total existing docs less than requested top count   
         query = {
-                 'query': 'SELECT top %d * FROM root r order by r.spam' % top_count
+                 'query': 'SELECT top %d * FROM root r order by r.spam' % top_count #nosec
         }  
         
         def get_order_by_key(r):
@@ -226,7 +226,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
 
         # a top query, the results will be sorted based on the target partition key range  
         query = {
-                 'query': 'SELECT top %d * FROM root r' % len(expected_ordered_ids)
+                 'query': 'SELECT top %d * FROM root r' % len(expected_ordered_ids) #nosec
         }
         self.execute_query_and_validate_results(query, expected_ordered_ids)
         
@@ -260,7 +260,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         expected_ordered_ids = [d['id'] for d in first_two_ranges_results]
 
         # a top query, the results will be sorted based on the target partition key range  
-        query = 'SELECT top %d * FROM root r' % len(expected_ordered_ids)
+        query = 'SELECT top %d * FROM root r' % len(expected_ordered_ids)   #nosec
         self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_parametrized_top_query(self):
