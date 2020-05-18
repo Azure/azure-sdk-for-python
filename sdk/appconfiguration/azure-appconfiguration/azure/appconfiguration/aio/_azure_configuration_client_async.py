@@ -38,14 +38,6 @@ from .._generated.models import KeyValue
 from .._models import ConfigurationSetting
 from .._sync_token import SyncTokenPolicy
 from .._user_agent import USER_AGENT
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
 
 
 class AzureAppConfigurationClient:
@@ -65,7 +57,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, dict) -> None
+        # type: (str, any, dict) -> None
         try:
             if not base_url.lower().startswith('http'):
                 base_url = "https://" + base_url
@@ -101,7 +93,7 @@ class AzureAppConfigurationClient:
         connection_string,
         **kwargs
     ):
-        # type: (str, dict) -> AzureAppConfigurationClient
+        # type: (string, dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
                 :param connection_string: Connection String
