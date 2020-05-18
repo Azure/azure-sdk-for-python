@@ -41,16 +41,14 @@ class GetBoundingBoxesSampleAsync(object):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
         from azure.ai.formrecognizer import FormWord, FormLine
-        # [START create_form_recognizer_client_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
-        # [END create_form_recognizer_client_async]
-        async with form_recognizer_client:
 
+        async with form_recognizer_client:
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(

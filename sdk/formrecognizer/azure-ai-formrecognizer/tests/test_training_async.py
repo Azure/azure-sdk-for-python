@@ -6,7 +6,7 @@
 
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
@@ -197,5 +197,5 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
-        model = await client.train_model(training_files_url=container_sas_url, prefix="xxx")
-        self.assertEqual(model.status, "invalid")  # prefix doesn't include any files so training fails
+        with self.assertRaises(HttpResponseError):
+            model = await client.train_model(training_files_url=container_sas_url, prefix="xxx")
