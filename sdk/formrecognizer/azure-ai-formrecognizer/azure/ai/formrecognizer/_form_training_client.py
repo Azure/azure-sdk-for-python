@@ -249,7 +249,7 @@ class FormTrainingClient(object):
         return CustomFormModel._from_generated(response)
 
     @distributed_trace
-    def authorize_copy_target(self, resource_id, resource_region, **kwargs):
+    def get_copy_authorization(self, resource_id, resource_region, **kwargs):
         # type: (str, str, Any) -> Dict[str, Union[str, int]]
         """Generate authorization for copying a model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
@@ -267,8 +267,8 @@ class FormTrainingClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_copy_model.py
-                :start-after: [START authorize_copy_target]
-                :end-before: [END authorize_copy_target]
+                :start-after: [START get_copy_authorization]
+                :end-before: [END get_copy_authorization]
                 :language: python
                 :dedent: 8
                 :caption: Authorize the target resource to receive the copied model
@@ -295,12 +295,12 @@ class FormTrainingClient(object):
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
         (with the model that is intended to be copied). The `target` parameter should be supplied from the
-        target resource's output from calling the :func:`~authorize_copy_target()` method.
+        target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
         :param dict target:
             The copy authorization generated from the target resource's call to
-            :func:`~authorize_copy_target()`.
+            :func:`~get_copy_authorization()`.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
         :return: An instance of an LROPoller. Call `result()` on the poller

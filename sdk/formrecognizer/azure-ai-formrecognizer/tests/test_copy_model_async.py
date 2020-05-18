@@ -24,7 +24,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
         model = await client.train_model(container_sas_url)
 
-        target = await client.authorize_copy_target(resource_region=location, resource_id=resource_id)
+        target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
         copy = await client.copy_model(model.model_id, target=target)
 
@@ -44,7 +44,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         model = await client.train_model(container_sas_url)
 
         # give an incorrect region
-        target = await client.authorize_copy_target(resource_region="eastus", resource_id=resource_id)
+        target = await client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
 
         with self.assertRaises(HttpResponseError):
             copy = await client.copy_model(model.model_id, target=target)
@@ -55,13 +55,13 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
         model = await client.train_model(container_sas_url)
 
-        target = await client.authorize_copy_target(resource_region=location, resource_id=resource_id)
+        target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
         raw_response = []
 
         def callback(response, _, headers):
             copy_result = client._client._deserialize(CopyOperationResult, response)
-            model_info = CustomFormModelInfo._from_generated_copy(copy_result, target["modelId"])
+            model_info = CustomFormModelInfo._from_generated(copy_result, target["modelId"])
             raw_response.append(copy_result)
             raw_response.append(model_info)
 
