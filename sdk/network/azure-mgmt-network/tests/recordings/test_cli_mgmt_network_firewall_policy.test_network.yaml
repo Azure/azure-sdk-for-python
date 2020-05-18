@@ -14,20 +14,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
         \    \"childPolicies\": [],\r\n    \"ruleGroups\": [],\r\n    \"firewalls\"\
         : [],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
-        ,\r\n  \"etag\": \"c5d21d1c-1083-4481-8b0a-6478525edf2d\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/cc2b5c93-e5a4-43c6-805b-0b7c74c61fe5?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/4bead938-b70c-43dc-acee-55801fb2c35d?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -35,7 +35,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:36:45 GMT
+      - Mon, 18 May 2020 16:30:19 GMT
       expires:
       - '-1'
       pragma:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -61,9 +61,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/cc2b5c93-e5a4-43c6-805b-0b7c74c61fe5?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/4bead938-b70c-43dc-acee-55801fb2c35d?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -75,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:36:56 GMT
+      - Mon, 18 May 2020 16:30:29 GMT
       expires:
       - '-1'
       pragma:
@@ -103,9 +103,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
@@ -113,7 +113,7 @@ interactions:
         : [],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n  \"id\": \"\
         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
-        ,\r\n  \"etag\": \"c5d21d1c-1083-4481-8b0a-6478525edf2d\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -123,7 +123,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:36:56 GMT
+      - Mon, 18 May 2020 16:30:30 GMT
       expires:
       - '-1'
       pragma:
@@ -159,9 +159,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -178,11 +178,11 @@ interactions:
         \    }\r\n    ],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"\
         id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
-        ,\r\n  \"etag\": \"725579cd-f524-4918-8e8c-ff72615c923e\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/88539b87-d4e3-4098-acf2-465730650e08?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/f8569a59-3a45-4d71-afb0-f97f8a414ffb?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -190,7 +190,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:36:57 GMT
+      - Mon, 18 May 2020 16:30:31 GMT
       expires:
       - '-1'
       pragma:
@@ -202,7 +202,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -216,9 +216,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/88539b87-d4e3-4098-acf2-465730650e08?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/f8569a59-3a45-4d71-afb0-f97f8a414ffb?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -230,7 +230,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:09 GMT
+      - Mon, 18 May 2020 16:30:41 GMT
       expires:
       - '-1'
       pragma:
@@ -258,9 +258,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -277,7 +277,7 @@ interactions:
         \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
         \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
-        ,\r\n  \"etag\": \"725579cd-f524-4918-8e8c-ff72615c923e\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
     headers:
       cache-control:
@@ -287,7 +287,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:09 GMT
+      - Mon, 18 May 2020 16:30:42 GMT
       expires:
       - '-1'
       pragma:
@@ -315,9 +315,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -334,7 +334,7 @@ interactions:
         \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
         \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
-        ,\r\n  \"etag\": \"725579cd-f524-4918-8e8c-ff72615c923e\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
     headers:
       cache-control:
@@ -344,7 +344,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:09 GMT
+      - Mon, 18 May 2020 16:30:42 GMT
       expires:
       - '-1'
       pragma:
@@ -372,9 +372,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
@@ -383,7 +383,7 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"firewalls\": [],\r\n    \"provisioningState\"\
         : \"Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
-        ,\r\n  \"etag\": \"c5d21d1c-1083-4481-8b0a-6478525edf2d\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -393,7 +393,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:10 GMT
+      - Mon, 18 May 2020 16:30:42 GMT
       expires:
       - '-1'
       pragma:
@@ -423,9 +423,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -442,11 +442,11 @@ interactions:
         \    }\r\n    ],\r\n    \"provisioningState\": \"Deleting\"\r\n  },\r\n  \"\
         id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
-        ,\r\n  \"etag\": \"725579cd-f524-4918-8e8c-ff72615c923e\",\r\n  \"location\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/9a0a1ca5-309d-43d4-9466-33b8c88150df?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -454,11 +454,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:11 GMT
+      - Mon, 18 May 2020 16:30:43 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperationResults/9a0a1ca5-309d-43d4-9466-33b8c88150df?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperationResults/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -468,7 +468,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -482,9 +482,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/9a0a1ca5-309d-43d4-9466-33b8c88150df?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -496,7 +496,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 06:37:21 GMT
+      - Mon, 18 May 2020 16:30:54 GMT
       expires:
       - '-1'
       pragma:
@@ -526,9 +526,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -538,7 +538,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 22 Apr 2020 06:37:24 GMT
+      - Mon, 18 May 2020 16:30:56 GMT
       expires:
       - '-1'
       pragma:
@@ -550,7 +550,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 200
       message: OK
