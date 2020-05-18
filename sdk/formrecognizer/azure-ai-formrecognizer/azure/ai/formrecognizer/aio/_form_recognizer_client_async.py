@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import (
-        USReceipt,
+        RecognizedReceipt,
         FormPage,
         RecognizedForm
     )
@@ -91,7 +91,7 @@ class FormRecognizerClient(object):
             self,
             stream: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> List["USReceipt"]:
+    ) -> List["RecognizedReceipt"]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -106,8 +106,8 @@ class FormRecognizerClient(object):
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of USReceipt.
-        :rtype: list[~azure.ai.formrecognizer.USReceipt]
+        :return: A list of RecognizedReceipt.
+        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -145,7 +145,7 @@ class FormRecognizerClient(object):
             self,
             url: str,
             **kwargs: Any
-    ) -> List["USReceipt"]:
+    ) -> List["RecognizedReceipt"]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
@@ -155,8 +155,8 @@ class FormRecognizerClient(object):
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of USReceipt.
-        :rtype: list[~azure.ai.formrecognizer.USReceipt]
+        :return: A list of RecognizedReceipt.
+        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
