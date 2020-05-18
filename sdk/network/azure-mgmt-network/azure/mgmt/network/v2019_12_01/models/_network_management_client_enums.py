@@ -8,13 +8,87 @@
 
 from enum import Enum
 
-class ApplicationGatewaySslProtocol(str, Enum):
-    """Ssl protocol enums.
+class Access(str, Enum):
+    """Access to be allowed or denied.
     """
 
-    tl_sv1_0 = "TLSv1_0"
-    tl_sv1 = "TLSv1_1"
-    tl_sv1_2 = "TLSv1_2"
+    allow = "Allow"
+    deny = "Deny"
+
+class ApplicationGatewayBackendHealthServerHealth(str, Enum):
+    """Health of backend server.
+    """
+
+    unknown = "Unknown"
+    up = "Up"
+    down = "Down"
+    partial = "Partial"
+    draining = "Draining"
+
+class ApplicationGatewayCookieBasedAffinity(str, Enum):
+    """Cookie based affinity.
+    """
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+class ApplicationGatewayCustomErrorStatusCode(str, Enum):
+    """Status code of the application gateway customer error.
+    """
+
+    http_status403 = "HttpStatus403"
+    http_status502 = "HttpStatus502"
+
+class ApplicationGatewayFirewallMode(str, Enum):
+    """Web application firewall mode.
+    """
+
+    detection = "Detection"
+    prevention = "Prevention"
+
+class ApplicationGatewayOperationalState(str, Enum):
+    """Operational state of the application gateway resource.
+    """
+
+    stopped = "Stopped"
+    starting = "Starting"
+    running = "Running"
+    stopping = "Stopping"
+
+class ApplicationGatewayProtocol(str, Enum):
+    """Application Gateway protocol.
+    """
+
+    http = "Http"
+    https = "Https"
+
+class ApplicationGatewayRedirectType(str, Enum):
+    """Redirect type enum.
+    """
+
+    permanent = "Permanent"
+    found = "Found"
+    see_other = "SeeOther"
+    temporary = "Temporary"
+
+class ApplicationGatewayRequestRoutingRuleType(str, Enum):
+    """Rule type.
+    """
+
+    basic = "Basic"
+    path_based_routing = "PathBasedRouting"
+
+class ApplicationGatewaySkuName(str, Enum):
+    """Name of an application gateway SKU.
+    """
+
+    standard_small = "Standard_Small"
+    standard_medium = "Standard_Medium"
+    standard_large = "Standard_Large"
+    waf_medium = "WAF_Medium"
+    waf_large = "WAF_Large"
+    standard_v2 = "Standard_v2"
+    waf_v2 = "WAF_v2"
 
 class ApplicationGatewaySslCipherSuite(str, Enum):
     """Ssl cipher suites enums.
@@ -49,147 +123,28 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
     tls_ecdhe_rsa_with_aes128_gcm_sha256 = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
     tls_ecdhe_rsa_with_aes256_gcm_sha384 = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
 
-class ProvisioningState(str, Enum):
-    """The current provisioning state.
+class ApplicationGatewaySslPolicyName(str, Enum):
+    """Ssl predefined policy name enums.
     """
 
-    succeeded = "Succeeded"
-    updating = "Updating"
-    deleting = "Deleting"
-    failed = "Failed"
+    app_gw_ssl_policy20150501 = "AppGwSslPolicy20150501"
+    app_gw_ssl_policy20170401 = "AppGwSslPolicy20170401"
+    app_gw_ssl_policy20170401_s = "AppGwSslPolicy20170401S"
 
-class IPAllocationMethod(str, Enum):
-    """IP address allocation method.
+class ApplicationGatewaySslPolicyType(str, Enum):
+    """Type of Ssl Policy.
     """
 
-    static = "Static"
-    dynamic = "Dynamic"
+    predefined = "Predefined"
+    custom = "Custom"
 
-class ApplicationGatewayProtocol(str, Enum):
-    """Application Gateway protocol.
+class ApplicationGatewaySslProtocol(str, Enum):
+    """Ssl protocol enums.
     """
 
-    http = "Http"
-    https = "Https"
-
-class TransportProtocol(str, Enum):
-    """The transport protocol for the endpoint.
-    """
-
-    udp = "Udp"
-    tcp = "Tcp"
-    all = "All"
-
-class IPVersion(str, Enum):
-    """IP address version.
-    """
-
-    i_pv4 = "IPv4"
-    i_pv6 = "IPv6"
-
-class SecurityRuleProtocol(str, Enum):
-    """Network protocol this rule applies to.
-    """
-
-    tcp = "Tcp"
-    udp = "Udp"
-    icmp = "Icmp"
-    esp = "Esp"
-    asterisk = "*"
-    ah = "Ah"
-
-class SecurityRuleAccess(str, Enum):
-    """Whether network traffic is allowed or denied.
-    """
-
-    allow = "Allow"
-    deny = "Deny"
-
-class SecurityRuleDirection(str, Enum):
-    """The direction of the rule. The direction specifies if rule will be evaluated on incoming or
-    outgoing traffic.
-    """
-
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-class RouteNextHopType(str, Enum):
-    """The type of Azure hop the packet should be sent to.
-    """
-
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    none = "None"
-
-class PublicIPAddressSkuName(str, Enum):
-    """Name of a public IP address SKU.
-    """
-
-    basic = "Basic"
-    standard = "Standard"
-
-class DdosSettingsProtectionCoverage(str, Enum):
-    """The DDoS protection policy customizability of the public IP. Only standard coverage will have
-    the ability to be customized.
-    """
-
-    basic = "Basic"
-    standard = "Standard"
-
-class ApplicationGatewayCookieBasedAffinity(str, Enum):
-    """Cookie based affinity.
-    """
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-class ApplicationGatewayCustomErrorStatusCode(str, Enum):
-    """Status code of the application gateway customer error.
-    """
-
-    http_status403 = "HttpStatus403"
-    http_status502 = "HttpStatus502"
-
-class ApplicationGatewayRequestRoutingRuleType(str, Enum):
-    """Rule type.
-    """
-
-    basic = "Basic"
-    path_based_routing = "PathBasedRouting"
-
-class ApplicationGatewayRedirectType(str, Enum):
-    """Redirect type enum.
-    """
-
-    permanent = "Permanent"
-    found = "Found"
-    see_other = "SeeOther"
-    temporary = "Temporary"
-
-class ResourceIdentityType(str, Enum):
-    """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
-    both an implicitly created identity and a set of user assigned identities. The type 'None' will
-    remove any identities from the virtual machine.
-    """
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
-
-class ApplicationGatewaySkuName(str, Enum):
-    """Name of an application gateway SKU.
-    """
-
-    standard_small = "Standard_Small"
-    standard_medium = "Standard_Medium"
-    standard_large = "Standard_Large"
-    waf_medium = "WAF_Medium"
-    waf_large = "WAF_Large"
-    standard_v2 = "Standard_v2"
-    waf_v2 = "WAF_v2"
+    tl_sv1_0 = "TLSv1_0"
+    tl_sv1_1 = "TLSv1_1"
+    tl_sv1_2 = "TLSv1_2"
 
 class ApplicationGatewayTier(str, Enum):
     """Tier of an application gateway.
@@ -200,46 +155,26 @@ class ApplicationGatewayTier(str, Enum):
     standard_v2 = "Standard_v2"
     waf_v2 = "WAF_v2"
 
-class ApplicationGatewaySslPolicyType(str, Enum):
-    """Type of Ssl Policy.
+class AssociationType(str, Enum):
+    """The association type of the child resource to the parent resource.
     """
 
-    predefined = "Predefined"
-    custom = "Custom"
+    associated = "Associated"
+    contains = "Contains"
 
-class ApplicationGatewaySslPolicyName(str, Enum):
-    """Ssl predefined policy name enums.
+class AuthenticationMethod(str, Enum):
+    """VPN client authentication method.
     """
 
-    app_gw_ssl_policy20150501 = "AppGwSslPolicy20150501"
-    app_gw_ssl_policy20170401 = "AppGwSslPolicy20170401"
-    app_gw_ssl_policy20170401_s = "AppGwSslPolicy20170401S"
+    eaptls = "EAPTLS"
+    eapmscha_pv2 = "EAPMSCHAPv2"
 
-class ApplicationGatewayOperationalState(str, Enum):
-    """Operational state of the application gateway resource.
+class AuthorizationUseStatus(str, Enum):
+    """The authorization use status.
     """
 
-    stopped = "Stopped"
-    starting = "Starting"
-    running = "Running"
-    stopping = "Stopping"
-
-class ApplicationGatewayFirewallMode(str, Enum):
-    """Web application firewall mode.
-    """
-
-    detection = "Detection"
-    prevention = "Prevention"
-
-class ApplicationGatewayBackendHealthServerHealth(str, Enum):
-    """Health of backend server.
-    """
-
-    unknown = "Unknown"
-    up = "Up"
-    down = "Down"
-    partial = "Partial"
-    draining = "Draining"
+    available = "Available"
+    in_use = "InUse"
 
 class AzureFirewallApplicationRuleProtocolType(str, Enum):
     """The protocol type of a Application Rule resource.
@@ -249,12 +184,12 @@ class AzureFirewallApplicationRuleProtocolType(str, Enum):
     https = "Https"
     mssql = "Mssql"
 
-class AzureFirewallRCActionType(str, Enum):
-    """The action type of a rule collection.
+class AzureFirewallNatRCActionType(str, Enum):
+    """The action type of a NAT rule collection.
     """
 
-    allow = "Allow"
-    deny = "Deny"
+    snat = "Snat"
+    dnat = "Dnat"
 
 class AzureFirewallNetworkRuleProtocol(str, Enum):
     """The protocol of a Network Rule resource.
@@ -265,12 +200,19 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     any = "Any"
     icmp = "ICMP"
 
-class AzureFirewallNatRCActionType(str, Enum):
-    """The action type of a NAT rule collection.
+class AzureFirewallRCActionType(str, Enum):
+    """The action type of a rule collection.
     """
 
-    snat = "Snat"
-    dnat = "Dnat"
+    allow = "Allow"
+    deny = "Deny"
+
+class AzureFirewallSkuName(str, Enum):
+    """Name of an Azure Firewall SKU.
+    """
+
+    azfw_vnet = "AZFW_VNet"
+    azfw_hub = "AZFW_Hub"
 
 class AzureFirewallThreatIntelMode(str, Enum):
     """The operation mode for Threat Intel.
@@ -280,19 +222,70 @@ class AzureFirewallThreatIntelMode(str, Enum):
     deny = "Deny"
     off = "Off"
 
-class AzureFirewallSkuName(str, Enum):
-    """Name of an Azure Firewall SKU.
-    """
-
-    azfw_vnet = "AZFW_VNet"
-    azfw_hub = "AZFW_Hub"
-
 class BastionConnectProtocol(str, Enum):
     """The protocol used to connect to the target.
     """
 
     ssh = "SSH"
     rdp = "RDP"
+
+class BgpPeerState(str, Enum):
+    """The BGP peer state.
+    """
+
+    unknown = "Unknown"
+    stopped = "Stopped"
+    idle = "Idle"
+    connecting = "Connecting"
+    connected = "Connected"
+
+class CircuitConnectionStatus(str, Enum):
+    """Express Route Circuit connection state.
+    """
+
+    connected = "Connected"
+    connecting = "Connecting"
+    disconnected = "Disconnected"
+
+class ConnectionMonitorSourceStatus(str, Enum):
+    """Status of connection monitor source.
+    """
+
+    unknown = "Unknown"
+    active = "Active"
+    inactive = "Inactive"
+
+class ConnectionMonitorTestConfigurationProtocol(str, Enum):
+    """The protocol to use in test evaluation.
+    """
+
+    tcp = "Tcp"
+    http = "Http"
+    icmp = "Icmp"
+
+class ConnectionMonitorType(str, Enum):
+    """Type of connection monitor.
+    """
+
+    multi_endpoint = "MultiEndpoint"
+    single_source_destination = "SingleSourceDestination"
+
+class ConnectionState(str, Enum):
+    """The connection state.
+    """
+
+    reachable = "Reachable"
+    unreachable = "Unreachable"
+    unknown = "Unknown"
+
+class ConnectionStatus(str, Enum):
+    """The connection status.
+    """
+
+    unknown = "Unknown"
+    connected = "Connected"
+    disconnected = "Disconnected"
+    degraded = "Degraded"
 
 class DdosCustomPolicyProtocol(str, Enum):
     """The protocol for which the DDoS protection policy is being customized.
@@ -314,144 +307,33 @@ class DdosCustomPolicyTriggerSensitivityOverride(str, Enum):
     default = "Default"
     high = "High"
 
-class AuthorizationUseStatus(str, Enum):
-    """The authorization use status.
-    """
-
-    available = "Available"
-    in_use = "InUse"
-
-class CircuitConnectionStatus(str, Enum):
-    """Express Route Circuit connection state.
-    """
-
-    connected = "Connected"
-    connecting = "Connecting"
-    disconnected = "Disconnected"
-
-class ExpressRoutePeeringType(str, Enum):
-    """The peering type.
-    """
-
-    azure_public_peering = "AzurePublicPeering"
-    azure_private_peering = "AzurePrivatePeering"
-    microsoft_peering = "MicrosoftPeering"
-
-class ExpressRoutePeeringState(str, Enum):
-    """The state of peering.
-    """
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(str, Enum):
-    """The advertised public prefix state of the Peering resource.
-    """
-
-    not_configured = "NotConfigured"
-    configuring = "Configuring"
-    configured = "Configured"
-    validation_needed = "ValidationNeeded"
-
-class ExpressRouteCircuitPeeringState(str, Enum):
-    """The state of peering.
-    """
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-class ExpressRouteCircuitSkuTier(str, Enum):
-    """The tier of the SKU.
-    """
-
-    standard = "Standard"
-    premium = "Premium"
-    basic = "Basic"
-    local = "Local"
-
-class ExpressRouteCircuitSkuFamily(str, Enum):
-    """The family of the SKU.
-    """
-
-    unlimited_data = "UnlimitedData"
-    metered_data = "MeteredData"
-
-class ServiceProviderProvisioningState(str, Enum):
-    """The ServiceProviderProvisioningState state of the resource.
-    """
-
-    not_provisioned = "NotProvisioned"
-    provisioning = "Provisioning"
-    provisioned = "Provisioned"
-    deprovisioning = "Deprovisioning"
-
-class ExpressRouteLinkConnectorType(str, Enum):
-    """Physical fiber port type.
-    """
-
-    lc = "LC"
-    sc = "SC"
-
-class ExpressRouteLinkAdminState(str, Enum):
-    """Administrative state of the physical port.
-    """
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-class ExpressRouteLinkMacSecCipher(str, Enum):
-    """Mac security cipher.
-    """
-
-    gcm_aes128 = "gcm-aes-128"
-    gcm_aes256 = "gcm-aes-256"
-
-class ExpressRoutePortsEncapsulation(str, Enum):
-    """Encapsulation method on physical ports.
-    """
-
-    dot1_q = "Dot1Q"
-    qin_q = "QinQ"
-
-class FirewallPolicyRuleType(str, Enum):
-    """The type of the rule.
-    """
-
-    firewall_policy_nat_rule = "FirewallPolicyNatRule"
-    firewall_policy_filter_rule = "FirewallPolicyFilterRule"
-
-class LoadDistribution(str, Enum):
-    """The load distribution policy for this rule.
-    """
-
-    default = "Default"
-    source_ip = "SourceIP"
-    source_ip_protocol = "SourceIPProtocol"
-
-class ProbeProtocol(str, Enum):
-    """The protocol of the end point. If 'Tcp' is specified, a received ACK is required for the probe
-    to be successful. If 'Http' or 'Https' is specified, a 200 OK response from the specifies URI
-    is required for the probe to be successful.
-    """
-
-    http = "Http"
-    tcp = "Tcp"
-    https = "Https"
-
-class LoadBalancerOutboundRuleProtocol(str, Enum):
-    """The protocol for the outbound rule in load balancer.
-    """
-
-    tcp = "Tcp"
-    udp = "Udp"
-    all = "All"
-
-class LoadBalancerSkuName(str, Enum):
-    """Name of a load balancer SKU.
+class DdosSettingsProtectionCoverage(str, Enum):
+    """The DDoS protection policy customizability of the public IP. Only standard coverage will have
+    the ability to be customized.
     """
 
     basic = "Basic"
     standard = "Standard"
+
+class DhGroup(str, Enum):
+    """The DH Groups used in IKE Phase 1 for initial SA.
+    """
+
+    none = "None"
+    dh_group1 = "DHGroup1"
+    dh_group2 = "DHGroup2"
+    dh_group14 = "DHGroup14"
+    dh_group2048 = "DHGroup2048"
+    ecp256 = "ECP256"
+    ecp384 = "ECP384"
+    dh_group24 = "DHGroup24"
+
+class Direction(str, Enum):
+    """The direction of the traffic.
+    """
+
+    inbound = "Inbound"
+    outbound = "Outbound"
 
 class EffectiveRouteSource(str, Enum):
     """Who created the route.
@@ -477,96 +359,6 @@ class EffectiveSecurityRuleProtocol(str, Enum):
     udp = "Udp"
     all = "All"
 
-class AssociationType(str, Enum):
-    """The association type of the child resource to the parent resource.
-    """
-
-    associated = "Associated"
-    contains = "Contains"
-
-class PcProtocol(str, Enum):
-    """Protocol to be filtered on.
-    """
-
-    tcp = "TCP"
-    udp = "UDP"
-    any = "Any"
-
-class PcError(str, Enum):
-
-    internal_error = "InternalError"
-    agent_stopped = "AgentStopped"
-    capture_failed = "CaptureFailed"
-    local_file_failed = "LocalFileFailed"
-    storage_failed = "StorageFailed"
-
-class Origin(str, Enum):
-    """The origin of the issue.
-    """
-
-    local = "Local"
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-class Severity(str, Enum):
-    """The severity of the issue.
-    """
-
-    error = "Error"
-    warning = "Warning"
-
-class IssueType(str, Enum):
-    """The type of issue.
-    """
-
-    unknown = "Unknown"
-    agent_stopped = "AgentStopped"
-    guest_firewall = "GuestFirewall"
-    dns_resolution = "DnsResolution"
-    socket_bind = "SocketBind"
-    network_security_rule = "NetworkSecurityRule"
-    user_defined_route = "UserDefinedRoute"
-    port_throttled = "PortThrottled"
-    platform = "Platform"
-
-class Direction(str, Enum):
-    """The direction of the traffic.
-    """
-
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-class ConnectionMonitorTestConfigurationProtocol(str, Enum):
-    """The protocol to use in test evaluation.
-    """
-
-    tcp = "Tcp"
-    http = "Http"
-    icmp = "Icmp"
-
-class PreferredIPVersion(str, Enum):
-    """The preferred IP version to use in test evaluation. The connection monitor may choose to use a
-    different version depending on other parameters.
-    """
-
-    i_pv4 = "IPv4"
-    i_pv6 = "IPv6"
-
-class HTTPConfigurationMethod(str, Enum):
-    """The HTTP method to use.
-    """
-
-    get = "Get"
-    post = "Post"
-
-class ConnectionState(str, Enum):
-    """The connection state.
-    """
-
-    reachable = "Reachable"
-    unreachable = "Unreachable"
-    unknown = "Unknown"
-
 class EvaluationState(str, Enum):
     """Connectivity analysis evaluation state.
     """
@@ -575,35 +367,171 @@ class EvaluationState(str, Enum):
     in_progress = "InProgress"
     completed = "Completed"
 
-class ConnectionMonitorType(str, Enum):
-    """Type of connection monitor.
+class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(str, Enum):
+    """The advertised public prefix state of the Peering resource.
     """
 
-    multi_endpoint = "MultiEndpoint"
-    single_source_destination = "SingleSourceDestination"
+    not_configured = "NotConfigured"
+    configuring = "Configuring"
+    configured = "Configured"
+    validation_needed = "ValidationNeeded"
 
-class Access(str, Enum):
-    """Access to be allowed or denied.
+class ExpressRouteCircuitPeeringState(str, Enum):
+    """The state of peering.
+    """
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+class ExpressRouteCircuitSkuFamily(str, Enum):
+    """The family of the SKU.
+    """
+
+    unlimited_data = "UnlimitedData"
+    metered_data = "MeteredData"
+
+class ExpressRouteCircuitSkuTier(str, Enum):
+    """The tier of the SKU.
+    """
+
+    standard = "Standard"
+    premium = "Premium"
+    basic = "Basic"
+    local = "Local"
+
+class ExpressRouteLinkAdminState(str, Enum):
+    """Administrative state of the physical port.
+    """
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+class ExpressRouteLinkConnectorType(str, Enum):
+    """Physical fiber port type.
+    """
+
+    lc = "LC"
+    sc = "SC"
+
+class ExpressRouteLinkMacSecCipher(str, Enum):
+    """Mac security cipher.
+    """
+
+    gcm_aes128 = "gcm-aes-128"
+    gcm_aes256 = "gcm-aes-256"
+
+class ExpressRoutePeeringState(str, Enum):
+    """The state of peering.
+    """
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+class ExpressRoutePeeringType(str, Enum):
+    """The peering type.
+    """
+
+    azure_public_peering = "AzurePublicPeering"
+    azure_private_peering = "AzurePrivatePeering"
+    microsoft_peering = "MicrosoftPeering"
+
+class ExpressRoutePortsEncapsulation(str, Enum):
+    """Encapsulation method on physical ports.
+    """
+
+    dot1_q = "Dot1Q"
+    qin_q = "QinQ"
+
+class FirewallPolicyFilterRuleActionType(str, Enum):
+    """The action type of a rule.
     """
 
     allow = "Allow"
     deny = "Deny"
 
-class VirtualNetworkPeeringState(str, Enum):
-    """The status of the virtual network peering.
+class FirewallPolicyRuleConditionApplicationProtocolType(str, Enum):
+    """The application protocol type of a Rule condition.
     """
 
-    initiated = "Initiated"
+    http = "Http"
+    https = "Https"
+
+class FirewallPolicyRuleConditionNetworkProtocol(str, Enum):
+    """The Network protocol of a Rule condition.
+    """
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+    icmp = "ICMP"
+
+class FirewallPolicyRuleConditionType(str, Enum):
+    """Rule Condition Type.
+    """
+
+    application_rule_condition = "ApplicationRuleCondition"
+    network_rule_condition = "NetworkRuleCondition"
+    nat_rule_condition = "NatRuleCondition"
+
+class FirewallPolicyRuleType(str, Enum):
+    """The type of the rule.
+    """
+
+    firewall_policy_nat_rule = "FirewallPolicyNatRule"
+    firewall_policy_filter_rule = "FirewallPolicyFilterRule"
+
+class HTTPConfigurationMethod(str, Enum):
+    """The HTTP method to use.
+    """
+
+    get = "Get"
+    post = "Post"
+
+class HubVirtualNetworkConnectionStatus(str, Enum):
+    """The current state of the VirtualHub to vnet connection.
+    """
+
+    unknown = "Unknown"
+    connecting = "Connecting"
     connected = "Connected"
-    disconnected = "Disconnected"
+    not_connected = "NotConnected"
 
-class VpnClientProtocol(str, Enum):
-    """VPN client protocol enabled for the virtual network gateway.
+class IkeEncryption(str, Enum):
+    """The IKE encryption algorithm (IKE phase 2).
     """
 
-    ike_v2 = "IkeV2"
-    sstp = "SSTP"
-    open_vpn = "OpenVPN"
+    des = "DES"
+    des3 = "DES3"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+    gcmaes256 = "GCMAES256"
+    gcmaes128 = "GCMAES128"
+
+class IkeIntegrity(str, Enum):
+    """The IKE integrity algorithm (IKE phase 2).
+    """
+
+    md5 = "MD5"
+    sha1 = "SHA1"
+    sha256 = "SHA256"
+    sha384 = "SHA384"
+    gcmaes256 = "GCMAES256"
+    gcmaes128 = "GCMAES128"
+
+class IPAllocationMethod(str, Enum):
+    """IP address allocation method.
+    """
+
+    static = "Static"
+    dynamic = "Dynamic"
+
+class IpFlowProtocol(str, Enum):
+    """Protocol to be verified on.
+    """
+
+    tcp = "TCP"
+    udp = "UDP"
 
 class IpsecEncryption(str, Enum):
     """The IPSec encryption algorithm (IKE phase 1).
@@ -630,41 +558,130 @@ class IpsecIntegrity(str, Enum):
     gcmaes192 = "GCMAES192"
     gcmaes256 = "GCMAES256"
 
-class IkeEncryption(str, Enum):
-    """The IKE encryption algorithm (IKE phase 2).
+class IPVersion(str, Enum):
+    """IP address version.
     """
 
-    des = "DES"
-    des3 = "DES3"
-    aes128 = "AES128"
-    aes192 = "AES192"
-    aes256 = "AES256"
-    gcmaes256 = "GCMAES256"
-    gcmaes128 = "GCMAES128"
+    i_pv4 = "IPv4"
+    i_pv6 = "IPv6"
 
-class IkeIntegrity(str, Enum):
-    """The IKE integrity algorithm (IKE phase 2).
+class IssueType(str, Enum):
+    """The type of issue.
     """
 
-    md5 = "MD5"
-    sha1 = "SHA1"
-    sha256 = "SHA256"
-    sha384 = "SHA384"
-    gcmaes256 = "GCMAES256"
-    gcmaes128 = "GCMAES128"
+    unknown = "Unknown"
+    agent_stopped = "AgentStopped"
+    guest_firewall = "GuestFirewall"
+    dns_resolution = "DnsResolution"
+    socket_bind = "SocketBind"
+    network_security_rule = "NetworkSecurityRule"
+    user_defined_route = "UserDefinedRoute"
+    port_throttled = "PortThrottled"
+    platform = "Platform"
 
-class DhGroup(str, Enum):
-    """The DH Groups used in IKE Phase 1 for initial SA.
+class LoadBalancerOutboundRuleProtocol(str, Enum):
+    """The protocol for the outbound rule in load balancer.
     """
 
+    tcp = "Tcp"
+    udp = "Udp"
+    all = "All"
+
+class LoadBalancerSkuName(str, Enum):
+    """Name of a load balancer SKU.
+    """
+
+    basic = "Basic"
+    standard = "Standard"
+
+class LoadDistribution(str, Enum):
+    """The load distribution policy for this rule.
+    """
+
+    default = "Default"
+    source_ip = "SourceIP"
+    source_ip_protocol = "SourceIPProtocol"
+
+class NetworkOperationStatus(str, Enum):
+    """Status of the Azure async operation.
+    """
+
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+class NextHopType(str, Enum):
+    """Next hop type.
+    """
+
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    hyper_net_gateway = "HyperNetGateway"
     none = "None"
-    dh_group1 = "DHGroup1"
-    dh_group2 = "DHGroup2"
-    dh_group14 = "DHGroup14"
-    dh_group2048 = "DHGroup2048"
-    ecp256 = "ECP256"
-    ecp384 = "ECP384"
-    dh_group24 = "DHGroup24"
+
+class OfficeTrafficCategory(str, Enum):
+    """The office traffic category.
+    """
+
+    optimize = "Optimize"
+    optimize_and_allow = "OptimizeAndAllow"
+    all = "All"
+    none = "None"
+
+class Origin(str, Enum):
+    """The origin of the issue.
+    """
+
+    local = "Local"
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+class OwaspCrsExclusionEntryMatchVariable(str, Enum):
+    """The variable to be excluded.
+    """
+
+    request_header_names = "RequestHeaderNames"
+    request_cookie_names = "RequestCookieNames"
+    request_arg_names = "RequestArgNames"
+
+class OwaspCrsExclusionEntrySelectorMatchOperator(str, Enum):
+    """When matchVariable is a collection, operate on the selector to specify which elements in the
+    collection this exclusion applies to.
+    """
+
+    equals = "Equals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+    equals_any = "EqualsAny"
+
+class PcError(str, Enum):
+
+    internal_error = "InternalError"
+    agent_stopped = "AgentStopped"
+    capture_failed = "CaptureFailed"
+    local_file_failed = "LocalFileFailed"
+    storage_failed = "StorageFailed"
+
+class PcProtocol(str, Enum):
+    """Protocol to be filtered on.
+    """
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+
+class PcStatus(str, Enum):
+    """The status of the packet capture session.
+    """
+
+    not_started = "NotStarted"
+    running = "Running"
+    stopped = "Stopped"
+    error = "Error"
+    unknown = "Unknown"
 
 class PfsGroup(str, Enum):
     """The Pfs Groups used in IKE Phase 2 for new child SA.
@@ -680,27 +697,168 @@ class PfsGroup(str, Enum):
     pfs14 = "PFS14"
     pfsmm = "PFSMM"
 
-class VirtualNetworkGatewayType(str, Enum):
-    """The type of this virtual network gateway.
+class PreferredIPVersion(str, Enum):
+    """The preferred IP version to use in test evaluation. The connection monitor may choose to use a
+    different version depending on other parameters.
     """
 
-    vpn = "Vpn"
-    express_route = "ExpressRoute"
+    i_pv4 = "IPv4"
+    i_pv6 = "IPv6"
 
-class VpnType(str, Enum):
-    """The type of this virtual network gateway.
+class ProbeProtocol(str, Enum):
+    """The protocol of the end point. If 'Tcp' is specified, a received ACK is required for the probe
+    to be successful. If 'Http' or 'Https' is specified, a 200 OK response from the specifies URI
+    is required for the probe to be successful.
     """
 
-    policy_based = "PolicyBased"
-    route_based = "RouteBased"
+    http = "Http"
+    tcp = "Tcp"
+    https = "Https"
 
-class VpnGatewayGeneration(str, Enum):
-    """The generation for this VirtualNetworkGateway. Must be None if gatewayType is not VPN.
+class ProcessorArchitecture(str, Enum):
+    """VPN client Processor Architecture.
     """
 
+    amd64 = "Amd64"
+    x86 = "X86"
+
+class Protocol(str, Enum):
+    """Network protocol.
+    """
+
+    tcp = "Tcp"
+    http = "Http"
+    https = "Https"
+    icmp = "Icmp"
+
+class ProvisioningState(str, Enum):
+    """The current provisioning state.
+    """
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+class PublicIPAddressSkuName(str, Enum):
+    """Name of a public IP address SKU.
+    """
+
+    basic = "Basic"
+    standard = "Standard"
+
+class ResourceIdentityType(str, Enum):
+    """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
+    both an implicitly created identity and a set of user assigned identities. The type 'None' will
+    remove any identities from the virtual machine.
+    """
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
     none = "None"
-    generation1 = "Generation1"
-    generation2 = "Generation2"
+
+class RouteNextHopType(str, Enum):
+    """The type of Azure hop the packet should be sent to.
+    """
+
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    none = "None"
+
+class SecurityRuleAccess(str, Enum):
+    """Whether network traffic is allowed or denied.
+    """
+
+    allow = "Allow"
+    deny = "Deny"
+
+class SecurityRuleDirection(str, Enum):
+    """The direction of the rule. The direction specifies if rule will be evaluated on incoming or
+    outgoing traffic.
+    """
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+class SecurityRuleProtocol(str, Enum):
+    """Network protocol this rule applies to.
+    """
+
+    tcp = "Tcp"
+    udp = "Udp"
+    icmp = "Icmp"
+    esp = "Esp"
+    asterisk = "*"
+    ah = "Ah"
+
+class ServiceProviderProvisioningState(str, Enum):
+    """The ServiceProviderProvisioningState state of the resource.
+    """
+
+    not_provisioned = "NotProvisioned"
+    provisioning = "Provisioning"
+    provisioned = "Provisioned"
+    deprovisioning = "Deprovisioning"
+
+class Severity(str, Enum):
+    """The severity of the issue.
+    """
+
+    error = "Error"
+    warning = "Warning"
+
+class TransportProtocol(str, Enum):
+    """The transport protocol for the endpoint.
+    """
+
+    udp = "Udp"
+    tcp = "Tcp"
+    all = "All"
+
+class TunnelConnectionStatus(str, Enum):
+    """The current state of the tunnel.
+    """
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+class VerbosityLevel(str, Enum):
+    """Verbosity level.
+    """
+
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
+
+class VirtualNetworkGatewayConnectionProtocol(str, Enum):
+    """Gateway connection protocol.
+    """
+
+    ik_ev2 = "IKEv2"
+    ik_ev1 = "IKEv1"
+
+class VirtualNetworkGatewayConnectionStatus(str, Enum):
+    """Virtual Network Gateway connection status.
+    """
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+class VirtualNetworkGatewayConnectionType(str, Enum):
+    """Gateway connection type.
+    """
+
+    i_psec = "IPsec"
+    vnet2_vnet = "Vnet2Vnet"
+    express_route = "ExpressRoute"
+    vpn_client = "VPNClient"
 
 class VirtualNetworkGatewaySkuName(str, Enum):
     """Gateway SKU name.
@@ -746,49 +904,20 @@ class VirtualNetworkGatewaySkuTier(str, Enum):
     er_gw2_az = "ErGw2AZ"
     er_gw3_az = "ErGw3AZ"
 
-class VirtualNetworkGatewayConnectionStatus(str, Enum):
-    """Virtual Network Gateway connection status.
+class VirtualNetworkGatewayType(str, Enum):
+    """The type of this virtual network gateway.
     """
 
-    unknown = "Unknown"
-    connecting = "Connecting"
-    connected = "Connected"
-    not_connected = "NotConnected"
-
-class VirtualNetworkGatewayConnectionType(str, Enum):
-    """Gateway connection type.
-    """
-
-    i_psec = "IPsec"
-    vnet2_vnet = "Vnet2Vnet"
+    vpn = "Vpn"
     express_route = "ExpressRoute"
-    vpn_client = "VPNClient"
 
-class VirtualNetworkGatewayConnectionProtocol(str, Enum):
-    """Gateway connection protocol.
+class VirtualNetworkPeeringState(str, Enum):
+    """The status of the virtual network peering.
     """
 
-    ik_ev2 = "IKEv2"
-    ik_ev1 = "IKEv1"
-
-class BgpPeerState(str, Enum):
-    """The BGP peer state.
-    """
-
-    unknown = "Unknown"
-    stopped = "Stopped"
-    idle = "Idle"
-    connecting = "Connecting"
+    initiated = "Initiated"
     connected = "Connected"
-
-class OfficeTrafficCategory(str, Enum):
-    """The office traffic category.
-    """
-
-    optimize = "Optimize"
-    optimize_and_allow = "OptimizeAndAllow"
-    all = "All"
-    none = "None"
+    disconnected = "Disconnected"
 
 class VirtualWanSecurityProviderType(str, Enum):
     """The virtual wan security provider type.
@@ -796,13 +925,6 @@ class VirtualWanSecurityProviderType(str, Enum):
 
     external = "External"
     native = "Native"
-
-class VpnGatewayTunnelingProtocol(str, Enum):
-    """VPN protocol enabled for the VpnServerConfiguration.
-    """
-
-    ike_v2 = "IkeV2"
-    open_vpn = "OpenVPN"
 
 class VpnAuthenticationType(str, Enum):
     """VPN authentication types enabled for the VpnServerConfiguration.
@@ -812,6 +934,14 @@ class VpnAuthenticationType(str, Enum):
     radius = "Radius"
     aad = "AAD"
 
+class VpnClientProtocol(str, Enum):
+    """VPN client protocol enabled for the virtual network gateway.
+    """
+
+    ike_v2 = "IkeV2"
+    sstp = "SSTP"
+    open_vpn = "OpenVPN"
+
 class VpnConnectionStatus(str, Enum):
     """The current state of the vpn connection.
     """
@@ -820,6 +950,43 @@ class VpnConnectionStatus(str, Enum):
     connecting = "Connecting"
     connected = "Connected"
     not_connected = "NotConnected"
+
+class VpnGatewayGeneration(str, Enum):
+    """The generation for this VirtualNetworkGateway. Must be None if gatewayType is not VPN.
+    """
+
+    none = "None"
+    generation1 = "Generation1"
+    generation2 = "Generation2"
+
+class VpnGatewayTunnelingProtocol(str, Enum):
+    """VPN protocol enabled for the VpnServerConfiguration.
+    """
+
+    ike_v2 = "IkeV2"
+    open_vpn = "OpenVPN"
+
+class VpnType(str, Enum):
+    """The type of this virtual network gateway.
+    """
+
+    policy_based = "PolicyBased"
+    route_based = "RouteBased"
+
+class WebApplicationFirewallAction(str, Enum):
+    """Type of Actions.
+    """
+
+    allow = "Allow"
+    block = "Block"
+    log = "Log"
+
+class WebApplicationFirewallEnabledState(str, Enum):
+    """The state of the policy.
+    """
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 class WebApplicationFirewallMatchVariable(str, Enum):
     """Match Variable.
@@ -834,16 +1001,12 @@ class WebApplicationFirewallMatchVariable(str, Enum):
     request_body = "RequestBody"
     request_cookies = "RequestCookies"
 
-class WebApplicationFirewallTransform(str, Enum):
-    """Transforms applied before matching.
+class WebApplicationFirewallMode(str, Enum):
+    """The mode of the policy.
     """
 
-    lowercase = "Lowercase"
-    trim = "Trim"
-    url_decode = "UrlDecode"
-    url_encode = "UrlEncode"
-    remove_nulls = "RemoveNulls"
-    html_entity_decode = "HtmlEntityDecode"
+    prevention = "Prevention"
+    detection = "Detection"
 
 class WebApplicationFirewallOperator(str, Enum):
     """The operator to be matched.
@@ -861,54 +1024,6 @@ class WebApplicationFirewallOperator(str, Enum):
     regex = "Regex"
     geo_match = "GeoMatch"
 
-class WebApplicationFirewallRuleType(str, Enum):
-    """The rule type.
-    """
-
-    match_rule = "MatchRule"
-    invalid = "Invalid"
-
-class WebApplicationFirewallAction(str, Enum):
-    """Type of Actions.
-    """
-
-    allow = "Allow"
-    block = "Block"
-    log = "Log"
-
-class OwaspCrsExclusionEntryMatchVariable(str, Enum):
-    """The variable to be excluded.
-    """
-
-    request_header_names = "RequestHeaderNames"
-    request_cookie_names = "RequestCookieNames"
-    request_arg_names = "RequestArgNames"
-
-class OwaspCrsExclusionEntrySelectorMatchOperator(str, Enum):
-    """When matchVariable is a collection, operate on the selector to specify which elements in the
-    collection this exclusion applies to.
-    """
-
-    equals = "Equals"
-    contains = "Contains"
-    starts_with = "StartsWith"
-    ends_with = "EndsWith"
-    equals_any = "EqualsAny"
-
-class WebApplicationFirewallEnabledState(str, Enum):
-    """The state of the policy.
-    """
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-class WebApplicationFirewallMode(str, Enum):
-    """The mode of the policy.
-    """
-
-    prevention = "Prevention"
-    detection = "Detection"
-
 class WebApplicationFirewallPolicyResourceState(str, Enum):
     """Resource status of the policy.
     """
@@ -920,135 +1035,20 @@ class WebApplicationFirewallPolicyResourceState(str, Enum):
     disabled = "Disabled"
     deleting = "Deleting"
 
-class FirewallPolicyRuleConditionType(str, Enum):
-    """Rule Condition Type.
+class WebApplicationFirewallRuleType(str, Enum):
+    """The rule type.
     """
 
-    application_rule_condition = "ApplicationRuleCondition"
-    network_rule_condition = "NetworkRuleCondition"
-    nat_rule_condition = "NatRuleCondition"
+    match_rule = "MatchRule"
+    invalid = "Invalid"
 
-class FirewallPolicyRuleConditionApplicationProtocolType(str, Enum):
-    """The application protocol type of a Rule condition.
+class WebApplicationFirewallTransform(str, Enum):
+    """Transforms applied before matching.
     """
 
-    http = "Http"
-    https = "Https"
-
-class FirewallPolicyRuleConditionNetworkProtocol(str, Enum):
-    """The Network protocol of a Rule condition.
-    """
-
-    tcp = "TCP"
-    udp = "UDP"
-    any = "Any"
-    icmp = "ICMP"
-
-class IpFlowProtocol(str, Enum):
-    """Protocol to be verified on.
-    """
-
-    tcp = "TCP"
-    udp = "UDP"
-
-class NextHopType(str, Enum):
-    """Next hop type.
-    """
-
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    hyper_net_gateway = "HyperNetGateway"
-    none = "None"
-
-class PcStatus(str, Enum):
-    """The status of the packet capture session.
-    """
-
-    not_started = "NotStarted"
-    running = "Running"
-    stopped = "Stopped"
-    error = "Error"
-    unknown = "Unknown"
-
-class Protocol(str, Enum):
-    """Network protocol.
-    """
-
-    tcp = "Tcp"
-    http = "Http"
-    https = "Https"
-    icmp = "Icmp"
-
-class ConnectionStatus(str, Enum):
-    """The connection status.
-    """
-
-    unknown = "Unknown"
-    connected = "Connected"
-    disconnected = "Disconnected"
-    degraded = "Degraded"
-
-class VerbosityLevel(str, Enum):
-    """Verbosity level.
-    """
-
-    normal = "Normal"
-    minimum = "Minimum"
-    full = "Full"
-
-class ConnectionMonitorSourceStatus(str, Enum):
-    """Status of connection monitor source.
-    """
-
-    unknown = "Unknown"
-    active = "Active"
-    inactive = "Inactive"
-
-class ProcessorArchitecture(str, Enum):
-    """VPN client Processor Architecture.
-    """
-
-    amd64 = "Amd64"
-    x86 = "X86"
-
-class AuthenticationMethod(str, Enum):
-    """VPN client authentication method.
-    """
-
-    eaptls = "EAPTLS"
-    eapmscha_pv2 = "EAPMSCHAPv2"
-
-class FirewallPolicyFilterRuleActionType(str, Enum):
-    """The action type of a rule.
-    """
-
-    allow = "Allow"
-    deny = "Deny"
-
-class NetworkOperationStatus(str, Enum):
-    """Status of the Azure async operation.
-    """
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-class TunnelConnectionStatus(str, Enum):
-    """The current state of the tunnel.
-    """
-
-    unknown = "Unknown"
-    connecting = "Connecting"
-    connected = "Connected"
-    not_connected = "NotConnected"
-
-class HubVirtualNetworkConnectionStatus(str, Enum):
-    """The current state of the VirtualHub to vnet connection.
-    """
-
-    unknown = "Unknown"
-    connecting = "Connecting"
-    connected = "Connected"
-    not_connected = "NotConnected"
+    lowercase = "Lowercase"
+    trim = "Trim"
+    url_decode = "UrlDecode"
+    url_encode = "UrlEncode"
+    remove_nulls = "RemoveNulls"
+    html_entity_decode = "HtmlEntityDecode"

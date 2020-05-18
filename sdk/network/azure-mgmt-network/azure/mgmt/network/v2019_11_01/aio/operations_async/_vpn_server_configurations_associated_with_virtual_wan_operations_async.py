@@ -49,11 +49,12 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         **kwargs
     ) -> "models.VpnServerConfigurationsResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfigurationsResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
 
         # Construct URL
-        url = self._list_initial.metadata['url']
+        url = self._list_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -83,10 +84,10 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
             deserialized = self._deserialize('VpnServerConfigurationsResponse', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _list_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/vpnServerConfigurations'}
+    _list_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/vpnServerConfigurations'}  # type: ignore
 
     async def list(
         self,
@@ -105,19 +106,26 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :return: An instance of LROPoller that returns VpnServerConfigurationsResponse
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2019_11_01.models.VpnServerConfigurationsResponse]
-
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: VpnServerConfigurationsResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnServerConfigurationsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfigurationsResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
         raw_result = await self._list_initial(
             resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('VpnServerConfigurationsResponse', pipeline_response)
@@ -126,12 +134,8 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        lro_delay = kwargs.get(
-            'polling_interval',
-            self._config.polling_interval
-        )
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/vpnServerConfigurations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/vpnServerConfigurations'}  # type: ignore

@@ -56,16 +56,17 @@ class ResourceNavigationLinksOperations:
         :param subnet_name: The name of the subnet.
         :type subnet_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceNavigationLinksListResult or the result of cls(response)
+        :return: ResourceNavigationLinksListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.ResourceNavigationLinksListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceNavigationLinksListResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
@@ -94,7 +95,7 @@ class ResourceNavigationLinksOperations:
         deserialized = self._deserialize('ResourceNavigationLinksListResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/ResourceNavigationLinks'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/ResourceNavigationLinks'}  # type: ignore

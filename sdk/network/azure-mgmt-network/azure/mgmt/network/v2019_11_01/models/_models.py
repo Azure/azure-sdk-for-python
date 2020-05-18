@@ -125,7 +125,7 @@ class ApplicationGateway(Resource):
     :param ssl_policy: SSL policy of the application gateway resource.
     :type ssl_policy: ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslPolicy
     :ivar operational_state: Operational state of the application gateway resource. Possible values
-     include: 'Stopped', 'Starting', 'Running', 'Stopping'.
+     include: "Stopped", "Starting", "Running", "Stopping".
     :vartype operational_state: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayOperationalState
     :param gateway_ip_configurations: Subnets of the application gateway resource. For default
@@ -208,7 +208,7 @@ class ApplicationGateway(Resource):
     :ivar resource_guid: The resource GUID property of the application gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application gateway resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param custom_error_configurations: Custom error configurations of the application gateway
      resource.
@@ -332,7 +332,7 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
     :param data: Certificate public data.
     :type data: str
     :ivar provisioning_state: The provisioning state of the authentication certificate resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -389,7 +389,7 @@ class ApplicationGatewayAutoscaleConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayAutoscaleConfiguration, self).__init__(**kwargs)
-        self.min_capacity = kwargs.get('min_capacity', None)
+        self.min_capacity = kwargs['min_capacity']
         self.max_capacity = kwargs.get('max_capacity', None)
 
 
@@ -411,8 +411,8 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     :param predefined_policies: List of available Ssl predefined policy.
     :type predefined_policies: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :param default_policy: Name of the Ssl predefined policy applied by default to application
-     gateway. Possible values include: 'AppGwSslPolicy20150501', 'AppGwSslPolicy20170401',
-     'AppGwSslPolicy20170401S'.
+     gateway. Possible values include: "AppGwSslPolicy20150501", "AppGwSslPolicy20170401",
+     "AppGwSslPolicy20170401S".
     :type default_policy: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslPolicyName
     :param available_cipher_suites: List of available Ssl cipher suites.
@@ -536,7 +536,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :type backend_addresses:
      list[~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayBackendAddress]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -673,8 +673,8 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
     :type address: str
     :param ip_configuration: Reference to IP configuration of backend server.
     :type ip_configuration: ~azure.mgmt.network.v2019_11_01.models.NetworkInterfaceIPConfiguration
-    :param health: Health of backend server. Possible values include: 'Unknown', 'Up', 'Down',
-     'Partial', 'Draining'.
+    :param health: Health of backend server. Possible values include: "Unknown", "Up", "Down",
+     "Partial", "Draining".
     :type health: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayBackendHealthServerHealth
     :param health_probe_log: Health Probe Log.
@@ -715,10 +715,10 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param port: The destination port on the backend.
     :type port: int
     :param protocol: The protocol used to communicate with the backend. Possible values include:
-     'Http', 'Https'.
+     "Http", "Https".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayProtocol
-    :param cookie_based_affinity: Cookie based affinity. Possible values include: 'Enabled',
-     'Disabled'.
+    :param cookie_based_affinity: Cookie based affinity. Possible values include: "Enabled",
+     "Disabled".
     :type cookie_based_affinity: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayCookieBasedAffinity
     :param request_timeout: Request timeout in seconds. Application Gateway will fail the request
@@ -749,7 +749,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      will be prefixed. Default value is null.
     :type path: str
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -831,15 +831,15 @@ class ApplicationGatewayConnectionDraining(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayConnectionDraining, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.drain_timeout_in_sec = kwargs.get('drain_timeout_in_sec', None)
+        self.enabled = kwargs['enabled']
+        self.drain_timeout_in_sec = kwargs['drain_timeout_in_sec']
 
 
 class ApplicationGatewayCustomError(msrest.serialization.Model):
     """Customer error of an application gateway.
 
     :param status_code: Status code of the application gateway customer error. Possible values
-     include: 'HttpStatus403', 'HttpStatus502'.
+     include: "HttpStatus403", "HttpStatus502".
     :type status_code: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayCustomErrorStatusCode
     :param custom_error_page_url: Error page URL of the application gateway customer error.
@@ -886,7 +886,7 @@ class ApplicationGatewayFirewallDisabledRuleGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__(**kwargs)
-        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.rule_group_name = kwargs['rule_group_name']
         self.rules = kwargs.get('rules', None)
 
 
@@ -922,9 +922,9 @@ class ApplicationGatewayFirewallExclusion(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayFirewallExclusion, self).__init__(**kwargs)
-        self.match_variable = kwargs.get('match_variable', None)
-        self.selector_match_operator = kwargs.get('selector_match_operator', None)
-        self.selector = kwargs.get('selector', None)
+        self.match_variable = kwargs['match_variable']
+        self.selector_match_operator = kwargs['selector_match_operator']
+        self.selector = kwargs['selector']
 
 
 class ApplicationGatewayFirewallRule(msrest.serialization.Model):
@@ -952,7 +952,7 @@ class ApplicationGatewayFirewallRule(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayFirewallRule, self).__init__(**kwargs)
-        self.rule_id = kwargs.get('rule_id', None)
+        self.rule_id = kwargs['rule_id']
         self.description = kwargs.get('description', None)
 
 
@@ -985,9 +985,9 @@ class ApplicationGatewayFirewallRuleGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationGatewayFirewallRuleGroup, self).__init__(**kwargs)
-        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.rule_group_name = kwargs['rule_group_name']
         self.description = kwargs.get('description', None)
-        self.rules = kwargs.get('rules', None)
+        self.rules = kwargs['rules']
 
 
 class ApplicationGatewayFirewallRuleSet(Resource):
@@ -1006,7 +1006,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the web application firewall rule set.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param rule_set_type: The type of the web application firewall rule set.
     :type rule_set_type: str
@@ -1063,7 +1063,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param private_ip_address: PrivateIPAddress of the network interface IP Configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The private IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param subnet: Reference to the subnet resource.
@@ -1071,7 +1071,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param public_ip_address: Reference to the PublicIP resource.
     :type public_ip_address: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1124,7 +1124,7 @@ class ApplicationGatewayFrontendPort(SubResource):
     :param port: Frontend port.
     :type port: int
     :ivar provisioning_state: The provisioning state of the frontend port resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1195,7 +1195,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :type frontend_ip_configuration: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param frontend_port: Frontend port resource of an application gateway.
     :type frontend_port: ~azure.mgmt.network.v2019_11_01.models.SubResource
-    :param protocol: Protocol of the HTTP listener. Possible values include: 'Http', 'Https'.
+    :param protocol: Protocol of the HTTP listener. Possible values include: "Http", "Https".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayProtocol
     :param host_name: Host name of HTTP listener.
     :type host_name: str
@@ -1205,7 +1205,7 @@ class ApplicationGatewayHttpListener(SubResource):
      multi-hosting.
     :type require_server_name_indication: bool
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param custom_error_configurations: Custom error configurations of the HTTP listener.
     :type custom_error_configurations:
@@ -1277,7 +1277,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
      its private address.
     :type subnet: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the application gateway IP configuration
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1334,7 +1334,7 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
 class ApplicationGatewayOnDemandProbe(msrest.serialization.Model):
     """Details of on demand test probe request.
 
-    :param protocol: The protocol used for the probe. Possible values include: 'Http', 'Https'.
+    :param protocol: The protocol used for the probe. Possible values include: "Http", "Https".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
     :type host: str
@@ -1407,7 +1407,7 @@ class ApplicationGatewayPathRule(SubResource):
     :param rewrite_rule_set: Rewrite rule set resource of URL path map path rule.
     :type rewrite_rule_set: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the path rule resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param firewall_policy: Reference to the FirewallPolicy resource.
     :type firewall_policy: ~azure.mgmt.network.v2019_11_01.models.SubResource
@@ -1463,7 +1463,7 @@ class ApplicationGatewayProbe(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :param protocol: The protocol used for the probe. Possible values include: 'Http', 'Https'.
+    :param protocol: The protocol used for the probe. Possible values include: "Http", "Https".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
     :type host: str
@@ -1489,7 +1489,7 @@ class ApplicationGatewayProbe(SubResource):
     :param match: Criterion for classifying a healthy probe response.
     :type match: ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayProbeHealthResponseMatch
     :ivar provisioning_state: The provisioning state of the probe resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
@@ -1580,8 +1580,8 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :param redirect_type: HTTP redirection type. Possible values include: 'Permanent', 'Found',
-     'SeeOther', 'Temporary'.
+    :param redirect_type: HTTP redirection type. Possible values include: "Permanent", "Found",
+     "SeeOther", "Temporary".
     :type redirect_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayRedirectType
     :param target_listener: Reference to a listener to redirect the request to.
@@ -1651,7 +1651,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :param rule_type: Rule type. Possible values include: 'Basic', 'PathBasedRouting'.
+    :param rule_type: Rule type. Possible values include: "Basic", "PathBasedRouting".
     :type rule_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayRequestRoutingRuleType
     :param priority: Priority of the request routing rule.
@@ -1669,7 +1669,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param redirect_configuration: Redirect configuration resource of the application gateway.
     :type redirect_configuration: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1826,7 +1826,7 @@ class ApplicationGatewayRewriteRuleSet(SubResource):
     :param rewrite_rules: Rewrite rules in the rewrite rule set.
     :type rewrite_rules: list[~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayRewriteRule]
     :ivar provisioning_state: The provisioning state of the rewrite rule set resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1857,11 +1857,11 @@ class ApplicationGatewayRewriteRuleSet(SubResource):
 class ApplicationGatewaySku(msrest.serialization.Model):
     """SKU of an application gateway.
 
-    :param name: Name of an application gateway SKU. Possible values include: 'Standard_Small',
-     'Standard_Medium', 'Standard_Large', 'WAF_Medium', 'WAF_Large', 'Standard_v2', 'WAF_v2'.
+    :param name: Name of an application gateway SKU. Possible values include: "Standard_Small",
+     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2".
     :type name: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySkuName
-    :param tier: Tier of an application gateway. Possible values include: 'Standard', 'WAF',
-     'Standard_v2', 'WAF_v2'.
+    :param tier: Tier of an application gateway. Possible values include: "Standard", "WAF",
+     "Standard_v2", "WAF_v2".
     :type tier: str or ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayTier
     :param capacity: Capacity (instance count) of an application gateway.
     :type capacity: int
@@ -1907,7 +1907,7 @@ class ApplicationGatewaySslCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :type key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the SSL certificate resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -1951,11 +1951,11 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     :param disabled_ssl_protocols: Ssl protocols to be disabled on application gateway.
     :type disabled_ssl_protocols: list[str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslProtocol]
-    :param policy_type: Type of Ssl Policy. Possible values include: 'Predefined', 'Custom'.
+    :param policy_type: Type of Ssl Policy. Possible values include: "Predefined", "Custom".
     :type policy_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslPolicyType
     :param policy_name: Name of Ssl predefined policy. Possible values include:
-     'AppGwSslPolicy20150501', 'AppGwSslPolicy20170401', 'AppGwSslPolicy20170401S'.
+     "AppGwSslPolicy20150501", "AppGwSslPolicy20170401", "AppGwSslPolicy20170401S".
     :type policy_name: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslPolicyName
     :param cipher_suites: Ssl cipher suites to be enabled in the specified order to application
@@ -1963,7 +1963,7 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     :type cipher_suites: list[str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslCipherSuite]
     :param min_protocol_version: Minimum version of Ssl protocol to be supported on application
-     gateway. Possible values include: 'TLSv1_0', 'TLSv1_1', 'TLSv1_2'.
+     gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
     :type min_protocol_version: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslProtocol
     """
@@ -2000,7 +2000,7 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
     :type cipher_suites: list[str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslCipherSuite]
     :param min_protocol_version: Minimum version of Ssl protocol to be supported on application
-     gateway. Possible values include: 'TLSv1_0', 'TLSv1_1', 'TLSv1_2'.
+     gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
     :type min_protocol_version: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewaySslProtocol
     """
@@ -2041,7 +2041,7 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :type key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the trusted root certificate resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -2128,7 +2128,7 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :param path_rules: Path rule of URL path map resource.
     :type path_rules: list[~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayPathRule]
     :ivar provisioning_state: The provisioning state of the URL path map resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -2175,7 +2175,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization
     :param enabled: Required. Whether the web application firewall is enabled or not.
     :type enabled: bool
     :param firewall_mode: Required. Web application firewall mode. Possible values include:
-     'Detection', 'Prevention'.
+     "Detection", "Prevention".
     :type firewall_mode: str or
      ~azure.mgmt.network.v2019_11_01.models.ApplicationGatewayFirewallMode
     :param rule_set_type: Required. The type of the web application firewall rule set. Possible
@@ -2227,10 +2227,10 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization
         **kwargs
     ):
         super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.firewall_mode = kwargs.get('firewall_mode', None)
-        self.rule_set_type = kwargs.get('rule_set_type', None)
-        self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.enabled = kwargs['enabled']
+        self.firewall_mode = kwargs['firewall_mode']
+        self.rule_set_type = kwargs['rule_set_type']
+        self.rule_set_version = kwargs['rule_set_version']
         self.disabled_rule_groups = kwargs.get('disabled_rule_groups', None)
         self.request_body_check = kwargs.get('request_body_check', None)
         self.max_request_body_size = kwargs.get('max_request_body_size', None)
@@ -2252,7 +2252,7 @@ class FirewallPolicyRuleCondition(msrest.serialization.Model):
     :param description: Description of the rule condition.
     :type description: str
     :param rule_condition_type: Required. Rule Condition Type.Constant filled by server.  Possible
-     values include: 'ApplicationRuleCondition', 'NetworkRuleCondition'.
+     values include: "ApplicationRuleCondition", "NetworkRuleCondition".
     :type rule_condition_type: str or
      ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleConditionType
     """
@@ -2291,7 +2291,7 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
     :param description: Description of the rule condition.
     :type description: str
     :param rule_condition_type: Required. Rule Condition Type.Constant filled by server.  Possible
-     values include: 'ApplicationRuleCondition', 'NetworkRuleCondition'.
+     values include: "ApplicationRuleCondition", "NetworkRuleCondition".
     :type rule_condition_type: str or
      ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleConditionType
     :param source_addresses: List of source IP addresses for this rule.
@@ -2357,7 +2357,7 @@ class ApplicationSecurityGroup(Resource):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application security group resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -2663,7 +2663,7 @@ class AvailableProvidersList(msrest.serialization.Model):
         **kwargs
     ):
         super(AvailableProvidersList, self).__init__(**kwargs)
-        self.countries = kwargs.get('countries', None)
+        self.countries = kwargs['countries']
 
 
 class AvailableProvidersListCity(msrest.serialization.Model):
@@ -2837,8 +2837,8 @@ class AvailableServiceAliasesResult(msrest.serialization.Model):
 class AzureAsyncOperationResult(msrest.serialization.Model):
     """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
 
-    :param status: Status of the Azure async operation. Possible values include: 'InProgress',
-     'Succeeded', 'Failed'.
+    :param status: Status of the Azure async operation. Possible values include: "InProgress",
+     "Succeeded", "Failed".
     :type status: str or ~azure.mgmt.network.v2019_11_01.models.NetworkOperationStatus
     :param error: Details of the error occurred during specified asynchronous operation.
     :type error: ~azure.mgmt.network.v2019_11_01.models.Error
@@ -2895,10 +2895,10 @@ class AzureFirewall(Resource):
     :type management_ip_configuration:
      ~azure.mgmt.network.v2019_11_01.models.AzureFirewallIPConfiguration
     :ivar provisioning_state: The provisioning state of the Azure firewall resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param threat_intel_mode: The operation mode for Threat Intelligence. Possible values include:
-     'Alert', 'Deny', 'Off'.
+     "Alert", "Deny", "Off".
     :type threat_intel_mode: str or
      ~azure.mgmt.network.v2019_11_01.models.AzureFirewallThreatIntelMode
     :param virtual_hub: The virtualHub to which the firewall belongs.
@@ -3033,7 +3033,7 @@ class AzureFirewallApplicationRuleCollection(SubResource):
     :param rules: Collection of rules used by a application rule collection.
     :type rules: list[~azure.mgmt.network.v2019_11_01.models.AzureFirewallApplicationRule]
     :ivar provisioning_state: The provisioning state of the application rule collection resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3069,7 +3069,7 @@ class AzureFirewallApplicationRuleCollection(SubResource):
 class AzureFirewallApplicationRuleProtocol(msrest.serialization.Model):
     """Properties of the application rule protocol.
 
-    :param protocol_type: Protocol type. Possible values include: 'Http', 'Https', 'Mssql'.
+    :param protocol_type: Protocol type. Possible values include: "Http", "Https", "Mssql".
     :type protocol_type: str or
      ~azure.mgmt.network.v2019_11_01.models.AzureFirewallApplicationRuleProtocolType
     :param port: Port number for the protocol, cannot be greater than 64000. This field is
@@ -3113,7 +3113,7 @@ class AzureFirewallFqdnTag(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the Azure firewall FQDN tag resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar fqdn_tag_name: The name of this FQDN Tag.
     :vartype fqdn_tag_name: str
@@ -3195,7 +3195,7 @@ class AzureFirewallIPConfiguration(SubResource):
      if subnet is not null.
     :type public_ip_address: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the Azure firewall IP configuration
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3287,7 +3287,7 @@ class AzureFirewallListResult(msrest.serialization.Model):
 class AzureFirewallNatRCAction(msrest.serialization.Model):
     """AzureFirewall NAT Rule Collection Action.
 
-    :param type: The type of action. Possible values include: 'Snat', 'Dnat'.
+    :param type: The type of action. Possible values include: "Snat", "Dnat".
     :type type: str or ~azure.mgmt.network.v2019_11_01.models.AzureFirewallNatRCActionType
     """
 
@@ -3379,7 +3379,7 @@ class AzureFirewallNatRuleCollection(SubResource):
     :param rules: Collection of rules used by a NAT rule collection.
     :type rules: list[~azure.mgmt.network.v2019_11_01.models.AzureFirewallNatRule]
     :ivar provisioning_state: The provisioning state of the NAT rule collection resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3483,7 +3483,7 @@ class AzureFirewallNetworkRuleCollection(SubResource):
     :param rules: Collection of rules used by a network rule collection.
     :type rules: list[~azure.mgmt.network.v2019_11_01.models.AzureFirewallNetworkRule]
     :ivar provisioning_state: The provisioning state of the network rule collection resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3538,7 +3538,7 @@ class AzureFirewallPublicIPAddress(msrest.serialization.Model):
 class AzureFirewallRCAction(msrest.serialization.Model):
     """Properties of the AzureFirewallRCAction.
 
-    :param type: The type of action. Possible values include: 'Allow', 'Deny'.
+    :param type: The type of action. Possible values include: "Allow", "Deny".
     :type type: str or ~azure.mgmt.network.v2019_11_01.models.AzureFirewallRCActionType
     """
 
@@ -3559,7 +3559,7 @@ class AzureFirewallSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Name of an Azure Firewall SKU. Possible values include: 'AZFW_VNet', 'AZFW_Hub'.
+    :param name: Name of an Azure Firewall SKU. Possible values include: "AZFW_VNet", "AZFW_Hub".
     :type name: str or ~azure.mgmt.network.v2019_11_01.models.AzureFirewallSkuName
     :ivar tier: Tier of an Azure Firewall. Default value: "Standard".
     :vartype tier: str
@@ -3616,9 +3616,9 @@ class AzureReachabilityReport(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureReachabilityReport, self).__init__(**kwargs)
-        self.aggregation_level = kwargs.get('aggregation_level', None)
-        self.provider_location = kwargs.get('provider_location', None)
-        self.reachability_report = kwargs.get('reachability_report', None)
+        self.aggregation_level = kwargs['aggregation_level']
+        self.provider_location = kwargs['provider_location']
+        self.reachability_report = kwargs['reachability_report']
 
 
 class AzureReachabilityReportItem(msrest.serialization.Model):
@@ -3705,7 +3705,7 @@ class AzureReachabilityReportLocation(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureReachabilityReportLocation, self).__init__(**kwargs)
-        self.country = kwargs.get('country', None)
+        self.country = kwargs['country']
         self.state = kwargs.get('state', None)
         self.city = kwargs.get('city', None)
 
@@ -3746,11 +3746,11 @@ class AzureReachabilityReportParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureReachabilityReportParameters, self).__init__(**kwargs)
-        self.provider_location = kwargs.get('provider_location', None)
+        self.provider_location = kwargs['provider_location']
         self.providers = kwargs.get('providers', None)
         self.azure_locations = kwargs.get('azure_locations', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
 
 
 class BackendAddressPool(SubResource):
@@ -3780,7 +3780,7 @@ class BackendAddressPool(SubResource):
      pool.
     :vartype outbound_rules: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3842,8 +3842,8 @@ class BastionActiveSession(msrest.serialization.Model):
     :vartype user_name: str
     :ivar target_ip_address: The IP Address of the target.
     :vartype target_ip_address: str
-    :ivar protocol: The protocol used to connect to the target. Possible values include: 'SSH',
-     'RDP'.
+    :ivar protocol: The protocol used to connect to the target. Possible values include: "SSH",
+     "RDP".
     :vartype protocol: str or ~azure.mgmt.network.v2019_11_01.models.BastionConnectProtocol
     :ivar target_resource_id: The resource id of the target.
     :vartype target_resource_id: str
@@ -3943,7 +3943,7 @@ class BastionHost(Resource):
     :param dns_name: FQDN for the endpoint on which bastion host is accessible.
     :type dns_name: str
     :ivar provisioning_state: The provisioning state of the bastion host resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -3996,10 +3996,10 @@ class BastionHostIPConfiguration(SubResource):
     :param public_ip_address: Reference of the PublicIP resource.
     :type public_ip_address: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the bastion host IP configuration resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param private_ip_allocation_method: Private IP allocation method. Possible values include:
-     'Static', 'Dynamic'.
+     "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     """
@@ -4124,7 +4124,7 @@ class BastionShareableLink(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param vm: Required. Reference of the virtual machine resource.
-    :type vm: ~azure.mgmt.network.v2019_11_01.models.VM
+    :type vm: ~azure.mgmt.network.v2019_11_01.models.Resource
     :ivar bsl: The unique Bastion Shareable Link to the virtual machine.
     :vartype bsl: str
     :ivar created_at: The time when the link was created.
@@ -4142,7 +4142,7 @@ class BastionShareableLink(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'vm': {'key': 'vm', 'type': 'VM'},
+        'vm': {'key': 'vm', 'type': 'Resource'},
         'bsl': {'key': 'bsl', 'type': 'str'},
         'created_at': {'key': 'createdAt', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -4153,7 +4153,7 @@ class BastionShareableLink(msrest.serialization.Model):
         **kwargs
     ):
         super(BastionShareableLink, self).__init__(**kwargs)
-        self.vm = kwargs.get('vm', None)
+        self.vm = kwargs['vm']
         self.bsl = None
         self.created_at = None
         self.message = None
@@ -4253,8 +4253,8 @@ class BgpPeerStatus(msrest.serialization.Model):
     :vartype neighbor: str
     :ivar asn: The autonomous system number of the remote BGP peer.
     :vartype asn: int
-    :ivar state: The BGP peer state. Possible values include: 'Unknown', 'Stopped', 'Idle',
-     'Connecting', 'Connected'.
+    :ivar state: The BGP peer state. Possible values include: "Unknown", "Stopped", "Idle",
+     "Connecting", "Connected".
     :vartype state: str or ~azure.mgmt.network.v2019_11_01.models.BgpPeerState
     :ivar connected_duration: For how long the peering has been up.
     :vartype connected_duration: str
@@ -4618,7 +4618,7 @@ class ConnectionMonitorEndpoint(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectionMonitorEndpoint, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.resource_id = kwargs.get('resource_id', None)
         self.address = kwargs.get('address', None)
         self.filter = kwargs.get('filter', None)
@@ -4691,7 +4691,7 @@ class ConnectionMonitorHttpConfiguration(msrest.serialization.Model):
 
     :param port: The port to connect to.
     :type port: int
-    :param method: The HTTP method to use. Possible values include: 'Get', 'Post'.
+    :param method: The HTTP method to use. Possible values include: "Get", "Post".
     :type method: str or ~azure.mgmt.network.v2019_11_01.models.HTTPConfigurationMethod
     :param path: The path component of the URI. For instance, "/dir1/dir2".
     :type path: str
@@ -4854,8 +4854,8 @@ class ConnectionMonitorParameters(msrest.serialization.Model):
 class ConnectionMonitorQueryResult(msrest.serialization.Model):
     """List of connection states snapshots.
 
-    :param source_status: Status of connection monitor source. Possible values include: 'Unknown',
-     'Active', 'Inactive'.
+    :param source_status: Status of connection monitor source. Possible values include: "Unknown",
+     "Active", "Inactive".
     :type source_status: str or
      ~azure.mgmt.network.v2019_11_01.models.ConnectionMonitorSourceStatus
     :param states: Information about connection states.
@@ -4913,14 +4913,14 @@ class ConnectionMonitorResult(msrest.serialization.Model):
     :param notes: Optional notes to be associated with the connection monitor.
     :type notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
     :ivar monitoring_status: The monitoring status of the connection monitor.
     :vartype monitoring_status: str
     :ivar connection_monitor_type: Type of connection monitor. Possible values include:
-     'MultiEndpoint', 'SingleSourceDestination'.
+     "MultiEndpoint", "SingleSourceDestination".
     :vartype connection_monitor_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ConnectionMonitorType
     """
@@ -5009,14 +5009,14 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     :param notes: Optional notes to be associated with the connection monitor.
     :type notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
     :ivar monitoring_status: The monitoring status of the connection monitor.
     :vartype monitoring_status: str
     :ivar connection_monitor_type: Type of connection monitor. Possible values include:
-     'MultiEndpoint', 'SingleSourceDestination'.
+     "MultiEndpoint", "SingleSourceDestination".
     :vartype connection_monitor_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ConnectionMonitorType
     """
@@ -5080,7 +5080,7 @@ class ConnectionMonitorSource(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectionMonitorSource, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs['resource_id']
         self.port = kwargs.get('port', None)
 
 
@@ -5143,12 +5143,12 @@ class ConnectionMonitorTestConfiguration(msrest.serialization.Model):
     :param test_frequency_sec: The frequency of test evaluation, in seconds.
     :type test_frequency_sec: int
     :param protocol: Required. The protocol to use in test evaluation. Possible values include:
-     'Tcp', 'Http', 'Icmp'.
+     "Tcp", "Http", "Icmp".
     :type protocol: str or
      ~azure.mgmt.network.v2019_11_01.models.ConnectionMonitorTestConfigurationProtocol
     :param preferred_ip_version: The preferred IP version to use in test evaluation. The connection
      monitor may choose to use a different version depending on other parameters. Possible values
-     include: 'IPv4', 'IPv6'.
+     include: "IPv4", "IPv6".
     :type preferred_ip_version: str or ~azure.mgmt.network.v2019_11_01.models.PreferredIPVersion
     :param http_configuration: The parameters used to perform test evaluation over HTTP.
     :type http_configuration:
@@ -5185,9 +5185,9 @@ class ConnectionMonitorTestConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectionMonitorTestConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.test_frequency_sec = kwargs.get('test_frequency_sec', None)
-        self.protocol = kwargs.get('protocol', None)
+        self.protocol = kwargs['protocol']
         self.preferred_ip_version = kwargs.get('preferred_ip_version', None)
         self.http_configuration = kwargs.get('http_configuration', None)
         self.tcp_configuration = kwargs.get('tcp_configuration', None)
@@ -5232,11 +5232,11 @@ class ConnectionMonitorTestGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectionMonitorTestGroup, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.disable = kwargs.get('disable', None)
-        self.test_configurations = kwargs.get('test_configurations', None)
-        self.sources = kwargs.get('sources', None)
-        self.destinations = kwargs.get('destinations', None)
+        self.test_configurations = kwargs['test_configurations']
+        self.sources = kwargs['sources']
+        self.destinations = kwargs['destinations']
 
 
 class ConnectionMonitorWorkspaceSettings(msrest.serialization.Model):
@@ -5281,7 +5281,7 @@ class ConnectionResetSharedKey(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectionResetSharedKey, self).__init__(**kwargs)
-        self.key_length = kwargs.get('key_length', None)
+        self.key_length = kwargs['key_length']
 
 
 class ConnectionSharedKey(SubResource):
@@ -5309,7 +5309,7 @@ class ConnectionSharedKey(SubResource):
         **kwargs
     ):
         super(ConnectionSharedKey, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class ConnectionStateSnapshot(msrest.serialization.Model):
@@ -5317,15 +5317,15 @@ class ConnectionStateSnapshot(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param connection_state: The connection state. Possible values include: 'Reachable',
-     'Unreachable', 'Unknown'.
+    :param connection_state: The connection state. Possible values include: "Reachable",
+     "Unreachable", "Unknown".
     :type connection_state: str or ~azure.mgmt.network.v2019_11_01.models.ConnectionState
     :param start_time: The start time of the connection snapshot.
     :type start_time: ~datetime.datetime
     :param end_time: The end time of the connection snapshot.
     :type end_time: ~datetime.datetime
     :param evaluation_state: Connectivity analysis evaluation state. Possible values include:
-     'NotStarted', 'InProgress', 'Completed'.
+     "NotStarted", "InProgress", "Completed".
     :type evaluation_state: str or ~azure.mgmt.network.v2019_11_01.models.EvaluationState
     :param avg_latency_in_ms: Average latency in ms.
     :type avg_latency_in_ms: int
@@ -5459,8 +5459,8 @@ class ConnectivityInformation(msrest.serialization.Model):
 
     :ivar hops: List of hops between the source and the destination.
     :vartype hops: list[~azure.mgmt.network.v2019_11_01.models.ConnectivityHop]
-    :ivar connection_status: The connection status. Possible values include: 'Unknown',
-     'Connected', 'Disconnected', 'Degraded'.
+    :ivar connection_status: The connection status. Possible values include: "Unknown",
+     "Connected", "Disconnected", "Degraded".
     :vartype connection_status: str or ~azure.mgmt.network.v2019_11_01.models.ConnectionStatus
     :ivar avg_latency_in_ms: Average latency in milliseconds.
     :vartype avg_latency_in_ms: int
@@ -5513,13 +5513,13 @@ class ConnectivityIssue(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar origin: The origin of the issue. Possible values include: 'Local', 'Inbound', 'Outbound'.
+    :ivar origin: The origin of the issue. Possible values include: "Local", "Inbound", "Outbound".
     :vartype origin: str or ~azure.mgmt.network.v2019_11_01.models.Origin
-    :ivar severity: The severity of the issue. Possible values include: 'Error', 'Warning'.
+    :ivar severity: The severity of the issue. Possible values include: "Error", "Warning".
     :vartype severity: str or ~azure.mgmt.network.v2019_11_01.models.Severity
-    :ivar type: The type of issue. Possible values include: 'Unknown', 'AgentStopped',
-     'GuestFirewall', 'DnsResolution', 'SocketBind', 'NetworkSecurityRule', 'UserDefinedRoute',
-     'PortThrottled', 'Platform'.
+    :ivar type: The type of issue. Possible values include: "Unknown", "AgentStopped",
+     "GuestFirewall", "DnsResolution", "SocketBind", "NetworkSecurityRule", "UserDefinedRoute",
+     "PortThrottled", "Platform".
     :vartype type: str or ~azure.mgmt.network.v2019_11_01.models.IssueType
     :ivar context: Provides additional context on the issue.
     :vartype context: list[dict[str, str]]
@@ -5559,12 +5559,12 @@ class ConnectivityParameters(msrest.serialization.Model):
     :type source: ~azure.mgmt.network.v2019_11_01.models.ConnectivitySource
     :param destination: Required. The destination of connection.
     :type destination: ~azure.mgmt.network.v2019_11_01.models.ConnectivityDestination
-    :param protocol: Network protocol. Possible values include: 'Tcp', 'Http', 'Https', 'Icmp'.
+    :param protocol: Network protocol. Possible values include: "Tcp", "Http", "Https", "Icmp".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.Protocol
     :param protocol_configuration: Configuration of the protocol.
     :type protocol_configuration: ~azure.mgmt.network.v2019_11_01.models.ProtocolConfiguration
     :param preferred_ip_version: Preferred IP version of the connection. Possible values include:
-     'IPv4', 'IPv6'.
+     "IPv4", "IPv6".
     :type preferred_ip_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     """
 
@@ -5586,8 +5586,8 @@ class ConnectivityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectivityParameters, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.destination = kwargs.get('destination', None)
+        self.source = kwargs['source']
+        self.destination = kwargs['destination']
         self.protocol = kwargs.get('protocol', None)
         self.protocol_configuration = kwargs.get('protocol_configuration', None)
         self.preferred_ip_version = kwargs.get('preferred_ip_version', None)
@@ -5619,7 +5619,7 @@ class ConnectivitySource(msrest.serialization.Model):
         **kwargs
     ):
         super(ConnectivitySource, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_id = kwargs['resource_id']
         self.port = kwargs.get('port', None)
 
 
@@ -5660,12 +5660,12 @@ class ContainerNetworkInterface(SubResource):
      ~azure.mgmt.network.v2019_11_01.models.ContainerNetworkInterfaceConfiguration
     :param container: Reference to the container to which this container network interface is
      attached.
-    :type container: ~azure.mgmt.network.v2019_11_01.models.Container
+    :type container: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar ip_configurations: Reference to the ip configuration on this container nic.
     :vartype ip_configurations:
      list[~azure.mgmt.network.v2019_11_01.models.ContainerNetworkInterfaceIpConfiguration]
     :ivar provisioning_state: The provisioning state of the container network interface resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -5683,7 +5683,7 @@ class ContainerNetworkInterface(SubResource):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'container_network_interface_configuration': {'key': 'properties.containerNetworkInterfaceConfiguration', 'type': 'ContainerNetworkInterfaceConfiguration'},
-        'container': {'key': 'properties.container', 'type': 'Container'},
+        'container': {'key': 'properties.container', 'type': 'SubResource'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[ContainerNetworkInterfaceIpConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -5722,7 +5722,7 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
      container network interface configuration.
     :type container_network_interfaces: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the container network interface
-     configuration resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     configuration resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -5767,7 +5767,7 @@ class ContainerNetworkInterfaceIpConfiguration(msrest.serialization.Model):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the container network interface IP
-     configuration resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     configuration resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -5817,7 +5817,7 @@ class DdosCustomPolicy(Resource):
      subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS custom policy resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar public_ip_addresses: The list of public IPs associated with the DDoS custom policy
      resource. This list is read-only.
@@ -5883,7 +5883,7 @@ class DdosProtectionPlan(msrest.serialization.Model):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS protection plan resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar virtual_networks: The list of virtual networks associated with the DDoS protection plan
      resource. This list is read-only.
@@ -5963,8 +5963,8 @@ class DdosSettings(msrest.serialization.Model):
     :param ddos_custom_policy: The DDoS custom policy associated with the public IP.
     :type ddos_custom_policy: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param protection_coverage: The DDoS protection policy customizability of the public IP. Only
-     standard coverage will have the ability to be customized. Possible values include: 'Basic',
-     'Standard'.
+     standard coverage will have the ability to be customized. Possible values include: "Basic",
+     "Standard".
     :type protection_coverage: str or
      ~azure.mgmt.network.v2019_11_01.models.DdosSettingsProtectionCoverage
     :param protected_ip: Enables DDoS protection on the public IP.
@@ -6005,7 +6005,7 @@ class Delegation(SubResource):
     :ivar actions: The actions permitted to the service upon delegation.
     :vartype actions: list[str]
     :ivar provisioning_state: The provisioning state of the service delegation resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -6218,8 +6218,8 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
 
     :param name: The name of the security rule specified by the user (if created by the user).
     :type name: str
-    :param protocol: The network protocol this rule applies to. Possible values include: 'Tcp',
-     'Udp', 'All'.
+    :param protocol: The network protocol this rule applies to. Possible values include: "Tcp",
+     "Udp", "All".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.EffectiveSecurityRuleProtocol
     :param source_port_range: The source port or range.
     :type source_port_range: str
@@ -6247,12 +6247,12 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
     :type expanded_source_address_prefix: list[str]
     :param expanded_destination_address_prefix: Expanded destination address prefix.
     :type expanded_destination_address_prefix: list[str]
-    :param access: Whether network traffic is allowed or denied. Possible values include: 'Allow',
-     'Deny'.
+    :param access: Whether network traffic is allowed or denied. Possible values include: "Allow",
+     "Deny".
     :type access: str or ~azure.mgmt.network.v2019_11_01.models.SecurityRuleAccess
     :param priority: The priority of the rule.
     :type priority: int
-    :param direction: The direction of the rule. Possible values include: 'Inbound', 'Outbound'.
+    :param direction: The direction of the rule. Possible values include: "Inbound", "Outbound".
     :type direction: str or ~azure.mgmt.network.v2019_11_01.models.SecurityRuleDirection
     """
 
@@ -6304,17 +6304,17 @@ class EffectiveRoute(msrest.serialization.Model):
     :param disable_bgp_route_propagation: If true, on-premises routes are not propagated to the
      network interfaces in the subnet.
     :type disable_bgp_route_propagation: bool
-    :param source: Who created the route. Possible values include: 'Unknown', 'User',
-     'VirtualNetworkGateway', 'Default'.
+    :param source: Who created the route. Possible values include: "Unknown", "User",
+     "VirtualNetworkGateway", "Default".
     :type source: str or ~azure.mgmt.network.v2019_11_01.models.EffectiveRouteSource
-    :param state: The value of effective route. Possible values include: 'Active', 'Invalid'.
+    :param state: The value of effective route. Possible values include: "Active", "Invalid".
     :type state: str or ~azure.mgmt.network.v2019_11_01.models.EffectiveRouteState
     :param address_prefix: The address prefixes of the effective routes in CIDR notation.
     :type address_prefix: list[str]
     :param next_hop_ip_address: The IP address of the next hop of the effective route.
     :type next_hop_ip_address: list[str]
     :param next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-     include: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', 'None'.
+     include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
     :type next_hop_type: str or ~azure.mgmt.network.v2019_11_01.models.RouteNextHopType
     """
 
@@ -6570,8 +6570,8 @@ class ExpressRouteCircuit(Resource):
     :param circuit_provisioning_state: The CircuitProvisioningState state of the resource.
     :type circuit_provisioning_state: str
     :param service_provider_provisioning_state: The ServiceProviderProvisioningState state of the
-     resource. Possible values include: 'NotProvisioned', 'Provisioning', 'Provisioned',
-     'Deprovisioning'.
+     resource. Possible values include: "NotProvisioned", "Provisioning", "Provisioned",
+     "Deprovisioning".
     :type service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2019_11_01.models.ServiceProviderProvisioningState
     :param authorizations: The list of authorizations.
@@ -6595,7 +6595,7 @@ class ExpressRouteCircuit(Resource):
     :ivar stag: The identifier of the circuit traffic. Outer tag for QinQ encapsulation.
     :vartype stag: int
     :ivar provisioning_state: The provisioning state of the express route circuit resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
@@ -6706,11 +6706,11 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :param authorization_key: The authorization key.
     :type authorization_key: str
     :param authorization_use_status: The authorization use status. Possible values include:
-     'Available', 'InUse'.
+     "Available", "InUse".
     :type authorization_use_status: str or
      ~azure.mgmt.network.v2019_11_01.models.AuthorizationUseStatus
     :ivar provisioning_state: The provisioning state of the authorization resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -6768,11 +6768,11 @@ class ExpressRouteCircuitConnection(SubResource):
     :param authorization_key: The authorization key.
     :type authorization_key: str
     :ivar circuit_connection_status: Express Route Circuit connection state. Possible values
-     include: 'Connected', 'Connecting', 'Disconnected'.
+     include: "Connected", "Connecting", "Disconnected".
     :vartype circuit_connection_status: str or
      ~azure.mgmt.network.v2019_11_01.models.CircuitConnectionStatus
     :ivar provisioning_state: The provisioning state of the express route circuit connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -6873,10 +6873,10 @@ class ExpressRouteCircuitPeering(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :param peering_type: The peering type. Possible values include: 'AzurePublicPeering',
-     'AzurePrivatePeering', 'MicrosoftPeering'.
+    :param peering_type: The peering type. Possible values include: "AzurePublicPeering",
+     "AzurePrivatePeering", "MicrosoftPeering".
     :type peering_type: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRoutePeeringType
-    :param state: The peering state. Possible values include: 'Disabled', 'Enabled'.
+    :param state: The peering state. Possible values include: "Disabled", "Enabled".
     :type state: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRoutePeeringState
     :param azure_asn: The Azure ASN.
     :type azure_asn: int
@@ -6900,7 +6900,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :param stats: The peering stats of express route circuit.
     :type stats: ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitStats
     :ivar provisioning_state: The provisioning state of the express route circuit peering resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
@@ -6998,8 +6998,8 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     :param advertised_communities: The communities of bgp peering. Specified for microsoft peering.
     :type advertised_communities: list[str]
     :ivar advertised_public_prefixes_state: The advertised public prefix state of the Peering
-     resource. Possible values include: 'NotConfigured', 'Configuring', 'Configured',
-     'ValidationNeeded'.
+     resource. Possible values include: "NotConfigured", "Configuring", "Configured",
+     "ValidationNeeded".
     :vartype advertised_public_prefixes_state: str or
      ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :param legacy_mode: The legacy mode of the peering.
@@ -7225,10 +7225,10 @@ class ExpressRouteCircuitSku(msrest.serialization.Model):
 
     :param name: The name of the SKU.
     :type name: str
-    :param tier: The tier of the SKU. Possible values include: 'Standard', 'Premium', 'Basic',
-     'Local'.
+    :param tier: The tier of the SKU. Possible values include: "Standard", "Premium", "Basic",
+     "Local".
     :type tier: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitSkuTier
-    :param family: The family of the SKU. Possible values include: 'UnlimitedData', 'MeteredData'.
+    :param family: The family of the SKU. Possible values include: "UnlimitedData", "MeteredData".
     :type family: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitSkuFamily
     """
 
@@ -7337,7 +7337,7 @@ class ExpressRouteConnection(SubResource):
     :param name: Required. The name of the resource.
     :type name: str
     :ivar provisioning_state: The provisioning state of the express route connection resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param express_route_circuit_peering: The ExpressRoute circuit peering.
     :type express_route_circuit_peering:
@@ -7370,7 +7370,7 @@ class ExpressRouteConnection(SubResource):
         **kwargs
     ):
         super(ExpressRouteConnection, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.provisioning_state = None
         self.express_route_circuit_peering = kwargs.get('express_route_circuit_peering', None)
         self.authorization_key = kwargs.get('authorization_key', None)
@@ -7453,14 +7453,14 @@ class ExpressRouteCrossConnection(Resource):
     :type express_route_circuit:
      ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitReference
     :param service_provider_provisioning_state: The provisioning state of the circuit in the
-     connectivity provider system. Possible values include: 'NotProvisioned', 'Provisioning',
-     'Provisioned', 'Deprovisioning'.
+     connectivity provider system. Possible values include: "NotProvisioned", "Provisioning",
+     "Provisioned", "Deprovisioning".
     :type service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2019_11_01.models.ServiceProviderProvisioningState
     :param service_provider_notes: Additional read only notes set by the connectivity provider.
     :type service_provider_notes: str
     :ivar provisioning_state: The provisioning state of the express route cross connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param peerings: The list of peerings.
     :type peerings: list[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCrossConnectionPeering]
@@ -7554,10 +7554,10 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :param peering_type: The peering type. Possible values include: 'AzurePublicPeering',
-     'AzurePrivatePeering', 'MicrosoftPeering'.
+    :param peering_type: The peering type. Possible values include: "AzurePublicPeering",
+     "AzurePrivatePeering", "MicrosoftPeering".
     :type peering_type: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRoutePeeringType
-    :param state: The peering state. Possible values include: 'Disabled', 'Enabled'.
+    :param state: The peering state. Possible values include: "Disabled", "Enabled".
     :type state: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRoutePeeringState
     :ivar azure_asn: The Azure ASN.
     :vartype azure_asn: int
@@ -7579,7 +7579,7 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     :type microsoft_peering_config:
      ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeeringConfig
     :ivar provisioning_state: The provisioning state of the express route cross connection peering
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
@@ -7761,7 +7761,7 @@ class ExpressRouteGateway(Resource):
     :vartype express_route_connections:
      list[~azure.mgmt.network.v2019_11_01.models.ExpressRouteConnection]
     :ivar provisioning_state: The provisioning state of the express route gateway resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param virtual_hub: The Virtual Hub where the ExpressRoute gateway is or will be deployed.
     :type virtual_hub: ~azure.mgmt.network.v2019_11_01.models.VirtualHubId
@@ -7882,14 +7882,14 @@ class ExpressRouteLink(SubResource):
     :vartype patch_panel_id: str
     :ivar rack_id: Mapping of physical patch panel to rack.
     :vartype rack_id: str
-    :ivar connector_type: Physical fiber port type. Possible values include: 'LC', 'SC'.
+    :ivar connector_type: Physical fiber port type. Possible values include: "LC", "SC".
     :vartype connector_type: str or
      ~azure.mgmt.network.v2019_11_01.models.ExpressRouteLinkConnectorType
     :param admin_state: Administrative state of the physical port. Possible values include:
-     'Enabled', 'Disabled'.
+     "Enabled", "Disabled".
     :type admin_state: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRouteLinkAdminState
     :ivar provisioning_state: The provisioning state of the express route link resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param mac_sec_config: MacSec configuration.
     :type mac_sec_config: ~azure.mgmt.network.v2019_11_01.models.ExpressRouteLinkMacSecConfig
@@ -7966,7 +7966,7 @@ class ExpressRouteLinkMacSecConfig(msrest.serialization.Model):
     :type ckn_secret_identifier: str
     :param cak_secret_identifier: Keyvault Secret Identifier URL containing Mac security CAK key.
     :type cak_secret_identifier: str
-    :param cipher: Mac security cipher. Possible values include: 'gcm-aes-128', 'gcm-aes-256'.
+    :param cipher: Mac security cipher. Possible values include: "gcm-aes-128", "gcm-aes-256".
     :type cipher: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRouteLinkMacSecCipher
     """
 
@@ -8014,8 +8014,8 @@ class ExpressRoutePort(Resource):
     :vartype provisioned_bandwidth_in_gbps: float
     :ivar mtu: Maximum transmission unit of the physical port pair(s).
     :vartype mtu: str
-    :param encapsulation: Encapsulation method on physical ports. Possible values include: 'Dot1Q',
-     'QinQ'.
+    :param encapsulation: Encapsulation method on physical ports. Possible values include: "Dot1Q",
+     "QinQ".
     :type encapsulation: str or
      ~azure.mgmt.network.v2019_11_01.models.ExpressRoutePortsEncapsulation
     :ivar ether_type: Ether type of the physical port.
@@ -8029,7 +8029,7 @@ class ExpressRoutePort(Resource):
      ExpressRoutePort resource.
     :vartype circuits: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the express route port resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the express route port resource.
     :vartype resource_guid: str
@@ -8135,7 +8135,7 @@ class ExpressRoutePortsLocation(Resource):
     :type available_bandwidths:
      list[~azure.mgmt.network.v2019_11_01.models.ExpressRoutePortsLocationBandwidths]
     :ivar provisioning_state: The provisioning state of the express route port location resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -8244,7 +8244,7 @@ class ExpressRouteServiceProvider(Resource):
     :type bandwidths_offered:
      list[~azure.mgmt.network.v2019_11_01.models.ExpressRouteServiceProviderBandwidthsOffered]
     :ivar provisioning_state: The provisioning state of the express route service provider
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -8341,7 +8341,7 @@ class FirewallPolicy(Resource):
     :ivar rule_groups: List of references to FirewallPolicyRuleGroups.
     :vartype rule_groups: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param base_policy: The parent firewall policy from which rules are inherited.
     :type base_policy: ~azure.mgmt.network.v2019_11_01.models.SubResource
@@ -8351,7 +8351,7 @@ class FirewallPolicy(Resource):
     :ivar child_policies: List of references to Child Firewall Policies.
     :vartype child_policies: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :param threat_intel_mode: The operation mode for Threat Intelligence. Possible values include:
-     'Alert', 'Deny', 'Off'.
+     "Alert", "Deny", "Off".
     :type threat_intel_mode: str or
      ~azure.mgmt.network.v2019_11_01.models.AzureFirewallThreatIntelMode
     """
@@ -8404,7 +8404,7 @@ class FirewallPolicyRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param rule_type: Required. The type of the rule.Constant filled by server.  Possible values
-     include: 'FirewallPolicyNatRule', 'FirewallPolicyFilterRule'.
+     include: "FirewallPolicyNatRule", "FirewallPolicyFilterRule".
     :type rule_type: str or ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleType
     :param name: The name of the rule.
     :type name: str
@@ -8443,7 +8443,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
     All required parameters must be populated in order to send to Azure.
 
     :param rule_type: Required. The type of the rule.Constant filled by server.  Possible values
-     include: 'FirewallPolicyNatRule', 'FirewallPolicyFilterRule'.
+     include: "FirewallPolicyNatRule", "FirewallPolicyFilterRule".
     :type rule_type: str or ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleType
     :param name: The name of the rule.
     :type name: str
@@ -8481,7 +8481,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
 class FirewallPolicyFilterRuleAction(msrest.serialization.Model):
     """Properties of the FirewallPolicyFilterRuleAction.
 
-    :param type: The type of action. Possible values include: 'Allow', 'Deny'.
+    :param type: The type of action. Possible values include: "Allow", "Deny".
     :type type: str or ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyFilterRuleActionType
     """
 
@@ -8526,7 +8526,7 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
     All required parameters must be populated in order to send to Azure.
 
     :param rule_type: Required. The type of the rule.Constant filled by server.  Possible values
-     include: 'FirewallPolicyNatRule', 'FirewallPolicyFilterRule'.
+     include: "FirewallPolicyNatRule", "FirewallPolicyFilterRule".
     :type rule_type: str or ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleType
     :param name: The name of the rule.
     :type name: str
@@ -8598,7 +8598,7 @@ class FirewallPolicyNatRuleAction(msrest.serialization.Model):
 class FirewallPolicyRuleConditionApplicationProtocol(msrest.serialization.Model):
     """Properties of the application rule protocol.
 
-    :param protocol_type: Protocol type. Possible values include: 'Http', 'Https'.
+    :param protocol_type: Protocol type. Possible values include: "Http", "Https".
     :type protocol_type: str or
      ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleConditionApplicationProtocolType
     :param port: Port number for the protocol, cannot be greater than 64000.
@@ -8642,7 +8642,7 @@ class FirewallPolicyRuleGroup(SubResource):
     :param rules: Group of Firewall Policy rules.
     :type rules: list[~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRule]
     :ivar provisioning_state: The provisioning state of the firewall policy rule group resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -8733,7 +8733,7 @@ class FlowLog(Resource):
     :type flow_analytics_configuration:
      ~azure.mgmt.network.v2019_11_01.models.TrafficAnalyticsProperties
     :ivar provisioning_state: The provisioning state of the flow log. Possible values include:
-     'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -8850,10 +8850,10 @@ class FlowLogInformation(msrest.serialization.Model):
         **kwargs
     ):
         super(FlowLogInformation, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_resource_id = kwargs['target_resource_id']
         self.flow_analytics_configuration = kwargs.get('flow_analytics_configuration', None)
-        self.storage_id = kwargs.get('storage_id', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.storage_id = kwargs['storage_id']
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
         self.format = kwargs.get('format', None)
 
@@ -8910,7 +8910,7 @@ class FlowLogStatusParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(FlowLogStatusParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_resource_id = kwargs['target_resource_id']
 
 
 class FrontendIPConfiguration(SubResource):
@@ -8942,11 +8942,11 @@ class FrontendIPConfiguration(SubResource):
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The Private IP allocation method. Possible values include:
-     'Static', 'Dynamic'.
+     "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param private_ip_address_version: Whether the specific ipconfiguration is IPv4 or IPv6.
-     Default is taken as IPv4. Possible values include: 'IPv4', 'IPv6'.
+     Default is taken as IPv4. Possible values include: "IPv4", "IPv6".
     :type private_ip_address_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     :param subnet: The reference to the subnet resource.
     :type subnet: ~azure.mgmt.network.v2019_11_01.models.Subnet
@@ -8955,7 +8955,7 @@ class FrontendIPConfiguration(SubResource):
     :param public_ip_prefix: The reference to the Public IP Prefix resource.
     :type public_ip_prefix: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9110,7 +9110,7 @@ class GetVpnSitesConfigurationRequest(msrest.serialization.Model):
     ):
         super(GetVpnSitesConfigurationRequest, self).__init__(**kwargs)
         self.vpn_sites = kwargs.get('vpn_sites', None)
-        self.output_blob_sas_url = kwargs.get('output_blob_sas_url', None)
+        self.output_blob_sas_url = kwargs['output_blob_sas_url']
 
 
 class HTTPConfiguration(msrest.serialization.Model):
@@ -9216,7 +9216,7 @@ class HubVirtualNetworkConnection(SubResource):
     :param enable_internet_security: Enable internet security.
     :type enable_internet_security: bool
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9267,7 +9267,7 @@ class InboundNatPool(SubResource):
     :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param protocol: The reference to the transport protocol used by the inbound NAT pool. Possible
-     values include: 'Udp', 'Tcp', 'All'.
+     values include: "Udp", "Tcp", "All".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.TransportProtocol
     :param frontend_port_range_start: The first port number in the range of external ports that
      will be used to provide Inbound Nat to NICs associated with a load balancer. Acceptable values
@@ -9293,7 +9293,7 @@ class InboundNatPool(SubResource):
      connection termination. This element is only used when the protocol is set to TCP.
     :type enable_tcp_reset: bool
     :ivar provisioning_state: The provisioning state of the inbound NAT pool resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9360,7 +9360,7 @@ class InboundNatRule(SubResource):
     :vartype backend_ip_configuration:
      ~azure.mgmt.network.v2019_11_01.models.NetworkInterfaceIPConfiguration
     :param protocol: The reference to the transport protocol used by the load balancing rule.
-     Possible values include: 'Udp', 'Tcp', 'All'.
+     Possible values include: "Udp", "Tcp", "All".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.TransportProtocol
     :param frontend_port: The port for the external endpoint. Port numbers for each rule must be
      unique within the Load Balancer. Acceptable values range from 1 to 65534.
@@ -9381,7 +9381,7 @@ class InboundNatRule(SubResource):
      connection termination. This element is only used when the protocol is set to TCP.
     :type enable_tcp_reset: bool
     :ivar provisioning_state: The provisioning state of the inbound NAT rule resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9495,7 +9495,7 @@ class IPConfiguration(SubResource):
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The private IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param subnet: The reference to the subnet resource.
@@ -9503,7 +9503,7 @@ class IPConfiguration(SubResource):
     :param public_ip_address: The reference to the public IP resource.
     :type public_ip_address: ~azure.mgmt.network.v2019_11_01.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9554,7 +9554,7 @@ class IPConfigurationProfile(SubResource):
      configuration.
     :type subnet: ~azure.mgmt.network.v2019_11_01.models.Subnet
     :ivar provisioning_state: The provisioning state of the IP configuration profile resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -9603,7 +9603,7 @@ class IpGroup(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the IpGroups resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param ip_addresses: IpAddresses/IpAddressPrefixes in the IpGroups resource.
     :type ip_addresses: list[str]
@@ -9677,24 +9677,24 @@ class IpsecPolicy(msrest.serialization.Model):
      or Phase 2 SA) payload size in KB for a site to site VPN tunnel.
     :type sa_data_size_kilobytes: int
     :param ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Possible
-     values include: 'None', 'DES', 'DES3', 'AES128', 'AES192', 'AES256', 'GCMAES128', 'GCMAES192',
-     'GCMAES256'.
+     values include: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
+     "GCMAES256".
     :type ipsec_encryption: str or ~azure.mgmt.network.v2019_11_01.models.IpsecEncryption
     :param ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Possible values
-     include: 'MD5', 'SHA1', 'SHA256', 'GCMAES128', 'GCMAES192', 'GCMAES256'.
+     include: "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
     :type ipsec_integrity: str or ~azure.mgmt.network.v2019_11_01.models.IpsecIntegrity
     :param ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Possible values
-     include: 'DES', 'DES3', 'AES128', 'AES192', 'AES256', 'GCMAES256', 'GCMAES128'.
+     include: "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES256", "GCMAES128".
     :type ike_encryption: str or ~azure.mgmt.network.v2019_11_01.models.IkeEncryption
     :param ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Possible values
-     include: 'MD5', 'SHA1', 'SHA256', 'SHA384', 'GCMAES256', 'GCMAES128'.
+     include: "MD5", "SHA1", "SHA256", "SHA384", "GCMAES256", "GCMAES128".
     :type ike_integrity: str or ~azure.mgmt.network.v2019_11_01.models.IkeIntegrity
     :param dh_group: Required. The DH Group used in IKE Phase 1 for initial SA. Possible values
-     include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14', 'DHGroup2048', 'ECP256', 'ECP384',
-     'DHGroup24'.
+     include: "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384",
+     "DHGroup24".
     :type dh_group: str or ~azure.mgmt.network.v2019_11_01.models.DhGroup
     :param pfs_group: Required. The Pfs Group used in IKE Phase 2 for new child SA. Possible values
-     include: 'None', 'PFS1', 'PFS2', 'PFS2048', 'ECP256', 'ECP384', 'PFS24', 'PFS14', 'PFSMM'.
+     include: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24", "PFS14", "PFSMM".
     :type pfs_group: str or ~azure.mgmt.network.v2019_11_01.models.PfsGroup
     """
 
@@ -9725,14 +9725,14 @@ class IpsecPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(IpsecPolicy, self).__init__(**kwargs)
-        self.sa_life_time_seconds = kwargs.get('sa_life_time_seconds', None)
-        self.sa_data_size_kilobytes = kwargs.get('sa_data_size_kilobytes', None)
-        self.ipsec_encryption = kwargs.get('ipsec_encryption', None)
-        self.ipsec_integrity = kwargs.get('ipsec_integrity', None)
-        self.ike_encryption = kwargs.get('ike_encryption', None)
-        self.ike_integrity = kwargs.get('ike_integrity', None)
-        self.dh_group = kwargs.get('dh_group', None)
-        self.pfs_group = kwargs.get('pfs_group', None)
+        self.sa_life_time_seconds = kwargs['sa_life_time_seconds']
+        self.sa_data_size_kilobytes = kwargs['sa_data_size_kilobytes']
+        self.ipsec_encryption = kwargs['ipsec_encryption']
+        self.ipsec_integrity = kwargs['ipsec_integrity']
+        self.ike_encryption = kwargs['ike_encryption']
+        self.ike_integrity = kwargs['ike_integrity']
+        self.dh_group = kwargs['dh_group']
+        self.pfs_group = kwargs['pfs_group']
 
 
 class IpTag(msrest.serialization.Model):
@@ -9770,7 +9770,7 @@ class Ipv6ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
      ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeeringConfig
     :param route_filter: The reference to the RouteFilter resource.
     :type route_filter: ~azure.mgmt.network.v2019_11_01.models.SubResource
-    :param state: The state of peering. Possible values include: 'Disabled', 'Enabled'.
+    :param state: The state of peering. Possible values include: "Disabled", "Enabled".
     :type state: str or ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeeringState
     """
 
@@ -10096,7 +10096,7 @@ class LoadBalancer(Resource):
     :ivar resource_guid: The resource GUID property of the load balancer resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the load balancer resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -10322,7 +10322,7 @@ class LoadBalancerProbeListResult(msrest.serialization.Model):
 class LoadBalancerSku(msrest.serialization.Model):
     """SKU of a load balancer.
 
-    :param name: Name of a load balancer SKU. Possible values include: 'Basic', 'Standard'.
+    :param name: Name of a load balancer SKU. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.network.v2019_11_01.models.LoadBalancerSkuName
     """
 
@@ -10360,10 +10360,10 @@ class LoadBalancingRule(SubResource):
     :param probe: The reference to the load balancer probe used by the load balancing rule.
     :type probe: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param protocol: The reference to the transport protocol used by the load balancing rule.
-     Possible values include: 'Udp', 'Tcp', 'All'.
+     Possible values include: "Udp", "Tcp", "All".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.TransportProtocol
     :param load_distribution: The load distribution policy for this rule. Possible values include:
-     'Default', 'SourceIP', 'SourceIPProtocol'.
+     "Default", "SourceIP", "SourceIPProtocol".
     :type load_distribution: str or ~azure.mgmt.network.v2019_11_01.models.LoadDistribution
     :param frontend_port: The port for the external endpoint. Port numbers for each rule must be
      unique within the Load Balancer. Acceptable values are between 0 and 65534. Note that value 0
@@ -10388,7 +10388,7 @@ class LoadBalancingRule(SubResource):
      publicIP address specified in the frontend of the load balancing rule.
     :type disable_outbound_snat: bool
     :ivar provisioning_state: The provisioning state of the load balancing rule resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -10465,7 +10465,7 @@ class LocalNetworkGateway(Resource):
     :ivar resource_guid: The resource GUID property of the local network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the local network gateway resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -10586,7 +10586,7 @@ class ManagedRuleGroupOverride(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagedRuleGroupOverride, self).__init__(**kwargs)
-        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.rule_group_name = kwargs['rule_group_name']
         self.rules = kwargs.get('rules', None)
 
 
@@ -10621,7 +10621,7 @@ class ManagedRuleOverride(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagedRuleOverride, self).__init__(**kwargs)
-        self.rule_id = kwargs.get('rule_id', None)
+        self.rule_id = kwargs['rule_id']
 
 
 class ManagedRulesDefinition(msrest.serialization.Model):
@@ -10650,7 +10650,7 @@ class ManagedRulesDefinition(msrest.serialization.Model):
     ):
         super(ManagedRulesDefinition, self).__init__(**kwargs)
         self.exclusions = kwargs.get('exclusions', None)
-        self.managed_rule_sets = kwargs.get('managed_rule_sets', None)
+        self.managed_rule_sets = kwargs['managed_rule_sets']
 
 
 class ManagedRuleSet(msrest.serialization.Model):
@@ -10683,8 +10683,8 @@ class ManagedRuleSet(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagedRuleSet, self).__init__(**kwargs)
-        self.rule_set_type = kwargs.get('rule_set_type', None)
-        self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.rule_set_type = kwargs['rule_set_type']
+        self.rule_set_version = kwargs['rule_set_version']
         self.rule_group_overrides = kwargs.get('rule_group_overrides', None)
 
 
@@ -10702,7 +10702,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :param type: The type of identity used for the resource. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user assigned
      identities. The type 'None' will remove any identities from the virtual machine. Possible
-     values include: 'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'.
+     values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
     :type type: str or ~azure.mgmt.network.v2019_11_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with resource. The user
      identity dictionary key references will be ARM resource ids in the form:
@@ -10741,9 +10741,9 @@ class MatchCondition(msrest.serialization.Model):
 
     :param match_variables: Required. List of match variables.
     :type match_variables: list[~azure.mgmt.network.v2019_11_01.models.MatchVariable]
-    :param operator: Required. The operator to be matched. Possible values include: 'IPMatch',
-     'Equal', 'Contains', 'LessThan', 'GreaterThan', 'LessThanOrEqual', 'GreaterThanOrEqual',
-     'BeginsWith', 'EndsWith', 'Regex', 'GeoMatch'.
+    :param operator: Required. The operator to be matched. Possible values include: "IPMatch",
+     "Equal", "Contains", "LessThan", "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual",
+     "BeginsWith", "EndsWith", "Regex", "GeoMatch".
     :type operator: str or ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallOperator
     :param negation_conditon: Whether this is negate condition or not.
     :type negation_conditon: bool
@@ -10773,10 +10773,10 @@ class MatchCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(MatchCondition, self).__init__(**kwargs)
-        self.match_variables = kwargs.get('match_variables', None)
-        self.operator = kwargs.get('operator', None)
+        self.match_variables = kwargs['match_variables']
+        self.operator = kwargs['operator']
         self.negation_conditon = kwargs.get('negation_conditon', None)
-        self.match_values = kwargs.get('match_values', None)
+        self.match_values = kwargs['match_values']
         self.transforms = kwargs.get('transforms', None)
 
 
@@ -10809,9 +10809,9 @@ class MatchVariable(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param variable_name: Required. Match Variable. Possible values include: 'RemoteAddr',
-     'RequestMethod', 'QueryString', 'PostArgs', 'RequestUri', 'RequestHeaders', 'RequestBody',
-     'RequestCookies'.
+    :param variable_name: Required. Match Variable. Possible values include: "RemoteAddr",
+     "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeaders", "RequestBody",
+     "RequestCookies".
     :type variable_name: str or
      ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallMatchVariable
     :param selector: The selector of match variable.
@@ -10832,7 +10832,7 @@ class MatchVariable(msrest.serialization.Model):
         **kwargs
     ):
         super(MatchVariable, self).__init__(**kwargs)
-        self.variable_name = kwargs.get('variable_name', None)
+        self.variable_name = kwargs['variable_name']
         self.selector = kwargs.get('selector', None)
 
 
@@ -10942,7 +10942,7 @@ class NatGateway(Resource):
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -11046,7 +11046,7 @@ class NetworkConfigurationDiagnosticParameters(msrest.serialization.Model):
      configuration diagnostic. Valid options are VM, NetworkInterface, VMSS/NetworkInterface and
      Application Gateway.
     :type target_resource_id: str
-    :param verbosity_level: Verbosity level. Possible values include: 'Normal', 'Minimum', 'Full'.
+    :param verbosity_level: Verbosity level. Possible values include: "Normal", "Minimum", "Full".
     :type verbosity_level: str or ~azure.mgmt.network.v2019_11_01.models.VerbosityLevel
     :param profiles: Required. List of network configuration diagnostic profiles.
     :type profiles:
@@ -11069,9 +11069,9 @@ class NetworkConfigurationDiagnosticParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(NetworkConfigurationDiagnosticParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_resource_id = kwargs['target_resource_id']
         self.verbosity_level = kwargs.get('verbosity_level', None)
-        self.profiles = kwargs.get('profiles', None)
+        self.profiles = kwargs['profiles']
 
 
 class NetworkConfigurationDiagnosticProfile(msrest.serialization.Model):
@@ -11079,8 +11079,8 @@ class NetworkConfigurationDiagnosticProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param direction: Required. The direction of the traffic. Possible values include: 'Inbound',
-     'Outbound'.
+    :param direction: Required. The direction of the traffic. Possible values include: "Inbound",
+     "Outbound".
     :type direction: str or ~azure.mgmt.network.v2019_11_01.models.Direction
     :param protocol: Required. Protocol to be verified on. Accepted values are '*', TCP, UDP.
     :type protocol: str
@@ -11115,11 +11115,11 @@ class NetworkConfigurationDiagnosticProfile(msrest.serialization.Model):
         **kwargs
     ):
         super(NetworkConfigurationDiagnosticProfile, self).__init__(**kwargs)
-        self.direction = kwargs.get('direction', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.source = kwargs.get('source', None)
-        self.destination = kwargs.get('destination', None)
-        self.destination_port = kwargs.get('destination_port', None)
+        self.direction = kwargs['direction']
+        self.protocol = kwargs['protocol']
+        self.source = kwargs['source']
+        self.destination = kwargs['destination']
+        self.destination_port = kwargs['destination_port']
 
 
 class NetworkConfigurationDiagnosticResponse(msrest.serialization.Model):
@@ -11285,7 +11285,7 @@ class NetworkInterface(Resource):
     :ivar resource_guid: The resource GUID property of the network interface resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network interface resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -11454,11 +11454,11 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param private_ip_address: Private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The private IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
-     Default is IPv4. Possible values include: 'IPv4', 'IPv6'.
+     Default is IPv4. Possible values include: "IPv4", "IPv6".
     :type private_ip_address_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     :param subnet: Subnet bound to the IP configuration.
     :type subnet: ~azure.mgmt.network.v2019_11_01.models.Subnet
@@ -11471,7 +11471,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :type application_security_groups:
      list[~azure.mgmt.network.v2019_11_01.models.ApplicationSecurityGroup]
     :ivar provisioning_state: The provisioning state of the network interface IP configuration.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar private_link_connection_properties: PrivateLinkConnection properties for the network
      interface.
@@ -11665,7 +11665,7 @@ class NetworkInterfaceTapConfiguration(SubResource):
     :param virtual_network_tap: The reference to the Virtual Network Tap resource.
     :type virtual_network_tap: ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkTap
     :ivar provisioning_state: The provisioning state of the network interface tap configuration
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -11752,7 +11752,7 @@ class NetworkProfile(Resource):
     :ivar resource_guid: The resource GUID property of the network profile resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network profile resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -11823,7 +11823,7 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
     :param description: Description of the rule condition.
     :type description: str
     :param rule_condition_type: Required. Rule Condition Type.Constant filled by server.  Possible
-     values include: 'ApplicationRuleCondition', 'NetworkRuleCondition'.
+     values include: "ApplicationRuleCondition", "NetworkRuleCondition".
     :type rule_condition_type: str or
      ~azure.mgmt.network.v2019_11_01.models.FirewallPolicyRuleConditionType
     :param ip_protocols: Array of FirewallPolicyRuleConditionNetworkProtocols.
@@ -11891,7 +11891,7 @@ class NetworkSecurityGroup(Resource):
     :ivar resource_guid: The resource GUID property of the network security group resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network security group resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -11964,7 +11964,7 @@ class NetworkSecurityGroupResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param security_rule_access_result: The network traffic is allowed or denied. Possible values
-     include: 'Allow', 'Deny'.
+     include: "Allow", "Deny".
     :type security_rule_access_result: str or
      ~azure.mgmt.network.v2019_11_01.models.SecurityRuleAccess
     :ivar evaluated_network_security_groups: List of results network security groups diagnostic.
@@ -12047,7 +12047,7 @@ class NetworkWatcher(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the network watcher resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -12131,17 +12131,17 @@ class NextHopParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(NextHopParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
-        self.source_ip_address = kwargs.get('source_ip_address', None)
-        self.destination_ip_address = kwargs.get('destination_ip_address', None)
+        self.target_resource_id = kwargs['target_resource_id']
+        self.source_ip_address = kwargs['source_ip_address']
+        self.destination_ip_address = kwargs['destination_ip_address']
         self.target_nic_resource_id = kwargs.get('target_nic_resource_id', None)
 
 
 class NextHopResult(msrest.serialization.Model):
     """The information about next hop from the specified VM.
 
-    :param next_hop_type: Next hop type. Possible values include: 'Internet', 'VirtualAppliance',
-     'VirtualNetworkGateway', 'VnetLocal', 'HyperNetGateway', 'None'.
+    :param next_hop_type: Next hop type. Possible values include: "Internet", "VirtualAppliance",
+     "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "None".
     :type next_hop_type: str or ~azure.mgmt.network.v2019_11_01.models.NextHopType
     :param next_hop_ip_address: Next hop IP Address.
     :type next_hop_ip_address: str
@@ -12298,10 +12298,10 @@ class OutboundRule(SubResource):
      balanced across IPs in the backend IPs.
     :type backend_address_pool: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the outbound rule resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param protocol: The protocol for the outbound rule in load balancer. Possible values include:
-     'Tcp', 'Udp', 'All'.
+     "Tcp", "Udp", "All".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.LoadBalancerOutboundRuleProtocol
     :param enable_tcp_reset: Receive bidirectional TCP Reset on TCP flow idle timeout or unexpected
      connection termination. This element is only used when the protocol is set to TCP.
@@ -12353,12 +12353,12 @@ class OwaspCrsExclusionEntry(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param match_variable: Required. The variable to be excluded. Possible values include:
-     'RequestHeaderNames', 'RequestCookieNames', 'RequestArgNames'.
+     "RequestHeaderNames", "RequestCookieNames", "RequestArgNames".
     :type match_variable: str or
      ~azure.mgmt.network.v2019_11_01.models.OwaspCrsExclusionEntryMatchVariable
     :param selector_match_operator: Required. When matchVariable is a collection, operate on the
      selector to specify which elements in the collection this exclusion applies to. Possible values
-     include: 'Equals', 'Contains', 'StartsWith', 'EndsWith', 'EqualsAny'.
+     include: "Equals", "Contains", "StartsWith", "EndsWith", "EqualsAny".
     :type selector_match_operator: str or
      ~azure.mgmt.network.v2019_11_01.models.OwaspCrsExclusionEntrySelectorMatchOperator
     :param selector: Required. When matchVariable is a collection, operator used to specify which
@@ -12383,9 +12383,9 @@ class OwaspCrsExclusionEntry(msrest.serialization.Model):
         **kwargs
     ):
         super(OwaspCrsExclusionEntry, self).__init__(**kwargs)
-        self.match_variable = kwargs.get('match_variable', None)
-        self.selector_match_operator = kwargs.get('selector_match_operator', None)
-        self.selector = kwargs.get('selector', None)
+        self.match_variable = kwargs['match_variable']
+        self.selector_match_operator = kwargs['selector_match_operator']
+        self.selector = kwargs['selector']
 
 
 class P2SConnectionConfiguration(SubResource):
@@ -12404,7 +12404,7 @@ class P2SConnectionConfiguration(SubResource):
      Address space for P2S VpnClient.
     :type vpn_client_address_pool: ~azure.mgmt.network.v2019_11_01.models.AddressSpace
     :ivar provisioning_state: The provisioning state of the P2SConnectionConfiguration resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -12519,7 +12519,7 @@ class P2SVpnGateway(Resource):
     :type p2_s_connection_configurations:
      list[~azure.mgmt.network.v2019_11_01.models.P2SConnectionConfiguration]
     :ivar provisioning_state: The provisioning state of the P2S VPN gateway resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :type vpn_gateway_scale_unit: int
@@ -12572,7 +12572,7 @@ class P2SVpnProfileParameters(msrest.serialization.Model):
     """Vpn Client Parameters for package generation.
 
     :param authentication_method: VPN client authentication method. Possible values include:
-     'EAPTLS', 'EAPMSCHAPv2'.
+     "EAPTLS", "EAPMSCHAPv2".
     :type authentication_method: str or ~azure.mgmt.network.v2019_11_01.models.AuthenticationMethod
     """
 
@@ -12627,18 +12627,18 @@ class PacketCapture(msrest.serialization.Model):
         **kwargs
     ):
         super(PacketCapture, self).__init__(**kwargs)
-        self.target = kwargs.get('target', None)
+        self.target = kwargs['target']
         self.bytes_to_capture_per_packet = kwargs.get('bytes_to_capture_per_packet', 0)
         self.total_bytes_per_session = kwargs.get('total_bytes_per_session', 1073741824)
         self.time_limit_in_seconds = kwargs.get('time_limit_in_seconds', 18000)
-        self.storage_location = kwargs.get('storage_location', None)
+        self.storage_location = kwargs['storage_location']
         self.filters = kwargs.get('filters', None)
 
 
 class PacketCaptureFilter(msrest.serialization.Model):
     """Filter that is applied to packet capture request. Multiple filters can be applied.
 
-    :param protocol: Protocol to be filtered on. Possible values include: 'TCP', 'UDP', 'Any'.
+    :param protocol: Protocol to be filtered on. Possible values include: "TCP", "UDP", "Any".
      Default value: "Any".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.PcProtocol
     :param local_ip_address: Local IP Address to be filtered on. Notation: "127.0.0.1" for single
@@ -12739,11 +12739,11 @@ class PacketCaptureParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(PacketCaptureParameters, self).__init__(**kwargs)
-        self.target = kwargs.get('target', None)
+        self.target = kwargs['target']
         self.bytes_to_capture_per_packet = kwargs.get('bytes_to_capture_per_packet', 0)
         self.total_bytes_per_session = kwargs.get('total_bytes_per_session', 1073741824)
         self.time_limit_in_seconds = kwargs.get('time_limit_in_seconds', 18000)
-        self.storage_location = kwargs.get('storage_location', None)
+        self.storage_location = kwargs['storage_location']
         self.filters = kwargs.get('filters', None)
 
 
@@ -12757,7 +12757,7 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
     :param capture_start_time: The start time of the packet capture session.
     :type capture_start_time: ~datetime.datetime
     :param packet_capture_status: The status of the packet capture session. Possible values
-     include: 'NotStarted', 'Running', 'Stopped', 'Error', 'Unknown'.
+     include: "NotStarted", "Running", "Stopped", "Error", "Unknown".
     :type packet_capture_status: str or ~azure.mgmt.network.v2019_11_01.models.PcStatus
     :param stop_reason: The reason the current packet capture session was stopped.
     :type stop_reason: str
@@ -12812,7 +12812,7 @@ class PacketCaptureResult(msrest.serialization.Model):
     :param filters: A list of packet capture filters.
     :type filters: list[~azure.mgmt.network.v2019_11_01.models.PacketCaptureFilter]
     :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -12874,7 +12874,7 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
     :param filters: A list of packet capture filters.
     :type filters: list[~azure.mgmt.network.v2019_11_01.models.PacketCaptureFilter]
     :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -12956,7 +12956,7 @@ class PatchRouteFilter(SubResource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -13008,7 +13008,7 @@ class PatchRouteFilterRule(SubResource):
     :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :param access: The access type of the rule. Possible values include: 'Allow', 'Deny'.
+    :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2019_11_01.models.Access
     :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
     :vartype route_filter_rule_type: str
@@ -13016,7 +13016,7 @@ class PatchRouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :type communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -13074,7 +13074,7 @@ class PeerExpressRouteCircuitConnection(SubResource):
     :param address_prefix: /29 IP address space to carve out Customer addresses for tunnels.
     :type address_prefix: str
     :ivar circuit_connection_status: Express Route Circuit connection state. Possible values
-     include: 'Connected', 'Connecting', 'Disconnected'.
+     include: "Connected", "Connecting", "Disconnected".
     :vartype circuit_connection_status: str or
      ~azure.mgmt.network.v2019_11_01.models.CircuitConnectionStatus
     :param connection_name: The name of the express route circuit connection resource.
@@ -13083,7 +13083,7 @@ class PeerExpressRouteCircuitConnection(SubResource):
      circuit connection.
     :type auth_resource_guid: str
     :ivar provisioning_state: The provisioning state of the peer express route circuit connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -13152,9 +13152,9 @@ class PeerExpressRouteCircuitConnectionListResult(msrest.serialization.Model):
 class PolicySettings(msrest.serialization.Model):
     """Defines contents of a web application firewall global configuration.
 
-    :param state: The state of the policy. Possible values include: 'Disabled', 'Enabled'.
+    :param state: The state of the policy. Possible values include: "Disabled", "Enabled".
     :type state: str or ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallEnabledState
-    :param mode: The mode of the policy. Possible values include: 'Prevention', 'Detection'.
+    :param mode: The mode of the policy. Possible values include: "Prevention", "Detection".
     :type mode: str or ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallMode
     :param request_body_check: Whether to allow WAF to check request Body.
     :type request_body_check: bool
@@ -13236,7 +13236,7 @@ class PrivateEndpoint(Resource):
      private endpoint.
     :vartype network_interfaces: list[~azure.mgmt.network.v2019_11_01.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private endpoint resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param private_link_service_connections: A grouping of information about the connection to the
      remote resource.
@@ -13305,7 +13305,7 @@ class PrivateEndpointConnection(SubResource):
     :type private_link_service_connection_state:
      ~azure.mgmt.network.v2019_11_01.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -13431,16 +13431,15 @@ class PrivateLinkService(Resource):
      private link service.
     :vartype network_interfaces: list[~azure.mgmt.network.v2019_11_01.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private link service resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :ivar private_endpoint_connections: An array of list about connections to the private endpoint.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.network.v2019_11_01.models.PrivateEndpointConnection]
     :param visibility: The visibility list of the private link service.
-    :type visibility: ~azure.mgmt.network.v2019_11_01.models.PrivateLinkServicePropertiesVisibility
+    :type visibility: ~azure.mgmt.network.v2019_11_01.models.ResourceSet
     :param auto_approval: The auto-approval list of the private link service.
-    :type auto_approval:
-     ~azure.mgmt.network.v2019_11_01.models.PrivateLinkServicePropertiesAutoApproval
+    :type auto_approval: ~azure.mgmt.network.v2019_11_01.models.ResourceSet
     :param fqdns: The list of Fqdn.
     :type fqdns: list[str]
     :ivar alias: The alias of the private link service.
@@ -13472,8 +13471,8 @@ class PrivateLinkService(Resource):
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'visibility': {'key': 'properties.visibility', 'type': 'PrivateLinkServicePropertiesVisibility'},
-        'auto_approval': {'key': 'properties.autoApproval', 'type': 'PrivateLinkServicePropertiesAutoApproval'},
+        'visibility': {'key': 'properties.visibility', 'type': 'ResourceSet'},
+        'auto_approval': {'key': 'properties.autoApproval', 'type': 'ResourceSet'},
         'fqdns': {'key': 'properties.fqdns', 'type': '[str]'},
         'alias': {'key': 'properties.alias', 'type': 'str'},
         'enable_proxy_protocol': {'key': 'properties.enableProxyProtocol', 'type': 'bool'},
@@ -13512,7 +13511,7 @@ class PrivateLinkServiceConnection(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private link service connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param private_link_service_id: The resource id of private link service.
     :type private_link_service_id: str
@@ -13606,7 +13605,7 @@ class PrivateLinkServiceIpConfiguration(SubResource):
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The private IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param subnet: The reference to the subnet resource.
@@ -13614,10 +13613,10 @@ class PrivateLinkServiceIpConfiguration(SubResource):
     :param primary: Whether the ip configuration is primary or not.
     :type primary: bool
     :ivar provisioning_state: The provisioning state of the private link service IP configuration
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
-     Default is IPv4. Possible values include: 'IPv4', 'IPv6'.
+     Default is IPv4. Possible values include: "IPv4", "IPv6".
     :type private_ip_address_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     """
 
@@ -13778,7 +13777,7 @@ class Probe(SubResource):
     :param protocol: The protocol of the end point. If 'Tcp' is specified, a received ACK is
      required for the probe to be successful. If 'Http' or 'Https' is specified, a 200 OK response
      from the specifies URI is required for the probe to be successful. Possible values include:
-     'Http', 'Tcp', 'Https'.
+     "Http", "Tcp", "Https".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.ProbeProtocol
     :param port: The port for communicating the probe. Possible values range from 1 to 65535,
      inclusive.
@@ -13796,7 +13795,7 @@ class Probe(SubResource):
      a protocol is set to http. Otherwise, it is not allowed. There is no default value.
     :type request_path: str
     :ivar provisioning_state: The provisioning state of the probe resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -13861,7 +13860,7 @@ class ProtocolCustomSettingsFormat(msrest.serialization.Model):
     """DDoS custom policy properties.
 
     :param protocol: The protocol for which the DDoS protection policy is being customized.
-     Possible values include: 'Tcp', 'Udp', 'Syn'.
+     Possible values include: "Tcp", "Udp", "Syn".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.DdosCustomPolicyProtocol
     :param trigger_rate_override: The customized DDoS protection trigger rate.
     :type trigger_rate_override: str
@@ -13871,7 +13870,7 @@ class ProtocolCustomSettingsFormat(msrest.serialization.Model):
      degrees. High: Trigger rate set with most sensitivity w.r.t. normal traffic. Default: Trigger
      rate set with moderate sensitivity w.r.t. normal traffic. Low: Trigger rate set with less
      sensitivity w.r.t. normal traffic. Relaxed: Trigger rate set with least sensitivity w.r.t.
-     normal traffic. Possible values include: 'Relaxed', 'Low', 'Default', 'High'.
+     normal traffic. Possible values include: "Relaxed", "Low", "Default", "High".
     :type trigger_sensitivity_override: str or
      ~azure.mgmt.network.v2019_11_01.models.DdosCustomPolicyTriggerSensitivityOverride
     """
@@ -13917,11 +13916,11 @@ class PublicIPAddress(Resource):
      come from.
     :type zones: list[str]
     :param public_ip_allocation_method: The public IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type public_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param public_ip_address_version: The public IP address version. Possible values include:
-     'IPv4', 'IPv6'.
+     "IPv4", "IPv6".
     :type public_ip_address_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     :ivar ip_configuration: The IP configuration associated with the public IP address.
     :vartype ip_configuration: ~azure.mgmt.network.v2019_11_01.models.IPConfiguration
@@ -13940,7 +13939,7 @@ class PublicIPAddress(Resource):
     :ivar resource_guid: The resource GUID property of the public IP address resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP address resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14055,7 +14054,7 @@ class PublicIPAddressListResult(msrest.serialization.Model):
 class PublicIPAddressSku(msrest.serialization.Model):
     """SKU of a public IP address.
 
-    :param name: Name of a public IP address SKU. Possible values include: 'Basic', 'Standard'.
+    :param name: Name of a public IP address SKU. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.network.v2019_11_01.models.PublicIPAddressSkuName
     """
 
@@ -14094,7 +14093,7 @@ class PublicIPPrefix(Resource):
      come from.
     :type zones: list[str]
     :param public_ip_address_version: The public IP address version. Possible values include:
-     'IPv4', 'IPv6'.
+     "IPv4", "IPv6".
     :type public_ip_address_version: str or ~azure.mgmt.network.v2019_11_01.models.IPVersion
     :param ip_tags: The list of tags associated with the public IP prefix.
     :type ip_tags: list[~azure.mgmt.network.v2019_11_01.models.IpTag]
@@ -14112,7 +14111,7 @@ class PublicIPPrefix(Resource):
     :ivar resource_guid: The resource GUID property of the public IP prefix resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP prefix resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14236,7 +14235,7 @@ class QueryTroubleshootingParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(QueryTroubleshootingParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_resource_id = kwargs['target_resource_id']
 
 
 class ReferencedPublicIpAddress(msrest.serialization.Model):
@@ -14277,7 +14276,7 @@ class ResourceNavigationLink(SubResource):
     :param link: Link to the external resource.
     :type link: str
     :ivar provisioning_state: The provisioning state of the resource navigation link resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14377,13 +14376,13 @@ class Route(SubResource):
     :param address_prefix: The destination CIDR to which the route applies.
     :type address_prefix: str
     :param next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-     include: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', 'None'.
+     include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
     :type next_hop_type: str or ~azure.mgmt.network.v2019_11_01.models.RouteNextHopType
     :param next_hop_ip_address: The IP address packets should be forwarded to. Next hop values are
      only allowed in routes where the next hop type is VirtualAppliance.
     :type next_hop_ip_address: str
     :ivar provisioning_state: The provisioning state of the route resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14439,7 +14438,7 @@ class RouteFilter(Resource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14514,7 +14513,7 @@ class RouteFilterRule(SubResource):
     :type location: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :param access: The access type of the rule. Possible values include: 'Allow', 'Deny'.
+    :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2019_11_01.models.Access
     :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
     :vartype route_filter_rule_type: str
@@ -14522,7 +14521,7 @@ class RouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :type communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14629,7 +14628,7 @@ class RouteTable(Resource):
      route table. True means disable.
     :type disable_bgp_route_propagation: bool
     :ivar provisioning_state: The provisioning state of the route table resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14735,7 +14734,7 @@ class SecurityGroupViewParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(SecurityGroupViewParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_resource_id = kwargs['target_resource_id']
 
 
 class SecurityGroupViewResult(msrest.serialization.Model):
@@ -14772,8 +14771,8 @@ class SecurityRule(SubResource):
     :vartype etag: str
     :param description: A description for this rule. Restricted to 140 chars.
     :type description: str
-    :param protocol: Network protocol this rule applies to. Possible values include: 'Tcp', 'Udp',
-     'Icmp', 'Esp', '*', 'Ah'.
+    :param protocol: Network protocol this rule applies to. Possible values include: "Tcp", "Udp",
+     "Icmp", "Esp", "*", "Ah".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.SecurityRuleProtocol
     :param source_port_range: The source port or range. Integer or range between 0 and 65535.
      Asterisk '*' can also be used to match all ports.
@@ -14805,18 +14804,18 @@ class SecurityRule(SubResource):
     :type source_port_ranges: list[str]
     :param destination_port_ranges: The destination port ranges.
     :type destination_port_ranges: list[str]
-    :param access: The network traffic is allowed or denied. Possible values include: 'Allow',
-     'Deny'.
+    :param access: The network traffic is allowed or denied. Possible values include: "Allow",
+     "Deny".
     :type access: str or ~azure.mgmt.network.v2019_11_01.models.SecurityRuleAccess
     :param priority: The priority of the rule. The value can be between 100 and 4096. The priority
      number must be unique for each rule in the collection. The lower the priority number, the
      higher the priority of the rule.
     :type priority: int
     :param direction: The direction of the rule. The direction specifies if rule will be evaluated
-     on incoming or outgoing traffic. Possible values include: 'Inbound', 'Outbound'.
+     on incoming or outgoing traffic. Possible values include: "Inbound", "Outbound".
     :type direction: str or ~azure.mgmt.network.v2019_11_01.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the security rule resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -14948,7 +14947,7 @@ class ServiceAssociationLink(SubResource):
     :param link: Link to the external resource.
     :type link: str
     :ivar provisioning_state: The provisioning state of the service association link resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param allow_delete: If true, the resource can be deleted.
     :type allow_delete: bool
@@ -15044,7 +15043,7 @@ class ServiceEndpointPolicy(Resource):
     :ivar resource_guid: The resource GUID property of the service endpoint policy resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the service endpoint policy resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -15101,7 +15100,7 @@ class ServiceEndpointPolicyDefinition(SubResource):
     :param service_resources: A list of service resources.
     :type service_resources: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint policy definition
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -15195,7 +15194,7 @@ class ServiceEndpointPropertiesFormat(msrest.serialization.Model):
     :param locations: A list of locations.
     :type locations: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -15413,7 +15412,7 @@ class Subnet(SubResource):
      delegations and other user-defined properties.
     :vartype purpose: str
     :ivar provisioning_state: The provisioning state of the subnet resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param private_endpoint_network_policies: Enable or Disable apply network policies on private
      end point in the subnet.
@@ -15602,7 +15601,7 @@ class TopologyAssociation(msrest.serialization.Model):
     :param resource_id: The ID of the resource that is associated with the parent resource.
     :type resource_id: str
     :param association_type: The association type of the child resource to the parent resource.
-     Possible values include: 'Associated', 'Contains'.
+     Possible values include: "Associated", "Contains".
     :type association_type: str or ~azure.mgmt.network.v2019_11_01.models.AssociationType
     """
 
@@ -15765,8 +15764,8 @@ class TrafficSelectorPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(TrafficSelectorPolicy, self).__init__(**kwargs)
-        self.local_address_ranges = kwargs.get('local_address_ranges', None)
-        self.remote_address_ranges = kwargs.get('remote_address_ranges', None)
+        self.local_address_ranges = kwargs['local_address_ranges']
+        self.remote_address_ranges = kwargs['remote_address_ranges']
 
 
 class TroubleshootingDetails(msrest.serialization.Model):
@@ -15835,9 +15834,9 @@ class TroubleshootingParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(TroubleshootingParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
-        self.storage_id = kwargs.get('storage_id', None)
-        self.storage_path = kwargs.get('storage_path', None)
+        self.target_resource_id = kwargs['target_resource_id']
+        self.storage_id = kwargs['storage_id']
+        self.storage_path = kwargs['storage_path']
 
 
 class TroubleshootingRecommendedActions(msrest.serialization.Model):
@@ -15912,7 +15911,7 @@ class TunnelConnectionHealth(msrest.serialization.Model):
     :ivar tunnel: Tunnel name.
     :vartype tunnel: str
     :ivar connection_status: Virtual Network Gateway connection status. Possible values include:
-     'Unknown', 'Connecting', 'Connected', 'NotConnected'.
+     "Unknown", "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this connection.
@@ -16014,9 +16013,9 @@ class Usage(msrest.serialization.Model):
     ):
         super(Usage, self).__init__(**kwargs)
         self.id = None
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.current_value = kwargs['current_value']
+        self.limit = kwargs['limit']
+        self.name = kwargs['name']
 
 
 class UsageName(msrest.serialization.Model):
@@ -16073,9 +16072,9 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
     :param target_resource_id: Required. The ID of the target resource to perform next-hop on.
     :type target_resource_id: str
     :param direction: Required. The direction of the packet represented as a 5-tuple. Possible
-     values include: 'Inbound', 'Outbound'.
+     values include: "Inbound", "Outbound".
     :type direction: str or ~azure.mgmt.network.v2019_11_01.models.Direction
-    :param protocol: Required. Protocol to be verified on. Possible values include: 'TCP', 'UDP'.
+    :param protocol: Required. Protocol to be verified on. Possible values include: "TCP", "UDP".
     :type protocol: str or ~azure.mgmt.network.v2019_11_01.models.IpFlowProtocol
     :param local_port: Required. The local port. Acceptable values are a single integer in the
      range (0-65535). Support for * for the source port, which depends on the direction.
@@ -16120,13 +16119,13 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VerificationIPFlowParameters, self).__init__(**kwargs)
-        self.target_resource_id = kwargs.get('target_resource_id', None)
-        self.direction = kwargs.get('direction', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.local_port = kwargs.get('local_port', None)
-        self.remote_port = kwargs.get('remote_port', None)
-        self.local_ip_address = kwargs.get('local_ip_address', None)
-        self.remote_ip_address = kwargs.get('remote_ip_address', None)
+        self.target_resource_id = kwargs['target_resource_id']
+        self.direction = kwargs['direction']
+        self.protocol = kwargs['protocol']
+        self.local_port = kwargs['local_port']
+        self.remote_port = kwargs['remote_port']
+        self.local_ip_address = kwargs['local_ip_address']
+        self.remote_ip_address = kwargs['remote_ip_address']
         self.target_nic_resource_id = kwargs.get('target_nic_resource_id', None)
 
 
@@ -16134,7 +16133,7 @@ class VerificationIPFlowResult(msrest.serialization.Model):
     """Results of IP flow verification on the target resource.
 
     :param access: Indicates whether the traffic is allowed or denied. Possible values include:
-     'Allow', 'Deny'.
+     "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2019_11_01.models.Access
     :param rule_name: Name of the rule. If input is not matched against any security rule, it is
      not displayed.
@@ -16190,7 +16189,7 @@ class VirtualHub(Resource):
     :param route_table: The routeTable associated with this virtual hub.
     :type route_table: ~azure.mgmt.network.v2019_11_01.models.VirtualHubRouteTable
     :ivar provisioning_state: The provisioning state of the virtual hub resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param security_provider_name: The Security Provider name.
     :type security_provider_name: str
@@ -16330,7 +16329,7 @@ class VirtualHubRouteTableV2(SubResource):
     :param attached_connections: List of all connections attached to this route table v2.
     :type attached_connections: list[str]
     :ivar provisioning_state: The provisioning state of the virtual hub route table v2 resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -16422,7 +16421,7 @@ class VirtualNetwork(Resource):
     :ivar resource_guid: The resourceGuid property of the Virtual Network resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param enable_ddos_protection: Indicates if DDoS protection is enabled for all the protected
      resources in the virtual network. It requires a DDoS protection plan associated with the
@@ -16512,7 +16511,7 @@ class VirtualNetworkBgpCommunities(msrest.serialization.Model):
         **kwargs
     ):
         super(VirtualNetworkBgpCommunities, self).__init__(**kwargs)
-        self.virtual_network_community = kwargs.get('virtual_network_community', None)
+        self.virtual_network_community = kwargs['virtual_network_community']
         self.regional_community = None
 
 
@@ -16538,7 +16537,7 @@ class VirtualNetworkConnectionGatewayReference(msrest.serialization.Model):
         **kwargs
     ):
         super(VirtualNetworkConnectionGatewayReference, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs['id']
 
 
 class VirtualNetworkGateway(Resource):
@@ -16561,14 +16560,14 @@ class VirtualNetworkGateway(Resource):
     :param ip_configurations: IP configurations for virtual network gateway.
     :type ip_configurations:
      list[~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayIPConfiguration]
-    :param gateway_type: The type of this virtual network gateway. Possible values include: 'Vpn',
-     'ExpressRoute'.
+    :param gateway_type: The type of this virtual network gateway. Possible values include: "Vpn",
+     "ExpressRoute".
     :type gateway_type: str or ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayType
     :param vpn_type: The type of this virtual network gateway. Possible values include:
-     'PolicyBased', 'RouteBased'.
+     "PolicyBased", "RouteBased".
     :type vpn_type: str or ~azure.mgmt.network.v2019_11_01.models.VpnType
     :param vpn_gateway_generation: The generation for this VirtualNetworkGateway. Must be None if
-     gatewayType is not VPN. Possible values include: 'None', 'Generation1', 'Generation2'.
+     gatewayType is not VPN. Possible values include: "None", "Generation1", "Generation2".
     :type vpn_gateway_generation: str or
      ~azure.mgmt.network.v2019_11_01.models.VpnGatewayGeneration
     :param enable_bgp: Whether BGP is enabled for this virtual network gateway or not.
@@ -16593,7 +16592,7 @@ class VirtualNetworkGateway(Resource):
     :ivar resource_guid: The resource GUID property of the virtual network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param enable_dns_forwarding: Whether dns forwarding is enabled or not.
     :type enable_dns_forwarding: bool
@@ -16685,12 +16684,12 @@ class VirtualNetworkGatewayConnection(Resource):
     :type virtual_network_gateway2: ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGateway
     :param local_network_gateway2: The reference to local network gateway resource.
     :type local_network_gateway2: ~azure.mgmt.network.v2019_11_01.models.LocalNetworkGateway
-    :param connection_type: Required. Gateway connection type. Possible values include: 'IPsec',
-     'Vnet2Vnet', 'ExpressRoute', 'VPNClient'.
+    :param connection_type: Required. Gateway connection type. Possible values include: "IPsec",
+     "Vnet2Vnet", "ExpressRoute", "VPNClient".
     :type connection_type: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionType
     :param connection_protocol: Connection protocol used for this connection. Possible values
-     include: 'IKEv2', 'IKEv1'.
+     include: "IKEv2", "IKEv1".
     :type connection_protocol: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionProtocol
     :param routing_weight: The routing weight.
@@ -16698,7 +16697,7 @@ class VirtualNetworkGatewayConnection(Resource):
     :param shared_key: The IPSec shared key.
     :type shared_key: str
     :ivar connection_status: Virtual Network Gateway connection status. Possible values include:
-     'Unknown', 'Connecting', 'Connected', 'NotConnected'.
+     "Unknown", "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar tunnel_connection_status: Collection of all tunnels' connection health status.
@@ -16724,7 +16723,7 @@ class VirtualNetworkGatewayConnection(Resource):
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :type express_route_gateway_bypass: bool
@@ -16780,10 +16779,10 @@ class VirtualNetworkGatewayConnection(Resource):
         super(VirtualNetworkGatewayConnection, self).__init__(**kwargs)
         self.etag = None
         self.authorization_key = kwargs.get('authorization_key', None)
-        self.virtual_network_gateway1 = kwargs.get('virtual_network_gateway1', None)
+        self.virtual_network_gateway1 = kwargs['virtual_network_gateway1']
         self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
         self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
-        self.connection_type = kwargs.get('connection_type', None)
+        self.connection_type = kwargs['connection_type']
         self.connection_protocol = kwargs.get('connection_protocol', None)
         self.routing_weight = kwargs.get('routing_weight', None)
         self.shared_key = kwargs.get('shared_key', None)
@@ -16831,12 +16830,12 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :param local_network_gateway2: The reference to local network gateway resource.
     :type local_network_gateway2:
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkConnectionGatewayReference
-    :param connection_type: Required. Gateway connection type. Possible values include: 'IPsec',
-     'Vnet2Vnet', 'ExpressRoute', 'VPNClient'.
+    :param connection_type: Required. Gateway connection type. Possible values include: "IPsec",
+     "Vnet2Vnet", "ExpressRoute", "VPNClient".
     :type connection_type: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionType
     :param connection_protocol: Connection protocol used for this connection. Possible values
-     include: 'IKEv2', 'IKEv1'.
+     include: "IKEv2", "IKEv1".
     :type connection_protocol: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionProtocol
     :param routing_weight: The routing weight.
@@ -16844,7 +16843,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :param shared_key: The IPSec shared key.
     :type shared_key: str
     :ivar connection_status: Virtual Network Gateway connection status. Possible values include:
-     'Unknown', 'Connecting', 'Connected', 'NotConnected'.
+     "Unknown", "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar tunnel_connection_status: Collection of all tunnels' connection health status.
@@ -16870,7 +16869,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :type express_route_gateway_bypass: bool
@@ -16926,10 +16925,10 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         super(VirtualNetworkGatewayConnectionListEntity, self).__init__(**kwargs)
         self.etag = None
         self.authorization_key = kwargs.get('authorization_key', None)
-        self.virtual_network_gateway1 = kwargs.get('virtual_network_gateway1', None)
+        self.virtual_network_gateway1 = kwargs['virtual_network_gateway1']
         self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
         self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
-        self.connection_type = kwargs.get('connection_type', None)
+        self.connection_type = kwargs['connection_type']
         self.connection_protocol = kwargs.get('connection_protocol', None)
         self.routing_weight = kwargs.get('routing_weight', None)
         self.shared_key = kwargs.get('shared_key', None)
@@ -16990,7 +16989,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :param private_ip_allocation_method: The private IP address allocation method. Possible values
-     include: 'Static', 'Dynamic'.
+     include: "Static", "Dynamic".
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_11_01.models.IPAllocationMethod
     :param subnet: The reference to the subnet resource.
@@ -16998,7 +16997,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :param public_ip_address: The reference to the public IP resource.
     :type public_ip_address: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the virtual network gateway IP
-     configuration resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     configuration resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -17095,13 +17094,13 @@ class VirtualNetworkGatewaySku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Gateway SKU name. Possible values include: 'Basic', 'HighPerformance', 'Standard',
-     'UltraPerformance', 'VpnGw1', 'VpnGw2', 'VpnGw3', 'VpnGw4', 'VpnGw5', 'VpnGw1AZ', 'VpnGw2AZ',
-     'VpnGw3AZ', 'VpnGw4AZ', 'VpnGw5AZ', 'ErGw1AZ', 'ErGw2AZ', 'ErGw3AZ'.
+    :param name: Gateway SKU name. Possible values include: "Basic", "HighPerformance", "Standard",
+     "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
+     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ".
     :type name: str or ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewaySkuName
-    :param tier: Gateway SKU tier. Possible values include: 'Basic', 'HighPerformance', 'Standard',
-     'UltraPerformance', 'VpnGw1', 'VpnGw2', 'VpnGw3', 'VpnGw4', 'VpnGw5', 'VpnGw1AZ', 'VpnGw2AZ',
-     'VpnGw3AZ', 'VpnGw4AZ', 'VpnGw5AZ', 'ErGw1AZ', 'ErGw2AZ', 'ErGw3AZ'.
+    :param tier: Gateway SKU tier. Possible values include: "Basic", "HighPerformance", "Standard",
+     "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
+     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ".
     :type tier: str or ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewaySkuTier
     :ivar capacity: The capacity.
     :vartype capacity: int
@@ -17213,10 +17212,10 @@ class VirtualNetworkPeering(SubResource):
     :param remote_address_space: The reference to the remote virtual network address space.
     :type remote_address_space: ~azure.mgmt.network.v2019_11_01.models.AddressSpace
     :param peering_state: The status of the virtual network peering. Possible values include:
-     'Initiated', 'Connected', 'Disconnected'.
+     "Initiated", "Connected", "Disconnected".
     :type peering_state: str or ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkPeeringState
     :ivar provisioning_state: The provisioning state of the virtual network peering resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -17303,7 +17302,7 @@ class VirtualNetworkTap(Resource):
     :ivar resource_guid: The resource GUID property of the virtual network tap resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network tap resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param destination_network_interface_ip_configuration: The reference to the private IP Address
      of the collector nic that will receive the tap.
@@ -17481,7 +17480,7 @@ class VirtualRouter(Resource):
     :ivar peerings: List of references to VirtualRouterPeerings.
     :vartype peerings: list[~azure.mgmt.network.v2019_11_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -17564,7 +17563,7 @@ class VirtualRouterPeering(SubResource):
     :param peer_ip: Peer IP.
     :type peer_ip: str
     :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -17649,11 +17648,11 @@ class VirtualWAN(Resource):
     :param allow_vnet_to_vnet_traffic: True if Vnet to Vnet traffic is allowed.
     :type allow_vnet_to_vnet_traffic: bool
     :ivar office365_local_breakout_category: The office local breakout category. Possible values
-     include: 'Optimize', 'OptimizeAndAllow', 'All', 'None'.
+     include: "Optimize", "OptimizeAndAllow", "All", "None".
     :vartype office365_local_breakout_category: str or
      ~azure.mgmt.network.v2019_11_01.models.OfficeTrafficCategory
     :ivar provisioning_state: The provisioning state of the virtual WAN resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param type_properties_type: The type of the VirtualWAN.
     :type type_properties_type: str
@@ -17711,7 +17710,7 @@ class VirtualWanSecurityProvider(msrest.serialization.Model):
     :type name: str
     :param url: Url of the security provider.
     :type url: str
-    :ivar type: Name of the security provider. Possible values include: 'External', 'Native'.
+    :ivar type: Name of the security provider. Possible values include: "External", "Native".
     :vartype type: str or ~azure.mgmt.network.v2019_11_01.models.VirtualWanSecurityProviderType
     """
 
@@ -17762,7 +17761,7 @@ class VirtualWanVpnProfileParameters(msrest.serialization.Model):
      which VirtualWan is associated to.
     :type vpn_server_configuration_resource_id: str
     :param authentication_method: VPN client authentication method. Possible values include:
-     'EAPTLS', 'EAPMSCHAPv2'.
+     "EAPTLS", "EAPMSCHAPv2".
     :type authentication_method: str or ~azure.mgmt.network.v2019_11_01.models.AuthenticationMethod
     """
 
@@ -18034,24 +18033,24 @@ class VpnClientIPsecParameters(msrest.serialization.Model):
      or Phase 2 SA) payload size in KB for P2S client..
     :type sa_data_size_kilobytes: int
     :param ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Possible
-     values include: 'None', 'DES', 'DES3', 'AES128', 'AES192', 'AES256', 'GCMAES128', 'GCMAES192',
-     'GCMAES256'.
+     values include: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
+     "GCMAES256".
     :type ipsec_encryption: str or ~azure.mgmt.network.v2019_11_01.models.IpsecEncryption
     :param ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Possible values
-     include: 'MD5', 'SHA1', 'SHA256', 'GCMAES128', 'GCMAES192', 'GCMAES256'.
+     include: "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
     :type ipsec_integrity: str or ~azure.mgmt.network.v2019_11_01.models.IpsecIntegrity
     :param ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Possible values
-     include: 'DES', 'DES3', 'AES128', 'AES192', 'AES256', 'GCMAES256', 'GCMAES128'.
+     include: "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES256", "GCMAES128".
     :type ike_encryption: str or ~azure.mgmt.network.v2019_11_01.models.IkeEncryption
     :param ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Possible values
-     include: 'MD5', 'SHA1', 'SHA256', 'SHA384', 'GCMAES256', 'GCMAES128'.
+     include: "MD5", "SHA1", "SHA256", "SHA384", "GCMAES256", "GCMAES128".
     :type ike_integrity: str or ~azure.mgmt.network.v2019_11_01.models.IkeIntegrity
     :param dh_group: Required. The DH Group used in IKE Phase 1 for initial SA. Possible values
-     include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14', 'DHGroup2048', 'ECP256', 'ECP384',
-     'DHGroup24'.
+     include: "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384",
+     "DHGroup24".
     :type dh_group: str or ~azure.mgmt.network.v2019_11_01.models.DhGroup
     :param pfs_group: Required. The Pfs Group used in IKE Phase 2 for new child SA. Possible values
-     include: 'None', 'PFS1', 'PFS2', 'PFS2048', 'ECP256', 'ECP384', 'PFS24', 'PFS14', 'PFSMM'.
+     include: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24", "PFS14", "PFSMM".
     :type pfs_group: str or ~azure.mgmt.network.v2019_11_01.models.PfsGroup
     """
 
@@ -18082,25 +18081,25 @@ class VpnClientIPsecParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VpnClientIPsecParameters, self).__init__(**kwargs)
-        self.sa_life_time_seconds = kwargs.get('sa_life_time_seconds', None)
-        self.sa_data_size_kilobytes = kwargs.get('sa_data_size_kilobytes', None)
-        self.ipsec_encryption = kwargs.get('ipsec_encryption', None)
-        self.ipsec_integrity = kwargs.get('ipsec_integrity', None)
-        self.ike_encryption = kwargs.get('ike_encryption', None)
-        self.ike_integrity = kwargs.get('ike_integrity', None)
-        self.dh_group = kwargs.get('dh_group', None)
-        self.pfs_group = kwargs.get('pfs_group', None)
+        self.sa_life_time_seconds = kwargs['sa_life_time_seconds']
+        self.sa_data_size_kilobytes = kwargs['sa_data_size_kilobytes']
+        self.ipsec_encryption = kwargs['ipsec_encryption']
+        self.ipsec_integrity = kwargs['ipsec_integrity']
+        self.ike_encryption = kwargs['ike_encryption']
+        self.ike_integrity = kwargs['ike_integrity']
+        self.dh_group = kwargs['dh_group']
+        self.pfs_group = kwargs['pfs_group']
 
 
 class VpnClientParameters(msrest.serialization.Model):
     """Vpn Client Parameters for package generation.
 
     :param processor_architecture: VPN client Processor Architecture. Possible values include:
-     'Amd64', 'X86'.
+     "Amd64", "X86".
     :type processor_architecture: str or
      ~azure.mgmt.network.v2019_11_01.models.ProcessorArchitecture
     :param authentication_method: VPN client authentication method. Possible values include:
-     'EAPTLS', 'EAPMSCHAPv2'.
+     "EAPTLS", "EAPMSCHAPv2".
     :type authentication_method: str or ~azure.mgmt.network.v2019_11_01.models.AuthenticationMethod
     :param radius_server_auth_certificate: The public certificate data for the radius server
      authentication certificate as a Base-64 encoded string. Required only if external radius
@@ -18145,7 +18144,7 @@ class VpnClientRevokedCertificate(SubResource):
     :param thumbprint: The revoked VPN client certificate thumbprint.
     :type thumbprint: str
     :ivar provisioning_state: The provisioning state of the VPN client revoked certificate
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -18190,7 +18189,7 @@ class VpnClientRootCertificate(SubResource):
     :param public_cert_data: Required. The certificate public data.
     :type public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root certificate resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -18215,7 +18214,7 @@ class VpnClientRootCertificate(SubResource):
         super(VpnClientRootCertificate, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
-        self.public_cert_data = kwargs.get('public_cert_data', None)
+        self.public_cert_data = kwargs['public_cert_data']
         self.provisioning_state = None
 
 
@@ -18235,11 +18234,11 @@ class VpnConnection(SubResource):
     :type remote_vpn_site: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param routing_weight: Routing weight for vpn connection.
     :type routing_weight: int
-    :ivar connection_status: The connection status. Possible values include: 'Unknown',
-     'Connecting', 'Connected', 'NotConnected'.
+    :ivar connection_status: The connection status. Possible values include: "Unknown",
+     "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or ~azure.mgmt.network.v2019_11_01.models.VpnConnectionStatus
     :param vpn_connection_protocol_type: Connection protocol used for this connection. Possible
-     values include: 'IKEv2', 'IKEv1'.
+     values include: "IKEv2", "IKEv1".
     :type vpn_connection_protocol_type: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionProtocol
     :ivar ingress_bytes_transferred: Ingress bytes transferred.
@@ -18263,7 +18262,7 @@ class VpnConnection(SubResource):
     :param use_local_azure_ip_address: Use local azure ip to initiate connection.
     :type use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN connection resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param vpn_link_connections: List of all vpn site link connections to the gateway.
     :type vpn_link_connections: list[~azure.mgmt.network.v2019_11_01.models.VpnSiteLinkConnection]
@@ -18375,7 +18374,7 @@ class VpnGateway(Resource):
     :param bgp_settings: Local network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_11_01.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN gateway resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param vpn_gateway_scale_unit: The scale unit for this vpn gateway.
     :type vpn_gateway_scale_unit: int
@@ -18776,7 +18775,7 @@ class VpnSite(Resource):
     :param bgp_properties: The set of bgp properties.
     :type bgp_properties: ~azure.mgmt.network.v2019_11_01.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     :param is_security_site: IsSecuritySite flag.
     :type is_security_site: bool
@@ -18872,7 +18871,7 @@ class VpnSiteLink(SubResource):
     :param bgp_properties: The set of bgp properties.
     :type bgp_properties: ~azure.mgmt.network.v2019_11_01.models.VpnLinkBgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site link resource. Possible values
-     include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -18925,11 +18924,11 @@ class VpnSiteLinkConnection(SubResource):
     :type vpn_site_link: ~azure.mgmt.network.v2019_11_01.models.SubResource
     :param routing_weight: Routing weight for vpn connection.
     :type routing_weight: int
-    :ivar connection_status: The connection status. Possible values include: 'Unknown',
-     'Connecting', 'Connected', 'NotConnected'.
+    :ivar connection_status: The connection status. Possible values include: "Unknown",
+     "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or ~azure.mgmt.network.v2019_11_01.models.VpnConnectionStatus
     :param vpn_connection_protocol_type: Connection protocol used for this connection. Possible
-     values include: 'IKEv2', 'IKEv1'.
+     values include: "IKEv2", "IKEv1".
     :type vpn_connection_protocol_type: str or
      ~azure.mgmt.network.v2019_11_01.models.VirtualNetworkGatewayConnectionProtocol
     :ivar ingress_bytes_transferred: Ingress bytes transferred.
@@ -18951,7 +18950,7 @@ class VpnSiteLinkConnection(SubResource):
     :param use_local_azure_ip_address: Use local azure ip to initiate connection.
     :type use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN site link connection resource.
-     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
     """
 
@@ -19024,11 +19023,11 @@ class WebApplicationFirewallCustomRule(msrest.serialization.Model):
     :param priority: Required. Priority of the rule. Rules with a lower value will be evaluated
      before rules with a higher value.
     :type priority: int
-    :param rule_type: Required. The rule type. Possible values include: 'MatchRule', 'Invalid'.
+    :param rule_type: Required. The rule type. Possible values include: "MatchRule", "Invalid".
     :type rule_type: str or ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallRuleType
     :param match_conditions: Required. List of match conditions.
     :type match_conditions: list[~azure.mgmt.network.v2019_11_01.models.MatchCondition]
-    :param action: Required. Type of Actions. Possible values include: 'Allow', 'Block', 'Log'.
+    :param action: Required. Type of Actions. Possible values include: "Allow", "Block", "Log".
     :type action: str or ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallAction
     """
 
@@ -19057,10 +19056,10 @@ class WebApplicationFirewallCustomRule(msrest.serialization.Model):
         super(WebApplicationFirewallCustomRule, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
-        self.priority = kwargs.get('priority', None)
-        self.rule_type = kwargs.get('rule_type', None)
-        self.match_conditions = kwargs.get('match_conditions', None)
-        self.action = kwargs.get('action', None)
+        self.priority = kwargs['priority']
+        self.rule_type = kwargs['rule_type']
+        self.match_conditions = kwargs['match_conditions']
+        self.action = kwargs['action']
 
 
 class WebApplicationFirewallPolicy(Resource):
@@ -19088,10 +19087,10 @@ class WebApplicationFirewallPolicy(Resource):
     :ivar application_gateways: A collection of references to application gateways.
     :vartype application_gateways: list[~azure.mgmt.network.v2019_11_01.models.ApplicationGateway]
     :ivar provisioning_state: The provisioning state of the web application firewall policy
-     resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'.
+     resource. Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2019_11_01.models.ProvisioningState
-    :ivar resource_state: Resource status of the policy. Possible values include: 'Creating',
-     'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'.
+    :ivar resource_state: Resource status of the policy. Possible values include: "Creating",
+     "Enabling", "Enabled", "Disabling", "Disabled", "Deleting".
     :vartype resource_state: str or
      ~azure.mgmt.network.v2019_11_01.models.WebApplicationFirewallPolicyResourceState
     :param managed_rules: Describes the managedRules structure.
