@@ -83,7 +83,7 @@ class FormRecognizerClient(object):
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
              Currently only supports US sales receipts.
         :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
@@ -134,8 +134,9 @@ class FormRecognizerClient(object):
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
-        :param url: The url of the receipt. Currently only supports US sales receipts.
-        :type url: str
+        :param str url: The url of the receipt to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
+            US sales receipts.
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -178,7 +179,7 @@ class FormRecognizerClient(object):
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type stream: bytes or IO[bytes]
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
@@ -223,8 +224,8 @@ class FormRecognizerClient(object):
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param url: The url of the document.
-        :type url: str
+        :param str url: The url of the form to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
@@ -252,7 +253,7 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param str model_id: Custom model identifier.
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
@@ -310,8 +311,8 @@ class FormRecognizerClient(object):
         The input document must be the location (Url) of the document to be analyzed.
 
         :param str model_id: Custom model identifier.
-        :param url: The url of the document.
-        :type url: str
+        :param str url: The url of the form to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
