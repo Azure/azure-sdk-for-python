@@ -34,7 +34,7 @@ class TestManagement(FormRecognizerTest):
     def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = client.list_model_infos()
+            result = client.list_custom_models()
             for res in result:
                 test = res
 
@@ -56,7 +56,7 @@ class TestManagement(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
         labeled_model_from_train = poller.result()
 
         labeled_model_from_get = client.get_custom_model(labeled_model_from_train.model_id)
@@ -76,7 +76,7 @@ class TestManagement(FormRecognizerTest):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -111,7 +111,7 @@ class TestManagement(FormRecognizerTest):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
-        models_list = client.list_model_infos()
+        models_list = client.list_custom_models()
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
@@ -124,17 +124,15 @@ class TestManagement(FormRecognizerTest):
             client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         transport = RequestsTransport()
-        frc = FormRecognizerClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
 
-        with frc:
-            poller = frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
-            result = poller.result()
+        with ftc:
+            ftc.get_account_properties()
             assert transport.session is not None
-            with frc.get_form_training_client() as ftc:
+            with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                properties = ftc.get_account_properties()
-            poller = frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
-            result = poller.result()
+                frc.begin_recognize_receipts_from_url(self.receipt_url_jpg).wait()
+            ftc.get_account_properties()
             assert transport.session is not None

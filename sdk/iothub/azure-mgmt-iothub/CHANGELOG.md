@@ -1,5 +1,41 @@
 # Release History
 
+## 0.12.0 (2020-05-12)
+
+**Features**
+
+  - Model RoutingEventHubProperties has a new parameter entity_path
+  - Model RoutingEventHubProperties has a new parameter authentication_type
+  - Model RoutingEventHubProperties has a new parameter endpoint_uri
+  - Model RoutingEventHubProperties has a new parameter id
+  - Model RoutingServiceBusQueueEndpointProperties has a new parameter entity_path
+  - Model RoutingServiceBusQueueEndpointProperties has a new parameter authentication_type
+  - Model RoutingServiceBusQueueEndpointProperties has a new parameter endpoint_uri
+  - Model RoutingServiceBusQueueEndpointProperties has a new parameter id
+  - Model ImportDevicesRequest has a new parameter authentication_type
+  - Model ImportDevicesRequest has a new parameter output_blob_name
+  - Model ImportDevicesRequest has a new parameter input_blob_name
+  - Model ExportDevicesRequest has a new parameter authentication_type
+  - Model ExportDevicesRequest has a new parameter export_blob_name
+  - Model RoutingServiceBusTopicEndpointProperties has a new parameter entity_path
+  - Model RoutingServiceBusTopicEndpointProperties has a new parameter authentication_type
+  - Model RoutingServiceBusTopicEndpointProperties has a new parameter endpoint_uri
+  - Model RoutingServiceBusTopicEndpointProperties has a new parameter id
+  - Model RoutingStorageContainerProperties has a new parameter authentication_type
+  - Model RoutingStorageContainerProperties has a new parameter endpoint_uri
+  - Model RoutingStorageContainerProperties has a new parameter id
+  - Model IotHubProperties has a new parameter public_network_access
+  - Model IotHubProperties has a new parameter private_endpoint_connections
+  - Model IotHubProperties has a new parameter min_tls_version
+  - Model StorageEndpointProperties has a new parameter authentication_type
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
+**Breaking changes**
+
+  - Operation IotHubResourceOperations.export_devices has a new signature
+  - Operation IotHubResourceOperations.import_devices has a new signature
+
 ## 0.11.0 (2020-03-17)
 
   - Preview API versions 2018-12-01-preview, 2019-03-22-preview, 2019-07-01-preview included

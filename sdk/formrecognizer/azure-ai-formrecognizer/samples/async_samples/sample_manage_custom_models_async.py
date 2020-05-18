@@ -47,8 +47,8 @@ class ManageCustomModelsSampleAsync(object):
             # [END get_account_properties_async]
 
             # Next, we get a paged list of all of our custom models
-            # [START list_model_infos_async]
-            custom_models = form_training_client.list_model_infos()
+            # [START list_custom_models_async]
+            custom_models = form_training_client.list_custom_models()
 
             print("We have models with the following ids:")
 
@@ -58,7 +58,7 @@ class ManageCustomModelsSampleAsync(object):
                 print(model.model_id)
                 if not first_model:
                     first_model = model
-            # [END list_model_infos_async]
+            # [END list_custom_models_async]
 
             # Now we'll get the first custom model in the paged list
             # [START get_custom_model_async]

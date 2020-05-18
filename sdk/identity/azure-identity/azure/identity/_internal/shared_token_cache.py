@@ -99,11 +99,11 @@ class SharedTokenCacheBase(ABC):
         cache = kwargs.pop("_cache", None)  # for ease of testing
 
         if not cache and sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-            from msal_extensions.token_cache import WindowsTokenCache
+            from msal_extensions import FilePersistenceWithDataProtection, PersistedTokenCache
 
-            cache = WindowsTokenCache(
-                cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
-            )
+            file_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
+            persistence = FilePersistenceWithDataProtection(file_location)
+            cache = PersistedTokenCache(persistence)
 
             # prevent writing to the shared cache
             # TODO: seperating deserializing access tokens from caching them would make this cleaner

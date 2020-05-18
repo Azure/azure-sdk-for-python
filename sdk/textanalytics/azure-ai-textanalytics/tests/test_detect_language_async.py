@@ -16,7 +16,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    DetectLanguageInput
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -72,10 +72,10 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_text_document_input(self, client):
         docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español."),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-            TextDocumentInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian"),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
         response = await client.detect_language(docs)
@@ -143,6 +143,22 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_output_same_order_as_input(self, client):
+        docs = [
+            DetectLanguageInput(id="1", text="one"),
+            DetectLanguageInput(id="2", text="two"),
+            DetectLanguageInput(id="3", text="three"),
+            DetectLanguageInput(id="4", text="four"),
+            DetectLanguageInput(id="5", text="five")
+        ]
+
+        response = await client.detect_language(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -160,15 +176,6 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = await client.detect_language(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     async def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
@@ -180,7 +187,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     async def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above documents"
         ]
         with self.assertRaises(TypeError):
@@ -469,11 +476,26 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            await client.detect_language(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.detect_language(docs)
-        assert "Input documents can not be empty" in str(excinfo.value)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.detect_language(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -501,13 +523,21 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.skip(reason="Service bug returns InvalidDocument here. Unskip after v3.0-preview.2")
-    async def test_invalid_country_hint(self, client):
+    async def test_invalid_country_hint_method(self, client):
+        docs = [{"id": "1", "text": "hello world"}]
+
+        response = await client.detect_language(docs, country_hint="United States")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
+        self.assertIsNotNone(response[0].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_country_hint_docs(self, client):
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
         response = await client.detect_language(docs)
-        self.assertEqual(response[0].error.code, "invalidCountryHint")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
         self.assertIsNotNone(response[0].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()

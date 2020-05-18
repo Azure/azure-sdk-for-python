@@ -9,8 +9,6 @@ import abc
 import base64
 import json
 import logging
-import os
-import sys
 import time
 
 import msal
@@ -20,6 +18,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
+from .persistent_cache import load_persistent_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
@@ -77,19 +76,6 @@ def _build_auth_record(response):
         return None
 
 
-def _load_persistent_cache():
-    # type: () -> msal.TokenCache
-
-    if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-        from msal_extensions.token_cache import WindowsTokenCache
-
-        return WindowsTokenCache(
-            cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
-        )
-
-    raise NotImplementedError("A persistent cache is not available on this platform.")
-
-
 class MsalCredential(ABC):
     """Base class for credentials wrapping MSAL applications"""
 
@@ -105,7 +91,8 @@ class MsalCredential(ABC):
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
             if kwargs.pop("enable_persistent_cache", False):
-                self._cache = _load_persistent_cache()
+                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+                self._cache = load_persistent_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
 

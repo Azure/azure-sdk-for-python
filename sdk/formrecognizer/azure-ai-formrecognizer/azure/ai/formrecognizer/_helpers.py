@@ -5,6 +5,8 @@
 # ------------------------------------
 
 import six
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
@@ -20,6 +22,21 @@ error_map = {
     409: ResourceExistsError,
     401: ClientAuthenticationError
 }
+
+
+def get_authentication_policy(credential):
+    authentication_policy = None
+    if credential is None:
+        raise ValueError("Parameter 'credential' must not be None.")
+    if isinstance(credential, AzureKeyCredential):
+        authentication_policy = AzureKeyCredentialPolicy(
+            name=COGNITIVE_KEY_HEADER, credential=credential
+        )
+    elif credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
+                        "or a token credential from azure.identity".format(type(credential)))
+
+    return authentication_policy
 
 
 def get_content_type(form):
