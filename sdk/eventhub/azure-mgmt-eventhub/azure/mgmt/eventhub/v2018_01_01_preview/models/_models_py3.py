@@ -11,6 +11,264 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._event_hub_management_client_enums import *
+
+
+class AccessKeys(msrest.serialization.Model):
+    """Namespace/EventHub Connection String.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar primary_connection_string: Primary connection string of the created namespace
+     AuthorizationRule.
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: Secondary connection string of the created namespace
+     AuthorizationRule.
+    :vartype secondary_connection_string: str
+    :ivar alias_primary_connection_string: Primary connection string of the alias if GEO DR is
+     enabled.
+    :vartype alias_primary_connection_string: str
+    :ivar alias_secondary_connection_string: Secondary  connection string of the alias if GEO DR is
+     enabled.
+    :vartype alias_secondary_connection_string: str
+    :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+     token.
+    :vartype primary_key: str
+    :ivar secondary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+     token.
+    :vartype secondary_key: str
+    :ivar key_name: A string that describes the AuthorizationRule.
+    :vartype key_name: str
+    """
+
+    _validation = {
+        'primary_connection_string': {'readonly': True},
+        'secondary_connection_string': {'readonly': True},
+        'alias_primary_connection_string': {'readonly': True},
+        'alias_secondary_connection_string': {'readonly': True},
+        'primary_key': {'readonly': True},
+        'secondary_key': {'readonly': True},
+        'key_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
+        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+        'alias_primary_connection_string': {'key': 'aliasPrimaryConnectionString', 'type': 'str'},
+        'alias_secondary_connection_string': {'key': 'aliasSecondaryConnectionString', 'type': 'str'},
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AccessKeys, self).__init__(**kwargs)
+        self.primary_connection_string = None
+        self.secondary_connection_string = None
+        self.alias_primary_connection_string = None
+        self.alias_secondary_connection_string = None
+        self.primary_key = None
+        self.secondary_key = None
+        self.key_name = None
+
+
+class Resource(msrest.serialization.Model):
+    """The resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ArmDisasterRecovery(Resource):
+    """Single item in List or Get Alias(Disaster Recovery configuration) operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
+     possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values include: "Accepted",
+     "Succeeded", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.ProvisioningStateDR
+    :param partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
+     part of GEO DR pairing.
+    :type partner_namespace: str
+    :param alternate_name: Alternate name specified when alias and namespace names are same.
+    :type alternate_name: str
+    :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
+     or 'Secondary'. Possible values include: "Primary", "PrimaryNotReplicating", "Secondary".
+    :vartype role: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.RoleDisasterRecovery
+    :ivar pending_replication_operations_count: Number of entities pending to be replicated.
+    :vartype pending_replication_operations_count: long
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'role': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
+        'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        *,
+        partner_namespace: Optional[str] = None,
+        alternate_name: Optional[str] = None,
+        **kwargs
+    ):
+        super(ArmDisasterRecovery, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.partner_namespace = partner_namespace
+        self.alternate_name = alternate_name
+        self.role = None
+        self.pending_replication_operations_count = None
+
+
+class ArmDisasterRecoveryListResult(msrest.serialization.Model):
+    """The result of the List Alias(Disaster Recovery configuration) operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param value: List of Alias(Disaster Recovery configurations).
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
+     of Alias(Disaster Recovery configuration).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ArmDisasterRecovery]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ArmDisasterRecovery"]] = None,
+        **kwargs
+    ):
+        super(ArmDisasterRecoveryListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class AuthorizationRule(Resource):
+    """Single item in a List or Get AuthorizationRule operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param rights: The rights associated with the rule.
+    :type rights: list[str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessRights]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'rights': {'key': 'properties.rights', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        rights: Optional[List[Union[str, "AccessRights"]]] = None,
+        **kwargs
+    ):
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.rights = rights
+
+
+class AuthorizationRuleListResult(msrest.serialization.Model):
+    """The response from the List namespace operation.
+
+    :param value: Result of the List Authorization Rules operation.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule]
+    :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
+     list of Authorization Rules.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AuthorizationRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["AuthorizationRule"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(AuthorizationRuleListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
 
 class AvailableCluster(msrest.serialization.Model):
     """Pre-provisioned and readily available Event Hubs Cluster count per region.
@@ -55,47 +313,135 @@ class AvailableClustersList(msrest.serialization.Model):
         self.value = value
 
 
-class Resource(msrest.serialization.Model):
-    """The Resource definition.
+class CaptureDescription(msrest.serialization.Model):
+    """Properties to configure capture description for eventhub.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :param enabled: A value that indicates whether capture description is enabled.
+    :type enabled: bool
+    :param encoding: Enumerates the possible values for the encoding format of capture description.
+     Note: 'AvroDeflate' will be deprecated in New API Version. Possible values include: "Avro",
+     "AvroDeflate".
+    :type encoding: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.EncodingCaptureDescription
+    :param interval_in_seconds: The time window allows you to set the frequency with which the
+     capture to Azure Blobs will happen, value should between 60 to 900 seconds.
+    :type interval_in_seconds: int
+    :param size_limit_in_bytes: The size window defines the amount of data built up in your Event
+     Hub before an capture operation, value should be between 10485760 to 524288000 bytes.
+    :type size_limit_in_bytes: int
+    :param destination: Properties of Destination where capture will be stored. (Storage Account,
+     Blob Names).
+    :type destination: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Destination
+    :param skip_empty_archives: A value that indicates whether to Skip Empty Archives.
+    :type skip_empty_archives: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'interval_in_seconds': {'maximum': 900, 'minimum': 60},
+        'size_limit_in_bytes': {'maximum': 524288000, 'minimum': 10485760},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'encoding': {'key': 'encoding', 'type': 'str'},
+        'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'int'},
+        'size_limit_in_bytes': {'key': 'sizeLimitInBytes', 'type': 'int'},
+        'destination': {'key': 'destination', 'type': 'Destination'},
+        'skip_empty_archives': {'key': 'skipEmptyArchives', 'type': 'bool'},
     }
 
     def __init__(
         self,
+        *,
+        enabled: Optional[bool] = None,
+        encoding: Optional[Union[str, "EncodingCaptureDescription"]] = None,
+        interval_in_seconds: Optional[int] = None,
+        size_limit_in_bytes: Optional[int] = None,
+        destination: Optional["Destination"] = None,
+        skip_empty_archives: Optional[bool] = None,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        super(CaptureDescription, self).__init__(**kwargs)
+        self.enabled = enabled
+        self.encoding = encoding
+        self.interval_in_seconds = interval_in_seconds
+        self.size_limit_in_bytes = size_limit_in_bytes
+        self.destination = destination
+        self.skip_empty_archives = skip_empty_archives
 
 
-class TrackedResource(Resource):
-    """Definition of an Azure resource.
+class CheckNameAvailabilityParameter(msrest.serialization.Model):
+    """Parameter supplied to check Namespace name availability operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name to check the namespace name availability.
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        **kwargs
+    ):
+        super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
+        self.name = name
+
+
+class CheckNameAvailabilityResult(msrest.serialization.Model):
+    """The Result of the CheckNameAvailability operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar message: The detailed info regarding the reason associated with the Namespace.
+    :vartype message: str
+    :param name_available: Value indicating Namespace is availability, true if the Namespace is
+     available; otherwise, false.
+    :type name_available: bool
+    :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
+     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+     "TooManyNamespaceInCurrentSubscription".
+    :type reason: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.UnavailableReason
+    """
+
+    _validation = {
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'message': {'key': 'message', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "UnavailableReason"]] = None,
+        **kwargs
+    ):
+        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        self.message = None
+        self.name_available = name_available
+        self.reason = reason
+
+
+class TrackedResource(Resource):
+    """Definition of resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -138,7 +484,7 @@ class Cluster(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -252,17 +598,18 @@ class ClusterQuotaConfigurationProperties(msrest.serialization.Model):
 class ClusterSku(msrest.serialization.Model):
     """SKU parameters particular to a cluster instance.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of this SKU. Possible values include: 'Dedicated', 'Basic',
-     'Standard'.
-    :type name: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.SkuName
+    :ivar name: Required. Name of this SKU. Default value: "Dedicated".
+    :vartype name: str
     :param capacity: The quantity of Event Hubs Cluster Capacity Units contained in this cluster.
     :type capacity: int
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'required': True, 'constant': True},
         'capacity': {'maximum': 32, 'minimum': 1},
     }
 
@@ -271,16 +618,132 @@ class ClusterSku(msrest.serialization.Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
+    name = "Dedicated"
+
     def __init__(
         self,
         *,
-        name: Union[str, "SkuName"],
         capacity: Optional[int] = None,
         **kwargs
     ):
         super(ClusterSku, self).__init__(**kwargs)
-        self.name = name
         self.capacity = capacity
+
+
+class ConsumerGroup(Resource):
+    """Single item in List or Get Consumer group operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar created_at: Exact time the message was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: ~datetime.datetime
+    :param user_metadata: User Metadata is a placeholder to store user-defined string data with
+     maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
+     their contact information also user-defined configuration settings can be stored.
+    :type user_metadata: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
+        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_metadata: Optional[str] = None,
+        **kwargs
+    ):
+        super(ConsumerGroup, self).__init__(**kwargs)
+        self.created_at = None
+        self.updated_at = None
+        self.user_metadata = user_metadata
+
+
+class ConsumerGroupListResult(msrest.serialization.Model):
+    """The result to the List Consumer Group operation.
+
+    :param value: Result of the List Consumer Group operation.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.ConsumerGroup]
+    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+     of Consumer Group.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ConsumerGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ConsumerGroup"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(ConsumerGroupListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class Destination(msrest.serialization.Model):
+    """Capture storage details for capture description.
+
+    :param name: Name for capture destination.
+    :type name: str
+    :param storage_account_resource_id: Resource id of the storage account to be used to create the
+     blobs.
+    :type storage_account_resource_id: str
+    :param blob_container: Blob container Name.
+    :type blob_container: str
+    :param archive_name_format: Blob naming convention for archive, e.g.
+     {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
+     the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
+    :type archive_name_format: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
+        'blob_container': {'key': 'properties.blobContainer', 'type': 'str'},
+        'archive_name_format': {'key': 'properties.archiveNameFormat', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        storage_account_resource_id: Optional[str] = None,
+        blob_container: Optional[str] = None,
+        archive_name_format: Optional[str] = None,
+        **kwargs
+    ):
+        super(Destination, self).__init__(**kwargs)
+        self.name = name
+        self.storage_account_resource_id = storage_account_resource_id
+        self.blob_container = blob_container
+        self.archive_name_format = archive_name_format
 
 
 class EHNamespace(TrackedResource):
@@ -288,7 +751,7 @@ class EHNamespace(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -300,6 +763,8 @@ class EHNamespace(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Properties of sku resource.
     :type sku: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Sku
+    :param identity: Properties of BYOK Identity description.
+    :type identity: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Identity
     :ivar provisioning_state: Provisioning state of the Namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the Namespace was created.
@@ -323,8 +788,6 @@ class EHNamespace(TrackedResource):
     :param zone_redundant: Enabling this property creates a Standard Event Hubs Namespace in
      regions supported availability zones.
     :type zone_redundant: bool
-    :param identity: Properties of BYOK Identity description.
-    :type identity: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Identity
     :param encryption: Properties of BYOK Encryption description.
     :type encryption: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Encryption
     """
@@ -348,6 +811,7 @@ class EHNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
@@ -358,7 +822,6 @@ class EHNamespace(TrackedResource):
         'maximum_throughput_units': {'key': 'properties.maximumThroughputUnits', 'type': 'int'},
         'kafka_enabled': {'key': 'properties.kafkaEnabled', 'type': 'bool'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
-        'identity': {'key': 'properties.identity', 'type': 'Identity'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
@@ -368,17 +831,18 @@ class EHNamespace(TrackedResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
+        identity: Optional["Identity"] = None,
         cluster_arm_id: Optional[str] = None,
         is_auto_inflate_enabled: Optional[bool] = None,
         maximum_throughput_units: Optional[int] = None,
         kafka_enabled: Optional[bool] = None,
         zone_redundant: Optional[bool] = None,
-        identity: Optional["Identity"] = None,
         encryption: Optional["Encryption"] = None,
         **kwargs
     ):
         super(EHNamespace, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.identity = identity
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
@@ -389,7 +853,6 @@ class EHNamespace(TrackedResource):
         self.maximum_throughput_units = maximum_throughput_units
         self.kafka_enabled = kafka_enabled
         self.zone_redundant = zone_redundant
-        self.identity = identity
         self.encryption = encryption
 
 
@@ -468,7 +931,8 @@ class Encryption(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param key_vault_properties: Properties of KeyVault.
-    :type key_vault_properties: ~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyVaultProperties
+    :type key_vault_properties:
+     list[~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyVaultProperties]
     :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value:
      "Microsoft.KeyVault".
     :vartype key_source: str
@@ -479,7 +943,7 @@ class Encryption(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': '[KeyVaultProperties]'},
         'key_source': {'key': 'keySource', 'type': 'str'},
     }
 
@@ -488,7 +952,7 @@ class Encryption(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_vault_properties: Optional["KeyVaultProperties"] = None,
+        key_vault_properties: Optional[List["KeyVaultProperties"]] = None,
         **kwargs
     ):
         super(Encryption, self).__init__(**kwargs)
@@ -496,7 +960,7 @@ class Encryption(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """Error response that indicates the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates Event Hub service is not able to process the incoming request. The reason is provided in the error message.
 
     :param code: Error code.
     :type code: str
@@ -519,6 +983,107 @@ class ErrorResponse(msrest.serialization.Model):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
+
+
+class Eventhub(Resource):
+    """Single item in List or Get Event Hub operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar partition_ids: Current number of shards on the Event Hub.
+    :vartype partition_ids: list[str]
+    :ivar created_at: Exact time the Event Hub was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: ~datetime.datetime
+    :param message_retention_in_days: Number of days to retain the events for this Event Hub, value
+     should be 1 to 7 days.
+    :type message_retention_in_days: long
+    :param partition_count: Number of partitions created for the Event Hub, allowed values are from
+     1 to 32 partitions.
+    :type partition_count: long
+    :param status: Enumerates the possible values for the status of the Event Hub. Possible values
+     include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
+     "Deleting", "Renaming", "Unknown".
+    :type status: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.EntityStatus
+    :param capture_description: Properties of capture description.
+    :type capture_description: ~azure.mgmt.eventhub.v2018_01_01_preview.models.CaptureDescription
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'partition_ids': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'message_retention_in_days': {'minimum': 1},
+        'partition_count': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'partition_ids': {'key': 'properties.partitionIds', 'type': '[str]'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
+        'message_retention_in_days': {'key': 'properties.messageRetentionInDays', 'type': 'long'},
+        'partition_count': {'key': 'properties.partitionCount', 'type': 'long'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'capture_description': {'key': 'properties.captureDescription', 'type': 'CaptureDescription'},
+    }
+
+    def __init__(
+        self,
+        *,
+        message_retention_in_days: Optional[int] = None,
+        partition_count: Optional[int] = None,
+        status: Optional[Union[str, "EntityStatus"]] = None,
+        capture_description: Optional["CaptureDescription"] = None,
+        **kwargs
+    ):
+        super(Eventhub, self).__init__(**kwargs)
+        self.partition_ids = None
+        self.created_at = None
+        self.updated_at = None
+        self.message_retention_in_days = message_retention_in_days
+        self.partition_count = partition_count
+        self.status = status
+        self.capture_description = capture_description
+
+
+class EventHubListResult(msrest.serialization.Model):
+    """The result of the List EventHubs operation.
+
+    :param value: Result of the List EventHubs operation.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub]
+    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+     of EventHubs.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Eventhub]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Eventhub"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(EventHubListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class Identity(msrest.serialization.Model):
@@ -564,7 +1129,7 @@ class IpFilterRule(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -572,7 +1137,7 @@ class IpFilterRule(Resource):
     :vartype type: str
     :param ip_mask: IP Mask.
     :type ip_mask: str
-    :param action: The IP Filter Action. Possible values include: 'Accept', 'Reject'.
+    :param action: The IP Filter Action. Possible values include: "Accept", "Reject".
     :type action: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.IPAction
     :param filter_name: IP Filter name.
     :type filter_name: str
@@ -641,11 +1206,14 @@ class KeyVaultProperties(msrest.serialization.Model):
     :type key_name: str
     :param key_vault_uri: Uri of KeyVault.
     :type key_vault_uri: str
+    :param key_version: Key Version.
+    :type key_version: str
     """
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
         'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -653,11 +1221,121 @@ class KeyVaultProperties(msrest.serialization.Model):
         *,
         key_name: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
+        key_version: Optional[str] = None,
         **kwargs
     ):
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_vault_uri = key_vault_uri
+        self.key_version = key_version
+
+
+class MessagingRegions(TrackedResource):
+    """Messaging Region.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param properties: Properties of Messaging Region.
+    :type properties: ~azure.mgmt.eventhub.v2018_01_01_preview.models.MessagingRegionsProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'MessagingRegionsProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["MessagingRegionsProperties"] = None,
+        **kwargs
+    ):
+        super(MessagingRegions, self).__init__(location=location, tags=tags, **kwargs)
+        self.properties = properties
+
+
+class MessagingRegionsListResult(msrest.serialization.Model):
+    """The response of the List MessagingRegions operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param value: Result of the List MessagingRegions type.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.MessagingRegions]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
+     of MessagingRegions.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MessagingRegions]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["MessagingRegions"]] = None,
+        **kwargs
+    ):
+        super(MessagingRegionsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class MessagingRegionsProperties(msrest.serialization.Model):
+    """Properties of Messaging Region.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Region code.
+    :vartype code: str
+    :ivar full_name: Full name of the region.
+    :vartype full_name: str
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'full_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'full_name': {'key': 'fullName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MessagingRegionsProperties, self).__init__(**kwargs)
+        self.code = None
+        self.full_name = None
 
 
 class NetworkRuleSet(Resource):
@@ -665,14 +1343,14 @@ class NetworkRuleSet(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param default_action: Default Action for Network Rule Set. Possible values include: 'Allow',
-     'Deny'.
+    :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+     "Deny".
     :type default_action: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.DefaultAction
     :param virtual_network_rules: List VirtualNetwork Rules.
     :type virtual_network_rules:
@@ -866,16 +1544,49 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class RegenerateAccessKeyParameters(msrest.serialization.Model):
+    """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs to be reset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
+     "SecondaryKey".
+    :type key_type: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyType
+    :param key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
+     set for keyType.
+    :type key: str
+    """
+
+    _validation = {
+        'key_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_type': {'key': 'keyType', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_type: Union[str, "KeyType"],
+        key: Optional[str] = None,
+        **kwargs
+    ):
+        super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
+        self.key_type = key_type
+        self.key = key
+
+
 class Sku(msrest.serialization.Model):
     """SKU parameters supplied to the create namespace operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of this SKU. Possible values include: 'Dedicated', 'Basic',
-     'Standard'.
+    :param name: Required. Name of this SKU. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.SkuName
-    :param tier: The billing tier of this particular SKU. Possible values include: 'Basic',
-     'Standard'.
+    :param tier: The billing tier of this particular SKU. Possible values include: "Basic",
+     "Standard".
     :type tier: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.SkuTier
     :param capacity: The Event Hubs throughput units, value should be 0 to 20 throughput units.
     :type capacity: int
@@ -932,7 +1643,7 @@ class VirtualNetworkRule(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str

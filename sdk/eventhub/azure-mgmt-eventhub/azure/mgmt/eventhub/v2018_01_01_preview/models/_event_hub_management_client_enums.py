@@ -43,6 +43,13 @@ class EntityStatus(str, Enum):
     renaming = "Renaming"
     unknown = "Unknown"
 
+class IPAction(str, Enum):
+    """The IP Filter Action
+    """
+
+    accept = "Accept"
+    reject = "Reject"
+
 class KeyType(str, Enum):
     """The access key to regenerate.
     """

@@ -26,7 +26,7 @@ class DisasterRecoveryConfigsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.eventhub.v2017_04_01.models
+    :type models: ~azure.mgmt.eventhub.v2018_01_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class DisasterRecoveryConfigsOperations:
         :type alias: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AuthorizationRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRuleListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRuleListResult"]
@@ -137,7 +137,7 @@ class DisasterRecoveryConfigsOperations:
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthorizationRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRule
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
@@ -202,7 +202,7 @@ class DisasterRecoveryConfigsOperations:
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AccessKeys
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
@@ -261,10 +261,10 @@ class DisasterRecoveryConfigsOperations:
         :param namespace_name: The Namespace name.
         :type namespace_name: str
         :param parameters: Parameters to check availability of the given Alias name.
-        :type parameters: ~azure.mgmt.eventhub.v2017_04_01.models.CheckNameAvailabilityParameter
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.CheckNameAvailabilityParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.CheckNameAvailabilityResult
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
@@ -327,7 +327,7 @@ class DisasterRecoveryConfigsOperations:
         :type namespace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ArmDisasterRecoveryListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecoveryListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecoveryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecoveryListResult"]
@@ -402,10 +402,10 @@ class DisasterRecoveryConfigsOperations:
         :param alias: The Disaster Recovery configuration name.
         :type alias: str
         :param parameters: Parameters required to create an Alias(Disaster Recovery configuration).
-        :type parameters: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ArmDisasterRecovery, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery or None
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecovery"]
@@ -531,7 +531,7 @@ class DisasterRecoveryConfigsOperations:
         :type alias: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ArmDisasterRecovery, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecovery"]

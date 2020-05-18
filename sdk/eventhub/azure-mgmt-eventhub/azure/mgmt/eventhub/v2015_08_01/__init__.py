@@ -8,3 +8,9 @@
 
 from ._event_hub_management_client import EventHubManagementClient
 __all__ = ['EventHubManagementClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

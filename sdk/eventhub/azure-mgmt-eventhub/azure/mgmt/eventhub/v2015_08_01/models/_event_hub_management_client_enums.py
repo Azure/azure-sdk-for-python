@@ -8,39 +8,6 @@
 
 from enum import Enum
 
-class SkuName(str, Enum):
-    """Name of this SKU.
-    """
-
-    basic = "Basic"
-    standard = "Standard"
-
-class SkuTier(str, Enum):
-    """The billing tier of this particular SKU.
-    """
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-class NamespaceState(str, Enum):
-    """State of the Namespace.
-    """
-
-    unknown = "Unknown"
-    creating = "Creating"
-    created = "Created"
-    activating = "Activating"
-    enabling = "Enabling"
-    active = "Active"
-    disabling = "Disabling"
-    disabled = "Disabled"
-    soft_deleting = "SoftDeleting"
-    soft_deleted = "SoftDeleted"
-    removing = "Removing"
-    removed = "Removed"
-    failed = "Failed"
-
 class AccessRights(str, Enum):
 
     manage = "Manage"
@@ -61,6 +28,46 @@ class EntityStatus(str, Enum):
     renaming = "Renaming"
     unknown = "Unknown"
 
+class NamespaceState(str, Enum):
+    """State of the Namespace.
+    """
+
+    unknown = "Unknown"
+    creating = "Creating"
+    created = "Created"
+    activating = "Activating"
+    enabling = "Enabling"
+    active = "Active"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    soft_deleting = "SoftDeleting"
+    soft_deleted = "SoftDeleted"
+    removing = "Removing"
+    removed = "Removed"
+    failed = "Failed"
+
+class Policykey(str, Enum):
+    """Key that needs to be regenerated.
+    """
+
+    primary_key = "PrimaryKey"
+    secondary_key = "SecondaryKey"
+
+class SkuName(str, Enum):
+    """Name of this SKU.
+    """
+
+    basic = "Basic"
+    standard = "Standard"
+
+class SkuTier(str, Enum):
+    """The billing tier of this particular SKU.
+    """
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
 class UnavailableReason(str, Enum):
     """Specifies the reason for the unavailability of the service.
     """
@@ -71,10 +78,3 @@ class UnavailableReason(str, Enum):
     name_in_use = "NameInUse"
     name_in_lockdown = "NameInLockdown"
     too_many_namespace_in_current_subscription = "TooManyNamespaceInCurrentSubscription"
-
-class Policykey(str, Enum):
-    """Key that needs to be regenerated.
-    """
-
-    primary_key = "PrimaryKey"
-    secondary_key = "SecondaryKey"

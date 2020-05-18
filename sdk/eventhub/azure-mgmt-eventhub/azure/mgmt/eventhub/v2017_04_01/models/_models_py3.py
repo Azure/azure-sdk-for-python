@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._event_hub_management_client_enums import *
+
 
 class AccessKeys(msrest.serialization.Model):
     """Namespace/EventHub Connection String.
@@ -74,11 +76,11 @@ class AccessKeys(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """The Resource definition.
+    """The resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -113,15 +115,15 @@ class ArmDisasterRecovery(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
-     possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values include: 'Accepted',
-     'Succeeded', 'Failed'.
+     possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values include: "Accepted",
+     "Succeeded", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventhub.v2017_04_01.models.ProvisioningStateDR
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
      part of GEO DR pairing.
@@ -129,7 +131,7 @@ class ArmDisasterRecovery(Resource):
     :param alternate_name: Alternate name specified when alias and namespace names are same.
     :type alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
-     or 'Secondary'. Possible values include: 'Primary', 'PrimaryNotReplicating', 'Secondary'.
+     or 'Secondary'. Possible values include: "Primary", "PrimaryNotReplicating", "Secondary".
     :vartype role: str or ~azure.mgmt.eventhub.v2017_04_01.models.RoleDisasterRecovery
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
     :vartype pending_replication_operations_count: long
@@ -207,7 +209,7 @@ class AuthorizationRule(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -273,8 +275,8 @@ class CaptureDescription(msrest.serialization.Model):
     :param enabled: A value that indicates whether capture description is enabled.
     :type enabled: bool
     :param encoding: Enumerates the possible values for the encoding format of capture description.
-     Note: 'AvroDeflate' will be deprecated in New API Version. Possible values include: 'Avro',
-     'AvroDeflate'.
+     Note: 'AvroDeflate' will be deprecated in New API Version. Possible values include: "Avro",
+     "AvroDeflate".
     :type encoding: str or ~azure.mgmt.eventhub.v2017_04_01.models.EncodingCaptureDescription
     :param interval_in_seconds: The time window allows you to set the frequency with which the
      capture to Azure Blobs will happen, value should between 60 to 900 seconds.
@@ -360,9 +362,9 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     :param name_available: Value indicating Namespace is availability, true if the Namespace is
      available; otherwise, false.
     :type name_available: bool
-    :param reason: The reason for unavailability of a Namespace. Possible values include: 'None',
-     'InvalidName', 'SubscriptionIsDisabled', 'NameInUse', 'NameInLockdown',
-     'TooManyNamespaceInCurrentSubscription'.
+    :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
+     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+     "TooManyNamespaceInCurrentSubscription".
     :type reason: str or ~azure.mgmt.eventhub.v2017_04_01.models.UnavailableReason
     """
 
@@ -394,7 +396,7 @@ class ConsumerGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -506,11 +508,11 @@ class Destination(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """Definition of Resource.
+    """Definition of resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -553,7 +555,7 @@ class EHNamespace(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -665,7 +667,7 @@ class EHNamespaceListResult(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates EventHub service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates Event Hub service is not able to process the incoming request. The reason is provided in the error message.
 
     :param code: Error code.
     :type code: str
@@ -695,7 +697,7 @@ class Eventhub(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -714,8 +716,8 @@ class Eventhub(Resource):
      1 to 32 partitions.
     :type partition_count: long
     :param status: Enumerates the possible values for the status of the Event Hub. Possible values
-     include: 'Active', 'Disabled', 'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating',
-     'Deleting', 'Renaming', 'Unknown'.
+     include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
+     "Deleting", "Renaming", "Unknown".
     :type status: str or ~azure.mgmt.eventhub.v2017_04_01.models.EntityStatus
     :param capture_description: Properties of capture description.
     :type capture_description: ~azure.mgmt.eventhub.v2017_04_01.models.CaptureDescription
@@ -796,7 +798,7 @@ class MessagingPlan(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -857,7 +859,7 @@ class MessagingRegions(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
@@ -867,7 +869,7 @@ class MessagingRegions(TrackedResource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param properties:
+    :param properties: Properties of Messaging Region.
     :type properties: ~azure.mgmt.eventhub.v2017_04_01.models.MessagingRegionsProperties
     """
 
@@ -931,7 +933,7 @@ class MessagingRegionsListResult(msrest.serialization.Model):
 
 
 class MessagingRegionsProperties(msrest.serialization.Model):
-    """MessagingRegionsProperties.
+    """Properties of Messaging Region.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -965,14 +967,14 @@ class NetworkRuleSet(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param default_action: Default Action for Network Rule Set. Possible values include: 'Allow',
-     'Deny'.
+    :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+     "Deny".
     :type default_action: str or ~azure.mgmt.eventhub.v2017_04_01.models.DefaultAction
     :param virtual_network_rules: List VirtualNetwork Rules.
     :type virtual_network_rules:
@@ -1198,8 +1200,8 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_type: Required. The access key to regenerate. Possible values include: 'PrimaryKey',
-     'SecondaryKey'.
+    :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
+     "SecondaryKey".
     :type key_type: str or ~azure.mgmt.eventhub.v2017_04_01.models.KeyType
     :param key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
      set for keyType.
@@ -1232,10 +1234,10 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of this SKU. Possible values include: 'Basic', 'Standard'.
+    :param name: Required. Name of this SKU. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.eventhub.v2017_04_01.models.SkuName
-    :param tier: The billing tier of this particular SKU. Possible values include: 'Basic',
-     'Standard'.
+    :param tier: The billing tier of this particular SKU. Possible values include: "Basic",
+     "Standard".
     :type tier: str or ~azure.mgmt.eventhub.v2017_04_01.models.SkuTier
     :param capacity: The Event Hubs throughput units, value should be 0 to 20 throughput units.
     :type capacity: int

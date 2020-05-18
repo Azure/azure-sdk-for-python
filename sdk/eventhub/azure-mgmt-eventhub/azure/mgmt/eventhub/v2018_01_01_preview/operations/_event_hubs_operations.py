@@ -23,14 +23,14 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class DisasterRecoveryConfigsOperations(object):
-    """DisasterRecoveryConfigsOperations operations.
+class EventHubsOperations(object):
+    """EventHubsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.eventhub.v2017_04_01.models
+    :type models: ~azure.mgmt.eventhub.v2018_01_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,21 +49,21 @@ class DisasterRecoveryConfigsOperations(object):
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
+        event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.AuthorizationRuleListResult"]
-        """Gets a list of authorization rules for a Namespace.
+        """Gets the authorization rules for an Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AuthorizationRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRuleListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRuleListResult"]
@@ -78,7 +78,7 @@ class DisasterRecoveryConfigsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -120,30 +120,105 @@ class DisasterRecoveryConfigsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules'}  # type: ignore
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules'}  # type: ignore
 
-    def get_authorization_rule(
+    def create_or_update_authorization_rule(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
+        event_hub_name,  # type: str
         authorization_rule_name,  # type: str
+        parameters,  # type: "models.AuthorizationRule"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.AuthorizationRule"
-        """Gets an AuthorizationRule for a Namespace by rule name.
+        """Creates or updates an AuthorizationRule for the specified Event Hub. Creation/update of the AuthorizationRule will take a few seconds to take effect.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :param parameters: The shared access AuthorizationRule.
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AuthorizationRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2017-04-01"
+        content_type = kwargs.pop("content_type", "application/json")
+
+        # Construct URL
+        url = self.create_or_update_authorization_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/json'
+
+        # Construct and send request
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'AuthorizationRule')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('AuthorizationRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+
+    def get_authorization_rule(
+        self,
+        resource_group_name,  # type: str
+        namespace_name,  # type: str
+        event_hub_name,  # type: str
+        authorization_rule_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.AuthorizationRule"
+        """Gets an AuthorizationRule for an Event Hub by rule name.
+
+        :param resource_group_name: Name of the resource group within the azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The Namespace name.
+        :type namespace_name: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthorizationRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRule
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
@@ -156,7 +231,7 @@ class DisasterRecoveryConfigsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -186,30 +261,92 @@ class DisasterRecoveryConfigsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
 
-    def list_keys(
+    def delete_authorization_rule(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
+        event_hub_name,  # type: str
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AccessKeys"
-        """Gets the primary and secondary connection strings for the Namespace.
+        # type: (...) -> None
+        """Deletes an Event Hub AuthorizationRule.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2017-04-01"
+
+        # Construct URL
+        url = self.delete_authorization_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+
+    def list_keys(
+        self,
+        resource_group_name,  # type: str
+        namespace_name,  # type: str
+        event_hub_name,  # type: str
+        authorization_rule_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.AccessKeys"
+        """Gets the ACS and SAS connection strings for the Event Hub.
+
+        :param resource_group_name: Name of the resource group within the azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The Namespace name.
+        :type namespace_name: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.AccessKeys
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
@@ -222,7 +359,7 @@ class DisasterRecoveryConfigsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -252,41 +389,50 @@ class DisasterRecoveryConfigsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}/listKeys'}  # type: ignore
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}/listKeys'}  # type: ignore
 
-    def check_name_availability(
+    def regenerate_keys(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        parameters,  # type: "models.CheckNameAvailabilityParameter"
+        event_hub_name,  # type: str
+        authorization_rule_name,  # type: str
+        parameters,  # type: "models.RegenerateAccessKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityResult"
-        """Check the give Namespace name availability.
+        # type: (...) -> "models.AccessKeys"
+        """Regenerates the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param parameters: Parameters to check availability of the given Alias name.
-        :type parameters: ~azure.mgmt.eventhub.v2017_04_01.models.CheckNameAvailabilityParameter
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :param parameters: Parameters supplied to regenerate the AuthorizationRule Keys
+         (PrimaryKey/SecondaryKey).
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.RegenerateAccessKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.CheckNameAvailabilityResult
+        :return: AccessKeys, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.check_name_availability.metadata['url']  # type: ignore
+        url = self.regenerate_keys.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -301,7 +447,7 @@ class DisasterRecoveryConfigsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CheckNameAvailabilityParameter')
+        body_content = self._serialize.body(parameters, 'RegenerateAccessKeyParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -313,33 +459,41 @@ class DisasterRecoveryConfigsOperations(object):
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
+        deserialized = self._deserialize('AccessKeys', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/checkNameAvailability'}  # type: ignore
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}  # type: ignore
 
-    def list(
+    def list_by_namespace(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
+        skip=None,  # type: Optional[int]
+        top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ArmDisasterRecoveryListResult"]
-        """Gets all Alias(Disaster Recovery configurations).
+        # type: (...) -> Iterable["models.EventHubListResult"]
+        """Gets all the Event Hubs in a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
+        :param skip: Skip is only used if a previous operation returned a partial result. If a previous
+     response contains a nextLink element, the value of the nextLink element will include a skip
+     parameter that specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most recent N usageDetails.
+        :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ArmDisasterRecoveryListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecoveryListResult]
+        :return: An iterator like instance of either EventHubListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.EventHubListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecoveryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
@@ -347,7 +501,7 @@ class DisasterRecoveryConfigsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_namespace.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -357,6 +511,10 @@ class DisasterRecoveryConfigsOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link
@@ -370,7 +528,7 @@ class DisasterRecoveryConfigsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ArmDisasterRecoveryListResult', pipeline_response)
+            deserialized = self._deserialize('EventHubListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -392,33 +550,33 @@ class DisasterRecoveryConfigsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs'}  # type: ignore
+    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs'}  # type: ignore
 
     def create_or_update(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
-        parameters,  # type: "models.ArmDisasterRecovery"
+        event_hub_name,  # type: str
+        parameters,  # type: "models.Eventhub"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ArmDisasterRecovery"
-        """Creates or updates a new Alias(Disaster Recovery configuration).
+        # type: (...) -> "models.Eventhub"
+        """Creates or updates a new Event Hub as a nested resource within a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
-        :param parameters: Parameters required to create an Alias(Disaster Recovery configuration).
-        :type parameters: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
+        :param parameters: Parameters supplied to create an Event Hub resource.
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ArmDisasterRecovery, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery or None
+        :return: Eventhub, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecovery"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Eventhub"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
@@ -429,7 +587,7 @@ class DisasterRecoveryConfigsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -445,44 +603,42 @@ class DisasterRecoveryConfigsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ArmDisasterRecovery')
+        body_content = self._serialize.body(parameters, 'Eventhub')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ArmDisasterRecovery', pipeline_response)
+        deserialized = self._deserialize('Eventhub', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'}  # type: ignore
 
     def delete(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
+        event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes an Alias(Disaster Recovery configuration).
+        """Deletes an Event Hub from the specified Namespace and resource group.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -498,7 +654,7 @@ class DisasterRecoveryConfigsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -515,7 +671,7 @@ class DisasterRecoveryConfigsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -523,30 +679,30 @@ class DisasterRecoveryConfigsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         namespace_name,  # type: str
-        alias,  # type: str
+        event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ArmDisasterRecovery"
-        """Retrieves Alias(Disaster Recovery configuration) for primary or secondary namespace.
+        # type: (...) -> "models.Eventhub"
+        """Gets an Event Hubs description for the specified Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
+        :param event_hub_name: The Event Hub name.
+        :type event_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ArmDisasterRecovery, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery
+        :return: Eventhub, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecovery"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Eventhub"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
@@ -556,7 +712,7 @@ class DisasterRecoveryConfigsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -579,126 +735,10 @@ class DisasterRecoveryConfigsOperations(object):
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ArmDisasterRecovery', pipeline_response)
+        deserialized = self._deserialize('Eventhub', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'}  # type: ignore
-
-    def break_pairing(
-        self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        alias,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """This operation disables the Disaster Recovery and stops replicating changes from primary to secondary namespaces.
-
-        :param resource_group_name: Name of the resource group within the azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name.
-        :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-
-        # Construct URL
-        url = self.break_pairing.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    break_pairing.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing'}  # type: ignore
-
-    def fail_over(
-        self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        alias,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Invokes GEO DR failover and reconfigure the alias to point to the secondary namespace.
-
-        :param resource_group_name: Name of the resource group within the azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name.
-        :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name.
-        :type alias: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-
-        # Construct URL
-        url = self.fail_over.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    fail_over.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'}  # type: ignore

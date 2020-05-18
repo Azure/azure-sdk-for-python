@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._event_hub_management_client_enums import *
+
 
 class CheckNameAvailabilityParameter(msrest.serialization.Model):
     """Parameter supplied to check Namespace name availability operation.
@@ -47,9 +49,9 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     :param name_available: Value indicating Namespace is availability, true if the Namespace is
      available; otherwise, false.
     :type name_available: bool
-    :param reason: The reason for unavailability of a Namespace. Possible values include: 'None',
-     'InvalidName', 'SubscriptionIsDisabled', 'NameInUse', 'NameInLockdown',
-     'TooManyNamespaceInCurrentSubscription'.
+    :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
+     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+     "TooManyNamespaceInCurrentSubscription".
     :type reason: str or ~azure.mgmt.eventhub.v2015_08_01.models.UnavailableReason
     :ivar message: The detailed info regarding the reason associated with the Namespace.
     :vartype message: str
@@ -284,8 +286,8 @@ class EventHubCreateOrUpdateParameters(msrest.serialization.Model):
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
     :param status: Enumerates the possible values for the status of the Event Hub. Possible values
-     include: 'Active', 'Disabled', 'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating',
-     'Deleting', 'Renaming', 'Unknown'.
+     include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
+     "Deleting", "Renaming", "Unknown".
     :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
@@ -382,8 +384,8 @@ class EventHubResource(Resource):
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
     :param status: Enumerates the possible values for the status of the Event Hub. Possible values
-     include: 'Active', 'Disabled', 'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating',
-     'Deleting', 'Renaming', 'Unknown'.
+     include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
+     "Deleting", "Renaming", "Unknown".
     :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
@@ -442,9 +444,9 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
     :type sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
     :param tags: A set of tags. Namespace tags.
     :type tags: dict[str, str]
-    :param status: State of the Namespace. Possible values include: 'Unknown', 'Creating',
-     'Created', 'Activating', 'Enabling', 'Active', 'Disabling', 'Disabled', 'SoftDeleting',
-     'SoftDeleted', 'Removing', 'Removed', 'Failed'.
+    :param status: State of the Namespace. Possible values include: "Unknown", "Creating",
+     "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+     "SoftDeleted", "Removing", "Removed", "Failed".
     :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
     :param provisioning_state: Provisioning state of the Namespace.
     :type provisioning_state: str
@@ -591,9 +593,9 @@ class NamespaceResource(TrackedResource):
     :type tags: dict[str, str]
     :param sku: SKU parameters supplied to the create Namespace operation.
     :type sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
-    :param status: State of the Namespace. Possible values include: 'Unknown', 'Creating',
-     'Created', 'Activating', 'Enabling', 'Active', 'Disabling', 'Disabled', 'SoftDeleting',
-     'SoftDeleted', 'Removing', 'Removed', 'Failed'.
+    :param status: State of the Namespace. Possible values include: "Unknown", "Creating",
+     "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+     "SoftDeleted", "Removing", "Removed", "Failed".
     :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
     :param provisioning_state: Provisioning state of the Namespace.
     :type provisioning_state: str
@@ -783,8 +785,8 @@ class OperationListResult(msrest.serialization.Model):
 class RegenerateKeysParameters(msrest.serialization.Model):
     """Parameters supplied to the Regenerate Authorization Rule keys operation.
 
-    :param policykey: Key that needs to be regenerated. Possible values include: 'PrimaryKey',
-     'SecondaryKey'.
+    :param policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
+     "SecondaryKey".
     :type policykey: str or ~azure.mgmt.eventhub.v2015_08_01.models.Policykey
     """
 
@@ -957,10 +959,10 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Name of this SKU. Possible values include: 'Basic', 'Standard'.
+    :param name: Name of this SKU. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuName
     :param tier: Required. The billing tier of this particular SKU. Possible values include:
-     'Basic', 'Standard', 'Premium'.
+     "Basic", "Standard", "Premium".
     :type tier: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuTier
     :param capacity: The Event Hubs throughput units.
     :type capacity: int

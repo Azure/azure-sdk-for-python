@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from ._configuration import EventHubManagementClientConfiguration
+from ._configuration_async import EventHubManagementClientConfiguration
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
@@ -57,17 +57,17 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: "AsyncTokenCredential"
         subscription_id,  # type: str
         api_version=None,
         base_url=None,
         profile=KnownProfiles.default,
         **kwargs  # type: Any
-    ):
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = EventHubManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(EventHubManagementClient, self).__init__(
             credential,
             self._config,
@@ -88,13 +88,13 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.eventhub.v2018_01_01_preview.models>`
         """
         if api_version == '2015-08-01':
-            from .v2015_08_01 import models
+            from ..v2015_08_01 import models
             return models
         elif api_version == '2017-04-01':
-            from .v2017_04_01 import models
+            from ..v2017_04_01 import models
             return models
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview import models
+            from ..v2018_01_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -102,11 +102,11 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def clusters(self):
         """Instance depends on the API version:
 
-           * 2018-01-01-preview: :class:`ClustersOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ClustersOperations>`
+           * 2018-01-01-preview: :class:`ClustersOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.ClustersOperations>`
         """
         api_version = self._get_api_version('clusters')
         if api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import ClustersOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import ClustersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -115,11 +115,11 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def configuration(self):
         """Instance depends on the API version:
 
-           * 2018-01-01-preview: :class:`ConfigurationOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations>`
+           * 2018-01-01-preview: :class:`ConfigurationOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.ConfigurationOperations>`
         """
         api_version = self._get_api_version('configuration')
         if api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import ConfigurationOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import ConfigurationOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -128,17 +128,17 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def consumer_groups(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2015_08_01.operations.ConsumerGroupsOperations>`
-           * 2017-04-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2017_04_01.operations.ConsumerGroupsOperations>`
-           * 2018-01-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ConsumerGroupsOperations>`
+           * 2015-08-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2015_08_01.aio.operations_async.ConsumerGroupsOperations>`
+           * 2017-04-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.ConsumerGroupsOperations>`
+           * 2018-01-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.ConsumerGroupsOperations>`
         """
         api_version = self._get_api_version('consumer_groups')
         if api_version == '2015-08-01':
-            from .v2015_08_01.operations import ConsumerGroupsOperations as OperationClass
+            from ..v2015_08_01.aio.operations_async import ConsumerGroupsOperations as OperationClass
         elif api_version == '2017-04-01':
-            from .v2017_04_01.operations import ConsumerGroupsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import ConsumerGroupsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import ConsumerGroupsOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import ConsumerGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -147,14 +147,14 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def disaster_recovery_configs(self):
         """Instance depends on the API version:
 
-           * 2017-04-01: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2017_04_01.operations.DisasterRecoveryConfigsOperations>`
-           * 2018-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.DisasterRecoveryConfigsOperations>`
+           * 2017-04-01: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.DisasterRecoveryConfigsOperations>`
+           * 2018-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.DisasterRecoveryConfigsOperations>`
         """
         api_version = self._get_api_version('disaster_recovery_configs')
         if api_version == '2017-04-01':
-            from .v2017_04_01.operations import DisasterRecoveryConfigsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import DisasterRecoveryConfigsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import DisasterRecoveryConfigsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -163,17 +163,17 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def event_hubs(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2015_08_01.operations.EventHubsOperations>`
-           * 2017-04-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2017_04_01.operations.EventHubsOperations>`
-           * 2018-01-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.EventHubsOperations>`
+           * 2015-08-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2015_08_01.aio.operations_async.EventHubsOperations>`
+           * 2017-04-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.EventHubsOperations>`
+           * 2018-01-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.EventHubsOperations>`
         """
         api_version = self._get_api_version('event_hubs')
         if api_version == '2015-08-01':
-            from .v2015_08_01.operations import EventHubsOperations as OperationClass
+            from ..v2015_08_01.aio.operations_async import EventHubsOperations as OperationClass
         elif api_version == '2017-04-01':
-            from .v2017_04_01.operations import EventHubsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import EventHubsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import EventHubsOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import EventHubsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -182,17 +182,17 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def namespaces(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`NamespacesOperations<azure.mgmt.eventhub.v2015_08_01.operations.NamespacesOperations>`
-           * 2017-04-01: :class:`NamespacesOperations<azure.mgmt.eventhub.v2017_04_01.operations.NamespacesOperations>`
-           * 2018-01-01-preview: :class:`NamespacesOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.NamespacesOperations>`
+           * 2015-08-01: :class:`NamespacesOperations<azure.mgmt.eventhub.v2015_08_01.aio.operations_async.NamespacesOperations>`
+           * 2017-04-01: :class:`NamespacesOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.NamespacesOperations>`
+           * 2018-01-01-preview: :class:`NamespacesOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.NamespacesOperations>`
         """
         api_version = self._get_api_version('namespaces')
         if api_version == '2015-08-01':
-            from .v2015_08_01.operations import NamespacesOperations as OperationClass
+            from ..v2015_08_01.aio.operations_async import NamespacesOperations as OperationClass
         elif api_version == '2017-04-01':
-            from .v2017_04_01.operations import NamespacesOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import NamespacesOperations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import NamespacesOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import NamespacesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -201,17 +201,17 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`Operations<azure.mgmt.eventhub.v2015_08_01.operations.Operations>`
-           * 2017-04-01: :class:`Operations<azure.mgmt.eventhub.v2017_04_01.operations.Operations>`
-           * 2018-01-01-preview: :class:`Operations<azure.mgmt.eventhub.v2018_01_01_preview.operations.Operations>`
+           * 2015-08-01: :class:`Operations<azure.mgmt.eventhub.v2015_08_01.aio.operations_async.Operations>`
+           * 2017-04-01: :class:`Operations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.Operations>`
+           * 2018-01-01-preview: :class:`Operations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-08-01':
-            from .v2015_08_01.operations import Operations as OperationClass
+            from ..v2015_08_01.aio.operations_async import Operations as OperationClass
         elif api_version == '2017-04-01':
-            from .v2017_04_01.operations import Operations as OperationClass
+            from ..v2017_04_01.aio.operations_async import Operations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import Operations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -220,22 +220,22 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
     def regions(self):
         """Instance depends on the API version:
 
-           * 2017-04-01: :class:`RegionsOperations<azure.mgmt.eventhub.v2017_04_01.operations.RegionsOperations>`
-           * 2018-01-01-preview: :class:`RegionsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.RegionsOperations>`
+           * 2017-04-01: :class:`RegionsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.RegionsOperations>`
+           * 2018-01-01-preview: :class:`RegionsOperations<azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.RegionsOperations>`
         """
         api_version = self._get_api_version('regions')
         if api_version == '2017-04-01':
-            from .v2017_04_01.operations import RegionsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import RegionsOperations as OperationClass
         elif api_version == '2018-01-01-preview':
-            from .v2018_01_01_preview.operations import RegionsOperations as OperationClass
+            from ..v2018_01_01_preview.aio.operations_async import RegionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
-    def close(self):
-        self._client.close()
-    def __enter__(self):
-        self._client.__enter__()
+    async def close(self):
+        await self._client.close()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
-    def __exit__(self, *exc_details):
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details):
+        await self._client.__aexit__(*exc_details)
