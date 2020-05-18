@@ -20,10 +20,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/eventhub/
-    - sdk/core/
-    - tools/
-    - eng/
+    - sdk/hybridkubernetes/
 
 pr:
   branches:
@@ -35,21 +32,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/eventhub/
-    - sdk/core/
-    - tools/
-    - eng/
+    - sdk/hybridkubernetes/
+
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: eventhub
+    ServiceDirectory: hybridkubernetes
     Artifacts:
-    - name: azure_eventhub
-      safeName: azureeventhub
-    - name: azure_eventhub_checkpointstoreblob_aio
-      safeName: azureeventhubcheckpointstoreblobaio
-    - name: azure_eventhub_checkpointstoreblob
-      safeName: azureeventhubcheckpointstoreblob
-    - name: azure-mgmt-eventhub
-      safeName: azuremgmteventhub
+    - name: azure_mgmt_hybridkubernetes
+      safeName: azuremgmthybridkubernetes

@@ -131,7 +131,7 @@ class ServiceBusClient(object):
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=ServiceBusSharedKeyCredential(policy, key),
+            credential=ServiceBusSharedKeyCredential(policy, key),  # type: ignore
             **kwargs
         )
 
@@ -298,7 +298,7 @@ class ServiceBusClient(object):
         )
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
-        # type: (str, str, Any) -> ServiceBusReceiver
+        # type: (str, str, str, Any) -> ServiceBusReceiver
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
@@ -402,4 +402,3 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             **kwargs
         )
-
