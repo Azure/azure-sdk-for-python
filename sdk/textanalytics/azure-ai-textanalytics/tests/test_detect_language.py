@@ -448,13 +448,15 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
     def test_bad_model_version_error(self, client):
+        # marking as xfail since the bad model version change hasn't appeared for LD endpoint yet
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = client.detect_language(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()

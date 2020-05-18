@@ -446,7 +446,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         try:
             result = await client.recognize_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
