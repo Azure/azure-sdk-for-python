@@ -94,8 +94,8 @@ class FormRecognizerClient(object):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -142,8 +142,8 @@ class FormRecognizerClient(object):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
