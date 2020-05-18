@@ -4,8 +4,9 @@
 # ------------------------------------
 from .authorization_code import AuthorizationCodeCredential
 from .browser import InteractiveBrowserCredential
+from .certificate import CertificateCredential
 from .chained import ChainedTokenCredential
-from .client_credential import CertificateCredential, ClientSecretCredential
+from .client_secret import ClientSecretCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
