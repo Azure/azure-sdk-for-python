@@ -144,6 +144,9 @@ class AzureCliScript(DeploymentScript):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration".
@@ -210,6 +213,7 @@ class AzureCliScript(DeploymentScript):
         'kind': {'key': 'kind', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'properties.storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
@@ -232,6 +236,7 @@ class AzureCliScript(DeploymentScript):
         super(AzureCliScript, self).__init__(**kwargs)
         self.kind = 'AzureCLI'
         self.container_settings = kwargs.get('container_settings', None)
+        self.storage_account_settings = kwargs.get('storage_account_settings', None)
         self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
@@ -315,6 +320,9 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration".
@@ -339,6 +347,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
 
     _attribute_map = {
         'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
@@ -351,6 +360,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     ):
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
         self.container_settings = kwargs.get('container_settings', None)
+        self.storage_account_settings = kwargs.get('storage_account_settings', None)
         self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
@@ -389,6 +399,9 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration".
@@ -426,6 +439,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         'retention_interval': {'key': 'retentionInterval', 'type': 'duration'},
         'timeout': {'key': 'timeout', 'type': 'duration'},
         'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
@@ -448,6 +462,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         self.timeout = kwargs.get('timeout', None)
         self.az_cli_version = kwargs['az_cli_version']
         self.container_settings = kwargs.get('container_settings', None)
+        self.storage_account_settings = kwargs.get('storage_account_settings', None)
         self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
@@ -485,6 +500,9 @@ class AzurePowerShellScript(DeploymentScript):
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration".
@@ -551,6 +569,7 @@ class AzurePowerShellScript(DeploymentScript):
         'kind': {'key': 'kind', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'properties.storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
@@ -573,6 +592,7 @@ class AzurePowerShellScript(DeploymentScript):
         super(AzurePowerShellScript, self).__init__(**kwargs)
         self.kind = 'AzurePowerShell'
         self.container_settings = kwargs.get('container_settings', None)
+        self.storage_account_settings = kwargs.get('storage_account_settings', None)
         self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
@@ -620,6 +640,9 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :param container_settings: Container settings.
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param storage_account_settings: Storage Account settings.
+    :type storage_account_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration".
@@ -657,6 +680,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         'retention_interval': {'key': 'retentionInterval', 'type': 'duration'},
         'timeout': {'key': 'timeout', 'type': 'duration'},
         'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'storage_account_settings': {'key': 'storageAccountSettings', 'type': 'StorageAccountConfiguration'},
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
@@ -679,6 +703,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         self.timeout = kwargs.get('timeout', None)
         self.az_power_shell_version = kwargs['az_power_shell_version']
         self.container_settings = kwargs.get('container_settings', None)
+        self.storage_account_settings = kwargs.get('storage_account_settings', None)
         self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
@@ -1048,6 +1073,29 @@ class ScriptStatus(msrest.serialization.Model):
         self.end_time = None
         self.expiration_time = None
         self.error = kwargs.get('error', None)
+
+
+class StorageAccountConfiguration(msrest.serialization.Model):
+    """Settings to use an existing storage account. Valid storage account kinds are: Storage, StorageV2 and FileStorage.
+
+    :param storage_account_name: The storage account name.
+    :type storage_account_name: str
+    :param storage_account_key: The storage account access key.
+    :type storage_account_key: str
+    """
+
+    _attribute_map = {
+        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
+        'storage_account_key': {'key': 'storageAccountKey', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StorageAccountConfiguration, self).__init__(**kwargs)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
+        self.storage_account_key = kwargs.get('storage_account_key', None)
 
 
 class SystemData(msrest.serialization.Model):
