@@ -23,13 +23,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 0f4bc38d-8a46-4fb0-91f2-3ebdcb2cf8b9
+      - 26895c8e-0142-4698-bbce-21e200519685
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Mon, 27 Apr 2020 17:38:15 GMT
+      - Mon, 18 May 2020 15:13:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

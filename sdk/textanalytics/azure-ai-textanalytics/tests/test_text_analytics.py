@@ -7,6 +7,7 @@
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics import _models
+from azure.ai.textanalytics._generated import models as _generated_models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
 
@@ -167,3 +168,19 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("TextDocumentInput(id=1, text=hello world, language=en)", repr(text_document_input))
         self.assertEqual("TextDocumentBatchStatistics(document_count=1, valid_document_count=2, "
                          "erroneous_document_count=3, transaction_count=4)", repr(text_document_batch_statistics))
+
+    def test_inner_error_takes_precedence(self):
+        generated_innererror = _generated_models.InnerError(
+            code="UnsupportedLanguageCode",
+            message="Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant",
+
+        )
+        generated_error = _generated_models.TextAnalyticsError(
+            code="InvalidArgument",
+            message="Invalid Language Code.",
+            innererror=generated_innererror
+        )
+
+        error = _models.TextAnalyticsError._from_generated(generated_error)
+        self.assertEqual(error.code, "UnsupportedLanguageCode")
+        self.assertEqual(error.message, "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant")

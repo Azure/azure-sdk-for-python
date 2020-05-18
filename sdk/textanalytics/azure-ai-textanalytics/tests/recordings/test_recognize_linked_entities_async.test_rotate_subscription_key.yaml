@@ -20,10 +20,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 1ce90b16-e00c-4389-bad4-47b57db41861
+      apim-request-id: c21253c3-2fa6-44de-ab3b-b57d98866501
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 18:31:34 GMT
+      date: Mon, 18 May 2020 15:13:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -51,20 +51,15 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
         key or wrong API endpoint. Make sure to provide a valid key for an active
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: 9b572bb6-dbb5-4fbf-b247-db42dc47c483
-      content-length: '225'
-      content-type: application/json
-      date: Thu, 23 Apr 2020 18:31:34 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      www-authenticate: AzureApiManagementKey realm="https://westus2.ppe.cognitiveservices.azure.com/text/analytics",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options: nosniff
+      content-length: '224'
+      date: Mon, 18 May 2020 15:13:25 GMT
     status:
       code: 401
-      message: Access Denied
+      message: PermissionDenied
     url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
@@ -87,14 +82,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 88ec1ea0-815c-4988-94b7-09e10c2a51da
+      apim-request-id: cd1b1ad7-3aa1-41f5-9969-1a5c2110216b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 18:31:34 GMT
+      date: Mon, 18 May 2020 15:13:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '22'
+      x-envoy-upstream-service-time: '32'
     status:
       code: 200
       message: OK

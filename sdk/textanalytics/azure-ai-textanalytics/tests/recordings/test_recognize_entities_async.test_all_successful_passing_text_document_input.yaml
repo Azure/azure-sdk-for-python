@@ -30,14 +30,14 @@ interactions:
         Gates","category":"Person","offset":37,"length":10,"confidenceScore":0.86},{"text":"Paul
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 182c9c74-3f72-4d71-9f1b-346e663879ff
+      apim-request-id: afa4acb5-1b36-4b59-a689-b8c491e2f078
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 27 Apr 2020 17:52:25 GMT
+      date: Mon, 18 May 2020 15:13:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '73'
+      x-envoy-upstream-service-time: '160'
     status:
       code: 200
       message: OK

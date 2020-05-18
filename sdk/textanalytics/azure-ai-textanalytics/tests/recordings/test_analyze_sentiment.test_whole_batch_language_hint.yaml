@@ -26,16 +26,16 @@ interactions:
         was the best day of my life."}],"warnings":[]},{"id":"1","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.03,"negative":0.97},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.0,"neutral":0.92,"negative":0.08},"offset":0,"length":38,"text":"I
         did not like the hotel we stayed at."},{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.03,"negative":0.97},"offset":39,"length":21,"text":"It
         was too expensive."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"offset":0,"length":42,"text":"The
-        restaurant was not as good as I hoped."}],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        restaurant was not as good as I hoped."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 3d651968-20b6-46a0-8c50-2a7508c7ee26
+      - a41c3831-235a-414e-a05b-1c563d47686a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 22 Apr 2020 22:41:59 GMT
+      - Mon, 18 May 2020 15:13:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '156'
+      - '112'
     status:
       code: 200
       message: OK

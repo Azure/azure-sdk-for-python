@@ -28,13 +28,13 @@ interactions:
         https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - c59e450a-a78e-4bb5-aac2-b6da434585d1
+      - 630f6d9c-42c6-4a98-8d35-fa9000c39524
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=6
       date:
-      - Wed, 06 May 2020 17:50:02 GMT
+      - Mon, 18 May 2020 15:13:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '957'
+      - '364'
     status:
       code: 200
       message: OK

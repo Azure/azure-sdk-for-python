@@ -22,16 +22,16 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","subcategory":"LOCATION.STRUCTURAL","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.75}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"LOCATION.STRUCTURAL","offset":4,"length":10,"confidenceScore":0.71}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 25863ce9-d015-43fb-b461-11528b3a8e09
+      - 467dcefb-282b-4ae7-9cdb-2c9499c4291e
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:54:03 GMT
+      - Mon, 18 May 2020 15:13:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '87'
+      - '471'
     status:
       code: 200
       message: OK
@@ -66,27 +66,17 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
         key or wrong API endpoint. Make sure to provide a valid key for an active
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id:
-      - a97d11c7-a0a7-4284-940e-7350c40fa40f
       content-length:
-      - '225'
-      content-type:
-      - application/json
+      - '224'
       date:
-      - Thu, 23 Apr 2020 15:54:03 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      www-authenticate:
-      - AzureApiManagementKey realm="https://westus2.ppe.cognitiveservices.azure.com/text/analytics",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options:
-      - nosniff
+      - Mon, 18 May 2020 15:13:22 GMT
     status:
       code: 401
-      message: Access Denied
+      message: PermissionDenied
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -110,16 +100,16 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","subcategory":"LOCATION.STRUCTURAL","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.75}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"LOCATION.STRUCTURAL","offset":4,"length":10,"confidenceScore":0.71}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - d86a3f2c-e113-4dc3-a3cb-12acc186dba3
+      - f027bbf3-a94c-47b9-bf1d-6fe18125f6e1
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:54:03 GMT
+      - Mon, 18 May 2020 15:13:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -127,7 +117,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '84'
+      - '436'
     status:
       code: 200
       message: OK

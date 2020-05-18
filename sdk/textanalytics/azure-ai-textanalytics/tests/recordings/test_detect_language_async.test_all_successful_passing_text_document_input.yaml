@@ -1,15 +1,15 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian",
-      "language": "US"}, {"id": "2", "text": "Este es un document escrito en Espa\u00f1ol.",
-      "language": "US"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "language":
+      "countryHint": "US"}, {"id": "2", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "countryHint": "US"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "countryHint":
       "US"}, {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
-      "language": "US"}]}'
+      "countryHint": "US"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '341'
+      - '353'
       Content-Type:
       - application/json
       User-Agent:
@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"Japanese","iso6391Name":"ja","confidenceScore":1.0},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 8eef5118-0636-45b1-abd0-81cb6568274a
+      apim-request-id: 14631f37-dce0-460d-981c-e496a624d9c9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Mon, 27 Apr 2020 17:37:37 GMT
+      date: Mon, 18 May 2020 15:13:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK

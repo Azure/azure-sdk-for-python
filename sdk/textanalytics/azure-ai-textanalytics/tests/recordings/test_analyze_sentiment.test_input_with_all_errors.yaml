@@ -27,14 +27,14 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 31e877c7-d76c-4f22-8cd6-3308217987d9
+      - 4a09fbee-fff5-405b-842b-8bad0684b249
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 22:41:52 GMT
+      - Mon, 18 May 2020 15:13:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -17,16 +17,16 @@ interactions:
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35,"text":"Bill
-        Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 808cf631-c1aa-4b6b-b53d-4853ad8b113f
+      apim-request-id: 0bf76b4d-8bd6-461c-bd0e-a4ebdbf2bbf4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 22 Apr 2020 22:46:04 GMT
+      date: Mon, 18 May 2020 15:13:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '127'
+      x-envoy-upstream-service-time: '121'
     status:
       code: 200
       message: OK

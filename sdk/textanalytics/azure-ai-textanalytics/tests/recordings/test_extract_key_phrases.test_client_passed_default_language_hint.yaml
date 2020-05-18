@@ -27,13 +27,13 @@ interactions:
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - c59586da-3199-490e-8478-44147e11cb07
+      - b8ba73ef-51ff-46ed-be7c-e71903e97cd2
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:17:02 GMT
+      - Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '5'
     status:
       code: 200
       message: OK
@@ -72,13 +72,13 @@ interactions:
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - e056bd10-a45f-47db-9a88-e90e2235fd86
+      - c38d81c5-9937-4345-9d53-9b9b5e3c511e
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:17:02 GMT
+      - Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -86,7 +86,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '5'
     status:
       code: 200
       message: OK
@@ -118,13 +118,13 @@ interactions:
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - eea05b25-b558-476f-98df-cfb1efdbebf5
+      - 8370e9d1-622e-4e78-bfb5-ced467714b84
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:17:02 GMT
+      - Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

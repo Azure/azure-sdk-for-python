@@ -17,11 +17,11 @@ interactions:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: c78d238c-e2e9-47a3-9c27-e4c3810b331a
+      apim-request-id: 8ce06601-1a2d-46a2-a199-aa7e9972ba5c
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:46:03 GMT
+      date: Mon, 18 May 2020 15:13:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

@@ -22,23 +22,23 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
-        Gates","offset":25,"length":10,"confidenceScore":0.0}],"language":"en","id":"Bill
+        Gates","offset":25,"length":10,"confidenceScore":0.52}],"language":"en","id":"Bill
         Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
-        Allen","matches":[{"text":"Paul Allen","offset":40,"length":10,"confidenceScore":0.0}],"language":"en","id":"Paul
-        Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.0}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]},{"id":"2","entities":[{"name":"Bill
-        Gates","matches":[{"text":"Bill Gates","offset":26,"length":10,"confidenceScore":0.0}],"language":"en","id":"Bill
+        Allen","matches":[{"text":"Paul Allen","offset":40,"length":10,"confidenceScore":0.54}],"language":"en","id":"Paul
+        Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.49}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]},{"id":"2","entities":[{"name":"Bill
+        Gates","matches":[{"text":"Bill Gates","offset":26,"length":10,"confidenceScore":0.52}],"language":"en","id":"Bill
         Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
-        Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"confidenceScore":0.0}],"language":"en","id":"Paul
-        Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.0}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+        Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"confidenceScore":0.55}],"language":"en","id":"Paul
+        Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.49}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 35855ef8-6198-4049-9f6e-abb6337d6f18
+      - 9456032d-5141-47b0-98db-1f415227378c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Thu, 23 Apr 2020 15:56:01 GMT
+      - Mon, 18 May 2020 15:13:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -31,11 +31,11 @@ interactions:
         language not supported. Pass in one of: en,es"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 96b04a1b-03ad-4798-8d3c-fc4e43fe75d3
+      - 1f1cd602-47b4-491e-996c-aadd298eff14
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Apr 2020 15:56:11 GMT
+      - Mon, 18 May 2020 15:13:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '1'
     status:
       code: 200
       message: OK

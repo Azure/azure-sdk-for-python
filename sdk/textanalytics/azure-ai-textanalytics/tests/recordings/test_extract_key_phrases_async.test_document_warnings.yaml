@@ -20,14 +20,14 @@ interactions:
         document contains very long words (longer than 64 characters). These words
         will be truncated and may result in unreliable model predictions."}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: c761fc46-cd6f-4885-a8bb-8f5f2606a6d5
+      apim-request-id: 1d17ebcf-1079-433f-966c-977f5734175c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 24 Apr 2020 18:41:46 GMT
+      date: Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 200
       message: OK

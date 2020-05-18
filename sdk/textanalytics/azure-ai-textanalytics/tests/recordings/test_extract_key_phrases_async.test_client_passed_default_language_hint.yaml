@@ -22,14 +22,14 @@ interactions:
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: afe7dec0-224d-42b3-8494-810b2c7778e7
+      apim-request-id: ef135164-e723-4cf2-a9da-99d4fe95558c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 15:23:40 GMT
+      date: Mon, 18 May 2020 15:13:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK
@@ -56,10 +56,10 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: d13b6cb3-4b32-4b10-bdc0-4b02c72c55bf
+      apim-request-id: 4f99abb9-157b-4596-8a34-cb620b4663a6
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 15:23:40 GMT
+      date: Mon, 18 May 2020 15:13:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -91,14 +91,14 @@ interactions:
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: dec44474-d9f7-4e5a-adf6-baee3259bfb5
+      apim-request-id: 310e8f7d-68de-444d-9e32-26c0403e3ffe
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 15:23:40 GMT
+      date: Mon, 18 May 2020 15:13:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK

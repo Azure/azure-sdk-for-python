@@ -31,16 +31,16 @@ interactions:
         :0.15,\"neutral\":0.79,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
         neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\"\
         :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
+        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
-      apim-request-id: b46c3d39-905e-4e23-a70f-77daae79674e
+      apim-request-id: 03d2728f-f37e-4e34-bfda-11228df3c1d6
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 22 Apr 2020 22:46:11 GMT
+      date: Mon, 18 May 2020 15:13:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '119'
+      x-envoy-upstream-service-time: '93'
     status:
       code: 200
       message: OK

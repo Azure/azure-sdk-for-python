@@ -24,11 +24,11 @@ interactions:
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
       apim-request-id:
-      - 869c58ce-e24e-42bb-8980-021afbc90ab1
+      - 450dc1e9-5052-46bf-8034-003e65c1b6df
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Apr 2020 15:56:05 GMT
+      - Mon, 18 May 2020 15:13:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 400
       message: Bad Request

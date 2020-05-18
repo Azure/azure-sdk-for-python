@@ -17,15 +17,15 @@ interactions:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 7f5703c2-0a73-40b4-9219-d838fc1c808b
+      apim-request-id: d4c7d8a4-dff7-4520-abd6-a72fed6c5b87
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:46:03 GMT
+      date: Mon, 18 May 2020 15:13:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 200
       message: OK

@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 1a65d927-7ba6-4118-9666-8033091d6c9c
+      - 950c923b-7ec1-4dc7-b764-8a160dda2342
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 22:41:50 GMT
+      - Mon, 18 May 2020 15:13:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK

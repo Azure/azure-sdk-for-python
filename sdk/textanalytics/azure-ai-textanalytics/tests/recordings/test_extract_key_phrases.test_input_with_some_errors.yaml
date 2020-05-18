@@ -26,13 +26,13 @@ interactions:
         language not supported. Pass in one of: da,de,en,es,fi,fr,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv"}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 9199ff43-5e2b-483e-b892-fbbfbb03d7ce
+      - 66c1e993-bf4f-473f-ba54-4b4ea6ab2946
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 23 Apr 2020 15:17:04 GMT
+      - Mon, 18 May 2020 15:13:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 200
       message: OK

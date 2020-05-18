@@ -9,6 +9,7 @@
 import sys
 import json
 from datetime import datetime
+import warnings
 
 from azure.common import AzureException
 from ._common_models import WindowsAzureData, _unicode_type
@@ -73,7 +74,6 @@ class Topic(WindowsAzureData):
 
     @property
     def max_size_in_mega_bytes(self):
-        import warnings
         warnings.warn(
             'This attribute has been changed to max_size_in_megabytes.')
         return self.max_size_in_megabytes

@@ -26,13 +26,13 @@ interactions:
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - cc2cfc52-8165-4958-a53f-144098db277f
+      - ef72a4ec-9848-4a5a-97fb-2de37a6d0e8a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:17:07 GMT
+      - Mon, 18 May 2020 15:13:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '7'
     status:
       code: 200
       message: OK

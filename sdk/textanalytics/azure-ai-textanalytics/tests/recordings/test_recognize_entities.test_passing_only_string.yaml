@@ -24,36 +24,24 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"0\",\"entities\":[{\"text\":\"Microsoft\"\
-        ,\"category\":\"Organization\",\"offset\":0,\"length\":9,\"confidenceScore\"\
-        :0.5},{\"text\":\"Bill Gates\",\"category\":\"Person\",\"offset\":25,\"length\"\
-        :10,\"confidenceScore\":0.47},{\"text\":\"Paul Allen\",\"category\":\"Person\"\
-        ,\"offset\":40,\"length\":10,\"confidenceScore\":0.7},{\"text\":\"April 4,\
-        \ 1975\",\"category\":\"DateTime\",\"subcategory\":\"Date\",\"offset\":54,\"\
-        length\":13,\"confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"1\",\"entities\"\
-        :[{\"text\":\"4\",\"category\":\"Quantity\",\"subcategory\":\"Number\",\"\
-        offset\":53,\"length\":1,\"confidenceScore\":0.8},{\"text\":\"1975\",\"category\"\
-        :\"DateTime\",\"subcategory\":\"DateRange\",\"offset\":67,\"length\":4,\"\
-        confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\"\
-        :\"Microsoft\",\"category\":\"Organization\",\"offset\":0,\"length\":9,\"\
-        confidenceScore\":0.33},{\"text\":\"4\",\"category\":\"Quantity\",\"subcategory\"\
-        :\"Number\",\"offset\":19,\"length\":1,\"confidenceScore\":0.8},{\"text\"\
-        :\"April 1975\",\"category\":\"DateTime\",\"subcategory\":\"DateRange\",\"\
-        offset\":22,\"length\":10,\"confidenceScore\":0.8},{\"text\":\"von Bill Gates\
-        \ und Paul Allen gegr\xFCndet\",\"category\":\"Person\",\"offset\":33,\"length\"\
-        :39,\"confidenceScore\":0.52}],\"warnings\":[]}],\"errors\":[{\"id\":\"3\"\
-        ,\"error\":{\"code\":\"InvalidArgument\",\"message\":\"Invalid document in\
-        \ request.\",\"innererror\":{\"code\":\"InvalidDocument\",\"message\":\"Document\
-        \ text is empty.\"}}}],\"modelVersion\":\"2020-04-01\"}"
+      string: '{"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.81},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
+        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"1","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":53,"length":1,"confidenceScore":0.8},{"text":"1975","category":"DateTime","subcategory":"DateRange","offset":67,"length":4,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":19,"length":1,"confidenceScore":0.8},{"text":"April
+        1975","category":"DateTime","subcategory":"DateRange","offset":22,"length":10,"confidenceScore":0.8},{"text":"von
+        Bill Gates","category":"Person","offset":33,"length":14,"confidenceScore":0.59},{"text":"Paul
+        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.63}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 658fac52-9a0b-4647-bf02-b93c5511c7cc
+      - c5d71ae7-c1c2-47b9-ab80-b8ed4a11c47d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Apr 2020 15:54:02 GMT
+      - Mon, 18 May 2020 15:13:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -61,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '122'
+      - '374'
     status:
       code: 200
       message: OK

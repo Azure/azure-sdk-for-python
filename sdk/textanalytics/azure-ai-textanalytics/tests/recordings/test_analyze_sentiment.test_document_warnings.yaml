@@ -21,16 +21,16 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"offset":0,"length":40,"text":"This
-        won''t actually create a warning :''("}],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        won''t actually create a warning :''("}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - c1f122eb-deb0-4369-b857-2d91e3d0e348
+      - 34059eab-c36c-4245-9388-303d19f27ed6
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 24 Apr 2020 18:51:45 GMT
+      - Mon, 18 May 2020 15:13:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '276'
+      - '119'
     status:
       code: 200
       message: OK

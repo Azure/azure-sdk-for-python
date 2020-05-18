@@ -19,13 +19,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
-      apim-request-id: ec199aaa-1810-4bf6-8be9-d6cb9f0bc019
+      apim-request-id: 43f42ef7-5cbe-4f72-8a34-28e8e09d6fb0
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:46:03 GMT
+      date: Mon, 18 May 2020 15:13:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 400
       message: Bad Request

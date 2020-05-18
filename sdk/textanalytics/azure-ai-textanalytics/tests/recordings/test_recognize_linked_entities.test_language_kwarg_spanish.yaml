@@ -21,19 +21,19 @@ interactions:
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"name":"Bill
-        Gates","matches":[{"text":"Bill Gates","offset":0,"length":10,"confidenceScore":0.0}],"language":"es","id":"Bill
-        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":25,"length":9,"confidenceScore":0.0}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"},{"name":"Director
-        ejecutivo","matches":[{"text":"CEO","offset":18,"length":3,"confidenceScore":0.0}],"language":"es","id":"Director
+        Gates","matches":[{"text":"Bill Gates","offset":0,"length":10,"confidenceScore":0.38}],"language":"es","id":"Bill
+        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":25,"length":9,"confidenceScore":0.3}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"},{"name":"Director
+        ejecutivo","matches":[{"text":"CEO","offset":18,"length":3,"confidenceScore":0.22}],"language":"es","id":"Director
         ejecutivo","url":"https://es.wikipedia.org/wiki/Director_ejecutivo","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 21685082-771a-442b-881e-dc18e0feaa74
+      - e2dc9714-4eb1-4301-a6b3-9977425c99ee
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 23 Apr 2020 15:56:07 GMT
+      - Mon, 18 May 2020 15:13:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '10'
+      - '22'
     status:
       code: 200
       message: OK

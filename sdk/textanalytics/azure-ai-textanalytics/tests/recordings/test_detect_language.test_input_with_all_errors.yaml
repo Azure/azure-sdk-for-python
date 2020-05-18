@@ -35,13 +35,11 @@ interactions:
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 72a211e5-5d57-46c7-a2c0-4fc2a951b9d1
+      - 2e18daa0-e022-476d-8510-dcb386f83bf3
       content-type:
       - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=0
       date:
-      - Mon, 27 Apr 2020 17:33:51 GMT
+      - Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

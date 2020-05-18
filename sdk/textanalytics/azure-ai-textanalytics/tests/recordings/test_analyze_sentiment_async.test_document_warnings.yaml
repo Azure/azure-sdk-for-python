@@ -17,16 +17,16 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"offset":0,"length":40,"text":"This
-        won''t actually create a warning :''("}],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        won''t actually create a warning :''("}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: cc030197-a61d-453a-a32c-e719084eb5e7
+      apim-request-id: d92788cd-9285-4e36-a550-3f367145cb0a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 27 Apr 2020 22:13:41 GMT
+      date: Mon, 18 May 2020 15:13:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '108'
+      x-envoy-upstream-service-time: '107'
     status:
       code: 200
       message: OK

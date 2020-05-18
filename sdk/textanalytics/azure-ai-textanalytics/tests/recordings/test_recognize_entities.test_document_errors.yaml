@@ -33,11 +33,11 @@ interactions:
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 1223cbe6-2468-4491-a3d2-e0c188167096
+      - 385b47f3-af5a-4d66-9fb2-724c53e7d3b7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Apr 2020 15:53:59 GMT
+      - Mon, 18 May 2020 15:13:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -45,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '5'
     status:
       code: 200
       message: OK

@@ -18,14 +18,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: b6c19d68-c369-4a3d-8f8c-1deff84704ae
+      apim-request-id: 2f18cf86-1f58-40f8-8f46-0e4a526c1235
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 27 Apr 2020 17:37:41 GMT
+      date: Mon, 18 May 2020 15:13:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK
@@ -49,14 +49,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 08f13872-19b0-4f61-82b8-1388eb112cbd
+      apim-request-id: 2b7f86d5-ec92-4767-800e-4a81b19ae11f
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 27 Apr 2020 17:37:41 GMT
+      date: Mon, 18 May 2020 15:13:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK
@@ -80,14 +80,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: eaf2896a-2383-412e-aab8-2010429ab253
+      apim-request-id: c91f52af-cfee-40ef-938a-e3f08590aca5
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 27 Apr 2020 17:37:41 GMT
+      date: Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK
@@ -111,14 +111,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: c11e8f22-9fd1-41e0-85b1-47acd0526066
+      apim-request-id: 93a76680-b164-4678-945f-17f6ce2a9b2a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 27 Apr 2020 17:37:42 GMT
+      date: Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK

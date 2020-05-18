@@ -24,13 +24,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 355eaa0f-0cf6-4901-9929-422c4f1a2626
+      - 274f6fdd-f740-43a1-930e-5f1f5cc599eb
       content-type:
       - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=0
       date:
-      - Mon, 27 Apr 2020 17:33:49 GMT
+      - Mon, 18 May 2020 15:13:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

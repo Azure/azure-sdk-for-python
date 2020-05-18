@@ -22,10 +22,10 @@ interactions:
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: bde7ee61-8b27-4b3e-8533-920efdc43237
+      apim-request-id: 77c0ed97-ccc5-4e86-a4b1-9d7e1ccc7897
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 23 Apr 2020 15:23:47 GMT
+      date: Mon, 18 May 2020 15:13:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

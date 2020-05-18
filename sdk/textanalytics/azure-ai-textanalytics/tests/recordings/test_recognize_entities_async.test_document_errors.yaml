@@ -28,13 +28,13 @@ interactions:
         size to: 5120 text elements. For additional details on the data limitations
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 0deaae36-719a-420c-9306-468094820996
+      apim-request-id: db82371d-0830-4976-bd9e-07bba0d6d95a
       content-type: application/json; charset=utf-8
-      date: Thu, 23 Apr 2020 18:32:47 GMT
+      date: Mon, 18 May 2020 15:13:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 200
       message: OK

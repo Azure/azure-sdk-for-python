@@ -26,11 +26,11 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"A
         document within the request was too large to be processed. Limit document
         size to: 5120 text elements. For additional details on the data limitations
-        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2019-10-01"}'
+        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: e9a1cc89-4fe7-4f1d-b126-40784752674b
+      apim-request-id: 310340cb-0037-4e05-80ee-853d0a4e331e
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:46:03 GMT
+      date: Mon, 18 May 2020 15:13:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

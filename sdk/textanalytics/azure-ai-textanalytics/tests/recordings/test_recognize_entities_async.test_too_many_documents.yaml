@@ -23,14 +23,14 @@ interactions:
         number of documents in the request have exceeded the data limitations. See
         https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: f2321d88-a033-445f-b2ec-6ada1f9d33fd
+      apim-request-id: 2120ff4c-f33e-49eb-a4cc-705b491f1c0f
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
-      date: Wed, 06 May 2020 17:50:03 GMT
+      date: Mon, 18 May 2020 15:13:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '779'
+      x-envoy-upstream-service-time: '97'
     status:
       code: 200
       message: OK

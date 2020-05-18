@@ -20,15 +20,15 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?model-version=bad&showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
-        is incorrect. Allowed values are latest,2019-10-01"}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid model version.
+        Possible values are: latest,2019-10-01"}}'
     headers:
       apim-request-id:
-      - a1d6c660-a438-4b1b-b77c-cbdf54eb4f55
+      - 4d28642b-cb75-4b15-8063-19dbb1057b18
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Apr 2020 17:33:45 GMT
+      - Mon, 18 May 2020 15:13:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '5'
     status:
       code: 400
       message: Bad Request
