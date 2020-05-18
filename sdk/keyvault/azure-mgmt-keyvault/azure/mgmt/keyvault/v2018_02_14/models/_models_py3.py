@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._key_vault_management_client_enums import *
+
 
 class AccessPolicyEntry(msrest.serialization.Model):
     """An identity that have access to the key vault. All identities in the array must use the same tenant ID as the key vault's tenant ID.
@@ -68,8 +70,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2018_02_14.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -300,11 +302,11 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     :param bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
      'None'.  If not specified the default is 'AzureServices'. Possible values include:
-     'AzureServices', 'None'.
+     "AzureServices", "None".
     :type bypass: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and from
      virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-     Possible values include: 'Allow', 'Deny'.
+     Possible values include: "Allow", "Deny".
     :type default_action: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleAction
     :param ip_rules: The list of IP address rules.
     :type ip_rules: list[~azure.mgmt.keyvault.v2018_02_14.models.IPRule]
@@ -560,7 +562,7 @@ class PrivateEndpointConnection(Resource):
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
+     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
     """
@@ -609,7 +611,7 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
+     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
     """
@@ -718,7 +720,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
     :param status: Indicates whether the connection has been approved, rejected or removed by the
-     key vault owner. Possible values include: 'Pending', 'Approved', 'Rejected', 'Disconnected'.
+     key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
     :type status: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval or rejection.
@@ -805,7 +807,7 @@ class Sku(msrest.serialization.Model):
     :ivar family: Required. SKU family name. Default value: "A".
     :vartype family: str
     :param name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: 'standard', 'premium'.
+     premium vault. Possible values include: "standard", "premium".
     :type name: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuName
     """
 
@@ -1112,7 +1114,7 @@ class VaultPatchProperties(msrest.serialization.Model):
      enabled for this key vault. It does not accept false value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1198,7 +1200,7 @@ class VaultProperties(msrest.serialization.Model):
      enabled for this key vault. It does not accept false value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault

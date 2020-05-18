@@ -45,10 +45,10 @@ class AccessPolicyEntry(msrest.serialization.Model):
         **kwargs
     ):
         super(AccessPolicyEntry, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.object_id = kwargs.get('object_id', None)
+        self.tenant_id = kwargs['tenant_id']
+        self.object_id = kwargs['object_id']
         self.application_id = kwargs.get('application_id', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.permissions = kwargs['permissions']
 
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
@@ -61,8 +61,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2019_09_01.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -244,7 +244,7 @@ class IPRule(msrest.serialization.Model):
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -279,11 +279,11 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     :param bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
      'None'.  If not specified the default is 'AzureServices'. Possible values include:
-     'AzureServices', 'None'.
+     "AzureServices", "None".
     :type bypass: str or ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and from
      virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-     Possible values include: 'Allow', 'Deny'.
+     Possible values include: "Allow", "Deny".
     :type default_action: str or ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleAction
     :param ip_rules: The list of IP address rules.
     :type ip_rules: list[~azure.mgmt.keyvault.v2019_09_01.models.IPRule]
@@ -516,7 +516,7 @@ class PrivateEndpointConnection(Resource):
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
+     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -562,7 +562,7 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
+     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -664,7 +664,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
     :param status: Indicates whether the connection has been approved, rejected or removed by the
-     key vault owner. Possible values include: 'Pending', 'Approved', 'Rejected', 'Disconnected'.
+     key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
     :type status: str or
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval or rejection.
@@ -742,7 +742,7 @@ class Sku(msrest.serialization.Model):
     :ivar family: Required. SKU family name. Default value: "A".
     :vartype family: str
     :param name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: 'standard', 'premium'.
+     premium vault. Possible values include: "standard", "premium".
     :type name: str or ~azure.mgmt.keyvault.v2019_09_01.models.SkuName
     """
 
@@ -763,7 +763,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class Vault(msrest.serialization.Model):
@@ -813,7 +813,7 @@ class Vault(msrest.serialization.Model):
         self.type = None
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultAccessPolicyParameters(msrest.serialization.Model):
@@ -860,7 +860,7 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.location = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultAccessPolicyProperties(msrest.serialization.Model):
@@ -886,7 +886,7 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultAccessPolicyProperties, self).__init__(**kwargs)
-        self.access_policies = kwargs.get('access_policies', None)
+        self.access_policies = kwargs['access_policies']
 
 
 class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
@@ -920,7 +920,7 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class VaultCreateOrUpdateParameters(msrest.serialization.Model):
@@ -952,9 +952,9 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultCreateOrUpdateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultListResult(msrest.serialization.Model):
@@ -1036,7 +1036,7 @@ class VaultPatchProperties(msrest.serialization.Model):
     :param soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
     :type soft_delete_retention_in_days: int
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1126,7 +1126,7 @@ class VaultProperties(msrest.serialization.Model):
      actions are always authorized with RBAC.
     :type enable_rbac_authorization: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1171,8 +1171,8 @@ class VaultProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultProperties, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.sku = kwargs.get('sku', None)
+        self.tenant_id = kwargs['tenant_id']
+        self.sku = kwargs['sku']
         self.access_policies = kwargs.get('access_policies', None)
         self.vault_uri = kwargs.get('vault_uri', None)
         self.enabled_for_deployment = kwargs.get('enabled_for_deployment', None)
@@ -1211,4 +1211,4 @@ class VirtualNetworkRule(msrest.serialization.Model):
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs['id']
