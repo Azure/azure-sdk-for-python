@@ -9,6 +9,7 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.ai.textanalytics.aio import TextAnalyticsClient
+from azure.core.credentials import AzureKeyCredential
 from testcase import GlobalTextAnalyticsAccountPreparer
 from asynctestcase import AsyncTextAnalyticsTest
 
@@ -53,3 +54,8 @@ class TestAuth(AsyncTextAnalyticsTest):
     def test_none_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ValueError):
             text_analytics = TextAnalyticsClient(text_analytics_account, None)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_none_endpoint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ValueError):
+            text_analytics = TextAnalyticsClient(None, AzureKeyCredential(text_analytics_account_key))
