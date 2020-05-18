@@ -53,7 +53,7 @@ class SubscriptionsOperations:
         :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of LocationListResult or the result of cls(response)
+        :return: An iterator like instance of either LocationListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -119,7 +119,7 @@ class SubscriptionsOperations:
         :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Subscription or the result of cls(response)
+        :return: Subscription, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -155,7 +155,7 @@ class SubscriptionsOperations:
         deserialized = self._deserialize('Subscription', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}'}  # type: ignore
@@ -167,7 +167,7 @@ class SubscriptionsOperations:
         """Gets all subscriptions for a tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of SubscriptionListResult or the result of cls(response)
+        :return: An iterator like instance of either SubscriptionListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

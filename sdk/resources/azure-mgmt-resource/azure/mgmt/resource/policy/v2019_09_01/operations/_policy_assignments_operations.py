@@ -65,7 +65,7 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: The name of the policy assignment to delete.
         :type policy_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -104,7 +104,7 @@ class PolicyAssignmentsOperations(object):
             deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}  # type: ignore
@@ -132,7 +132,7 @@ class PolicyAssignmentsOperations(object):
         :param parameters: Parameters for the policy assignment.
         :type parameters: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -175,7 +175,7 @@ class PolicyAssignmentsOperations(object):
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}  # type: ignore
@@ -200,7 +200,7 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: The name of the policy assignment to get.
         :type policy_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -237,7 +237,7 @@ class PolicyAssignmentsOperations(object):
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}  # type: ignore
@@ -259,7 +259,7 @@ class PolicyAssignmentsOperations(object):
      or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering is performed.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicyAssignmentListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicyAssignmentListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -349,7 +349,7 @@ class PolicyAssignmentsOperations(object):
      or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering is performed.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicyAssignmentListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicyAssignmentListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -430,7 +430,7 @@ class PolicyAssignmentsOperations(object):
      management group scope.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicyAssignmentListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicyAssignmentListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -501,7 +501,7 @@ class PolicyAssignmentsOperations(object):
      or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering is performed.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicyAssignmentListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicyAssignmentListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -573,7 +573,7 @@ class PolicyAssignmentsOperations(object):
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'.
         :type policy_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -611,7 +611,7 @@ class PolicyAssignmentsOperations(object):
             deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     delete_by_id.metadata = {'url': '/{policyAssignmentId}'}  # type: ignore
@@ -633,7 +633,7 @@ class PolicyAssignmentsOperations(object):
         :param parameters: Parameters for policy assignment.
         :type parameters: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -675,7 +675,7 @@ class PolicyAssignmentsOperations(object):
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_by_id.metadata = {'url': '/{policyAssignmentId}'}  # type: ignore
@@ -694,7 +694,7 @@ class PolicyAssignmentsOperations(object):
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'.
         :type policy_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyAssignment or the result of cls(response)
+        :return: PolicyAssignment, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -730,7 +730,7 @@ class PolicyAssignmentsOperations(object):
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_by_id.metadata = {'url': '/{policyAssignmentId}'}  # type: ignore

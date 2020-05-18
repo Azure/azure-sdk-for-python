@@ -56,7 +56,7 @@ class PolicySetDefinitionsOperations:
         :param parameters: The policy set definition properties.
         :type parameters: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicySetDefinition or the result of cls(response)
+        :return: PolicySetDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -104,7 +104,7 @@ class PolicySetDefinitionsOperations:
             deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
@@ -121,7 +121,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to delete.
         :type policy_set_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -155,7 +155,7 @@ class PolicySetDefinitionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
 
@@ -171,7 +171,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get.
         :type policy_set_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicySetDefinition or the result of cls(response)
+        :return: PolicySetDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -208,7 +208,7 @@ class PolicySetDefinitionsOperations:
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
@@ -225,7 +225,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get.
         :type policy_set_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicySetDefinition or the result of cls(response)
+        :return: PolicySetDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -261,7 +261,7 @@ class PolicySetDefinitionsOperations:
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_built_in.metadata = {'url': '/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
@@ -275,7 +275,7 @@ class PolicySetDefinitionsOperations:
         Retrieves the policy set definitions for a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicySetDefinitionListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicySetDefinitionListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -340,7 +340,7 @@ class PolicySetDefinitionsOperations:
         Retrieves built-in policy set definitions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicySetDefinitionListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicySetDefinitionListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -410,7 +410,7 @@ class PolicySetDefinitionsOperations:
         :param parameters: The policy set definition properties.
         :type parameters: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicySetDefinition or the result of cls(response)
+        :return: PolicySetDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -458,7 +458,7 @@ class PolicySetDefinitionsOperations:
             deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
@@ -478,7 +478,7 @@ class PolicySetDefinitionsOperations:
         :param management_group_id: The ID of the management group.
         :type management_group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -512,7 +512,7 @@ class PolicySetDefinitionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
 
@@ -531,7 +531,7 @@ class PolicySetDefinitionsOperations:
         :param management_group_id: The ID of the management group.
         :type management_group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicySetDefinition or the result of cls(response)
+        :return: PolicySetDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -568,7 +568,7 @@ class PolicySetDefinitionsOperations:
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}  # type: ignore
@@ -585,7 +585,7 @@ class PolicySetDefinitionsOperations:
         :param management_group_id: The ID of the management group.
         :type management_group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PolicySetDefinitionListResult or the result of cls(response)
+        :return: An iterator like instance of either PolicySetDefinitionListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

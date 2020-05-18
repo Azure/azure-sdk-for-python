@@ -61,7 +61,7 @@ class ApplicationsOperations(object):
         :param application_name: The name of the managed application.
         :type application_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Application or the result of cls(response)
+        :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -102,7 +102,7 @@ class ApplicationsOperations(object):
             deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
@@ -146,7 +146,7 @@ class ApplicationsOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
 
@@ -168,7 +168,7 @@ class ApplicationsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -184,6 +184,9 @@ class ApplicationsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -249,7 +252,7 @@ class ApplicationsOperations(object):
             deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
@@ -275,7 +278,7 @@ class ApplicationsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns Application
+        :return: An instance of LROPoller that returns either Application or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.managedapplications.models.Application]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -292,6 +295,9 @@ class ApplicationsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('Application', pipeline_response)
@@ -323,7 +329,7 @@ class ApplicationsOperations(object):
         :param parameters: Parameters supplied to update an existing managed application.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Application or the result of cls(response)
+        :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -371,7 +377,7 @@ class ApplicationsOperations(object):
         deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
@@ -387,7 +393,7 @@ class ApplicationsOperations(object):
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ApplicationListResult or the result of cls(response)
+        :return: An iterator like instance of either ApplicationListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.managedapplications.models.ApplicationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -453,7 +459,7 @@ class ApplicationsOperations(object):
         """Gets all the applications within a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ApplicationListResult or the result of cls(response)
+        :return: An iterator like instance of either ApplicationListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.managedapplications.models.ApplicationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -524,7 +530,7 @@ class ApplicationsOperations(object):
          name}/Microsoft.Solutions/applications/{application-name}.
         :type application_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Application or the result of cls(response)
+        :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -563,7 +569,7 @@ class ApplicationsOperations(object):
             deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore
@@ -604,7 +610,7 @@ class ApplicationsOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_by_id_initial.metadata = {'url': '/{applicationId}'}  # type: ignore
 
@@ -626,7 +632,7 @@ class ApplicationsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -641,6 +647,9 @@ class ApplicationsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -703,7 +712,7 @@ class ApplicationsOperations(object):
             deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_by_id_initial.metadata = {'url': '/{applicationId}'}  # type: ignore
@@ -729,7 +738,7 @@ class ApplicationsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns Application
+        :return: An instance of LROPoller that returns either Application or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.managedapplications.models.Application]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -745,6 +754,9 @@ class ApplicationsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('Application', pipeline_response)
@@ -776,7 +788,7 @@ class ApplicationsOperations(object):
         :param parameters: Parameters supplied to update an existing managed application.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Application or the result of cls(response)
+        :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -822,7 +834,7 @@ class ApplicationsOperations(object):
         deserialized = self._deserialize('Application', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     update_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore

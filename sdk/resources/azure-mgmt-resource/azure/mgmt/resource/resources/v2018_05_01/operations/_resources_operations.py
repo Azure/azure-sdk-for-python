@@ -81,7 +81,7 @@ class ResourcesOperations(object):
         :param top: The number of results to return. If null is passed, returns all resources.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ResourceListResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2018_05_01.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -187,7 +187,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _move_resources_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'}  # type: ignore
 
@@ -212,7 +212,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -228,6 +228,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -282,7 +285,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _validate_move_resources_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources'}  # type: ignore
 
@@ -307,7 +310,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -323,6 +326,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -365,7 +371,7 @@ class ResourcesOperations(object):
         :param top: The number of results to return. If null is passed, returns all resource groups.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ResourceListResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2018_05_01.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -451,7 +457,7 @@ class ResourcesOperations(object):
         :param resource_name: The name of the resource to check whether it exists.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -489,7 +495,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
         return 200 <= response.status_code <= 299
     check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
@@ -538,7 +544,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
 
@@ -570,7 +576,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -589,6 +595,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -659,7 +668,7 @@ class ResourcesOperations(object):
             deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
@@ -695,7 +704,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns GenericResource
+        :return: An instance of LROPoller that returns either GenericResource or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -715,6 +724,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('GenericResource', pipeline_response)
@@ -785,7 +797,7 @@ class ResourcesOperations(object):
             deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
@@ -821,7 +833,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns GenericResource
+        :return: An instance of LROPoller that returns either GenericResource or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -841,6 +853,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('GenericResource', pipeline_response)
@@ -879,7 +894,7 @@ class ResourcesOperations(object):
         :param resource_name: The name of the resource to get.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GenericResource or the result of cls(response)
+        :return: GenericResource, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -920,7 +935,7 @@ class ResourcesOperations(object):
         deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
@@ -938,7 +953,7 @@ class ResourcesOperations(object):
          name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -971,7 +986,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
         return 200 <= response.status_code <= 299
     check_existence_by_id.metadata = {'url': '/{resourceId}'}  # type: ignore
@@ -1011,7 +1026,7 @@ class ResourcesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_by_id_initial.metadata = {'url': '/{resourceId}'}  # type: ignore
 
@@ -1032,7 +1047,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1047,6 +1062,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -1108,7 +1126,7 @@ class ResourcesOperations(object):
             deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_by_id_initial.metadata = {'url': '/{resourceId}'}  # type: ignore
@@ -1133,7 +1151,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns GenericResource
+        :return: An instance of LROPoller that returns either GenericResource or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1149,6 +1167,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('GenericResource', pipeline_response)
@@ -1210,7 +1231,7 @@ class ResourcesOperations(object):
             deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _update_by_id_initial.metadata = {'url': '/{resourceId}'}  # type: ignore
@@ -1235,7 +1256,7 @@ class ResourcesOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns GenericResource
+        :return: An instance of LROPoller that returns either GenericResource or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1251,6 +1272,9 @@ class ResourcesOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('GenericResource', pipeline_response)
@@ -1278,7 +1302,7 @@ class ResourcesOperations(object):
          name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GenericResource or the result of cls(response)
+        :return: GenericResource, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2018_05_01.models.GenericResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1314,7 +1338,7 @@ class ResourcesOperations(object):
         deserialized = self._deserialize('GenericResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_by_id.metadata = {'url': '/{resourceId}'}  # type: ignore

@@ -57,7 +57,7 @@ class DeploymentOperationsOperations:
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentOperation or the result of cls(response)
+        :return: DeploymentOperation, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -95,7 +95,7 @@ class DeploymentOperationsOperations:
         deserialized = self._deserialize('DeploymentOperation', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}'}  # type: ignore
@@ -116,7 +116,7 @@ class DeploymentOperationsOperations:
         :param top: The number of results to return.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentOperationsListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentOperationsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -188,7 +188,7 @@ class DeploymentOperationsOperations:
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentOperation or the result of cls(response)
+        :return: DeploymentOperation, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -226,7 +226,7 @@ class DeploymentOperationsOperations:
         deserialized = self._deserialize('DeploymentOperation', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}'}  # type: ignore
@@ -244,7 +244,7 @@ class DeploymentOperationsOperations:
         :param top: The number of results to return.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentOperationsListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentOperationsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -319,7 +319,7 @@ class DeploymentOperationsOperations:
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentOperation or the result of cls(response)
+        :return: DeploymentOperation, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -358,7 +358,7 @@ class DeploymentOperationsOperations:
         deserialized = self._deserialize('DeploymentOperation', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'}  # type: ignore
@@ -379,7 +379,7 @@ class DeploymentOperationsOperations:
         :param top: The number of results to return.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentOperationsListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentOperationsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

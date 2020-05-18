@@ -101,7 +101,7 @@ class DeploymentScriptsOperations(object):
             deserialized = self._deserialize('DeploymentScript', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
@@ -127,7 +127,7 @@ class DeploymentScriptsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns DeploymentScript
+        :return: An instance of LROPoller that returns either DeploymentScript or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -144,6 +144,9 @@ class DeploymentScriptsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('DeploymentScript', pipeline_response)
@@ -175,7 +178,7 @@ class DeploymentScriptsOperations(object):
         :param deployment_script: Deployment script resource with the tags to be updated.
         :type deployment_script: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentScript or the result of cls(response)
+        :return: DeploymentScript, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -223,7 +226,7 @@ class DeploymentScriptsOperations(object):
         deserialized = self._deserialize('DeploymentScript', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
@@ -242,7 +245,7 @@ class DeploymentScriptsOperations(object):
         :param script_name: Name of the deployment script.
         :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentScript or the result of cls(response)
+        :return: DeploymentScript, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -281,7 +284,7 @@ class DeploymentScriptsOperations(object):
         deserialized = self._deserialize('DeploymentScript', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
@@ -300,7 +303,7 @@ class DeploymentScriptsOperations(object):
         :param script_name: Name of the deployment script.
         :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -336,7 +339,7 @@ class DeploymentScriptsOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
 
@@ -348,7 +351,7 @@ class DeploymentScriptsOperations(object):
         """Lists all deployment scripts for a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentScriptListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentScriptListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -419,7 +422,7 @@ class DeploymentScriptsOperations(object):
         :param script_name: Name of the deployment script.
         :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ScriptLogsList or the result of cls(response)
+        :return: ScriptLogsList, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLogsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -458,7 +461,7 @@ class DeploymentScriptsOperations(object):
         deserialized = self._deserialize('ScriptLogsList', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_logs.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}/logs'}  # type: ignore
@@ -482,7 +485,7 @@ class DeploymentScriptsOperations(object):
          up to container instance log capacity of 4mb.
         :type tail: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ScriptLog or the result of cls(response)
+        :return: ScriptLog, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLog
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -523,7 +526,7 @@ class DeploymentScriptsOperations(object):
         deserialized = self._deserialize('ScriptLog', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_logs_default.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}/logs/default'}  # type: ignore
@@ -539,7 +542,7 @@ class DeploymentScriptsOperations(object):
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentScriptListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentScriptListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

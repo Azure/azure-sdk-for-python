@@ -54,7 +54,7 @@ class ResourceGroupsOperations:
          insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -88,7 +88,7 @@ class ResourceGroupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
         return 200 <= response.status_code <= 299
     check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
@@ -106,7 +106,7 @@ class ResourceGroupsOperations:
         :param parameters: Parameters supplied to the create or update a resource group.
         :type parameters: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceGroup or the result of cls(response)
+        :return: ResourceGroup, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -154,7 +154,7 @@ class ResourceGroupsOperations:
             deserialized = self._deserialize('ResourceGroup', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
@@ -194,7 +194,7 @@ class ResourceGroupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
 
@@ -215,7 +215,7 @@ class ResourceGroupsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -230,6 +230,9 @@ class ResourceGroupsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -252,7 +255,7 @@ class ResourceGroupsOperations:
          insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceGroup or the result of cls(response)
+        :return: ResourceGroup, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -289,7 +292,7 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize('ResourceGroup', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
@@ -310,7 +313,7 @@ class ResourceGroupsOperations:
         :param parameters: Parameters supplied to update a resource group.
         :type parameters: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupPatchable
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceGroup or the result of cls(response)
+        :return: ResourceGroup, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -353,7 +356,7 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize('ResourceGroup', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
@@ -371,7 +374,7 @@ class ResourceGroupsOperations:
         :param parameters: Parameters for exporting the template.
         :type parameters: ~azure.mgmt.resource.resources.v2017_05_10.models.ExportTemplateRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceGroupExportResult or the result of cls(response)
+        :return: ResourceGroupExportResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -414,7 +417,7 @@ class ResourceGroupsOperations:
         deserialized = self._deserialize('ResourceGroupExportResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     export_template.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate'}  # type: ignore
@@ -432,7 +435,7 @@ class ResourceGroupsOperations:
         :param top: The number of results to return. If null is passed, returns all resource groups.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ResourceGroupListResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceGroupListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

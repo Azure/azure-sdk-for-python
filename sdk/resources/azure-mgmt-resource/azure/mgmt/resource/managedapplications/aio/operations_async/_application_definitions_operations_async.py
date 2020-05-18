@@ -56,7 +56,7 @@ class ApplicationDefinitionsOperations:
         :param application_definition_name: The name of the managed application definition.
         :type application_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ApplicationDefinition or the result of cls(response)
+        :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -97,7 +97,7 @@ class ApplicationDefinitionsOperations:
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
@@ -140,7 +140,7 @@ class ApplicationDefinitionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
@@ -161,7 +161,7 @@ class ApplicationDefinitionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -177,6 +177,9 @@ class ApplicationDefinitionsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -241,7 +244,7 @@ class ApplicationDefinitionsOperations:
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
@@ -267,7 +270,7 @@ class ApplicationDefinitionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ApplicationDefinition
+        :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -284,6 +287,9 @@ class ApplicationDefinitionsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)
@@ -308,7 +314,7 @@ class ApplicationDefinitionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ApplicationDefinitionListResult or the result of cls(response)
+        :return: An iterator like instance of either ApplicationDefinitionListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.models.ApplicationDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -379,7 +385,7 @@ class ApplicationDefinitionsOperations:
          name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
         :type application_definition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ApplicationDefinition or the result of cls(response)
+        :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -418,7 +424,7 @@ class ApplicationDefinitionsOperations:
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
@@ -458,7 +464,7 @@ class ApplicationDefinitionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
 
@@ -479,7 +485,7 @@ class ApplicationDefinitionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -494,6 +500,9 @@ class ApplicationDefinitionsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -555,7 +564,7 @@ class ApplicationDefinitionsOperations:
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
@@ -581,7 +590,7 @@ class ApplicationDefinitionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ApplicationDefinition
+        :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -597,6 +606,9 @@ class ApplicationDefinitionsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('ApplicationDefinition', pipeline_response)

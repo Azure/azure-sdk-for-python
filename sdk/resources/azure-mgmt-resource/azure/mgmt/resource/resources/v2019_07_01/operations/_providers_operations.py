@@ -56,7 +56,7 @@ class ProvidersOperations(object):
         :param resource_provider_namespace: The namespace of the resource provider to unregister.
         :type resource_provider_namespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Provider or the result of cls(response)
+        :return: Provider, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -93,7 +93,7 @@ class ProvidersOperations(object):
         deserialized = self._deserialize('Provider', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     unregister.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister'}  # type: ignore
@@ -109,7 +109,7 @@ class ProvidersOperations(object):
         :param resource_provider_namespace: The namespace of the resource provider to register.
         :type resource_provider_namespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Provider or the result of cls(response)
+        :return: Provider, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -146,7 +146,7 @@ class ProvidersOperations(object):
         deserialized = self._deserialize('Provider', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     register.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register'}  # type: ignore
@@ -167,7 +167,7 @@ class ProvidersOperations(object):
      response, use $expand=resourceTypes/aliases.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ProviderListResult or the result of cls(response)
+        :return: An iterator like instance of either ProviderListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_07_01.models.ProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -243,7 +243,7 @@ class ProvidersOperations(object):
      response, use $expand=resourceTypes/aliases.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ProviderListResult or the result of cls(response)
+        :return: An iterator like instance of either ProviderListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_07_01.models.ProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -314,7 +314,7 @@ class ProvidersOperations(object):
          response, use $expand=resourceTypes/aliases.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Provider or the result of cls(response)
+        :return: Provider, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -353,7 +353,7 @@ class ProvidersOperations(object):
         deserialized = self._deserialize('Provider', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'}  # type: ignore
@@ -373,7 +373,7 @@ class ProvidersOperations(object):
          response, use $expand=resourceTypes/aliases.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Provider or the result of cls(response)
+        :return: Provider, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -411,7 +411,7 @@ class ProvidersOperations(object):
         deserialized = self._deserialize('Provider', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_at_tenant_scope.metadata = {'url': '/providers/{resourceProviderNamespace}'}  # type: ignore

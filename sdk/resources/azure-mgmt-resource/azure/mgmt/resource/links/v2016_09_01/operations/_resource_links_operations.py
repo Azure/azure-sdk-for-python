@@ -59,7 +59,7 @@ class ResourceLinksOperations(object):
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -92,7 +92,7 @@ class ResourceLinksOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/{linkId}'}  # type: ignore
 
@@ -113,7 +113,7 @@ class ResourceLinksOperations(object):
         :param parameters: Parameters for creating or updating a resource link.
         :type parameters: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceLink or the result of cls(response)
+        :return: ResourceLink, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -160,7 +160,7 @@ class ResourceLinksOperations(object):
             deserialized = self._deserialize('ResourceLink', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/{linkId}'}  # type: ignore
@@ -177,7 +177,7 @@ class ResourceLinksOperations(object):
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceLink or the result of cls(response)
+        :return: ResourceLink, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -213,7 +213,7 @@ class ResourceLinksOperations(object):
         deserialized = self._deserialize('ResourceLink', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/{linkId}'}  # type: ignore
@@ -230,7 +230,7 @@ class ResourceLinksOperations(object):
      for list resource links is targetId. For example, $filter=targetId eq {value}.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ResourceLinkResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceLinkResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -305,7 +305,7 @@ class ResourceLinksOperations(object):
      specified scope (not below the scope), use Filter.atScope().
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ResourceLinkResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceLinkResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

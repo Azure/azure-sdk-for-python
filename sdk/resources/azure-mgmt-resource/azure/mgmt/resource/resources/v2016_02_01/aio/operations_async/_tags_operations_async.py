@@ -54,7 +54,7 @@ class TagsOperations:
         :param tag_value: The value of the tag.
         :type tag_value: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -89,7 +89,7 @@ class TagsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete_value.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'}  # type: ignore
 
@@ -106,7 +106,7 @@ class TagsOperations:
         :param tag_value: The value of the tag.
         :type tag_value: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TagValue or the result of cls(response)
+        :return: TagValue, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -149,7 +149,7 @@ class TagsOperations:
             deserialized = self._deserialize('TagValue', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update_value.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'}  # type: ignore
@@ -164,7 +164,7 @@ class TagsOperations:
         :param tag_name: The name of the tag.
         :type tag_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TagDetails or the result of cls(response)
+        :return: TagDetails, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -206,7 +206,7 @@ class TagsOperations:
             deserialized = self._deserialize('TagDetails', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}'}  # type: ignore
@@ -221,7 +221,7 @@ class TagsOperations:
         :param tag_name: The name of the tag.
         :type tag_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -255,7 +255,7 @@ class TagsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames/{tagName}'}  # type: ignore
 
@@ -266,7 +266,7 @@ class TagsOperations:
         """Get a list of subscription resource tags.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of TagsListResult or the result of cls(response)
+        :return: An iterator like instance of either TagsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.TagsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

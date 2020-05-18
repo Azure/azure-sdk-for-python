@@ -62,7 +62,7 @@ class ManagementLocksOperations(object):
         :param parameters: The management lock parameters.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagementLockObject or the result of cls(response)
+        :return: ManagementLockObject, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -111,7 +111,7 @@ class ManagementLocksOperations(object):
             deserialized = self._deserialize('ManagementLockObject', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
@@ -130,7 +130,7 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -165,7 +165,7 @@ class ManagementLocksOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
 
@@ -183,7 +183,7 @@ class ManagementLocksOperations(object):
         :param lock_name: The lock name.
         :type lock_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagementLockObject or the result of cls(response)
+        :return: ManagementLockObject, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -221,7 +221,7 @@ class ManagementLocksOperations(object):
         deserialized = self._deserialize('ManagementLockObject', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_at_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
@@ -255,7 +255,7 @@ class ManagementLocksOperations(object):
         :param parameters: Create or update management lock parameters.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagementLockObject or the result of cls(response)
+        :return: ManagementLockObject, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -308,7 +308,7 @@ class ManagementLocksOperations(object):
             deserialized = self._deserialize('ManagementLockObject', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
@@ -339,7 +339,7 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -378,7 +378,7 @@ class ManagementLocksOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete_at_resource_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
 
@@ -396,7 +396,7 @@ class ManagementLocksOperations(object):
         :param parameters: The management lock parameters.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagementLockObject or the result of cls(response)
+        :return: ManagementLockObject, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -444,7 +444,7 @@ class ManagementLocksOperations(object):
             deserialized = self._deserialize('ManagementLockObject', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
@@ -460,7 +460,7 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -494,7 +494,7 @@ class ManagementLocksOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete_at_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
 
@@ -509,7 +509,7 @@ class ManagementLocksOperations(object):
         :param lock_name: Name of the management lock.
         :type lock_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagementLockObject or the result of cls(response)
+        :return: ManagementLockObject, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -546,7 +546,7 @@ class ManagementLocksOperations(object):
         deserialized = self._deserialize('ManagementLockObject', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'}  # type: ignore
@@ -565,7 +565,7 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ManagementLockListResult or the result of cls(response)
+        :return: An iterator like instance of either ManagementLockListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -650,7 +650,7 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ManagementLockListResult or the result of cls(response)
+        :return: An iterator like instance of either ManagementLockListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -724,7 +724,7 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ManagementLockListResult or the result of cls(response)
+        :return: An iterator like instance of either ManagementLockListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

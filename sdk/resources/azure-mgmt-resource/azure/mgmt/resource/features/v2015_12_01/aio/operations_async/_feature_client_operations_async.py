@@ -28,7 +28,7 @@ class FeatureClientOperationsMixin:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of OperationListResult or the result of cls(response)
+        :return: An iterator like instance of either OperationListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """

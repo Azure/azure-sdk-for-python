@@ -80,7 +80,7 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
@@ -101,7 +101,7 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -117,6 +117,9 @@ class DeploymentsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:
@@ -142,7 +145,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -177,7 +180,7 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
         return 200 <= response.status_code <= 299
     check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
@@ -234,7 +237,7 @@ class DeploymentsOperations:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
@@ -259,7 +262,7 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended
+        :return: DeploymentExtended, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -276,6 +279,9 @@ class DeploymentsOperations:
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
@@ -304,7 +310,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentExtended or the result of cls(response)
+        :return: DeploymentExtended, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -342,7 +348,7 @@ class DeploymentsOperations:
         deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
@@ -360,7 +366,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -395,7 +401,7 @@ class DeploymentsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}  # type: ignore
 
@@ -415,7 +421,7 @@ class DeploymentsOperations:
         :param parameters: Deployment to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentValidateResult or the result of cls(response)
+        :return: DeploymentValidateResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentValidateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -464,7 +470,7 @@ class DeploymentsOperations:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
@@ -482,7 +488,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentExportResult or the result of cls(response)
+        :return: DeploymentExportResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -520,7 +526,7 @@ class DeploymentsOperations:
         deserialized = self._deserialize('DeploymentExportResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     export_template.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'}  # type: ignore
@@ -542,7 +548,7 @@ class DeploymentsOperations:
         :param top: Query parameters. If null is passed returns all deployments.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of DeploymentListResult or the result of cls(response)
+        :return: An iterator like instance of either DeploymentListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -613,7 +619,7 @@ class DeploymentsOperations:
         :param template: The template provided to calculate hash.
         :type template: object
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TemplateHashResult or the result of cls(response)
+        :return: TemplateHashResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateHashResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -651,7 +657,7 @@ class DeploymentsOperations:
         deserialized = self._deserialize('TemplateHashResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     calculate_template_hash.metadata = {'url': '/providers/Microsoft.Resources/calculateTemplateHash'}  # type: ignore
