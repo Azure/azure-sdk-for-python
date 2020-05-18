@@ -205,7 +205,7 @@ class RecognizedReceipt(RecognizedForm):
         self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, " \
+        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={}, " \
             "receipt_type={}, receipt_locale={})".format(
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages),
             repr(self.receipt_type), self.receipt_locale

@@ -148,6 +148,15 @@ class TestRepr():
         )[:1024]
         assert repr(model) == model_repr
 
+    def test_recognized_receipt(self, form_field_one, page_range, form_page, us_receipt_type):
+        model = _models.RecognizedReceipt(
+            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]],
+            receipt_type=us_receipt_type[0], receipt_locale="en-US")
+        model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
+            form_field_one[1], page_range[1], form_page[1], us_receipt_type[0], "en-US"
+        )[:1024]
+        assert repr(model) == model_repr
+
     def test_us_receipt(self, form_field_one, form_field_two, us_receipt_type, us_receipt_item, page_range, form_page):
         model = _models.USReceipt(
             merchant_address=form_field_one[0],
