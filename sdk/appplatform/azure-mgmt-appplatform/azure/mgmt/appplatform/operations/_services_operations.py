@@ -106,7 +106,7 @@ class ServicesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -132,10 +132,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if resource is not None:
-            body_content = self._serialize.body(resource, 'ServiceResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(resource, 'ServiceResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -160,7 +157,7 @@ class ServicesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new Service or update an exiting Service.
 
         :param resource_group_name: The name of the resource group that
@@ -294,7 +291,7 @@ class ServicesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -320,10 +317,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if resource is not None:
-            body_content = self._serialize.body(resource, 'ServiceResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(resource, 'ServiceResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -348,7 +342,7 @@ class ServicesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting Service.
 
         :param resource_group_name: The name of the resource group that
@@ -485,9 +479,7 @@ class ServicesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        regenerate_test_key_request = None
-        if key_type is not None:
-            regenerate_test_key_request = models.RegenerateTestKeyRequestPayload(key_type=key_type)
+        regenerate_test_key_request = models.RegenerateTestKeyRequestPayload(key_type=key_type)
 
         # Construct URL
         url = self.regenerate_test_key.metadata['url']
@@ -514,10 +506,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if regenerate_test_key_request is not None:
-            body_content = self._serialize.body(regenerate_test_key_request, 'RegenerateTestKeyRequestPayload')
-        else:
-            body_content = None
+        body_content = self._serialize.body(regenerate_test_key_request, 'RegenerateTestKeyRequestPayload')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -682,8 +671,8 @@ class ServicesOperations(object):
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
