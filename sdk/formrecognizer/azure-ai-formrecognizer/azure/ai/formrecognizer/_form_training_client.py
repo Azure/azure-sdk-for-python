@@ -305,7 +305,7 @@ class FormTrainingClient(object):
             no Retry-After header is present.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModelInfo`.
-        :rtype: ~azure.core.polling.LROPoller[CustomFormModelInfo]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModelInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -322,7 +322,7 @@ class FormTrainingClient(object):
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated_copy(copy_result, target["modelId"])
+            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,

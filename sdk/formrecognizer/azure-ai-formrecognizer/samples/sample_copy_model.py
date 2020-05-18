@@ -63,7 +63,8 @@ class CopyModelSample(object):
         copy = poller.result()
 
         copied_over_model = target_client.get_custom_model(copy.model_id)
-        print(copied_over_model)
+        print("Model ID: {}".format(copied_over_model.model_id))
+        print("Status: {}".format(copied_over_model.status))
         # [END begin_copy_model]
 
 

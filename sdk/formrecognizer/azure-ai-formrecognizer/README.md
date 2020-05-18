@@ -131,7 +131,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 - Training custom models to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service's documents][fr-train-without-labels] for a more detailed explanation.
 - Training custom models to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service's documents][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
-- Copying a model from one Form Recognizer resource to another.
+- Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 

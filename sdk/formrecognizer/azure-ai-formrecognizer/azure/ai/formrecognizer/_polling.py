@@ -123,8 +123,5 @@ class CopyPolling(OperationResourcePolling):
             if copy_result:
                 errors = copy_result.get("errors")
                 if errors:
-                    message = ""
-                    for err in errors:
-                        message += "({}) {}\n".format(err.get("code"), err.get("message"))
-                    raise HttpResponseError(message)
+                    raise_error(response, errors, message="")
         return status

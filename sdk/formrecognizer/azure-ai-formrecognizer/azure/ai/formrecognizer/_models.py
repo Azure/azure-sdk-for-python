@@ -287,7 +287,6 @@ class FormField(object):
             page_number=value.page if value else None,
         )
 
-
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
@@ -455,6 +454,7 @@ class FormLine(FormContent):
         return "FormLine(text={}, bounding_box={}, words={}, page_number={})".format(
             self.text, self.bounding_box, repr(self.words), self.page_number
         )[:1024]
+
 
 class FormWord(FormContent):
     """Represents a word recognized from the input document.
@@ -848,21 +848,12 @@ class CustomFormModelInfo(object):
         self.last_modified = kwargs.get("last_modified", None)
 
     @classmethod
-    def _from_generated(cls, model):
+    def _from_generated(cls, model, model_id=None):
         return cls(
-            model_id=model.model_id,
+            model_id=model_id if model_id else model.model_id,
             status=model.status,
             created_on=model.created_date_time,
             last_modified=model.last_updated_date_time
-        )
-
-    @classmethod
-    def _from_generated_copy(cls, copy, model_id):
-        return cls(
-            model_id=model_id,
-            status=copy.status,
-            created_on=copy.created_date_time,
-            last_modified=copy.last_updated_date_time
         )
 
     def __repr__(self):

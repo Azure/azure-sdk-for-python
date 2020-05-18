@@ -13,7 +13,7 @@
 
 **New features**
 
-- Copy API is now supported to copy a model from one Form Recognizer resource to another
+- Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
 

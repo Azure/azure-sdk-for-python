@@ -331,7 +331,7 @@ class FormTrainingClient(object):
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated_copy(copy_result, target["modelId"])
+            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
 
         return await self._client.copy_custom_model(  # type: ignore
             model_id=model_id,
