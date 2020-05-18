@@ -44,6 +44,12 @@ class PublicNetworkAccess(str, Enum):
     disabled = "Disabled"
 
 
+class ServerVersion(str, Enum):
+
+    three_full_stop_two = "3.2"
+    three_full_stop_six = "3.6"
+
+
 class IndexingMode(str, Enum):
 
     consistent = "Consistent"

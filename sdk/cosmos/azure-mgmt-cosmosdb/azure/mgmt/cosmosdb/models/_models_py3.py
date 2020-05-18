@@ -13,6 +13,23 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ApiProperties(Model):
+    """ApiProperties.
+
+    :param server_version: Describes the ServerVersion of an a MongoDB
+     account. Possible values include: '3.2', '3.6'
+    :type server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
+    """
+
+    _attribute_map = {
+        'server_version': {'key': 'serverVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, server_version=None, **kwargs) -> None:
+        super(ApiProperties, self).__init__(**kwargs)
+        self.server_version = server_version
+
+
 class ARMProxyResource(Model):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
@@ -87,6 +104,60 @@ class ARMResourceProperties(Model):
         self.type = None
         self.location = location
         self.tags = tags
+
+
+class AutoscaleSettings(Model):
+    """AutoscaleSettings.
+
+    :param max_throughput: Represents maximum throughput, the resource can
+     scale up to.
+    :type max_throughput: int
+    """
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, max_throughput: int=None, **kwargs) -> None:
+        super(AutoscaleSettings, self).__init__(**kwargs)
+        self.max_throughput = max_throughput
+
+
+class AutoscaleSettingsResource(Model):
+    """Cosmos DB provisioned throughput settings object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_throughput: Required. Represents maximum throughput container
+     can scale up to.
+    :type max_throughput: int
+    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
+    :type auto_upgrade_policy:
+     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
+    :ivar target_max_throughput: Represents target maximum throughput
+     container can scale up to once offer is no longer in pending state.
+    :vartype target_max_throughput: int
+    """
+
+    _validation = {
+        'max_throughput': {'required': True},
+        'target_max_throughput': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
+        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
+        super(AutoscaleSettingsResource, self).__init__(**kwargs)
+        self.max_throughput = max_throughput
+        self.auto_upgrade_policy = auto_upgrade_policy
+        self.target_max_throughput = None
 
 
 class AutoUpgradePolicyResource(Model):
@@ -252,34 +323,43 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
 class OptionsResource(Model):
     """Cosmos DB options resource object.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
         super(OptionsResource, self).__init__(**kwargs)
         self.throughput = throughput
+        self.autoscale_settings = autoscale_settings
 
 
 class CassandraKeyspaceGetPropertiesOptions(OptionsResource):
     """CassandraKeyspaceGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(CassandraKeyspaceGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(CassandraKeyspaceGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class CassandraKeyspaceGetPropertiesResource(Model):
@@ -487,17 +567,21 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
 class CassandraTableGetPropertiesOptions(OptionsResource):
     """CassandraTableGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(CassandraTableGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(CassandraTableGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class CassandraTableGetPropertiesResource(Model):
@@ -514,6 +598,8 @@ class CassandraTableGetPropertiesResource(Model):
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
     :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -535,16 +621,18 @@ class CassandraTableGetPropertiesResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'schema': {'key': 'schema', 'type': 'CassandraSchema'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, default_ttl: int=None, schema=None, **kwargs) -> None:
+    def __init__(self, *, id: str, default_ttl: int=None, schema=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(CassandraTableGetPropertiesResource, self).__init__(**kwargs)
         self.id = id
         self.default_ttl = default_ttl
         self.schema = schema
+        self.analytical_storage_ttl = analytical_storage_ttl
         self._rid = None
         self._ts = None
         self._etag = None
@@ -608,6 +696,8 @@ class CassandraTableResource(Model):
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
     :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     """
 
     _validation = {
@@ -618,13 +708,15 @@ class CassandraTableResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'schema': {'key': 'schema', 'type': 'CassandraSchema'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
     }
 
-    def __init__(self, *, id: str, default_ttl: int=None, schema=None, **kwargs) -> None:
+    def __init__(self, *, id: str, default_ttl: int=None, schema=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(CassandraTableResource, self).__init__(**kwargs)
         self.id = id
         self.default_ttl = default_ttl
         self.schema = schema
+        self.analytical_storage_ttl = analytical_storage_ttl
 
 
 class CloudError(Model):
@@ -803,23 +895,22 @@ class CreateUpdateOptions(Model):
     resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
     and "Throughput".
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, str]
     :param throughput: Request Units per second. For example, "throughput":
-     "10000".
-    :type throughput: str
+     10000.
+    :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
-        'throughput': {'key': 'throughput', 'type': 'str'},
+        'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, throughput: str=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
         super(CreateUpdateOptions, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
         self.throughput = throughput
+        self.autoscale_settings = autoscale_settings
 
 
 class DatabaseAccountConnectionString(Model):
@@ -882,11 +973,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :ivar database_account_offer_type: Required. The offer type for the
      database. Default value: "Standard" .
     :vartype database_account_offer_type: str
-    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
-     the set of IP addresses or IP address ranges in CIDR form to be included
-     as the allowed list of client IPs for a given database account. IP
-     addresses/ranges must be comma separated and must not contain any spaces.
-    :type ip_range_filter: str
+    :param ip_rules: List of IpRules.
+    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
     :param is_virtual_network_filter_enabled: Flag to indicate whether to
      enable/disable Virtual Network ACL rules.
     :type is_virtual_network_filter_enabled: bool
@@ -919,6 +1007,14 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
      allowed. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
+    :type enable_free_tier: bool
+    :param api_properties: API specific properties. Currently, supported only
+     for MongoDB API.
+    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
+    :param enable_analytical_storage: Flag to indicate whether to enable
+     storage analytics.
+    :type enable_analytical_storage: bool
     """
 
     _validation = {
@@ -939,7 +1035,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
-        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
         'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
@@ -950,16 +1046,19 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
+        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
+        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.consistency_policy = consistency_policy
         self.locations = locations
-        self.ip_range_filter = ip_range_filter
+        self.ip_rules = ip_rules
         self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
         self.enable_automatic_failover = enable_automatic_failover
         self.capabilities = capabilities
@@ -970,6 +1069,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
         self.public_network_access = public_network_access
+        self.enable_free_tier = enable_free_tier
+        self.api_properties = api_properties
+        self.enable_analytical_storage = enable_analytical_storage
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1003,11 +1105,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      'Standard'
     :vartype database_account_offer_type: str or
      ~azure.mgmt.cosmosdb.models.DatabaseAccountOfferType
-    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
-     the set of IP addresses or IP address ranges in CIDR form to be included
-     as the allowed list of client IPs for a given database account. IP
-     addresses/ranges must be comma separated and must not contain any spaces.
-    :type ip_range_filter: str
+    :param ip_rules: List of IpRules.
+    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
     :param is_virtual_network_filter_enabled: Flag to indicate whether to
      enable/disable Virtual Network ACL rules.
     :type is_virtual_network_filter_enabled: bool
@@ -1060,6 +1159,13 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      allowed. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
+    :type enable_free_tier: bool
+    :param api_properties: API specific properties.
+    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
+    :param enable_analytical_storage: Flag to indicate whether to enable
+     storage analytics.
+    :type enable_analytical_storage: bool
     """
 
     _validation = {
@@ -1085,7 +1191,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'DatabaseAccountOfferType'},
-        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
         'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
@@ -1102,15 +1208,18 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
+        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
+        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
         self.document_endpoint = None
         self.database_account_offer_type = None
-        self.ip_range_filter = ip_range_filter
+        self.ip_rules = ip_rules
         self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
         self.enable_automatic_failover = enable_automatic_failover
         self.consistency_policy = consistency_policy
@@ -1127,6 +1236,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
         self.public_network_access = public_network_access
+        self.enable_free_tier = enable_free_tier
+        self.api_properties = api_properties
+        self.enable_analytical_storage = enable_analytical_storage
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1254,11 +1366,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param locations: An array that contains the georeplication locations
      enabled for the Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
-     the set of IP addresses or IP address ranges in CIDR form to be included
-     as the allowed list of client IPs for a given database account. IP
-     addresses/ranges must be comma separated and must not contain any spaces.
-    :type ip_range_filter: str
+    :param ip_rules: List of IpRules.
+    :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
     :param is_virtual_network_filter_enabled: Flag to indicate whether to
      enable/disable Virtual Network ACL rules.
     :type is_virtual_network_filter_enabled: bool
@@ -1291,6 +1400,14 @@ class DatabaseAccountUpdateParameters(Model):
      allowed. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
+    :type enable_free_tier: bool
+    :param api_properties: API specific properties. Currently, supported only
+     for MongoDB API.
+    :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
+    :param enable_analytical_storage: Flag to indicate whether to enable
+     storage analytics.
+    :type enable_analytical_storage: bool
     """
 
     _attribute_map = {
@@ -1298,7 +1415,7 @@ class DatabaseAccountUpdateParameters(Model):
         'location': {'key': 'location', 'type': 'str'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
         'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
@@ -1309,15 +1426,18 @@ class DatabaseAccountUpdateParameters(Model):
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
+        'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
+        'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
         self.consistency_policy = consistency_policy
         self.locations = locations
-        self.ip_range_filter = ip_range_filter
+        self.ip_rules = ip_rules
         self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
         self.enable_automatic_failover = enable_automatic_failover
         self.capabilities = capabilities
@@ -1328,6 +1448,9 @@ class DatabaseAccountUpdateParameters(Model):
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
         self.public_network_access = public_network_access
+        self.enable_free_tier = enable_free_tier
+        self.api_properties = api_properties
+        self.enable_analytical_storage = enable_analytical_storage
 
 
 class ErrorResponse(Model):
@@ -1527,17 +1650,21 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
 class GremlinDatabaseGetPropertiesOptions(OptionsResource):
     """GremlinDatabaseGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(GremlinDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(GremlinDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class GremlinDatabaseGetPropertiesResource(Model):
@@ -1704,17 +1831,21 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
 class GremlinGraphGetPropertiesOptions(OptionsResource):
     """GremlinGraphGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(GremlinGraphGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(GremlinGraphGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class GremlinGraphGetPropertiesResource(Model):
@@ -1964,6 +2095,27 @@ class IndexingPolicy(Model):
         self.excluded_paths = excluded_paths
         self.composite_indexes = composite_indexes
         self.spatial_indexes = spatial_indexes
+
+
+class IpAddressOrRange(Model):
+    """IpAddressOrRange object.
+
+    :param ip_address_or_range: A single IPv4 address or a single IPv4 address
+     range in CIDR format. Provided IPs must be well-formatted and cannot be
+     contained in one of the following ranges: 10.0.0.0/8, 100.64.0.0/10,
+     172.16.0.0/12, 192.168.0.0/16, since these are not enforceable by the IP
+     address filter. Example of valid inputs: “23.40.210.245” or
+     “23.40.210.0/8”.
+    :type ip_address_or_range: str
+    """
+
+    _attribute_map = {
+        'ip_address_or_range': {'key': 'ipAddressOrRange', 'type': 'str'},
+    }
+
+    def __init__(self, *, ip_address_or_range: str=None, **kwargs) -> None:
+        super(IpAddressOrRange, self).__init__(**kwargs)
+        self.ip_address_or_range = ip_address_or_range
 
 
 class Location(Model):
@@ -2277,17 +2429,21 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
 class MongoDBCollectionGetPropertiesOptions(OptionsResource):
     """MongoDBCollectionGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(MongoDBCollectionGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(MongoDBCollectionGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class MongoDBCollectionGetPropertiesResource(Model):
@@ -2305,6 +2461,8 @@ class MongoDBCollectionGetPropertiesResource(Model):
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
     :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -2326,16 +2484,18 @@ class MongoDBCollectionGetPropertiesResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'shard_key': {'key': 'shardKey', 'type': '{str}'},
         'indexes': {'key': 'indexes', 'type': '[MongoIndex]'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, shard_key=None, indexes=None, **kwargs) -> None:
+    def __init__(self, *, id: str, shard_key=None, indexes=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(MongoDBCollectionGetPropertiesResource, self).__init__(**kwargs)
         self.id = id
         self.shard_key = shard_key
         self.indexes = indexes
+        self.analytical_storage_ttl = analytical_storage_ttl
         self._rid = None
         self._ts = None
         self._etag = None
@@ -2400,6 +2560,8 @@ class MongoDBCollectionResource(Model):
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
     :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     """
 
     _validation = {
@@ -2410,13 +2572,15 @@ class MongoDBCollectionResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'shard_key': {'key': 'shardKey', 'type': '{str}'},
         'indexes': {'key': 'indexes', 'type': '[MongoIndex]'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
     }
 
-    def __init__(self, *, id: str, shard_key=None, indexes=None, **kwargs) -> None:
+    def __init__(self, *, id: str, shard_key=None, indexes=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(MongoDBCollectionResource, self).__init__(**kwargs)
         self.id = id
         self.shard_key = shard_key
         self.indexes = indexes
+        self.analytical_storage_ttl = analytical_storage_ttl
 
 
 class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -2472,17 +2636,21 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
 class MongoDBDatabaseGetPropertiesOptions(OptionsResource):
     """MongoDBDatabaseGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(MongoDBDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(MongoDBDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class MongoDBDatabaseGetPropertiesResource(Model):
@@ -3259,43 +3427,6 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         self.description = description
 
 
-class ProvisionedThroughputSettingsResource(Model):
-    """Cosmos DB provisioned throughput settings object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param max_throughput: Required. Represents maximum throughput container
-     can scale up to.
-    :type max_throughput: int
-    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
-    :type auto_upgrade_policy:
-     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
-    :ivar target_max_throughput: Represents target maximum throughput
-     container can scale up to once offer is no longer in pending state.
-    :vartype target_max_throughput: int
-    """
-
-    _validation = {
-        'max_throughput': {'required': True},
-        'target_max_throughput': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
-        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
-        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
-    }
-
-    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
-        super(ProvisionedThroughputSettingsResource, self).__init__(**kwargs)
-        self.max_throughput = max_throughput
-        self.auto_upgrade_policy = auto_upgrade_policy
-        self.target_max_throughput = None
-
-
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
@@ -3393,17 +3524,21 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
 class SqlContainerGetPropertiesOptions(OptionsResource):
     """SqlContainerGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(SqlContainerGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(SqlContainerGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class SqlContainerGetPropertiesResource(Model):
@@ -3624,17 +3759,21 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
 class SqlDatabaseGetPropertiesOptions(OptionsResource):
     """SqlDatabaseGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(SqlDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(SqlDatabaseGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class SqlDatabaseGetPropertiesResource(Model):
@@ -4325,17 +4464,21 @@ class TableCreateUpdateParameters(ARMResourceProperties):
 class TableGetPropertiesOptions(OptionsResource):
     """TableGetPropertiesOptions.
 
-    :param throughput: Value of the Cosmos DB resource throughput. Use the
-     ThroughputSetting resource when retrieving offer details.
+    :param throughput: Value of the Cosmos DB resource throughput or
+     autoscaleSettings. Use the ThroughputSetting resource when retrieving
+     offer details.
     :type throughput: int
+    :param autoscale_settings: Specifies the Autoscale settings.
+    :type autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
     }
 
-    def __init__(self, *, throughput: int=None, **kwargs) -> None:
-        super(TableGetPropertiesOptions, self).__init__(throughput=throughput, **kwargs)
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
+        super(TableGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
 
 
 class TableGetPropertiesResource(Model):
@@ -4476,14 +4619,13 @@ class ThroughputSettingsGetPropertiesResource(Model):
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or provisionedThroughputSettings is required, but
-     not both.
+     throughput is required or autoscaleSettings is required, but not both.
     :type throughput: int
-    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
-     throughput settings. Either throughput is required or
-     provisionedThroughputSettings is required, but not both.
-    :type provisioned_throughput_settings:
-     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
+    :param autoscale_settings: Cosmos DB resource for autoscale settings.
+     Either throughput is required or autoscaleSettings is required, but not
+     both.
+    :type autoscale_settings:
+     ~azure.mgmt.cosmosdb.models.AutoscaleSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4508,7 +4650,7 @@ class ThroughputSettingsGetPropertiesResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
         '_rid': {'key': '_rid', 'type': 'str'},
@@ -4516,10 +4658,10 @@ class ThroughputSettingsGetPropertiesResource(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int=None, provisioned_throughput_settings=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
         super(ThroughputSettingsGetPropertiesResource, self).__init__(**kwargs)
         self.throughput = throughput
-        self.provisioned_throughput_settings = provisioned_throughput_settings
+        self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
         self._rid = None
@@ -4571,20 +4713,19 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
 
 class ThroughputSettingsResource(Model):
     """Cosmos DB resource throughput object. Either throughput is required or
-    provisionedThroughputSettings is required, but not both.
+    autoscaleSettings is required, but not both.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or provisionedThroughputSettings is required, but
-     not both.
+     throughput is required or autoscaleSettings is required, but not both.
     :type throughput: int
-    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
-     throughput settings. Either throughput is required or
-     provisionedThroughputSettings is required, but not both.
-    :type provisioned_throughput_settings:
-     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
+    :param autoscale_settings: Cosmos DB resource for autoscale settings.
+     Either throughput is required or autoscaleSettings is required, but not
+     both.
+    :type autoscale_settings:
+     ~azure.mgmt.cosmosdb.models.AutoscaleSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4598,15 +4739,15 @@ class ThroughputSettingsResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
+        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int=None, provisioned_throughput_settings=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autoscale_settings=None, **kwargs) -> None:
         super(ThroughputSettingsResource, self).__init__(**kwargs)
         self.throughput = throughput
-        self.provisioned_throughput_settings = provisioned_throughput_settings
+        self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
 
