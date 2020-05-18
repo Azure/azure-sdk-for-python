@@ -52,16 +52,17 @@ class ServiceTagsOperations:
          but limited to the cloud that your subscription belongs to).
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ServiceTagsListResult or the result of cls(response)
+        :return: ServiceTagsListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_12_01.models.ServiceTagsListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceTagsListResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
@@ -88,7 +89,7 @@ class ServiceTagsOperations:
         deserialized = self._deserialize('ServiceTagsListResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/serviceTags'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/serviceTags'}  # type: ignore

@@ -59,16 +59,17 @@ class VpnSiteLinkConnectionsOperations:
         :param link_connection_name: The name of the vpn connection.
         :type link_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VpnSiteLinkConnection or the result of cls(response)
+        :return: VpnSiteLinkConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnSiteLinkConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSiteLinkConnection"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -98,7 +99,7 @@ class VpnSiteLinkConnectionsOperations:
         deserialized = self._deserialize('VpnSiteLinkConnection', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}/vpnLinkConnections/{linkConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}/vpnLinkConnections/{linkConnectionName}'}  # type: ignore
