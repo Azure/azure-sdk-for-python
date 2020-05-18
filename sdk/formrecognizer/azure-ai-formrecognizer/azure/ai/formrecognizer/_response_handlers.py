@@ -8,7 +8,7 @@
 
 from ._models import (
     USReceipt,
-    USReceiptType,
+    ReceiptType,
     FormField,
     USReceiptItem,
     FormPage,
@@ -47,7 +47,7 @@ def prepare_us_receipt(response):
                 page.fields.get("MerchantPhoneNumber"),
                 read_result,
             ),
-            receipt_type=USReceiptType._from_generated(page.fields.get("ReceiptType")),
+            receipt_type=ReceiptType._from_generated(page.fields.get("ReceiptType")),
             receipt_items=USReceiptItem._from_generated(
                 page.fields.get("Items"), read_result
             ),

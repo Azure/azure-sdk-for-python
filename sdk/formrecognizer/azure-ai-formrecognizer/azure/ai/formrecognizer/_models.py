@@ -121,10 +121,10 @@ class Point(namedtuple("Point", "x y")):
 
 
 class FormPageRange(namedtuple("FormPageRange", "first_page last_page")):
-    """The 1-based page range of the document.
+    """The 1-based page range of the form.
 
-    :ivar int first_page: The first page number of the document.
-    :ivar int last_page: The last page number of the document.
+    :ivar int first_page: The first page number of the form.
+    :ivar int last_page: The last page number of the form.
     """
 
     __slots__ = ()
@@ -179,8 +179,39 @@ class RecognizedForm(object):
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
         )[:1024]
 
+class RecognizedReceipt(RecognizedForm):
+    """Represents a receipt that has been recognized by a trained model.
 
-class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
+    :ivar fields:
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
+        The first and last page of the input form.
+    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
+        A list of pages recognized from the input document. Contains lines,
+        words, tables and page metadata.
+    :ivar ~azure.ai.formrecognizer.ReceiptType receipt_type:
+        The reciept type and confidence.
+    :ivar str receipt_locale: Defaults to "en-US".
+    """
+    def __init__(self, **kwargs):
+        super(RecognizedReceipt, self).__init__(**kwargs)
+        self.receipt_type = kwargs.get("receipt_type", None)
+        self.receipt_locale = kwargs.get("receipt_locale", "en-US")
+
+    def __repr__(self):
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, " \
+            "receipt_type={}, receipt_locale={})".format(
+            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages),
+            repr(self.receipt_type), self.receipt_locale
+        )[:1024]
+
+class USReceipt(RecognizedReceipt):  # pylint: disable=too-many-instance-attributes
     """Extracted fields found on the US sales receipt. Provides
     attributes for accessing common fields present in US sales receipts.
 
@@ -190,8 +221,6 @@ class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
         The name of the merchant.
     :ivar ~azure.ai.formrecognizer.FormField merchant_phone_number:
         The phone number associated with the merchant.
-    :ivar ~azure.ai.formrecognizer.USReceiptType receipt_type:
-        The reciept type and confidence.
     :ivar list[~azure.ai.formrecognizer.USReceiptItem] receipt_items:
         The purchased items found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField subtotal:
@@ -216,7 +245,6 @@ class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
         If `include_text_content=True` is passed, contains a list
         of extracted text lines for each page in the input document.
     :ivar str form_type: The type of form.
-    :ivar str receipt_locale: Defaults to "en-US".
     """
 
     def __init__(self, **kwargs):
@@ -224,7 +252,6 @@ class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
         self.merchant_address = kwargs.get("merchant_address", None)
         self.merchant_name = kwargs.get("merchant_name", None)
         self.merchant_phone_number = kwargs.get("merchant_phone_number", None)
-        self.receipt_type = kwargs.get("receipt_type", None)
         self.receipt_items = kwargs.get("receipt_items", None)
         self.subtotal = kwargs.get("subtotal", None)
         self.tax = kwargs.get("tax", None)
@@ -232,7 +259,6 @@ class USReceipt(RecognizedForm):  # pylint: disable=too-many-instance-attributes
         self.total = kwargs.get("total", None)
         self.transaction_date = kwargs.get("transaction_date", None)
         self.transaction_time = kwargs.get("transaction_time", None)
-        self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
     def __repr__(self):
         return "USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, " \
@@ -487,7 +513,7 @@ class FormWord(FormContent):
         )[:1024]
 
 
-class USReceiptType(object):
+class ReceiptType(object):
     """The type of the analyzed US receipt and the confidence
     value of that type.
 
@@ -508,7 +534,7 @@ class USReceiptType(object):
             confidence=adjust_confidence(item.confidence)) if item else None
 
     def __repr__(self):
-        return "USReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
+        return "ReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
 
 
 class USReceiptItem(object):

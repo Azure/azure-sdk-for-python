@@ -97,8 +97,8 @@ def form_page(form_table, form_line):
 
 @pytest.fixture
 def us_receipt_type():
-    model = _models.USReceiptType(type="Itemized", confidence=1.0)
-    model_repr = "USReceiptType(type=Itemized, confidence=1.0)"
+    model = _models.ReceiptType(type="Itemized", confidence=1.0)
+    model_repr = "ReceiptType(type=Itemized, confidence=1.0)"
     assert repr(model) == model_repr
     return model, model_repr
 

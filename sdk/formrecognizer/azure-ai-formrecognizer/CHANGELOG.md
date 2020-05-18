@@ -2,6 +2,9 @@
 
 ## 1.0.0b3 (Unreleased)
 
+* `PageRange` is renamed to `FormPageRange`
+* `FormField` does not have a page_number.
+* `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
 
 ## 1.0.0b2 (2020-05-06)
 
