@@ -127,9 +127,8 @@ class AadClientBase(ABC):
         }
 
         request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
         )
-        request.set_formdata_body(data)
         return request
 
     def _get_jwt_assertion(self, certificate):
