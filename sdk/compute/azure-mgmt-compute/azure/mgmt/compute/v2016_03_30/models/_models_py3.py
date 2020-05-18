@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._compute_management_client_enums import *
+
 
 class AdditionalUnattendContent(msrest.serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
@@ -24,8 +26,8 @@ class AdditionalUnattendContent(msrest.serialization.Model):
      Windows-Shell-Setup. Default value: "Microsoft-Windows-Shell-Setup".
     :vartype component_name: str
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
-     values are: FirstLogonCommands and AutoLogon. Possible values include: 'AutoLogon',
-     'FirstLogonCommands'.
+     values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
+     "FirstLogonCommands".
     :type setting_name: str or ~azure.mgmt.compute.v2016_03_30.models.SettingNames
     :param content: Specifies the XML formatted content that is added to the unattend.xml file for
      the specified path and component. The XML must be less than 4KB and must include the root
@@ -398,8 +400,8 @@ class DataDisk(msrest.serialization.Model):
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: 'None', 'ReadOnly',
-     'ReadWrite'.
+     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
+     "ReadWrite".
     :type caching: str or ~azure.mgmt.compute.v2016_03_30.models.CachingTypes
     :param create_option: Required. Specifies how the virtual machine should be
      created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
@@ -407,7 +409,7 @@ class DataDisk(msrest.serialization.Model):
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: 'FromImage', 'Empty', 'Attach'.
+     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
     :type create_option: str or ~azure.mgmt.compute.v2016_03_30.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -576,18 +578,18 @@ class HardwareProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
      :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
      <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Possible
-     values include: 'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4', 'Standard_A0',
-     'Standard_A1', 'Standard_A2', 'Standard_A3', 'Standard_A4', 'Standard_A5', 'Standard_A6',
-     'Standard_A7', 'Standard_A8', 'Standard_A9', 'Standard_A10', 'Standard_A11', 'Standard_D1',
-     'Standard_D2', 'Standard_D3', 'Standard_D4', 'Standard_D11', 'Standard_D12', 'Standard_D13',
-     'Standard_D14', 'Standard_D1_v2', 'Standard_D2_v2', 'Standard_D3_v2', 'Standard_D4_v2',
-     'Standard_D5_v2', 'Standard_D11_v2', 'Standard_D12_v2', 'Standard_D13_v2', 'Standard_D14_v2',
-     'Standard_D15_v2', 'Standard_DS1', 'Standard_DS2', 'Standard_DS3', 'Standard_DS4',
-     'Standard_DS11', 'Standard_DS12', 'Standard_DS13', 'Standard_DS14', 'Standard_DS1_v2',
-     'Standard_DS2_v2', 'Standard_DS3_v2', 'Standard_DS4_v2', 'Standard_DS5_v2', 'Standard_DS11_v2',
-     'Standard_DS12_v2', 'Standard_DS13_v2', 'Standard_DS14_v2', 'Standard_DS15_v2', 'Standard_G1',
-     'Standard_G2', 'Standard_G3', 'Standard_G4', 'Standard_G5', 'Standard_GS1', 'Standard_GS2',
-     'Standard_GS3', 'Standard_GS4', 'Standard_GS5'.
+     values include: "Basic_A0", "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0",
+     "Standard_A1", "Standard_A2", "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6",
+     "Standard_A7", "Standard_A8", "Standard_A9", "Standard_A10", "Standard_A11", "Standard_D1",
+     "Standard_D2", "Standard_D3", "Standard_D4", "Standard_D11", "Standard_D12", "Standard_D13",
+     "Standard_D14", "Standard_D1_v2", "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2",
+     "Standard_D5_v2", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2", "Standard_D14_v2",
+     "Standard_D15_v2", "Standard_DS1", "Standard_DS2", "Standard_DS3", "Standard_DS4",
+     "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14", "Standard_DS1_v2",
+     "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_DS11_v2",
+     "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2", "Standard_G1",
+     "Standard_G2", "Standard_G3", "Standard_G4", "Standard_G5", "Standard_GS1", "Standard_GS2",
+     "Standard_GS3", "Standard_GS4", "Standard_GS5".
     :type vm_size: str or ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineSizeTypes
     """
 
@@ -677,7 +679,7 @@ class InstanceViewStatus(msrest.serialization.Model):
 
     :param code: The status code.
     :type code: str
-    :param level: The level code. Possible values include: 'Info', 'Warning', 'Error'.
+    :param level: The level code. Possible values include: "Info", "Warning", "Error".
     :type level: str or ~azure.mgmt.compute.v2016_03_30.models.StatusLevelTypes
     :param display_status: The short localizable label for the status.
     :type display_status: str
@@ -962,7 +964,7 @@ class OSDisk(msrest.serialization.Model):
     :param os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: 'Windows', 'Linux'.
+     values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2016_03_30.models.OperatingSystemTypes
     :param encryption_settings: Specifies the encryption settings for the OS Disk.
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
@@ -978,8 +980,8 @@ class OSDisk(msrest.serialization.Model):
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: 'None', 'ReadOnly',
-     'ReadWrite'.
+     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
+     "ReadWrite".
     :type caching: str or ~azure.mgmt.compute.v2016_03_30.models.CachingTypes
     :param create_option: Required. Specifies how the virtual machine should be
      created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
@@ -987,7 +989,7 @@ class OSDisk(msrest.serialization.Model):
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: 'FromImage', 'Empty', 'Attach'.
+     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
     :type create_option: str or ~azure.mgmt.compute.v2016_03_30.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -1042,7 +1044,7 @@ class OSDiskImage(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param operating_system: Required. The operating system of the osDiskImage. Possible values
-     include: 'Windows', 'Linux'.
+     include: "Windows", "Linux".
     :type operating_system: str or ~azure.mgmt.compute.v2016_03_30.models.OperatingSystemTypes
     """
 
@@ -1395,8 +1397,8 @@ class UpgradePolicy(msrest.serialization.Model):
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
      the application of updates to virtual machines in the scale set. You do this by using the
      manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-     scale set are  automatically updated at the same time. Possible values include: 'Automatic',
-     'Manual'.
+     scale set are  automatically updated at the same time. Possible values include: "Automatic",
+     "Manual".
     :type mode: str or ~azure.mgmt.compute.v2016_03_30.models.UpgradeMode
     """
 
@@ -2845,20 +2847,20 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: 'None', 'ReadOnly',
-     'ReadWrite'.
+     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
+     "ReadWrite".
     :type caching: str or ~azure.mgmt.compute.v2016_03_30.models.CachingTypes
     :param create_option: Required. Specifies how the virtual machines in the scale set should be
      created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
      used when you are using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are using a marketplace
      image, you  also use the plan element previously described. Possible values include:
-     'FromImage', 'Empty', 'Attach'.
+     "FromImage", "Empty", "Attach".
     :type create_option: str or ~azure.mgmt.compute.v2016_03_30.models.DiskCreateOptionTypes
     :param os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: 'Windows', 'Linux'.
+     values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2016_03_30.models.OperatingSystemTypes
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied before
      using it to attach to the Virtual Machine. If SourceImage is provided, the destination
@@ -3029,8 +3031,8 @@ class VirtualMachineScaleSetSkuCapacity(msrest.serialization.Model):
     :vartype maximum: long
     :ivar default_capacity: The default capacity.
     :vartype default_capacity: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: 'Automatic',
-     'None'.
+    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
+     "None".
     :vartype scale_type: str or
      ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetSkuScaleType
     """
@@ -3616,7 +3618,7 @@ class WinRMListener(msrest.serialization.Model):
 
     :param protocol: Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
-     'Http', 'Https'.
+     "Http", "Https".
     :type protocol: str or ~azure.mgmt.compute.v2016_03_30.models.ProtocolTypes
     :param certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault

@@ -8,28 +8,11 @@
 
 from enum import Enum
 
-class DiskStorageAccountTypes(str, Enum):
-    """The sku name.
-    """
+class AccessLevel(str, Enum):
 
-    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
-    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
-    standard_ssd_lrs = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
-    ultra_ssd_lrs = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
-
-class OperatingSystemTypes(str, Enum):
-    """The Operating System type.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class HyperVGeneration(str, Enum):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
-
-    v1 = "V1"
-    v2 = "V2"
+    none = "None"
+    read = "Read"
+    write = "Write"
 
 class DiskCreateOption(str, Enum):
     """This enumerates the possible sources of a disk's creation.
@@ -54,12 +37,35 @@ class DiskState(str, Enum):
     ready_to_upload = "ReadyToUpload"  #: A disk is ready to be created by upload by requesting a write token.
     active_upload = "ActiveUpload"  #: A disk is created for upload and a write token has been issued for uploading to it.
 
+class DiskStorageAccountTypes(str, Enum):
+    """The sku name.
+    """
+
+    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
+    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
+    standard_ssd_lrs = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
+    ultra_ssd_lrs = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
+
 class EncryptionType(str, Enum):
     """The type of key used to encrypt the data of the disk.
     """
 
     encryption_at_rest_with_platform_key = "EncryptionAtRestWithPlatformKey"  #: Disk is encrypted with XStore managed key at rest. It is the default encryption type.
     encryption_at_rest_with_customer_key = "EncryptionAtRestWithCustomerKey"  #: Disk is encrypted with Customer managed key at rest.
+
+class HyperVGeneration(str, Enum):
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
+    """
+
+    v1 = "V1"
+    v2 = "V2"
+
+class OperatingSystemTypes(str, Enum):
+    """The Operating System type.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
 
 class SnapshotStorageAccountTypes(str, Enum):
     """The sku name.
@@ -68,9 +74,3 @@ class SnapshotStorageAccountTypes(str, Enum):
     standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage.
     premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage.
     standard_zrs = "Standard_ZRS"  #: Standard zone redundant storage.
-
-class AccessLevel(str, Enum):
-
-    none = "None"
-    read = "Read"
-    write = "Write"

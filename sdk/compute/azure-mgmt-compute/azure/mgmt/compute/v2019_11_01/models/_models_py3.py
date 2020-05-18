@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._compute_management_client_enums import *
+
 
 class AccessUri(msrest.serialization.Model):
     """A disk access SAS uri.
@@ -116,7 +118,7 @@ class CreationData(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param create_option: Required. This enumerates the possible sources of a disk's creation.
-     Possible values include: 'Empty', 'Attach', 'FromImage', 'Import', 'Copy', 'Restore', 'Upload'.
+     Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
     :type create_option: str or ~azure.mgmt.compute.v2019_11_01.models.DiskCreateOption
     :param storage_account_id: Required if createOption is Import. The Azure Resource Manager
      identifier of the storage account containing the blob to import as a disk.
@@ -260,10 +262,10 @@ class Disk(Resource):
     :type zones: list[str]
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :param os_type: The Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: The Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2019_11_01.models.OperatingSystemTypes
     :param hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: 'V1', 'V2'.
+     disks only. Possible values include: "V1", "V2".
     :type hyper_v_generation: str or ~azure.mgmt.compute.v2019_11_01.models.HyperVGeneration
     :param creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -297,8 +299,8 @@ class Disk(Resource):
      mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
      the ISO notation, of powers of 10.
     :type disk_m_bps_read_only: long
-    :ivar disk_state: The state of the disk. Possible values include: 'Unattached', 'Attached',
-     'Reserved', 'ActiveSAS', 'ReadyToUpload', 'ActiveUpload'.
+    :ivar disk_state: The state of the disk. Possible values include: "Unattached", "Attached",
+     "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2019_11_01.models.DiskState
     :param encryption: Encryption property can be used to encrypt data at rest with customer
      managed keys or platform managed keys.
@@ -564,8 +566,8 @@ class DiskSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: The sku name. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'StandardSSD_LRS', 'UltraSSD_LRS'.
+    :param name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+     "StandardSSD_LRS", "UltraSSD_LRS".
     :type name: str or ~azure.mgmt.compute.v2019_11_01.models.DiskStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -599,7 +601,7 @@ class DiskUpdate(msrest.serialization.Model):
     :param sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
      UltraSSD_LRS.
     :type sku: ~azure.mgmt.compute.v2019_11_01.models.DiskSku
-    :param os_type: the Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: the Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2019_11_01.models.OperatingSystemTypes
     :param disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with
@@ -683,7 +685,7 @@ class Encryption(msrest.serialization.Model):
      encryption at rest.
     :type disk_encryption_set_id: str
     :param type: The type of key used to encrypt the data of the disk. Possible values include:
-     'EncryptionAtRestWithPlatformKey', 'EncryptionAtRestWithCustomerKey'.
+     "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey".
     :type type: str or ~azure.mgmt.compute.v2019_11_01.models.EncryptionType
     """
 
@@ -820,7 +822,7 @@ class GrantAccessData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param access: Required.  Possible values include: 'None', 'Read', 'Write'.
+    :param access: Required.  Possible values include: "None", "Read", "Write".
     :type access: str or ~azure.mgmt.compute.v2019_11_01.models.AccessLevel
     :param duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
     :type duration_in_seconds: int
@@ -1022,10 +1024,10 @@ class Snapshot(Resource):
     :type sku: ~azure.mgmt.compute.v2019_11_01.models.SnapshotSku
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :param os_type: The Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: The Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2019_11_01.models.OperatingSystemTypes
     :param hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: 'V1', 'V2'.
+     disks only. Possible values include: "V1", "V2".
     :type hyper_v_generation: str or ~azure.mgmt.compute.v2019_11_01.models.HyperVGeneration
     :param creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -1155,8 +1157,8 @@ class SnapshotSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: The sku name. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'Standard_ZRS'.
+    :param name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+     "Standard_ZRS".
     :type name: str or ~azure.mgmt.compute.v2019_11_01.models.SnapshotStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -1189,7 +1191,7 @@ class SnapshotUpdate(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
     :type sku: ~azure.mgmt.compute.v2019_11_01.models.SnapshotSku
-    :param os_type: the Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: the Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2019_11_01.models.OperatingSystemTypes
     :param disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with

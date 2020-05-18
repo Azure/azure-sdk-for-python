@@ -40,7 +40,7 @@ class CreationData(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param create_option: Required. This enumerates the possible sources of a disk's creation.
-     Possible values include: 'Empty', 'Attach', 'FromImage', 'Import', 'Copy', 'Restore', 'Upload'.
+     Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
     :type create_option: str or ~azure.mgmt.compute.v2018_09_30.models.DiskCreateOption
     :param storage_account_id: If createOption is Import, the Azure Resource Manager identifier of
      the storage account containing the blob to import as a disk. Required only if the blob is in a
@@ -73,7 +73,7 @@ class CreationData(msrest.serialization.Model):
         **kwargs
     ):
         super(CreationData, self).__init__(**kwargs)
-        self.create_option = kwargs.get('create_option', None)
+        self.create_option = kwargs['create_option']
         self.storage_account_id = kwargs.get('storage_account_id', None)
         self.image_reference = kwargs.get('image_reference', None)
         self.source_uri = kwargs.get('source_uri', None)
@@ -122,7 +122,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -152,10 +152,10 @@ class Disk(Resource):
     :type zones: list[str]
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :param os_type: The Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: The Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :param hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: 'V1', 'V2'.
+     disks only. Possible values include: "V1", "V2".
     :type hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
     :param creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -178,8 +178,8 @@ class Disk(Resource):
      disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
      10.
     :type disk_m_bps_read_write: int
-    :ivar disk_state: The state of the disk. Possible values include: 'Unattached', 'Attached',
-     'Reserved', 'ActiveSAS', 'ReadyToUpload', 'ActiveUpload'.
+    :ivar disk_state: The state of the disk. Possible values include: "Unattached", "Attached",
+     "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2018_09_30.models.DiskState
     """
 
@@ -261,7 +261,7 @@ class DiskList(msrest.serialization.Model):
         **kwargs
     ):
         super(DiskList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -270,8 +270,8 @@ class DiskSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: The sku name. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'StandardSSD_LRS', 'UltraSSD_LRS'.
+    :param name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+     "StandardSSD_LRS", "UltraSSD_LRS".
     :type name: str or ~azure.mgmt.compute.v2018_09_30.models.DiskStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -303,7 +303,7 @@ class DiskUpdate(msrest.serialization.Model):
     :param sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
      UltraSSD_LRS.
     :type sku: ~azure.mgmt.compute.v2018_09_30.models.DiskSku
-    :param os_type: the Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: the Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :param disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the VHD to create. If this field is present for updates or creation with
@@ -376,7 +376,7 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(EncryptionSettingsCollection, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = kwargs['enabled']
         self.encryption_settings = kwargs.get('encryption_settings', None)
 
 
@@ -409,7 +409,7 @@ class GrantAccessData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param access: Required.  Possible values include: 'None', 'Read', 'Write'.
+    :param access: Required.  Possible values include: "None", "Read", "Write".
     :type access: str or ~azure.mgmt.compute.v2018_09_30.models.AccessLevel
     :param duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
     :type duration_in_seconds: int
@@ -430,8 +430,8 @@ class GrantAccessData(msrest.serialization.Model):
         **kwargs
     ):
         super(GrantAccessData, self).__init__(**kwargs)
-        self.access = kwargs.get('access', None)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
+        self.access = kwargs['access']
+        self.duration_in_seconds = kwargs['duration_in_seconds']
 
 
 class ImageDiskReference(msrest.serialization.Model):
@@ -461,7 +461,7 @@ class ImageDiskReference(msrest.serialization.Model):
         **kwargs
     ):
         super(ImageDiskReference, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs['id']
         self.lun = kwargs.get('lun', None)
 
 
@@ -491,8 +491,8 @@ class KeyVaultAndKeyReference(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyVaultAndKeyReference, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.key_url = kwargs.get('key_url', None)
+        self.source_vault = kwargs['source_vault']
+        self.key_url = kwargs['key_url']
 
 
 class KeyVaultAndSecretReference(msrest.serialization.Model):
@@ -521,8 +521,8 @@ class KeyVaultAndSecretReference(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyVaultAndSecretReference, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.secret_url = kwargs.get('secret_url', None)
+        self.source_vault = kwargs['source_vault']
+        self.secret_url = kwargs['secret_url']
 
 
 class Snapshot(Resource):
@@ -548,10 +548,10 @@ class Snapshot(Resource):
     :type sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :param os_type: The Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: The Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :param hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: 'V1', 'V2'.
+     disks only. Possible values include: "V1", "V2".
     :type hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
     :param creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -638,7 +638,7 @@ class SnapshotList(msrest.serialization.Model):
         **kwargs
     ):
         super(SnapshotList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -647,8 +647,8 @@ class SnapshotSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: The sku name. Possible values include: 'Standard_LRS', 'Premium_LRS',
-     'Standard_ZRS'.
+    :param name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+     "Standard_ZRS".
     :type name: str or ~azure.mgmt.compute.v2018_09_30.models.SnapshotStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -679,7 +679,7 @@ class SnapshotUpdate(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
     :type sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
-    :param os_type: the Operating System type. Possible values include: 'Windows', 'Linux'.
+    :param os_type: the Operating System type. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :param disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the VHD to create. If this field is present for updates or creation with

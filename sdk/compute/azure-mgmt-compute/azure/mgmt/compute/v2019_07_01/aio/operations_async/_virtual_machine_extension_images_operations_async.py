@@ -59,16 +59,17 @@ class VirtualMachineExtensionImagesOperations:
         :param version:
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualMachineExtensionImage or the result of cls(response)
+        :return: VirtualMachineExtensionImage, or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionImage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineExtensionImage"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-07-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -98,17 +99,17 @@ class VirtualMachineExtensionImagesOperations:
         deserialized = self._deserialize('VirtualMachineExtensionImage', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions/{version}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions/{version}'}  # type: ignore
 
     async def list_types(
         self,
         location: str,
         publisher_name: str,
         **kwargs
-    ) -> List["VirtualMachineExtensionImage"]:
+    ) -> List["models.VirtualMachineExtensionImage"]:
         """Gets a list of virtual machine extension image types.
 
         :param location: The name of a supported Azure region.
@@ -116,16 +117,17 @@ class VirtualMachineExtensionImagesOperations:
         :param publisher_name:
         :type publisher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineExtensionImage, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionImage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineExtensionImage"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineExtensionImage"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-07-01"
 
         # Construct URL
-        url = self.list_types.metadata['url']
+        url = self.list_types.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -153,10 +155,10 @@ class VirtualMachineExtensionImagesOperations:
         deserialized = self._deserialize('[VirtualMachineExtensionImage]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_types.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types'}
+    list_types.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types'}  # type: ignore
 
     async def list_versions(
         self,
@@ -167,7 +169,7 @@ class VirtualMachineExtensionImagesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> List["VirtualMachineExtensionImage"]:
+    ) -> List["models.VirtualMachineExtensionImage"]:
         """Gets a list of virtual machine extension image versions.
 
         :param location: The name of a supported Azure region.
@@ -183,16 +185,17 @@ class VirtualMachineExtensionImagesOperations:
         :param orderby:
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineExtensionImage, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionImage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineExtensionImage"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineExtensionImage"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-07-01"
 
         # Construct URL
-        url = self.list_versions.metadata['url']
+        url = self.list_versions.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -227,7 +230,7 @@ class VirtualMachineExtensionImagesOperations:
         deserialized = self._deserialize('[VirtualMachineExtensionImage]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_versions.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions'}
+    list_versions.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions'}  # type: ignore

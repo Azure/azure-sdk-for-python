@@ -8,14 +8,6 @@
 
 from enum import Enum
 
-class StatusLevelTypes(str, Enum):
-    """The level code.
-    """
-
-    info = "Info"
-    warning = "Warning"
-    error = "Error"
-
 class CachingTypes(str, Enum):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
@@ -40,13 +32,12 @@ class DiskCreateOptionTypes(str, Enum):
     empty = "Empty"
     attach = "Attach"
 
-class SettingNames(str, Enum):
-    """Specifies the name of the setting to which the content applies. Possible values are:
-    FirstLogonCommands and AutoLogon.
+class OperatingSystemTypes(str, Enum):
+    """The operating system of the osDiskImage.
     """
 
-    auto_logon = "AutoLogon"
-    first_logon_commands = "FirstLogonCommands"
+    windows = "Windows"
+    linux = "Linux"
 
 class ProtocolTypes(str, Enum):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
@@ -55,6 +46,40 @@ class ProtocolTypes(str, Enum):
 
     http = "Http"
     https = "Https"
+
+class SettingNames(str, Enum):
+    """Specifies the name of the setting to which the content applies. Possible values are:
+    FirstLogonCommands and AutoLogon.
+    """
+
+    auto_logon = "AutoLogon"
+    first_logon_commands = "FirstLogonCommands"
+
+class StatusLevelTypes(str, Enum):
+    """The level code.
+    """
+
+    info = "Info"
+    warning = "Warning"
+    error = "Error"
+
+class UpgradeMode(str, Enum):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.
+    """
+
+    automatic = "Automatic"
+    manual = "Manual"
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
+    none = "None"
 
 class VirtualMachineSizeTypes(str, Enum):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
@@ -133,28 +158,3 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
-
-class OperatingSystemTypes(str, Enum):
-    """The operating system of the osDiskImage.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class UpgradeMode(str, Enum):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-
-class VirtualMachineScaleSetSkuScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    none = "None"

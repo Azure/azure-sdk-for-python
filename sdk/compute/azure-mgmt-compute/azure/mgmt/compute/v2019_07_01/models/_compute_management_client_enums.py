@@ -8,22 +8,39 @@
 
 from enum import Enum
 
-class StatusLevelTypes(str, Enum):
-    """The level code.
+class AccessLevel(str, Enum):
+
+    none = "None"
+    read = "Read"
+    write = "Write"
+
+class AggregatedReplicationState(str, Enum):
+    """This is the aggregated replication status based on all the regional replication status flags.
     """
 
-    info = "Info"
-    warning = "Warning"
-    error = "Error"
+    unknown = "Unknown"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
 
-class ProximityPlacementGroupType(str, Enum):
-    """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
-    are: :code:`<br>`:code:`<br>` **Standard** : Co-locate resources within an Azure region or
-    Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For future use.
+class AvailabilitySetSkuTypes(str, Enum):
+    """Specifies the sku of an Availability Set. Use 'Aligned' for virtual machines with managed disks
+    and 'Classic' for virtual machines with unmanaged disks. Default value is 'Classic'.
     """
 
-    standard = "Standard"
-    ultra = "Ultra"
+    classic = "Classic"
+    aligned = "Aligned"
+
+class CachingTypes(str, Enum):
+    """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
+    :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
+    :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
+    storage. ReadOnly for Premium storage**
+    """
+
+    none = "None"
+    read_only = "ReadOnly"
+    read_write = "ReadWrite"
 
 class DedicatedHostLicenseTypes(str, Enum):
     """Specifies the software license type that will be applied to the VMs deployed on the dedicated
@@ -36,16 +53,17 @@ class DedicatedHostLicenseTypes(str, Enum):
     windows_server_hybrid = "Windows_Server_Hybrid"
     windows_server_perpetual = "Windows_Server_Perpetual"
 
-class CachingTypes(str, Enum):
-    """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
-    :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**
+class DiskCreateOption(str, Enum):
+    """This enumerates the possible sources of a disk's creation.
     """
 
-    none = "None"
-    read_only = "ReadOnly"
-    read_write = "ReadWrite"
+    empty = "Empty"  #: Create an empty data disk of a size given by diskSizeGB.
+    attach = "Attach"  #: Disk will be attached to a VM.
+    from_image = "FromImage"  #: Create a new disk from a platform image specified by the given imageReference.
+    import_enum = "Import"  #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified by storageAccountId.
+    copy = "Copy"  #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given sourceResourceId.
+    restore = "Restore"  #: Create a new disk by copying from a backup recovery point.
+    upload = "Upload"  #: Create a new disk by obtaining a write token and using it to directly upload the contents of the disk.
 
 class DiskCreateOptionTypes(str, Enum):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
@@ -59,6 +77,232 @@ class DiskCreateOptionTypes(str, Enum):
     from_image = "FromImage"
     empty = "Empty"
     attach = "Attach"
+
+class DiskState(str, Enum):
+    """The state of the disk.
+    """
+
+    unattached = "Unattached"  #: The disk is not being used and can be attached to a VM.
+    attached = "Attached"  #: The disk is currently mounted to a running VM.
+    reserved = "Reserved"  #: The disk is mounted to a stopped-deallocated VM.
+    active_sas = "ActiveSAS"  #: The disk currently has an Active SAS Uri associated with it.
+    ready_to_upload = "ReadyToUpload"  #: A disk is ready to be created by upload by requesting a write token.
+    active_upload = "ActiveUpload"  #: A disk is created for upload and a write token has been issued for uploading to it.
+
+class DiskStorageAccountTypes(str, Enum):
+    """The sku name.
+    """
+
+    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
+    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
+    standard_ssd_lrs = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
+    ultra_ssd_lrs = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
+
+class EncryptionType(str, Enum):
+    """The type of key used to encrypt the data of the disk.
+    """
+
+    encryption_at_rest_with_platform_key = "EncryptionAtRestWithPlatformKey"  #: Disk is encrypted with XStore managed key at rest. It is the default encryption type.
+    encryption_at_rest_with_customer_key = "EncryptionAtRestWithCustomerKey"  #: Disk is encrypted with Customer managed key at rest.
+
+class GalleryApplicationVersionPropertiesProvisioningState(str, Enum):
+    """The provisioning state, which only appears in the response.
+    """
+
+    creating = "Creating"
+    updating = "Updating"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    migrating = "Migrating"
+
+class GalleryImagePropertiesProvisioningState(str, Enum):
+    """The provisioning state, which only appears in the response.
+    """
+
+    creating = "Creating"
+    updating = "Updating"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    migrating = "Migrating"
+
+class GalleryImageVersionPropertiesProvisioningState(str, Enum):
+    """The provisioning state, which only appears in the response.
+    """
+
+    creating = "Creating"
+    updating = "Updating"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    migrating = "Migrating"
+
+class GalleryPropertiesProvisioningState(str, Enum):
+    """The provisioning state, which only appears in the response.
+    """
+
+    creating = "Creating"
+    updating = "Updating"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    migrating = "Migrating"
+
+class HostCaching(str, Enum):
+    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'
+    """
+
+    none = "None"
+    read_only = "ReadOnly"
+    read_write = "ReadWrite"
+
+class HyperVGeneration(str, Enum):
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
+    """
+
+    v1 = "V1"
+    v2 = "V2"
+
+class HyperVGenerationType(str, Enum):
+    """Specifies the HyperVGeneration Type associated with a resource
+    """
+
+    v1 = "V1"
+    v2 = "V2"
+
+class HyperVGenerationTypes(str, Enum):
+    """Specifies the HyperVGeneration Type
+    """
+
+    v1 = "V1"
+    v2 = "V2"
+
+class IntervalInMins(str, Enum):
+    """Interval value in minutes used to create LogAnalytics call rate logs.
+    """
+
+    three_mins = "ThreeMins"
+    five_mins = "FiveMins"
+    thirty_mins = "ThirtyMins"
+    sixty_mins = "SixtyMins"
+
+class IPVersion(str, Enum):
+    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
+    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
+    'IPv6'.
+    """
+
+    i_pv4 = "IPv4"
+    i_pv6 = "IPv6"
+
+class MaintenanceOperationResultCodeTypes(str, Enum):
+    """The Last Maintenance Operation Result Code.
+    """
+
+    none = "None"
+    retry_later = "RetryLater"
+    maintenance_aborted = "MaintenanceAborted"
+    maintenance_completed = "MaintenanceCompleted"
+
+class OperatingSystemStateTypes(str, Enum):
+    """The OS State.
+    """
+
+    generalized = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
+    specialized = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
+
+class OperatingSystemTypes(str, Enum):
+    """The Operating System type.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
+
+class ProtocolTypes(str, Enum):
+    """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
+    :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**
+    """
+
+    http = "Http"
+    https = "Https"
+
+class ProximityPlacementGroupType(str, Enum):
+    """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
+    are: :code:`<br>`:code:`<br>` **Standard** : Co-locate resources within an Azure region or
+    Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For future use.
+    """
+
+    standard = "Standard"
+    ultra = "Ultra"
+
+class ReplicationState(str, Enum):
+    """This is the regional replication state.
+    """
+
+    unknown = "Unknown"
+    replicating = "Replicating"
+    completed = "Completed"
+    failed = "Failed"
+
+class ResourceIdentityType(str, Enum):
+    """The type of identity used for the virtual machine. The type 'SystemAssigned, UserAssigned'
+    includes both an implicitly created identity and a set of user assigned identities. The type
+    'None' will remove any identities from the virtual machine.
+    """
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+class RollingUpgradeActionType(str, Enum):
+    """The last action performed on the rolling upgrade.
+    """
+
+    start = "Start"
+    cancel = "Cancel"
+
+class RollingUpgradeStatusCode(str, Enum):
+    """Code indicating the current status of the upgrade.
+    """
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+class SettingNames(str, Enum):
+    """Specifies the name of the setting to which the content applies. Possible values are:
+    FirstLogonCommands and AutoLogon.
+    """
+
+    auto_logon = "AutoLogon"
+    first_logon_commands = "FirstLogonCommands"
+
+class SnapshotStorageAccountTypes(str, Enum):
+    """The sku name.
+    """
+
+    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage.
+    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage.
+    standard_zrs = "Standard_ZRS"  #: Standard zone redundant storage.
+
+class StatusLevelTypes(str, Enum):
+    """The level code.
+    """
+
+    info = "Info"
+    warning = "Warning"
+    error = "Error"
+
+class StorageAccountType(str, Enum):
+    """Specifies the storage account type to be used to store the image. This property is not
+    updatable.
+    """
+
+    standard_lrs = "Standard_LRS"
+    standard_zrs = "Standard_ZRS"
 
 class StorageAccountTypes(str, Enum):
     """Specifies the storage account type for the managed disk. Managed OS disk storage account type
@@ -75,31 +319,63 @@ class StorageAccountTypes(str, Enum):
     standard_ssd_lrs = "StandardSSD_LRS"
     ultra_ssd_lrs = "UltraSSD_LRS"
 
-class SettingNames(str, Enum):
-    """Specifies the name of the setting to which the content applies. Possible values are:
-    FirstLogonCommands and AutoLogon.
+class UpgradeMode(str, Enum):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.
     """
 
-    auto_logon = "AutoLogon"
-    first_logon_commands = "FirstLogonCommands"
+    automatic = "Automatic"
+    manual = "Manual"
+    rolling = "Rolling"
 
-class ProtocolTypes(str, Enum):
-    """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**
+class UpgradeOperationInvoker(str, Enum):
+    """Invoker of the Upgrade Operation
     """
 
-    http = "Http"
-    https = "Https"
+    unknown = "Unknown"
+    user = "User"
+    platform = "Platform"
 
-class ResourceIdentityType(str, Enum):
-    """The type of identity used for the virtual machine. The type 'SystemAssigned, UserAssigned'
-    includes both an implicitly created identity and a set of user assigned identities. The type
-    'None' will remove any identities from the virtual machine.
+class UpgradeState(str, Enum):
+    """Code indicating the current status of the upgrade.
     """
 
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+    """Specifies the eviction policy for the Azure Spot VM/VMSS
+    """
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+class VirtualMachinePriorityTypes(str, Enum):
+    """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
+    set. :code:`<br>`:code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot' as
+    the enum to deploy Azure Spot VM/VMSS.
+    """
+
+    regular = "Regular"
+    low = "Low"
+    spot = "Spot"
+
+class VirtualMachineScaleSetScaleInRules(str, Enum):
+
+    default = "Default"
+    oldest_vm = "OldestVM"
+    newest_vm = "NewestVM"
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
     none = "None"
 
 class VirtualMachineSizeTypes(str, Enum):
@@ -242,6 +518,7 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
     standard_gs4_8 = "Standard_GS4-8"
+    standard_gs4_4 = "Standard_GS4-4"
     standard_gs5_16 = "Standard_GS5-16"
     standard_gs5_8 = "Standard_GS5-8"
     standard_h8 = "Standard_H8"
@@ -281,279 +558,3 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_nv6 = "Standard_NV6"
     standard_nv12 = "Standard_NV12"
     standard_nv24 = "Standard_NV24"
-
-class OperatingSystemTypes(str, Enum):
-    """The Operating System type.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class VirtualMachinePriorityTypes(str, Enum):
-    """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
-    set. :code:`<br>`:code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot' as
-    the enum to deploy Azure Spot VM/VMSS.
-    """
-
-    regular = "Regular"
-    low = "Low"
-    spot = "Spot"
-
-class VirtualMachineEvictionPolicyTypes(str, Enum):
-    """Specifies the eviction policy for the Azure Spot VM/VMSS
-    """
-
-    deallocate = "Deallocate"
-    delete = "Delete"
-
-class HyperVGenerationType(str, Enum):
-    """Specifies the HyperVGeneration Type associated with a resource
-    """
-
-    v1 = "V1"
-    v2 = "V2"
-
-class MaintenanceOperationResultCodeTypes(str, Enum):
-    """The Last Maintenance Operation Result Code.
-    """
-
-    none = "None"
-    retry_later = "RetryLater"
-    maintenance_aborted = "MaintenanceAborted"
-    maintenance_completed = "MaintenanceCompleted"
-
-class OperatingSystemStateTypes(str, Enum):
-    """The OS State.
-    """
-
-    generalized = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
-    specialized = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
-
-class HyperVGenerationTypes(str, Enum):
-    """Specifies the HyperVGeneration Type
-    """
-
-    v1 = "V1"
-    v2 = "V2"
-
-class IPVersion(str, Enum):
-    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
-    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
-    'IPv6'.
-    """
-
-    i_pv4 = "IPv4"
-    i_pv6 = "IPv6"
-
-class VirtualMachineScaleSetScaleInRules(str, Enum):
-
-    default = "Default"
-    oldest_vm = "OldestVM"
-    newest_vm = "NewestVM"
-
-class UpgradeMode(str, Enum):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-    rolling = "Rolling"
-
-class VirtualMachineScaleSetSkuScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    none = "None"
-
-class UpgradeState(str, Enum):
-    """Code indicating the current status of the upgrade.
-    """
-
-    rolling_forward = "RollingForward"
-    cancelled = "Cancelled"
-    completed = "Completed"
-    faulted = "Faulted"
-
-class UpgradeOperationInvoker(str, Enum):
-    """Invoker of the Upgrade Operation
-    """
-
-    unknown = "Unknown"
-    user = "User"
-    platform = "Platform"
-
-class DiskStorageAccountTypes(str, Enum):
-    """The sku name.
-    """
-
-    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
-    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
-    standard_ssd_lrs = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
-    ultra_ssd_lrs = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
-
-class HyperVGeneration(str, Enum):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
-
-    v1 = "V1"
-    v2 = "V2"
-
-class DiskCreateOption(str, Enum):
-    """This enumerates the possible sources of a disk's creation.
-    """
-
-    empty = "Empty"  #: Create an empty data disk of a size given by diskSizeGB.
-    attach = "Attach"  #: Disk will be attached to a VM.
-    from_image = "FromImage"  #: Create a new disk from a platform image specified by the given imageReference.
-    import_enum = "Import"  #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified by storageAccountId.
-    copy = "Copy"  #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given sourceResourceId.
-    restore = "Restore"  #: Create a new disk by copying from a backup recovery point.
-    upload = "Upload"  #: Create a new disk by obtaining a write token and using it to directly upload the contents of the disk.
-
-class DiskState(str, Enum):
-    """The state of the disk.
-    """
-
-    unattached = "Unattached"  #: The disk is not being used and can be attached to a VM.
-    attached = "Attached"  #: The disk is currently mounted to a running VM.
-    reserved = "Reserved"  #: The disk is mounted to a stopped-deallocated VM.
-    active_sas = "ActiveSAS"  #: The disk currently has an Active SAS Uri associated with it.
-    ready_to_upload = "ReadyToUpload"  #: A disk is ready to be created by upload by requesting a write token.
-    active_upload = "ActiveUpload"  #: A disk is created for upload and a write token has been issued for uploading to it.
-
-class EncryptionType(str, Enum):
-    """The type of key used to encrypt the data of the disk.
-    """
-
-    encryption_at_rest_with_platform_key = "EncryptionAtRestWithPlatformKey"  #: Disk is encrypted with XStore managed key at rest. It is the default encryption type.
-    encryption_at_rest_with_customer_key = "EncryptionAtRestWithCustomerKey"  #: Disk is encrypted with Customer managed key at rest.
-
-class SnapshotStorageAccountTypes(str, Enum):
-    """The sku name.
-    """
-
-    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage.
-    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage.
-    standard_zrs = "Standard_ZRS"  #: Standard zone redundant storage.
-
-class StorageAccountType(str, Enum):
-    """Specifies the storage account type to be used to store the image. This property is not
-    updatable.
-    """
-
-    standard_lrs = "Standard_LRS"
-    standard_zrs = "Standard_ZRS"
-
-class ReplicationState(str, Enum):
-    """This is the regional replication state.
-    """
-
-    unknown = "Unknown"
-    replicating = "Replicating"
-    completed = "Completed"
-    failed = "Failed"
-
-class GalleryPropertiesProvisioningState(str, Enum):
-    """The provisioning state, which only appears in the response.
-    """
-
-    creating = "Creating"
-    updating = "Updating"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-    migrating = "Migrating"
-
-class GalleryImagePropertiesProvisioningState(str, Enum):
-    """The provisioning state, which only appears in the response.
-    """
-
-    creating = "Creating"
-    updating = "Updating"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-    migrating = "Migrating"
-
-class GalleryImageVersionPropertiesProvisioningState(str, Enum):
-    """The provisioning state, which only appears in the response.
-    """
-
-    creating = "Creating"
-    updating = "Updating"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-    migrating = "Migrating"
-
-class AggregatedReplicationState(str, Enum):
-    """This is the aggregated replication status based on all the regional replication status flags.
-    """
-
-    unknown = "Unknown"
-    in_progress = "InProgress"
-    completed = "Completed"
-    failed = "Failed"
-
-class GalleryApplicationVersionPropertiesProvisioningState(str, Enum):
-    """The provisioning state, which only appears in the response.
-    """
-
-    creating = "Creating"
-    updating = "Updating"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-    migrating = "Migrating"
-
-class AccessLevel(str, Enum):
-
-    none = "None"
-    read = "Read"
-    write = "Write"
-
-class AvailabilitySetSkuTypes(str, Enum):
-    """Specifies the sku of an Availability Set. Use 'Aligned' for virtual machines with managed disks
-    and 'Classic' for virtual machines with unmanaged disks. Default value is 'Classic'.
-    """
-
-    classic = "Classic"
-    aligned = "Aligned"
-
-class RollingUpgradeStatusCode(str, Enum):
-    """Code indicating the current status of the upgrade.
-    """
-
-    rolling_forward = "RollingForward"
-    cancelled = "Cancelled"
-    completed = "Completed"
-    faulted = "Faulted"
-
-class RollingUpgradeActionType(str, Enum):
-    """The last action performed on the rolling upgrade.
-    """
-
-    start = "Start"
-    cancel = "Cancel"
-
-class IntervalInMins(str, Enum):
-    """Interval value in minutes used to create LogAnalytics call rate logs.
-    """
-
-    three_mins = "ThreeMins"
-    five_mins = "FiveMins"
-    thirty_mins = "ThirtyMins"
-    sixty_mins = "SixtyMins"
-
-class HostCaching(str, Enum):
-    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'
-    """
-
-    none = "None"
-    read_only = "ReadOnly"
-    read_write = "ReadWrite"

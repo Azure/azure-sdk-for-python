@@ -8,12 +8,13 @@
 
 from enum import Enum
 
-class ResourceSkuRestrictionsType(str, Enum):
-    """The type of restrictions.
+class ResourceSkuCapacityScaleType(str, Enum):
+    """The scale type applicable to the sku.
     """
 
-    location = "Location"
-    zone = "Zone"
+    automatic = "Automatic"
+    manual = "Manual"
+    none = "None"
 
 class ResourceSkuRestrictionsReasonCode(str, Enum):
     """The reason for restriction.
@@ -22,10 +23,9 @@ class ResourceSkuRestrictionsReasonCode(str, Enum):
     quota_id = "QuotaId"
     not_available_for_subscription = "NotAvailableForSubscription"
 
-class ResourceSkuCapacityScaleType(str, Enum):
-    """The scale type applicable to the sku.
+class ResourceSkuRestrictionsType(str, Enum):
+    """The type of restrictions.
     """
 
-    automatic = "Automatic"
-    manual = "Manual"
-    none = "None"
+    location = "Location"
+    zone = "Zone"

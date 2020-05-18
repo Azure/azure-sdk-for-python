@@ -49,12 +49,13 @@ class LogAnalyticsOperations:
         **kwargs
     ) -> "models.LogAnalyticsOperationResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._export_request_rate_by_interval_initial.metadata['url']
+        url = self._export_request_rate_by_interval_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
@@ -88,10 +89,10 @@ class LogAnalyticsOperations:
             deserialized = self._deserialize('LogAnalyticsOperationResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _export_request_rate_by_interval_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}
+    _export_request_rate_by_interval_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}  # type: ignore
 
     async def export_request_rate_by_interval(
         self,
@@ -109,19 +110,26 @@ class LogAnalyticsOperations:
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :return: An instance of LROPoller that returns LogAnalyticsOperationResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult]
-
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: LogAnalyticsOperationResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
         raw_result = await self._export_request_rate_by_interval_initial(
             location=location,
             parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('LogAnalyticsOperationResult', pipeline_response)
@@ -130,29 +138,26 @@ class LogAnalyticsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        lro_delay = kwargs.get(
-            'polling_interval',
-            self._config.polling_interval
-        )
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    export_request_rate_by_interval.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}
+    export_request_rate_by_interval.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}  # type: ignore
 
     async def _export_throttled_requests_initial(
         self,
         location: str,
-        parameters: "models.ThrottledRequestsInput",
+        parameters: "models.LogAnalyticsInputBase",
         **kwargs
     ) -> "models.LogAnalyticsOperationResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._export_throttled_requests_initial.metadata['url']
+        url = self._export_throttled_requests_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
@@ -170,7 +175,7 @@ class LogAnalyticsOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ThrottledRequestsInput')
+        body_content = self._serialize.body(parameters, 'LogAnalyticsInputBase')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -186,15 +191,15 @@ class LogAnalyticsOperations:
             deserialized = self._deserialize('LogAnalyticsOperationResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _export_throttled_requests_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}
+    _export_throttled_requests_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}  # type: ignore
 
     async def export_throttled_requests(
         self,
         location: str,
-        parameters: "models.ThrottledRequestsInput",
+        parameters: "models.LogAnalyticsInputBase",
         **kwargs
     ) -> "models.LogAnalyticsOperationResult":
         """Export logs that show total throttled Api requests for this subscription in the given time window.
@@ -202,24 +207,31 @@ class LogAnalyticsOperations:
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getThrottledRequests Api.
-        :type parameters: ~azure.mgmt.compute.v2019_03_01.models.ThrottledRequestsInput
+        :type parameters: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsInputBase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :return: An instance of LROPoller that returns LogAnalyticsOperationResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult]
-
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: LogAnalyticsOperationResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
         raw_result = await self._export_throttled_requests_initial(
             location=location,
             parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('LogAnalyticsOperationResult', pipeline_response)
@@ -228,12 +240,8 @@ class LogAnalyticsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        lro_delay = kwargs.get(
-            'polling_interval',
-            self._config.polling_interval
-        )
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    export_throttled_requests.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}
+    export_throttled_requests.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}  # type: ignore

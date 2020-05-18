@@ -35,16 +35,15 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credential which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-12-01'
@@ -60,7 +59,15 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credential, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default, **kwargs):
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = ComputeManagementClientConfiguration(credential, subscription_id, **kwargs)

@@ -8,14 +8,6 @@
 
 from enum import Enum
 
-class StatusLevelTypes(str, Enum):
-    """The level code.
-    """
-
-    info = "Info"
-    warning = "Warning"
-    error = "Error"
-
 class CachingTypes(str, Enum):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
@@ -40,22 +32,46 @@ class DiskCreateOptionTypes(str, Enum):
     empty = "Empty"
     attach = "Attach"
 
-class StorageAccountTypes(str, Enum):
-    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
-    Premium_LRS. NOTE: Managed OS disk storage account type can only be set when you create the
-    scale set.
+class IntervalInMins(str, Enum):
+    """Interval value in minutes used to create LogAnalytics call rate logs.
     """
 
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
+    three_mins = "ThreeMins"
+    five_mins = "FiveMins"
+    thirty_mins = "ThirtyMins"
+    sixty_mins = "SixtyMins"
 
-class SettingNames(str, Enum):
-    """Specifies the name of the setting to which the content applies. Possible values are:
-    FirstLogonCommands and AutoLogon.
+class IPVersion(str, Enum):
+    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
+    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
+    'IPv6'.
     """
 
-    auto_logon = "AutoLogon"
-    first_logon_commands = "FirstLogonCommands"
+    i_pv4 = "IPv4"
+    i_pv6 = "IPv6"
+
+class MaintenanceOperationResultCodeTypes(str, Enum):
+    """The Last Maintenance Operation Result Code.
+    """
+
+    none = "None"
+    retry_later = "RetryLater"
+    maintenance_aborted = "MaintenanceAborted"
+    maintenance_completed = "MaintenanceCompleted"
+
+class OperatingSystemStateTypes(str, Enum):
+    """The OS State.
+    """
+
+    generalized = "Generalized"
+    specialized = "Specialized"
+
+class OperatingSystemTypes(str, Enum):
+    """The operating system of the osDiskImage.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
 
 class ProtocolTypes(str, Enum):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
@@ -74,6 +90,99 @@ class ResourceIdentityType(str, Enum):
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"
     system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+class RollingUpgradeActionType(str, Enum):
+    """The last action performed on the rolling upgrade.
+    """
+
+    start = "Start"
+    cancel = "Cancel"
+
+class RollingUpgradeStatusCode(str, Enum):
+    """Code indicating the current status of the upgrade.
+    """
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+class SettingNames(str, Enum):
+    """Specifies the name of the setting to which the content applies. Possible values are:
+    FirstLogonCommands and AutoLogon.
+    """
+
+    auto_logon = "AutoLogon"
+    first_logon_commands = "FirstLogonCommands"
+
+class StatusLevelTypes(str, Enum):
+    """The level code.
+    """
+
+    info = "Info"
+    warning = "Warning"
+    error = "Error"
+
+class StorageAccountTypes(str, Enum):
+    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
+    Premium_LRS. NOTE: Managed OS disk storage account type can only be set when you create the
+    scale set.
+    """
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+class UpgradeMode(str, Enum):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.
+    """
+
+    automatic = "Automatic"
+    manual = "Manual"
+    rolling = "Rolling"
+
+class UpgradeOperationInvoker(str, Enum):
+    """Invoker of the Upgrade Operation
+    """
+
+    unknown = "Unknown"
+    user = "User"
+    platform = "Platform"
+
+class UpgradeState(str, Enum):
+    """Code indicating the current status of the upgrade.
+    """
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+    """Specifies the eviction policy for virtual machines in a low priority scale set.
+    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
+    """
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+class VirtualMachinePriorityTypes(str, Enum):
+    """Specifies the priority for the virtual machines in the scale set.
+    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
+    """
+
+    regular = "Regular"
+    low = "Low"
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
     none = "None"
 
 class VirtualMachineSizeTypes(str, Enum):
@@ -216,6 +325,7 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
     standard_gs4_8 = "Standard_GS4-8"
+    standard_gs4_4 = "Standard_GS4-4"
     standard_gs5_16 = "Standard_GS5-16"
     standard_gs5_8 = "Standard_GS5-8"
     standard_h8 = "Standard_H8"
@@ -255,112 +365,3 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_nv6 = "Standard_NV6"
     standard_nv12 = "Standard_NV12"
     standard_nv24 = "Standard_NV24"
-
-class OperatingSystemTypes(str, Enum):
-    """The operating system of the osDiskImage.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class MaintenanceOperationResultCodeTypes(str, Enum):
-    """The Last Maintenance Operation Result Code.
-    """
-
-    none = "None"
-    retry_later = "RetryLater"
-    maintenance_aborted = "MaintenanceAborted"
-    maintenance_completed = "MaintenanceCompleted"
-
-class OperatingSystemStateTypes(str, Enum):
-    """The OS State.
-    """
-
-    generalized = "Generalized"
-    specialized = "Specialized"
-
-class IPVersion(str, Enum):
-    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
-    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
-    'IPv6'.
-    """
-
-    i_pv4 = "IPv4"
-    i_pv6 = "IPv6"
-
-class UpgradeMode(str, Enum):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-    rolling = "Rolling"
-
-class VirtualMachinePriorityTypes(str, Enum):
-    """Specifies the priority for the virtual machines in the scale set.
-    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
-    """
-
-    regular = "Regular"
-    low = "Low"
-
-class VirtualMachineEvictionPolicyTypes(str, Enum):
-    """Specifies the eviction policy for virtual machines in a low priority scale set.
-    :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview
-    """
-
-    deallocate = "Deallocate"
-    delete = "Delete"
-
-class VirtualMachineScaleSetSkuScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    none = "None"
-
-class UpgradeState(str, Enum):
-    """Code indicating the current status of the upgrade.
-    """
-
-    rolling_forward = "RollingForward"
-    cancelled = "Cancelled"
-    completed = "Completed"
-    faulted = "Faulted"
-
-class UpgradeOperationInvoker(str, Enum):
-    """Invoker of the Upgrade Operation
-    """
-
-    unknown = "Unknown"
-    user = "User"
-    platform = "Platform"
-
-class RollingUpgradeStatusCode(str, Enum):
-    """Code indicating the current status of the upgrade.
-    """
-
-    rolling_forward = "RollingForward"
-    cancelled = "Cancelled"
-    completed = "Completed"
-    faulted = "Faulted"
-
-class RollingUpgradeActionType(str, Enum):
-    """The last action performed on the rolling upgrade.
-    """
-
-    start = "Start"
-    cancel = "Cancel"
-
-class IntervalInMins(str, Enum):
-    """Interval value in minutes used to create LogAnalytics call rate logs.
-    """
-
-    three_mins = "ThreeMins"
-    five_mins = "FiveMins"
-    thirty_mins = "ThirtyMins"
-    sixty_mins = "SixtyMins"

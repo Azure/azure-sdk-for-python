@@ -8,28 +8,11 @@
 
 from enum import Enum
 
-class DiskStorageAccountTypes(str, Enum):
-    """The sku name.
-    """
+class AccessLevel(str, Enum):
 
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
-    standard_ssd_lrs = "StandardSSD_LRS"
-    ultra_ssd_lrs = "UltraSSD_LRS"
-
-class OperatingSystemTypes(str, Enum):
-    """The Operating System type.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class HyperVGeneration(str, Enum):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
-
-    v1 = "V1"
-    v2 = "V2"
+    none = "None"
+    read = "Read"
+    write = "Write"
 
 class DiskCreateOption(str, Enum):
     """This enumerates the possible sources of a disk's creation.
@@ -54,6 +37,29 @@ class DiskState(str, Enum):
     ready_to_upload = "ReadyToUpload"
     active_upload = "ActiveUpload"
 
+class DiskStorageAccountTypes(str, Enum):
+    """The sku name.
+    """
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
+
+class HyperVGeneration(str, Enum):
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
+    """
+
+    v1 = "V1"
+    v2 = "V2"
+
+class OperatingSystemTypes(str, Enum):
+    """The Operating System type.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
+
 class SnapshotStorageAccountTypes(str, Enum):
     """The sku name.
     """
@@ -61,9 +67,3 @@ class SnapshotStorageAccountTypes(str, Enum):
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
     standard_zrs = "Standard_ZRS"
-
-class AccessLevel(str, Enum):
-
-    none = "None"
-    read = "Read"
-    write = "Write"

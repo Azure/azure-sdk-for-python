@@ -8,13 +8,10 @@
 
 from enum import Enum
 
-class StatusLevelTypes(str, Enum):
-    """The level code.
-    """
+class AccessLevel(str, Enum):
 
-    info = "Info"
-    warning = "Warning"
-    error = "Error"
+    none = "None"
+    read = "Read"
 
 class CachingTypes(str, Enum):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
@@ -27,19 +24,16 @@ class CachingTypes(str, Enum):
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
-class OperatingSystemTypes(str, Enum):
-    """The operating system of the osDiskImage.
+class DiskCreateOption(str, Enum):
+    """This enumerates the possible sources of a disk's creation.
     """
 
-    windows = "Windows"
-    linux = "Linux"
-
-class OperatingSystemStateTypes(str, Enum):
-    """The OS State.
-    """
-
-    generalized = "Generalized"
-    specialized = "Specialized"
+    empty = "Empty"
+    attach = "Attach"
+    from_image = "FromImage"
+    import_enum = "Import"
+    copy = "Copy"
+    restore = "Restore"
 
 class DiskCreateOptionTypes(str, Enum):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
@@ -54,13 +48,27 @@ class DiskCreateOptionTypes(str, Enum):
     empty = "Empty"
     attach = "Attach"
 
-class StorageAccountTypes(str, Enum):
-    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
-    Premium_LRS.
+class OperatingSystemStateTypes(str, Enum):
+    """The OS State.
     """
 
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
+    generalized = "Generalized"
+    specialized = "Specialized"
+
+class OperatingSystemTypes(str, Enum):
+    """The operating system of the osDiskImage.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
+
+class ProtocolTypes(str, Enum):
+    """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
+    **http** :code:`<br>`:code:`<br>` **https**
+    """
+
+    http = "Http"
+    https = "Https"
 
 class SettingNames(str, Enum):
     """Specifies the name of the setting to which the content applies. Possible values are:
@@ -70,13 +78,39 @@ class SettingNames(str, Enum):
     auto_logon = "AutoLogon"
     first_logon_commands = "FirstLogonCommands"
 
-class ProtocolTypes(str, Enum):
-    """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
-    **http** :code:`<br>`:code:`<br>` **https**
+class StatusLevelTypes(str, Enum):
+    """The level code.
     """
 
-    http = "Http"
-    https = "Https"
+    info = "Info"
+    warning = "Warning"
+    error = "Error"
+
+class StorageAccountTypes(str, Enum):
+    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
+    Premium_LRS.
+    """
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+class UpgradeMode(str, Enum):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.
+    """
+
+    automatic = "Automatic"
+    manual = "Manual"
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
+    none = "None"
 
 class VirtualMachineSizeTypes(str, Enum):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
@@ -153,37 +187,3 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
-
-class UpgradeMode(str, Enum):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-
-class VirtualMachineScaleSetSkuScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    none = "None"
-
-class DiskCreateOption(str, Enum):
-    """This enumerates the possible sources of a disk's creation.
-    """
-
-    empty = "Empty"
-    attach = "Attach"
-    from_image = "FromImage"
-    import_enum = "Import"
-    copy = "Copy"
-    restore = "Restore"
-
-class AccessLevel(str, Enum):
-
-    none = "None"
-    read = "Read"

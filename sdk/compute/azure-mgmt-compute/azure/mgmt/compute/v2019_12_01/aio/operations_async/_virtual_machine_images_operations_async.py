@@ -62,16 +62,17 @@ class VirtualMachineImagesOperations:
         :param version: A valid image SKU version.
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualMachineImage or the result of cls(response)
+        :return: VirtualMachineImage, or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineImage"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -102,10 +103,10 @@ class VirtualMachineImagesOperations:
         deserialized = self._deserialize('VirtualMachineImage', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'}  # type: ignore
 
     async def list(
         self,
@@ -117,7 +118,7 @@ class VirtualMachineImagesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> List["VirtualMachineImageResource"]:
+    ) -> List["models.VirtualMachineImageResource"]:
         """Gets a list of all virtual machine image versions for the specified location, publisher, offer, and SKU.
 
         :param location: The name of a supported Azure region.
@@ -135,16 +136,17 @@ class VirtualMachineImagesOperations:
         :param orderby:
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineImageResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineImageResource"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -180,17 +182,17 @@ class VirtualMachineImagesOperations:
         deserialized = self._deserialize('[VirtualMachineImageResource]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions'}  # type: ignore
 
     async def list_offers(
         self,
         location: str,
         publisher_name: str,
         **kwargs
-    ) -> List["VirtualMachineImageResource"]:
+    ) -> List["models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image offers for the specified location and publisher.
 
         :param location: The name of a supported Azure region.
@@ -198,16 +200,17 @@ class VirtualMachineImagesOperations:
         :param publisher_name: A valid image publisher.
         :type publisher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineImageResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineImageResource"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.list_offers.metadata['url']
+        url = self.list_offers.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -235,31 +238,32 @@ class VirtualMachineImagesOperations:
         deserialized = self._deserialize('[VirtualMachineImageResource]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers'}
+    list_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers'}  # type: ignore
 
     async def list_publishers(
         self,
         location: str,
         **kwargs
-    ) -> List["VirtualMachineImageResource"]:
+    ) -> List["models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image publishers for the specified Azure location.
 
         :param location: The name of a supported Azure region.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineImageResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineImageResource"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.list_publishers.metadata['url']
+        url = self.list_publishers.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
@@ -286,10 +290,10 @@ class VirtualMachineImagesOperations:
         deserialized = self._deserialize('[VirtualMachineImageResource]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_publishers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers'}
+    list_publishers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers'}  # type: ignore
 
     async def list_skus(
         self,
@@ -297,7 +301,7 @@ class VirtualMachineImagesOperations:
         publisher_name: str,
         offer: str,
         **kwargs
-    ) -> List["VirtualMachineImageResource"]:
+    ) -> List["models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image SKUs for the specified location, publisher, and offer.
 
         :param location: The name of a supported Azure region.
@@ -307,16 +311,17 @@ class VirtualMachineImagesOperations:
         :param offer: A valid image publisher offer.
         :type offer: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list or the result of cls(response)
+        :return: list of VirtualMachineImageResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VirtualMachineImageResource"]]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
 
         # Construct URL
-        url = self.list_skus.metadata['url']
+        url = self.list_skus.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -345,7 +350,7 @@ class VirtualMachineImagesOperations:
         deserialized = self._deserialize('[VirtualMachineImageResource]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus'}
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus'}  # type: ignore

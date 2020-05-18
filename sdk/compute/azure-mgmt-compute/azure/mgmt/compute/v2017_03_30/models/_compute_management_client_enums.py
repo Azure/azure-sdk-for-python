@@ -8,13 +8,10 @@
 
 from enum import Enum
 
-class StatusLevelTypes(str, Enum):
-    """The level code.
-    """
+class AccessLevel(str, Enum):
 
-    info = "Info"
-    warning = "Warning"
-    error = "Error"
+    none = "None"
+    read = "Read"
 
 class CachingTypes(str, Enum):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
@@ -26,6 +23,16 @@ class CachingTypes(str, Enum):
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
+
+class DiskCreateOption(str, Enum):
+    """This enumerates the possible sources of a disk's creation.
+    """
+
+    empty = "Empty"
+    attach = "Attach"
+    from_image = "FromImage"
+    import_enum = "Import"
+    copy = "Copy"
 
 class DiskCreateOptionTypes(str, Enum):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
@@ -40,14 +47,76 @@ class DiskCreateOptionTypes(str, Enum):
     empty = "Empty"
     attach = "Attach"
 
-class StorageAccountTypes(str, Enum):
-    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
-    Premium_LRS. NOTE: Managed OS disk storage account type can only be set when you create the
-    scale set.
+class IPVersion(str, Enum):
+    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
+    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
+    'IPv6'.
     """
 
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
+    i_pv4 = "IPv4"
+    i_pv6 = "IPv6"
+
+class MaintenanceOperationResultCodeTypes(str, Enum):
+    """The Last Maintenance Operation Result Code.
+    """
+
+    none = "None"
+    retry_later = "RetryLater"
+    maintenance_aborted = "MaintenanceAborted"
+    maintenance_completed = "MaintenanceCompleted"
+
+class OperatingSystemStateTypes(str, Enum):
+    """The OS State.
+    """
+
+    generalized = "Generalized"
+    specialized = "Specialized"
+
+class OperatingSystemTypes(str, Enum):
+    """The operating system of the osDiskImage.
+    """
+
+    windows = "Windows"
+    linux = "Linux"
+
+class ProtocolTypes(str, Enum):
+    """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
+    **http** :code:`<br>`:code:`<br>` **https**
+    """
+
+    http = "Http"
+    https = "Https"
+
+class ResourceSkuCapacityScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
+    manual = "Manual"
+    none = "None"
+
+class ResourceSkuRestrictionsReasonCode(str, Enum):
+    """The reason for restriction.
+    """
+
+    quota_id = "QuotaId"
+    not_available_for_subscription = "NotAvailableForSubscription"
+
+class RollingUpgradeActionType(str, Enum):
+    """The last action performed on the rolling upgrade.
+    """
+
+    start = "Start"
+    cancel = "Cancel"
+
+class RollingUpgradeStatusCode(str, Enum):
+    """Code indicating the current status of the upgrade.
+    """
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
 
 class SettingNames(str, Enum):
     """Specifies the name of the setting to which the content applies. Possible values are:
@@ -57,13 +126,41 @@ class SettingNames(str, Enum):
     auto_logon = "AutoLogon"
     first_logon_commands = "FirstLogonCommands"
 
-class ProtocolTypes(str, Enum):
-    """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
-    **http** :code:`<br>`:code:`<br>` **https**
+class StatusLevelTypes(str, Enum):
+    """The level code.
     """
 
-    http = "Http"
-    https = "Https"
+    info = "Info"
+    warning = "Warning"
+    error = "Error"
+
+class StorageAccountTypes(str, Enum):
+    """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
+    Premium_LRS. NOTE: Managed OS disk storage account type can only be set when you create the
+    scale set.
+    """
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+class UpgradeMode(str, Enum):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.
+    """
+
+    automatic = "Automatic"
+    manual = "Manual"
+    rolling = "Rolling"
+
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
+    """The scale type applicable to the sku.
+    """
+
+    automatic = "Automatic"
+    none = "None"
 
 class VirtualMachineSizeTypes(str, Enum):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
@@ -176,100 +273,3 @@ class VirtualMachineSizeTypes(str, Enum):
     standard_nv6 = "Standard_NV6"
     standard_nv12 = "Standard_NV12"
     standard_nv24 = "Standard_NV24"
-
-class OperatingSystemTypes(str, Enum):
-    """The operating system of the osDiskImage.
-    """
-
-    windows = "Windows"
-    linux = "Linux"
-
-class MaintenanceOperationResultCodeTypes(str, Enum):
-    """The Last Maintenance Operation Result Code.
-    """
-
-    none = "None"
-    retry_later = "RetryLater"
-    maintenance_aborted = "MaintenanceAborted"
-    maintenance_completed = "MaintenanceCompleted"
-
-class OperatingSystemStateTypes(str, Enum):
-    """The OS State.
-    """
-
-    generalized = "Generalized"
-    specialized = "Specialized"
-
-class ResourceSkuRestrictionsReasonCode(str, Enum):
-    """The reason for restriction.
-    """
-
-    quota_id = "QuotaId"
-    not_available_for_subscription = "NotAvailableForSubscription"
-
-class ResourceSkuCapacityScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-    none = "None"
-
-class IPVersion(str, Enum):
-    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
-    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
-    'IPv6'.
-    """
-
-    i_pv4 = "IPv4"
-    i_pv6 = "IPv6"
-
-class UpgradeMode(str, Enum):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
-    """
-
-    automatic = "Automatic"
-    manual = "Manual"
-    rolling = "Rolling"
-
-class VirtualMachineScaleSetSkuScaleType(str, Enum):
-    """The scale type applicable to the sku.
-    """
-
-    automatic = "Automatic"
-    none = "None"
-
-class DiskCreateOption(str, Enum):
-    """This enumerates the possible sources of a disk's creation.
-    """
-
-    empty = "Empty"
-    attach = "Attach"
-    from_image = "FromImage"
-    import_enum = "Import"
-    copy = "Copy"
-
-class RollingUpgradeStatusCode(str, Enum):
-    """Code indicating the current status of the upgrade.
-    """
-
-    rolling_forward = "RollingForward"
-    cancelled = "Cancelled"
-    completed = "Completed"
-    faulted = "Faulted"
-
-class RollingUpgradeActionType(str, Enum):
-    """The last action performed on the rolling upgrade.
-    """
-
-    start = "Start"
-    cancel = "Cancel"
-
-class AccessLevel(str, Enum):
-
-    none = "None"
-    read = "Read"
