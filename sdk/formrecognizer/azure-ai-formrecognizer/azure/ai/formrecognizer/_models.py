@@ -88,7 +88,7 @@ class TrainingStatus(str, Enum):
     failed = "failed"
 
 
-class CustomFormModelStatus(str, Enum):
+class CustomFormsModelStatus(str, Enum):
     """Status indicating the model's readiness for use.
     """
 
@@ -646,20 +646,20 @@ class FormTableCell(FormContent):
                 )[:1024]
 
 
-class CustomFormModel(object):
+class CustomFormsModel(object):
     """Represents a model trained from custom forms.
 
     :ivar str model_id: The unique identifier of this model.
     :ivar str status:
         Status indicating the model's readiness for use,
-        :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
+        :class:`~azure.ai.formrecognizer.CustomFormsModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
         The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
-    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
-        A list of submodels that are part of this model, each of
+    :ivar list[~azure.ai.formrecognizer.CustomFormModel] models:
+        A list of models that are part of this model, each of
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
@@ -683,22 +683,22 @@ class CustomFormModel(object):
             status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_modified=model.model_info.last_updated_date_time,
-            models=CustomFormSubModel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubModel._from_generated_labeled(model),
+            models=CustomFormModel._from_generated_unlabeled(model)
+            if model.keys else CustomFormModel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+        return "CustomFormsModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
                 "errors={}, training_documents={})".format(
                     self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
                     repr(self.errors), repr(self.training_documents)
                 )[:1024]
 
 
-class CustomFormSubModel(object):
+class CustomFormModel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
@@ -828,12 +828,12 @@ class FormRecognizerError(object):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
-class CustomFormModelInfo(object):
+class CustomFormsModelInfo(object):
     """Custom model information.
 
     :ivar str model_id: The unique identifier of the model.
     :ivar str status:
-        The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
+        The status of the model, :class:`~azure.ai.formrecognizer.CustomFormsModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
         Date and time (UTC) when model training was started.
@@ -857,7 +857,7 @@ class CustomFormModelInfo(object):
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
+        return "CustomFormsModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
             self.model_id, self.status, self.created_on, self.last_modified
         )[:1024]
 
