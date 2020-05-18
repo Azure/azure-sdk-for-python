@@ -6,5 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_hub2018_preview_management_client import EventHub2018PreviewManagementClient
-__all__ = ['EventHub2018PreviewManagementClient']
+from ._event_hub_management_client import EventHubManagementClient
+__all__ = ['EventHubManagementClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

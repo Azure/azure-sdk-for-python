@@ -6,14 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations_async import Operations
 from ._clusters_operations_async import ClustersOperations
-from ._configuration_operations_async import ConfigurationOperations
 from ._namespaces_operations_async import NamespacesOperations
+from ._configuration_operations_async import ConfigurationOperations
+from ._disaster_recovery_configs_operations_async import DisasterRecoveryConfigsOperations
+from ._event_hubs_operations_async import EventHubsOperations
+from ._consumer_groups_operations_async import ConsumerGroupsOperations
+from ._operations_async import Operations
+from ._regions_operations_async import RegionsOperations
 
 __all__ = [
-    'Operations',
     'ClustersOperations',
-    'ConfigurationOperations',
     'NamespacesOperations',
+    'ConfigurationOperations',
+    'DisasterRecoveryConfigsOperations',
+    'EventHubsOperations',
+    'ConsumerGroupsOperations',
+    'Operations',
+    'RegionsOperations',
 ]

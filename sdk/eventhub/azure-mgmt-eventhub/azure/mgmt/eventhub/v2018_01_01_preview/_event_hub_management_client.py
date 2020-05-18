@@ -6,35 +6,54 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration import EventHub2018PreviewManagementClientConfiguration
-from .operations import Operations
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+
+from ._configuration import EventHubManagementClientConfiguration
 from .operations import ClustersOperations
-from .operations import ConfigurationOperations
 from .operations import NamespacesOperations
+from .operations import ConfigurationOperations
+from .operations import DisasterRecoveryConfigsOperations
+from .operations import EventHubsOperations
+from .operations import ConsumerGroupsOperations
+from .operations import Operations
+from .operations import RegionsOperations
 from . import models
 
 
-class EventHub2018PreviewManagementClient(object):
+class EventHubManagementClient(object):
     """Azure Event Hubs client for managing Event Hubs Cluster, IPFilter Rules and VirtualNetworkRules resources.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.eventhub.v2018_01_01_preview.operations.Operations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.eventhub.v2018_01_01_preview.operations.ClustersOperations
-    :ivar configuration: ConfigurationOperations operations
-    :vartype configuration: azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.eventhub.v2018_01_01_preview.operations.NamespacesOperations
+    :ivar configuration: ConfigurationOperations operations
+    :vartype configuration: azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations
+    :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
+    :vartype disaster_recovery_configs: azure.mgmt.eventhub.v2018_01_01_preview.operations.DisasterRecoveryConfigsOperations
+    :ivar event_hubs: EventHubsOperations operations
+    :vartype event_hubs: azure.mgmt.eventhub.v2018_01_01_preview.operations.EventHubsOperations
+    :ivar consumer_groups: ConsumerGroupsOperations operations
+    :vartype consumer_groups: azure.mgmt.eventhub.v2018_01_01_preview.operations.ConsumerGroupsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.eventhub.v2018_01_01_preview.operations.Operations
+    :ivar regions: RegionsOperations operations
+    :vartype regions: azure.mgmt.eventhub.v2018_01_01_preview.operations.RegionsOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -47,20 +66,28 @@ class EventHub2018PreviewManagementClient(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = EventHub2018PreviewManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = EventHubManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.namespaces = NamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.configuration = ConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.namespaces = NamespacesOperations(
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.event_hubs = EventHubsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.consumer_groups = ConsumerGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.regions = RegionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
@@ -68,7 +95,7 @@ class EventHub2018PreviewManagementClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> EventHub2018PreviewManagementClient
+        # type: () -> EventHubManagementClient
         self._client.__enter__()
         return self
 

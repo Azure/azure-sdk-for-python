@@ -49,24 +49,25 @@ class ConfigurationOperations:
     ) -> "models.ClusterQuotaConfigurationProperties":
         """Replace all specified Event Hubs Cluster settings with those contained in the request body. Leaves the settings not specified in the request body unmodified.
 
-        :param resource_group_name: Name of the resource group within the Azure subscription.
+        :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
         :param parameters: Parameters for creating an Event Hubs Cluster resource.
         :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClusterQuotaConfigurationProperties or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties or ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties or None
+        :return: ClusterQuotaConfigurationProperties, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterQuotaConfigurationProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.patch.metadata['url']
+        url = self.patch.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -105,10 +106,10 @@ class ConfigurationOperations:
             deserialized = self._deserialize('ClusterQuotaConfigurationProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/quotaConfiguration/default'}
+    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/quotaConfiguration/default'}  # type: ignore
 
     async def get(
         self,
@@ -118,21 +119,22 @@ class ConfigurationOperations:
     ) -> "models.ClusterQuotaConfigurationProperties":
         """Get all Event Hubs Cluster settings - a collection of key/value pairs which represent the quotas and settings imposed on the cluster.
 
-        :param resource_group_name: Name of the resource group within the Azure subscription.
+        :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClusterQuotaConfigurationProperties or the result of cls(response)
+        :return: ClusterQuotaConfigurationProperties, or the result of cls(response)
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterQuotaConfigurationProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -161,7 +163,7 @@ class ConfigurationOperations:
         deserialized = self._deserialize('ClusterQuotaConfigurationProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/quotaConfiguration/default'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/quotaConfiguration/default'}  # type: ignore

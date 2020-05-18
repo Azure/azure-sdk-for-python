@@ -6,18 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations_async import Operations
 from ._namespaces_operations_async import NamespacesOperations
 from ._disaster_recovery_configs_operations_async import DisasterRecoveryConfigsOperations
 from ._event_hubs_operations_async import EventHubsOperations
 from ._consumer_groups_operations_async import ConsumerGroupsOperations
+from ._operations_async import Operations
 from ._regions_operations_async import RegionsOperations
 
 __all__ = [
-    'Operations',
     'NamespacesOperations',
     'DisasterRecoveryConfigsOperations',
     'EventHubsOperations',
     'ConsumerGroupsOperations',
+    'Operations',
     'RegionsOperations',
 ]
