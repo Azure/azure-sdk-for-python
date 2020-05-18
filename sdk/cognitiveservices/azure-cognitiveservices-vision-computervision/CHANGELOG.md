@@ -1,5 +1,28 @@
 # Release History
 
+## 0.6.0 (2020-05-18)
+
+**Features**
+
+  - Model Line has a new parameter language
+  - Added operation ComputerVisionClientOperationsMixin.read
+  - Added operation ComputerVisionClientOperationsMixin.get_read_result
+  - Added operation ComputerVisionClientOperationsMixin.read_in_stream
+
+**Breaking changes**
+
+  - Parameter words of model Line is now required
+  - Parameter bounding_box of model Line is now required
+  - Parameter text of model Line is now required
+  - Parameter confidence of model Word is now required
+  - Removed operation ComputerVisionClientOperationsMixin.get_text_operation_result
+  - Removed operation ComputerVisionClientOperationsMixin.get_read_operation_result
+  - Removed operation ComputerVisionClientOperationsMixin.recognize_text_in_stream
+  - Removed operation ComputerVisionClientOperationsMixin.recognize_text
+  - Removed operation ComputerVisionClientOperationsMixin.batch_read_file
+  - Removed operation ComputerVisionClientOperationsMixin.batch_read_file_in_stream
+  - Model ReadOperationResult has a new signature
+
 ## 0.5.0 (2019-10-01)
 
 **Features**
