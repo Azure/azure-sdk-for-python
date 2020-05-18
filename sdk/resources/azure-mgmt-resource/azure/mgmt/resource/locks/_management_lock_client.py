@@ -9,45 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import ManagementLockClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-
-class ManagementLockClient(MultiApiClientMixin, SDKClient):
+class ManagementLockClient(MultiApiClientMixin, _SDKClient):
     """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: ManagementLockClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
-    _PROFILE_TAG = "azure.mgmt.resource.locks.ManagementLockClient"
+    _PROFILE_TAG = "azure.mgmt.resource.ManagementLockClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -55,11 +55,22 @@ class ManagementLockClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = ManagementLockClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ManagementLockClient, self).__init__(
-            credentials,
-            self.config,
+            credential,
+            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -72,8 +83,8 @@ class ManagementLockClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-01-01: :mod:`v2015_01_01.models<azure.mgmt.resource.locks.v2015_01_01.models>`
-           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.locks.v2016_09_01.models>`
+           * 2015-01-01: :mod:`v2015_01_01.models<azure.mgmt.resource.v2015_01_01.models>`
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.v2016_09_01.models>`
         """
         if api_version == '2015-01-01':
             from .v2015_01_01 import models
@@ -87,21 +98,21 @@ class ManagementLockClient(MultiApiClientMixin, SDKClient):
     def authorization_operations(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`AuthorizationOperations<azure.mgmt.resource.locks.v2016_09_01.operations.AuthorizationOperations>`
+           * 2016-09-01: :class:`AuthorizationOperationsOperations<azure.mgmt.resource.v2016_09_01.operations.AuthorizationOperationsOperations>`
         """
         api_version = self._get_api_version('authorization_operations')
         if api_version == '2016-09-01':
-            from .v2016_09_01.operations import AuthorizationOperations as OperationClass
+            from .v2016_09_01.operations import AuthorizationOperationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def management_locks(self):
         """Instance depends on the API version:
 
-           * 2015-01-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2015_01_01.operations.ManagementLocksOperations>`
-           * 2016-09-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations>`
+           * 2015-01-01: :class:`ManagementLocksOperations<azure.mgmt.resource.v2015_01_01.operations.ManagementLocksOperations>`
+           * 2016-09-01: :class:`ManagementLocksOperations<azure.mgmt.resource.v2016_09_01.operations.ManagementLocksOperations>`
         """
         api_version = self._get_api_version('management_locks')
         if api_version == '2015-01-01':
@@ -110,4 +121,12 @@ class ManagementLockClient(MultiApiClientMixin, SDKClient):
             from .v2016_09_01.operations import ManagementLocksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

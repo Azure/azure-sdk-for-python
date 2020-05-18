@@ -9,25 +9,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Visual
+        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}},{"id":"/subscriptions/685ba005-af8d-4b04-8f16-a7bf38b2eb5a","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"b5ce0030-ec42-4a62-bc94-3025993e790c"},{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"685ba005-af8d-4b04-8f16-a7bf38b2eb5a","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Java
+        Tooling Tests with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":2}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '514'
+      - '999'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Apr 2020 07:03:51 GMT
+      - Mon, 27 Apr 2020 12:21:18 GMT
       expires:
       - '-1'
       pragma:
@@ -51,10 +49,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2019-11-01
   response:
@@ -141,7 +136,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Apr 2020 07:03:52 GMT
+      - Mon, 27 Apr 2020 12:21:19 GMT
       expires:
       - '-1'
       pragma:
@@ -165,25 +160,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Visual
+        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '467'
+      - '432'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Apr 2020 07:03:53 GMT
+      - Mon, 27 Apr 2020 12:21:20 GMT
       expires:
       - '-1'
       pragma:
