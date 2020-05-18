@@ -13,6 +13,7 @@
 - `PageRange` is renamed to `FormPageRange`
 - `FormField` does not have a page_number.
 - `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
+- `USReceiptType` is renamed to `ReceiptType`
 
 **New features**
 
