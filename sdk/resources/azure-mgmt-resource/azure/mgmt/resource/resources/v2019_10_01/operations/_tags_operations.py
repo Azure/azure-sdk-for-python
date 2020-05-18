@@ -370,7 +370,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.create_or_update_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -433,7 +433,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.update_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -492,7 +492,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.get_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -546,7 +546,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.delete_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
