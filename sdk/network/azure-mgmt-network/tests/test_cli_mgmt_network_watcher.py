@@ -28,10 +28,7 @@
 
 
 import unittest
-
-import azure.mgmt.compute
 import azure.mgmt.network
-import azure.mgmt.storage
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
