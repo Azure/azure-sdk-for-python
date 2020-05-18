@@ -9,6 +9,7 @@
 - `list_model_infos` method has been renamed to `list_custom_models`
 - Removed `get_form_training_client` from `FormRecognizerClient`
 - Added `get_form_recognizer_client` to `FormTrainingClient`
+- A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_train_model()` or `train_model()` methods
 
 **New features**
 

@@ -587,8 +587,25 @@ class EventChannel(Resource):
      'Canceled', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.EventChannelProvisioningState
+    :ivar partner_topic_readiness_state: The readiness state of the
+     corresponding partner topic. Possible values include:
+     'NotActivatedByUserYet', 'ActivatedByUser', 'DeactivatedByUser',
+     'DeletedByUser'
+    :vartype partner_topic_readiness_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerTopicReadinessState
+    :param expiration_time_if_not_activated_utc: Expiration time of the event
+     channel. If this timer expires while the corresponding partner topic is
+     never activated,
+     the event channel and corresponding partner topic are deleted.
+    :type expiration_time_if_not_activated_utc: datetime
     :param filter: Information about the filter for the event channel.
     :type filter: ~azure.mgmt.eventgrid.models.EventChannelFilter
+    :param partner_topic_friendly_description: Friendly description about the
+     topic. This can be set by the publisher/partner to show custom description
+     for the customer partner topic.
+     This will be helpful to remove any ambiguity of the origin of creation of
+     the partner topic for the customer.
+    :type partner_topic_friendly_description: str
     """
 
     _validation = {
@@ -596,6 +613,7 @@ class EventChannel(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'partner_topic_readiness_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -605,7 +623,10 @@ class EventChannel(Resource):
         'source': {'key': 'properties.source', 'type': 'EventChannelSource'},
         'destination': {'key': 'properties.destination', 'type': 'EventChannelDestination'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'partner_topic_readiness_state': {'key': 'properties.partnerTopicReadinessState', 'type': 'str'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
         'filter': {'key': 'properties.filter', 'type': 'EventChannelFilter'},
+        'partner_topic_friendly_description': {'key': 'properties.partnerTopicFriendlyDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -613,7 +634,10 @@ class EventChannel(Resource):
         self.source = kwargs.get('source', None)
         self.destination = kwargs.get('destination', None)
         self.provisioning_state = None
+        self.partner_topic_readiness_state = None
+        self.expiration_time_if_not_activated_utc = kwargs.get('expiration_time_if_not_activated_utc', None)
         self.filter = kwargs.get('filter', None)
+        self.partner_topic_friendly_description = kwargs.get('partner_topic_friendly_description', None)
 
 
 class EventChannelDestination(Model):
@@ -650,42 +674,17 @@ class EventChannelDestination(Model):
 class EventChannelFilter(Model):
     """Filter for the Event Channel.
 
-    :param subject_begins_with: An optional string to filter events for an
-     event channel based on a resource path prefix.
-     The format of this depends on the publisher of the events. Wildcard
-     characters are not supported in this path.
-    :type subject_begins_with: str
-    :param subject_ends_with: An optional string to filter events for an event
-     channel based on a resource path suffix.
-     Wildcard characters are not supported in this path.
-    :type subject_ends_with: str
-    :param included_event_types: A list of applicable event types that need to
-     be part of the event channel. If it is desired to subscribe to all default
-     event types, set the IncludedEventTypes to null.
-    :type included_event_types: list[str]
-    :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
-     SubjectEndsWith properties of the filter
-     should be compared in a case sensitive manner.
-    :type is_subject_case_sensitive: bool
     :param advanced_filters: An array of advanced filters that are used for
      filtering event channels.
     :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
     """
 
     _attribute_map = {
-        'subject_begins_with': {'key': 'subjectBeginsWith', 'type': 'str'},
-        'subject_ends_with': {'key': 'subjectEndsWith', 'type': 'str'},
-        'included_event_types': {'key': 'includedEventTypes', 'type': '[str]'},
-        'is_subject_case_sensitive': {'key': 'isSubjectCaseSensitive', 'type': 'bool'},
         'advanced_filters': {'key': 'advancedFilters', 'type': '[AdvancedFilter]'},
     }
 
     def __init__(self, **kwargs):
         super(EventChannelFilter, self).__init__(**kwargs)
-        self.subject_begins_with = kwargs.get('subject_begins_with', None)
-        self.subject_ends_with = kwargs.get('subject_ends_with', None)
-        self.included_event_types = kwargs.get('included_event_types', None)
-        self.is_subject_case_sensitive = kwargs.get('is_subject_case_sensitive', None)
         self.advanced_filters = kwargs.get('advanced_filters', None)
 
 
@@ -1686,9 +1685,30 @@ class PartnerRegistration(TrackedResource):
     :param partner_resource_type_display_name: Display name of the partner
      resource type.
     :type partner_resource_type_display_name: str
-    :param partner_resource_type_description: Description of the partner
-     resource type.
+    :param partner_resource_type_description: Short description of the partner
+     resource type. The length of this description should not exceed 256
+     characters.
     :type partner_resource_type_description: str
+    :param long_description: Long description for the custom scenarios and
+     integration to be displayed in the portal if needed.
+     Length of this description should not exceed 2048 characters.
+    :type long_description: str
+    :param partner_customer_service_number: The customer service number of the
+     publisher. The expected phone format should start with a '+' sign
+     followed by the country code. The remaining digits are then followed. Only
+     digits and spaces are allowed and its
+     length cannot exceed 16 digits including country code. Examples of valid
+     phone numbers are: +1 515 123 4567 and
+     +966 7 5115 2471. Examples of invalid phone numbers are: +1 (515)
+     123-4567, 1 515 123 4567 and +966 121 5115 24 7 551 1234 43
+    :type partner_customer_service_number: str
+    :param partner_customer_service_extension: The extension of the customer
+     service number of the publisher. Only digits are allowed and number of
+     digits should not exceed 10.
+    :type partner_customer_service_extension: str
+    :param customer_service_uri: The extension of the customer service URI of
+     the publisher.
+    :type customer_service_uri: str
     :param setup_uri: URI of the partner website that can be used by Azure
      customers to setup Event Grid
      integration on an event source.
@@ -1728,6 +1748,10 @@ class PartnerRegistration(TrackedResource):
         'partner_resource_type_name': {'key': 'properties.partnerResourceTypeName', 'type': 'str'},
         'partner_resource_type_display_name': {'key': 'properties.partnerResourceTypeDisplayName', 'type': 'str'},
         'partner_resource_type_description': {'key': 'properties.partnerResourceTypeDescription', 'type': 'str'},
+        'long_description': {'key': 'properties.longDescription', 'type': 'str'},
+        'partner_customer_service_number': {'key': 'properties.partnerCustomerServiceNumber', 'type': 'str'},
+        'partner_customer_service_extension': {'key': 'properties.partnerCustomerServiceExtension', 'type': 'str'},
+        'customer_service_uri': {'key': 'properties.customerServiceUri', 'type': 'str'},
         'setup_uri': {'key': 'properties.setupUri', 'type': 'str'},
         'logo_uri': {'key': 'properties.logoUri', 'type': 'str'},
         'visibility_state': {'key': 'properties.visibilityState', 'type': 'str'},
@@ -1741,6 +1765,10 @@ class PartnerRegistration(TrackedResource):
         self.partner_resource_type_name = kwargs.get('partner_resource_type_name', None)
         self.partner_resource_type_display_name = kwargs.get('partner_resource_type_display_name', None)
         self.partner_resource_type_description = kwargs.get('partner_resource_type_description', None)
+        self.long_description = kwargs.get('long_description', None)
+        self.partner_customer_service_number = kwargs.get('partner_customer_service_number', None)
+        self.partner_customer_service_extension = kwargs.get('partner_customer_service_extension', None)
+        self.customer_service_uri = kwargs.get('customer_service_uri', None)
         self.setup_uri = kwargs.get('setup_uri', None)
         self.logo_uri = kwargs.get('logo_uri', None)
         self.visibility_state = kwargs.get('visibility_state', None)
@@ -1839,6 +1867,11 @@ class PartnerTopic(TrackedResource):
     :param source: Source associated with this partner topic. This represents
      a unique partner resource.
     :type source: str
+    :param expiration_time_if_not_activated_utc: Expiration time of the
+     partner topic. If this timer expires while the partner topic is still
+     never activated,
+     the partner topic and corresponding event channel are deleted.
+    :type expiration_time_if_not_activated_utc: datetime
     :ivar provisioning_state: Provisioning state of the partner topic.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
@@ -1848,6 +1881,12 @@ class PartnerTopic(TrackedResource):
      values include: 'NeverActivated', 'Activated', 'Deactivated'
     :type activation_state: str or
      ~azure.mgmt.eventgrid.models.PartnerTopicActivationState
+    :param partner_topic_friendly_description: Friendly description about the
+     topic. This can be set by the publisher/partner to show custom description
+     for the customer partner topic.
+     This will be helpful to remove any ambiguity of the origin of creation of
+     the partner topic for the customer.
+    :type partner_topic_friendly_description: str
     """
 
     _validation = {
@@ -1865,15 +1904,19 @@ class PartnerTopic(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'source': {'key': 'properties.source', 'type': 'str'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'activation_state': {'key': 'properties.activationState', 'type': 'str'},
+        'partner_topic_friendly_description': {'key': 'properties.partnerTopicFriendlyDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PartnerTopic, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
+        self.expiration_time_if_not_activated_utc = kwargs.get('expiration_time_if_not_activated_utc', None)
         self.provisioning_state = None
         self.activation_state = kwargs.get('activation_state', None)
+        self.partner_topic_friendly_description = kwargs.get('partner_topic_friendly_description', None)
 
 
 class PartnerTopicType(Resource):
@@ -2080,9 +2123,8 @@ class PrivateLinkResource(Model):
 class ResourceSku(Model):
     """Describes an EventGrid Resource Sku.
 
-    :param name: the Sku name of the resource.
-     the possible values: Basic; Premium. Possible values include: 'Basic',
-     'Premium'
+    :param name: The Sku name of the resource. The possible values are: Basic
+     or Premium. Possible values include: 'Basic', 'Premium'
     :type name: str or ~azure.mgmt.eventgrid.models.Sku
     """
 

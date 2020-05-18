@@ -25,7 +25,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient, CorsOptions, Index, ScoringProfile, edm, SimpleField, SearchableField
+from azure.search.documents import ComplexField, SearchServiceClient, CorsOptions, Index, ScoringProfile, edm, SimpleField, SearchableField
 
 client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_indexes_client()
 
@@ -34,7 +34,12 @@ def create_index():
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double)
+        SimpleField(name="baseRate", type=edm.Double),
+        SearchableField(name="description", type=edm.String),
+        ComplexField(name="address", fields=[
+            SimpleField(name="streetAddress", type=edm.String),
+            SimpleField(name="city", type=edm.String),
+        ])
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
@@ -59,7 +64,13 @@ def update_index():
     fields = [
         SimpleField(name="hotelId", type=edm.String, key=True),
         SimpleField(name="baseRate", type=edm.Double),
-        SearchableField(name="hotelName", type=edm.String)
+        SearchableField(name="description", type=edm.String),
+        SearchableField(name="hotelName", type=edm.String),
+        ComplexField(name="address", fields=[
+            SimpleField(name="streetAddress", type=edm.String),
+            SimpleField(name="city", type=edm.String),
+            SimpleField(name="state", type=edm.String),
+        ])
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profile = ScoringProfile(

@@ -84,18 +84,21 @@ jobs:
           pip --version
         displayName: pip --version
 
-      - script: pip install packaging pkginfo
-        displayName: Install requirements for dev tools
-
-      - script: pip install -r ./common/smoketest/requirements.txt
-        displayName: "Install requirements.txt"
+      - script: pip install -r ./common/smoketest/requirements.txt --pre --no-deps --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
+        displayName: Install requirements from dev feed without dependencies
 
       - script: pip install -r ./common/smoketest/requirements_async.txt
         displayName: "Install requirements_async.txt"
         condition: and(succeeded(), eq(variables['InstallAsyncRequirements'], 'true'))
 
-      - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt
-        displayName: "Install dev dependencies from feed"
+      - script: python ./common/smoketest/dependencies.py -r ./common/smoketest/requirements.txt | tee ./common/smoketest/requirements_dependencies.txt
+        displayName: Create dependency list from installed dev packages
+
+      - script: pip install -r ./common/smoketest/requirements_dependencies.txt
+        displayName: Install dev package dependencies from PyPI
+
+      - script: pip freeze
+        displayName: Show installed packages (pip freeze)
 
       - template: /eng/common/TestResources/deploy-test-resources.yml
         parameters:
@@ -105,7 +108,7 @@ jobs:
           ArmTemplateParameters: $(ArmTemplateParameters)
 
       - script: python ./common/smoketest/program.py
-        displayName: "Run Smoke Test"
+        displayName: Run Smoke Test
 
       - template: /eng/common/TestResources/remove-test-resources.yml
         parameters:

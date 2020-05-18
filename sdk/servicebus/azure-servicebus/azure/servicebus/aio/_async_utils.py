@@ -11,7 +11,7 @@ import functools
 
 from uamqp import authentication
 
-from .._common.utils import renewable_start_time, get_running_loop, utc_now
+from .._common.utils import renewable_start_time, utc_now
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed
 from .._common.constants import (
     JWT_TOKEN_SCOPE,
@@ -21,6 +21,25 @@ from .._common.constants import (
 
 
 _log = logging.getLogger(__name__)
+
+
+def get_running_loop():
+    try:
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.5 / 3.6
+        loop = None
+        try:
+            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        except AttributeError:
+            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
+        if loop is None:
+            _log.warning('No running event loop')
+            loop = asyncio.get_event_loop()
+        return loop
+    except RuntimeError:
+        # For backwards compatibility, create new event loop
+        _log.warning('No running event loop')
+        return asyncio.get_event_loop()
 
 
 async def create_authentication(client):
