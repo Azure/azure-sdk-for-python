@@ -42,5 +42,3 @@ stages:
     Artifacts:
     - name: azure_mgmt_hybridkubernetes
       safeName: azuremgmthybridkubernetes
-    - name: azure_hybridkubernetes
-      safeName: azurehybridkubernetes
