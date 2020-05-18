@@ -1,0 +1,32 @@
+{
+    "chosen_version": "2015-07-01",
+    "total_api_version_list": ["2015-07-01"],
+    "client": {
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
+        "description": "Monitor Management Client.",
+        "has_subscription_id": false
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "service_diagnostic_settings": "ServiceDiagnosticSettingsOperations"
+    },
+    "operation_mixins": {
+    }
+}

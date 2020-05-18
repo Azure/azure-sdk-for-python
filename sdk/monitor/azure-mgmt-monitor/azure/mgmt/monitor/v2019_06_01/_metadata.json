@@ -1,0 +1,38 @@
+{
+    "chosen_version": "2019-06-01",
+    "total_api_version_list": ["2019-06-01"],
+    "client": {
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
+        "description": "Monitor Management Client.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The Azure subscription Id.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "action_groups": "ActionGroupsOperations"
+    },
+    "operation_mixins": {
+    }
+}

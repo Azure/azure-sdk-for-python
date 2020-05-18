@@ -1,0 +1,42 @@
+{
+    "chosen_version": "2019-10-17-preview",
+    "total_api_version_list": ["2019-10-17-preview"],
+    "client": {
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
+        "description": "Monitor Management Client.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The Azure subscription Id.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "private_link_scopes": "PrivateLinkScopesOperations",
+        "private_link_scope_operation_status": "PrivateLinkScopeOperationStatusOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_scoped_resources": "PrivateLinkScopedResourcesOperations"
+    },
+    "operation_mixins": {
+    }
+}
