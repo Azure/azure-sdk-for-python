@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport
+    from ..._internal import AadClientCertificate
 
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -55,6 +56,14 @@ class AadClient(AadClientBase):
         )
         now = int(time.time())
         response = await self._pipeline.run(request, **kwargs)
+        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+        return self._process_response(response=content, scopes=scopes, now=now)
+
+    async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
+        # type: (Sequence[str], AadClientCertificate, **Any) -> AccessToken
+        request = self._get_client_certificate_request(scopes, certificate)
+        now = int(time.time())
+        response = await self._pipeline.run(request, stream=False, **kwargs)
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
         return self._process_response(response=content, scopes=scopes, now=now)
 
