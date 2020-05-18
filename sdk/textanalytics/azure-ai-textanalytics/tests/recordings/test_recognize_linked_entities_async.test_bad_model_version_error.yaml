@@ -1,33 +1,33 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I did not like the hotel we stayed
-      at.", "countryHint": "US"}]}'
+      at.", "language": "english"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '99'
+      - '101'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?model-version=bad&showStats=false
+    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid model version.
-        Possible values are: latest,2019-10-01"}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
+        model version. Possible values are: latest,2020-02-01"}}}'
     headers:
-      apim-request-id: 4c03585b-b971-4565-825f-c84de2b98a30
+      apim-request-id: d6df87ea-2ae6-4044-bd24-16ca43118a92
       content-type: application/json; charset=utf-8
-      date: Mon, 18 May 2020 15:13:14 GMT
+      date: Mon, 18 May 2020 15:20:43 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?model-version=bad&showStats=false
+    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
 version: 1

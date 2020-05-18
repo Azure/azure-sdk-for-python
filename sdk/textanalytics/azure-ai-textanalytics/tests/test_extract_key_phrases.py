@@ -419,7 +419,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             result = client.extract_key_phrases(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
