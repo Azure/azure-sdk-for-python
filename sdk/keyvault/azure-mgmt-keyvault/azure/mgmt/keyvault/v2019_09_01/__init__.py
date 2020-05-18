@@ -8,3 +8,9 @@
 
 from ._key_vault_management_client import KeyVaultManagementClient
 __all__ = ['KeyVaultManagementClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass
