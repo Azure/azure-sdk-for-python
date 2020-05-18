@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 21:44:27 GMT
+      - Mon, 18 May 2020 15:46:49 GMT
       expires:
       - '-1'
       pragma:
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 21:44:27 GMT
+      - Mon, 18 May 2020 15:46:49 GMT
       expires:
       - '-1'
       pragma:
@@ -139,16 +139,18 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Compute/ArtifactTypes/VMExtension/Types/VMAccessAgent/Versions/2.4.4\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2.4.5\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Compute/ArtifactTypes/VMExtension/Types/VMAccessAgent/Versions/2.4.5\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2.4.7\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Compute/ArtifactTypes/VMExtension/Types/VMAccessAgent/Versions/2.4.7\"\
         \r\n  }\r\n]"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '3367'
+      - '3627'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 21:44:28 GMT
+      - Mon, 18 May 2020 15:46:49 GMT
       expires:
       - '-1'
       pragma:

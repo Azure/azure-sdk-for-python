@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:57:37 GMT
+      - Mon, 18 May 2020 15:03:32 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199
+      - Microsoft.Compute/PutVM3Min;573,Microsoft.Compute/PutVM30Min;2877
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -83,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:57:38 GMT
+      - Mon, 18 May 2020 15:03:32 GMT
       expires:
       - '-1'
       pragma:
@@ -137,7 +137,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:57:38 GMT
+      - Mon, 18 May 2020 15:03:33 GMT
       expires:
       - '-1'
       pragma:
@@ -154,7 +154,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1198
+      - Microsoft.Compute/PutVM3Min;572,Microsoft.Compute/PutVM30Min;2876
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -184,7 +184,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 06 May 2020 04:57:41 GMT
+      - Mon, 18 May 2020 15:03:35 GMT
       expires:
       - '-1'
       pragma:

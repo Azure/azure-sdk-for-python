@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:58:07 GMT
+      - Mon, 18 May 2020 15:04:24 GMT
       expires:
       - '-1'
       pragma:
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:58:08 GMT
+      - Mon, 18 May 2020 15:04:24 GMT
       expires:
       - '-1'
       pragma:
@@ -96,7 +96,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/HighCostGet3Min;139,Microsoft.Compute/HighCostGet30Min;699
+      - Microsoft.Compute/HighCostGet3Min;138,Microsoft.Compute/HighCostGet30Min;692
     status:
       code: 200
       message: OK
@@ -132,7 +132,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 04:58:08 GMT
+      - Mon, 18 May 2020 15:04:25 GMT
       expires:
       - '-1'
       pragma:
@@ -179,7 +179,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 06 May 2020 04:58:11 GMT
+      - Mon, 18 May 2020 15:04:26 GMT
       expires:
       - '-1'
       pragma:

@@ -136,7 +136,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                     "access_policies": [
                       {
                         "tenant_id": tenant_id,
-                        "object_id": "123743cc-88ef-49ee-920e-13958fe5697d",
+                        "object_id": object_id,
                         "permissions": {
                           "keys": [
                             "encrypt",
@@ -190,7 +190,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
-        KEY_VAULT_NAME = self.get_resource_name("keyvaultx")
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxrr")
         DISK_ENCRYPTION_SET_NAME = self.get_resource_name("diskencryptionset")
 
         VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID)

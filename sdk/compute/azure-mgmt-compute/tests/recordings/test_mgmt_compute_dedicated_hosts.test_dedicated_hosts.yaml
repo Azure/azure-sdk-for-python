@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:48:55 GMT
+      - Mon, 18 May 2020 15:04:37 GMT
       expires:
       - '-1'
       pragma:
@@ -46,7 +46,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;119,Microsoft.Compute/PutDeleteDedicatedHost30Min;599
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -74,13 +74,13 @@ interactions:
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
         HR\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"DSv3-Type1\"\r\n  },\r\n \
         \ \"properties\": {\r\n    \"platformFaultDomain\": 1,\r\n    \"autoReplaceOnFailure\"\
-        : true,\r\n    \"hostId\": \"f9ea1496-23b5-41f2-87b8-22e6bd6486bf\",\r\n \
+        : true,\r\n    \"hostId\": \"6506599c-9e55-4339-90b5-6aefb4801133\",\r\n \
         \   \"provisioningState\": \"Creating\"\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/bd7cfc06-3f4c-4176-9ebe-cb27e7bab441?api-version=2019-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/73f599af-fddf-451b-8921-433318109914?api-version=2019-12-01
       cache-control:
       - no-cache
       content-length:
@@ -88,7 +88,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:48:58 GMT
+      - Mon, 18 May 2020 15:04:40 GMT
       expires:
       - '-1'
       pragma:
@@ -103,7 +103,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;118,Microsoft.Compute/PutDeleteDedicatedHost30Min;598
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -119,12 +119,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/bd7cfc06-3f4c-4176-9ebe-cb27e7bab441?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/73f599af-fddf-451b-8921-433318109914?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-04-26T19:48:58.0998488+00:00\",\r\n  \"\
-        endTime\": \"2020-04-26T19:48:58.5529901+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"name\": \"bd7cfc06-3f4c-4176-9ebe-cb27e7bab441\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-05-18T15:04:40.0962842+00:00\",\r\n  \"\
+        endTime\": \"2020-05-18T15:04:40.7213244+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"73f599af-fddf-451b-8921-433318109914\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -133,7 +133,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:29 GMT
+      - Mon, 18 May 2020 15:05:10 GMT
       expires:
       - '-1'
       pragma:
@@ -150,7 +150,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14995,Microsoft.Compute/GetOperation30Min;29995
+      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29996
     status:
       code: 200
       message: OK
@@ -173,8 +173,8 @@ interactions:
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
         HR\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"DSv3-Type1\"\r\n  },\r\n \
         \ \"properties\": {\r\n    \"platformFaultDomain\": 1,\r\n    \"autoReplaceOnFailure\"\
-        : true,\r\n    \"hostId\": \"f9ea1496-23b5-41f2-87b8-22e6bd6486bf\",\r\n \
-        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-04-26T19:48:58.4436087+00:00\"\
+        : true,\r\n    \"hostId\": \"6506599c-9e55-4339-90b5-6aefb4801133\",\r\n \
+        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-05-18T15:04:40.5494622+00:00\"\
         ,\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -184,7 +184,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:29 GMT
+      - Mon, 18 May 2020 15:05:10 GMT
       expires:
       - '-1'
       pragma:
@@ -201,7 +201,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetDedicatedHost3Min;248,Microsoft.Compute/GetDedicatedHost30Min;998
+      - Microsoft.Compute/GetDedicatedHost3Min;247,Microsoft.Compute/GetDedicatedHost30Min;997
     status:
       code: 200
       message: OK
@@ -234,7 +234,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:30 GMT
+      - Mon, 18 May 2020 15:05:10 GMT
       expires:
       - '-1'
       pragma:
@@ -251,7 +251,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetDedicatedHost30Min;997
+      - Microsoft.Compute/GetDedicatedHost30Min;996
     status:
       code: 200
       message: OK
@@ -274,10 +274,10 @@ interactions:
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
         HR\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"DSv3-Type1\"\r\n  },\r\n \
         \ \"properties\": {\r\n    \"platformFaultDomain\": 1,\r\n    \"autoReplaceOnFailure\"\
-        : true,\r\n    \"hostId\": \"f9ea1496-23b5-41f2-87b8-22e6bd6486bf\",\r\n \
-        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-04-26T19:48:58.4436087+00:00\"\
+        : true,\r\n    \"hostId\": \"6506599c-9e55-4339-90b5-6aefb4801133\",\r\n \
+        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-05-18T15:04:40.5494622+00:00\"\
         ,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"instanceView\": {\r\
-        \n      \"assetId\": \"9f3d1718-64c6-46e0-be72-fe55c24935c7\",\r\n      \"\
+        \n      \"assetId\": \"3de5f88c-e0e4-406a-ac34-83209ef1568b\",\r\n      \"\
         availableCapacity\": {\r\n        \"allocatableVMs\": [\r\n          {\r\n\
         \            \"vmSize\": \"Standard_D2hs_v3\",\r\n            \"count\": 32\r\
         \n          },\r\n          {\r\n            \"vmSize\": \"Standard_D2s_v3\"\
@@ -302,7 +302,7 @@ interactions:
         \    \"count\": 1\r\n          }\r\n        ]\r\n      },\r\n      \"statuses\"\
         : [\r\n        {\r\n          \"code\": \"ProvisioningState/succeeded\",\r\
         \n          \"level\": \"Info\",\r\n          \"displayStatus\": \"Provisioning\
-        \ succeeded\",\r\n          \"time\": \"2020-04-26T19:48:58.4436087+00:00\"\
+        \ succeeded\",\r\n          \"time\": \"2020-05-18T15:04:40.5494622+00:00\"\
         \r\n        },\r\n        {\r\n          \"code\": \"HealthState/available\"\
         ,\r\n          \"level\": \"Info\",\r\n          \"displayStatus\": \"Host\
         \ available\"\r\n        }\r\n      ]\r\n    }\r\n  }\r\n}"
@@ -314,7 +314,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:30 GMT
+      - Mon, 18 May 2020 15:05:10 GMT
       expires:
       - '-1'
       pragma:
@@ -331,7 +331,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetDedicatedHost3Min;247,Microsoft.Compute/GetDedicatedHost30Min;996
+      - Microsoft.Compute/GetDedicatedHost3Min;246,Microsoft.Compute/GetDedicatedHost30Min;995
     status:
       code: 200
       message: OK
@@ -367,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:31 GMT
+      - Mon, 18 May 2020 15:05:12 GMT
       expires:
       - '-1'
       pragma:
@@ -386,7 +386,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;117,Microsoft.Compute/PutDeleteDedicatedHost30Min;597
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -413,14 +413,14 @@ interactions:
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
         HR\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"DSv3-Type1\"\r\n  },\r\n \
         \ \"properties\": {\r\n    \"platformFaultDomain\": 1,\r\n    \"autoReplaceOnFailure\"\
-        : true,\r\n    \"hostId\": \"f9ea1496-23b5-41f2-87b8-22e6bd6486bf\",\r\n \
-        \   \"provisioningTime\": \"2020-04-26T19:48:58.4436087+00:00\",\r\n    \"\
+        : true,\r\n    \"hostId\": \"6506599c-9e55-4339-90b5-6aefb4801133\",\r\n \
+        \   \"provisioningTime\": \"2020-05-18T15:04:40.5494622+00:00\",\r\n    \"\
         provisioningState\": \"Updating\"\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0a22cde3-895f-40f7-a72a-685625d6eae6?api-version=2019-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/96edac2c-137a-4400-a478-3b2b90906329?api-version=2019-12-01
       cache-control:
       - no-cache
       content-length:
@@ -428,7 +428,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:49:32 GMT
+      - Mon, 18 May 2020 15:05:14 GMT
       expires:
       - '-1'
       pragma:
@@ -447,7 +447,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;116,Microsoft.Compute/PutDeleteDedicatedHost30Min;596
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -463,12 +463,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0a22cde3-895f-40f7-a72a-685625d6eae6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/96edac2c-137a-4400-a478-3b2b90906329?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-04-26T19:49:31.8346025+00:00\",\r\n  \"\
-        endTime\": \"2020-04-26T19:49:31.8502216+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"name\": \"0a22cde3-895f-40f7-a72a-685625d6eae6\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-05-18T15:05:13.8007071+00:00\",\r\n  \"\
+        endTime\": \"2020-05-18T15:05:13.8163453+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"96edac2c-137a-4400-a478-3b2b90906329\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -477,7 +477,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:50:02 GMT
+      - Mon, 18 May 2020 15:05:44 GMT
       expires:
       - '-1'
       pragma:
@@ -494,7 +494,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14994,Microsoft.Compute/GetOperation30Min;29993
+      - Microsoft.Compute/GetOperation3Min;14994,Microsoft.Compute/GetOperation30Min;29994
     status:
       code: 200
       message: OK
@@ -517,8 +517,8 @@ interactions:
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
         HR\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"DSv3-Type1\"\r\n  },\r\n \
         \ \"properties\": {\r\n    \"platformFaultDomain\": 1,\r\n    \"autoReplaceOnFailure\"\
-        : true,\r\n    \"hostId\": \"f9ea1496-23b5-41f2-87b8-22e6bd6486bf\",\r\n \
-        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-04-26T19:48:58.4436087+00:00\"\
+        : true,\r\n    \"hostId\": \"6506599c-9e55-4339-90b5-6aefb4801133\",\r\n \
+        \   \"virtualMachines\": [],\r\n    \"provisioningTime\": \"2020-05-18T15:04:40.5494622+00:00\"\
         ,\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -528,7 +528,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:50:02 GMT
+      - Mon, 18 May 2020 15:05:44 GMT
       expires:
       - '-1'
       pragma:
@@ -545,7 +545,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetDedicatedHost3Min;246,Microsoft.Compute/GetDedicatedHost30Min;995
+      - Microsoft.Compute/GetDedicatedHost3Min;243,Microsoft.Compute/GetDedicatedHost30Min;992
     status:
       code: 200
       message: OK
@@ -571,17 +571,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0edeb54f-12b0-4723-9e0f-26c98139d0b6?api-version=2019-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/b60b6b7e-205c-4aa3-8ccb-d86a7c6c0726?api-version=2019-12-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Sun, 26 Apr 2020 19:50:03 GMT
+      - Mon, 18 May 2020 15:05:44 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0edeb54f-12b0-4723-9e0f-26c98139d0b6?monitor=true&api-version=2019-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/b60b6b7e-205c-4aa3-8ccb-d86a7c6c0726?monitor=true&api-version=2019-12-01
       pragma:
       - no-cache
       server:
@@ -594,7 +594,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;115,Microsoft.Compute/PutDeleteDedicatedHost30Min;595
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -610,12 +610,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0edeb54f-12b0-4723-9e0f-26c98139d0b6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/b60b6b7e-205c-4aa3-8ccb-d86a7c6c0726?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-04-26T19:50:03.2568093+00:00\",\r\n  \"\
-        endTime\": \"2020-04-26T19:50:03.3661969+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"name\": \"0edeb54f-12b0-4723-9e0f-26c98139d0b6\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-05-18T15:05:45.5197967+00:00\",\r\n  \"\
+        endTime\": \"2020-05-18T15:05:45.6604245+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"b60b6b7e-205c-4aa3-8ccb-d86a7c6c0726\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -624,7 +624,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 26 Apr 2020 19:50:33 GMT
+      - Mon, 18 May 2020 15:06:15 GMT
       expires:
       - '-1'
       pragma:
@@ -641,7 +641,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14992,Microsoft.Compute/GetOperation30Min;29990
+      - Microsoft.Compute/GetOperation3Min;14992,Microsoft.Compute/GetOperation30Min;29992
     status:
       code: 200
       message: OK
@@ -669,7 +669,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 26 Apr 2020 19:50:35 GMT
+      - Mon, 18 May 2020 15:06:18 GMT
       expires:
       - '-1'
       pragma:
@@ -684,7 +684,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeleteDedicatedHost3Min;114,Microsoft.Compute/PutDeleteDedicatedHost30Min;594
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 200
       message: OK
