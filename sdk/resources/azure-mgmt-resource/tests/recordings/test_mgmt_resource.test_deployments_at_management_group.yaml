@@ -23,7 +23,7 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456?api-version=2018-03-01-preview
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456","type":"/providers/Microsoft.Management/managementGroups","name":"20000000-0001-0000-0000-000000000123456","properties":{"tenantId":"00000000-0000-0000-0000-000000000000","displayName":"20000000-0001-0000-0000-000000000123456","details":{"version":1,"updatedTime":"2020-04-28T13:47:11.4440107Z","updatedBy":"123743cc-88ef-49ee-920e-13958fe5697d","parent":{"id":"/providers/Microsoft.Management/managementGroups/00000000-0000-0000-0000-000000000000","name":"00000000-0000-0000-0000-000000000000","displayName":"00000000-0000-0000-0000-000000000000"}}}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456","type":"/providers/Microsoft.Management/managementGroups","name":"20000000-0001-0000-0000-000000000123456","properties":{"tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","displayName":"20000000-0001-0000-0000-000000000123456","details":{"version":8,"updatedTime":"2020-05-18T12:49:30.0498754Z","updatedBy":"05b1f982-1404-4e2d-b2e8-af3ee7a330b4","parent":{"id":"/providers/Microsoft.Management/managementGroups/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","name":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","displayName":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"}}}}'
     headers:
       cache-control:
       - no-cache
@@ -32,13 +32,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:53:34 GMT
+      - Mon, 18 May 2020 12:52:12 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - a5f03cee-1e40-4255-badb-f09caa664a1e
+      - fe77706f-aadf-42c4-9a1d-e731c8b93091
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -46,7 +46,7 @@ interactions:
       vary:
       - Accept-Encoding,Accept-Encoding
       x-ba-restapi:
-      - 1.0.3.1566
+      - 1.0.3.1572
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-writes:
@@ -76,7 +76,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 13:53:39 GMT
+      - Mon, 18 May 2020 12:52:13 GMT
       expires:
       - '-1'
       pragma:
@@ -109,10 +109,10 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2020-04-28T13:53:42.6085506Z","duration":"PT1.7791682S","correlationId":"b8a0a4eb-3ad3-4aac-aeee-72ea4e64a2f5","providers":[],"dependencies":[]}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2020-05-18T12:52:16.7359414Z","duration":"PT1.6628543S","correlationId":"99b0e02f-ae20-41c7-bc53-4e449ed7620c","providers":[],"dependencies":[]}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operationStatuses/08586135248646482191?api-version=2019-10-01
+      - https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operationStatuses/08586118005504045087?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
@@ -120,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:53:43 GMT
+      - Mon, 18 May 2020 12:52:18 GMT
       expires:
       - '-1'
       pragma:
@@ -134,7 +134,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-writes:
-      - '1196'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -150,7 +150,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operationStatuses/08586135248646482191?api-version=2019-10-01
+    uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operationStatuses/08586118005504045087?api-version=2019-10-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -162,7 +162,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:14 GMT
+      - Mon, 18 May 2020 12:52:48 GMT
       expires:
       - '-1'
       pragma:
@@ -191,16 +191,16 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-04-28T13:53:43.9838954Z","duration":"PT3.154513S","correlationId":"b8a0a4eb-3ad3-4aac-aeee-72ea4e64a2f5","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:20.2703314Z","duration":"PT5.1972443S","correlationId":"99b0e02f-ae20-41c7-bc53-4e449ed7620c","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '860'
+      - '861'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:14 GMT
+      - Mon, 18 May 2020 12:52:49 GMT
       expires:
       - '-1'
       pragma:
@@ -229,16 +229,16 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-04-28T13:53:43.9838954Z","duration":"PT3.154513S","correlationId":"b8a0a4eb-3ad3-4aac-aeee-72ea4e64a2f5","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}]}'
+      string: '{"value":[{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:20.2703314Z","duration":"PT5.1972443S","correlationId":"99b0e02f-ae20-41c7-bc53-4e449ed7620c","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '872'
+      - '873'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:15 GMT
+      - Mon, 18 May 2020 12:52:49 GMT
       expires:
       - '-1'
       pragma:
@@ -267,16 +267,16 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-04-28T13:53:43.9838954Z","duration":"PT3.154513S","correlationId":"b8a0a4eb-3ad3-4aac-aeee-72ea4e64a2f5","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:20.2703314Z","duration":"PT5.1972443S","correlationId":"99b0e02f-ae20-41c7-bc53-4e449ed7620c","providers":[],"dependencies":[],"outputs":{},"outputResources":[]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '860'
+      - '861'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:15 GMT
+      - Mon, 18 May 2020 12:52:50 GMT
       expires:
       - '-1'
       pragma:
@@ -305,7 +305,7 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586135248646482191","operationId":"08586135248646482191","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-04-28T13:53:43.9637584Z","duration":"PT0.0415513S","trackingId":"6c81dcfd-14cd-40f0-9c17-21b1f597bf52","statusCode":"OK","statusMessage":null}}]}'
+      string: '{"value":[{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586118005504045087","operationId":"08586118005504045087","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:20.0592028Z","duration":"PT0.4483774S","trackingId":"6082c598-30d8-4d3e-bddb-db731421e5f4","statusCode":"OK","statusMessage":null}}]}'
     headers:
       cache-control:
       - no-cache
@@ -314,7 +314,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:16 GMT
+      - Mon, 18 May 2020 12:52:50 GMT
       expires:
       - '-1'
       pragma:
@@ -340,10 +340,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586135248646482191?api-version=2019-10-01
+    uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586118005504045087?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586135248646482191","operationId":"08586135248646482191","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-04-28T13:53:43.9637584Z","duration":"PT0.0415513S","trackingId":"6c81dcfd-14cd-40f0-9c17-21b1f597bf52","statusCode":"OK","statusMessage":null}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/operations/08586118005504045087","operationId":"08586118005504045087","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:20.0592028Z","duration":"PT0.4483774S","trackingId":"6082c598-30d8-4d3e-bddb-db731421e5f4","statusCode":"OK","statusMessage":null}}'
     headers:
       cache-control:
       - no-cache
@@ -352,7 +352,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:17 GMT
+      - Mon, 18 May 2020 12:52:51 GMT
       expires:
       - '-1'
       pragma:
@@ -385,17 +385,17 @@ interactions:
     body:
       string: '{"error":{"code":"DeploymentCannotBeCancelled","message":"The deployment
         ''pytestlinked7fb516d9'' cannot be cancelled because it has provisioning state
-        ''Succeeded'' or it has already expired (expiration time is ''5/5/2020 1:53:40
+        ''Succeeded'' or it has already expired (expiration time is ''5/25/2020 12:52:15
         PM'')."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '234'
+      - '236'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:17 GMT
+      - Mon, 18 May 2020 12:52:53 GMT
       expires:
       - '-1'
       pragma:
@@ -407,7 +407,7 @@ interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-tenant-writes:
-      - '1198'
+      - '1196'
     status:
       code: 409
       message: Conflict
@@ -432,7 +432,7 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9/validate?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-04-28T13:54:18.6988787Z","duration":"PT0S","correlationId":"be7d1ced-7407-4923-a4a9-0d19f4c134b9","providers":[],"dependencies":[],"validatedResources":[]}}'
+      string: '{"id":"/providers/Microsoft.Management/managementGroups/20000000-0001-0000-0000-000000000123456/providers/Microsoft.Resources/deployments/pytestlinked7fb516d9","name":"pytestlinked7fb516d9","type":"Microsoft.Resources/deployments","location":"westus","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"653051900461279848","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json"},"parameters":{},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:52:54.9605738Z","duration":"PT0S","correlationId":"b8a41050-776d-4345-89b5-877b6b94fc32","providers":[],"dependencies":[],"validatedResources":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -441,7 +441,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:18 GMT
+      - Mon, 18 May 2020 12:52:54 GMT
       expires:
       - '-1'
       pragma:
@@ -455,7 +455,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-writes:
-      - '1197'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -485,7 +485,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:19 GMT
+      - Mon, 18 May 2020 12:52:55 GMT
       expires:
       - '-1'
       pragma:
@@ -499,7 +499,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-writes:
-      - '1196'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -527,7 +527,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 13:54:21 GMT
+      - Mon, 18 May 2020 12:52:57 GMT
       expires:
       - '-1'
       location:
@@ -539,7 +539,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -565,7 +565,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 13:54:36 GMT
+      - Mon, 18 May 2020 12:53:13 GMT
       expires:
       - '-1'
       location:
@@ -599,7 +599,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 28 Apr 2020 13:54:52 GMT
+      - Mon, 18 May 2020 12:53:28 GMT
       expires:
       - '-1'
       pragma:
@@ -642,7 +642,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:54:59 GMT
+      - Mon, 18 May 2020 12:53:32 GMT
       expires:
       - '-1'
       location:
@@ -650,11 +650,11 @@ interactions:
       pragma:
       - no-cache
       request-id:
-      - a13dd981-b1a1-4454-aba1-a192a8b81e6b
+      - 99c57a13-2b91-4f27-8604-f2dca796acb7
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ba-restapi:
-      - 1.0.3.1566
+      - 1.0.3.1572
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-deletes:
@@ -687,13 +687,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:55:10 GMT
+      - Mon, 18 May 2020 12:53:53 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - c229d85b-7dc7-451b-bf9e-bbb3d8bc391c
+      - 78a17589-3034-405a-be53-64098b5569cc
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -701,7 +701,7 @@ interactions:
       vary:
       - Accept-Encoding,Accept-Encoding
       x-ba-restapi:
-      - 1.0.3.1566
+      - 1.0.3.1572
       x-content-type-options:
       - nosniff
     status:

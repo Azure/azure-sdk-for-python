@@ -75,7 +75,7 @@ interactions:
         Central","Switzerland North","Germany West Central","Norway East","Norway
         West","UAE Central","Germany North","Australia Central 2","East US 2 EUAP","Central
         US EUAP","France South","South Africa West"],"apiVersions":["2019-08-01","2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"staticSites","locations":["West
-        US 2","Central US","East US 2","West Europe","East Asia","West US"],"apiVersions":["2019-12-01-preview","2019-08-01"],"capabilities":"SupportsTags,
+        US 2","Central US","East US 2","West Europe","East Asia"],"apiVersions":["2019-12-01-preview","2019-08-01"],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"listSitesAssignedToHostName","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
@@ -505,11 +505,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '63754'
+      - '63744'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 11:49:45 GMT
+      - Mon, 18 May 2020 12:59:43 GMT
       expires:
       - '-1'
       pragma:
