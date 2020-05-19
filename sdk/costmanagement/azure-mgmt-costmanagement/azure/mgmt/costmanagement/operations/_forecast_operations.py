@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class QueryOperations(object):
-    """QueryOperations operations.
+class ForecastOperations(object):
+    """ForecastOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,12 +39,11 @@ class QueryOperations(object):
         self.config = config
 
     def usage(
-            self, scope, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for scope defined.
+            self, scope, parameters, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the forecast charges for scope defined.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with forecast operations. This
+         includes '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -62,9 +61,14 @@ class QueryOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
         :type scope: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query
+        :param parameters: Parameters supplied to the CreateOrUpdate Forecast
          Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition
+        :param filter: May be used to filter forecasts by properties/usageDate
+         (Utc time), properties/chargeType or properties/grain. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -85,6 +89,8 @@ class QueryOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -99,7 +105,7 @@ class QueryOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
+        body_content = self._serialize.body(parameters, 'ForecastDefinition')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -117,11 +123,11 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
+    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/forecast'}
 
-    def usage_by_external_cloud_provider_type(
-            self, external_cloud_provider_type, external_cloud_provider_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for external cloud provider type defined.
+    def external_cloud_provider_usage(
+            self, external_cloud_provider_type, external_cloud_provider_id, parameters, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the forecast charges for external cloud provider type defined.
 
         :param external_cloud_provider_type: The external cloud provider type
          associated with dimension/query operations. This includes
@@ -135,9 +141,14 @@ class QueryOperations(object):
          '{externalBillingAccountId}' for consolidated account used with
          dimension/query operations.
         :type external_cloud_provider_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query
+        :param parameters: Parameters supplied to the CreateOrUpdate Forecast
          Config operation.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition
+        :param filter: May be used to filter forecasts by properties/usageDate
+         (Utc time), properties/chargeType or properties/grain. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -150,7 +161,7 @@ class QueryOperations(object):
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.usage_by_external_cloud_provider_type.metadata['url']
+        url = self.external_cloud_provider_usage.metadata['url']
         path_format_arguments = {
             'externalCloudProviderType': self._serialize.url("external_cloud_provider_type", external_cloud_provider_type, 'str'),
             'externalCloudProviderId': self._serialize.url("external_cloud_provider_id", external_cloud_provider_id, 'str')
@@ -159,6 +170,8 @@ class QueryOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -173,7 +186,7 @@ class QueryOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'QueryDefinition')
+        body_content = self._serialize.body(parameters, 'ForecastDefinition')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -191,4 +204,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage_by_external_cloud_provider_type.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/query'}
+    external_cloud_provider_usage.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/forecast'}
