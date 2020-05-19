@@ -187,3 +187,13 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
         return (error_map, AccessCondition(if_match=if_match, if_none_match=if_none_match))
     except AttributeError:
         raise ValueError("Unable to get e_tag from the model")
+
+def _normalize_endpoint(endpoint):
+    try:
+        if not endpoint.lower().startswith('http'):
+            endpoint = "https://" + endpoint
+        elif not endpoint.lower().startswith('https'):
+            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
+        return endpoint
+    except AttributeError:
+        raise ValueError("Endpoint must be a string.")
