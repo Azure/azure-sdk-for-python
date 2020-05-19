@@ -203,6 +203,7 @@ __all__ = (
     "ScoringFunction",
     "ScoringProfile",
     "SearchDataSourcesClient",
+    "SearchClient",
     "SearchField",
     "SearchIndex",
     "SearchIndexer",
