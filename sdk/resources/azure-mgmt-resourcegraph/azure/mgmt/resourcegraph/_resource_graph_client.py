@@ -14,6 +14,8 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import ResourceGraphClientConfiguration
 from .operations import ResourceGraphClientOperationsMixin
+from .operations import ListOperations
+from .operations import GetOperations
 from .operations import Operations
 from . import models
 
@@ -24,6 +26,10 @@ class ResourceGraphClient(ResourceGraphClientOperationsMixin, SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ResourceGraphClientConfiguration
 
+    :ivar list: List operations
+    :vartype list: azure.mgmt.resourcegraph.operations.ListOperations
+    :ivar get: Get operations
+    :vartype get: azure.mgmt.resourcegraph.operations.GetOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resourcegraph.operations.Operations
 
@@ -40,9 +46,13 @@ class ResourceGraphClient(ResourceGraphClientOperationsMixin, SDKClient):
         super(ResourceGraphClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-01'
+        self.api_version = '2020-04-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.list = ListOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.get = GetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
