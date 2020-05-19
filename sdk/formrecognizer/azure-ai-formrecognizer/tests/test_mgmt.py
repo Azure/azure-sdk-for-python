@@ -92,7 +92,7 @@ class TestManagement(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_unlabeled(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         unlabeled_model_from_train = poller.result()
 
         unlabeled_model_from_get = client.get_custom_model(unlabeled_model_from_train.model_id)
