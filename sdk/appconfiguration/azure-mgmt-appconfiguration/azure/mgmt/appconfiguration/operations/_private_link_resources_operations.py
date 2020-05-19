@@ -30,7 +30,7 @@ class PrivateLinkResourcesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appconfiguration.models
+    :type models: ~app_configuration_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -60,8 +60,8 @@ class PrivateLinkResourcesOperations(object):
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PrivateLinkResourceListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appconfiguration.models.PrivateLinkResourceListResult]
+        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~app_configuration_management_client.models.PrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
@@ -137,8 +137,8 @@ class PrivateLinkResourcesOperations(object):
         :param group_name: The name of the private link resource group.
         :type group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResource or the result of cls(response)
-        :rtype: ~azure.mgmt.appconfiguration.models.PrivateLinkResource
+        :return: PrivateLinkResource, or the result of cls(response)
+        :rtype: ~app_configuration_management_client.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]
@@ -177,7 +177,7 @@ class PrivateLinkResourcesOperations(object):
         deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateLinkResources/{groupName}'}  # type: ignore

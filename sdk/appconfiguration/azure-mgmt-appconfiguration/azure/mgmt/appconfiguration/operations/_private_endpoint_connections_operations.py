@@ -32,7 +32,7 @@ class PrivateEndpointConnectionsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appconfiguration.models
+    :type models: ~app_configuration_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -62,8 +62,8 @@ class PrivateEndpointConnectionsOperations(object):
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appconfiguration.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~app_configuration_management_client.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
@@ -139,8 +139,8 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: Private endpoint connection name.
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.appconfiguration.models.PrivateEndpointConnection
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~app_configuration_management_client.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
@@ -179,7 +179,7 @@ class PrivateEndpointConnectionsOperations(object):
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
@@ -240,7 +240,7 @@ class PrivateEndpointConnectionsOperations(object):
             deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
@@ -264,14 +264,14 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: Private endpoint connection name.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection properties.
-        :type private_endpoint_connection: ~azure.mgmt.appconfiguration.models.PrivateEndpointConnection
+        :type private_endpoint_connection: ~app_configuration_management_client.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns PrivateEndpointConnection
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.appconfiguration.models.PrivateEndpointConnection]
+        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~app_configuration_management_client.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -288,6 +288,9 @@ class PrivateEndpointConnectionsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -343,7 +346,7 @@ class PrivateEndpointConnectionsOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
 
@@ -369,7 +372,7 @@ class PrivateEndpointConnectionsOperations(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns None
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -386,6 +389,9 @@ class PrivateEndpointConnectionsOperations(object):
             cls=lambda x,y,z: x,
             **kwargs
         )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
             if cls:

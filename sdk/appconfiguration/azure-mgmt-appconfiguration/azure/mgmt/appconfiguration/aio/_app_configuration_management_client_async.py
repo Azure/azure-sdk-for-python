@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import AppConfigurationManagementClientConfiguration
 from .operations_async import ConfigurationStoresOperations
@@ -23,13 +27,13 @@ class AppConfigurationManagementClient(object):
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
-    :vartype configuration_stores: azure.mgmt.appconfiguration.aio.operations_async.ConfigurationStoresOperations
+    :vartype configuration_stores: app_configuration_management_client.aio.operations_async.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.appconfiguration.aio.operations_async.Operations
+    :vartype operations: app_configuration_management_client.aio.operations_async.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.appconfiguration.aio.operations_async.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: app_configuration_management_client.aio.operations_async.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.appconfiguration.aio.operations_async.PrivateLinkResourcesOperations
+    :vartype private_link_resources: app_configuration_management_client.aio.operations_async.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
