@@ -14,6 +14,7 @@
 - `FormField` does not have a page_number.
 - `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
 - `USReceiptType` is renamed to `ReceiptType`
+- `use_training_labels` is now a required positional param in the `begin_training` APIs.
 
 **New features**
 

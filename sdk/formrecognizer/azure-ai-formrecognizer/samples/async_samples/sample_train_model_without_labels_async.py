@@ -43,7 +43,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
         ) as form_training_client:
 
             # Default for train_model is `use_training_labels=False`
-            model = await form_training_client.train_model(self.container_sas_url)
+            model = await form_training_client.train_model(self.container_sas_url, use_training_labels=False)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
