@@ -279,10 +279,6 @@ database = client.create_database(database_name, logging_enable=True)
 
 For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos DB documentation][cosmos_docs] on docs.microsoft.com.
 
-###  HTTP Pipeline configuration
-For additional documentation of the pipeline configuration options, see 
-[API reference documentation][reference_docs].
-
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_portal]: https://portal.azure.com
