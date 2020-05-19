@@ -481,6 +481,11 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar bool request_server_encrypted:
         Whether this blob is encrypted.
+    :ivar dict(str, dict(str, str)) object_replication_source_properties:
+        Only present for blobs that have policy ids and rule ids applied to them.
+        Dictionary<policy_id, Dictionary<rule_id, status of replication(Complete,Failed)
+    :ivar str object_replication_destination_policy:
+        Represents the Object Replication Policy Id that created this blob.
     """
 
     def __init__(self, **kwargs):
@@ -511,6 +516,8 @@ class BlobProperties(DictMixin):
         self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
+        self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
 
     @classmethod
     def _from_generated(cls, generated):
