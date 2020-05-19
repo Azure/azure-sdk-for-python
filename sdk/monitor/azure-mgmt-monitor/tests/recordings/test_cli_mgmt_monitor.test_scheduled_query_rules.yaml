@@ -23,14 +23,15 @@ interactions:
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"source\": \"Azure\",\r\n    \"customerId\"\
-        : \"d58adb7b-1141-42b5-9d36-d4927e7cc26d\",\r\n    \"provisioningState\":\
+        : \"e962cfda-35b0-4887-8500-77755ce6efde\",\r\n    \"provisioningState\":\
         \ \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n \
-        \     \"lastSkuUpdate\": \"Tue, 07 Apr 2020 15:50:05 GMT\"\r\n    },\r\n \
-        \   \"retentionInDays\": 30,\r\n    \"features\": {\r\n      \"legacy\": 0,\r\
-        \n      \"searchVersion\": 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\"\
-        : true\r\n    },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\"\
-        : -1.0,\r\n      \"quotaNextResetTime\": \"Fri, 10 Apr 2020 18:00:00 GMT\"\
-        ,\r\n      \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
+        \     \"maxCapacityReservationLevel\": 1000,\r\n      \"lastSkuUpdate\": \"\
+        Tue, 19 May 2020 15:07:32 GMT\"\r\n    },\r\n    \"retentionInDays\": 30,\r\
+        \n    \"features\": {\r\n      \"legacy\": 0,\r\n      \"searchVersion\":\
+        \ 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\": true\r\n  \
+        \  },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\": -1.0,\r\n\
+        \      \"quotaNextResetTime\": \"Wed, 20 May 2020 10:00:00 GMT\",\r\n    \
+        \  \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
         : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\"\r\n  },\r\
         \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
         ,\r\n  \"name\": \"workspacexe69613f0\",\r\n  \"type\": \"Microsoft.OperationalInsights/workspaces\"\
@@ -40,11 +41,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1043'
+      - '1087'
       content-type:
       - application/json
       date:
-      - Fri, 10 Apr 2020 08:23:29 GMT
+      - Tue, 19 May 2020 16:39:06 GMT
       pragma:
       - no-cache
       server:
@@ -59,7 +60,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1187'
+      - '1199'
       x-powered-by:
       - ASP.NET
       - ASP.NET
@@ -96,10 +97,10 @@ interactions:
       string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0\"\
         ,\r\n  \"name\": \"scheduledqueryrulee69613f0\",\r\n  \"type\": \"microsoft.insights/scheduledqueryrules\"\
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": null,\r\n  \"kind\": null,\r\
-        \n  \"etag\": \"\\\"c3034cdf-0000-0100-0000-5e902d060000\\\"\",\r\n  \"properties\"\
+        \n  \"etag\": \"\\\"3300e952-0000-0100-0000-5ec40bb40000\\\"\",\r\n  \"properties\"\
         : {\r\n    \"description\": \"log alert description\",\r\n    \"displayName\"\
         : \"scheduledqueryrulee69613f0\",\r\n    \"enabled\": \"true\",\r\n    \"\
-        lastUpdatedTime\": \"2020-04-10T08:23:34.8372233Z\",\r\n    \"provisioningState\"\
+        lastUpdatedTime\": \"2020-05-19T16:39:16.0488284Z\",\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"source\": {\r\n      \"query\": \"Heartbeat | summarize\
         \ AggregatedValue = count() by bin(TimeGenerated, 5m)\",\r\n      \"dataSourceId\"\
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
@@ -122,7 +123,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:23:35 GMT
+      - Tue, 19 May 2020 16:39:16 GMT
       expires:
       - '-1'
       pragma:
@@ -136,7 +137,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1189'
+      - '1198'
       x-powered-by:
       - ASP.NET
     status:
@@ -160,10 +161,10 @@ interactions:
       string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0\"\
         ,\r\n  \"name\": \"scheduledqueryrulee69613f0\",\r\n  \"type\": \"microsoft.insights/scheduledqueryrules\"\
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": null,\r\n  \"kind\": null,\r\
-        \n  \"etag\": \"\\\"c3034cdf-0000-0100-0000-5e902d060000\\\"\",\r\n  \"properties\"\
+        \n  \"etag\": \"\\\"3300e952-0000-0100-0000-5ec40bb40000\\\"\",\r\n  \"properties\"\
         : {\r\n    \"description\": \"log alert description\",\r\n    \"displayName\"\
         : \"scheduledqueryrulee69613f0\",\r\n    \"enabled\": \"true\",\r\n    \"\
-        lastUpdatedTime\": \"2020-04-10T08:23:34.8372233Z\",\r\n    \"provisioningState\"\
+        lastUpdatedTime\": \"2020-05-19T16:39:16.0488284Z\",\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"source\": {\r\n      \"query\": \"Heartbeat | summarize\
         \ AggregatedValue = count() by bin(TimeGenerated, 5m)\",\r\n      \"dataSourceId\"\
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
@@ -186,7 +187,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:23:37 GMT
+      - Tue, 19 May 2020 16:39:17 GMT
       expires:
       - '-1'
       pragma:
@@ -209,7 +210,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"tags": {"enabled": "true"}}'
+    body: '{"properties": {"enabled": "true"}}'
     headers:
       Accept:
       - application/json
@@ -218,7 +219,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '29'
+      - '35'
       Content-Type:
       - application/json
       User-Agent:
@@ -229,15 +230,14 @@ interactions:
     body:
       string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.insights/scheduledqueryrules/scheduledqueryrulee69613f0\"\
         ,\r\n  \"name\": \"scheduledqueryrulee69613f0\",\r\n  \"type\": \"microsoft.insights/scheduledqueryrules\"\
-        ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"enabled\": \"true\"\
-        \r\n  },\r\n  \"kind\": null,\r\n  \"etag\": \"\\\"c30382df-0000-0100-0000-5e902d0b0000\\\
-        \"\",\r\n  \"properties\": {\r\n    \"description\": \"log alert description\"\
-        ,\r\n    \"displayName\": \"scheduledqueryrulee69613f0\",\r\n    \"enabled\"\
-        : \"true\",\r\n    \"migrationSource\": \"None\",\r\n    \"migrationMetadata\"\
-        : null,\r\n    \"lastUpdatedTime\": \"2020-04-10T08:23:34.8372233Z\",\r\n\
-        \    \"provisioningState\": \"Succeeded\",\r\n    \"source\": {\r\n      \"\
-        query\": \"Heartbeat | summarize AggregatedValue = count() by bin(TimeGenerated,\
-        \ 5m)\",\r\n      \"dataSourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
+        ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": null,\r\n  \"kind\": null,\r\
+        \n  \"etag\": \"\\\"3300ea52-0000-0100-0000-5ec40bb60000\\\"\",\r\n  \"properties\"\
+        : {\r\n    \"description\": \"log alert description\",\r\n    \"displayName\"\
+        : \"scheduledqueryrulee69613f0\",\r\n    \"enabled\": \"true\",\r\n    \"\
+        lastUpdatedTime\": \"2020-05-19T16:39:18.6964034Z\",\r\n    \"provisioningState\"\
+        : \"Succeeded\",\r\n    \"source\": {\r\n      \"query\": \"Heartbeat | summarize\
+        \ AggregatedValue = count() by bin(TimeGenerated, 5m)\",\r\n      \"dataSourceId\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_monitor_test_scheduled_query_rulese69613f0/providers/microsoft.operationalinsights/workspaces/workspacexe69613f0\"\
         ,\r\n      \"queryType\": \"ResultCount\"\r\n    },\r\n    \"schedule\": {\r\
         \n      \"frequencyInMinutes\": 15,\r\n      \"timeWindowInMinutes\": 15\r\
         \n    },\r\n    \"action\": {\r\n      \"severity\": \"1\",\r\n      \"aznsAction\"\
@@ -253,11 +253,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1871'
+      - '1782'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:23:39 GMT
+      - Tue, 19 May 2020 16:39:18 GMT
       expires:
       - '-1'
       pragma:
@@ -275,7 +275,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1197'
       x-powered-by:
       - ASP.NET
     status:
@@ -305,7 +305,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Apr 2020 08:23:42 GMT
+      - Tue, 19 May 2020 16:39:20 GMT
       expires:
       - '-1'
       pragma:
@@ -319,7 +319,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14999'
       x-powered-by:
       - ASP.NET
     status:

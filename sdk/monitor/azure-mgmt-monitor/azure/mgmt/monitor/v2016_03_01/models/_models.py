@@ -52,7 +52,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -118,10 +118,10 @@ class AlertRuleResource(Resource):
         **kwargs
     ):
         super(AlertRuleResource, self).__init__(**kwargs)
-        self.name_properties_name = kwargs.get('name_properties_name', None)
+        self.name_properties_name = kwargs['name_properties_name']
         self.description = kwargs.get('description', None)
-        self.is_enabled = kwargs.get('is_enabled', None)
-        self.condition = kwargs.get('condition', None)
+        self.is_enabled = kwargs['is_enabled']
+        self.condition = kwargs['condition']
         self.actions = kwargs.get('actions', None)
         self.last_updated_time = None
 
@@ -308,7 +308,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -393,7 +393,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         super(LocationThresholdRuleCondition, self).__init__(**kwargs)
         self.odata_type = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'
         self.window_size = kwargs.get('window_size', None)
-        self.failed_location_count = kwargs.get('failed_location_count', None)
+        self.failed_location_count = kwargs['failed_location_count']
 
 
 class LogProfileCollection(msrest.serialization.Model):
@@ -418,7 +418,7 @@ class LogProfileCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(LogProfileCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class LogProfileResource(Resource):
@@ -485,9 +485,9 @@ class LogProfileResource(Resource):
         super(LogProfileResource, self).__init__(**kwargs)
         self.storage_account_id = kwargs.get('storage_account_id', None)
         self.service_bus_rule_id = kwargs.get('service_bus_rule_id', None)
-        self.locations = kwargs.get('locations', None)
-        self.categories = kwargs.get('categories', None)
-        self.retention_policy = kwargs.get('retention_policy', None)
+        self.locations = kwargs['locations']
+        self.categories = kwargs['categories']
+        self.retention_policy = kwargs['retention_policy']
 
 
 class LogProfileResourcePatch(msrest.serialization.Model):
@@ -537,8 +537,8 @@ class LogProfileResourcePatch(msrest.serialization.Model):
 class ManagementEventAggregationCondition(msrest.serialization.Model):
     """How the data that is collected should be combined over time.
 
-    :param operator: the condition operator. Possible values include: 'GreaterThan',
-     'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'.
+    :param operator: the condition operator. Possible values include: "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2016_03_01.models.ConditionOperator
     :param threshold: The threshold value that activates the alert.
     :type threshold: float
@@ -635,12 +635,12 @@ class MetricDefinition(msrest.serialization.Model):
     :type resource_id: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2016_03_01.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
     :type unit: str or ~$(python-base-namespace).v2016_03_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2016_03_01.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be
@@ -695,7 +695,7 @@ class MetricDefinitionCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricDefinitionCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -725,8 +725,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.days = kwargs.get('days', None)
+        self.enabled = kwargs['enabled']
+        self.days = kwargs['days']
 
 
 class RuleAction(msrest.serialization.Model):
@@ -1007,7 +1007,7 @@ class ThresholdRuleCondition(RuleCondition):
      dataSource will always be of type RuleMetricDataSource.
     :type data_source: ~$(python-base-namespace).v2016_03_01.models.RuleDataSource
     :param operator: Required. the operator used to compare the data and the threshold. Possible
-     values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'.
+     values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2016_03_01.models.ConditionOperator
     :param threshold: Required. the threshold value that activates the alert.
     :type threshold: float
@@ -1017,7 +1017,7 @@ class ThresholdRuleCondition(RuleCondition):
     :type window_size: ~datetime.timedelta
     :param time_aggregation: the time aggregation operator. How the data that are collected should
      be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
-     values include: 'Average', 'Minimum', 'Maximum', 'Total', 'Last'.
+     values include: "Average", "Minimum", "Maximum", "Total", "Last".
     :type time_aggregation: str or ~$(python-base-
      namespace).v2016_03_01.models.TimeAggregationOperator
     """
@@ -1043,7 +1043,7 @@ class ThresholdRuleCondition(RuleCondition):
     ):
         super(ThresholdRuleCondition, self).__init__(**kwargs)
         self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
-        self.operator = kwargs.get('operator', None)
-        self.threshold = kwargs.get('threshold', None)
+        self.operator = kwargs['operator']
+        self.threshold = kwargs['threshold']
         self.window_size = kwargs.get('window_size', None)
         self.time_aggregation = kwargs.get('time_aggregation', None)

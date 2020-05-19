@@ -32,7 +32,7 @@ class DataContainer(msrest.serialization.Model):
         **kwargs
     ):
         super(DataContainer, self).__init__(**kwargs)
-        self.workspace = kwargs.get('workspace', None)
+        self.workspace = kwargs['workspace']
 
 
 class Error(msrest.serialization.Model):
@@ -60,7 +60,7 @@ class Error(msrest.serialization.Model):
         **kwargs
     ):
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
+        self.code = kwargs['code']
         self.message = kwargs.get('message', None)
 
 
@@ -121,7 +121,7 @@ class ResponseWithError(msrest.serialization.Model):
         **kwargs
     ):
         super(ResponseWithError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs['error']
 
 
 class VMInsightsOnboardingStatus(ProxyResource):
@@ -140,12 +140,12 @@ class VMInsightsOnboardingStatus(ProxyResource):
     :type resource_id: str
     :param onboarding_status: The onboarding status for the resource. Note that, a higher level
      scope, e.g., resource group or subscription, is considered onboarded if at least one resource
-     under it is onboarded. Possible values include: 'onboarded', 'notOnboarded', 'unknown'.
+     under it is onboarded. Possible values include: "onboarded", "notOnboarded", "unknown".
     :type onboarding_status: str or ~$(python-base-
      namespace).v2018_11_27_preview.models.OnboardingStatus
     :param data_status: The status of VM Insights data from the resource. When reported as
      ``present`` the data array will contain information about the data containers to which data for
-     the specified resource is being routed. Possible values include: 'present', 'notPresent'.
+     the specified resource is being routed. Possible values include: "present", "notPresent".
     :type data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
     :param data: Containers that currently store VM Insights data for the specified resource.
     :type data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
@@ -208,6 +208,6 @@ class WorkspaceInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(WorkspaceInfo, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.location = kwargs.get('location', None)
-        self.customer_id = kwargs.get('customer_id', None)
+        self.id = kwargs['id']
+        self.location = kwargs['location']
+        self.customer_id = kwargs['customer_id']

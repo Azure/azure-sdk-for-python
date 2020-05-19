@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import MonitorClientConfiguration
 from .operations_async import PrivateLinkScopesOperations
@@ -34,15 +38,16 @@ class MonitorClient(object):
     :ivar private_link_scoped_resources: PrivateLinkScopedResourcesOperations operations
     :vartype private_link_scoped_resources: $(python-base-namespace).v2019_10_17.aio.operations_async.PrivateLinkScopedResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: Optional[str] = None,
         **kwargs: Any

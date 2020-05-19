@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -16,8 +16,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models
 
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+
+    T = TypeVar('T')
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 class BaselineOperations(object):
     """BaselineOperations operations.
@@ -82,16 +86,17 @@ class BaselineOperations(object):
          values which produce a specific metric's time series, in which a baseline is requested for.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BaselineResponse or the result of cls(response)
+        :return: BaselineResponse, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_09_01.models.BaselineResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BaselineResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-09-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
         }
@@ -134,7 +139,7 @@ class BaselineOperations(object):
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline'}
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline'}  # type: ignore

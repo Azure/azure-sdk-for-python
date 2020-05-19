@@ -57,7 +57,7 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
     :ivar type: Azure resource type.
     :vartype type: str
     :param category_type: The type of the diagnostic settings category. Possible values include:
-     'Metrics', 'Logs'.
+     "Metrics", "Logs".
     :type category_type: str or ~$(python-base-namespace).v2017_05_01_preview.models.CategoryType
     """
 
@@ -243,7 +243,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -278,7 +278,7 @@ class LogSettings(msrest.serialization.Model):
     ):
         super(LogSettings, self).__init__(**kwargs)
         self.category = kwargs.get('category', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -317,9 +317,9 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds',
-     'Unspecified'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~$(python-base-namespace).v2017_05_01_preview.models.TimeSeriesElement]
@@ -346,11 +346,11 @@ class Metric(msrest.serialization.Model):
         **kwargs
     ):
         super(Metric, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.unit = kwargs.get('unit', None)
-        self.timeseries = kwargs.get('timeseries', None)
+        self.id = kwargs['id']
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+        self.unit = kwargs['unit']
+        self.timeseries = kwargs['timeseries']
 
 
 class MetricAvailability(msrest.serialization.Model):
@@ -387,12 +387,12 @@ class MetricDefinition(msrest.serialization.Model):
     :type resource_id: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2017_05_01_preview.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be
@@ -454,7 +454,7 @@ class MetricDefinitionCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricDefinitionCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class MetricSettings(msrest.serialization.Model):
@@ -492,7 +492,7 @@ class MetricSettings(msrest.serialization.Model):
         super(MetricSettings, self).__init__(**kwargs)
         self.time_grain = kwargs.get('time_grain', None)
         self.category = kwargs.get('category', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -534,7 +534,7 @@ class MetricValue(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricValue, self).__init__(**kwargs)
-        self.time_stamp = kwargs.get('time_stamp', None)
+        self.time_stamp = kwargs['time_stamp']
         self.average = kwargs.get('average', None)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
@@ -580,9 +580,9 @@ class Response(msrest.serialization.Model):
     ):
         super(Response, self).__init__(**kwargs)
         self.cost = kwargs.get('cost', None)
-        self.timespan = kwargs.get('timespan', None)
+        self.timespan = kwargs['timespan']
         self.interval = kwargs.get('interval', None)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -612,8 +612,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.days = kwargs.get('days', None)
+        self.enabled = kwargs['enabled']
+        self.days = kwargs['days']
 
 
 class TimeSeriesElement(msrest.serialization.Model):

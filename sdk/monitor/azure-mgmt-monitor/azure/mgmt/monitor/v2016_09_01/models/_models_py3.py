@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
@@ -122,8 +124,8 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
     :type unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
     :param data: Required. Array of data points representing the metric values.
     :type data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]

@@ -8,6 +8,14 @@
 
 from enum import Enum
 
+class BaselineSensitivity(str, Enum):
+    """the sensitivity of the baseline.
+    """
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
 class ReceiverStatus(str, Enum):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
@@ -16,14 +24,6 @@ class ReceiverStatus(str, Enum):
     not_specified = "NotSpecified"
     enabled = "Enabled"
     disabled = "Disabled"
-
-class BaselineSensitivity(str, Enum):
-    """the sensitivity of the baseline.
-    """
-
-    low = "Low"
-    medium = "Medium"
-    high = "High"
 
 class ResultType(str, Enum):
 

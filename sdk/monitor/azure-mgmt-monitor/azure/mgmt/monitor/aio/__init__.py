@@ -6,11 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._monitor_client import MonitorClient
+from ._monitor_client_async import MonitorClient
 __all__ = ['MonitorClient']
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass

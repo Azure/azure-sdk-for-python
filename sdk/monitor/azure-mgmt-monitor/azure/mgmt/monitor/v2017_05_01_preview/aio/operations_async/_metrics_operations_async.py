@@ -89,16 +89,17 @@ class MetricsOperations:
          operation. See the operation's description for details.
         :type result_type: str or ~$(python-base-namespace).v2017_05_01_preview.models.ResultType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Response or the result of cls(response)
+        :return: Response, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.Response
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Response"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-05-01-preview"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
         }
@@ -141,7 +142,7 @@ class MetricsOperations:
         deserialized = self._deserialize('Response', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}  # type: ignore

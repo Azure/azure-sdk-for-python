@@ -51,16 +51,17 @@ class VMInsightsOperations:
          scope, whose status to retrieve.
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VMInsightsOnboardingStatus or the result of cls(response)
+        :return: VMInsightsOnboardingStatus, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_11_27_preview.models.VMInsightsOnboardingStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VMInsightsOnboardingStatus"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-11-27-preview"
 
         # Construct URL
-        url = self.get_onboarding_status.metadata['url']
+        url = self.get_onboarding_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
         }
@@ -87,7 +88,7 @@ class VMInsightsOperations:
         deserialized = self._deserialize('VMInsightsOnboardingStatus', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_onboarding_status.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default'}
+    get_onboarding_status.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default'}  # type: ignore

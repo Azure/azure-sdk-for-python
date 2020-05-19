@@ -81,16 +81,17 @@ class MetricBaselineOperations:
          values which produce a specific metric's time series, in which a baseline is requested for.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BaselineResponse or the result of cls(response)
+        :return: BaselineResponse, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_09_01.models.BaselineResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BaselineResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-09-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'metricName': self._serialize.url("metric_name", metric_name, 'str'),
@@ -132,10 +133,10 @@ class MetricBaselineOperations:
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'}
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'}  # type: ignore
 
     async def calculate_baseline(
         self,
@@ -154,17 +155,18 @@ class MetricBaselineOperations:
          on a time series.
         :type time_series_information: ~$(python-base-namespace).v2018_09_01.models.TimeSeriesInformation
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CalculateBaselineResponse or the result of cls(response)
+        :return: CalculateBaselineResponse, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_09_01.models.CalculateBaselineResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CalculateBaselineResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.calculate_baseline.metadata['url']
+        url = self.calculate_baseline.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
         }
@@ -196,7 +198,7 @@ class MetricBaselineOperations:
         deserialized = self._deserialize('CalculateBaselineResponse', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/calculatebaseline'}
+    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/calculatebaseline'}  # type: ignore

@@ -12,6 +12,8 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
@@ -109,9 +111,9 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds',
-     'Unspecified', 'Cores', 'MilliCores', 'NanoCores', 'BitsPerSecond'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2018_01_01.models.Unit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
@@ -190,13 +192,13 @@ class MetricDefinition(msrest.serialization.Model):
     :type namespace: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified',
-     'Cores', 'MilliCores', 'NanoCores', 'BitsPerSecond'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2018_01_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2018_01_01.models.AggregationType
     :param supported_aggregation_types: the collection of what aggregation types are supported.

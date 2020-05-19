@@ -6,10 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
+    from azure.core.credentials import TokenCredential
 
 VERSION = "unknown"
 
@@ -20,7 +26,7 @@ class MonitorClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
@@ -36,6 +42,7 @@ class MonitorClientConfiguration(Configuration):
         self.credential = credential
         self.api_version = "2015-07-01"
         self.credential_scopes = ['https://management.azure.com/.default']
+        self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
         kwargs.setdefault('sdk_moniker', 'mgmt-eventhub/{}'.format(VERSION))
         self._configure(**kwargs)
 

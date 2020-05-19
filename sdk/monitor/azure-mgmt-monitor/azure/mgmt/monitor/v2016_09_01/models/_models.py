@@ -58,7 +58,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -93,7 +93,7 @@ class LogSettings(msrest.serialization.Model):
     ):
         super(LogSettings, self).__init__(**kwargs)
         self.category = kwargs.get('category', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -109,8 +109,8 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
     :type unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
     :param data: Required. Array of data points representing the metric values.
     :type data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
@@ -137,9 +137,9 @@ class Metric(msrest.serialization.Model):
         super(Metric, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.unit = kwargs.get('unit', None)
-        self.data = kwargs.get('data', None)
+        self.name = kwargs['name']
+        self.unit = kwargs['unit']
+        self.data = kwargs['data']
 
 
 class MetricCollection(msrest.serialization.Model):
@@ -164,7 +164,7 @@ class MetricCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class MetricSettings(msrest.serialization.Model):
@@ -196,8 +196,8 @@ class MetricSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricSettings, self).__init__(**kwargs)
-        self.time_grain = kwargs.get('time_grain', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.time_grain = kwargs['time_grain']
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -239,7 +239,7 @@ class MetricValue(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricValue, self).__init__(**kwargs)
-        self.time_stamp = kwargs.get('time_stamp', None)
+        self.time_stamp = kwargs['time_stamp']
         self.average = kwargs.get('average', None)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
@@ -289,7 +289,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -320,8 +320,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.days = kwargs.get('days', None)
+        self.enabled = kwargs['enabled']
+        self.days = kwargs['days']
 
 
 class ServiceDiagnosticSettingsResource(Resource):

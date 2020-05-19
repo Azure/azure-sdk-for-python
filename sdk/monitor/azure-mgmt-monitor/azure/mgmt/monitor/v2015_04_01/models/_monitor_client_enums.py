@@ -8,6 +8,17 @@
 
 from enum import Enum
 
+class ComparisonOperationType(str, Enum):
+    """the operator that is used to compare the metric data and the threshold.
+    """
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+
 class EventLevel(str, Enum):
     """the event level
     """
@@ -27,28 +38,21 @@ class MetricStatisticType(str, Enum):
     max = "Max"
     sum = "Sum"
 
-class TimeAggregationType(str, Enum):
-    """time aggregation type. How the data that is collected should be combined over time. The default
-    value is Average.
+class RecurrenceFrequency(str, Enum):
+    """the recurrence frequency. How often the schedule profile should take effect. This value must be
+    Week, meaning each week will have the same set of profiles. For example, to set a daily
+    schedule, set **schedule** to every day of the week. The frequency property specifies that the
+    schedule is repeated weekly.
     """
 
-    average = "Average"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-    count = "Count"
-    last = "Last"
-
-class ComparisonOperationType(str, Enum):
-    """the operator that is used to compare the metric data and the threshold.
-    """
-
-    equals = "Equals"
-    not_equals = "NotEquals"
-    greater_than = "GreaterThan"
-    greater_than_or_equal = "GreaterThanOrEqual"
-    less_than = "LessThan"
-    less_than_or_equal = "LessThanOrEqual"
+    none = "None"
+    second = "Second"
+    minute = "Minute"
+    hour = "Hour"
+    day = "Day"
+    week = "Week"
+    month = "Month"
+    year = "Year"
 
 class ScaleDirection(str, Enum):
     """the scale direction. Whether the scaling action increases or decreases the number of instances.
@@ -66,18 +70,14 @@ class ScaleType(str, Enum):
     percent_change_count = "PercentChangeCount"
     exact_count = "ExactCount"
 
-class RecurrenceFrequency(str, Enum):
-    """the recurrence frequency. How often the schedule profile should take effect. This value must be
-    Week, meaning each week will have the same set of profiles. For example, to set a daily
-    schedule, set **schedule** to every day of the week. The frequency property specifies that the
-    schedule is repeated weekly.
+class TimeAggregationType(str, Enum):
+    """time aggregation type. How the data that is collected should be combined over time. The default
+    value is Average.
     """
 
-    none = "None"
-    second = "Second"
-    minute = "Minute"
-    hour = "Hour"
-    day = "Day"
-    week = "Week"
-    month = "Month"
-    year = "Year"
+    average = "Average"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+    count = "Count"
+    last = "Last"

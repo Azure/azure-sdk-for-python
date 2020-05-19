@@ -19,6 +19,11 @@ class AggregationType(str, Enum):
     maximum = "Maximum"
     total = "Total"
 
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"
+
 class Unit(str, Enum):
     """the unit of the metric.
     """
@@ -36,8 +41,3 @@ class Unit(str, Enum):
     milli_cores = "MilliCores"
     nano_cores = "NanoCores"
     bits_per_second = "BitsPerSecond"
-
-class ResultType(str, Enum):
-
-    data = "Data"
-    metadata = "Metadata"

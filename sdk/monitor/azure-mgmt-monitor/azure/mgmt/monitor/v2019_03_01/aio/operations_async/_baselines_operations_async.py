@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -54,7 +54,7 @@ class BaselinesOperations:
         filter: Optional[str] = None,
         result_type: Optional[Union[str, "models.ResultType"]] = None,
         **kwargs
-    ) -> "models.MetricBaselinesResponse":
+    ) -> AsyncIterable["models.MetricBaselinesResponse"]:
         """**Lists the metric baseline values for a resource**.
 
         :param resource_uri: The identifier of the resource.
@@ -86,45 +86,46 @@ class BaselinesOperations:
      information is retrieved.
         :type result_type: str or ~$(python-base-namespace).v2019_03_01.models.ResultType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricBaselinesResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_03_01.models.MetricBaselinesResponse
+        :return: An iterator like instance of either MetricBaselinesResponse or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_03_01.models.MetricBaselinesResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricBaselinesResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
 
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if metricnames is not None:
+                    query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
+                if metricnamespace is not None:
+                    query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
+                if timespan is not None:
+                    query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
+                if interval is not None:
+                    query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
+                if aggregation is not None:
+                    query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
+                if sensitivities is not None:
+                    query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if result_type is not None:
+                    query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
             else:
                 url = next_link
-
-            # Construct parameters
-            query_parameters = {}  # type: Dict[str, Any]
-            if metricnames is not None:
-                query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
-            if metricnamespace is not None:
-                query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
-            if timespan is not None:
-                query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-            if interval is not None:
-                query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-            if aggregation is not None:
-                query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-            if sensitivities is not None:
-                query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
-            if filter is not None:
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-            if result_type is not None:
-                query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
+                query_parameters = {}  # type: Dict[str, Any]
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
             header_parameters['Accept'] = 'application/json'
@@ -156,4 +157,4 @@ class BaselinesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}  # type: ignore

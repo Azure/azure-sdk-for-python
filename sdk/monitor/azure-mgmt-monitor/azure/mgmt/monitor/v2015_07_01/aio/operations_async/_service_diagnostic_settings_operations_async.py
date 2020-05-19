@@ -50,16 +50,17 @@ class ServiceDiagnosticSettingsOperations:
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ServiceDiagnosticSettingsResource or the result of cls(response)
+        :return: ServiceDiagnosticSettingsResource, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2015_07_01.models.ServiceDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceDiagnosticSettingsResource"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-07-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
         }
@@ -86,10 +87,10 @@ class ServiceDiagnosticSettingsOperations:
         deserialized = self._deserialize('ServiceDiagnosticSettingsResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'}
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'}  # type: ignore
 
     async def create_or_update(
         self,
@@ -104,17 +105,18 @@ class ServiceDiagnosticSettingsOperations:
         :param parameters: Parameters supplied to the operation.
         :type parameters: ~$(python-base-namespace).v2015_07_01.models.ServiceDiagnosticSettingsResource
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ServiceDiagnosticSettingsResource or the result of cls(response)
+        :return: ServiceDiagnosticSettingsResource, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2015_07_01.models.ServiceDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceDiagnosticSettingsResource"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
         }
@@ -145,7 +147,7 @@ class ServiceDiagnosticSettingsOperations:
         deserialized = self._deserialize('ServiceDiagnosticSettingsResource', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'}
+    create_or_update.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'}  # type: ignore

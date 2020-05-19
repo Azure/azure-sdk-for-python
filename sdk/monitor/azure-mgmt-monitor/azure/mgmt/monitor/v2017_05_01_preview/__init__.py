@@ -8,3 +8,9 @@
 
 from ._monitor_client import MonitorClient
 __all__ = ['MonitorClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

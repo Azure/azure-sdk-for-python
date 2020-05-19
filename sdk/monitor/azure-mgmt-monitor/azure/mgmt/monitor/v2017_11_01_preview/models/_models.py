@@ -15,8 +15,8 @@ class Baseline(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: 'Low',
-     'Medium', 'High'.
+    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: "Low",
+     "Medium", "High".
     :type sensitivity: str or ~$(python-base-namespace).v2017_11_01_preview.models.Sensitivity
     :param low_thresholds: Required. The low thresholds of the baseline.
     :type low_thresholds: list[float]
@@ -41,9 +41,9 @@ class Baseline(msrest.serialization.Model):
         **kwargs
     ):
         super(Baseline, self).__init__(**kwargs)
-        self.sensitivity = kwargs.get('sensitivity', None)
-        self.low_thresholds = kwargs.get('low_thresholds', None)
-        self.high_thresholds = kwargs.get('high_thresholds', None)
+        self.sensitivity = kwargs['sensitivity']
+        self.low_thresholds = kwargs['low_thresholds']
+        self.high_thresholds = kwargs['high_thresholds']
 
 
 class BaselineMetadataValue(msrest.serialization.Model):
@@ -162,9 +162,9 @@ class CalculateBaselineResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(CalculateBaselineResponse, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        self.type = kwargs['type']
         self.timestamps = kwargs.get('timestamps', None)
-        self.baseline = kwargs.get('baseline', None)
+        self.baseline = kwargs['baseline']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -215,7 +215,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -248,6 +248,6 @@ class TimeSeriesInformation(msrest.serialization.Model):
         **kwargs
     ):
         super(TimeSeriesInformation, self).__init__(**kwargs)
-        self.sensitivities = kwargs.get('sensitivities', None)
-        self.values = kwargs.get('values', None)
+        self.sensitivities = kwargs['sensitivities']
+        self.values = kwargs['values']
         self.timestamps = kwargs.get('timestamps', None)

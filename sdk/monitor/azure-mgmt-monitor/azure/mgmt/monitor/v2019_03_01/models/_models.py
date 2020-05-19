@@ -99,7 +99,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -232,9 +232,9 @@ class ArmRoleReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(ArmRoleReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.role_id = kwargs.get('role_id', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.name = kwargs['name']
+        self.role_id = kwargs['role_id']
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']
 
 
 class AutomationRunbookReceiver(msrest.serialization.Model):
@@ -282,13 +282,13 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AutomationRunbookReceiver, self).__init__(**kwargs)
-        self.automation_account_id = kwargs.get('automation_account_id', None)
-        self.runbook_name = kwargs.get('runbook_name', None)
-        self.webhook_resource_id = kwargs.get('webhook_resource_id', None)
-        self.is_global_runbook = kwargs.get('is_global_runbook', None)
+        self.automation_account_id = kwargs['automation_account_id']
+        self.runbook_name = kwargs['runbook_name']
+        self.webhook_resource_id = kwargs['webhook_resource_id']
+        self.is_global_runbook = kwargs['is_global_runbook']
         self.name = kwargs.get('name', None)
         self.service_uri = kwargs.get('service_uri', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']
 
 
 class AzureAppPushReceiver(msrest.serialization.Model):
@@ -318,8 +318,8 @@ class AzureAppPushReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureAppPushReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
 
 
 class AzureFunctionReceiver(msrest.serialization.Model):
@@ -361,11 +361,11 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureFunctionReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.function_app_resource_id = kwargs.get('function_app_resource_id', None)
-        self.function_name = kwargs.get('function_name', None)
-        self.http_trigger_url = kwargs.get('http_trigger_url', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.name = kwargs['name']
+        self.function_app_resource_id = kwargs['function_app_resource_id']
+        self.function_name = kwargs['function_name']
+        self.http_trigger_url = kwargs['http_trigger_url']
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']
 
 
 class BaselineMetadata(msrest.serialization.Model):
@@ -394,8 +394,8 @@ class BaselineMetadata(msrest.serialization.Model):
         **kwargs
     ):
         super(BaselineMetadata, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = kwargs['name']
+        self.value = kwargs['value']
 
 
 class EmailReceiver(msrest.serialization.Model):
@@ -412,8 +412,8 @@ class EmailReceiver(msrest.serialization.Model):
     :type email_address: str
     :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
-    :ivar status: The receiver status of the e-mail. Possible values include: 'NotSpecified',
-     'Enabled', 'Disabled'.
+    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
+     "Enabled", "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
     """
 
@@ -436,9 +436,9 @@ class EmailReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(EmailReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']
         self.status = None
 
 
@@ -464,7 +464,7 @@ class EnableRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(EnableRequest, self).__init__(**kwargs)
-        self.receiver_name = kwargs.get('receiver_name', None)
+        self.receiver_name = kwargs['receiver_name']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -532,11 +532,11 @@ class ItsmReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(ItsmReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.workspace_id = kwargs.get('workspace_id', None)
-        self.connection_id = kwargs.get('connection_id', None)
-        self.ticket_configuration = kwargs.get('ticket_configuration', None)
-        self.region = kwargs.get('region', None)
+        self.name = kwargs['name']
+        self.workspace_id = kwargs['workspace_id']
+        self.connection_id = kwargs['connection_id']
+        self.ticket_configuration = kwargs['ticket_configuration']
+        self.region = kwargs['region']
 
 
 class LogicAppReceiver(msrest.serialization.Model):
@@ -574,10 +574,10 @@ class LogicAppReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(LogicAppReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.callback_url = kwargs.get('callback_url', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.name = kwargs['name']
+        self.resource_id = kwargs['resource_id']
+        self.callback_url = kwargs['callback_url']
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']
 
 
 class MetricBaselinesResponse(msrest.serialization.Model):
@@ -625,8 +625,8 @@ class MetricSingleDimension(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricSingleDimension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = kwargs['name']
+        self.value = kwargs['value']
 
 
 class SingleBaseline(msrest.serialization.Model):
@@ -634,8 +634,8 @@ class SingleBaseline(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: 'Low',
-     'Medium', 'High'.
+    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: "Low",
+     "Medium", "High".
     :type sensitivity: str or ~$(python-base-namespace).v2019_03_01.models.BaselineSensitivity
     :param low_thresholds: Required. The low thresholds of the baseline.
     :type low_thresholds: list[float]
@@ -660,9 +660,9 @@ class SingleBaseline(msrest.serialization.Model):
         **kwargs
     ):
         super(SingleBaseline, self).__init__(**kwargs)
-        self.sensitivity = kwargs.get('sensitivity', None)
-        self.low_thresholds = kwargs.get('low_thresholds', None)
-        self.high_thresholds = kwargs.get('high_thresholds', None)
+        self.sensitivity = kwargs['sensitivity']
+        self.low_thresholds = kwargs['low_thresholds']
+        self.high_thresholds = kwargs['high_thresholds']
 
 
 class SingleMetricBaseline(msrest.serialization.Model):
@@ -714,13 +714,13 @@ class SingleMetricBaseline(msrest.serialization.Model):
         **kwargs
     ):
         super(SingleMetricBaseline, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.timespan = kwargs.get('timespan', None)
-        self.interval = kwargs.get('interval', None)
+        self.id = kwargs['id']
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+        self.timespan = kwargs['timespan']
+        self.interval = kwargs['interval']
         self.namespace = kwargs.get('namespace', None)
-        self.baselines = kwargs.get('baselines', None)
+        self.baselines = kwargs['baselines']
 
 
 class SmsReceiver(msrest.serialization.Model):
@@ -737,8 +737,8 @@ class SmsReceiver(msrest.serialization.Model):
     :type country_code: str
     :param phone_number: Required. The phone number of the SMS receiver.
     :type phone_number: str
-    :ivar status: The status of the receiver. Possible values include: 'NotSpecified', 'Enabled',
-     'Disabled'.
+    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
     """
 
@@ -761,9 +761,9 @@ class SmsReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(SmsReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.country_code = kwargs.get('country_code', None)
-        self.phone_number = kwargs.get('phone_number', None)
+        self.name = kwargs['name']
+        self.country_code = kwargs['country_code']
+        self.phone_number = kwargs['phone_number']
         self.status = None
 
 
@@ -803,10 +803,10 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         **kwargs
     ):
         super(TimeSeriesBaseline, self).__init__(**kwargs)
-        self.aggregation = kwargs.get('aggregation', None)
+        self.aggregation = kwargs['aggregation']
         self.dimensions = kwargs.get('dimensions', None)
-        self.timestamps = kwargs.get('timestamps', None)
-        self.data = kwargs.get('data', None)
+        self.timestamps = kwargs['timestamps']
+        self.data = kwargs['data']
         self.metadata = kwargs.get('metadata', None)
 
 
@@ -841,9 +841,9 @@ class VoiceReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(VoiceReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.country_code = kwargs.get('country_code', None)
-        self.phone_number = kwargs.get('phone_number', None)
+        self.name = kwargs['name']
+        self.country_code = kwargs['country_code']
+        self.phone_number = kwargs['phone_number']
 
 
 class WebhookReceiver(msrest.serialization.Model):
@@ -877,6 +877,6 @@ class WebhookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(WebhookReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.service_uri = kwargs.get('service_uri', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.name = kwargs['name']
+        self.service_uri = kwargs['service_uri']
+        self.use_common_alert_schema = kwargs['use_common_alert_schema']

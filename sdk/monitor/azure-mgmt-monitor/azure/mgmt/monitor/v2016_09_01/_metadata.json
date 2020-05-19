@@ -4,30 +4,39 @@
     "client": {
         "name": "MonitorClient",
         "filename": "_monitor_client",
-        "description": "Monitor Management Client.",
-        "has_subscription_id": false
+        "description": "Monitor Management Client."
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential"
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"],
-        "package_version": false,
-        "global_parameters": {
-            "method": {
-                "credential": {
-                    "method_signature": "credential,  # type: \"TokenCredential\"",
-                    "description": "Credential needed for the client to connect to Azure.",
-                    "docstring_type": "azure.core.credentials.TokenCredential",
-                    "required": true
-                }
-            },
-            "constant": {
-            }
-        }
+        "credential_scopes": ["https://management.azure.com/.default"]
     },
     "operation_groups": {
         "metrics": "MetricsOperations",
         "service_diagnostic_settings": "ServiceDiagnosticSettingsOperations"
     },
     "operation_mixins": {
-    }
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
 }

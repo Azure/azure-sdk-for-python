@@ -8,6 +8,11 @@
 
 from enum import Enum
 
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"
+
 class Sensitivity(str, Enum):
     """the sensitivity of the baseline.
     """
@@ -15,8 +20,3 @@ class Sensitivity(str, Enum):
     low = "Low"
     medium = "Medium"
     high = "High"
-
-class ResultType(str, Enum):
-
-    data = "Data"
-    metadata = "Metadata"

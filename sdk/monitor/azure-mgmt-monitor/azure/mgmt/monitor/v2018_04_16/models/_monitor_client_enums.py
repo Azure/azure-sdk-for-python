@@ -8,21 +8,15 @@
 
 from enum import Enum
 
-class Enabled(str, Enum):
-    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
+class AlertSeverity(str, Enum):
+    """Severity Level of Alert
     """
 
-    true = "true"
-    false = "false"
-
-class ProvisioningState(str, Enum):
-    """Provisioning state of the scheduled query rule
-    """
-
-    succeeded = "Succeeded"
-    deploying = "Deploying"
-    canceled = "Canceled"
-    failed = "Failed"
+    zero = "0"
+    one = "1"
+    two = "2"
+    three = "3"
+    four = "4"
 
 class ConditionalOperator(str, Enum):
     """Result Condition Evaluation criteria. Supported Values - 'GreaterThan' or 'LessThan' or
@@ -33,6 +27,13 @@ class ConditionalOperator(str, Enum):
     less_than = "LessThan"
     equal = "Equal"
 
+class Enabled(str, Enum):
+    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
+    """
+
+    true = "true"
+    false = "false"
+
 class MetricTriggerType(str, Enum):
     """Metric Trigger Evaluation Type
     """
@@ -40,12 +41,11 @@ class MetricTriggerType(str, Enum):
     consecutive = "Consecutive"
     total = "Total"
 
-class AlertSeverity(str, Enum):
-    """Severity Level of Alert
+class ProvisioningState(str, Enum):
+    """Provisioning state of the scheduled query rule
     """
 
-    zero = "0"
-    one = "1"
-    two = "2"
-    three = "3"
-    four = "4"
+    succeeded = "Succeeded"
+    deploying = "Deploying"
+    canceled = "Canceled"
+    failed = "Failed"

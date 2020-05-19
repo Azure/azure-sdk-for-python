@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class AutoscaleNotification(msrest.serialization.Model):
     """Autoscale notification.
@@ -430,8 +432,8 @@ class EventData(msrest.serialization.Model):
      'clientIpAddress' (IP address of the user who initiated the event) and 'method' (HTTP method
      e.g. PUT).
     :vartype http_request: ~$(python-base-namespace).v2015_04_01.models.HttpRequestInfo
-    :ivar level: the event level. Possible values include: 'Critical', 'Error', 'Warning',
-     'Informational', 'Verbose'.
+    :ivar level: the event level. Possible values include: "Critical", "Error", "Warning",
+     "Informational", "Verbose".
     :vartype level: str or ~$(python-base-namespace).v2015_04_01.models.EventLevel
     :ivar resource_group_name: the resource group name of the impacted resource.
     :vartype resource_group_name: str
@@ -674,19 +676,19 @@ class MetricTrigger(msrest.serialization.Model):
      1 minute.
     :type time_grain: ~datetime.timedelta
     :param statistic: Required. the metric statistic type. How the metrics from multiple instances
-     are combined. Possible values include: 'Average', 'Min', 'Max', 'Sum'.
+     are combined. Possible values include: "Average", "Min", "Max", "Sum".
     :type statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
     :param time_window: Required. the range of time in which instance data is collected. This value
      must be greater than the delay in metric collection, which can vary from resource-to-resource.
      Must be between 12 hours and 5 minutes.
     :type time_window: ~datetime.timedelta
     :param time_aggregation: Required. time aggregation type. How the data that is collected should
-     be combined over time. The default value is Average. Possible values include: 'Average',
-     'Minimum', 'Maximum', 'Total', 'Count', 'Last'.
+     be combined over time. The default value is Average. Possible values include: "Average",
+     "Minimum", "Maximum", "Total", "Count", "Last".
     :type time_aggregation: str or ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
     :param operator: Required. the operator that is used to compare the metric data and the
-     threshold. Possible values include: 'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanOrEqual',
-     'LessThan', 'LessThanOrEqual'.
+     threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+     "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
     :param threshold: Required. the threshold of the metric that triggers the scale action.
     :type threshold: float
@@ -829,8 +831,8 @@ class Recurrence(msrest.serialization.Model):
     :param frequency: Required. the recurrence frequency. How often the schedule profile should
      take effect. This value must be Week, meaning each week will have the same set of profiles. For
      example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-     property specifies that the schedule is repeated weekly. Possible values include: 'None',
-     'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'.
+     property specifies that the schedule is repeated weekly. Possible values include: "None",
+     "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
     :type frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
     :param schedule: Required. the scheduling constraints for when the profile begins.
     :type schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
@@ -940,10 +942,10 @@ class ScaleAction(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param direction: Required. the scale direction. Whether the scaling action increases or
-     decreases the number of instances. Possible values include: 'None', 'Increase', 'Decrease'.
+     decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
     :type direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
     :param type: Required. the type of action that should occur when the scale rule fires. Possible
-     values include: 'ChangeCount', 'PercentChangeCount', 'ExactCount'.
+     values include: "ChangeCount", "PercentChangeCount", "ExactCount".
     :type type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
     :param value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.

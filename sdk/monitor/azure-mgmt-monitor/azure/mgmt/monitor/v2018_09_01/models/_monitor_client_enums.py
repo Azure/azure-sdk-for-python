@@ -17,6 +17,11 @@ class ReceiverStatus(str, Enum):
     enabled = "Enabled"
     disabled = "Disabled"
 
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"
+
 class Sensitivity(str, Enum):
     """The sensitivity of the baseline.
     """
@@ -24,8 +29,3 @@ class Sensitivity(str, Enum):
     low = "Low"
     medium = "Medium"
     high = "High"
-
-class ResultType(str, Enum):
-
-    data = "Data"
-    metadata = "Metadata"

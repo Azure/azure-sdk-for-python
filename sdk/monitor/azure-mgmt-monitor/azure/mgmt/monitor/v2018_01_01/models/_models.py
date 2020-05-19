@@ -58,7 +58,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -97,9 +97,9 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds',
-     'Unspecified', 'Cores', 'MilliCores', 'NanoCores', 'BitsPerSecond'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2018_01_01.models.Unit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
@@ -126,11 +126,11 @@ class Metric(msrest.serialization.Model):
         **kwargs
     ):
         super(Metric, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.unit = kwargs.get('unit', None)
-        self.timeseries = kwargs.get('timeseries', None)
+        self.id = kwargs['id']
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+        self.unit = kwargs['unit']
+        self.timeseries = kwargs['timeseries']
 
 
 class MetricAvailability(msrest.serialization.Model):
@@ -169,13 +169,13 @@ class MetricDefinition(msrest.serialization.Model):
     :type namespace: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2018_01_01.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified',
-     'Cores', 'MilliCores', 'NanoCores', 'BitsPerSecond'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2018_01_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2018_01_01.models.AggregationType
     :param supported_aggregation_types: the collection of what aggregation types are supported.
@@ -244,7 +244,7 @@ class MetricDefinitionCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricDefinitionCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class MetricValue(msrest.serialization.Model):
@@ -285,7 +285,7 @@ class MetricValue(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricValue, self).__init__(**kwargs)
-        self.time_stamp = kwargs.get('time_stamp', None)
+        self.time_stamp = kwargs['time_stamp']
         self.average = kwargs.get('average', None)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
@@ -337,11 +337,11 @@ class Response(msrest.serialization.Model):
     ):
         super(Response, self).__init__(**kwargs)
         self.cost = kwargs.get('cost', None)
-        self.timespan = kwargs.get('timespan', None)
+        self.timespan = kwargs['timespan']
         self.interval = kwargs.get('interval', None)
         self.namespace = kwargs.get('namespace', None)
         self.resourceregion = kwargs.get('resourceregion', None)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class TimeSeriesElement(msrest.serialization.Model):

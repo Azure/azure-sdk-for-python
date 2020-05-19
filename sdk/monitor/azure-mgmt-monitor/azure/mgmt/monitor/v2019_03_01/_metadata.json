@@ -4,36 +4,51 @@
     "client": {
         "name": "MonitorClient",
         "filename": "_monitor_client",
-        "description": "Monitor Management Client.",
-        "has_subscription_id": true
+        "description": "Monitor Management Client."
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "method_signature": "subscription_id,  # type: str",
+                "description": "The Azure subscription Id.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "method_signature": "subscription_id,  # type: str",
+                "description": "The Azure subscription Id.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id"
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"],
-        "package_version": false,
-        "global_parameters": {
-            "method": {
-                "credential": {
-                    "method_signature": "credential,  # type: \"TokenCredential\"",
-                    "description": "Credential needed for the client to connect to Azure.",
-                    "docstring_type": "azure.core.credentials.TokenCredential",
-                    "required": true
-                },
-                "subscription_id": {
-                    "method_signature": "subscription_id,  # type: str",
-                    "description": "The Azure subscription Id.",
-                    "docstring_type": "str",
-                    "required": true
-                }
-            },
-            "constant": {
-            }
-        }
+        "credential_scopes": ["https://management.azure.com/.default"]
     },
     "operation_groups": {
         "action_groups": "ActionGroupsOperations",
         "baselines": "BaselinesOperations"
     },
     "operation_mixins": {
-    }
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
 }

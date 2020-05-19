@@ -51,7 +51,7 @@ class PrivateLinkScopesResource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -135,7 +135,7 @@ class AzureMonitorPrivateLinkScopeListResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureMonitorPrivateLinkScopeListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -503,8 +503,8 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
         **kwargs
     ):
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
+        self.status = kwargs['status']
+        self.description = kwargs['description']
         self.actions_required = None
 
 

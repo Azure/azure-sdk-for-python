@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from ._configuration import MonitorClientConfiguration
+from ._configuration_async import MonitorClientConfiguration
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
@@ -82,17 +82,17 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: "AsyncTokenCredential"
         subscription_id,  # type: str
         api_version=None,
         base_url=None,
         profile=KnownProfiles.default,
         **kwargs  # type: Any
-    ):
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = MonitorClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(MonitorClient, self).__init__(
             credential,
             self._config,
@@ -128,58 +128,58 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
            * 2019-10-17-preview: :mod:`v2019_10_17.models<azure.mgmt.eventhub.v2019_10_17.models>`
         """
         if api_version == '2015-04-01':
-            from .v2015_04_01 import models
+            from ..v2015_04_01 import models
             return models
         elif api_version == '2015-07-01':
-            from .v2015_07_01 import models
+            from ..v2015_07_01 import models
             return models
         elif api_version == '2016-03-01':
-            from .v2016_03_01 import models
+            from ..v2016_03_01 import models
             return models
         elif api_version == '2016-09-01':
-            from .v2016_09_01 import models
+            from ..v2016_09_01 import models
             return models
         elif api_version == '2017-03-01-preview':
-            from .v2017_03_01_preview import models
+            from ..v2017_03_01_preview import models
             return models
         elif api_version == '2017-04-01':
-            from .v2017_04_01 import models
+            from ..v2017_04_01 import models
             return models
         elif api_version == '2017-05-01-preview':
-            from .v2017_05_01_preview import models
+            from ..v2017_05_01_preview import models
             return models
         elif api_version == '2017-11-01-preview':
-            from .v2017_11_01_preview import models
+            from ..v2017_11_01_preview import models
             return models
         elif api_version == '2017-12-01-preview':
-            from .v2017_12_01_preview import models
+            from ..v2017_12_01_preview import models
             return models
         elif api_version == '2018-01-01':
-            from .v2018_01_01 import models
+            from ..v2018_01_01 import models
             return models
         elif api_version == '2018-03-01':
-            from .v2018_03_01 import models
+            from ..v2018_03_01 import models
             return models
         elif api_version == '2018-04-16':
-            from .v2018_04_16 import models
+            from ..v2018_04_16 import models
             return models
         elif api_version == '2018-06-01-preview':
-            from .v2018_06_01_preview import models
+            from ..v2018_06_01_preview import models
             return models
         elif api_version == '2018-09-01':
-            from .v2018_09_01 import models
+            from ..v2018_09_01 import models
             return models
         elif api_version == '2018-11-27-preview':
-            from .v2018_11_27_preview import models
+            from ..v2018_11_27_preview import models
             return models
         elif api_version == '2019-03-01':
-            from .v2019_03_01 import models
+            from ..v2019_03_01 import models
             return models
         elif api_version == '2019-06-01':
-            from .v2019_06_01 import models
+            from ..v2019_06_01 import models
             return models
         elif api_version == '2019-10-17-preview':
-            from .v2019_10_17 import models
+            from ..v2019_10_17 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -187,23 +187,23 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def action_groups(self):
         """Instance depends on the API version:
 
-           * 2017-04-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2017_04_01.operations.ActionGroupsOperations>`
-           * 2018-03-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2018_03_01.operations.ActionGroupsOperations>`
-           * 2018-09-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2018_09_01.operations.ActionGroupsOperations>`
-           * 2019-03-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2019_03_01.operations.ActionGroupsOperations>`
-           * 2019-06-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2019_06_01.operations.ActionGroupsOperations>`
+           * 2017-04-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.ActionGroupsOperations>`
+           * 2018-03-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2018_03_01.aio.operations_async.ActionGroupsOperations>`
+           * 2018-09-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2018_09_01.aio.operations_async.ActionGroupsOperations>`
+           * 2019-03-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2019_03_01.aio.operations_async.ActionGroupsOperations>`
+           * 2019-06-01: :class:`ActionGroupsOperations<azure.mgmt.eventhub.v2019_06_01.aio.operations_async.ActionGroupsOperations>`
         """
         api_version = self._get_api_version('action_groups')
         if api_version == '2017-04-01':
-            from .v2017_04_01.operations import ActionGroupsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import ActionGroupsOperations as OperationClass
         elif api_version == '2018-03-01':
-            from .v2018_03_01.operations import ActionGroupsOperations as OperationClass
+            from ..v2018_03_01.aio.operations_async import ActionGroupsOperations as OperationClass
         elif api_version == '2018-09-01':
-            from .v2018_09_01.operations import ActionGroupsOperations as OperationClass
+            from ..v2018_09_01.aio.operations_async import ActionGroupsOperations as OperationClass
         elif api_version == '2019-03-01':
-            from .v2019_03_01.operations import ActionGroupsOperations as OperationClass
+            from ..v2019_03_01.aio.operations_async import ActionGroupsOperations as OperationClass
         elif api_version == '2019-06-01':
-            from .v2019_06_01.operations import ActionGroupsOperations as OperationClass
+            from ..v2019_06_01.aio.operations_async import ActionGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -212,14 +212,14 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def activity_log_alerts(self):
         """Instance depends on the API version:
 
-           * 2017-03-01-preview: :class:`ActivityLogAlertsOperations<azure.mgmt.eventhub.v2017_03_01_preview.operations.ActivityLogAlertsOperations>`
-           * 2017-04-01: :class:`ActivityLogAlertsOperations<azure.mgmt.eventhub.v2017_04_01.operations.ActivityLogAlertsOperations>`
+           * 2017-03-01-preview: :class:`ActivityLogAlertsOperations<azure.mgmt.eventhub.v2017_03_01_preview.aio.operations_async.ActivityLogAlertsOperations>`
+           * 2017-04-01: :class:`ActivityLogAlertsOperations<azure.mgmt.eventhub.v2017_04_01.aio.operations_async.ActivityLogAlertsOperations>`
         """
         api_version = self._get_api_version('activity_log_alerts')
         if api_version == '2017-03-01-preview':
-            from .v2017_03_01_preview.operations import ActivityLogAlertsOperations as OperationClass
+            from ..v2017_03_01_preview.aio.operations_async import ActivityLogAlertsOperations as OperationClass
         elif api_version == '2017-04-01':
-            from .v2017_04_01.operations import ActivityLogAlertsOperations as OperationClass
+            from ..v2017_04_01.aio.operations_async import ActivityLogAlertsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -228,11 +228,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def activity_logs(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`ActivityLogsOperations<azure.mgmt.eventhub.v2015_04_01.operations.ActivityLogsOperations>`
+           * 2015-04-01: :class:`ActivityLogsOperations<azure.mgmt.eventhub.v2015_04_01.aio.operations_async.ActivityLogsOperations>`
         """
         api_version = self._get_api_version('activity_logs')
         if api_version == '2015-04-01':
-            from .v2015_04_01.operations import ActivityLogsOperations as OperationClass
+            from ..v2015_04_01.aio.operations_async import ActivityLogsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -241,11 +241,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def alert_rule_incidents(self):
         """Instance depends on the API version:
 
-           * 2016-03-01: :class:`AlertRuleIncidentsOperations<azure.mgmt.eventhub.v2016_03_01.operations.AlertRuleIncidentsOperations>`
+           * 2016-03-01: :class:`AlertRuleIncidentsOperations<azure.mgmt.eventhub.v2016_03_01.aio.operations_async.AlertRuleIncidentsOperations>`
         """
         api_version = self._get_api_version('alert_rule_incidents')
         if api_version == '2016-03-01':
-            from .v2016_03_01.operations import AlertRuleIncidentsOperations as OperationClass
+            from ..v2016_03_01.aio.operations_async import AlertRuleIncidentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -254,11 +254,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def alert_rules(self):
         """Instance depends on the API version:
 
-           * 2016-03-01: :class:`AlertRulesOperations<azure.mgmt.eventhub.v2016_03_01.operations.AlertRulesOperations>`
+           * 2016-03-01: :class:`AlertRulesOperations<azure.mgmt.eventhub.v2016_03_01.aio.operations_async.AlertRulesOperations>`
         """
         api_version = self._get_api_version('alert_rules')
         if api_version == '2016-03-01':
-            from .v2016_03_01.operations import AlertRulesOperations as OperationClass
+            from ..v2016_03_01.aio.operations_async import AlertRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -267,11 +267,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def autoscale_settings(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`AutoscaleSettingsOperations<azure.mgmt.eventhub.v2015_04_01.operations.AutoscaleSettingsOperations>`
+           * 2015-04-01: :class:`AutoscaleSettingsOperations<azure.mgmt.eventhub.v2015_04_01.aio.operations_async.AutoscaleSettingsOperations>`
         """
         api_version = self._get_api_version('autoscale_settings')
         if api_version == '2015-04-01':
-            from .v2015_04_01.operations import AutoscaleSettingsOperations as OperationClass
+            from ..v2015_04_01.aio.operations_async import AutoscaleSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -280,11 +280,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def baseline(self):
         """Instance depends on the API version:
 
-           * 2018-09-01: :class:`BaselineOperations<azure.mgmt.eventhub.v2018_09_01.operations.BaselineOperations>`
+           * 2018-09-01: :class:`BaselineOperations<azure.mgmt.eventhub.v2018_09_01.aio.operations_async.BaselineOperations>`
         """
         api_version = self._get_api_version('baseline')
         if api_version == '2018-09-01':
-            from .v2018_09_01.operations import BaselineOperations as OperationClass
+            from ..v2018_09_01.aio.operations_async import BaselineOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -293,11 +293,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def baselines(self):
         """Instance depends on the API version:
 
-           * 2019-03-01: :class:`BaselinesOperations<azure.mgmt.eventhub.v2019_03_01.operations.BaselinesOperations>`
+           * 2019-03-01: :class:`BaselinesOperations<azure.mgmt.eventhub.v2019_03_01.aio.operations_async.BaselinesOperations>`
         """
         api_version = self._get_api_version('baselines')
         if api_version == '2019-03-01':
-            from .v2019_03_01.operations import BaselinesOperations as OperationClass
+            from ..v2019_03_01.aio.operations_async import BaselinesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -306,11 +306,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def diagnostic_settings(self):
         """Instance depends on the API version:
 
-           * 2017-05-01-preview: :class:`DiagnosticSettingsOperations<azure.mgmt.eventhub.v2017_05_01_preview.operations.DiagnosticSettingsOperations>`
+           * 2017-05-01-preview: :class:`DiagnosticSettingsOperations<azure.mgmt.eventhub.v2017_05_01_preview.aio.operations_async.DiagnosticSettingsOperations>`
         """
         api_version = self._get_api_version('diagnostic_settings')
         if api_version == '2017-05-01-preview':
-            from .v2017_05_01_preview.operations import DiagnosticSettingsOperations as OperationClass
+            from ..v2017_05_01_preview.aio.operations_async import DiagnosticSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -319,11 +319,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def diagnostic_settings_category(self):
         """Instance depends on the API version:
 
-           * 2017-05-01-preview: :class:`DiagnosticSettingsCategoryOperations<azure.mgmt.eventhub.v2017_05_01_preview.operations.DiagnosticSettingsCategoryOperations>`
+           * 2017-05-01-preview: :class:`DiagnosticSettingsCategoryOperations<azure.mgmt.eventhub.v2017_05_01_preview.aio.operations_async.DiagnosticSettingsCategoryOperations>`
         """
         api_version = self._get_api_version('diagnostic_settings_category')
         if api_version == '2017-05-01-preview':
-            from .v2017_05_01_preview.operations import DiagnosticSettingsCategoryOperations as OperationClass
+            from ..v2017_05_01_preview.aio.operations_async import DiagnosticSettingsCategoryOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -332,11 +332,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def event_categories(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`EventCategoriesOperations<azure.mgmt.eventhub.v2015_04_01.operations.EventCategoriesOperations>`
+           * 2015-04-01: :class:`EventCategoriesOperations<azure.mgmt.eventhub.v2015_04_01.aio.operations_async.EventCategoriesOperations>`
         """
         api_version = self._get_api_version('event_categories')
         if api_version == '2015-04-01':
-            from .v2015_04_01.operations import EventCategoriesOperations as OperationClass
+            from ..v2015_04_01.aio.operations_async import EventCategoriesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -345,11 +345,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def guest_diagnostics_settings(self):
         """Instance depends on the API version:
 
-           * 2018-06-01-preview: :class:`GuestDiagnosticsSettingsOperations<azure.mgmt.eventhub.v2018_06_01_preview.operations.GuestDiagnosticsSettingsOperations>`
+           * 2018-06-01-preview: :class:`GuestDiagnosticsSettingsOperations<azure.mgmt.eventhub.v2018_06_01_preview.aio.operations_async.GuestDiagnosticsSettingsOperations>`
         """
         api_version = self._get_api_version('guest_diagnostics_settings')
         if api_version == '2018-06-01-preview':
-            from .v2018_06_01_preview.operations import GuestDiagnosticsSettingsOperations as OperationClass
+            from ..v2018_06_01_preview.aio.operations_async import GuestDiagnosticsSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -358,11 +358,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def guest_diagnostics_settings_association(self):
         """Instance depends on the API version:
 
-           * 2018-06-01-preview: :class:`GuestDiagnosticsSettingsAssociationOperations<azure.mgmt.eventhub.v2018_06_01_preview.operations.GuestDiagnosticsSettingsAssociationOperations>`
+           * 2018-06-01-preview: :class:`GuestDiagnosticsSettingsAssociationOperations<azure.mgmt.eventhub.v2018_06_01_preview.aio.operations_async.GuestDiagnosticsSettingsAssociationOperations>`
         """
         api_version = self._get_api_version('guest_diagnostics_settings_association')
         if api_version == '2018-06-01-preview':
-            from .v2018_06_01_preview.operations import GuestDiagnosticsSettingsAssociationOperations as OperationClass
+            from ..v2018_06_01_preview.aio.operations_async import GuestDiagnosticsSettingsAssociationOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -371,11 +371,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def log_profiles(self):
         """Instance depends on the API version:
 
-           * 2016-03-01: :class:`LogProfilesOperations<azure.mgmt.eventhub.v2016_03_01.operations.LogProfilesOperations>`
+           * 2016-03-01: :class:`LogProfilesOperations<azure.mgmt.eventhub.v2016_03_01.aio.operations_async.LogProfilesOperations>`
         """
         api_version = self._get_api_version('log_profiles')
         if api_version == '2016-03-01':
-            from .v2016_03_01.operations import LogProfilesOperations as OperationClass
+            from ..v2016_03_01.aio.operations_async import LogProfilesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -384,11 +384,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metric_alerts(self):
         """Instance depends on the API version:
 
-           * 2018-03-01: :class:`MetricAlertsOperations<azure.mgmt.eventhub.v2018_03_01.operations.MetricAlertsOperations>`
+           * 2018-03-01: :class:`MetricAlertsOperations<azure.mgmt.eventhub.v2018_03_01.aio.operations_async.MetricAlertsOperations>`
         """
         api_version = self._get_api_version('metric_alerts')
         if api_version == '2018-03-01':
-            from .v2018_03_01.operations import MetricAlertsOperations as OperationClass
+            from ..v2018_03_01.aio.operations_async import MetricAlertsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -397,11 +397,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metric_alerts_status(self):
         """Instance depends on the API version:
 
-           * 2018-03-01: :class:`MetricAlertsStatusOperations<azure.mgmt.eventhub.v2018_03_01.operations.MetricAlertsStatusOperations>`
+           * 2018-03-01: :class:`MetricAlertsStatusOperations<azure.mgmt.eventhub.v2018_03_01.aio.operations_async.MetricAlertsStatusOperations>`
         """
         api_version = self._get_api_version('metric_alerts_status')
         if api_version == '2018-03-01':
-            from .v2018_03_01.operations import MetricAlertsStatusOperations as OperationClass
+            from ..v2018_03_01.aio.operations_async import MetricAlertsStatusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -410,14 +410,14 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metric_baseline(self):
         """Instance depends on the API version:
 
-           * 2017-11-01-preview: :class:`MetricBaselineOperations<azure.mgmt.eventhub.v2017_11_01_preview.operations.MetricBaselineOperations>`
-           * 2018-09-01: :class:`MetricBaselineOperations<azure.mgmt.eventhub.v2018_09_01.operations.MetricBaselineOperations>`
+           * 2017-11-01-preview: :class:`MetricBaselineOperations<azure.mgmt.eventhub.v2017_11_01_preview.aio.operations_async.MetricBaselineOperations>`
+           * 2018-09-01: :class:`MetricBaselineOperations<azure.mgmt.eventhub.v2018_09_01.aio.operations_async.MetricBaselineOperations>`
         """
         api_version = self._get_api_version('metric_baseline')
         if api_version == '2017-11-01-preview':
-            from .v2017_11_01_preview.operations import MetricBaselineOperations as OperationClass
+            from ..v2017_11_01_preview.aio.operations_async import MetricBaselineOperations as OperationClass
         elif api_version == '2018-09-01':
-            from .v2018_09_01.operations import MetricBaselineOperations as OperationClass
+            from ..v2018_09_01.aio.operations_async import MetricBaselineOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -426,17 +426,17 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metric_definitions(self):
         """Instance depends on the API version:
 
-           * 2016-03-01: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2016_03_01.operations.MetricDefinitionsOperations>`
-           * 2017-05-01-preview: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2017_05_01_preview.operations.MetricDefinitionsOperations>`
-           * 2018-01-01: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2018_01_01.operations.MetricDefinitionsOperations>`
+           * 2016-03-01: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2016_03_01.aio.operations_async.MetricDefinitionsOperations>`
+           * 2017-05-01-preview: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2017_05_01_preview.aio.operations_async.MetricDefinitionsOperations>`
+           * 2018-01-01: :class:`MetricDefinitionsOperations<azure.mgmt.eventhub.v2018_01_01.aio.operations_async.MetricDefinitionsOperations>`
         """
         api_version = self._get_api_version('metric_definitions')
         if api_version == '2016-03-01':
-            from .v2016_03_01.operations import MetricDefinitionsOperations as OperationClass
+            from ..v2016_03_01.aio.operations_async import MetricDefinitionsOperations as OperationClass
         elif api_version == '2017-05-01-preview':
-            from .v2017_05_01_preview.operations import MetricDefinitionsOperations as OperationClass
+            from ..v2017_05_01_preview.aio.operations_async import MetricDefinitionsOperations as OperationClass
         elif api_version == '2018-01-01':
-            from .v2018_01_01.operations import MetricDefinitionsOperations as OperationClass
+            from ..v2018_01_01.aio.operations_async import MetricDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -445,11 +445,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metric_namespaces(self):
         """Instance depends on the API version:
 
-           * 2017-12-01-preview: :class:`MetricNamespacesOperations<azure.mgmt.eventhub.v2017_12_01_preview.operations.MetricNamespacesOperations>`
+           * 2017-12-01-preview: :class:`MetricNamespacesOperations<azure.mgmt.eventhub.v2017_12_01_preview.aio.operations_async.MetricNamespacesOperations>`
         """
         api_version = self._get_api_version('metric_namespaces')
         if api_version == '2017-12-01-preview':
-            from .v2017_12_01_preview.operations import MetricNamespacesOperations as OperationClass
+            from ..v2017_12_01_preview.aio.operations_async import MetricNamespacesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -458,17 +458,17 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def metrics(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`MetricsOperations<azure.mgmt.eventhub.v2016_09_01.operations.MetricsOperations>`
-           * 2017-05-01-preview: :class:`MetricsOperations<azure.mgmt.eventhub.v2017_05_01_preview.operations.MetricsOperations>`
-           * 2018-01-01: :class:`MetricsOperations<azure.mgmt.eventhub.v2018_01_01.operations.MetricsOperations>`
+           * 2016-09-01: :class:`MetricsOperations<azure.mgmt.eventhub.v2016_09_01.aio.operations_async.MetricsOperations>`
+           * 2017-05-01-preview: :class:`MetricsOperations<azure.mgmt.eventhub.v2017_05_01_preview.aio.operations_async.MetricsOperations>`
+           * 2018-01-01: :class:`MetricsOperations<azure.mgmt.eventhub.v2018_01_01.aio.operations_async.MetricsOperations>`
         """
         api_version = self._get_api_version('metrics')
         if api_version == '2016-09-01':
-            from .v2016_09_01.operations import MetricsOperations as OperationClass
+            from ..v2016_09_01.aio.operations_async import MetricsOperations as OperationClass
         elif api_version == '2017-05-01-preview':
-            from .v2017_05_01_preview.operations import MetricsOperations as OperationClass
+            from ..v2017_05_01_preview.aio.operations_async import MetricsOperations as OperationClass
         elif api_version == '2018-01-01':
-            from .v2018_01_01.operations import MetricsOperations as OperationClass
+            from ..v2018_01_01.aio.operations_async import MetricsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -477,11 +477,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`Operations<azure.mgmt.eventhub.v2015_04_01.operations.Operations>`
+           * 2015-04-01: :class:`Operations<azure.mgmt.eventhub.v2015_04_01.aio.operations_async.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-04-01':
-            from .v2015_04_01.operations import Operations as OperationClass
+            from ..v2015_04_01.aio.operations_async import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -490,11 +490,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2019-10-17-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2019_10_17.operations.PrivateEndpointConnectionsOperations>`
+           * 2019-10-17-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2019_10_17.aio.operations_async.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-10-17-preview':
-            from .v2019_10_17.operations import PrivateEndpointConnectionsOperations as OperationClass
+            from ..v2019_10_17.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -503,11 +503,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2019-10-17-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2019_10_17.operations.PrivateLinkResourcesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2019_10_17.aio.operations_async.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-10-17-preview':
-            from .v2019_10_17.operations import PrivateLinkResourcesOperations as OperationClass
+            from ..v2019_10_17.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -516,11 +516,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def private_link_scope_operation_status(self):
         """Instance depends on the API version:
 
-           * 2019-10-17-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.eventhub.v2019_10_17.operations.PrivateLinkScopeOperationStatusOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.eventhub.v2019_10_17.aio.operations_async.PrivateLinkScopeOperationStatusOperations>`
         """
         api_version = self._get_api_version('private_link_scope_operation_status')
         if api_version == '2019-10-17-preview':
-            from .v2019_10_17.operations import PrivateLinkScopeOperationStatusOperations as OperationClass
+            from ..v2019_10_17.aio.operations_async import PrivateLinkScopeOperationStatusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -529,11 +529,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def private_link_scoped_resources(self):
         """Instance depends on the API version:
 
-           * 2019-10-17-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.eventhub.v2019_10_17.operations.PrivateLinkScopedResourcesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.eventhub.v2019_10_17.aio.operations_async.PrivateLinkScopedResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_scoped_resources')
         if api_version == '2019-10-17-preview':
-            from .v2019_10_17.operations import PrivateLinkScopedResourcesOperations as OperationClass
+            from ..v2019_10_17.aio.operations_async import PrivateLinkScopedResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -542,11 +542,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def private_link_scopes(self):
         """Instance depends on the API version:
 
-           * 2019-10-17-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.eventhub.v2019_10_17.operations.PrivateLinkScopesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.eventhub.v2019_10_17.aio.operations_async.PrivateLinkScopesOperations>`
         """
         api_version = self._get_api_version('private_link_scopes')
         if api_version == '2019-10-17-preview':
-            from .v2019_10_17.operations import PrivateLinkScopesOperations as OperationClass
+            from ..v2019_10_17.aio.operations_async import PrivateLinkScopesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -555,11 +555,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def scheduled_query_rules(self):
         """Instance depends on the API version:
 
-           * 2018-04-16: :class:`ScheduledQueryRulesOperations<azure.mgmt.eventhub.v2018_04_16.operations.ScheduledQueryRulesOperations>`
+           * 2018-04-16: :class:`ScheduledQueryRulesOperations<azure.mgmt.eventhub.v2018_04_16.aio.operations_async.ScheduledQueryRulesOperations>`
         """
         api_version = self._get_api_version('scheduled_query_rules')
         if api_version == '2018-04-16':
-            from .v2018_04_16.operations import ScheduledQueryRulesOperations as OperationClass
+            from ..v2018_04_16.aio.operations_async import ScheduledQueryRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -568,14 +568,14 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def service_diagnostic_settings(self):
         """Instance depends on the API version:
 
-           * 2015-07-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.eventhub.v2015_07_01.operations.ServiceDiagnosticSettingsOperations>`
-           * 2016-09-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.eventhub.v2016_09_01.operations.ServiceDiagnosticSettingsOperations>`
+           * 2015-07-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.eventhub.v2015_07_01.aio.operations_async.ServiceDiagnosticSettingsOperations>`
+           * 2016-09-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.eventhub.v2016_09_01.aio.operations_async.ServiceDiagnosticSettingsOperations>`
         """
         api_version = self._get_api_version('service_diagnostic_settings')
         if api_version == '2015-07-01':
-            from .v2015_07_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
+            from ..v2015_07_01.aio.operations_async import ServiceDiagnosticSettingsOperations as OperationClass
         elif api_version == '2016-09-01':
-            from .v2016_09_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
+            from ..v2016_09_01.aio.operations_async import ServiceDiagnosticSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -584,11 +584,11 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def tenant_activity_logs(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`TenantActivityLogsOperations<azure.mgmt.eventhub.v2015_04_01.operations.TenantActivityLogsOperations>`
+           * 2015-04-01: :class:`TenantActivityLogsOperations<azure.mgmt.eventhub.v2015_04_01.aio.operations_async.TenantActivityLogsOperations>`
         """
         api_version = self._get_api_version('tenant_activity_logs')
         if api_version == '2015-04-01':
-            from .v2015_04_01.operations import TenantActivityLogsOperations as OperationClass
+            from ..v2015_04_01.aio.operations_async import TenantActivityLogsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -597,19 +597,19 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
     def vm_insights(self):
         """Instance depends on the API version:
 
-           * 2018-11-27-preview: :class:`VMInsightsOperations<azure.mgmt.eventhub.v2018_11_27_preview.operations.VMInsightsOperations>`
+           * 2018-11-27-preview: :class:`VMInsightsOperations<azure.mgmt.eventhub.v2018_11_27_preview.aio.operations_async.VMInsightsOperations>`
         """
         api_version = self._get_api_version('vm_insights')
         if api_version == '2018-11-27-preview':
-            from .v2018_11_27_preview.operations import VMInsightsOperations as OperationClass
+            from ..v2018_11_27_preview.aio.operations_async import VMInsightsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
-    def close(self):
-        self._client.close()
-    def __enter__(self):
-        self._client.__enter__()
+    async def close(self):
+        await self._client.close()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
-    def __exit__(self, *exc_details):
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details):
+        await self._client.__aexit__(*exc_details)

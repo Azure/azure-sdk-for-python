@@ -8,12 +8,28 @@
 
 from enum import Enum
 
+class AggregationType(str, Enum):
+    """the primary aggregation type value defining how to use the values for display.
+    """
+
+    none = "None"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
 class CategoryType(str, Enum):
     """The type of the diagnostic settings category.
     """
 
     metrics = "Metrics"
     logs = "Logs"
+
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"
 
 class Unit(str, Enum):
     """the unit of the metric.
@@ -28,19 +44,3 @@ class Unit(str, Enum):
     milli_seconds = "MilliSeconds"
     byte_seconds = "ByteSeconds"
     unspecified = "Unspecified"
-
-class AggregationType(str, Enum):
-    """the primary aggregation type value defining how to use the values for display.
-    """
-
-    none = "None"
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-
-class ResultType(str, Enum):
-
-    data = "Data"
-    metadata = "Metadata"

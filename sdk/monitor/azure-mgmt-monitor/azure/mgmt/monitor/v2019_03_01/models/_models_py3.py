@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class ActionGroupList(msrest.serialization.Model):
     """A list of action groups.
@@ -463,8 +465,8 @@ class EmailReceiver(msrest.serialization.Model):
     :type email_address: str
     :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
-    :ivar status: The receiver status of the e-mail. Possible values include: 'NotSpecified',
-     'Enabled', 'Disabled'.
+    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
+     "Enabled", "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
     """
 
@@ -710,8 +712,8 @@ class SingleBaseline(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: 'Low',
-     'Medium', 'High'.
+    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: "Low",
+     "Medium", "High".
     :type sensitivity: str or ~$(python-base-namespace).v2019_03_01.models.BaselineSensitivity
     :param low_thresholds: Required. The low thresholds of the baseline.
     :type low_thresholds: list[float]
@@ -825,8 +827,8 @@ class SmsReceiver(msrest.serialization.Model):
     :type country_code: str
     :param phone_number: Required. The phone number of the SMS receiver.
     :type phone_number: str
-    :ivar status: The status of the receiver. Possible values include: 'NotSpecified', 'Enabled',
-     'Disabled'.
+    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
     """
 
