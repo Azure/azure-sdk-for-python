@@ -53,6 +53,34 @@ class AdultInfo(Model):
         self.gore_score = gore_score
 
 
+class AnalyzeResults(Model):
+    """Analyze batch operation result.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param version: Required. Version of schema used for this result.
+    :type version: str
+    :param read_results: Required. Text extracted from the input.
+    :type read_results:
+     list[~azure.cognitiveservices.vision.computervision.models.ReadResult]
+    """
+
+    _validation = {
+        'version': {'required': True},
+        'read_results': {'required': True},
+    }
+
+    _attribute_map = {
+        'version': {'key': 'version', 'type': 'str'},
+        'read_results': {'key': 'readResults', 'type': '[ReadResult]'},
+    }
+
+    def __init__(self, *, version: str, read_results, **kwargs) -> None:
+        super(AnalyzeResults, self).__init__(**kwargs)
+        self.version = version
+        self.read_results = read_results
+
+
 class AreaOfInterestResult(Model):
     """Result of AreaOfInterest operation.
 
@@ -767,23 +795,36 @@ class LandmarksModel(Model):
 class Line(Model):
     """An object representing a recognized text line.
 
-    :param bounding_box: Bounding box of a recognized line.
+    All required parameters must be populated in order to send to Azure.
+
+    :param language: The BCP-47 language code of the recognized text line.
+     Only provided where the language of the line differs from the page's.
+    :type language: str
+    :param bounding_box: Required. Bounding box of a recognized line.
     :type bounding_box: list[float]
-    :param text: The text content of the line.
+    :param text: Required. The text content of the line.
     :type text: str
-    :param words: List of words in the text line.
+    :param words: Required. List of words in the text line.
     :type words:
      list[~azure.cognitiveservices.vision.computervision.models.Word]
     """
 
+    _validation = {
+        'bounding_box': {'required': True},
+        'text': {'required': True},
+        'words': {'required': True},
+    }
+
     _attribute_map = {
+        'language': {'key': 'language', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'text': {'key': 'text', 'type': 'str'},
         'words': {'key': 'words', 'type': '[Word]'},
     }
 
-    def __init__(self, *, bounding_box=None, text: str=None, words=None, **kwargs) -> None:
+    def __init__(self, *, bounding_box, text: str, words, language: str=None, **kwargs) -> None:
         super(Line, self).__init__(**kwargs)
+        self.language = language
         self.bounding_box = bounding_box
         self.text = text
         self.words = words
@@ -989,24 +1030,91 @@ class ReadOperationResult(Model):
     """OCR result of the read operation.
 
     :param status: Status of the read operation. Possible values include:
-     'NotStarted', 'Running', 'Failed', 'Succeeded'
+     'notStarted', 'running', 'failed', 'succeeded'
     :type status: str or
-     ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
-    :param recognition_results: An array of text recognition result of the
-     read operation.
-    :type recognition_results:
-     list[~azure.cognitiveservices.vision.computervision.models.TextRecognitionResult]
+     ~azure.cognitiveservices.vision.computervision.models.OperationStatusCodes
+    :param created_date_time: Get UTC date time the batch operation was
+     submitted.
+    :type created_date_time: str
+    :param last_updated_date_time: Get last updated UTC date time of this
+     batch operation.
+    :type last_updated_date_time: str
+    :param analyze_result: Analyze batch operation result.
+    :type analyze_result:
+     ~azure.cognitiveservices.vision.computervision.models.AnalyzeResults
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'TextOperationStatusCodes'},
-        'recognition_results': {'key': 'recognitionResults', 'type': '[TextRecognitionResult]'},
+        'status': {'key': 'status', 'type': 'OperationStatusCodes'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'str'},
+        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'str'},
+        'analyze_result': {'key': 'analyzeResult', 'type': 'AnalyzeResults'},
     }
 
-    def __init__(self, *, status=None, recognition_results=None, **kwargs) -> None:
+    def __init__(self, *, status=None, created_date_time: str=None, last_updated_date_time: str=None, analyze_result=None, **kwargs) -> None:
         super(ReadOperationResult, self).__init__(**kwargs)
         self.status = status
-        self.recognition_results = recognition_results
+        self.created_date_time = created_date_time
+        self.last_updated_date_time = last_updated_date_time
+        self.analyze_result = analyze_result
+
+
+class ReadResult(Model):
+    """Text extracted from a page in the input document.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param page: Required. The 1-based page number of the recognition result.
+    :type page: int
+    :param language: The BCP-47 language code of the recognized text page.
+    :type language: str
+    :param angle: Required. The orientation of the image in degrees in the
+     clockwise direction. Range between [-180, 180).
+    :type angle: float
+    :param width: Required. The width of the image in pixels or the PDF in
+     inches.
+    :type width: float
+    :param height: Required. The height of the image in pixels or the PDF in
+     inches.
+    :type height: float
+    :param unit: Required. The unit used in the Width, Height and BoundingBox.
+     For images, the unit is 'pixel'. For PDF, the unit is 'inch'. Possible
+     values include: 'pixel', 'inch'
+    :type unit: str or
+     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultDimensionUnit
+    :param lines: Required. A list of recognized text lines.
+    :type lines:
+     list[~azure.cognitiveservices.vision.computervision.models.Line]
+    """
+
+    _validation = {
+        'page': {'required': True},
+        'angle': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
+        'unit': {'required': True},
+        'lines': {'required': True},
+    }
+
+    _attribute_map = {
+        'page': {'key': 'page', 'type': 'int'},
+        'language': {'key': 'language', 'type': 'str'},
+        'angle': {'key': 'angle', 'type': 'float'},
+        'width': {'key': 'width', 'type': 'float'},
+        'height': {'key': 'height', 'type': 'float'},
+        'unit': {'key': 'unit', 'type': 'TextRecognitionResultDimensionUnit'},
+        'lines': {'key': 'lines', 'type': '[Line]'},
+    }
+
+    def __init__(self, *, page: int, angle: float, width: float, height: float, unit, lines, language: str=None, **kwargs) -> None:
+        super(ReadResult, self).__init__(**kwargs)
+        self.page = page
+        self.language = language
+        self.angle = angle
+        self.width = width
+        self.height = height
+        self.unit = unit
+        self.lines = lines
 
 
 class TagResult(Model):
@@ -1036,76 +1144,6 @@ class TagResult(Model):
         self.metadata = metadata
 
 
-class TextOperationResult(Model):
-    """Result of recognition text operation.
-
-    :param status: Status of the text operation. Possible values include:
-     'NotStarted', 'Running', 'Failed', 'Succeeded'
-    :type status: str or
-     ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
-    :param recognition_result: Text recognition result of the text operation.
-    :type recognition_result:
-     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResult
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'TextOperationStatusCodes'},
-        'recognition_result': {'key': 'recognitionResult', 'type': 'TextRecognitionResult'},
-    }
-
-    def __init__(self, *, status=None, recognition_result=None, **kwargs) -> None:
-        super(TextOperationResult, self).__init__(**kwargs)
-        self.status = status
-        self.recognition_result = recognition_result
-
-
-class TextRecognitionResult(Model):
-    """An object representing a recognized text region.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param page: The 1-based page number of the recognition result.
-    :type page: int
-    :param clockwise_orientation: The orientation of the image in degrees in
-     the clockwise direction. Range between [0, 360).
-    :type clockwise_orientation: float
-    :param width: The width of the image in pixels or the PDF in inches.
-    :type width: float
-    :param height: The height of the image in pixels or the PDF in inches.
-    :type height: float
-    :param unit: The unit used in the Width, Height and BoundingBox. For
-     images, the unit is 'pixel'. For PDF, the unit is 'inch'. Possible values
-     include: 'pixel', 'inch'
-    :type unit: str or
-     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultDimensionUnit
-    :param lines: Required. A list of recognized text lines.
-    :type lines:
-     list[~azure.cognitiveservices.vision.computervision.models.Line]
-    """
-
-    _validation = {
-        'lines': {'required': True},
-    }
-
-    _attribute_map = {
-        'page': {'key': 'page', 'type': 'int'},
-        'clockwise_orientation': {'key': 'clockwiseOrientation', 'type': 'float'},
-        'width': {'key': 'width', 'type': 'float'},
-        'height': {'key': 'height', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'TextRecognitionResultDimensionUnit'},
-        'lines': {'key': 'lines', 'type': '[Line]'},
-    }
-
-    def __init__(self, *, lines, page: int=None, clockwise_orientation: float=None, width: float=None, height: float=None, unit=None, **kwargs) -> None:
-        super(TextRecognitionResult, self).__init__(**kwargs)
-        self.page = page
-        self.clockwise_orientation = clockwise_orientation
-        self.width = width
-        self.height = height
-        self.unit = unit
-        self.lines = lines
-
-
 class Word(Model):
     """An object representing a recognized word.
 
@@ -1115,24 +1153,23 @@ class Word(Model):
     :type bounding_box: list[float]
     :param text: Required. The text content of the word.
     :type text: str
-    :param confidence: Qualitative confidence measure. Possible values
-     include: 'High', 'Low'
-    :type confidence: str or
-     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultConfidenceClass
+    :param confidence: Required. Qualitative confidence measure.
+    :type confidence: float
     """
 
     _validation = {
         'bounding_box': {'required': True},
         'text': {'required': True},
+        'confidence': {'required': True},
     }
 
     _attribute_map = {
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'text': {'key': 'text', 'type': 'str'},
-        'confidence': {'key': 'confidence', 'type': 'TextRecognitionResultConfidenceClass'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, *, bounding_box, text: str, confidence=None, **kwargs) -> None:
+    def __init__(self, *, bounding_box, text: str, confidence: float, **kwargs) -> None:
         super(Word, self).__init__(**kwargs)
         self.bounding_box = bounding_box
         self.text = text

@@ -143,7 +143,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -207,7 +207,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -373,7 +373,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )

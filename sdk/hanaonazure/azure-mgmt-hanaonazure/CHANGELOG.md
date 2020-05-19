@@ -1,5 +1,28 @@
 # Release History
 
+## 0.14.0 (2020-05-14)
+
+**Features**
+
+  - Model SapMonitor has a new parameter sap_monitor_collector_version
+  - Model SapMonitor has a new parameter monitor_subnet
+  - Added operation group ProviderInstancesOperations
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter tags
+  - Model Resource no longer has parameter location
+  - Model SapMonitor no longer has parameter key_vault_id
+  - Model SapMonitor no longer has parameter hana_db_password_key_vault_url
+  - Model SapMonitor no longer has parameter hana_db_name
+  - Model SapMonitor no longer has parameter hana_db_credentials_msi_id
+  - Model SapMonitor no longer has parameter hana_hostname
+  - Model SapMonitor no longer has parameter hana_db_username
+  - Model SapMonitor no longer has parameter hana_db_password
+  - Model SapMonitor no longer has parameter hana_subnet
+  - Model SapMonitor no longer has parameter hana_db_sql_port
+  - Removed operation group HanaInstancesOperations
+
 ## 0.13.0 (2020-02-13)
 
 **Features**

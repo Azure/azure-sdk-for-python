@@ -92,6 +92,14 @@ class EventChannelProvisioningState(str, Enum):
     failed = "Failed"
 
 
+class PartnerTopicReadinessState(str, Enum):
+
+    not_activated_by_user_yet = "NotActivatedByUserYet"
+    activated_by_user = "ActivatedByUser"
+    deactivated_by_user = "DeactivatedByUser"
+    deleted_by_user = "DeletedByUser"
+
+
 class EventSubscriptionProvisioningState(str, Enum):
 
     creating = "Creating"

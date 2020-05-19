@@ -36,7 +36,7 @@ class RecognizeReceiptsSample(object):
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
         with open("sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
-            poller = form_recognizer_client.begin_recognize_receipts(stream=f)
+            poller = form_recognizer_client.begin_recognize_receipts(receipt=f)
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):

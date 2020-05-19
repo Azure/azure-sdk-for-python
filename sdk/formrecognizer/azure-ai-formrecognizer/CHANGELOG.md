@@ -7,12 +7,22 @@
 - `training_files` parameter of `begin_train_model` is renamed to `training_files_url`
 - `use_labels` parameter of `begin_train_model` is renamed to `use_training_labels`
 - `list_model_infos` method has been renamed to `list_custom_models`
+- Removed `get_form_training_client` from `FormRecognizerClient`
+- Added `get_form_recognizer_client` to `FormTrainingClient`
+- A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_train_model()` or `train_model()` methods
+- `PageRange` is renamed to `FormPageRange`
+- `FormField` does not have a page_number.
+- `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
+- `USReceiptType` is renamed to `ReceiptType`
+- `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively.
+For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
+
+
 
 **New features**
 
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
-
 
 ## 1.0.0b2 (2020-05-06)
 

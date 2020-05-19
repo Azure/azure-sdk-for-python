@@ -8,6 +8,7 @@ import pytest
 
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
+from azure.core.credentials import AzureKeyCredential
 
 class TestAuth(TextAnalyticsTest):
     @pytest.mark.live_test_only
@@ -37,3 +38,8 @@ class TestAuth(TextAnalyticsTest):
     def test_none_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ValueError):
             text_analytics = TextAnalyticsClient(text_analytics_account, None)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_none_endpoint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ValueError):
+            text_analytics = TextAnalyticsClient(None, AzureKeyCredential(text_analytics_account_key))

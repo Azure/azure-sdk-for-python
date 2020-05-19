@@ -37,18 +37,16 @@ class GetBoundingBoxesSample(object):
 
     def get_bounding_boxes(self):
         from azure.ai.formrecognizer import FormWord, FormLine
-        # [START create_form_recognizer_client]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
-        # [END create_form_recognizer_client]
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
-                model_id=self.model_id, stream=f, include_text_content=True
+                model_id=self.model_id, form=f, include_text_content=True
             )
         forms = poller.result()
 
