@@ -24,9 +24,11 @@ from .operations import OperationStatusesOperations
 from .operations import SharedKeysOperations
 from .operations import UsagesOperations
 from .operations import WorkspacesOperations
+from .operations import DeletedWorkspacesOperations
 from .operations import ClustersOperations
 from .operations import StorageInsightConfigsOperations
 from .operations import SavedSearchesOperations
+from .operations import AvailableServiceTiersOperations
 from .operations import GatewaysOperations
 from .operations import SchemaOperations
 from .operations import WorkspacePurgeOperations
@@ -61,12 +63,16 @@ class LogAnalyticsManagementClient(SDKClient):
     :vartype usages: azure.mgmt.loganalytics.operations.UsagesOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar deleted_workspaces: DeletedWorkspaces operations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
     :ivar storage_insight_configs: StorageInsightConfigs operations
     :vartype storage_insight_configs: azure.mgmt.loganalytics.operations.StorageInsightConfigsOperations
     :ivar saved_searches: SavedSearches operations
     :vartype saved_searches: azure.mgmt.loganalytics.operations.SavedSearchesOperations
+    :ivar available_service_tiers: AvailableServiceTiers operations
+    :vartype available_service_tiers: azure.mgmt.loganalytics.operations.AvailableServiceTiersOperations
     :ivar gateways: Gateways operations
     :vartype gateways: azure.mgmt.loganalytics.operations.GatewaysOperations
     :ivar schema: Schema operations
@@ -115,11 +121,15 @@ class LogAnalyticsManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.deleted_workspaces = DeletedWorkspacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_insight_configs = StorageInsightConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.saved_searches = SavedSearchesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_service_tiers = AvailableServiceTiersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gateways = GatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
