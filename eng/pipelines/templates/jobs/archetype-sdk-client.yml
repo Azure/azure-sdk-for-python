@@ -8,18 +8,6 @@ parameters:
   InjectedPackages: ''
   BuildDocs: true
   TestMatrix:
-    Linux_Python27:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '2.7'
-      CoverageArg: ''
-      RunForPR: true
-    Linux_Python35:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.5'
-      CoverageArg: ''
-      RunForPR: false
     Linux_Python36:
       OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
@@ -49,7 +37,7 @@ parameters:
       OSVmImage: 'macOS-10.15'
       PythonVersion: '2.7'
       CoverageArg: ''
-      RunForPR: false
+      RunForPR: true
     Linux_pypy3:
       OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
