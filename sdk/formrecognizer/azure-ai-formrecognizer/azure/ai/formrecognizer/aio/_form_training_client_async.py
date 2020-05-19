@@ -263,13 +263,13 @@ class FormTrainingClient(object):
             resource_region: str,
             **kwargs: Any
     ) -> Dict[str, Union[str, int]]:
-        """Generate authorization for copying a model into the target Form Recognizer resource.
+        """Generate authorization for copying a custom model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
         and the output can be passed as the `target` parameter into :func:`~copy_model()`.
 
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
-        :param str resource_region: Location of the target Azure resource. A valid Azure
+        :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
             region name supported by Cognitive Services.
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".

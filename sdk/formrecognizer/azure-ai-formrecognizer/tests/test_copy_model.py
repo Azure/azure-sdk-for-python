@@ -78,3 +78,15 @@ class TestCopyModel(FormRecognizerTest):
         self.assertEqual(copy.status, actual.status)
         self.assertEqual(copy.last_modified, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer(copy=True)
+    def test_copy_authorization(self, client, container_sas_url, location, resource_id):
+
+        target = client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
+
+        self.assertIsNotNone(target["modelId"])
+        self.assertIsNotNone(target["accessToken"])
+        self.assertIsNotNone(target["expirationDateTimeTicks"])
+        self.assertEqual(target["resourceRegion"], "eastus")
+        self.assertEqual(target["resourceId"], resource_id)
