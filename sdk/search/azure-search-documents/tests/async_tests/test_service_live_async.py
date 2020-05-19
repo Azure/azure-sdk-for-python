@@ -24,17 +24,16 @@ from azure.search.documents import(
     AnalyzeResult,
     CorsOptions,
     EntityRecognitionSkill,
-    Field,
-    Index,
+    SearchIndex,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchServiceClient,
     ScoringProfile,
-    Skillset,
+    SearchIndexerSkillset,
     DataSourceCredentials,
-    DataSource,
-    DataContainer,
-    Indexer,
+    SearchIndexerDataSource,
+    SearchIndexerDataContainer,
+    SearchIndexer,
     SynonymMap,
     SimpleField,
     edm
@@ -143,7 +142,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = Index(
+        index = SearchIndex(
             name=name,
             fields=fields,
             scoring_profiles=scoring_profiles,
@@ -173,7 +172,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = Index(
+        index = SearchIndex(
             name=name,
             fields=fields,
             scoring_profiles=scoring_profiles,
@@ -196,7 +195,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
-        index = Index(
+        index = SearchIndex(
             name=name,
             fields=fields,
             scoring_profiles=scoring_profiles,
@@ -211,7 +210,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         )
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
-        index = Index(
+        index = SearchIndex(
             name=name,
             fields=fields,
             scoring_profiles=scoring_profiles,
@@ -245,7 +244,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = Index(
+        index = SearchIndex(
             name=name,
             fields=fields,
             scoring_profiles=scoring_profiles,
@@ -379,7 +378,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         result = await client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert isinstance(result, Skillset)
+        assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc"
         assert result.e_tag
@@ -430,7 +429,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
-        assert isinstance(result, Skillset)
+        assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc"
         assert result.e_tag
@@ -448,7 +447,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         await client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
         result = await client.get_skillsets()
         assert isinstance(result, list)
-        assert all(isinstance(x, Skillset) for x in result)
+        assert all(isinstance(x, SearchIndexerSkillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -463,7 +462,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
-        assert isinstance(result, Skillset)
+        assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
@@ -479,7 +478,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
-        assert isinstance(result, Skillset)
+        assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
@@ -505,8 +504,8 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
     def _create_datasource(self, name="sample-datasource"):
         credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
-        container = DataContainer(name='searchcontainer')
-        data_source = DataSource(
+        container = SearchIndexerDataContainer(name='searchcontainer')
+        data_source = SearchIndexerDataSource(
             name=name,
             type="azureblob",
             credentials=credentials,
@@ -611,8 +610,8 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
         self.scrubber.register_name_pair(con_str, 'connection_string')
         credentials = DataSourceCredentials(connection_string=con_str)
-        container = DataContainer(name='searchcontainer')
-        data_source = DataSource(
+        container = SearchIndexerDataContainer(name='searchcontainer')
+        data_source = SearchIndexerDataSource(
             name=ds_name,
             type="azureblob",
             credentials=credentials,
@@ -630,10 +629,10 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
           "key": True,
           "searchable": False
         }]
-        index = Index(name=index_name, fields=fields)
+        index = SearchIndex(name=index_name, fields=fields)
         ind_client = client.get_indexes_client()
         ind = await ind_client.create_index(index)
-        return Indexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
+        return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
