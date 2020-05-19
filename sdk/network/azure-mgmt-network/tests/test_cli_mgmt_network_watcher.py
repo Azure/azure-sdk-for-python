@@ -22,7 +22,7 @@
 #  network_virtual_appliances: 0/6  # TODO: (InvalidResourceType) The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-03-01'
 #  flow_logs: 3/3
 #  packet_captures: 6/6  
-#  connection_monitors: 0/9 # TODO: need old api_version
+#  connection_monitors: 9/9
 #  security_rules: 4/4
 #  default_security_rules: 2/2
 
@@ -40,10 +40,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
-        # self.mgmt_client_v190601 = self.create_mgmt_client(
-        #     azure.mgmt.network.NetworkManagementClient,
-        #     api_version="2019-06-01"
-        # )
+        self.mgmt_client_v190601 = self.create_mgmt_client(
+            azure.mgmt.network.NetworkManagementClient,
+            api_version="2019-06-01"
+        )
         if self.is_live:
             from azure.mgmt.compute import ComputeManagementClient
             self.compute_client = self.create_mgmt_client(
@@ -455,7 +455,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @unittest.skip("need use api_version 2019-06-01")
+    # @unittest.skip("need use api_version 2019-06-01")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_monitor(self, resource_group):
 
