@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import os
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from devtools_testutils import (
@@ -37,7 +36,7 @@ class TextAnalyticsTest(AzureTestCase):
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT_STABLE")
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
@@ -87,20 +86,14 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
         )
 
     def create_resource(self, name, **kwargs):
-        if self.is_live:
-            return {
-                'location': 'westus2',
-                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-                'text_analytics_account': os.environ['AZURE_TEXT_ANALYTICS_ENDPOINT'],
-                'text_analytics_account_key': os.environ['AZURE_TEXT_ANALYTICS_KEY'],
-            }
-        else:
-            return {
-                'location': 'westus2',
-                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-                'text_analytics_account': "https://westus2.ppe.cognitiveservices.azure.com",
-                'text_analytics_account_key': "fake_key",
-            }
+        text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
+
+        return {
+            'location': 'westus2',
+            'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
+            'text_analytics_account': text_analytics_account,
+            'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
+        }
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
@@ -135,7 +128,7 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 def text_analytics_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog')
+    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog', location='CentralUSEUAP')
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)

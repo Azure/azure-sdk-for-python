@@ -20,7 +20,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"Japanese","iso6391Name":"ja","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
@@ -28,13 +28,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - f2ffc86c-67fb-4b80-9ceb-14dc4ae6d30d
+      - e1764721-13c9-42ea-b3bb-d61c7bdb8281
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Mon, 18 May 2020 15:13:14 GMT
+      - Tue, 19 May 2020 15:32:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '8'
     status:
       code: 200
       message: OK
