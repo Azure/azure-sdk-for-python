@@ -20,12 +20,13 @@ from azure.storage.blob._deserialize import deserialize_ors_policies
 class StorageObjectReplicationTest(StorageTestCase):
     SRC_CONTAINER = "test1"
     DST_CONTAINER = "test2"
-    # BLOB_NAME = "pythonorstest"
     BLOB_NAME = "bla.txt"
 
     # -- Test cases for Object Replication enabled account ----------------------------------------------
     # TODO the tests will temporarily use designated account, containers, and blobs to check the OR headers
+    # TODO use generated account and set OR policy dynamically
 
+    # mock a response to test the deserializer
     def test_deserialize_ors_policies(self):
         class StubHTTPResponse:
             headers = {}
