@@ -86,9 +86,9 @@ class AutoscaleProfile(msrest.serialization.Model):
         **kwargs
     ):
         super(AutoscaleProfile, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.capacity = kwargs.get('capacity', None)
-        self.rules = kwargs.get('rules', None)
+        self.name = kwargs['name']
+        self.capacity = kwargs['capacity']
+        self.rules = kwargs['rules']
         self.fixed_date = kwargs.get('fixed_date', None)
         self.recurrence = kwargs.get('recurrence', None)
 
@@ -135,7 +135,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -197,7 +197,7 @@ class AutoscaleSettingResource(Resource):
         **kwargs
     ):
         super(AutoscaleSettingResource, self).__init__(**kwargs)
-        self.profiles = kwargs.get('profiles', None)
+        self.profiles = kwargs['profiles']
         self.notifications = kwargs.get('notifications', None)
         self.enabled = kwargs.get('enabled', True)
         self.name_properties_name = kwargs.get('name_properties_name', None)
@@ -229,7 +229,7 @@ class AutoscaleSettingResourceCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(AutoscaleSettingResourceCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -354,7 +354,7 @@ class EventCategoryCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(EventCategoryCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
 
 
 class EventData(msrest.serialization.Model):
@@ -388,8 +388,8 @@ class EventData(msrest.serialization.Model):
      'clientIpAddress' (IP address of the user who initiated the event) and 'method' (HTTP method
      e.g. PUT).
     :vartype http_request: ~$(python-base-namespace).v2015_04_01.models.HttpRequestInfo
-    :ivar level: the event level. Possible values include: 'Critical', 'Error', 'Warning',
-     'Informational', 'Verbose'.
+    :ivar level: the event level. Possible values include: "Critical", "Error", "Warning",
+     "Informational", "Verbose".
     :vartype level: str or ~$(python-base-namespace).v2015_04_01.models.EventLevel
     :ivar resource_group_name: the resource group name of the impacted resource.
     :vartype resource_group_name: str
@@ -542,7 +542,7 @@ class EventDataCollection(msrest.serialization.Model):
         **kwargs
     ):
         super(EventDataCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -602,7 +602,7 @@ class LocalizableString(msrest.serialization.Model):
         **kwargs
     ):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
 
 
@@ -621,19 +621,19 @@ class MetricTrigger(msrest.serialization.Model):
      1 minute.
     :type time_grain: ~datetime.timedelta
     :param statistic: Required. the metric statistic type. How the metrics from multiple instances
-     are combined. Possible values include: 'Average', 'Min', 'Max', 'Sum'.
+     are combined. Possible values include: "Average", "Min", "Max", "Sum".
     :type statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
     :param time_window: Required. the range of time in which instance data is collected. This value
      must be greater than the delay in metric collection, which can vary from resource-to-resource.
      Must be between 12 hours and 5 minutes.
     :type time_window: ~datetime.timedelta
     :param time_aggregation: Required. time aggregation type. How the data that is collected should
-     be combined over time. The default value is Average. Possible values include: 'Average',
-     'Minimum', 'Maximum', 'Total', 'Count', 'Last'.
+     be combined over time. The default value is Average. Possible values include: "Average",
+     "Minimum", "Maximum", "Total", "Count", "Last".
     :type time_aggregation: str or ~$(python-base-namespace).v2015_04_01.models.TimeAggregationType
     :param operator: Required. the operator that is used to compare the metric data and the
-     threshold. Possible values include: 'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanOrEqual',
-     'LessThan', 'LessThanOrEqual'.
+     threshold. Possible values include: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
+     "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2015_04_01.models.ComparisonOperationType
     :param threshold: Required. the threshold of the metric that triggers the scale action.
     :type threshold: float
@@ -666,14 +666,14 @@ class MetricTrigger(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricTrigger, self).__init__(**kwargs)
-        self.metric_name = kwargs.get('metric_name', None)
-        self.metric_resource_uri = kwargs.get('metric_resource_uri', None)
-        self.time_grain = kwargs.get('time_grain', None)
-        self.statistic = kwargs.get('statistic', None)
-        self.time_window = kwargs.get('time_window', None)
-        self.time_aggregation = kwargs.get('time_aggregation', None)
-        self.operator = kwargs.get('operator', None)
-        self.threshold = kwargs.get('threshold', None)
+        self.metric_name = kwargs['metric_name']
+        self.metric_resource_uri = kwargs['metric_resource_uri']
+        self.time_grain = kwargs['time_grain']
+        self.statistic = kwargs['statistic']
+        self.time_window = kwargs['time_window']
+        self.time_aggregation = kwargs['time_aggregation']
+        self.operator = kwargs['operator']
+        self.threshold = kwargs['threshold']
 
 
 class Operation(msrest.serialization.Model):
@@ -757,8 +757,8 @@ class Recurrence(msrest.serialization.Model):
     :param frequency: Required. the recurrence frequency. How often the schedule profile should
      take effect. This value must be Week, meaning each week will have the same set of profiles. For
      example, to set a daily schedule, set **schedule** to every day of the week. The frequency
-     property specifies that the schedule is repeated weekly. Possible values include: 'None',
-     'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'.
+     property specifies that the schedule is repeated weekly. Possible values include: "None",
+     "Second", "Minute", "Hour", "Day", "Week", "Month", "Year".
     :type frequency: str or ~$(python-base-namespace).v2015_04_01.models.RecurrenceFrequency
     :param schedule: Required. the scheduling constraints for when the profile begins.
     :type schedule: ~$(python-base-namespace).v2015_04_01.models.RecurrentSchedule
@@ -779,8 +779,8 @@ class Recurrence(msrest.serialization.Model):
         **kwargs
     ):
         super(Recurrence, self).__init__(**kwargs)
-        self.frequency = kwargs.get('frequency', None)
-        self.schedule = kwargs.get('schedule', None)
+        self.frequency = kwargs['frequency']
+        self.schedule = kwargs['schedule']
 
 
 class RecurrentSchedule(msrest.serialization.Model):
@@ -848,10 +848,10 @@ class RecurrentSchedule(msrest.serialization.Model):
         **kwargs
     ):
         super(RecurrentSchedule, self).__init__(**kwargs)
-        self.time_zone = kwargs.get('time_zone', None)
-        self.days = kwargs.get('days', None)
-        self.hours = kwargs.get('hours', None)
-        self.minutes = kwargs.get('minutes', None)
+        self.time_zone = kwargs['time_zone']
+        self.days = kwargs['days']
+        self.hours = kwargs['hours']
+        self.minutes = kwargs['minutes']
 
 
 class ScaleAction(msrest.serialization.Model):
@@ -860,10 +860,10 @@ class ScaleAction(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param direction: Required. the scale direction. Whether the scaling action increases or
-     decreases the number of instances. Possible values include: 'None', 'Increase', 'Decrease'.
+     decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
     :type direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
     :param type: Required. the type of action that should occur when the scale rule fires. Possible
-     values include: 'ChangeCount', 'PercentChangeCount', 'ExactCount'.
+     values include: "ChangeCount", "PercentChangeCount", "ExactCount".
     :type type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
     :param value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
@@ -891,10 +891,10 @@ class ScaleAction(msrest.serialization.Model):
         **kwargs
     ):
         super(ScaleAction, self).__init__(**kwargs)
-        self.direction = kwargs.get('direction', None)
-        self.type = kwargs.get('type', None)
+        self.direction = kwargs['direction']
+        self.type = kwargs['type']
         self.value = kwargs.get('value', "1")
-        self.cooldown = kwargs.get('cooldown', None)
+        self.cooldown = kwargs['cooldown']
 
 
 class ScaleCapacity(msrest.serialization.Model):
@@ -930,9 +930,9 @@ class ScaleCapacity(msrest.serialization.Model):
         **kwargs
     ):
         super(ScaleCapacity, self).__init__(**kwargs)
-        self.minimum = kwargs.get('minimum', None)
-        self.maximum = kwargs.get('maximum', None)
-        self.default = kwargs.get('default', None)
+        self.minimum = kwargs['minimum']
+        self.maximum = kwargs['maximum']
+        self.default = kwargs['default']
 
 
 class ScaleRule(msrest.serialization.Model):
@@ -961,8 +961,8 @@ class ScaleRule(msrest.serialization.Model):
         **kwargs
     ):
         super(ScaleRule, self).__init__(**kwargs)
-        self.metric_trigger = kwargs.get('metric_trigger', None)
-        self.scale_action = kwargs.get('scale_action', None)
+        self.metric_trigger = kwargs['metric_trigger']
+        self.scale_action = kwargs['scale_action']
 
 
 class SenderAuthorization(msrest.serialization.Model):
@@ -1051,8 +1051,8 @@ class TimeWindow(msrest.serialization.Model):
     ):
         super(TimeWindow, self).__init__(**kwargs)
         self.time_zone = kwargs.get('time_zone', None)
-        self.start = kwargs.get('start', None)
-        self.end = kwargs.get('end', None)
+        self.start = kwargs['start']
+        self.end = kwargs['end']
 
 
 class WebhookNotification(msrest.serialization.Model):

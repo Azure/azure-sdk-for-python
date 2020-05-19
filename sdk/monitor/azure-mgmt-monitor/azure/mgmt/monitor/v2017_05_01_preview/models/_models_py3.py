@@ -12,6 +12,8 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class ProxyOnlyResource(msrest.serialization.Model):
     """A proxy only azure resource object.
@@ -60,7 +62,7 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
     :ivar type: Azure resource type.
     :vartype type: str
     :param category_type: The type of the diagnostic settings category. Possible values include:
-     'Metrics', 'Logs'.
+     "Metrics", "Logs".
     :type category_type: str or ~$(python-base-namespace).v2017_05_01_preview.models.CategoryType
     """
 
@@ -348,9 +350,9 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds',
-     'Unspecified'.
+    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~$(python-base-namespace).v2017_05_01_preview.models.TimeSeriesElement]
@@ -427,12 +429,12 @@ class MetricDefinition(msrest.serialization.Model):
     :type resource_id: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2017_05_01_preview.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be

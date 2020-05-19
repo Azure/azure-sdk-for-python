@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -16,8 +16,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models
 
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+
+    T = TypeVar('T')
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 class MetricsOperations(object):
     """MetricsOperations operations.
@@ -93,16 +97,17 @@ class MetricsOperations(object):
         :param metricnamespace: Metric namespace to query metric definitions for.
         :type metricnamespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Response or the result of cls(response)
+        :return: Response, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_01_01.models.Response
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Response"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
         }
@@ -147,7 +152,7 @@ class MetricsOperations(object):
         deserialized = self._deserialize('Response', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}  # type: ignore

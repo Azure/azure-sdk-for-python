@@ -8,15 +8,6 @@
 
 from enum import Enum
 
-class OnboardingStatus(str, Enum):
-    """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
-    or subscription, is considered onboarded if at least one resource under it is onboarded.
-    """
-
-    onboarded = "onboarded"
-    not_onboarded = "notOnboarded"
-    unknown = "unknown"
-
 class DataStatus(str, Enum):
     """The status of VM Insights data from the resource. When reported as ``present`` the data array
     will contain information about the data containers to which data for the specified resource is
@@ -25,3 +16,12 @@ class DataStatus(str, Enum):
 
     present = "present"
     not_present = "notPresent"
+
+class OnboardingStatus(str, Enum):
+    """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
+    or subscription, is considered onboarded if at least one resource under it is onboarded.
+    """
+
+    onboarded = "onboarded"
+    not_onboarded = "notOnboarded"
+    unknown = "unknown"

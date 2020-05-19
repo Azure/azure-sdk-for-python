@@ -8,14 +8,39 @@
 
 from enum import Enum
 
-class ReceiverStatus(str, Enum):
-    """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
-    communications.
+class AggregationType(str, Enum):
+    """the criteria time aggregation types.
     """
 
-    not_specified = "NotSpecified"
-    enabled = "Enabled"
-    disabled = "Disabled"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+class CriterionType(str, Enum):
+    """Specifies the type of threshold criteria
+    """
+
+    static_threshold_criterion = "StaticThresholdCriterion"
+    dynamic_threshold_criterion = "DynamicThresholdCriterion"
+
+class DynamicThresholdOperator(str, Enum):
+    """The operator used to compare the metric value against the threshold.
+    """
+
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    greater_or_less_than = "GreaterOrLessThan"
+
+class DynamicThresholdSensitivity(str, Enum):
+    """The extent of deviation required to trigger an alert. This will affect how tight the threshold
+    is to the metric series pattern.
+    """
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
 
 class Odatatype(str, Enum):
     """specifies the type of the alert criteria.
@@ -36,36 +61,11 @@ class Operator(str, Enum):
     less_than = "LessThan"
     less_than_or_equal = "LessThanOrEqual"
 
-class CriterionType(str, Enum):
-    """Specifies the type of threshold criteria
+class ReceiverStatus(str, Enum):
+    """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
+    communications.
     """
 
-    static_threshold_criterion = "StaticThresholdCriterion"
-    dynamic_threshold_criterion = "DynamicThresholdCriterion"
-
-class AggregationType(str, Enum):
-    """the criteria time aggregation types.
-    """
-
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-
-class DynamicThresholdOperator(str, Enum):
-    """The operator used to compare the metric value against the threshold.
-    """
-
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    greater_or_less_than = "GreaterOrLessThan"
-
-class DynamicThresholdSensitivity(str, Enum):
-    """The extent of deviation required to trigger an alert. This will affect how tight the threshold
-    is to the metric series pattern.
-    """
-
-    low = "Low"
-    medium = "Medium"
-    high = "High"
+    not_specified = "NotSpecified"
+    enabled = "Enabled"
+    disabled = "Disabled"

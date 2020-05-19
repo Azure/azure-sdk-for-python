@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class Resource(msrest.serialization.Model):
     """An azure resource object.
@@ -381,7 +383,7 @@ class RuleCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleCondition, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type: Optional[str] = None
         self.data_source = data_source
 
 
@@ -428,7 +430,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         **kwargs
     ):
         super(LocationThresholdRuleCondition, self).__init__(data_source=data_source, **kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'
         self.window_size = window_size
         self.failed_location_count = failed_location_count
 
@@ -591,8 +593,8 @@ class LogProfileResourcePatch(msrest.serialization.Model):
 class ManagementEventAggregationCondition(msrest.serialization.Model):
     """How the data that is collected should be combined over time.
 
-    :param operator: the condition operator. Possible values include: 'GreaterThan',
-     'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'.
+    :param operator: the condition operator. Possible values include: "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2016_03_01.models.ConditionOperator
     :param threshold: The threshold value that activates the alert.
     :type threshold: float
@@ -660,7 +662,7 @@ class ManagementEventRuleCondition(RuleCondition):
         **kwargs
     ):
         super(ManagementEventRuleCondition, self).__init__(data_source=data_source, **kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'
         self.aggregation = aggregation
 
 
@@ -699,12 +701,12 @@ class MetricDefinition(msrest.serialization.Model):
     :type resource_id: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2016_03_01.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'CountPerSecond', 'BytesPerSecond', 'Percent', 'MilliSeconds'.
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
     :type unit: str or ~$(python-base-namespace).v2016_03_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: 'None', 'Average', 'Count', 'Minimum', 'Maximum',
-     'Total'.
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
     :type primary_aggregation_type: str or ~$(python-base-
      namespace).v2016_03_01.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be
@@ -835,7 +837,7 @@ class RuleAction(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleAction, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type: Optional[str] = None
 
 
 class RuleDataSource(msrest.serialization.Model):
@@ -874,7 +876,7 @@ class RuleDataSource(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleDataSource, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type: Optional[str] = None
         self.resource_uri = resource_uri
 
 
@@ -912,7 +914,7 @@ class RuleEmailAction(RuleAction):
         **kwargs
     ):
         super(RuleEmailAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
 
@@ -1005,7 +1007,7 @@ class RuleManagementEventDataSource(RuleDataSource):
         **kwargs
     ):
         super(RuleManagementEventDataSource, self).__init__(resource_uri=resource_uri, **kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'
         self.event_name = event_name
         self.event_source = event_source
         self.level = level
@@ -1050,7 +1052,7 @@ class RuleMetricDataSource(RuleDataSource):
         **kwargs
     ):
         super(RuleMetricDataSource, self).__init__(resource_uri=resource_uri, **kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
         self.metric_name = metric_name
 
 
@@ -1088,7 +1090,7 @@ class RuleWebhookAction(RuleAction):
         **kwargs
     ):
         super(RuleWebhookAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'
         self.service_uri = service_uri
         self.properties = properties
 
@@ -1107,7 +1109,7 @@ class ThresholdRuleCondition(RuleCondition):
      dataSource will always be of type RuleMetricDataSource.
     :type data_source: ~$(python-base-namespace).v2016_03_01.models.RuleDataSource
     :param operator: Required. the operator used to compare the data and the threshold. Possible
-     values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'.
+     values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2016_03_01.models.ConditionOperator
     :param threshold: Required. the threshold value that activates the alert.
     :type threshold: float
@@ -1117,7 +1119,7 @@ class ThresholdRuleCondition(RuleCondition):
     :type window_size: ~datetime.timedelta
     :param time_aggregation: the time aggregation operator. How the data that are collected should
      be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
-     values include: 'Average', 'Minimum', 'Maximum', 'Total', 'Last'.
+     values include: "Average", "Minimum", "Maximum", "Total", "Last".
     :type time_aggregation: str or ~$(python-base-
      namespace).v2016_03_01.models.TimeAggregationOperator
     """
@@ -1148,7 +1150,7 @@ class ThresholdRuleCondition(RuleCondition):
         **kwargs
     ):
         super(ThresholdRuleCondition, self).__init__(data_source=data_source, **kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
+        self.odata_type: str = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

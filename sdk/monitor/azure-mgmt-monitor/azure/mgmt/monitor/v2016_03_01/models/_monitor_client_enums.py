@@ -8,18 +8,6 @@
 
 from enum import Enum
 
-class Unit(str, Enum):
-    """the unit of the metric.
-    """
-
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-    percent = "Percent"
-    milli_seconds = "MilliSeconds"
-
 class AggregationType(str, Enum):
     """the primary aggregation type value defining how to use the values for display.
     """
@@ -49,3 +37,15 @@ class TimeAggregationOperator(str, Enum):
     maximum = "Maximum"
     total = "Total"
     last = "Last"
+
+class Unit(str, Enum):
+    """the unit of the metric.
+    """
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    percent = "Percent"
+    milli_seconds = "MilliSeconds"

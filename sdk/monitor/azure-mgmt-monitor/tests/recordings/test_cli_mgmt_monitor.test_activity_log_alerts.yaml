@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:12:06 GMT
+      - Tue, 19 May 2020 16:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:12:06 GMT
+      - Tue, 19 May 2020 16:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -91,8 +91,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"tags": {"tags": "{''key1'': ''value1'', ''key2'': ''value2''}", "properties":
-      "{''enabled'': False}"}, "properties": {"enabled": true}}'
+    body: '{"tags": {"key1": "value1", "key2": "value2"}, "properties": {"enabled":
+      false}}'
     headers:
       Accept:
       - application/json
@@ -101,7 +101,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '127'
+      - '80'
       Content-Type:
       - application/json
       User-Agent:
@@ -110,18 +110,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_activity_log_alertsbfb21318/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_activity_log_alertsbfb21318/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318","type":"Microsoft.Insights/ActivityLogAlerts","name":"activitylogalertxbfb21318","location":"Global","kind":null,"tags":{"tags":"{''key1'':
-        ''value1'', ''key2'': ''value2''}","properties":"{''enabled'': False}"},"properties":{"scopes":["subscriptions/00000000-0000-0000-0000-000000000000"],"condition":{"allOf":[{"field":"category","equals":"Administrative","containsAny":null,"odata.type":null},{"field":"level","equals":"Error","containsAny":null,"odata.type":null}],"odata.type":null},"actions":{"actionGroups":[]},"enabled":true,"description":"Sample
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_activity_log_alertsbfb21318/providers/microsoft.insights/activityLogAlerts/activitylogalertxbfb21318","type":"Microsoft.Insights/ActivityLogAlerts","name":"activitylogalertxbfb21318","location":"Global","kind":null,"tags":{"key1":"value1","key2":"value2"},"properties":{"scopes":["subscriptions/00000000-0000-0000-0000-000000000000"],"condition":{"allOf":[{"field":"category","equals":"Administrative","containsAny":null,"odata.type":null},{"field":"level","equals":"Error","containsAny":null,"odata.type":null}],"odata.type":null},"actions":{"actionGroups":[]},"enabled":false,"description":"Sample
         activity log alert description"},"identity":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '797'
+      - '750'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 08:12:08 GMT
+      - Tue, 19 May 2020 16:35:27 GMT
       expires:
       - '-1'
       pragma:
@@ -137,7 +136,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1187'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -165,7 +164,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Apr 2020 08:12:11 GMT
+      - Tue, 19 May 2020 16:35:29 GMT
       expires:
       - '-1'
       pragma:
@@ -177,7 +176,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14993'
+      - '14999'
     status:
       code: 200
       message: OK

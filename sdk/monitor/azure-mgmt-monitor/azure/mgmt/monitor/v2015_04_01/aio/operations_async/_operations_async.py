@@ -47,16 +47,17 @@ class Operations:
         """Lists all of the available operations from Microsoft.Insights provider.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationListResult or the result of cls(response)
+        :return: OperationListResult, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2015_04_01.models.OperationListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationListResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-04-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -78,7 +79,7 @@ class Operations:
         deserialized = self._deserialize('OperationListResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/microsoft.insights/operations'}
+    list.metadata = {'url': '/providers/microsoft.insights/operations'}  # type: ignore

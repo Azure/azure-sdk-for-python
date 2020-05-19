@@ -8,12 +8,6 @@
 
 from enum import Enum
 
-class SinkConfigurationKind(str, Enum):
-
-    event_hub = "EventHub"
-    application_insights = "ApplicationInsights"
-    log_analytics = "LogAnalytics"
-
 class DataSourceKind(str, Enum):
     """Datasource kind
     """
@@ -28,3 +22,9 @@ class GuestDiagnosticSettingsOsType(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+class SinkConfigurationKind(str, Enum):
+
+    event_hub = "EventHub"
+    application_insights = "ApplicationInsights"
+    log_analytics = "LogAnalytics"

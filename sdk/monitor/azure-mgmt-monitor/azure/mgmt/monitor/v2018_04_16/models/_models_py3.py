@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class Action(msrest.serialization.Model):
     """Action descriptor.
@@ -42,7 +44,7 @@ class Action(msrest.serialization.Model):
         **kwargs
     ):
         super(Action, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type: Optional[str] = None
 
 
 class AlertingAction(Action):
@@ -53,8 +55,8 @@ class AlertingAction(Action):
     :param odata_type: Required. Specifies the action. Supported values - AlertingAction,
      LogToMetricAction.Constant filled by server.
     :type odata_type: str
-    :param severity: Required. Severity of the alert. Possible values include: '0', '1', '2', '3',
-     '4'.
+    :param severity: Required. Severity of the alert. Possible values include: "0", "1", "2", "3",
+     "4".
     :type severity: str or ~$(python-base-namespace).v2018_04_16.models.AlertSeverity
     :param azns_action: Azure action group reference.
     :type azns_action: ~$(python-base-namespace).v2018_04_16.models.AzNsActionGroup
@@ -88,7 +90,7 @@ class AlertingAction(Action):
         **kwargs
     ):
         super(AlertingAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'
+        self.odata_type: str = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'
         self.severity = severity
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min
@@ -230,13 +232,13 @@ class LogMetricTrigger(msrest.serialization.Model):
     """A log metrics trigger descriptor.
 
     :param threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-     'Equal'. Possible values include: 'GreaterThan', 'LessThan', 'Equal'.
+     'Equal'. Possible values include: "GreaterThan", "LessThan", "Equal".
     :type threshold_operator: str or ~$(python-base-
      namespace).v2018_04_16.models.ConditionalOperator
     :param threshold: The threshold of the metric trigger.
     :type threshold: float
     :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Possible values
-     include: 'Consecutive', 'Total'.
+     include: "Consecutive", "Total".
     :type metric_trigger_type: str or ~$(python-base-
      namespace).v2018_04_16.models.MetricTriggerType
     :param metric_column: Evaluation of metric on a particular column.
@@ -335,12 +337,12 @@ class LogSearchRuleResource(Resource):
     :param description: The description of the Log Search rule.
     :type description: str
     :param enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-     be true or false. Possible values include: 'true', 'false'.
+     be true or false. Possible values include: "true", "false".
     :type enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
     :ivar last_updated_time: Last time the rule was updated in IS08601 format.
     :vartype last_updated_time: ~datetime.datetime
     :ivar provisioning_state: Provisioning state of the scheduled query rule. Possible values
-     include: 'Succeeded', 'Deploying', 'Canceled', 'Failed'.
+     include: "Succeeded", "Deploying", "Canceled", "Failed".
     :vartype provisioning_state: str or ~$(python-base-
      namespace).v2018_04_16.models.ProvisioningState
     :param source: Required. Data Source against which rule will Query Data.
@@ -427,7 +429,7 @@ class LogSearchRuleResourcePatch(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-     be true or false. Possible values include: 'true', 'false'.
+     be true or false. Possible values include: "true", "false".
     :type enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
     """
 
@@ -477,7 +479,7 @@ class LogToMetricAction(Action):
         **kwargs
     ):
         super(LogToMetricAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'
+        self.odata_type: str = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'
         self.criteria = criteria
 
 
@@ -567,7 +569,7 @@ class TriggerCondition(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param threshold_operator: Required. Evaluation operation for rule - 'GreaterThan' or
-     'LessThan. Possible values include: 'GreaterThan', 'LessThan', 'Equal'.
+     'LessThan. Possible values include: "GreaterThan", "LessThan", "Equal".
     :type threshold_operator: str or ~$(python-base-
      namespace).v2018_04_16.models.ConditionalOperator
     :param threshold: Required. Result or count threshold based on which rule should be triggered.

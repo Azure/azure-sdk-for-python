@@ -64,7 +64,7 @@ class LogSettings(msrest.serialization.Model):
     ):
         super(LogSettings, self).__init__(**kwargs)
         self.category = kwargs.get('category', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -97,8 +97,8 @@ class MetricSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricSettings, self).__init__(**kwargs)
-        self.time_grain = kwargs.get('time_grain', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.time_grain = kwargs['time_grain']
+        self.enabled = kwargs['enabled']
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -144,7 +144,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -175,8 +175,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.days = kwargs.get('days', None)
+        self.enabled = kwargs['enabled']
+        self.days = kwargs['days']
 
 
 class ServiceDiagnosticSettingsResource(Resource):

@@ -15,8 +15,8 @@ class DataSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required. Datasource kind. Possible values include: 'PerformanceCounter',
-     'ETWProviders', 'WindowsEventLogs'.
+    :param kind: Required. Datasource kind. Possible values include: "PerformanceCounter",
+     "ETWProviders", "WindowsEventLogs".
     :type kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
     :param configuration: Required.
     :type configuration: ~$(python-base-
@@ -42,9 +42,9 @@ class DataSource(msrest.serialization.Model):
         **kwargs
     ):
         super(DataSource, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.configuration = kwargs.get('configuration', None)
-        self.sinks = kwargs.get('sinks', None)
+        self.kind = kwargs['kind']
+        self.configuration = kwargs['configuration']
+        self.sinks = kwargs['sinks']
 
 
 class DataSourceConfiguration(msrest.serialization.Model):
@@ -129,8 +129,8 @@ class EtwEventConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(EtwEventConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.id = kwargs.get('id', None)
+        self.name = kwargs['name']
+        self.id = kwargs['id']
         self.filter = kwargs.get('filter', None)
 
 
@@ -160,8 +160,8 @@ class EtwProviderConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(EtwProviderConfiguration, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.events = kwargs.get('events', None)
+        self.id = kwargs['id']
+        self.events = kwargs['events']
 
 
 class EventLogConfiguration(msrest.serialization.Model):
@@ -189,7 +189,7 @@ class EventLogConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(EventLogConfiguration, self).__init__(**kwargs)
-        self.log_name = kwargs.get('log_name', None)
+        self.log_name = kwargs['log_name']
         self.filter = kwargs.get('filter', None)
 
 
@@ -259,7 +259,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -306,7 +306,7 @@ class GuestDiagnosticSettingsAssociationResource(Resource):
         **kwargs
     ):
         super(GuestDiagnosticSettingsAssociationResource, self).__init__(**kwargs)
-        self.guest_diagnostic_settings_name = kwargs.get('guest_diagnostic_settings_name', None)
+        self.guest_diagnostic_settings_name = kwargs['guest_diagnostic_settings_name']
 
 
 class GuestDiagnosticSettingsAssociationResourcePatch(msrest.serialization.Model):
@@ -362,7 +362,7 @@ class GuestDiagnosticSettingsPatchResource(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
-     'Windows', 'Linux'.
+     "Windows", "Linux".
     :type os_type: str or ~$(python-base-
      namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
@@ -408,7 +408,7 @@ class GuestDiagnosticSettingsResource(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
-     'Windows', 'Linux'.
+     "Windows", "Linux".
     :type os_type: str or ~$(python-base-
      namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
@@ -475,8 +475,8 @@ class PerformanceCounterConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(PerformanceCounterConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.sampling_period = kwargs.get('sampling_period', None)
+        self.name = kwargs['name']
+        self.sampling_period = kwargs['sampling_period']
         self.instance = kwargs.get('instance', None)
 
 
@@ -485,8 +485,8 @@ class SinkConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required.  Possible values include: 'EventHub', 'ApplicationInsights',
-     'LogAnalytics'.
+    :param kind: Required.  Possible values include: "EventHub", "ApplicationInsights",
+     "LogAnalytics".
     :type kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
     """
 
@@ -503,4 +503,4 @@ class SinkConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(SinkConfiguration, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs['kind']

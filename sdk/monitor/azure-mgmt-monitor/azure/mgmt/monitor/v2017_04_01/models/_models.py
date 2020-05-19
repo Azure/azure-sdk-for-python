@@ -99,7 +99,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -209,7 +209,7 @@ class ActivityLogAlertActionGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertActionGroup, self).__init__(**kwargs)
-        self.action_group_id = kwargs.get('action_group_id', None)
+        self.action_group_id = kwargs['action_group_id']
         self.webhook_properties = kwargs.get('webhook_properties', None)
 
 
@@ -255,7 +255,7 @@ class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertAllOfCondition, self).__init__(**kwargs)
-        self.all_of = kwargs.get('all_of', None)
+        self.all_of = kwargs['all_of']
 
 
 class ActivityLogAlertLeafCondition(msrest.serialization.Model):
@@ -288,8 +288,8 @@ class ActivityLogAlertLeafCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertLeafCondition, self).__init__(**kwargs)
-        self.field = kwargs.get('field', None)
-        self.equals = kwargs.get('equals', None)
+        self.field = kwargs['field']
+        self.equals = kwargs['equals']
 
 
 class ActivityLogAlertList(msrest.serialization.Model):
@@ -444,10 +444,10 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AutomationRunbookReceiver, self).__init__(**kwargs)
-        self.automation_account_id = kwargs.get('automation_account_id', None)
-        self.runbook_name = kwargs.get('runbook_name', None)
-        self.webhook_resource_id = kwargs.get('webhook_resource_id', None)
-        self.is_global_runbook = kwargs.get('is_global_runbook', None)
+        self.automation_account_id = kwargs['automation_account_id']
+        self.runbook_name = kwargs['runbook_name']
+        self.webhook_resource_id = kwargs['webhook_resource_id']
+        self.is_global_runbook = kwargs['is_global_runbook']
         self.name = kwargs.get('name', None)
         self.service_uri = kwargs.get('service_uri', None)
 
@@ -479,8 +479,8 @@ class AzureAppPushReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureAppPushReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
 
 
 class EmailReceiver(msrest.serialization.Model):
@@ -495,8 +495,8 @@ class EmailReceiver(msrest.serialization.Model):
     :type name: str
     :param email_address: Required. The email address of this receiver.
     :type email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: 'NotSpecified',
-     'Enabled', 'Disabled'.
+    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
+     "Enabled", "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
 
@@ -517,8 +517,8 @@ class EmailReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(EmailReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
         self.status = None
 
 
@@ -544,7 +544,7 @@ class EnableRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(EnableRequest, self).__init__(**kwargs)
-        self.receiver_name = kwargs.get('receiver_name', None)
+        self.receiver_name = kwargs['receiver_name']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -612,11 +612,11 @@ class ItsmReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(ItsmReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.workspace_id = kwargs.get('workspace_id', None)
-        self.connection_id = kwargs.get('connection_id', None)
-        self.ticket_configuration = kwargs.get('ticket_configuration', None)
-        self.region = kwargs.get('region', None)
+        self.name = kwargs['name']
+        self.workspace_id = kwargs['workspace_id']
+        self.connection_id = kwargs['connection_id']
+        self.ticket_configuration = kwargs['ticket_configuration']
+        self.region = kwargs['region']
 
 
 class SmsReceiver(msrest.serialization.Model):
@@ -633,8 +633,8 @@ class SmsReceiver(msrest.serialization.Model):
     :type country_code: str
     :param phone_number: Required. The phone number of the SMS receiver.
     :type phone_number: str
-    :ivar status: The status of the receiver. Possible values include: 'NotSpecified', 'Enabled',
-     'Disabled'.
+    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
 
@@ -657,9 +657,9 @@ class SmsReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(SmsReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.country_code = kwargs.get('country_code', None)
-        self.phone_number = kwargs.get('phone_number', None)
+        self.name = kwargs['name']
+        self.country_code = kwargs['country_code']
+        self.phone_number = kwargs['phone_number']
         self.status = None
 
 
@@ -690,5 +690,5 @@ class WebhookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(WebhookReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.service_uri = kwargs.get('service_uri', None)
+        self.name = kwargs['name']
+        self.service_uri = kwargs['service_uri']

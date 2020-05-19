@@ -12,14 +12,16 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class Baseline(msrest.serialization.Model):
     """The baseline values for a single sensitivity value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: 'Low',
-     'Medium', 'High'.
+    :param sensitivity: Required. the sensitivity of the baseline. Possible values include: "Low",
+     "Medium", "High".
     :type sensitivity: str or ~$(python-base-namespace).v2017_11_01_preview.models.Sensitivity
     :param low_thresholds: Required. The low thresholds of the baseline.
     :type low_thresholds: list[float]

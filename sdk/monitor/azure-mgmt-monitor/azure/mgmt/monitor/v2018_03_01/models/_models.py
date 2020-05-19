@@ -99,7 +99,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -237,10 +237,10 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AutomationRunbookReceiver, self).__init__(**kwargs)
-        self.automation_account_id = kwargs.get('automation_account_id', None)
-        self.runbook_name = kwargs.get('runbook_name', None)
-        self.webhook_resource_id = kwargs.get('webhook_resource_id', None)
-        self.is_global_runbook = kwargs.get('is_global_runbook', None)
+        self.automation_account_id = kwargs['automation_account_id']
+        self.runbook_name = kwargs['runbook_name']
+        self.webhook_resource_id = kwargs['webhook_resource_id']
+        self.is_global_runbook = kwargs['is_global_runbook']
         self.name = kwargs.get('name', None)
         self.service_uri = kwargs.get('service_uri', None)
 
@@ -272,8 +272,8 @@ class AzureAppPushReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureAppPushReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
 
 
 class AzureFunctionReceiver(msrest.serialization.Model):
@@ -311,10 +311,10 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureFunctionReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.function_app_resource_id = kwargs.get('function_app_resource_id', None)
-        self.function_name = kwargs.get('function_name', None)
-        self.http_trigger_url = kwargs.get('http_trigger_url', None)
+        self.name = kwargs['name']
+        self.function_app_resource_id = kwargs['function_app_resource_id']
+        self.function_name = kwargs['function_name']
+        self.http_trigger_url = kwargs['http_trigger_url']
 
 
 class MultiMetricCriteria(msrest.serialization.Model):
@@ -329,7 +329,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
      collection.
     :type additional_properties: dict[str, object]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server.  Possible values include: 'StaticThresholdCriterion', 'DynamicThresholdCriterion'.
+     server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :param name: Required. Name of the criteria.
     :type name: str
@@ -338,7 +338,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
-     include: 'Average', 'Count', 'Minimum', 'Maximum', 'Total'.
+     include: "Average", "Count", "Minimum", "Maximum", "Total".
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
@@ -372,10 +372,10 @@ class MultiMetricCriteria(msrest.serialization.Model):
         super(MultiMetricCriteria, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
         self.criterion_type = 'MultiMetricCriteria'
-        self.name = kwargs.get('name', None)
-        self.metric_name = kwargs.get('metric_name', None)
+        self.name = kwargs['name']
+        self.metric_name = kwargs['metric_name']
         self.metric_namespace = kwargs.get('metric_namespace', None)
-        self.time_aggregation = kwargs.get('time_aggregation', None)
+        self.time_aggregation = kwargs['time_aggregation']
         self.dimensions = kwargs.get('dimensions', None)
 
 
@@ -388,7 +388,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
      collection.
     :type additional_properties: dict[str, object]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server.  Possible values include: 'StaticThresholdCriterion', 'DynamicThresholdCriterion'.
+     server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :param name: Required. Name of the criteria.
     :type name: str
@@ -397,16 +397,16 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
-     include: 'Average', 'Count', 'Minimum', 'Maximum', 'Total'.
+     include: "Average", "Count", "Minimum", "Maximum", "Total".
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param operator: Required. The operator used to compare the metric value against the threshold.
-     Possible values include: 'GreaterThan', 'LessThan', 'GreaterOrLessThan'.
+     Possible values include: "GreaterThan", "LessThan", "GreaterOrLessThan".
     :type operator: str or ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
     :param alert_sensitivity: Required. The extent of deviation required to trigger an alert. This
      will affect how tight the threshold is to the metric series pattern. Possible values include:
-     'Low', 'Medium', 'High'.
+     "Low", "Medium", "High".
     :type alert_sensitivity: str or ~$(python-base-
      namespace).v2018_03_01.models.DynamicThresholdSensitivity
     :param failing_periods: Required. The minimum number of violations required within the selected
@@ -448,9 +448,9 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     ):
         super(DynamicMetricCriteria, self).__init__(**kwargs)
         self.criterion_type = 'DynamicThresholdCriterion'
-        self.operator = kwargs.get('operator', None)
-        self.alert_sensitivity = kwargs.get('alert_sensitivity', None)
-        self.failing_periods = kwargs.get('failing_periods', None)
+        self.operator = kwargs['operator']
+        self.alert_sensitivity = kwargs['alert_sensitivity']
+        self.failing_periods = kwargs['failing_periods']
         self.ignore_data_before = kwargs.get('ignore_data_before', None)
 
 
@@ -483,8 +483,8 @@ class DynamicThresholdFailingPeriods(msrest.serialization.Model):
         **kwargs
     ):
         super(DynamicThresholdFailingPeriods, self).__init__(**kwargs)
-        self.number_of_evaluation_periods = kwargs.get('number_of_evaluation_periods', None)
-        self.min_failing_periods_to_alert = kwargs.get('min_failing_periods_to_alert', None)
+        self.number_of_evaluation_periods = kwargs['number_of_evaluation_periods']
+        self.min_failing_periods_to_alert = kwargs['min_failing_periods_to_alert']
 
 
 class EmailReceiver(msrest.serialization.Model):
@@ -499,8 +499,8 @@ class EmailReceiver(msrest.serialization.Model):
     :type name: str
     :param email_address: Required. The email address of this receiver.
     :type email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: 'NotSpecified',
-     'Enabled', 'Disabled'.
+    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
+     "Enabled", "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
     """
 
@@ -521,8 +521,8 @@ class EmailReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(EmailReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.email_address = kwargs.get('email_address', None)
+        self.name = kwargs['name']
+        self.email_address = kwargs['email_address']
         self.status = None
 
 
@@ -548,7 +548,7 @@ class EnableRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(EnableRequest, self).__init__(**kwargs)
-        self.receiver_name = kwargs.get('receiver_name', None)
+        self.receiver_name = kwargs['receiver_name']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -616,11 +616,11 @@ class ItsmReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(ItsmReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.workspace_id = kwargs.get('workspace_id', None)
-        self.connection_id = kwargs.get('connection_id', None)
-        self.ticket_configuration = kwargs.get('ticket_configuration', None)
-        self.region = kwargs.get('region', None)
+        self.name = kwargs['name']
+        self.workspace_id = kwargs['workspace_id']
+        self.connection_id = kwargs['connection_id']
+        self.ticket_configuration = kwargs['ticket_configuration']
+        self.region = kwargs['region']
 
 
 class LogicAppReceiver(msrest.serialization.Model):
@@ -654,9 +654,9 @@ class LogicAppReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(LogicAppReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.callback_url = kwargs.get('callback_url', None)
+        self.name = kwargs['name']
+        self.resource_id = kwargs['resource_id']
+        self.callback_url = kwargs['callback_url']
 
 
 class MetricAlertAction(msrest.serialization.Model):
@@ -695,9 +695,9 @@ class MetricAlertCriteria(msrest.serialization.Model):
     :type additional_properties: dict[str, object]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
-     'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'.
+     "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :type odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
     """
 
@@ -733,9 +733,9 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
     :type additional_properties: dict[str, object]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
-     'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'.
+     "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :type odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
     :param all_of: the list of multiple metric criteria for this 'all of' operation.
     :type all_of: list[~$(python-base-namespace).v2018_03_01.models.MultiMetricCriteria]
@@ -849,15 +849,15 @@ class MetricAlertResource(Resource):
         **kwargs
     ):
         super(MetricAlertResource, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.severity = kwargs.get('severity', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.description = kwargs['description']
+        self.severity = kwargs['severity']
+        self.enabled = kwargs['enabled']
         self.scopes = kwargs.get('scopes', None)
-        self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
-        self.window_size = kwargs.get('window_size', None)
+        self.evaluation_frequency = kwargs['evaluation_frequency']
+        self.window_size = kwargs['window_size']
         self.target_resource_type = kwargs.get('target_resource_type', None)
         self.target_resource_region = kwargs.get('target_resource_region', None)
-        self.criteria = kwargs.get('criteria', None)
+        self.criteria = kwargs['criteria']
         self.auto_mitigate = kwargs.get('auto_mitigate', None)
         self.actions = kwargs.get('actions', None)
         self.last_updated_time = None
@@ -972,9 +972,9 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
     :type additional_properties: dict[str, object]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
-     'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria',
-     'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'.
+     "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :type odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
     :param all_of: The list of metric criteria for this 'all of' operation.
     :type all_of: list[~$(python-base-namespace).v2018_03_01.models.MetricCriteria]
@@ -1085,7 +1085,7 @@ class MetricCriteria(MultiMetricCriteria):
      collection.
     :type additional_properties: dict[str, object]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server.  Possible values include: 'StaticThresholdCriterion', 'DynamicThresholdCriterion'.
+     server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :param name: Required. Name of the criteria.
     :type name: str
@@ -1094,12 +1094,12 @@ class MetricCriteria(MultiMetricCriteria):
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
-     include: 'Average', 'Count', 'Minimum', 'Maximum', 'Total'.
+     include: "Average", "Count", "Minimum", "Maximum", "Total".
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
-    :param operator: Required. the criteria operator. Possible values include: 'Equals',
-     'NotEquals', 'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'.
+    :param operator: Required. the criteria operator. Possible values include: "Equals",
+     "NotEquals", "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
     :param threshold: Required. the criteria threshold value that activates the alert.
     :type threshold: float
@@ -1132,8 +1132,8 @@ class MetricCriteria(MultiMetricCriteria):
     ):
         super(MetricCriteria, self).__init__(**kwargs)
         self.criterion_type = 'StaticThresholdCriterion'
-        self.operator = kwargs.get('operator', None)
-        self.threshold = kwargs.get('threshold', None)
+        self.operator = kwargs['operator']
+        self.threshold = kwargs['threshold']
 
 
 class MetricDimension(msrest.serialization.Model):
@@ -1166,9 +1166,9 @@ class MetricDimension(msrest.serialization.Model):
         **kwargs
     ):
         super(MetricDimension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.operator = kwargs.get('operator', None)
-        self.values = kwargs.get('values', None)
+        self.name = kwargs['name']
+        self.operator = kwargs['operator']
+        self.values = kwargs['values']
 
 
 class SmsReceiver(msrest.serialization.Model):
@@ -1185,8 +1185,8 @@ class SmsReceiver(msrest.serialization.Model):
     :type country_code: str
     :param phone_number: Required. The phone number of the SMS receiver.
     :type phone_number: str
-    :ivar status: The status of the receiver. Possible values include: 'NotSpecified', 'Enabled',
-     'Disabled'.
+    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
     """
 
@@ -1209,9 +1209,9 @@ class SmsReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(SmsReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.country_code = kwargs.get('country_code', None)
-        self.phone_number = kwargs.get('phone_number', None)
+        self.name = kwargs['name']
+        self.country_code = kwargs['country_code']
+        self.phone_number = kwargs['phone_number']
         self.status = None
 
 
@@ -1246,9 +1246,9 @@ class VoiceReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(VoiceReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.country_code = kwargs.get('country_code', None)
-        self.phone_number = kwargs.get('phone_number', None)
+        self.name = kwargs['name']
+        self.country_code = kwargs['country_code']
+        self.phone_number = kwargs['phone_number']
 
 
 class WebhookReceiver(msrest.serialization.Model):
@@ -1278,8 +1278,8 @@ class WebhookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         super(WebhookReceiver, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.service_uri = kwargs.get('service_uri', None)
+        self.name = kwargs['name']
+        self.service_uri = kwargs['service_uri']
 
 
 class WebtestLocationAvailabilityCriteria(msrest.serialization.Model):
@@ -1312,6 +1312,6 @@ class WebtestLocationAvailabilityCriteria(msrest.serialization.Model):
         **kwargs
     ):
         super(WebtestLocationAvailabilityCriteria, self).__init__(**kwargs)
-        self.web_test_id = kwargs.get('web_test_id', None)
-        self.component_id = kwargs.get('component_id', None)
-        self.failed_location_count = kwargs.get('failed_location_count', None)
+        self.web_test_id = kwargs['web_test_id']
+        self.component_id = kwargs['component_id']
+        self.failed_location_count = kwargs['failed_location_count']

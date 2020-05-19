@@ -37,7 +37,7 @@ class ActivityLogAlertActionGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertActionGroup, self).__init__(**kwargs)
-        self.action_group_id = kwargs.get('action_group_id', None)
+        self.action_group_id = kwargs['action_group_id']
         self.webhook_properties = kwargs.get('webhook_properties', None)
 
 
@@ -84,7 +84,7 @@ class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertAllOfCondition, self).__init__(**kwargs)
-        self.all_of = kwargs.get('all_of', None)
+        self.all_of = kwargs['all_of']
 
 
 class ActivityLogAlertLeafCondition(msrest.serialization.Model):
@@ -117,8 +117,8 @@ class ActivityLogAlertLeafCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(ActivityLogAlertLeafCondition, self).__init__(**kwargs)
-        self.field = kwargs.get('field', None)
-        self.equals = kwargs.get('equals', None)
+        self.field = kwargs['field']
+        self.equals = kwargs['equals']
 
 
 class ActivityLogAlertList(msrest.serialization.Model):
@@ -183,7 +183,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 

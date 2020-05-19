@@ -11,14 +11,16 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._monitor_client_enums import *
+
 
 class DataSource(msrest.serialization.Model):
     """Data source object contains configuration to collect telemetry and one or more sinks to send that telemetry data to.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required. Datasource kind. Possible values include: 'PerformanceCounter',
-     'ETWProviders', 'WindowsEventLogs'.
+    :param kind: Required. Datasource kind. Possible values include: "PerformanceCounter",
+     "ETWProviders", "WindowsEventLogs".
     :type kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
     :param configuration: Required.
     :type configuration: ~$(python-base-
@@ -401,7 +403,7 @@ class GuestDiagnosticSettingsPatchResource(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
-     'Windows', 'Linux'.
+     "Windows", "Linux".
     :type os_type: str or ~$(python-base-
      namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
@@ -452,7 +454,7 @@ class GuestDiagnosticSettingsResource(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
-     'Windows', 'Linux'.
+     "Windows", "Linux".
     :type os_type: str or ~$(python-base-
      namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
@@ -539,8 +541,8 @@ class SinkConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required.  Possible values include: 'EventHub', 'ApplicationInsights',
-     'LogAnalytics'.
+    :param kind: Required.  Possible values include: "EventHub", "ApplicationInsights",
+     "LogAnalytics".
     :type kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
     """
 

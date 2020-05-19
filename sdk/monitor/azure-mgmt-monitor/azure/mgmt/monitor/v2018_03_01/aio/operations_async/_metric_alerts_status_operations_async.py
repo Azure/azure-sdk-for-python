@@ -53,16 +53,17 @@ class MetricAlertsStatusOperations:
         :param rule_name: The name of the rule.
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricAlertStatusCollection or the result of cls(response)
+        :return: MetricAlertStatusCollection, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricAlertStatusCollection"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-03-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -91,10 +92,10 @@ class MetricAlertsStatusOperations:
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status'}  # type: ignore
 
     async def list_by_name(
         self,
@@ -112,16 +113,17 @@ class MetricAlertsStatusOperations:
         :param status_name: The name of the status.
         :type status_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricAlertStatusCollection or the result of cls(response)
+        :return: MetricAlertStatusCollection, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricAlertStatusCollection"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-03-01"
 
         # Construct URL
-        url = self.list_by_name.metadata['url']
+        url = self.list_by_name.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -151,7 +153,7 @@ class MetricAlertsStatusOperations:
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}'}
+    list_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}'}  # type: ignore
