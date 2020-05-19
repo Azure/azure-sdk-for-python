@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:05 GMT
+      - Tue, 19 May 2020 16:54:31 GMT
       expires:
       - '-1'
       pragma:
@@ -63,18 +63,18 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a","name":"pytestdeployment9c41124a","type":"Microsoft.Resources/deployments","properties":{"templateHash":"16604828588493152528","parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2020-05-18T12:54:10.0861924Z","duration":"PT2.274394S","correlationId":"dbad7d1d-575a-4d9f-b3ec-ad112dc761f5","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'
+        US"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2020-05-19T16:54:35.6888862Z","duration":"PT2.2807558S","correlationId":"d462637c-9881-4b00-a1e2-3a5adb16f2d0","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operationStatuses/08586118004376658103?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operationStatuses/08586116996120694820?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '703'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:11 GMT
+      - Tue, 19 May 2020 16:54:36 GMT
       expires:
       - '-1'
       pragma:
@@ -100,7 +100,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operationStatuses/08586118004376658103?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operationStatuses/08586116996120694820?api-version=2019-10-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -112,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:41 GMT
+      - Tue, 19 May 2020 16:55:06 GMT
       expires:
       - '-1'
       pragma:
@@ -142,16 +142,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a","name":"pytestdeployment9c41124a","type":"Microsoft.Resources/deployments","properties":{"templateHash":"16604828588493152528","parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.3171935Z","duration":"PT8.5053951S","correlationId":"dbad7d1d-575a-4d9f-b3ec-ad112dc761f5","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:44.0625756Z","duration":"PT10.6544452S","correlationId":"d462637c-9881-4b00-a1e2-3a5adb16f2d0","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1029'
+      - '1030'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:41 GMT
+      - Tue, 19 May 2020 16:55:07 GMT
       expires:
       - '-1'
       pragma:
@@ -181,16 +181,16 @@ interactions:
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a","name":"pytestdeployment9c41124a","type":"Microsoft.Resources/deployments","properties":{"templateHash":"16604828588493152528","parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.3171935Z","duration":"PT8.5053951S","correlationId":"dbad7d1d-575a-4d9f-b3ec-ad112dc761f5","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:44.0625756Z","duration":"PT10.6544452S","correlationId":"d462637c-9881-4b00-a1e2-3a5adb16f2d0","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1041'
+      - '1042'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:42 GMT
+      - Tue, 19 May 2020 16:55:07 GMT
       expires:
       - '-1'
       pragma:
@@ -220,16 +220,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a","name":"pytestdeployment9c41124a","type":"Microsoft.Resources/deployments","properties":{"templateHash":"16604828588493152528","parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.3171935Z","duration":"PT8.5053951S","correlationId":"dbad7d1d-575a-4d9f-b3ec-ad112dc761f5","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:44.0625756Z","duration":"PT10.6544452S","correlationId":"d462637c-9881-4b00-a1e2-3a5adb16f2d0","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1029'
+      - '1030'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:43 GMT
+      - Tue, 19 May 2020 16:55:08 GMT
       expires:
       - '-1'
       pragma:
@@ -258,7 +258,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/FD230AB5751E64C5","operationId":"FD230AB5751E64C5","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.1963898Z","duration":"PT4.8069261S","trackingId":"f0166cff-e5ad-48eb-a283-d76b67eedd46","serviceRequestId":"a74c199d-92c5-4d65-b3fc-731d94a49941","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/08586118004376658103","operationId":"08586118004376658103","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.2920854Z","duration":"PT0.0603581S","trackingId":"6c4961f7-d9c9-41bf-85fe-71f61c2d32ce","statusCode":"OK","statusMessage":null}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/2D0224D33E3D7A83","operationId":"2D0224D33E3D7A83","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:43.1401607Z","duration":"PT4.9381401S","trackingId":"45521b87-a499-489c-884e-b38a04d42fe7","serviceRequestId":"61a38ce3-ac23-4d45-a679-fb3ffccb10a5","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/08586116996120694820","operationId":"08586116996120694820","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:43.8548551Z","duration":"PT0.4354219S","trackingId":"8c11996c-cda5-41c4-9ef8-e4f8e19a6bf7","statusCode":"OK","statusMessage":null}}]}'
     headers:
       cache-control:
       - no-cache
@@ -267,7 +267,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:44 GMT
+      - Tue, 19 May 2020 16:55:08 GMT
       expires:
       - '-1'
       pragma:
@@ -293,10 +293,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/FD230AB5751E64C5?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/2D0224D33E3D7A83?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/FD230AB5751E64C5","operationId":"FD230AB5751E64C5","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:16.1963898Z","duration":"PT4.8069261S","trackingId":"f0166cff-e5ad-48eb-a283-d76b67eedd46","serviceRequestId":"a74c199d-92c5-4d65-b3fc-731d94a49941","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a/operations/2D0224D33E3D7A83","operationId":"2D0224D33E3D7A83","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2020-05-19T16:54:43.1401607Z","duration":"PT4.9381401S","trackingId":"45521b87-a499-489c-884e-b38a04d42fe7","serviceRequestId":"61a38ce3-ac23-4d45-a679-fb3ffccb10a5","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}}'
     headers:
       cache-control:
       - no-cache
@@ -305,7 +305,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:44 GMT
+      - Tue, 19 May 2020 16:55:09 GMT
       expires:
       - '-1'
       pragma:
@@ -338,17 +338,17 @@ interactions:
     body:
       string: '{"error":{"code":"DeploymentCannotBeCancelled","message":"The deployment
         ''pytestdeployment9c41124a'' cannot be cancelled because it has provisioning
-        state ''Succeeded'' or it has already expired (expiration time is ''5/25/2020
-        12:54:07 PM'')."}}'
+        state ''Succeeded'' or it has already expired (expiration time is ''5/26/2020
+        4:54:33 PM'')."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '240'
+      - '239'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:45 GMT
+      - Tue, 19 May 2020 16:55:09 GMT
       expires:
       - '-1'
       pragma:
@@ -390,7 +390,7 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Resources/deployments/pytestdeployment9c41124a","name":"pytestdeployment9c41124a","type":"Microsoft.Resources/deployments","properties":{"templateHash":"16604828588493152528","parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-18T12:54:46.9343469Z","duration":"PT0S","correlationId":"23f9911a-6999-4d44-b109-50dbe68c43bb","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"validatedResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-05-19T16:55:11.1607734Z","duration":"PT0S","correlationId":"d054809e-b03d-4727-88d3-632d0cc3cc5a","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"validatedResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
     headers:
       cache-control:
       - no-cache
@@ -399,7 +399,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:46 GMT
+      - Tue, 19 May 2020 16:55:10 GMT
       expires:
       - '-1'
       pragma:
@@ -445,7 +445,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 12:54:47 GMT
+      - Tue, 19 May 2020 16:55:10 GMT
       expires:
       - '-1'
       pragma:
@@ -487,7 +487,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 12:54:49 GMT
+      - Tue, 19 May 2020 16:55:13 GMT
       expires:
       - '-1'
       location:
@@ -525,7 +525,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 12:55:05 GMT
+      - Tue, 19 May 2020 16:55:30 GMT
       expires:
       - '-1'
       location:
@@ -559,7 +559,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 18 May 2020 12:55:20 GMT
+      - Tue, 19 May 2020 16:55:45 GMT
       expires:
       - '-1'
       pragma:

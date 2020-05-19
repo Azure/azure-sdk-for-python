@@ -27,7 +27,8 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
 
         if self.is_live:
             # special client
-            self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
+            from azure.mgmt.managementgroups import ManagementGroupsAPI
+            self.mgmtgroup_client = ManagementGroupsAPI(
                 credentials=self.settings.get_credentials()
             )
 

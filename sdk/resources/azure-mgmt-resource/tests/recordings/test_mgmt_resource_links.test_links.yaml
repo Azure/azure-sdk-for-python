@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:11 GMT
+      - Tue, 19 May 2020 17:09:17 GMT
       expires:
       - '-1'
       pragma:
@@ -48,9 +48,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1195
+      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1195
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -86,7 +86,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:15 GMT
+      - Tue, 19 May 2020 17:09:20 GMT
       expires:
       - '-1'
       pragma:
@@ -103,15 +103,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1194
+      - Microsoft.Compute/PutVM3Min;236,Microsoft.Compute/PutVM30Min;1194
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1195'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2",
-      "notes": "Testing links"}}\'''''
+    body: 'b''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2",
+      "notes": "Testing links"}}'''
     headers:
       Accept:
       - application/json
@@ -139,7 +139,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:16 GMT
+      - Tue, 19 May 2020 17:09:21 GMT
       expires:
       - '-1'
       pragma:
@@ -149,7 +149,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -178,7 +178,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:27 GMT
+      - Tue, 19 May 2020 17:09:32 GMT
       expires:
       - '-1'
       pragma:
@@ -219,7 +219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:27 GMT
+      - Tue, 19 May 2020 17:09:32 GMT
       expires:
       - '-1'
       pragma:
@@ -260,7 +260,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:27 GMT
+      - Tue, 19 May 2020 17:09:32 GMT
       expires:
       - '-1'
       pragma:
@@ -301,7 +301,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 13:45:27 GMT
+      - Tue, 19 May 2020 17:09:32 GMT
       expires:
       - '-1'
       pragma:
@@ -341,7 +341,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Apr 2020 13:45:28 GMT
+      - Tue, 19 May 2020 17:09:32 GMT
       expires:
       - '-1'
       pragma:
@@ -351,7 +351,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK

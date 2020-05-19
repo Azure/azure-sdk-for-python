@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:27 GMT
+      - Tue, 19 May 2020 17:02:02 GMT
       expires:
       - '-1'
       pragma:
@@ -61,7 +61,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:28 GMT
+      - Tue, 19 May 2020 17:02:02 GMT
       expires:
       - '-1'
       pragma:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:36 GMT
+      - Tue, 19 May 2020 17:02:11 GMT
       expires:
       - '-1'
       pragma:
@@ -124,7 +124,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1194
+      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -162,7 +162,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:40 GMT
+      - Tue, 19 May 2020 17:02:14 GMT
       expires:
       - '-1'
       pragma:
@@ -179,7 +179,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1193
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1198
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -213,7 +213,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:40 GMT
+      - Tue, 19 May 2020 17:02:15 GMT
       expires:
       - '-1'
       pragma:
@@ -230,7 +230,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3998,Microsoft.Compute/LowCostGet30Min;31970
+      - Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31999
     status:
       code: 200
       message: OK
@@ -262,7 +262,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:40 GMT
+      - Tue, 19 May 2020 17:02:15 GMT
       expires:
       - '-1'
       pragma:
@@ -279,7 +279,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3997,Microsoft.Compute/LowCostGet30Min;31969
+      - Microsoft.Compute/LowCostGet3Min;3998,Microsoft.Compute/LowCostGet30Min;31998
     status:
       code: 200
       message: OK
@@ -298,6 +298,44 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=name%20eq%20%27pytestavsetea520dc4%27&api-version=2019-10-01
   response:
     body:
+      string: '{"value":[],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?%24filter=name+eq+%27pytestavsetea520dc4%27&api-version=2019-10-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9EUTBRVFEtIiwibmV4dFJvd0tleSI6IjEhMTg4IU1VTTFRamd5UlVVNU1qazBORFUyT0VJd1F6QkNPVU0xTWpOQ1F6QkVPRFpmUjFKTUxWRlRWRVZUVkRWQlJUQTRSVFJHTlVFek5EUkZNVUU0TmtVNE1VWkRPRGswTnpVMk9EUTNMVTFKUTFKUFUwOUdWRG95UlU1RlZGZFBVa3M2TWtaUVZVSk1TVU5KVUVGRVJGSkZVMU5GVXpveVJrcEZUa3RKVGxOUVZVSk1TVU5KVUMxRlFWTlVWVk0tIn0%3d"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 17:02:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?%24filter=name+eq+%27pytestavsetea520dc4%27&api-version=2019-10-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9EUTBRVFEtIiwibmV4dFJvd0tleSI6IjEhMTg4IU1VTTFRamd5UlVVNU1qazBORFUyT0VJd1F6QkNPVU0xTWpOQ1F6QkVPRFpmUjFKTUxWRlRWRVZUVkRWQlJUQTRSVFJHTlVFek5EUkZNVUU0TmtVNE1VWkRPRGswTnpVMk9EUTNMVTFKUTFKUFUwOUdWRG95UlU1RlZGZFBVa3M2TWtaUVZVSk1TVU5KVUVGRVJGSkZVMU5GVXpveVJrcEZUa3RKVGxOUVZVSk1TVU5KVUMxRlFWTlVWVk0tIn0%3d
+  response:
+    body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4","name":"pytestavsetea520dc4","type":"Microsoft.Compute/availabilitySets","sku":{"name":"Classic"},"location":"westus"}]}'
     headers:
       cache-control:
@@ -307,7 +345,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:41 GMT
+      - Tue, 19 May 2020 17:02:15 GMT
       expires:
       - '-1'
       pragma:
@@ -340,16 +378,16 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pynewgroupea520dc4?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4","name":"pynewgroupea520dc4","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"StorageType":"Standard_LRS","type":"test"},"properties":{"provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4","name":"pynewgroupea520dc4","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '285'
+      - '233'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:01:42 GMT
+      - Tue, 19 May 2020 17:02:16 GMT
       expires:
       - '-1'
       pragma:
@@ -390,7 +428,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:01:46 GMT
+      - Tue, 19 May 2020 17:02:21 GMT
       expires:
       - '-1'
       location:
@@ -402,7 +440,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1195'
     status:
       code: 202
       message: Accepted
@@ -428,7 +466,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:02:01 GMT
+      - Tue, 19 May 2020 17:02:35 GMT
       expires:
       - '-1'
       location:
@@ -464,7 +502,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:02:17 GMT
+      - Tue, 19 May 2020 17:02:51 GMT
       expires:
       - '-1'
       location:
@@ -500,7 +538,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:02:32 GMT
+      - Tue, 19 May 2020 17:03:07 GMT
       expires:
       - '-1'
       location:
@@ -536,7 +574,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:02:47 GMT
+      - Tue, 19 May 2020 17:03:23 GMT
       expires:
       - '-1'
       location:
@@ -572,7 +610,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:03:02 GMT
+      - Tue, 19 May 2020 17:03:38 GMT
       expires:
       - '-1'
       location:
@@ -606,7 +644,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 18 May 2020 13:03:19 GMT
+      - Tue, 19 May 2020 17:03:53 GMT
       expires:
       - '-1'
       pragma:
@@ -645,7 +683,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:03:23 GMT
+      - Tue, 19 May 2020 17:03:58 GMT
       expires:
       - '-1'
       location:
@@ -657,7 +695,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 202
       message: Accepted
@@ -683,7 +721,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:03:38 GMT
+      - Tue, 19 May 2020 17:04:14 GMT
       expires:
       - '-1'
       location:
@@ -719,7 +757,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:03:53 GMT
+      - Tue, 19 May 2020 17:04:29 GMT
       expires:
       - '-1'
       location:
@@ -755,7 +793,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:04:09 GMT
+      - Tue, 19 May 2020 17:04:44 GMT
       expires:
       - '-1'
       location:
@@ -791,7 +829,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:04:24 GMT
+      - Tue, 19 May 2020 17:05:00 GMT
       expires:
       - '-1'
       location:
@@ -827,7 +865,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:04:40 GMT
+      - Tue, 19 May 2020 17:05:15 GMT
       expires:
       - '-1'
       location:
@@ -863,7 +901,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:04:55 GMT
+      - Tue, 19 May 2020 17:05:31 GMT
       expires:
       - '-1'
       location:
@@ -899,7 +937,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:05:10 GMT
+      - Tue, 19 May 2020 17:05:45 GMT
       expires:
       - '-1'
       location:
@@ -935,7 +973,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:05:25 GMT
+      - Tue, 19 May 2020 17:06:02 GMT
       expires:
       - '-1'
       location:
@@ -971,7 +1009,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:05:41 GMT
+      - Tue, 19 May 2020 17:06:29 GMT
       expires:
       - '-1'
       location:
@@ -1007,7 +1045,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:05:57 GMT
+      - Tue, 19 May 2020 17:06:45 GMT
       expires:
       - '-1'
       location:
@@ -1043,7 +1081,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:06:12 GMT
+      - Tue, 19 May 2020 17:07:01 GMT
       expires:
       - '-1'
       location:
@@ -1079,43 +1117,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:06:28 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Mon, 18 May 2020 13:06:43 GMT
+      - Tue, 19 May 2020 17:07:16 GMT
       expires:
       - '-1'
       location:
@@ -1149,7 +1151,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 18 May 2020 13:06:59 GMT
+      - Tue, 19 May 2020 17:07:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1193,7 +1195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:07:02 GMT
+      - Tue, 19 May 2020 17:07:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1210,7 +1212,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1193
+      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1197
       x-ms-ratelimit-remaining-subscription-writes:
       - '1196'
     status:
@@ -1248,7 +1250,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 13:07:04 GMT
+      - Tue, 19 May 2020 17:07:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1265,7 +1267,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1192
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1196
       x-ms-ratelimit-remaining-subscription-writes:
       - '1195'
     status:
@@ -1295,7 +1297,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:07 GMT
+      - Tue, 19 May 2020 17:07:48 GMT
       expires:
       - '-1'
       pragma:
@@ -1308,9 +1310,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1194
+      - Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1199
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK
@@ -1338,7 +1340,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:10 GMT
+      - Tue, 19 May 2020 17:07:52 GMT
       expires:
       - '-1'
       pragma:
@@ -1351,9 +1353,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1193
+      - Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1198
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 200
       message: OK
@@ -1381,7 +1383,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:12 GMT
+      - Tue, 19 May 2020 17:07:56 GMT
       expires:
       - '-1'
       location:
@@ -1393,7 +1395,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -1419,7 +1421,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:28 GMT
+      - Tue, 19 May 2020 17:08:12 GMT
       expires:
       - '-1'
       location:
@@ -1455,7 +1457,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:43 GMT
+      - Tue, 19 May 2020 17:08:27 GMT
       expires:
       - '-1'
       location:
@@ -1491,7 +1493,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 13:07:58 GMT
+      - Tue, 19 May 2020 17:08:42 GMT
       expires:
       - '-1'
       pragma:
