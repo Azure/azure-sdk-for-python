@@ -565,6 +565,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.complete()
                     count += 1
             assert count == 0
+
+            # TODO: add dead_letter queue receiving check
+            # assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+            # assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
     
 
     @pytest.mark.skip(reason="Pending dead letter receiver")
@@ -605,6 +609,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
                     count += 1
             assert count == 10

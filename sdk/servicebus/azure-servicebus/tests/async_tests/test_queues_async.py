@@ -515,6 +515,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
+            # TODO: add dead_letter queue receiving check
+            # assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+            # assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+
     @pytest.mark.skip(reason="requires deadletter receiver")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -547,6 +551,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
                     count += 1
             assert count == 10

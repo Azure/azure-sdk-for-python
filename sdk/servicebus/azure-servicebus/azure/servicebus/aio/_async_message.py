@@ -13,7 +13,9 @@ from .._common.constants import (
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
-    MESSAGE_RENEW_LOCK
+    MESSAGE_RENEW_LOCK,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION
 )
 from .._common.utils import utc_from_timestamp
 from ._async_utils import get_running_loop
@@ -84,7 +86,13 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        await self._settle_message(MESSAGE_DEAD_LETTER)
+
+        details = {
+            RECEIVER_LINK_DEAD_LETTER_REASON: reason,
+            RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
+        }
+
+        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
         self._settled = True
 
     async def abandon(self) -> None:  # type: ignore

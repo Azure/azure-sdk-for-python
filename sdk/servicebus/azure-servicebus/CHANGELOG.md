@@ -2,6 +2,9 @@
 
 ## 7.0.0b3 (Unreleased)
 
+**BugFixes**
+
+* Fixed bug where reason and description not being set when dead-lettering messages.
 
 ## 7.0.0b2 (2020-05-04)
 
@@ -23,7 +26,7 @@
 
 **BugFixes**
 
-* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Fixed bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 * Updated uAMQP dependency to 1.2.7.
     * Fixed bug in setting certificate of tlsio on MacOS. #7201
     * Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `ServiceBusClient`.

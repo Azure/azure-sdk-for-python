@@ -32,6 +32,8 @@ from .constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION,
     MESSAGE_COMPLETE,
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
@@ -555,11 +557,18 @@ class ReceivedMessage(PeekMessage):
                 [self.lock_token],
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
+            reason = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_REASON)
+            description = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION)
+            mgmt_dead_letter_details = {
+                MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
+                MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""
+            }
+
             return functools.partial(
                 self._receiver._settle_message,
                 SETTLEMENT_DEADLETTER,
                 [self.lock_token],
-                dead_letter_details=dead_letter_details
+                dead_letter_details=mgmt_dead_letter_details
             )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(
@@ -569,20 +578,19 @@ class ReceivedMessage(PeekMessage):
             )
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
         # type: (str, Dict[str, Any]) -> Callable
-        # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
-        # should be accepted. Will revisit this later.
-        # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
-        # TODO: to make dead_letter_details useful
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(self.message.accept)
         if settle_operation == MESSAGE_ABANDON:
             return functools.partial(self.message.modify, True, False)
         if settle_operation == MESSAGE_DEAD_LETTER:
-            # note: message.reject() can not set reason and description properly due to the issue
-            # https://github.com/Azure/azure-uamqp-python/issues/155
-            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
+            return functools.partial(
+                self.message.reject,
+                condition=DEADLETTERNAME,
+                description=dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION),
+                info=dead_letter_details
+            )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
@@ -646,8 +654,9 @@ class ReceivedMessage(PeekMessage):
         self._check_live(MESSAGE_DEAD_LETTER)
 
         details = {
-            MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
-            MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
+            RECEIVER_LINK_DEAD_LETTER_REASON: reason,
+            RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
+        }
 
         self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
         self._settled = True
