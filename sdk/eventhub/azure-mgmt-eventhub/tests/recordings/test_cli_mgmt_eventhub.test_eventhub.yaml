@@ -14,11 +14,11 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-storage/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:33:52 GMT
+      - Tue, 19 May 2020 17:44:55 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/ef1d0535-f4ba-464e-a31b-e6ab3389e647?monitor=true&api-version=2019-06-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -59,103 +59,21 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-storage/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/ef1d0535-f4ba-464e-a31b-e6ab3389e647?monitor=true&api-version=2019-06-01
   response:
     body:
-      string: ''
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","name":"storageaccount13130eda","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-19T17:44:55.5289057Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-19T17:44:55.5289057Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-19T17:44:55.4663421Z","primaryEndpoints":{"blob":"https://storageaccount13130eda.blob.core.windows.net/","queue":"https://storageaccount13130eda.queue.core.windows.net/","table":"https://storageaccount13130eda.table.core.windows.net/","file":"https://storageaccount13130eda.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '0'
-      content-type:
-      - text/plain; charset=utf-8
-      date:
-      - Sat, 28 Mar 2020 17:34:10 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      content-type:
-      - text/plain; charset=utf-8
-      date:
-      - Sat, 28 Mar 2020 17:34:13 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/896f968b-8483-4869-89b3-53bb73a4e87b?monitor=true&api-version=2019-04-01
-  response:
-    body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","name":"storageaccount13130eda","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-03-28T17:33:52.4498224Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-03-28T17:33:52.4498224Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-03-28T17:33:52.3716737Z","primaryEndpoints":{"blob":"https://storageaccount13130eda.blob.core.windows.net/","queue":"https://storageaccount13130eda.queue.core.windows.net/","table":"https://storageaccount13130eda.table.core.windows.net/","file":"https://storageaccount13130eda.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1125'
+      - '1197'
       content-type:
       - application/json
       date:
-      - Sat, 28 Mar 2020 17:34:18 GMT
+      - Tue, 19 May 2020 17:45:13 GMT
       expires:
       - '-1'
       pragma:
@@ -191,22 +109,22 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork13130eda\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda\"\
-        ,\r\n  \"etag\": \"W/\\\"7a218bff-58fa-4cd7-9122-6643802e1bef\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b62c123b-7dd4-443f-8174-22c7b038a77e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"d8ef492b-4966-41bf-8eb9-1cce99d7d6d8\",\r\n    \"\
+        \   \"resourceGuid\": \"e9b51bc4-3bd0-43cd-9be7-652b74c35186\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnet13130eda\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda/subnets/subnet13130eda\"\
-        ,\r\n        \"etag\": \"W/\\\"7a218bff-58fa-4cd7-9122-6643802e1bef\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"b62c123b-7dd4-443f-8174-22c7b038a77e\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
@@ -215,8 +133,10 @@ interactions:
         \  }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
         : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
     headers:
+      azure-asyncnotification:
+      - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9db78f9-a640-4e29-9084-c92b9b2ea94b?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0db3167e-b2b7-4486-bb34-734d7aef1fc5?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -224,7 +144,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:34:23 GMT
+      - Tue, 19 May 2020 17:45:19 GMT
       expires:
       - '-1'
       pragma:
@@ -237,9 +157,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9894bcef-abc8-44f5-8561-fb813520e215
+      - 2df56853-80db-4329-aad9-11a45f6af8a7
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -254,9 +174,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9db78f9-a640-4e29-9084-c92b9b2ea94b?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0db3167e-b2b7-4486-bb34-734d7aef1fc5?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -268,7 +188,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:34:37 GMT
+      - Tue, 19 May 2020 17:45:23 GMT
       expires:
       - '-1'
       pragma:
@@ -285,7 +205,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 547766a9-a41d-45c5-806f-31c6d9fcf4f2
+      - b164b98a-1ee7-4bbb-a5b9-f075a18e792b
     status:
       code: 200
       message: OK
@@ -300,20 +220,20 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork13130eda\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda\"\
-        ,\r\n  \"etag\": \"W/\\\"f6a7fd18-aa56-41aa-8fc4-591df81e6725\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"2639b727-49d7-480a-ba8c-83460919add9\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"d8ef492b-4966-41bf-8eb9-1cce99d7d6d8\",\r\n    \"\
+        \    \"resourceGuid\": \"e9b51bc4-3bd0-43cd-9be7-652b74c35186\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnet13130eda\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda/subnets/subnet13130eda\"\
-        ,\r\n        \"etag\": \"W/\\\"f6a7fd18-aa56-41aa-8fc4-591df81e6725\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"2639b727-49d7-480a-ba8c-83460919add9\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
@@ -329,9 +249,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:34:38 GMT
+      - Tue, 19 May 2020 17:45:23 GMT
       etag:
-      - W/"f6a7fd18-aa56-41aa-8fc4-591df81e6725"
+      - W/"2639b727-49d7-480a-ba8c-83460919add9"
       expires:
       - '-1'
       pragma:
@@ -348,7 +268,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 59670a01-098b-4655-951f-ea092166be21
+      - 80315a8c-6c49-47fd-8776-b51a6adec17b
     status:
       code: 200
       message: OK
@@ -363,15 +283,15 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda/subnets/subnet13130eda?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda/subnets/subnet13130eda?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnet13130eda\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Network/virtualNetworks/virtualnetwork13130eda/subnets/subnet13130eda\"\
-        ,\r\n  \"etag\": \"W/\\\"f6a7fd18-aa56-41aa-8fc4-591df81e6725\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"2639b727-49d7-480a-ba8c-83460919add9\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -384,9 +304,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:34:38 GMT
+      - Tue, 19 May 2020 17:45:24 GMT
       etag:
-      - W/"f6a7fd18-aa56-41aa-8fc4-591df81e6725"
+      - W/"2639b727-49d7-480a-ba8c-83460919add9"
       expires:
       - '-1'
       pragma:
@@ -403,7 +323,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 09077877-16b8-48dc-bb87-aa72b5f51c01
+      - fc6dd127-67f6-413c-9fd9-9f6376834e00
     status:
       code: 200
       message: OK
@@ -422,13 +342,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda","name":"namespace13130eda","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-03-28T17:34:45.187Z","updatedAt":"2020-03-28T17:34:45.187Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-05-19T17:45:28.713Z","updatedAt":"2020-05-19T17:45:28.713Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -437,7 +357,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:34:47 GMT
+      - Tue, 19 May 2020 17:45:29 GMT
       expires:
       - '-1'
       pragma:
@@ -456,7 +376,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '45'
+      - '49'
     status:
       code: 200
       message: OK
@@ -470,13 +390,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda","name":"namespace13130eda","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-03-28T17:34:45.187Z","updatedAt":"2020-03-28T17:34:45.187Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-05-19T17:45:28.713Z","updatedAt":"2020-05-19T17:45:28.713Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -485,7 +405,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:35:18 GMT
+      - Tue, 19 May 2020 17:45:59 GMT
       expires:
       - '-1'
       pragma:
@@ -516,13 +436,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda","name":"namespace13130eda","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-03-28T17:34:45.187Z","updatedAt":"2020-03-28T17:35:28.433Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Active"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-05-19T17:45:28.713Z","updatedAt":"2020-05-19T17:46:12.687Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -531,7 +451,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:35:49 GMT
+      - Tue, 19 May 2020 17:46:29 GMT
       expires:
       - '-1'
       pragma:
@@ -562,12 +482,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/messagingplan?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-03-28T17:34:46.3584433Z","revision":5}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-05-19T17:45:31.7678098Z","revision":3}}'
     headers:
       cache-control:
       - no-cache
@@ -576,7 +496,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:35:55 GMT
+      - Tue, 19 May 2020 17:46:35 GMT
       expires:
       - '-1'
       pragma:
@@ -615,22 +535,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda","name":"eventhub13130eda","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-03-28T17:35:59.363Z","updatedAt":"2020-03-28T17:35:59.697Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-19T17:46:39.37Z","updatedAt":"2020-05-19T17:46:39.86Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1020'
+      - '1018'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:35:59 GMT
+      - Tue, 19 May 2020 17:46:40 GMT
       expires:
       - '-1'
       pragma:
@@ -649,7 +569,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -670,7 +590,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/networkRuleSets/default?api-version=2017-04-01
   response:
@@ -685,7 +605,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:18 GMT
+      - Tue, 19 May 2020 17:46:58 GMT
       expires:
       - '-1'
       pragma:
@@ -704,7 +624,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -722,12 +642,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda","name":"authorizationrule13130eda","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda","name":"authorizationrule13130eda","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control:
@@ -737,7 +657,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:25 GMT
+      - Tue, 19 May 2020 17:47:05 GMT
       expires:
       - '-1'
       pragma:
@@ -756,7 +676,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1190'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -774,13 +694,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda","name":"consumergroup13130eda","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-03-28T17:36:28.0686581Z","updatedAt":"2020-03-28T17:36:28.0686581Z","userMetadata":"New
+        Central US","properties":{"createdAt":"2020-05-19T17:47:07.0300542Z","updatedAt":"2020-05-19T17:47:07.0300542Z","userMetadata":"New
         consumergroup"}}'
     headers:
       cache-control:
@@ -790,7 +710,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:27 GMT
+      - Tue, 19 May 2020 17:47:06 GMT
       expires:
       - '-1'
       pragma:
@@ -809,7 +729,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1189'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -827,7 +747,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
@@ -842,7 +762,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:29 GMT
+      - Tue, 19 May 2020 17:47:07 GMT
       expires:
       - '-1'
       pragma:
@@ -861,7 +781,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -875,12 +795,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda","name":"authorizationrule13130eda","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda","name":"authorizationrule13130eda","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control:
@@ -890,7 +810,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:30 GMT
+      - Tue, 19 May 2020 17:47:08 GMT
       expires:
       - '-1'
       pragma:
@@ -921,7 +841,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
@@ -936,7 +856,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:30 GMT
+      - Tue, 19 May 2020 17:47:08 GMT
       expires:
       - '-1'
       pragma:
@@ -967,13 +887,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda","name":"consumergroup13130eda","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-03-28T17:36:28.068Z","updatedAt":"2020-03-28T17:36:28.068Z","userMetadata":"New
+        Central US","properties":{"createdAt":"2020-05-19T17:47:07.033Z","updatedAt":"2020-05-19T17:47:07.033Z","userMetadata":"New
         consumergroup"}}'
     headers:
       cache-control:
@@ -983,7 +903,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:31 GMT
+      - Tue, 19 May 2020 17:47:08 GMT
       expires:
       - '-1'
       pragma:
@@ -1014,7 +934,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/networkRuleSets/default?api-version=2017-04-01
   response:
@@ -1029,7 +949,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:32 GMT
+      - Tue, 19 May 2020 17:47:09 GMT
       expires:
       - '-1'
       pragma:
@@ -1060,22 +980,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda","name":"eventhub13130eda","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-03-28T17:35:59.363","updatedAt":"2020-03-28T17:36:29.407","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-19T17:46:39.37","updatedAt":"2020-05-19T17:47:08.227","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.Storage/storageAccounts/storageaccount13130eda","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1018'
+      - '1017'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:32 GMT
+      - Tue, 19 May 2020 17:47:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1106,13 +1026,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda","name":"namespace13130eda","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-03-28T17:34:45.187Z","updatedAt":"2020-03-28T17:35:28.433Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Active"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-05-19T17:45:28.713Z","updatedAt":"2020-05-19T17:46:12.687Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -1121,7 +1041,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:33 GMT
+      - Tue, 19 May 2020 17:47:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1156,12 +1076,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=vB66bk9N8Kcodd0oCPadKf/TRSR/1wm3NjJh0lQ/KPE=;EntityPath=eventhub13130eda","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=ZmhO5KsYpFK7F5JsJHeg1VJQMdr9U7MNPiyGlTUVTKc=;EntityPath=eventhub13130eda","primaryKey":"vB66bk9N8Kcodd0oCPadKf/TRSR/1wm3NjJh0lQ/KPE=","secondaryKey":"ZmhO5KsYpFK7F5JsJHeg1VJQMdr9U7MNPiyGlTUVTKc=","keyName":"authorizationrule13130eda"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=Bk4P/2lf43ElugT0yEZtEqLgST0wQ2pKeXb/1Z7rf+8=;EntityPath=eventhub13130eda","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=L9SiAcyy2tSkoWKHRkbzdnirBPgIYpCme9DLtikpMkY=;EntityPath=eventhub13130eda","primaryKey":"Bk4P/2lf43ElugT0yEZtEqLgST0wQ2pKeXb/1Z7rf+8=","secondaryKey":"L9SiAcyy2tSkoWKHRkbzdnirBPgIYpCme9DLtikpMkY=","keyName":"authorizationrule13130eda"}'
     headers:
       cache-control:
       - no-cache
@@ -1170,7 +1090,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:34 GMT
+      - Tue, 19 May 2020 17:47:11 GMT
       expires:
       - '-1'
       pragma:
@@ -1205,12 +1125,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda/ListKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=vB66bk9N8Kcodd0oCPadKf/TRSR/1wm3NjJh0lQ/KPE=;EntityPath=eventhub13130eda","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=ZmhO5KsYpFK7F5JsJHeg1VJQMdr9U7MNPiyGlTUVTKc=;EntityPath=eventhub13130eda","primaryKey":"vB66bk9N8Kcodd0oCPadKf/TRSR/1wm3NjJh0lQ/KPE=","secondaryKey":"ZmhO5KsYpFK7F5JsJHeg1VJQMdr9U7MNPiyGlTUVTKc=","keyName":"authorizationrule13130eda"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=Bk4P/2lf43ElugT0yEZtEqLgST0wQ2pKeXb/1Z7rf+8=;EntityPath=eventhub13130eda","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=L9SiAcyy2tSkoWKHRkbzdnirBPgIYpCme9DLtikpMkY=;EntityPath=eventhub13130eda","primaryKey":"Bk4P/2lf43ElugT0yEZtEqLgST0wQ2pKeXb/1Z7rf+8=","secondaryKey":"L9SiAcyy2tSkoWKHRkbzdnirBPgIYpCme9DLtikpMkY=","keyName":"authorizationrule13130eda"}'
     headers:
       cache-control:
       - no-cache
@@ -1219,7 +1139,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:35 GMT
+      - Tue, 19 May 2020 17:47:14 GMT
       expires:
       - '-1'
       pragma:
@@ -1256,12 +1176,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda/regenerateKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=CRnoCdTaoOnANyJJndp8SPM/bXm6Z6STiOssSw2wt2Q=","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=f9JMzkbMeBDWop1LaztpiVoLejRAZsRfO9Q0hHIO2wg=","primaryKey":"CRnoCdTaoOnANyJJndp8SPM/bXm6Z6STiOssSw2wt2Q=","secondaryKey":"f9JMzkbMeBDWop1LaztpiVoLejRAZsRfO9Q0hHIO2wg=","keyName":"authorizationrule13130eda"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=IJ62sUFH8uhQnMeZeFxOKmE9bunMTjXZYw53gyErDRo=","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=sADfpTVahhkPjSzpUNaKGTZYp2nwaARD6DIOwGXN6L4=","primaryKey":"IJ62sUFH8uhQnMeZeFxOKmE9bunMTjXZYw53gyErDRo=","secondaryKey":"sADfpTVahhkPjSzpUNaKGTZYp2nwaARD6DIOwGXN6L4=","keyName":"authorizationrule13130eda"}'
     headers:
       cache-control:
       - no-cache
@@ -1270,7 +1190,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:41 GMT
+      - Tue, 19 May 2020 17:47:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1305,12 +1225,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda/listKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=CRnoCdTaoOnANyJJndp8SPM/bXm6Z6STiOssSw2wt2Q=","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=f9JMzkbMeBDWop1LaztpiVoLejRAZsRfO9Q0hHIO2wg=","primaryKey":"CRnoCdTaoOnANyJJndp8SPM/bXm6Z6STiOssSw2wt2Q=","secondaryKey":"f9JMzkbMeBDWop1LaztpiVoLejRAZsRfO9Q0hHIO2wg=","keyName":"authorizationrule13130eda"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=IJ62sUFH8uhQnMeZeFxOKmE9bunMTjXZYw53gyErDRo=","secondaryConnectionString":"Endpoint=sb://namespace13130eda.servicebus.windows.net/;SharedAccessKeyName=authorizationrule13130eda;SharedAccessKey=sADfpTVahhkPjSzpUNaKGTZYp2nwaARD6DIOwGXN6L4=","primaryKey":"IJ62sUFH8uhQnMeZeFxOKmE9bunMTjXZYw53gyErDRo=","secondaryKey":"sADfpTVahhkPjSzpUNaKGTZYp2nwaARD6DIOwGXN6L4=","keyName":"authorizationrule13130eda"}'
     headers:
       cache-control:
       - no-cache
@@ -1319,7 +1239,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:42 GMT
+      - Tue, 19 May 2020 17:47:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1356,13 +1276,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda","name":"namespace13130eda","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-03-28T17:34:45.187Z","updatedAt":"2020-03-28T17:36:45.667Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namespace13130eda","createdAt":"2020-05-19T17:45:28.713Z","updatedAt":"2020-05-19T17:47:22.743Z","serviceBusEndpoint":"https://namespace13130eda.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -1371,7 +1291,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:48 GMT
+      - Tue, 19 May 2020 17:47:24 GMT
       expires:
       - '-1'
       pragma:
@@ -1390,7 +1310,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '45'
+      - '48'
     status:
       code: 200
       message: OK
@@ -1408,9 +1328,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/CheckNameAvailability?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/checkNameAvailability?api-version=2017-04-01
   response:
     body:
       string: '{"nameAvailable":true,"reason":"None","message":null}'
@@ -1422,7 +1342,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 28 Mar 2020 17:36:49 GMT
+      - Tue, 19 May 2020 17:47:24 GMT
       expires:
       - '-1'
       pragma:
@@ -1457,7 +1377,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
@@ -1469,50 +1389,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 28 Mar 2020 17:36:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda?api-version=2017-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Sat, 28 Mar 2020 17:36:52 GMT
+      - Tue, 19 May 2020 17:47:25 GMT
       expires:
       - '-1'
       pragma:
@@ -1543,21 +1420,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace213130eda?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda/consumergroups/consumergroup13130eda?api-version=2017-04-01
   response:
     body:
       string: ''
     headers:
       cache-control:
       - no-cache
+      content-length:
+      - '0'
       date:
-      - Sat, 28 Mar 2020 17:36:53 GMT
+      - Tue, 19 May 2020 17:47:27 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -1565,8 +1449,8 @@ interactions:
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14997'
     status:
-      code: 204
-      message: No Content
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -1579,9 +1463,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/AuthorizationRules/authorizationrule13130eda?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/authorizationRules/authorizationrule13130eda?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1591,7 +1475,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 28 Mar 2020 17:37:00 GMT
+      - Tue, 19 May 2020 17:47:33 GMT
       expires:
       - '-1'
       pragma:
@@ -1622,7 +1506,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/eventhubs/eventhub13130eda?api-version=2017-04-01
   response:
@@ -1634,7 +1518,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 28 Mar 2020 17:37:02 GMT
+      - Tue, 19 May 2020 17:47:34 GMT
       expires:
       - '-1'
       pragma:
@@ -1665,7 +1549,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda?api-version=2017-04-01
   response:
@@ -1677,7 +1561,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 28 Mar 2020 17:37:05 GMT
+      - Tue, 19 May 2020 17:47:45 GMT
       expires:
       - '-1'
       location:
@@ -1708,7 +1592,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_eventhub13130eda/providers/Microsoft.EventHub/namespaces/namespace13130eda/operationresults/namespace13130eda?api-version=2017-04-01
   response:
@@ -1720,7 +1604,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 28 Mar 2020 17:37:35 GMT
+      - Tue, 19 May 2020 17:48:16 GMT
       expires:
       - '-1'
       pragma:
