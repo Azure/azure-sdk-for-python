@@ -23,20 +23,20 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_custom_form_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.recognize_custom_forms_from_url(model_id="xx", url=self.form_url_jpg)
+            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_url_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.recognize_custom_forms_from_url(model_id="xx", url=self.form_url_jpg)
+            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(HttpResponseError):
-            result = await client.recognize_custom_forms_from_url(model_id="xx", url="https://badurl.jpg")
+            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url="https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_pass_stream_into_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -46,7 +46,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             with self.assertRaises(HttpResponseError):
                 result = await client.recognize_custom_forms_from_url(
                     model_id="xxx",
-                    url=fd,
+                    form_url=fd,
                 )
 
     @GlobalFormRecognizerAccountPreparer()
@@ -59,7 +59,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         with self.assertRaises(HttpResponseError):
             form = await fr_client.recognize_custom_forms_from_url(
                 model.model_id,
-                url="https://badurl.jpg"
+                form_url="https://badurl.jpg"
             )
 
     @GlobalFormRecognizerAccountPreparer()
