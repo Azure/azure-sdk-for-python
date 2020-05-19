@@ -122,6 +122,22 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_output_same_order_as_input(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="one"),
+            TextDocumentInput(id="2", text="two"),
+            TextDocumentInput(id="3", text="three"),
+            TextDocumentInput(id="4", text="four"),
+            TextDocumentInput(id="5", text="five")
+        ]
+
+        response = await client.analyze_sentiment(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -135,15 +151,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.analyze_sentiment(
                 ["This is written in English."]
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = await client.analyze_sentiment(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -349,6 +356,22 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_method(self, client):
+        response = await client.analyze_sentiment(
+            ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_docs(self, client):
+        response = await client.analyze_sentiment(
+            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
@@ -452,11 +475,26 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            await client.analyze_sentiment(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.analyze_sentiment(docs)
-        assert "Input documents can not be empty" in str(excinfo.value)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.analyze_sentiment(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

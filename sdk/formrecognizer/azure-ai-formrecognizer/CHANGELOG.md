@@ -1,6 +1,30 @@
 # Change Log azure-ai-formrecognizer
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b3 (Unreleased)
+
+**Breaking Changes**
+
+- `training_files` parameter of `begin_train_model` is renamed to `training_files_url`
+- `use_labels` parameter of `begin_train_model` is renamed to `use_training_labels`
+- `list_model_infos` method has been renamed to `list_custom_models`
+- Removed `get_form_training_client` from `FormRecognizerClient`
+- Added `get_form_recognizer_client` to `FormTrainingClient`
+- A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_train_model()` or `train_model()` methods
+- `PageRange` is renamed to `FormPageRange`
+- `FormField` does not have a page_number.
+- `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
+- `USReceiptType` is renamed to `ReceiptType`
+- `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively.
+For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
+
+
+
+**New features**
+
+- Authentication using `azure-identity` credentials now supported
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+
+## 1.0.0b2 (2020-05-06)
 
 **Fixes and improvements**
 
@@ -10,7 +34,7 @@
 
 ## 1.0.0b1 (2020-04-23)
 
-Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Form Recognizer. 
+Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Form Recognizer.
 This library replaces the package found here: https://pypi.org/project/azure-cognitiveservices-formrecognizer/
 
 For more information about this, and preview releases of other Azure SDK libraries, please visit
@@ -19,7 +43,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 **Breaking changes: New API design**
 
 - New namespace/package name:
-  - The namespace/package name for the Form Recognizer client library has changed from 
+  - The namespace/package name for the Form Recognizer client library has changed from
     `azure.cognitiveservices.formrecognizer` to `azure.ai.formrecognizer`
 - Two client design:
     - FormRecognizerClient to analyze fields/values on custom forms, receipts, and form content/layout
@@ -30,7 +54,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 - Asynchronous APIs added under `azure.ai.formrecognizer.aio` namespace
 - Authentication with API key supported using `AzureKeyCredential("<api_key>")` from `azure.core.credentials`
 - New underlying REST pipeline implementation based on the azure-core library
-- Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. 
+- Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation.
     See README for a link to optional configuration arguments
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`

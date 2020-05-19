@@ -1118,6 +1118,12 @@ class ErrorResponseBody(Model):
     :type code: str
     :param message: Required. error message.
     :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    :param details: an array of additional nested error response info objects,
+     as described by this contract.
+    :type details:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.InnerErrorDescription
     """
 
     _validation = {
@@ -1128,12 +1134,16 @@ class ErrorResponseBody(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'InnerErrorDescription'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class EventInfo(Model):
@@ -1715,6 +1725,37 @@ class ImportSourceCredentials(Model):
         super(ImportSourceCredentials, self).__init__(**kwargs)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+
+
+class InnerErrorDescription(Model):
+    """inner error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(InnerErrorDescription, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
 
 
 class IPRule(Model):

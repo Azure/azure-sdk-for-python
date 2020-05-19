@@ -44,8 +44,8 @@ class ManageCustomModelsSample(object):
         # [END get_account_properties]
 
         # Next, we get a paged list of all of our custom models
-        # [START list_model_infos]
-        custom_models = form_training_client.list_model_infos()
+        # [START list_custom_models]
+        custom_models = form_training_client.list_custom_models()
 
         print("We have models with the following ids:")
 
@@ -54,7 +54,7 @@ class ManageCustomModelsSample(object):
         print(first_model.model_id)
         for model in custom_models:
             print(model.model_id)
-        # [END list_model_infos]
+        # [END list_custom_models]
 
         # Now we'll get the first custom model in the paged list
         # [START get_custom_model]

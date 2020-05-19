@@ -78,7 +78,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'uamqp>=1.2.5,<2.0.0',
+        'uamqp>=1.2.7,<2.0.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],

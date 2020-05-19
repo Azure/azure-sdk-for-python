@@ -26,7 +26,7 @@ class SapMonitorsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-11-03-preview".
+    :ivar api_version: Client API version. Constant value: "2020-02-07-preview".
     """
 
     models = models
@@ -36,7 +36,7 @@ class SapMonitorsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-03-preview"
+        self.api_version = "2020-02-07-preview"
 
         self.config = config
 
@@ -367,7 +367,7 @@ class SapMonitorsOperations(object):
         :type resource_group_name: str
         :param sap_monitor_name: Name of the SAP monitor resource.
         :type sap_monitor_name: str
-        :param tags: Tags field of the HANA instance.
+        :param tags: Tags field of the resource.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

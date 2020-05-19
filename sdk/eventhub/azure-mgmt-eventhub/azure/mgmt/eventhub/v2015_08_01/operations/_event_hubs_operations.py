@@ -532,7 +532,7 @@ class EventHubsOperations(object):
         return deserialized
     get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}
 
-    def postt_authorization_rule(
+    def post_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets an AuthorizationRule for an Event Hub by rule name.
 
@@ -558,7 +558,7 @@ class EventHubsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.postt_authorization_rule.metadata['url']
+        url = self.post_authorization_rule.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -600,7 +600,7 @@ class EventHubsOperations(object):
             return client_raw_response
 
         return deserialized
-    postt_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}
+    post_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'}
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):

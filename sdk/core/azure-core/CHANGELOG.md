@@ -1,7 +1,13 @@
 
 # Release History
 
-## 1.5.0 (Unreleased)
+## 1.5.1 (Unreleased)
+
+### Bug fixes
+
+- Fix AttributeException in StreamDownloadGenerator #11462
+
+## 1.5.0 (2020-05-04)
 
 ### Features
 

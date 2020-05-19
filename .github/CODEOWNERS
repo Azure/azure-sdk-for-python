@@ -10,14 +10,14 @@
 
 # Core
 /sdk/core/                                                           @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/                                                @xiangyan99 @bryevdv @lmazuel
+/sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
 /sdk/identity/                                                       @chlowell @schaabs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft
 /sdk/applicationinsights/                                            @alexeldeib
-/sdk/batch/                                                          @bgklein @matthchr @xingwu1
+/sdk/batch/                                                          @bgklein @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
 /sdk/loganalytics/                                                   @alexeldeib
@@ -39,6 +39,9 @@
 /sdk/synapse/                                                        @aim-for-better @idear1203
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
 /**/*mgmt*/     @zikalino

@@ -10,7 +10,7 @@
 import os
 import pytest
 import re
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AccessToken
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -18,7 +18,18 @@ from devtools_testutils import (
     ResourceGroupPreparer,
 )
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
-from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
+from azure_devtools.scenario_tests import ReplayableTest
+
+
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+
+    def get_token(self, *args):
+        return self.token
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -42,6 +53,22 @@ class FormRecognizerTest(AzureTestCase):
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
         self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
+
+    def get_oauth_endpoint(self):
+        return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        return self.generate_fake_token()
+
+    def generate_fake_token(self):
+        return FakeTokenCredential()
 
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
         self.assertEqual(model.model_id, actual.model_info.model_id)
@@ -128,7 +155,6 @@ class FormRecognizerTest(AzureTestCase):
         b = form_fields
         for label, a in actual_fields.items():
             self.assertEqual(label, b[label].name)
-            self.assertEqual(a.page, b[label].page_number)
             self.assertEqual(a.confidence, b[label].confidence if a.confidence is not None else 1.0)
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
@@ -194,7 +220,6 @@ class FormRecognizerTest(AzureTestCase):
         self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
         self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
-        self.assertEqual(receipt_field.page_number, actual_field.page)
         if read_results:
             self.assertTextContentTransformCorrect(
                 receipt_field.value_data.text_content,

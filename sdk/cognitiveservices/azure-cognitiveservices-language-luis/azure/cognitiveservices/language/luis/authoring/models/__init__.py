@@ -57,6 +57,7 @@ try:
     from ._models_py3 import HierarchicalChildModelUpdateObject
     from ._models_py3 import HierarchicalEntityExtractor
     from ._models_py3 import HierarchicalModel
+    from ._models_py3 import HierarchicalModelV2
     from ._models_py3 import IntentClassifier
     from ._models_py3 import IntentPrediction
     from ._models_py3 import IntentsSuggestionExample
@@ -70,6 +71,7 @@ try:
     from ._models_py3 import LabelExampleResponse
     from ._models_py3 import LabelTextObject
     from ._models_py3 import LuisApp
+    from ._models_py3 import LuisAppV2
     from ._models_py3 import ModelCreateObject
     from ._models_py3 import ModelFeatureInformation
     from ._models_py3 import ModelInfo
@@ -164,6 +166,7 @@ except (SyntaxError, ImportError):
     from ._models import HierarchicalChildModelUpdateObject
     from ._models import HierarchicalEntityExtractor
     from ._models import HierarchicalModel
+    from ._models import HierarchicalModelV2
     from ._models import IntentClassifier
     from ._models import IntentPrediction
     from ._models import IntentsSuggestionExample
@@ -177,6 +180,7 @@ except (SyntaxError, ImportError):
     from ._models import LabelExampleResponse
     from ._models import LabelTextObject
     from ._models import LuisApp
+    from ._models import LuisAppV2
     from ._models import ModelCreateObject
     from ._models import ModelFeatureInformation
     from ._models import ModelInfo
@@ -276,6 +280,7 @@ __all__ = [
     'HierarchicalChildModelUpdateObject',
     'HierarchicalEntityExtractor',
     'HierarchicalModel',
+    'HierarchicalModelV2',
     'IntentClassifier',
     'IntentPrediction',
     'IntentsSuggestionExample',
@@ -289,6 +294,7 @@ __all__ = [
     'LabelExampleResponse',
     'LabelTextObject',
     'LuisApp',
+    'LuisAppV2',
     'ModelCreateObject',
     'ModelFeatureInformation',
     'ModelInfo',

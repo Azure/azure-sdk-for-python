@@ -7,11 +7,12 @@ from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
+from ._search_service_client_base import SearchServiceClientBase
 from ._generated import SearchServiceClient as _SearchServiceClient
-from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 from ._datasources_client import SearchDataSourcesClient
 from ._indexes_client import SearchIndexesClient
+from ._indexers_client import SearchIndexersClient
 from ._skillsets_client import SearchSkillsetsClient
 from ._synonym_maps_client import SearchSynonymMapsClient
 
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-methods
+class SearchServiceClient(SearchServiceClientBase):  # pylint: disable=too-many-public-methods
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -43,13 +44,10 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
-
-        self._endpoint = endpoint  # type: str
-        self._credential = credential  # type: AzureKeyCredential
+        super(SearchServiceClient, self).__init__(endpoint, credential, **kwargs)
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
-
         self._indexes_client = SearchIndexesClient(endpoint, credential, **kwargs)
 
         self._synonym_maps_client = SearchSynonymMapsClient(
@@ -62,9 +60,7 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
             endpoint, credential, **kwargs
         )
 
-    def __repr__(self):
-        # type: () -> str
-        return "<SearchServiceClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
+        self._indexers_client = SearchIndexersClient(endpoint, credential, **kwargs)
 
     def __enter__(self):
         # type: () -> SearchServiceClient
@@ -127,3 +123,12 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         :rtype: SearchDataSourcesClient
         """
         return self._datasources_client
+
+    def get_indexers_client(self):
+        # type: () -> SearchIndexersClient
+        """Return a client to perform operations on Data Sources.
+
+        :return: The Data Sources client
+        :rtype: SearchDataSourcesClient
+        """
+        return self._indexers_client

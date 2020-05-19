@@ -654,7 +654,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages[0].complete()
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -673,7 +672,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content, session_id=session_id)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send(message)
 
                 messages = []
@@ -691,7 +690,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) == 1
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -714,7 +712,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content, session_id=session_id)
                     message_b.properties.message_id = message_id_b
-                    tokens = sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
                 messages = []
@@ -733,7 +731,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) == 2
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -750,9 +747,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message_a = Message("Test scheduled message", session_id=session_id)
                 message_b = Message("Test scheduled message", session_id=session_id)
-                tokens = sender.schedule(enqueue_time, message_a, message_b)
+                tokens = sender.schedule([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
-                sender.cancel_scheduled_messages(*tokens)
+                sender.cancel_scheduled_messages(tokens)
 
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = []

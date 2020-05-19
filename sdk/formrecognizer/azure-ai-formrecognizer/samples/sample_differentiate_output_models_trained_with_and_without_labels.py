@@ -49,10 +49,10 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             stream = f.read()
         forms_with_labeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
-            model_id=self.model_trained_with_labels_id, stream=stream
+            model_id=self.model_trained_with_labels_id, form=stream
         )
         forms_with_unlabeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
-            model_id=self.model_trained_without_labels_id, stream=stream
+            model_id=self.model_trained_without_labels_id, form=stream
         )
 
         # Calling result after kicking off each call allows for server-side paralellization

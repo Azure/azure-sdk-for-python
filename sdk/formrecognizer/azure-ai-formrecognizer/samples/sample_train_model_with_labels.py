@@ -35,14 +35,12 @@ class TrainModelWithLabelsSample(object):
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     def train_model_with_labels(self):
-        # [START create_form_training_client]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
-        # [END create_form_training_client]
 
-        poller = form_training_client.begin_train_model(self.container_sas_url, use_labels=True)
+        poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=True)
         model = poller.result()
 
         # Custom model information
@@ -55,7 +53,7 @@ class TrainModelWithLabelsSample(object):
         # looping through the submodels, which contains the fields they were trained on
         # The labels are based on the ones you gave the training document.
         for submodel in model.models:
-            print("...The submodel has accuracy '{}'".format(submodel.accuracy))
+            print("...The submodel with form type {} has accuracy '{}'".format(submodel.form_type, submodel.accuracy))
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(
                     name, field.name, field.accuracy

@@ -1272,3 +1272,126 @@ class AppsOperations(object):
 
         return deserialized
     package_trained_application_as_gzip.metadata = {'url': '/package/{appId}/versions/{versionId}/gzip'}
+
+    def import_v2_app(
+            self, luis_app_v2, app_name=None, custom_headers=None, raw=False, **operation_config):
+        """Imports an application to LUIS, the application's structure is included
+        in the request body.
+
+        :param luis_app_v2: A LUIS application structure.
+        :type luis_app_v2:
+         ~azure.cognitiveservices.language.luis.authoring.models.LuisAppV2
+        :param app_name: The application name to create. If not specified, the
+         application name will be read from the imported object. If the
+         application name already exists, an error is returned.
+        :type app_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.import_v2_app.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if app_name is not None:
+            query_parameters['appName'] = self._serialize.query("app_name", app_name, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(luis_app_v2, 'LuisAppV2')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('str', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    import_v2_app.metadata = {'url': '/apps/import'}
+
+    def import_lu_format(
+            self, luis_app_lu, app_name=None, custom_headers=None, raw=False, **operation_config):
+        """Imports an application to LUIS, the application's structure is included
+        in the request body.
+
+        :param luis_app_lu: A LUIS application structure.
+        :type luis_app_lu: str
+        :param app_name: The application name to create. If not specified, the
+         application name will be read from the imported object. If the
+         application name already exists, an error is returned.
+        :type app_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.import_lu_format.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if app_name is not None:
+            query_parameters['appName'] = self._serialize.query("app_name", app_name, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'text/plain'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(luis_app_lu, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('str', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    import_lu_format.metadata = {'url': '/apps/import'}

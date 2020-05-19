@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .custom_vision_prediction_client import CustomVisionPredictionClient
-from .version import VERSION
+from ._configuration import CustomVisionPredictionClientConfiguration
+from ._custom_vision_prediction_client import CustomVisionPredictionClient
+__all__ = ['CustomVisionPredictionClient', 'CustomVisionPredictionClientConfiguration']
 
-__all__ = ['CustomVisionPredictionClient']
+from .version import VERSION
 
 __version__ = VERSION
 
