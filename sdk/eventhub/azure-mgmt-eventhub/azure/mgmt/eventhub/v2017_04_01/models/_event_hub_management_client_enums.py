@@ -12,18 +12,6 @@
 from enum import Enum
 
 
-class SkuName(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class SkuTier(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
 class AccessRights(str, Enum):
 
     manage = "Manage"
@@ -35,25 +23,6 @@ class KeyType(str, Enum):
 
     primary_key = "PrimaryKey"
     secondary_key = "SecondaryKey"
-
-
-class EntityStatus(str, Enum):
-
-    active = "Active"
-    disabled = "Disabled"
-    restoring = "Restoring"
-    send_disabled = "SendDisabled"
-    receive_disabled = "ReceiveDisabled"
-    creating = "Creating"
-    deleting = "Deleting"
-    renaming = "Renaming"
-    unknown = "Unknown"
-
-
-class EncodingCaptureDescription(str, Enum):
-
-    avro = "Avro"
-    avro_deflate = "AvroDeflate"
 
 
 class UnavailableReason(str, Enum):
@@ -78,6 +47,37 @@ class RoleDisasterRecovery(str, Enum):
     primary = "Primary"
     primary_not_replicating = "PrimaryNotReplicating"
     secondary = "Secondary"
+
+
+class EncodingCaptureDescription(str, Enum):
+
+    avro = "Avro"
+    avro_deflate = "AvroDeflate"
+
+
+class EntityStatus(str, Enum):
+
+    active = "Active"
+    disabled = "Disabled"
+    restoring = "Restoring"
+    send_disabled = "SendDisabled"
+    receive_disabled = "ReceiveDisabled"
+    creating = "Creating"
+    deleting = "Deleting"
+    renaming = "Renaming"
+    unknown = "Unknown"
+
+
+class SkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class SkuTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
 
 
 class NetworkRuleIPAction(str, Enum):

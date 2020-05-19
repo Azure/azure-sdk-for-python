@@ -25,6 +25,22 @@
 # --------------------------------------------------------------------------
 
 from ._index.aio import AsyncSearchItemPaged, SearchClient
-from ._service.aio import SearchServiceClient
+from ._service.aio import (
+    SearchServiceClient,
+    SearchDataSourcesClient,
+    SearchIndexersClient,
+    SearchIndexesClient,
+    SearchSkillsetsClient,
+    SearchSynonymMapsClient,
+)
 
-__all__ = ("AsyncSearchItemPaged", "SearchClient", "SearchServiceClient")
+__all__ = (
+    "AsyncSearchItemPaged",
+    "SearchClient",
+    "SearchServiceClient",
+    "SearchDataSourcesClient",
+    "SearchIndexersClient",
+    "SearchIndexesClient",
+    "SearchSkillsetsClient",
+    "SearchSynonymMapsClient",
+)

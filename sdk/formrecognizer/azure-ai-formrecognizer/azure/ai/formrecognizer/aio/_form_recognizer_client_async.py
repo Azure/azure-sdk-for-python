@@ -15,8 +15,6 @@ from typing import (
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from ._form_training_client_async import FormTrainingClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
     prepare_us_receipt,
@@ -24,13 +22,14 @@ from .._response_handlers import (
     prepare_form_result
 )
 from .._generated.models import AnalyzeOperationResult
-from .._helpers import get_content_type, error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from .._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import (
-        USReceipt,
+        RecognizedReceipt,
         FormPage,
         RecognizedForm
     )
@@ -45,32 +44,41 @@ class FormRecognizerClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of AzureKeyCredential if using an API key.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+        This is an instance of AzureKeyCredential if using an API key or a token
+        credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        or :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_get_bounding_boxes_async.py
-            :start-after: [START create_form_recognizer_client_async]
-            :end-before: [END create_form_recognizer_client_async]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_fr_client_with_key_async]
+            :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_fr_client_with_aad_async]
+            :end-before: [END create_fr_client_with_aad_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormRecognizerClient with a token credential.
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: "AzureKeyCredential",
+            credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
             **kwargs: Any
     ) -> None:
-        self._endpoint = endpoint
-        self._credential = credential
+
+        authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,
+            endpoint=endpoint,
+            credential=credential,
             sdk_moniker=USER_AGENT,
-            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
@@ -83,14 +91,14 @@ class FormRecognizerClient(object):
             self,
             stream: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> List["USReceipt"]:
+    ) -> List["RecognizedReceipt"]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
             Currently only supports US sales receipts.
-        :type stream: stream
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -98,8 +106,8 @@ class FormRecognizerClient(object):
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of USReceipt.
-        :rtype: list[~azure.ai.formrecognizer.USReceipt]
+        :return: A list of RecognizedReceipt.
+        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -137,18 +145,19 @@ class FormRecognizerClient(object):
             self,
             url: str,
             **kwargs: Any
-    ) -> List["USReceipt"]:
+    ) -> List["RecognizedReceipt"]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
-        :param url: The url of the receipt. Currently only supports US sales receipts.
-        :type url: str
+        :param str url: The url of the receipt to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
+            US sales receipts.
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of USReceipt.
-        :rtype: list[~azure.ai.formrecognizer.USReceipt]
+        :return: A list of RecognizedReceipt.
+        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -183,8 +192,8 @@ class FormRecognizerClient(object):
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :type stream: bytes or IO[bytes]
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -226,8 +235,8 @@ class FormRecognizerClient(object):
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param url: The url of the document.
-        :type url: str
+        :param str url: The url of the form to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of FormPage.
@@ -257,8 +266,8 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param str model_id: Custom model identifier.
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
+        :param stream: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :type stream: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword str content_type: Media type of the body sent to the API. Content-type is
@@ -319,8 +328,8 @@ class FormRecognizerClient(object):
         The input document must be the location (Url) of the document to be analyzed.
 
         :param str model_id: Custom model identifier.
-        :param url: The url of the document.
-        :type url: str
+        :param str url: The url of the form to analyze. The input must be a valid, encoded url
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -346,18 +355,6 @@ class FormRecognizerClient(object):
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
             error_map=error_map,
-            **kwargs
-        )
-
-    def get_form_training_client(self, **kwargs: Any) -> FormTrainingClient:
-        """Get an instance of a FormTrainingClient from FormRecognizerClient.
-
-        :rtype: ~azure.ai.formrecognizer.aio.FormTrainingClient
-        :return: A FormTrainingClient
-        """
-        return FormTrainingClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
             **kwargs
         )
 

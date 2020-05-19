@@ -9,10 +9,8 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 * Create, read, update, and delete the **items** (JSON documents) in your containers
 * Query the documents in your database using **SQL-like syntax**
 
-Looking for source code or API reference?
+[SDK source code][source_code] | [Package (PyPI)][cosmos_pypi] | [API reference documentation][ref_cosmos_sdk] | [Product documentation][cosmos_docs] | [Samples][cosmos_samples]
 
-* [SDK source code][source_code]
-* [SDK reference documentation][ref_cosmos_sdk]
 
 ## Getting started
 
@@ -30,7 +28,7 @@ az cosmosdb create --resource-group <resource-group-name> --name <cosmos-account
 ## Installation
 
 ```bash
-pip install --pre azure-cosmos
+pip install azure-cosmos
 ```
 
 ### Configure a virtual environment (optional)
@@ -282,10 +280,6 @@ The container name must be unique within the database.""")
 
 ```
 
-## More sample code
-
-Coming soon...
-
 ## Next steps
 
 For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos DB documentation][cosmos_docs] on docs.microsoft.com.
@@ -300,6 +294,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_container]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-containers
 [cosmos_database]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-databases
 [cosmos_docs]: https://docs.microsoft.com/azure/cosmos-db/
+[cosmos_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples
+[cosmos_pypi]: https://pypi.org/project/azure-cosmos/
 [cosmos_http_status_codes]: https://docs.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
 [cosmos_item]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
 [cosmos_request_units]: https://docs.microsoft.com/azure/cosmos-db/request-units
@@ -307,15 +303,15 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-[ref_container_delete_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
-[ref_container_query_items]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
-[ref_container_upsert_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
-[ref_container]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy
-[ref_cosmos_sdk]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html
-[ref_cosmosclient_create_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
-[ref_cosmosclient]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.CosmosClient
-[ref_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.DatabaseProxy
-[ref_httpfailure]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.exceptions.CosmosHttpResponseError
+[ref_container_delete_item]: https://aka.ms/azsdk-python-cosmos-ref-delete-item
+[ref_container_query_items]: https://aka.ms/azsdk-python-cosmos-ref-query-items
+[ref_container_upsert_item]: https://aka.ms/azsdk-python-cosmos-ref-upsert-item
+[ref_container]: https://aka.ms/azsdk-python-cosmos-ref-container
+[ref_cosmos_sdk]: https://aka.ms/azsdk-python-cosmos-ref
+[ref_cosmosclient_create_database]: https://aka.ms/azsdk-python-cosmos-ref-create-database
+[ref_cosmosclient]: https://aka.ms/azsdk-python-cosmos-ref-cosmos-client
+[ref_database]: https://aka.ms/azsdk-python-cosmos-ref-database
+[ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/database_management.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/document_management.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py

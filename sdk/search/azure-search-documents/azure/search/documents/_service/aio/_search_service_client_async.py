@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from ..._headers_mixin import HeadersMixin
+from .._search_service_client_base import SearchServiceClientBase
 from ..._version import SDK_MONIKER
 from ._datasources_client import SearchDataSourcesClient
 from ._indexes_client import SearchIndexesClient
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-methods
+class SearchServiceClient(SearchServiceClientBase):  # pylint: disable=too-many-public-methods
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -45,8 +45,7 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
-        self._endpoint = endpoint  # type: str
-        self._credential = credential  # type: AzureKeyCredential
+        super().__init__(endpoint, credential, **kwargs)
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
@@ -64,10 +63,6 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         )
 
         self._indexers_client = SearchIndexersClient(endpoint, credential, **kwargs)
-
-    def __repr__(self):
-        # type: () -> str
-        return "<SearchServiceClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
 
     async def __aenter__(self):
         # type: () -> SearchServiceClient
