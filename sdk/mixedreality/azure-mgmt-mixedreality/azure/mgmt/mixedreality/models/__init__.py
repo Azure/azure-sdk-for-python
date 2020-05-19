@@ -10,53 +10,83 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .check_name_availability_request_py3 import CheckNameAvailabilityRequest
-    from .check_name_availability_response_py3 import CheckNameAvailabilityResponse
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .spatial_anchors_account_py3 import SpatialAnchorsAccount
-    from .spatial_anchors_account_keys_py3 import SpatialAnchorsAccountKeys
-    from .spatial_anchors_account_key_regenerate_request_py3 import SpatialAnchorsAccountKeyRegenerateRequest
-    from .proxy_resource_py3 import ProxyResource
-    from .azure_entity_resource_py3 import AzureEntityResource
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
+    from ._models_py3 import AccountKeyRegenerateRequest
+    from ._models_py3 import AccountKeys
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import CheckNameAvailabilityRequest
+    from ._models_py3 import CheckNameAvailabilityResponse
+    from ._models_py3 import Identity
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Plan
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import RemoteRenderingAccount
+    from ._models_py3 import RemoteRenderingAccountIdentity
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceModelWithAllowedPropertySet
+    from ._models_py3 import ResourceModelWithAllowedPropertySetIdentity
+    from ._models_py3 import ResourceModelWithAllowedPropertySetPlan
+    from ._models_py3 import ResourceModelWithAllowedPropertySetSku
+    from ._models_py3 import Sku
+    from ._models_py3 import SpatialAnchorsAccount
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from .check_name_availability_request import CheckNameAvailabilityRequest
-    from .check_name_availability_response import CheckNameAvailabilityResponse
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .spatial_anchors_account import SpatialAnchorsAccount
-    from .spatial_anchors_account_keys import SpatialAnchorsAccountKeys
-    from .spatial_anchors_account_key_regenerate_request import SpatialAnchorsAccountKeyRegenerateRequest
-    from .proxy_resource import ProxyResource
-    from .azure_entity_resource import AzureEntityResource
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-from .operation_paged import OperationPaged
-from .spatial_anchors_account_paged import SpatialAnchorsAccountPaged
-from .mixed_reality_client_enums import (
+    from ._models import AccountKeyRegenerateRequest
+    from ._models import AccountKeys
+    from ._models import AzureEntityResource
+    from ._models import CheckNameAvailabilityRequest
+    from ._models import CheckNameAvailabilityResponse
+    from ._models import Identity
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Plan
+    from ._models import ProxyResource
+    from ._models import RemoteRenderingAccount
+    from ._models import RemoteRenderingAccountIdentity
+    from ._models import Resource
+    from ._models import ResourceModelWithAllowedPropertySet
+    from ._models import ResourceModelWithAllowedPropertySetIdentity
+    from ._models import ResourceModelWithAllowedPropertySetPlan
+    from ._models import ResourceModelWithAllowedPropertySetSku
+    from ._models import Sku
+    from ._models import SpatialAnchorsAccount
+    from ._models import TrackedResource
+from ._paged_models import OperationPaged
+from ._paged_models import RemoteRenderingAccountPaged
+from ._paged_models import SpatialAnchorsAccountPaged
+from ._mixed_reality_client_enums import (
     NameAvailability,
     NameUnavailableReason,
+    SkuTier,
+    ResourceIdentityType,
 )
 
 __all__ = [
+    'AccountKeyRegenerateRequest',
+    'AccountKeys',
+    'AzureEntityResource',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
-    'ErrorResponse', 'ErrorResponseException',
-    'OperationDisplay',
+    'Identity',
     'Operation',
-    'SpatialAnchorsAccount',
-    'SpatialAnchorsAccountKeys',
-    'SpatialAnchorsAccountKeyRegenerateRequest',
+    'OperationDisplay',
+    'Plan',
     'ProxyResource',
-    'AzureEntityResource',
+    'RemoteRenderingAccount',
+    'RemoteRenderingAccountIdentity',
     'Resource',
+    'ResourceModelWithAllowedPropertySet',
+    'ResourceModelWithAllowedPropertySetIdentity',
+    'ResourceModelWithAllowedPropertySetPlan',
+    'ResourceModelWithAllowedPropertySetSku',
+    'Sku',
+    'SpatialAnchorsAccount',
     'TrackedResource',
     'OperationPaged',
     'SpatialAnchorsAccountPaged',
+    'RemoteRenderingAccountPaged',
     'NameAvailability',
     'NameUnavailableReason',
+    'SkuTier',
+    'ResourceIdentityType',
 ]

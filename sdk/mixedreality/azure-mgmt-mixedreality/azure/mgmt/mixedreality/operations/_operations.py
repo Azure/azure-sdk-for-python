@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -18,11 +19,13 @@ from .. import models
 class Operations(object):
     """Operations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-28-preview".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -32,7 +35,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-02-28-preview"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
@@ -48,11 +51,9 @@ class Operations(object):
         :return: An iterator like instance of Operation
         :rtype:
          ~azure.mgmt.mixedreality.models.OperationPaged[~azure.mgmt.mixedreality.models.Operation]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.mixedreality.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -77,20 +78,25 @@ class Operations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.MixedReality/operations'}

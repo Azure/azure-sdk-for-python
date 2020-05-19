@@ -9,87 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
+from .. import models
 import uuid
-from .operations.operations import Operations
-from .operations.spatial_anchors_accounts_operations import SpatialAnchorsAccountsOperations
-from . import models
 
 
-class MixedRealityClientConfiguration(AzureConfiguration):
-    """Configuration for MixedRealityClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(MixedRealityClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-mixedreality/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
-class MixedRealityClient(SDKClient):
-    """Mixed Reality Client
-
-    :ivar config: Configuration for client.
-    :vartype config: MixedRealityClientConfiguration
-
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.mixedreality.operations.Operations
-    :ivar spatial_anchors_accounts: SpatialAnchorsAccounts operations
-    :vartype spatial_anchors_accounts: azure.mgmt.mixedreality.operations.SpatialAnchorsAccountsOperations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        self.config = MixedRealityClientConfiguration(credentials, subscription_id, base_url)
-        super(MixedRealityClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-02-28-preview'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.spatial_anchors_accounts = SpatialAnchorsAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+class MixedRealityClientOperationsMixin(object):
 
     def check_name_availability_local(
             self, location, name, type, custom_headers=None, raw=False, **operation_config):
-        """Check Name Availability for global uniqueness.
+        """Check Name Availability for local uniqueness.
 
         :param location: The location in which uniqueness will be verified.
         :type location: str
@@ -107,10 +37,11 @@ class MixedRealityClient(SDKClient):
          raw=true
         :rtype: ~azure.mgmt.mixedreality.models.CheckNameAvailabilityResponse
          or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.mixedreality.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         check_name_availability = models.CheckNameAvailabilityRequest(name=name, type=type)
+
+        api_version = "2020-05-01"
 
         # Construct URL
         url = self.check_name_availability_local.metadata['url']
@@ -122,7 +53,7 @@ class MixedRealityClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -143,10 +74,11 @@ class MixedRealityClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameAvailabilityResponse', response)
 
