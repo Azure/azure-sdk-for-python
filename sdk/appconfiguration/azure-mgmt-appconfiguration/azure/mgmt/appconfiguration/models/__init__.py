@@ -25,6 +25,7 @@ try:
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointConnectionReference
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
@@ -52,6 +53,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointConnectionReference  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
@@ -66,6 +68,7 @@ from ._app_configuration_management_client_enums import (
     ConnectionStatus,
     IdentityType,
     ProvisioningState,
+    PublicNetworkAccess,
 )
 
 __all__ = [
@@ -87,6 +90,7 @@ __all__ = [
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
+    'PrivateEndpointConnectionReference',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
@@ -99,4 +103,5 @@ __all__ = [
     'ConnectionStatus',
     'IdentityType',
     'ProvisioningState',
+    'PublicNetworkAccess',
 ]

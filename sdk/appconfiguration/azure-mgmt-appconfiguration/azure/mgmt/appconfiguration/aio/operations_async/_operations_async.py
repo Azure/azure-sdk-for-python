@@ -26,7 +26,7 @@ class Operations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appconfiguration.models
+    :type models: ~app_configuration_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -50,10 +50,10 @@ class Operations:
 
         :param check_name_availability_parameters: The object containing information for the
          availability request.
-        :type check_name_availability_parameters: ~azure.mgmt.appconfiguration.models.CheckNameAvailabilityParameters
+        :type check_name_availability_parameters: ~app_configuration_management_client.models.CheckNameAvailabilityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NameAvailabilityStatus or the result of cls(response)
-        :rtype: ~azure.mgmt.appconfiguration.models.NameAvailabilityStatus
+        :return: NameAvailabilityStatus, or the result of cls(response)
+        :rtype: ~app_configuration_management_client.models.NameAvailabilityStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NameAvailabilityStatus"]
@@ -95,7 +95,7 @@ class Operations:
         deserialized = self._deserialize('NameAvailabilityStatus', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/checkNameAvailability'}  # type: ignore
@@ -113,8 +113,8 @@ class Operations:
      subsequent calls.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of OperationDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.OperationDefinitionListResult]
+        :return: An iterator like instance of either OperationDefinitionListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.OperationDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationDefinitionListResult"]

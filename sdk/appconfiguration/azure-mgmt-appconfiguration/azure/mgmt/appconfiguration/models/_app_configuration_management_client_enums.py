@@ -45,3 +45,11 @@ class ProvisioningState(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+
+class PublicNetworkAccess(str, Enum):
+    """Control permission for data plane traffic coming from public networks while private endpoint is
+    enabled.
+    """
+
+    enabled = "Enabled"
+    disabled = "Disabled"

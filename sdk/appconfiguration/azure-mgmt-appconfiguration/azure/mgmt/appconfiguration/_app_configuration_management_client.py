@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
+    from azure.core.credentials import TokenCredential
+
 from ._configuration import AppConfigurationManagementClientConfiguration
 from .operations import ConfigurationStoresOperations
 from .operations import Operations
@@ -27,13 +29,13 @@ class AppConfigurationManagementClient(object):
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
-    :vartype configuration_stores: azure.mgmt.appconfiguration.operations.ConfigurationStoresOperations
+    :vartype configuration_stores: app_configuration_management_client.operations.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.appconfiguration.operations.Operations
+    :vartype operations: app_configuration_management_client.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.appconfiguration.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: app_configuration_management_client.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.appconfiguration.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: app_configuration_management_client.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
