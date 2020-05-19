@@ -19,9 +19,8 @@ if TYPE_CHECKING:
 
 
 def deserialize_blob_properties(response, obj, headers):
-    metadata = deserialize_metadata(response, obj, headers)
     blob_properties = BlobProperties(
-        metadata=metadata,
+        metadata=deserialize_metadata(response, obj, headers),
         object_replication_source_properties=deserialize_ors_policies(response),
         **headers
     )
@@ -47,7 +46,7 @@ def deserialize_ors_policies(response):
         policy_id = policy_and_rule_ids[0]
         rule_id = policy_and_rule_ids[1]
 
-        # we saw this policy already
+        # we are seeing this policy for the first time, so a new rule_id -> result dict is needed
         if parsed_result.get(policy_id) is None:
             parsed_result[policy_id] = {rule_id: val}
         else:
