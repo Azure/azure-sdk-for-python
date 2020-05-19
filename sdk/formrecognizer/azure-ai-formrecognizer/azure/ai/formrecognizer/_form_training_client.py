@@ -7,7 +7,6 @@
 # pylint: disable=protected-access
 
 from typing import (
-    Optional,
     Any,
     Iterable,
     Union,
