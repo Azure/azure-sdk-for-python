@@ -15,7 +15,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import DataSource
+    from ._generated.models import SearchIndexerDataSource
     from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -57,12 +57,12 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def create_datasource(self, data_source, **kwargs):
-        # type: (DataSource, **Any) -> Dict[str, Any]
+        # type: (SearchIndexerDataSource, **Any) -> Dict[str, Any]
         """Creates a new datasource.
 
         :param data_source: The definition of the datasource to create.
-        :type data_source: ~search.models.DataSource
-        :return: The created DataSource
+        :type data_source: ~search.models.SearchIndexerDataSource
+        :return: The created SearchIndexerDataSource
         :rtype: dict
 
         .. admonition:: Example:
@@ -80,28 +80,27 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (DataSource, Optional[str], **Any) -> Dict[str, Any]
+        # type: (SearchIndexerDataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
         :param name: The name of the datasource to create or update.
         :type name: str
         :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~search.models.DataSource
+        :type data_source: ~search.models.SearchIndexerDataSource
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :return: The created DataSource
+        :return: The created SearchIndexerDataSource
         :rtype: dict
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         if not name:
             name = data_source.name
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=data_source,
-            access_condition=access_condition,
             error_map=error_map,
             **kwargs
         )
@@ -114,7 +113,7 @@ class SearchDataSourcesClient(HeadersMixin):
 
         :param name: The name of the datasource to retrieve.
         :type name: str
-        :return: The DataSource that is fetched.
+        :return: The SearchIndexerDataSource that is fetched.
         :rtype: dict
 
         .. admonition:: Example:
@@ -124,7 +123,7 @@ class SearchDataSourcesClient(HeadersMixin):
                 :end-before: [END get_data_source]
                 :language: python
                 :dedent: 4
-                :caption: Retrieve a DataSource
+                :caption: Retrieve a SearchIndexerDataSource
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
@@ -132,7 +131,7 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def get_datasources(self, **kwargs):
-        # type: (**Any) -> Sequence[DataSource]
+        # type: (**Any) -> Sequence[SearchIndexerDataSource]
         """Lists all datasources available for a search service.
 
         :return: List of all the data sources.
@@ -145,7 +144,7 @@ class SearchDataSourcesClient(HeadersMixin):
                 :end-before: [END list_data_source]
                 :language: python
                 :dedent: 4
-                :caption: List all the DataSources
+                :caption: List all the SearchIndexerDataSources
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
@@ -153,13 +152,13 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def delete_datasource(self, data_source, **kwargs):
-        # type: (Union[str, DataSource], **Any) -> None
+        # type: (Union[str, SearchIndexerDataSource], **Any) -> None
         """Deletes a datasource. To use access conditions, the Datasource model must be
         provided instead of the name. It is enough to provide the name of the datasource
         to delete unconditionally
 
         :param data_source: The datasource to delete.
-        :type data_source: str or ~search.models.DataSource
+        :type data_source: str or ~search.models.SearchIndexerDataSource
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -172,20 +171,17 @@ class SearchDataSourcesClient(HeadersMixin):
                 :end-before: [END delete_data_source]
                 :language: python
                 :dedent: 4
-                :caption: Delete a DataSource
+                :caption: Delete a SearchIndexerDataSource
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = data_source.name
         except AttributeError:
             name = data_source
         self._client.data_sources.delete(
-            data_source_name=name,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            data_source_name=name, error_map=error_map, **kwargs
         )
