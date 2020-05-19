@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import Awaitable
-from typing import Callable, Any, Tuple, Generic, TypeVar
+from typing import Callable, Any, Tuple, Generic, TypeVar, Generator
 
 from ._poller import NoPolling as _NoPolling
 
@@ -165,7 +165,7 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
         await self.wait()
         return self._polling_method.resource()
 
-    def __await__(self) -> PollingReturnType:
+    def __await__(self) -> Generator[Any, None, PollingReturnType]:
         return self.result().__await__()
 
     async def wait(self) -> None:
