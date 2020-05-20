@@ -20,6 +20,18 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            client.begin_recognize_custom_forms(model_id=None, form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            client.begin_recognize_custom_forms(model_id="", form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
