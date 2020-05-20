@@ -557,8 +557,9 @@ class ReceivedMessage(PeekMessage):
                 [self.lock_token],
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            reason = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_REASON)
-            description = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION)
+            reason = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_REASON) if dead_letter_details else None
+            description = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION) \
+                if dead_letter_details else None
             mgmt_dead_letter_details = {
                 MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
                 MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""
@@ -588,7 +589,9 @@ class ReceivedMessage(PeekMessage):
             return functools.partial(
                 self.message.reject,
                 condition=DEADLETTERNAME,
-                description=dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION),
+                description=(
+                    dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION) if dead_letter_details else None
+                ),
                 info=dead_letter_details
             )
         if settle_operation == MESSAGE_DEFER:
