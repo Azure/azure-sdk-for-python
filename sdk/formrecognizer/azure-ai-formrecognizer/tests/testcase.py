@@ -449,9 +449,11 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         if self.copy:
             if self.is_live:
                 resource_group = kwargs.get("resource_group")
+                subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
                 form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
 
-                resource_id = resource_group.id + "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
+                resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
+                              "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
                 resource_location = "westus"
                 self.test_class_instance.scrubber.register_name_pair(
                     resource_id,
