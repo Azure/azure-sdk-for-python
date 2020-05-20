@@ -30,6 +30,7 @@ except ImportError:
     import mock
 
 import pytest
+import six
 
 from azure.core import PipelineClient
 from azure.core.polling import *
@@ -82,7 +83,7 @@ def test_no_polling(client):
     assert no_polling.resource() == "Treated: "+initial_response
 
     continuation_token = no_polling.get_continuation_token()
-    assert isinstance(continuation_token, str)
+    assert isinstance(continuation_token, six.string_types)
 
     no_polling_revived_args = NoPolling.from_continuation_token(
         continuation_token,

@@ -29,6 +29,7 @@ import re
 import types
 import platform
 import unittest
+import six
 try:
     from unittest import mock
 except ImportError:
@@ -148,7 +149,7 @@ def test_base_polling_continuation_token(client, polling_response):
     polling, _ = polling_response
 
     continuation_token = polling.get_continuation_token()
-    assert isinstance(continuation_token, str)
+    assert isinstance(continuation_token, six.string_types)
 
     polling_args = LROBasePolling.from_continuation_token(
         continuation_token,
