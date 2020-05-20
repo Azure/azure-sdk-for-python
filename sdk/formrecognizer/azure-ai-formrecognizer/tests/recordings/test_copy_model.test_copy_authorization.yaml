@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
+  response:
+    body:
+      string: '{"modelId": "3a1af284-1187-402d-9869-39ad09181bf5", "accessToken":
+        "redacted", "expirationDateTimeTicks": 637255865516657423}'
+    headers:
+      apim-request-id:
+      - be03b750-1177-47fa-9473-028489a9ce67
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 15:49:11 GMT
+      location:
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/3a1af284-1187-402d-9869-39ad09181bf5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '231'
+    status:
+      code: 201
+      message: Created
+version: 1

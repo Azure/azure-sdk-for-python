@@ -103,7 +103,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
-            self.assertEqual(model.status, "ready")
+            self.assertIsNotNone(model.status)
             self.assertIsNotNone(model.created_on)
             self.assertIsNotNone(model.last_modified)
 
@@ -136,7 +136,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         models_list = client.list_custom_models()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
-            self.assertEqual(model.status, "ready")
+            self.assertIsNotNone(model.status)
             self.assertIsNotNone(model.created_on)
             self.assertIsNotNone(model.last_modified)
 
