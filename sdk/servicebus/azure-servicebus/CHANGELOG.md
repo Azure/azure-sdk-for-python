@@ -12,6 +12,7 @@
 
 **BugFixes**
 
+* Added associated-link-keepalive functionality to management operations such as renewing a message lock, to ensure service-side link termination does not interfere with long-duration processing.
 * Fixed bug in setting `description` when dead lettering messages (issue #9242).
 * Increments UAMQP dependency min version to 1.2.8, as a component of fixing the aformentioned dead letter issue.
 
