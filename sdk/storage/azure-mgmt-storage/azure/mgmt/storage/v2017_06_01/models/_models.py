@@ -15,22 +15,22 @@ class AccountSasParameters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param services: Required. The signed services accessible with the account SAS. Possible values
-     include: Blob (b), Queue (q), Table (t), File (f). Possible values include: 'b', 'q', 't', 'f'.
+     include: Blob (b), Queue (q), Table (t), File (f). Possible values include: "b", "q", "t", "f".
     :type services: str or ~azure.mgmt.storage.v2017_06_01.models.Services
     :param resource_types: Required. The signed resource types that are accessible with the account
      SAS. Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
      Object (o): Access to object-level APIs for blobs, queue messages, table entities, and files.
-     Possible values include: 's', 'c', 'o'.
+     Possible values include: "s", "c", "o".
     :type resource_types: str or ~azure.mgmt.storage.v2017_06_01.models.SignedResourceTypes
     :param permissions: Required. The signed permissions for the account SAS. Possible values
      include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
-     (p). Possible values include: 'r', 'd', 'w', 'l', 'a', 'c', 'u', 'p'.
+     (p). Possible values include: "r", "d", "w", "l", "a", "c", "u", "p".
     :type permissions: str or ~azure.mgmt.storage.v2017_06_01.models.Permissions
     :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: 'https,http', 'https'.
+     values include: "https,http", "https".
     :type protocols: str or ~azure.mgmt.storage.v2017_06_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: ~datetime.datetime
@@ -64,13 +64,13 @@ class AccountSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AccountSasParameters, self).__init__(**kwargs)
-        self.services = kwargs.get('services', None)
-        self.resource_types = kwargs.get('resource_types', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.services = kwargs['services']
+        self.resource_types = kwargs['resource_types']
+        self.permissions = kwargs['permissions']
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
         self.protocols = kwargs.get('protocols', None)
         self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
-        self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
+        self.shared_access_expiry_time = kwargs['shared_access_expiry_time']
         self.key_to_sign = kwargs.get('key_to_sign', None)
 
 
@@ -84,8 +84,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be used. The Reason element
-     is only returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     is only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2017_06_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more detail.
     :vartype message: str
@@ -140,7 +140,7 @@ class CustomDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomDomain, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)
 
 
@@ -176,7 +176,7 @@ class Encryption(msrest.serialization.Model):
     :type services: ~azure.mgmt.storage.v2017_06_01.models.EncryptionServices
     :param key_source: Required. The encryption keySource (provider). Possible values (case-
      insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
-     'Microsoft.Storage', 'Microsoft.Keyvault'. Default value: "Microsoft.Storage".
+     "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2017_06_01.models.KeySource
     :param key_vault_properties: Properties provided by key vault.
     :type key_vault_properties: ~azure.mgmt.storage.v2017_06_01.models.KeyVaultProperties
@@ -381,7 +381,7 @@ class IPRule(msrest.serialization.Model):
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
-        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.ip_address_or_range = kwargs['ip_address_or_range']
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -519,15 +519,15 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     :param bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
      Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
-     Metrics"), or None to bypass none of those traffics. Possible values include: 'None',
-     'Logging', 'Metrics', 'AzureServices'. Default value: "AzureServices".
+     Metrics"), or None to bypass none of those traffics. Possible values include: "None",
+     "Logging", "Metrics", "AzureServices". Default value: "AzureServices".
     :type bypass: str or ~azure.mgmt.storage.v2017_06_01.models.Bypass
     :param virtual_network_rules: Sets the virtual network rules.
     :type virtual_network_rules: list[~azure.mgmt.storage.v2017_06_01.models.VirtualNetworkRule]
     :param ip_rules: Sets the IP ACL rules.
     :type ip_rules: list[~azure.mgmt.storage.v2017_06_01.models.IPRule]
     :param default_action: Required. Specifies the default action of allow or deny when no other
-     rules match. Possible values include: 'Allow', 'Deny'. Default value: "Allow".
+     rules match. Possible values include: "Allow", "Deny". Default value: "Allow".
     :type default_action: str or ~azure.mgmt.storage.v2017_06_01.models.DefaultAction
     """
 
@@ -687,7 +687,7 @@ class Restriction(msrest.serialization.Model):
     :param reason_code: The reason for the restriction. As of now this can be "QuotaId" or
      "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
      subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
-     capacity at DC. Possible values include: 'QuotaId', 'NotAvailableForSubscription'.
+     capacity at DC. Possible values include: "QuotaId", "NotAvailableForSubscription".
     :type reason_code: str or ~azure.mgmt.storage.v2017_06_01.models.ReasonCode
     """
 
@@ -720,18 +720,18 @@ class ServiceSasParameters(msrest.serialization.Model):
     :param canonicalized_resource: Required. The canonical path to the signed resource.
     :type canonicalized_resource: str
     :param resource: Required. The signed services accessible with the service SAS. Possible values
-     include: Blob (b), Container (c), File (f), Share (s). Possible values include: 'b', 'c', 'f',
-     's'.
+     include: Blob (b), Container (c), File (f), Share (s). Possible values include: "b", "c", "f",
+     "s".
     :type resource: str or ~azure.mgmt.storage.v2017_06_01.models.SignedResource
     :param permissions: The signed permissions for the service SAS. Possible values include: Read
      (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Possible
-     values include: 'r', 'd', 'w', 'l', 'a', 'c', 'u', 'p'.
+     values include: "r", "d", "w", "l", "a", "c", "u", "p".
     :type permissions: str or ~azure.mgmt.storage.v2017_06_01.models.Permissions
     :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: 'https,http', 'https'.
+     values include: "https,http", "https".
     :type protocols: str or ~azure.mgmt.storage.v2017_06_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: ~datetime.datetime
@@ -795,8 +795,8 @@ class ServiceSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(ServiceSasParameters, self).__init__(**kwargs)
-        self.canonicalized_resource = kwargs.get('canonicalized_resource', None)
-        self.resource = kwargs.get('resource', None)
+        self.canonicalized_resource = kwargs['canonicalized_resource']
+        self.resource = kwargs['resource']
         self.permissions = kwargs.get('permissions', None)
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
         self.protocols = kwargs.get('protocols', None)
@@ -843,15 +843,15 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. Gets or sets the sku name. Required for account creation; optional for
      update. Note that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'.
+     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS".
     :type name: str or ~azure.mgmt.storage.v2017_06_01.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible values include:
-     'Standard', 'Premium'.
+     "Standard", "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2017_06_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is 'storageAccounts'.
     :vartype resource_type: str
-    :ivar kind: Indicates the type of storage account. Possible values include: 'Storage',
-     'BlobStorage'.
+    :ivar kind: Indicates the type of storage account. Possible values include: "Storage",
+     "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_06_01.models.Kind
     :ivar locations: The set of locations that the SKU is available. This will be supported and
      registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).
@@ -888,7 +888,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = None
         self.resource_type = None
         self.kind = None
@@ -946,12 +946,12 @@ class StorageAccount(Resource):
     :type tags: dict[str, str]
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2017_06_01.models.Sku
-    :ivar kind: Gets the Kind. Possible values include: 'Storage', 'BlobStorage'.
+    :ivar kind: Gets the Kind. Possible values include: "Storage", "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_06_01.models.Kind
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2017_06_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
+     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2017_06_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -960,7 +960,7 @@ class StorageAccount(Resource):
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'available', 'unavailable'.
+     account is available or unavailable. Possible values include: "available", "unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2017_06_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent instance of a failover to
      the secondary location. Only the most recent timestamp is retained. This element is not
@@ -972,7 +972,7 @@ class StorageAccount(Resource):
     :vartype secondary_location: str
     :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
      storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
+     Standard_RAGRS. Possible values include: "available", "unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2017_06_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -986,7 +986,7 @@ class StorageAccount(Resource):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2017_06_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Possible values include: 'Hot', 'Cool'.
+     for billing. Possible values include: "Hot", "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2017_06_01.models.AccessTier
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :type enable_https_traffic_only: bool
@@ -1095,7 +1095,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class StorageAccountCreateParameters(msrest.serialization.Model):
@@ -1106,7 +1106,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param sku: Required. Required. Gets or sets the sku name.
     :type sku: ~azure.mgmt.storage.v2017_06_01.models.Sku
     :param kind: Required. Required. Indicates the type of storage account. Possible values
-     include: 'Storage', 'BlobStorage'.
+     include: "Storage", "BlobStorage".
     :type kind: str or ~azure.mgmt.storage.v2017_06_01.models.Kind
     :param location: Required. Required. Gets or sets the location of the resource. This will be
      one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
@@ -1130,7 +1130,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param network_rule_set: Network rule set.
     :type network_rule_set: ~azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2017_06_01.models.AccessTier
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :type enable_https_traffic_only: bool
@@ -1160,9 +1160,9 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
+        self.sku = kwargs['sku']
+        self.kind = kwargs['kind']
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.identity = kwargs.get('identity', None)
         self.custom_domain = kwargs.get('custom_domain', None)
@@ -1182,7 +1182,7 @@ class StorageAccountKey(msrest.serialization.Model):
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full permissions. Possible values
-     include: 'Read', 'Full'.
+     include: "Read", "Full".
     :vartype permissions: str or ~azure.mgmt.storage.v2017_06_01.models.KeyPermission
     """
 
@@ -1282,7 +1282,7 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = kwargs['key_name']
 
 
 class StorageAccountUpdateParameters(msrest.serialization.Model):
@@ -1306,7 +1306,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      unencrypted.
     :type encryption: ~azure.mgmt.storage.v2017_06_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2017_06_01.models.AccessTier
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :type enable_https_traffic_only: bool
@@ -1370,8 +1370,8 @@ class Usage(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar unit: Gets the unit of measurement. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'Percent', 'CountsPerSecond', 'BytesPerSecond'.
+    :ivar unit: Gets the unit of measurement. Possible values include: "Count", "Bytes", "Seconds",
+     "Percent", "CountsPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2017_06_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in the subscription.
     :vartype current_value: int
@@ -1467,8 +1467,8 @@ class VirtualNetworkRule(msrest.serialization.Model):
     :type virtual_network_resource_id: str
     :ivar action: The action of virtual network rule. Default value: "Allow".
     :vartype action: str
-    :param state: Gets the state of virtual network rule. Possible values include: 'provisioning',
-     'deprovisioning', 'succeeded', 'failed', 'networkSourceDeleted'.
+    :param state: Gets the state of virtual network rule. Possible values include: "provisioning",
+     "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
     :type state: str or ~azure.mgmt.storage.v2017_06_01.models.State
     """
 
@@ -1490,5 +1490,5 @@ class VirtualNetworkRule(msrest.serialization.Model):
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.virtual_network_resource_id = kwargs.get('virtual_network_resource_id', None)
+        self.virtual_network_resource_id = kwargs['virtual_network_resource_id']
         self.state = kwargs.get('state', None)

@@ -19,6 +19,10 @@ from ._blob_services_operations_async import BlobServicesOperations
 from ._blob_containers_operations_async import BlobContainersOperations
 from ._file_services_operations_async import FileServicesOperations
 from ._file_shares_operations_async import FileSharesOperations
+from ._queue_services_operations_async import QueueServicesOperations
+from ._queue_operations_async import QueueOperations
+from ._table_services_operations_async import TableServicesOperations
+from ._table_operations_async import TableOperations
 
 __all__ = [
     'Operations',
@@ -34,4 +38,8 @@ __all__ = [
     'BlobContainersOperations',
     'FileServicesOperations',
     'FileSharesOperations',
+    'QueueServicesOperations',
+    'QueueOperations',
+    'TableServicesOperations',
+    'TableOperations',
 ]

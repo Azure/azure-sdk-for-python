@@ -56,16 +56,17 @@ class BlobContainersOperations:
          case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListContainerItems or the result of cls(response)
+        :return: ListContainerItems, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ListContainerItems
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListContainerItems"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -93,10 +94,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ListContainerItems', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers'}  # type: ignore
 
     async def create(
         self,
@@ -123,17 +124,18 @@ class BlobContainersOperations:
         :param blob_container: Properties of the blob container to create.
         :type blob_container: ~azure.mgmt.storage.v2018_07_01.models.BlobContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobContainer or the result of cls(response)
+        :return: BlobContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -167,10 +169,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('BlobContainer', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}  # type: ignore
 
     async def update(
         self,
@@ -197,17 +199,18 @@ class BlobContainersOperations:
         :param blob_container: Properties to update for the blob container.
         :type blob_container: ~azure.mgmt.storage.v2018_07_01.models.BlobContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobContainer or the result of cls(response)
+        :return: BlobContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -241,10 +244,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('BlobContainer', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}  # type: ignore
 
     async def get(
         self,
@@ -268,16 +271,17 @@ class BlobContainersOperations:
          by a letter or number.
         :type container_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobContainer or the result of cls(response)
+        :return: BlobContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -306,10 +310,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('BlobContainer', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}  # type: ignore
 
     async def delete(
         self,
@@ -333,16 +337,17 @@ class BlobContainersOperations:
          by a letter or number.
         :type container_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -368,9 +373,9 @@ class BlobContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}  # type: ignore
 
     async def set_legal_hold(
         self,
@@ -397,17 +402,18 @@ class BlobContainersOperations:
         :param legal_hold: The LegalHold property that will be set to a blob container.
         :type legal_hold: ~azure.mgmt.storage.v2018_07_01.models.LegalHold
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LegalHold or the result of cls(response)
+        :return: LegalHold, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.set_legal_hold.metadata['url']
+        url = self.set_legal_hold.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -441,10 +447,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('LegalHold', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set_legal_hold.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/setLegalHold'}
+    set_legal_hold.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/setLegalHold'}  # type: ignore
 
     async def clear_legal_hold(
         self,
@@ -471,17 +477,18 @@ class BlobContainersOperations:
         :param legal_hold: The LegalHold property that will be clear from a blob container.
         :type legal_hold: ~azure.mgmt.storage.v2018_07_01.models.LegalHold
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LegalHold or the result of cls(response)
+        :return: LegalHold, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.clear_legal_hold.metadata['url']
+        url = self.clear_legal_hold.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -515,10 +522,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('LegalHold', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    clear_legal_hold.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold'}
+    clear_legal_hold.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold'}  # type: ignore
 
     async def create_or_update_immutability_policy(
         self,
@@ -551,18 +558,19 @@ class BlobContainersOperations:
          container.
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ImmutabilityPolicy or the result of cls(response)
+        :return: ImmutabilityPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create_or_update_immutability_policy.metadata['url']
+        url = self.create_or_update_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -604,10 +612,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ImmutabilityPolicy', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    create_or_update_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}
+    create_or_update_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}  # type: ignore
 
     async def get_immutability_policy(
         self,
@@ -636,17 +644,18 @@ class BlobContainersOperations:
          omitted, this operation will always be applied.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ImmutabilityPolicy or the result of cls(response)
+        :return: ImmutabilityPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.get_immutability_policy.metadata['url']
+        url = self.get_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -680,10 +689,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ImmutabilityPolicy', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}
+    get_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}  # type: ignore
 
     async def delete_immutability_policy(
         self,
@@ -712,17 +721,18 @@ class BlobContainersOperations:
          omitted, this operation will always be applied.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ImmutabilityPolicy or the result of cls(response)
+        :return: ImmutabilityPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.delete_immutability_policy.metadata['url']
+        url = self.delete_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -755,10 +765,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ImmutabilityPolicy', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    delete_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}
+    delete_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}'}  # type: ignore
 
     async def lock_immutability_policy(
         self,
@@ -787,16 +797,17 @@ class BlobContainersOperations:
          omitted, this operation will always be applied.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ImmutabilityPolicy or the result of cls(response)
+        :return: ImmutabilityPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
 
         # Construct URL
-        url = self.lock_immutability_policy.metadata['url']
+        url = self.lock_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -828,10 +839,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ImmutabilityPolicy', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    lock_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock'}
+    lock_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock'}  # type: ignore
 
     async def extend_immutability_policy(
         self,
@@ -864,17 +875,18 @@ class BlobContainersOperations:
          container.
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ImmutabilityPolicy or the result of cls(response)
+        :return: ImmutabilityPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.extend_immutability_policy.metadata['url']
+        url = self.extend_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -914,10 +926,10 @@ class BlobContainersOperations:
         deserialized = self._deserialize('ImmutabilityPolicy', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    extend_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/extend'}
+    extend_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/extend'}  # type: ignore
 
     async def lease(
         self,
@@ -944,17 +956,18 @@ class BlobContainersOperations:
         :param parameters: Lease Container request body.
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.LeaseContainerRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LeaseContainerResponse or the result of cls(response)
+        :return: LeaseContainerResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.LeaseContainerResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LeaseContainerResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.lease.metadata['url']
+        url = self.lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -991,7 +1004,7 @@ class BlobContainersOperations:
         deserialized = self._deserialize('LeaseContainerResponse', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    lease.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/lease'}
+    lease.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/lease'}  # type: ignore

@@ -8,13 +8,13 @@
 
 from enum import Enum
 
-class ProvisioningState(str, Enum):
-    """The status of the storage account at the time the operation was called.
+class AccountStatus(str, Enum):
+    """The status indicating whether the primary location of the storage account is available or
+    unavailable.
     """
 
-    creating = "Creating"
-    resolving_dns = "ResolvingDNS"
-    succeeded = "Succeeded"
+    available = "Available"
+    unavailable = "Unavailable"
 
 class AccountType(str, Enum):
     """The sku name. Required for account creation; optional for update. Note that in older versions,
@@ -27,13 +27,21 @@ class AccountType(str, Enum):
     standard_ragrs = "Standard_RAGRS"
     premium_lrs = "Premium_LRS"
 
-class AccountStatus(str, Enum):
-    """The status indicating whether the primary location of the storage account is available or
-    unavailable.
+class ProvisioningState(str, Enum):
+    """The status of the storage account at the time the operation was called.
     """
 
-    available = "Available"
-    unavailable = "Unavailable"
+    creating = "Creating"
+    resolving_dns = "ResolvingDNS"
+    succeeded = "Succeeded"
+
+class Reason(str, Enum):
+    """The reason that a storage account name could not be used. The Reason element is only returned
+    if NameAvailable is false.
+    """
+
+    account_name_invalid = "AccountNameInvalid"
+    already_exists = "AlreadyExists"
 
 class UsageUnit(str, Enum):
     """The unit of measurement.
@@ -45,11 +53,3 @@ class UsageUnit(str, Enum):
     percent = "Percent"
     counts_per_second = "CountsPerSecond"
     bytes_per_second = "BytesPerSecond"
-
-class Reason(str, Enum):
-    """The reason that a storage account name could not be used. The Reason element is only returned
-    if NameAvailable is false.
-    """
-
-    account_name_invalid = "AccountNameInvalid"
-    already_exists = "AlreadyExists"

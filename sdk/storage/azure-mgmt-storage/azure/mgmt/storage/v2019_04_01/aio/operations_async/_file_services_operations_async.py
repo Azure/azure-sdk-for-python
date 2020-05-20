@@ -56,16 +56,17 @@ class FileServicesOperations:
          case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FileServiceItems or the result of cls(response)
+        :return: FileServiceItems, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceItems
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceItems"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-04-01"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -93,10 +94,10 @@ class FileServicesOperations:
         deserialized = self._deserialize('FileServiceItems', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices'}  # type: ignore
 
     async def set_service_properties(
         self,
@@ -118,18 +119,19 @@ class FileServicesOperations:
          Origin Resource Sharing) rules.
         :type parameters: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FileServiceProperties or the result of cls(response)
+        :return: FileServiceProperties, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-04-01"
         file_services_name = "default"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.set_service_properties.metadata['url']
+        url = self.set_service_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -163,10 +165,10 @@ class FileServicesOperations:
         deserialized = self._deserialize('FileServiceProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}
+    set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}  # type: ignore
 
     async def get_service_properties(
         self,
@@ -184,17 +186,18 @@ class FileServicesOperations:
          case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FileServiceProperties or the result of cls(response)
+        :return: FileServiceProperties, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-04-01"
         file_services_name = "default"
 
         # Construct URL
-        url = self.get_service_properties.metadata['url']
+        url = self.get_service_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -223,7 +226,7 @@ class FileServicesOperations:
         deserialized = self._deserialize('FileServiceProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}
+    get_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}  # type: ignore

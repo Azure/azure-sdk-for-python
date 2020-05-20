@@ -17,8 +17,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :type name_available: bool
     :param reason: The reason that a storage account name could not be used. The Reason element is
-     only returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :type reason: str or ~azure.mgmt.storage.v2015_06_15.models.Reason
     :param message: The error message explaining the Reason value in more detail.
     :type message: str
@@ -66,7 +66,7 @@ class CustomDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomDomain, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)
 
 
@@ -160,10 +160,10 @@ class StorageAccount(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param provisioning_state: The status of the storage account at the time the operation was
-     called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
+     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
     :type provisioning_state: str or ~azure.mgmt.storage.v2015_06_15.models.ProvisioningState
-    :param account_type: The type of the storage account. Possible values include: 'Standard_LRS',
-     'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+    :param account_type: The type of the storage account. Possible values include: "Standard_LRS",
+     "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     :param primary_endpoints: The URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -172,7 +172,7 @@ class StorageAccount(Resource):
     :param primary_location: The location of the primary data center for the storage account.
     :type primary_location: str
     :param status_of_primary: The status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'Available', 'Unavailable'.
+     account is available or unavailable. Possible values include: "Available", "Unavailable".
     :type status_of_primary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :param last_geo_failover_time: The timestamp of the most recent instance of a failover to the
      secondary location. Only the most recent timestamp is retained. This element is not returned if
@@ -184,7 +184,7 @@ class StorageAccount(Resource):
     :type secondary_location: str
     :param status_of_secondary: The status indicating whether the secondary location of the storage
      account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: 'Available', 'Unavailable'.
+     Standard_RAGRS. Possible values include: "Available", "Unavailable".
     :type status_of_secondary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :param creation_time: The creation date and time of the storage account in UTC.
     :type creation_time: ~datetime.datetime
@@ -264,7 +264,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.type = kwargs.get('type', "Microsoft.Storage/storageAccounts")
 
 
@@ -285,7 +285,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param account_type: The sku name. Required for account creation; optional for update. Note
      that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+     "Standard_LRS", "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     """
 
@@ -304,7 +304,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.account_type = kwargs.get('account_type', None)
 
@@ -373,7 +373,7 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = kwargs['key_name']
 
 
 class StorageAccountUpdateParameters(msrest.serialization.Model):
@@ -383,8 +383,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param account_type: The account type. Note that StandardZRS and PremiumLRS accounts cannot be
      changed to other account types, and other account types cannot be changed to StandardZRS or
-     PremiumLRS. Possible values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
-     'Standard_RAGRS', 'Premium_LRS'.
+     PremiumLRS. Possible values include: "Standard_LRS", "Standard_ZRS", "Standard_GRS",
+     "Standard_RAGRS", "Premium_LRS".
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
      Only one custom domain is supported per storage account at this time. To clear the existing
@@ -413,8 +413,8 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param unit: Required. The unit of measurement. Possible values include: 'Count', 'Bytes',
-     'Seconds', 'Percent', 'CountsPerSecond', 'BytesPerSecond'.
+    :param unit: Required. The unit of measurement. Possible values include: "Count", "Bytes",
+     "Seconds", "Percent", "CountsPerSecond", "BytesPerSecond".
     :type unit: str or ~azure.mgmt.storage.v2015_06_15.models.UsageUnit
     :param current_value: Required. The current count of the allocated resources in the
      subscription.
@@ -445,10 +445,10 @@ class Usage(msrest.serialization.Model):
         **kwargs
     ):
         super(Usage, self).__init__(**kwargs)
-        self.unit = kwargs.get('unit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.unit = kwargs['unit']
+        self.current_value = kwargs['current_value']
+        self.limit = kwargs['limit']
+        self.name = kwargs['name']
 
 
 class UsageListResult(msrest.serialization.Model):

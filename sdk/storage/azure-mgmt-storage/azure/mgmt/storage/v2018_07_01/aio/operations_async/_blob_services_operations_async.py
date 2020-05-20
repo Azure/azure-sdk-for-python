@@ -60,18 +60,19 @@ class BlobServicesOperations:
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.BlobServiceProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobServiceProperties or the result of cls(response)
+        :return: BlobServiceProperties, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.BlobServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobServiceProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         blob_services_name = "default"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.set_service_properties.metadata['url']
+        url = self.set_service_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -105,10 +106,10 @@ class BlobServicesOperations:
         deserialized = self._deserialize('BlobServiceProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}
+    set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}  # type: ignore
 
     async def get_service_properties(
         self,
@@ -126,17 +127,18 @@ class BlobServicesOperations:
          case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobServiceProperties or the result of cls(response)
+        :return: BlobServiceProperties, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.BlobServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobServiceProperties"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-07-01"
         blob_services_name = "default"
 
         # Construct URL
-        url = self.get_service_properties.metadata['url']
+        url = self.get_service_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -165,7 +167,7 @@ class BlobServicesOperations:
         deserialized = self._deserialize('BlobServiceProperties', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}
+    get_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}  # type: ignore

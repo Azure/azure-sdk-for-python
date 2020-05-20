@@ -8,6 +8,51 @@
 
 from enum import Enum
 
+class AccessTier(str, Enum):
+    """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
+    """
+
+    hot = "Hot"
+    cool = "Cool"
+
+class AccountStatus(str, Enum):
+    """Gets the status indicating whether the primary location of the storage account is available or
+    unavailable.
+    """
+
+    available = "Available"
+    unavailable = "Unavailable"
+
+class KeyPermission(str, Enum):
+    """Permissions for the key -- read-only or full permissions.
+    """
+
+    read = "READ"
+    full = "FULL"
+
+class Kind(str, Enum):
+    """Required. Indicates the type of storage account.
+    """
+
+    storage = "Storage"
+    blob_storage = "BlobStorage"
+
+class ProvisioningState(str, Enum):
+    """Gets the status of the storage account at the time the operation was called.
+    """
+
+    creating = "Creating"
+    resolving_dns = "ResolvingDNS"
+    succeeded = "Succeeded"
+
+class Reason(str, Enum):
+    """Gets the reason that a storage account name could not be used. The Reason element is only
+    returned if NameAvailable is false.
+    """
+
+    account_name_invalid = "AccountNameInvalid"
+    already_exists = "AlreadyExists"
+
 class SkuName(str, Enum):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
     older versions, sku name was called accountType.
@@ -26,43 +71,6 @@ class SkuTier(str, Enum):
     standard = "Standard"
     premium = "Premium"
 
-class Kind(str, Enum):
-    """Required. Indicates the type of storage account.
-    """
-
-    storage = "Storage"
-    blob_storage = "BlobStorage"
-
-class ProvisioningState(str, Enum):
-    """Gets the status of the storage account at the time the operation was called.
-    """
-
-    creating = "Creating"
-    resolving_dns = "ResolvingDNS"
-    succeeded = "Succeeded"
-
-class AccountStatus(str, Enum):
-    """Gets the status indicating whether the primary location of the storage account is available or
-    unavailable.
-    """
-
-    available = "Available"
-    unavailable = "Unavailable"
-
-class AccessTier(str, Enum):
-    """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
-    """
-
-    hot = "Hot"
-    cool = "Cool"
-
-class KeyPermission(str, Enum):
-    """Permissions for the key -- read-only or full permissions.
-    """
-
-    read = "READ"
-    full = "FULL"
-
 class UsageUnit(str, Enum):
     """Gets the unit of measurement.
     """
@@ -73,11 +81,3 @@ class UsageUnit(str, Enum):
     percent = "Percent"
     counts_per_second = "CountsPerSecond"
     bytes_per_second = "BytesPerSecond"
-
-class Reason(str, Enum):
-    """Gets the reason that a storage account name could not be used. The Reason element is only
-    returned if NameAvailable is false.
-    """
-
-    account_name_invalid = "AccountNameInvalid"
-    already_exists = "AlreadyExists"

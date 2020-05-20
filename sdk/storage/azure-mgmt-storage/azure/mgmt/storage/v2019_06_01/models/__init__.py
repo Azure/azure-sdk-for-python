@@ -26,6 +26,7 @@ try:
     from ._models_py3 import DateAfterCreation
     from ._models_py3 import DateAfterModification
     from ._models_py3 import DeleteRetentionPolicy
+    from ._models_py3 import DeletedShare
     from ._models_py3 import Dimension
     from ._models_py3 import Encryption
     from ._models_py3 import EncryptionScope
@@ -53,7 +54,12 @@ try:
     from ._models_py3 import ListAccountSasResponse
     from ._models_py3 import ListContainerItem
     from ._models_py3 import ListContainerItems
+    from ._models_py3 import ListQueue
+    from ._models_py3 import ListQueueResource
+    from ._models_py3 import ListQueueServices
     from ._models_py3 import ListServiceSasResponse
+    from ._models_py3 import ListTableResource
+    from ._models_py3 import ListTableServices
     from ._models_py3 import ManagementPolicy
     from ._models_py3 import ManagementPolicyAction
     from ._models_py3 import ManagementPolicyBaseBlob
@@ -73,9 +79,11 @@ try:
     from ._models_py3 import OperationListResult
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import QueueServiceProperties
     from ._models_py3 import Resource
     from ._models_py3 import RestorePolicyProperties
     from ._models_py3 import Restriction
@@ -95,7 +103,11 @@ try:
     from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import StorageQueue
     from ._models_py3 import StorageSkuListResult
+    from ._models_py3 import Table
+    from ._models_py3 import TableServiceProperties
+    from ._models_py3 import TagFilter
     from ._models_py3 import TagProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateHistoryProperty
@@ -123,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import DateAfterCreation  # type: ignore
     from ._models import DateAfterModification  # type: ignore
     from ._models import DeleteRetentionPolicy  # type: ignore
+    from ._models import DeletedShare  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import Encryption  # type: ignore
     from ._models import EncryptionScope  # type: ignore
@@ -150,7 +163,12 @@ except (SyntaxError, ImportError):
     from ._models import ListAccountSasResponse  # type: ignore
     from ._models import ListContainerItem  # type: ignore
     from ._models import ListContainerItems  # type: ignore
+    from ._models import ListQueue  # type: ignore
+    from ._models import ListQueueResource  # type: ignore
+    from ._models import ListQueueServices  # type: ignore
     from ._models import ListServiceSasResponse  # type: ignore
+    from ._models import ListTableResource  # type: ignore
+    from ._models import ListTableServices  # type: ignore
     from ._models import ManagementPolicy  # type: ignore
     from ._models import ManagementPolicyAction  # type: ignore
     from ._models import ManagementPolicyBaseBlob  # type: ignore
@@ -170,9 +188,11 @@ except (SyntaxError, ImportError):
     from ._models import OperationListResult  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
+    from ._models import QueueServiceProperties  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import RestorePolicyProperties  # type: ignore
     from ._models import Restriction  # type: ignore
@@ -192,7 +212,11 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountMicrosoftEndpoints  # type: ignore
     from ._models import StorageAccountRegenerateKeyParameters  # type: ignore
     from ._models import StorageAccountUpdateParameters  # type: ignore
+    from ._models import StorageQueue  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
+    from ._models import Table  # type: ignore
+    from ._models import TableServiceProperties  # type: ignore
+    from ._models import TagFilter  # type: ignore
     from ._models import TagProperty  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UpdateHistoryProperty  # type: ignore
@@ -209,6 +233,7 @@ from ._storage_management_client_enums import (
     CorsRuleAllowedMethodsItem,
     DefaultAction,
     DirectoryServiceOptions,
+    EnabledProtocols,
     EncryptionScopeSource,
     EncryptionScopeState,
     GeoReplicationStatus,
@@ -231,8 +256,10 @@ from ._storage_management_client_enums import (
     PublicAccess,
     Reason,
     ReasonCode,
+    RootSquashType,
     RoutingChoice,
     Services,
+    ShareAccessTier,
     SignedResource,
     SignedResourceTypes,
     SkuName,
@@ -262,6 +289,7 @@ __all__ = [
     'DateAfterCreation',
     'DateAfterModification',
     'DeleteRetentionPolicy',
+    'DeletedShare',
     'Dimension',
     'Encryption',
     'EncryptionScope',
@@ -289,7 +317,12 @@ __all__ = [
     'ListAccountSasResponse',
     'ListContainerItem',
     'ListContainerItems',
+    'ListQueue',
+    'ListQueueResource',
+    'ListQueueServices',
     'ListServiceSasResponse',
+    'ListTableResource',
+    'ListTableServices',
     'ManagementPolicy',
     'ManagementPolicyAction',
     'ManagementPolicyBaseBlob',
@@ -309,9 +342,11 @@ __all__ = [
     'OperationListResult',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
+    'QueueServiceProperties',
     'Resource',
     'RestorePolicyProperties',
     'Restriction',
@@ -331,7 +366,11 @@ __all__ = [
     'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
+    'StorageQueue',
     'StorageSkuListResult',
+    'Table',
+    'TableServiceProperties',
+    'TagFilter',
     'TagProperty',
     'TrackedResource',
     'UpdateHistoryProperty',
@@ -346,6 +385,7 @@ __all__ = [
     'CorsRuleAllowedMethodsItem',
     'DefaultAction',
     'DirectoryServiceOptions',
+    'EnabledProtocols',
     'EncryptionScopeSource',
     'EncryptionScopeState',
     'GeoReplicationStatus',
@@ -368,8 +408,10 @@ __all__ = [
     'PublicAccess',
     'Reason',
     'ReasonCode',
+    'RootSquashType',
     'RoutingChoice',
     'Services',
+    'ShareAccessTier',
     'SignedResource',
     'SignedResourceTypes',
     'SkuName',

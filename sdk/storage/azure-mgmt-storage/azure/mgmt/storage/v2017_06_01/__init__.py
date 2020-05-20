@@ -8,3 +8,9 @@
 
 from ._storage_management import StorageManagement
 __all__ = ['StorageManagement']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

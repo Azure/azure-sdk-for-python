@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._storage_management_client_enums import *
+
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
     """The CheckNameAvailability operation response.
@@ -21,8 +23,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be used. The Reason element
-     is only returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     is only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2016_01_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more detail.
     :vartype message: str
@@ -270,10 +272,10 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. Gets or sets the sku name. Required for account creation; optional for
      update. Note that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'.
+     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS".
     :type name: str or ~azure.mgmt.storage.v2016_01_01.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible values include:
-     'Standard', 'Premium'.
+     "Standard", "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2016_01_01.models.SkuTier
     """
 
@@ -316,10 +318,10 @@ class StorageAccount(Resource):
     :type tags: dict[str, str]
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2016_01_01.models.Sku
-    :ivar kind: Gets the Kind. Possible values include: 'Storage', 'BlobStorage'.
+    :ivar kind: Gets the Kind. Possible values include: "Storage", "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2016_01_01.models.Kind
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
+     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2016_01_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -328,7 +330,7 @@ class StorageAccount(Resource):
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'Available', 'Unavailable'.
+     account is available or unavailable. Possible values include: "Available", "Unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2016_01_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent instance of a failover to
      the secondary location. Only the most recent timestamp is retained. This element is not
@@ -340,7 +342,7 @@ class StorageAccount(Resource):
     :vartype secondary_location: str
     :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
      storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: 'Available', 'Unavailable'.
+     Standard_RAGRS. Possible values include: "Available", "Unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2016_01_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -354,7 +356,7 @@ class StorageAccount(Resource):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2016_01_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Possible values include: 'Hot', 'Cool'.
+     for billing. Possible values include: "Hot", "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2016_01_01.models.AccessTier
     """
 
@@ -467,7 +469,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param sku: Required. Required. Gets or sets the sku name.
     :type sku: ~azure.mgmt.storage.v2016_01_01.models.Sku
     :param kind: Required. Required. Indicates the type of storage account. Possible values
-     include: 'Storage', 'BlobStorage'.
+     include: "Storage", "BlobStorage".
     :type kind: str or ~azure.mgmt.storage.v2016_01_01.models.Kind
     :param location: Required. Required. Gets or sets the location of the resource. This will be
      one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
@@ -487,7 +489,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      account encryption settings will remain the same. The default setting is unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_01_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2016_01_01.models.AccessTier
     """
 
@@ -539,7 +541,7 @@ class StorageAccountKey(msrest.serialization.Model):
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full permissions. Possible values
-     include: 'READ', 'FULL'.
+     include: "READ", "FULL".
     :vartype permissions: str or ~azure.mgmt.storage.v2016_01_01.models.KeyPermission
     """
 
@@ -662,7 +664,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_01_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2016_01_01.models.AccessTier
     """
 
@@ -697,8 +699,8 @@ class Usage(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar unit: Gets the unit of measurement. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'Percent', 'CountsPerSecond', 'BytesPerSecond'.
+    :ivar unit: Gets the unit of measurement. Possible values include: "Count", "Bytes", "Seconds",
+     "Percent", "CountsPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2016_01_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in the subscription.
     :vartype current_value: int

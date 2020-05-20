@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import StorageManagementClientConfiguration
 from .operations_async import Operations
@@ -25,6 +29,10 @@ from .operations_async import BlobServicesOperations
 from .operations_async import BlobContainersOperations
 from .operations_async import FileServicesOperations
 from .operations_async import FileSharesOperations
+from .operations_async import QueueServicesOperations
+from .operations_async import QueueOperations
+from .operations_async import TableServicesOperations
+from .operations_async import TableOperations
 from .. import models
 
 
@@ -57,16 +65,25 @@ class StorageManagementClient(object):
     :vartype file_services: azure.mgmt.storage.v2019_06_01.aio.operations_async.FileServicesOperations
     :ivar file_shares: FileSharesOperations operations
     :vartype file_shares: azure.mgmt.storage.v2019_06_01.aio.operations_async.FileSharesOperations
+    :ivar queue_services: QueueServicesOperations operations
+    :vartype queue_services: azure.mgmt.storage.v2019_06_01.aio.operations_async.QueueServicesOperations
+    :ivar queue: QueueOperations operations
+    :vartype queue: azure.mgmt.storage.v2019_06_01.aio.operations_async.QueueOperations
+    :ivar table_services: TableServicesOperations operations
+    :vartype table_services: azure.mgmt.storage.v2019_06_01.aio.operations_async.TableServicesOperations
+    :ivar table: TableOperations operations
+    :vartype table: azure.mgmt.storage.v2019_06_01.aio.operations_async.TableOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: Optional[str] = None,
         **kwargs: Any
@@ -105,6 +122,14 @@ class StorageManagementClient(object):
         self.file_services = FileServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.file_shares = FileSharesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.queue_services = QueueServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.queue = QueueOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.table_services = TableServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.table = TableOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:

@@ -56,16 +56,17 @@ class PrivateLinkResourcesOperations:
          case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult or the result of cls(response)
+        :return: PrivateLinkResourceListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkResourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01"
 
         # Construct URL
-        url = self.list_by_storage_account.metadata['url']
+        url = self.list_by_storage_account.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -93,7 +94,7 @@ class PrivateLinkResourcesOperations:
         deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_by_storage_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateLinkResources'}
+    list_by_storage_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateLinkResources'}  # type: ignore

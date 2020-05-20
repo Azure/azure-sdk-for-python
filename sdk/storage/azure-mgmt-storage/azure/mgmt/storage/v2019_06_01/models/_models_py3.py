@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._storage_management_client_enums import *
+
 
 class AccountSasParameters(msrest.serialization.Model):
     """The parameters to list SAS credentials of a storage account.
@@ -19,22 +21,22 @@ class AccountSasParameters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param services: Required. The signed services accessible with the account SAS. Possible values
-     include: Blob (b), Queue (q), Table (t), File (f). Possible values include: 'b', 'q', 't', 'f'.
+     include: Blob (b), Queue (q), Table (t), File (f). Possible values include: "b", "q", "t", "f".
     :type services: str or ~azure.mgmt.storage.v2019_06_01.models.Services
     :param resource_types: Required. The signed resource types that are accessible with the account
      SAS. Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
      Object (o): Access to object-level APIs for blobs, queue messages, table entities, and files.
-     Possible values include: 's', 'c', 'o'.
+     Possible values include: "s", "c", "o".
     :type resource_types: str or ~azure.mgmt.storage.v2019_06_01.models.SignedResourceTypes
     :param permissions: Required. The signed permissions for the account SAS. Possible values
      include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
-     (p). Possible values include: 'r', 'd', 'w', 'l', 'a', 'c', 'u', 'p'.
+     (p). Possible values include: "r", "d", "w", "l", "a", "c", "u", "p".
     :type permissions: str or ~azure.mgmt.storage.v2019_06_01.models.Permissions
     :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: 'https,http', 'https'.
+     values include: "https,http", "https".
     :type protocols: str or ~azure.mgmt.storage.v2019_06_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: ~datetime.datetime
@@ -227,7 +229,7 @@ class AzureFilesIdentityBasedAuthentication(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param directory_service_options: Required. Indicates the directory service used. Possible
-     values include: 'None', 'AADDS', 'AD'.
+     values include: "None", "AADDS", "AD".
     :type directory_service_options: str or
      ~azure.mgmt.storage.v2019_06_01.models.DirectoryServiceOptions
     :param active_directory_properties: Required if choose AD.
@@ -271,6 +273,14 @@ class BlobContainer(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :ivar version: The version of the deleted blob container.
+    :vartype version: str
+    :ivar deleted: Indicates whether the blob container was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: Blob container deletion time.
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days: Remaining retention days for soft deleted blob container.
+    :vartype remaining_retention_days: int
     :param default_encryption_scope: Default the container to use specified encryption scope for
      all writes.
     :type default_encryption_scope: str
@@ -278,18 +288,18 @@ class BlobContainer(AzureEntityResource):
      default.
     :type deny_encryption_scope_override: bool
     :param public_access: Specifies whether data in the container may be accessed publicly and the
-     level of access. Possible values include: 'Container', 'Blob', 'None'.
+     level of access. Possible values include: "Container", "Blob", "None".
     :type public_access: str or ~azure.mgmt.storage.v2019_06_01.models.PublicAccess
     :ivar last_modified_time: Returns the date and time the container was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :ivar lease_status: The lease status of the container. Possible values include: 'Locked',
-     'Unlocked'.
+    :ivar lease_status: The lease status of the container. Possible values include: "Locked",
+     "Unlocked".
     :vartype lease_status: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseStatus
-    :ivar lease_state: Lease state of the container. Possible values include: 'Available',
-     'Leased', 'Expired', 'Breaking', 'Broken'.
+    :ivar lease_state: Lease state of the container. Possible values include: "Available",
+     "Leased", "Expired", "Breaking", "Broken".
     :vartype lease_state: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseState
     :ivar lease_duration: Specifies whether the lease on a container is of infinite or fixed
-     duration, only when the container is leased. Possible values include: 'Infinite', 'Fixed'.
+     duration, only when the container is leased. Possible values include: "Infinite", "Fixed".
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseDuration
     :param metadata: A name-value pair to associate with the container as metadata.
     :type metadata: dict[str, str]
@@ -314,6 +324,10 @@ class BlobContainer(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'lease_status': {'readonly': True},
         'lease_state': {'readonly': True},
@@ -329,6 +343,10 @@ class BlobContainer(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
         'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
         'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'str'},
@@ -353,6 +371,10 @@ class BlobContainer(AzureEntityResource):
         **kwargs
     ):
         super(BlobContainer, self).__init__(**kwargs)
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
@@ -441,7 +463,7 @@ class BlobRestoreStatus(msrest.serialization.Model):
     :ivar status: The status of blob restore progress. Possible values are: - InProgress: Indicates
      that blob restore is ongoing. - Complete: Indicates that blob restore has been completed
      successfully. - Failed: Indicates that blob restore is failed. Possible values include:
-     'InProgress', 'Complete', 'Failed'.
+     "InProgress", "Complete", "Failed".
     :vartype status: str or ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreProgressStatus
     :ivar failure_reason: Failure reason when blob restore is failed.
     :vartype failure_reason: str
@@ -618,8 +640,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be used. The Reason element
-     is only returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     is only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2019_06_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more detail.
     :vartype message: str
@@ -855,6 +877,41 @@ class DateAfterModification(msrest.serialization.Model):
         self.days_after_modification_greater_than = days_after_modification_greater_than
 
 
+class DeletedShare(msrest.serialization.Model):
+    """The deleted share to be restored.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param deleted_share_name: Required. Required. Identify the name of the deleted share that will
+     be restored.
+    :type deleted_share_name: str
+    :param deleted_share_version: Required. Required. Identify the version of the deleted share
+     that will be restored.
+    :type deleted_share_version: str
+    """
+
+    _validation = {
+        'deleted_share_name': {'required': True},
+        'deleted_share_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'deleted_share_name': {'key': 'deletedShareName', 'type': 'str'},
+        'deleted_share_version': {'key': 'deletedShareVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        deleted_share_name: str,
+        deleted_share_version: str,
+        **kwargs
+    ):
+        super(DeletedShare, self).__init__(**kwargs)
+        self.deleted_share_name = deleted_share_name
+        self.deleted_share_version = deleted_share_version
+
+
 class DeleteRetentionPolicy(msrest.serialization.Model):
     """The service properties for soft delete.
 
@@ -921,8 +978,11 @@ class Encryption(msrest.serialization.Model):
     :type services: ~azure.mgmt.storage.v2019_06_01.models.EncryptionServices
     :param key_source: Required. The encryption keySource (provider). Possible values (case-
      insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
-     'Microsoft.Storage', 'Microsoft.Keyvault'. Default value: "Microsoft.Storage".
+     "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2019_06_01.models.KeySource
+    :param require_infrastructure_encryption: A boolean indicating whether or not the service
+     applies a secondary layer of encryption with platform managed keys for data at rest.
+    :type require_infrastructure_encryption: bool
     :param key_vault_properties: Properties provided by key vault.
     :type key_vault_properties: ~azure.mgmt.storage.v2019_06_01.models.KeyVaultProperties
     """
@@ -934,20 +994,23 @@ class Encryption(msrest.serialization.Model):
     _attribute_map = {
         'services': {'key': 'services', 'type': 'EncryptionServices'},
         'key_source': {'key': 'keySource', 'type': 'str'},
+        'require_infrastructure_encryption': {'key': 'requireInfrastructureEncryption', 'type': 'bool'},
         'key_vault_properties': {'key': 'keyvaultproperties', 'type': 'KeyVaultProperties'},
     }
 
     def __init__(
         self,
         *,
-        key_source: Union[str, "KeySource"],
+        key_source: Union[str, "KeySource"] = "Microsoft.Storage",
         services: Optional["EncryptionServices"] = None,
+        require_infrastructure_encryption: Optional[bool] = None,
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         **kwargs
     ):
         super(Encryption, self).__init__(**kwargs)
         self.services = services
         self.key_source = key_source
+        self.require_infrastructure_encryption = require_infrastructure_encryption
         self.key_vault_properties = key_vault_properties
 
 
@@ -965,11 +1028,11 @@ class EncryptionScope(Resource):
      Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param source: The provider for the encryption scope. Possible values (case-insensitive):
-     Microsoft.Storage, Microsoft.KeyVault. Possible values include: 'Microsoft.Storage',
-     'Microsoft.KeyVault'.
+     Microsoft.Storage, Microsoft.KeyVault. Possible values include: "Microsoft.Storage",
+     "Microsoft.KeyVault".
     :type source: str or ~azure.mgmt.storage.v2019_06_01.models.EncryptionScopeSource
     :param state: The state of the encryption scope. Possible values (case-insensitive):  Enabled,
-     Disabled. Possible values include: 'Enabled', 'Disabled'.
+     Disabled. Possible values include: "Enabled", "Disabled".
     :type state: str or ~azure.mgmt.storage.v2019_06_01.models.EncryptionScopeState
     :ivar creation_time: Gets the creation date and time of the encryption scope in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -1085,7 +1148,7 @@ class EncryptionService(msrest.serialization.Model):
     :vartype last_enabled_time: ~datetime.datetime
     :param key_type: Encryption key type to be used for the encryption service. 'Account' key type
      implies that an account-scoped encryption key will be used. 'Service' key type implies that a
-     default service key is used. Possible values include: 'Service', 'Account'.
+     default service key is used. Possible values include: "Service", "Account".
     :type key_type: str or ~azure.mgmt.storage.v2019_06_01.models.KeyType
     """
 
@@ -1339,6 +1402,31 @@ class FileShare(AzureEntityResource):
     :param share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
      less than or equal to 5TB (5120). For Large File Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the file share. Can only
+     be specified when creating a share. Possible values include: "SMB", "NFS".
+    :type enabled_protocols: str or ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is NoRootSquash. Possible
+     values include: "NoRootSquash", "RootSquash", "AllSquash".
+    :type root_squash: str or ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days: Remaining retention days for share that was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can choose between
+     TransactionOptimized (default), Hot, and Cool. FileStorage account can choose Premium. Possible
+     values include: "TransactionOptimized", "Hot", "Cool", "Premium".
+    :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for share access tier.
+    :vartype access_tier_change_time: ~datetime.datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the share. Note that this
+     value may not include all recently created or recently resized files.
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1348,6 +1436,13 @@ class FileShare(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1358,6 +1453,16 @@ class FileShare(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(
@@ -1365,12 +1470,25 @@ class FileShare(AzureEntityResource):
         *,
         metadata: Optional[Dict[str, str]] = None,
         share_quota: Optional[int] = None,
+        enabled_protocols: Optional[Union[str, "EnabledProtocols"]] = None,
+        root_squash: Optional[Union[str, "RootSquashType"]] = None,
+        access_tier: Optional[Union[str, "ShareAccessTier"]] = None,
         **kwargs
     ):
         super(FileShare, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
         self.share_quota = share_quota
+        self.enabled_protocols = enabled_protocols
+        self.root_squash = root_squash
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = access_tier
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class FileShareItem(AzureEntityResource):
@@ -1395,6 +1513,31 @@ class FileShareItem(AzureEntityResource):
     :param share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
      less than or equal to 5TB (5120). For Large File Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the file share. Can only
+     be specified when creating a share. Possible values include: "SMB", "NFS".
+    :type enabled_protocols: str or ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is NoRootSquash. Possible
+     values include: "NoRootSquash", "RootSquash", "AllSquash".
+    :type root_squash: str or ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days: Remaining retention days for share that was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can choose between
+     TransactionOptimized (default), Hot, and Cool. FileStorage account can choose Premium. Possible
+     values include: "TransactionOptimized", "Hot", "Cool", "Premium".
+    :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for share access tier.
+    :vartype access_tier_change_time: ~datetime.datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the share. Note that this
+     value may not include all recently created or recently resized files.
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1404,6 +1547,13 @@ class FileShareItem(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1414,6 +1564,16 @@ class FileShareItem(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(
@@ -1421,12 +1581,25 @@ class FileShareItem(AzureEntityResource):
         *,
         metadata: Optional[Dict[str, str]] = None,
         share_quota: Optional[int] = None,
+        enabled_protocols: Optional[Union[str, "EnabledProtocols"]] = None,
+        root_squash: Optional[Union[str, "RootSquashType"]] = None,
+        access_tier: Optional[Union[str, "ShareAccessTier"]] = None,
         **kwargs
     ):
         super(FileShareItem, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
         self.share_quota = share_quota
+        self.enabled_protocols = enabled_protocols
+        self.root_squash = root_squash
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = access_tier
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class FileShareItems(msrest.serialization.Model):
@@ -1469,8 +1642,8 @@ class GeoReplicationStats(msrest.serialization.Model):
      the secondary location is active and operational. - Bootstrap: Indicates initial
      synchronization from the primary location to the secondary location is in progress.This
      typically occurs when replication is first enabled. - Unavailable: Indicates that the secondary
-     location is temporarily unavailable. Possible values include: 'Live', 'Bootstrap',
-     'Unavailable'.
+     location is temporarily unavailable. Possible values include: "Live", "Bootstrap",
+     "Unavailable".
     :vartype status: str or ~azure.mgmt.storage.v2019_06_01.models.GeoReplicationStatus
     :ivar last_sync_time: All primary writes preceding this UTC date/time value are guaranteed to
      be available for read operations. Primary writes following this point in time may or may not be
@@ -1561,7 +1734,7 @@ class ImmutabilityPolicy(AzureEntityResource):
      container since the policy creation, in days.
     :type immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
-     and Unlocked. Possible values include: 'Locked', 'Unlocked'.
+     and Unlocked. Possible values include: "Locked", "Unlocked".
     :vartype state: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyState
     :param allow_protected_append_writes: This property can only be changed for unlocked time-based
      retention policies. When enabled, new blocks can be written to an append blob while maintaining
@@ -1615,7 +1788,7 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
      container since the policy creation, in days.
     :type immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
-     and Unlocked. Possible values include: 'Locked', 'Unlocked'.
+     and Unlocked. Possible values include: "Locked", "Unlocked".
     :vartype state: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyState
     :param allow_protected_append_writes: This property can only be changed for unlocked time-based
      retention policies. When enabled, new blocks can be written to an append blob while maintaining
@@ -1743,7 +1916,7 @@ class LeaseContainerRequest(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param action: Required. Specifies the lease action. Can be one of the available actions.
-     Possible values include: 'Acquire', 'Renew', 'Change', 'Release', 'Break'.
+     Possible values include: "Acquire", "Renew", "Change", "Release", "Break".
     :type action: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseContainerRequestAction
     :param lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :type lease_id: str
@@ -1927,6 +2100,14 @@ class ListContainerItem(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :ivar version: The version of the deleted blob container.
+    :vartype version: str
+    :ivar deleted: Indicates whether the blob container was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: Blob container deletion time.
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days: Remaining retention days for soft deleted blob container.
+    :vartype remaining_retention_days: int
     :param default_encryption_scope: Default the container to use specified encryption scope for
      all writes.
     :type default_encryption_scope: str
@@ -1934,18 +2115,18 @@ class ListContainerItem(AzureEntityResource):
      default.
     :type deny_encryption_scope_override: bool
     :param public_access: Specifies whether data in the container may be accessed publicly and the
-     level of access. Possible values include: 'Container', 'Blob', 'None'.
+     level of access. Possible values include: "Container", "Blob", "None".
     :type public_access: str or ~azure.mgmt.storage.v2019_06_01.models.PublicAccess
     :ivar last_modified_time: Returns the date and time the container was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :ivar lease_status: The lease status of the container. Possible values include: 'Locked',
-     'Unlocked'.
+    :ivar lease_status: The lease status of the container. Possible values include: "Locked",
+     "Unlocked".
     :vartype lease_status: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseStatus
-    :ivar lease_state: Lease state of the container. Possible values include: 'Available',
-     'Leased', 'Expired', 'Breaking', 'Broken'.
+    :ivar lease_state: Lease state of the container. Possible values include: "Available",
+     "Leased", "Expired", "Breaking", "Broken".
     :vartype lease_state: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseState
     :ivar lease_duration: Specifies whether the lease on a container is of infinite or fixed
-     duration, only when the container is leased. Possible values include: 'Infinite', 'Fixed'.
+     duration, only when the container is leased. Possible values include: "Infinite", "Fixed".
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseDuration
     :param metadata: A name-value pair to associate with the container as metadata.
     :type metadata: dict[str, str]
@@ -1970,6 +2151,10 @@ class ListContainerItem(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'lease_status': {'readonly': True},
         'lease_state': {'readonly': True},
@@ -1985,6 +2170,10 @@ class ListContainerItem(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
         'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
         'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'str'},
@@ -2009,6 +2198,10 @@ class ListContainerItem(AzureEntityResource):
         **kwargs
     ):
         super(ListContainerItem, self).__init__(**kwargs)
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
@@ -2054,6 +2247,101 @@ class ListContainerItems(msrest.serialization.Model):
         self.next_link = None
 
 
+class ListQueue(Resource):
+    """ListQueue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param metadata: A name-value pair that represents queue metadata.
+    :type metadata: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        super(ListQueue, self).__init__(**kwargs)
+        self.metadata = metadata
+
+
+class ListQueueResource(msrest.serialization.Model):
+    """Response schema. Contains list of queues returned.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of queues returned.
+    :vartype value: list[~azure.mgmt.storage.v2019_06_01.models.ListQueue]
+    :ivar next_link: Request URL that can be used to list next page of queues.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ListQueue]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListQueueResource, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ListQueueServices(msrest.serialization.Model):
+    """ListQueueServices.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of queue services returned.
+    :vartype value: list[~azure.mgmt.storage.v2019_06_01.models.QueueServiceProperties]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[QueueServiceProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListQueueServices, self).__init__(**kwargs)
+        self.value = None
+
+
 class ListServiceSasResponse(msrest.serialization.Model):
     """The List service SAS credentials operation response.
 
@@ -2077,6 +2365,61 @@ class ListServiceSasResponse(msrest.serialization.Model):
     ):
         super(ListServiceSasResponse, self).__init__(**kwargs)
         self.service_sas_token = None
+
+
+class ListTableResource(msrest.serialization.Model):
+    """Response schema. Contains list of tables returned.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of tables returned.
+    :vartype value: list[~azure.mgmt.storage.v2019_06_01.models.Table]
+    :ivar next_link: Request URL that can be used to query next page of tables.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Table]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListTableResource, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ListTableServices(msrest.serialization.Model):
+    """ListTableServices.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of table services returned.
+    :vartype value: list[~azure.mgmt.storage.v2019_06_01.models.TableServiceProperties]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[TableServiceProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListTableServices, self).__init__(**kwargs)
+        self.value = None
 
 
 class ManagementPolicy(Resource):
@@ -2225,6 +2568,9 @@ class ManagementPolicyFilter(msrest.serialization.Model):
     :type prefix_match: list[str]
     :param blob_types: Required. An array of predefined enum values. Only blockBlob is supported.
     :type blob_types: list[str]
+    :param blob_index_match: An array of blob index tag based filters, there can be at most 10 tag
+     filters.
+    :type blob_index_match: list[~azure.mgmt.storage.v2019_06_01.models.TagFilter]
     """
 
     _validation = {
@@ -2234,6 +2580,7 @@ class ManagementPolicyFilter(msrest.serialization.Model):
     _attribute_map = {
         'prefix_match': {'key': 'prefixMatch', 'type': '[str]'},
         'blob_types': {'key': 'blobTypes', 'type': '[str]'},
+        'blob_index_match': {'key': 'blobIndexMatch', 'type': '[TagFilter]'},
     }
 
     def __init__(
@@ -2241,11 +2588,13 @@ class ManagementPolicyFilter(msrest.serialization.Model):
         *,
         blob_types: List[str],
         prefix_match: Optional[List[str]] = None,
+        blob_index_match: Optional[List["TagFilter"]] = None,
         **kwargs
     ):
         super(ManagementPolicyFilter, self).__init__(**kwargs)
         self.prefix_match = prefix_match
         self.blob_types = blob_types
+        self.blob_index_match = blob_index_match
 
 
 class ManagementPolicyRule(msrest.serialization.Model):
@@ -2412,15 +2761,15 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     :param bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
      Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
-     Metrics"), or None to bypass none of those traffics. Possible values include: 'None',
-     'Logging', 'Metrics', 'AzureServices'. Default value: "AzureServices".
+     Metrics"), or None to bypass none of those traffics. Possible values include: "None",
+     "Logging", "Metrics", "AzureServices". Default value: "AzureServices".
     :type bypass: str or ~azure.mgmt.storage.v2019_06_01.models.Bypass
     :param virtual_network_rules: Sets the virtual network rules.
     :type virtual_network_rules: list[~azure.mgmt.storage.v2019_06_01.models.VirtualNetworkRule]
     :param ip_rules: Sets the IP ACL rules.
     :type ip_rules: list[~azure.mgmt.storage.v2019_06_01.models.IPRule]
     :param default_action: Required. Specifies the default action of allow or deny when no other
-     rules match. Possible values include: 'Allow', 'Deny'. Default value: "Allow".
+     rules match. Possible values include: "Allow", "Deny". Default value: "Allow".
     :type default_action: str or ~azure.mgmt.storage.v2019_06_01.models.DefaultAction
     """
 
@@ -2438,7 +2787,7 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        default_action: Union[str, "DefaultAction"],
+        default_action: Union[str, "DefaultAction"] = "Allow",
         bypass: Optional[Union[str, "Bypass"]] = "AzureServices",
         virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["IPRule"]] = None,
@@ -2742,7 +3091,7 @@ class PrivateEndpointConnection(Resource):
     :type private_link_service_connection_state:
      ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Possible values include: 'Succeeded', 'Creating', 'Deleting', 'Failed'.
+     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -2774,6 +3123,27 @@ class PrivateEndpointConnection(Resource):
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    :param value: Array of private endpoint connections.
+    :type value: list[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class PrivateLinkResource(Resource):
@@ -2851,7 +3221,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
     :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: 'Pending', 'Approved', 'Rejected'.
+     of the service. Possible values include: "Pending", "Approved", "Rejected".
     :type status: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval/rejection of the connection.
@@ -2879,6 +3249,48 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self.status = status
         self.description = description
         self.action_required = action_required
+
+
+class QueueServiceProperties(Resource):
+    """The properties of a storage account’s Queue service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param cors: Specifies CORS rules for the Queue service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Queue service.
+    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        **kwargs
+    ):
+        super(QueueServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
 
 
 class RestorePolicyProperties(msrest.serialization.Model):
@@ -2935,7 +3347,7 @@ class Restriction(msrest.serialization.Model):
     :param reason_code: The reason for the restriction. As of now this can be "QuotaId" or
      "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
      subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
-     capacity at DC. Possible values include: 'QuotaId', 'NotAvailableForSubscription'.
+     capacity at DC. Possible values include: "QuotaId", "NotAvailableForSubscription".
     :type reason_code: str or ~azure.mgmt.storage.v2019_06_01.models.ReasonCode
     """
 
@@ -2966,7 +3378,7 @@ class RoutingPreference(msrest.serialization.Model):
     """Routing preference defines the type of network, either microsoft or internet routing to be used to deliver the user data, the default option is microsoft routing.
 
     :param routing_choice: Routing Choice defines the kind of network routing opted by the user.
-     Possible values include: 'MicrosoftRouting', 'InternetRouting'.
+     Possible values include: "MicrosoftRouting", "InternetRouting".
     :type routing_choice: str or ~azure.mgmt.storage.v2019_06_01.models.RoutingChoice
     :param publish_microsoft_endpoints: A boolean flag which indicates whether microsoft routing
      storage endpoints are to be published.
@@ -3004,17 +3416,17 @@ class ServiceSasParameters(msrest.serialization.Model):
     :param canonicalized_resource: Required. The canonical path to the signed resource.
     :type canonicalized_resource: str
     :param resource: The signed services accessible with the service SAS. Possible values include:
-     Blob (b), Container (c), File (f), Share (s). Possible values include: 'b', 'c', 'f', 's'.
+     Blob (b), Container (c), File (f), Share (s). Possible values include: "b", "c", "f", "s".
     :type resource: str or ~azure.mgmt.storage.v2019_06_01.models.SignedResource
     :param permissions: The signed permissions for the service SAS. Possible values include: Read
      (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Possible
-     values include: 'r', 'd', 'w', 'l', 'a', 'c', 'u', 'p'.
+     values include: "r", "d", "w", "l", "a", "c", "u", "p".
     :type permissions: str or ~azure.mgmt.storage.v2019_06_01.models.Permissions
     :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: 'https,http', 'https'.
+     values include: "https,http", "https".
     :type protocols: str or ~azure.mgmt.storage.v2019_06_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: ~datetime.datetime
@@ -3146,11 +3558,11 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. The SKU name. Required for account creation; optional for update. Note
      that in older versions, SKU name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS', 'Premium_ZRS',
-     'Standard_GZRS', 'Standard_RAGZRS'.
+     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
+     "Standard_GZRS", "Standard_RAGZRS".
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
-     'Premium'.
+    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: "Standard",
+     "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     """
 
@@ -3215,16 +3627,16 @@ class SkuInformation(msrest.serialization.Model):
 
     :param name: Required. The SKU name. Required for account creation; optional for update. Note
      that in older versions, SKU name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS', 'Premium_ZRS',
-     'Standard_GZRS', 'Standard_RAGZRS'.
+     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
+     "Standard_GZRS", "Standard_RAGZRS".
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
-     'Premium'.
+    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: "Standard",
+     "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is 'storageAccounts'.
     :vartype resource_type: str
-    :ivar kind: Indicates the type of storage account. Possible values include: 'Storage',
-     'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
+    :ivar kind: Indicates the type of storage account. Possible values include: "Storage",
+     "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
     :ivar locations: The set of locations that the SKU is available. This will be supported and
      registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).
@@ -3342,13 +3754,13 @@ class StorageAccount(TrackedResource):
     :type location: str
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
-    :ivar kind: Gets the Kind. Possible values include: 'Storage', 'StorageV2', 'BlobStorage',
-     'FileStorage', 'BlockBlobStorage'.
+    :ivar kind: Gets the Kind. Possible values include: "Storage", "StorageV2", "BlobStorage",
+     "FileStorage", "BlockBlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2019_06_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
+     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2019_06_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -3357,7 +3769,7 @@ class StorageAccount(TrackedResource):
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'available', 'unavailable'.
+     account is available or unavailable. Possible values include: "available", "unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2019_06_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent instance of a failover to
      the secondary location. Only the most recent timestamp is retained. This element is not
@@ -3369,7 +3781,7 @@ class StorageAccount(TrackedResource):
     :vartype secondary_location: str
     :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
      storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
+     Standard_RAGRS. Possible values include: "available", "unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2019_06_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -3383,7 +3795,7 @@ class StorageAccount(TrackedResource):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Possible values include: 'Hot', 'Cool'.
+     for billing. Possible values include: "Hot", "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
     :param azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
@@ -3401,7 +3813,7 @@ class StorageAccount(TrackedResource):
      it will be null.
     :vartype failover_in_progress: bool
     :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
+     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
     :ivar private_endpoint_connections: List of private endpoint connection associated with the
@@ -3559,7 +3971,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param sku: Required. Required. Gets or sets the SKU name.
     :type sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     :param kind: Required. Required. Indicates the type of storage account. Possible values
-     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
+     include: "Storage", "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
     :type kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
     :param location: Required. Required. Gets or sets the location of the resource. This will be
      one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
@@ -3583,7 +3995,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param network_rule_set: Network rule set.
     :type network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
     :param azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
@@ -3595,7 +4007,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
     :type is_hns_enabled: bool
     :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
+     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
     :param routing_preference: Maintains information about the network routing choice opted by the
@@ -3712,7 +4124,7 @@ class StorageAccountKey(msrest.serialization.Model):
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full permissions. Possible values
-     include: 'Read', 'Full'.
+     include: "Read", "Full".
     :vartype permissions: str or ~azure.mgmt.storage.v2019_06_01.models.KeyPermission
     """
 
@@ -3888,8 +4300,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2019_06_01.models.Identity
     :param kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
-     supported by server. Possible values include: 'Storage', 'StorageV2', 'BlobStorage',
-     'FileStorage', 'BlockBlobStorage'.
+     supported by server. Possible values include: "Storage", "StorageV2", "BlobStorage",
+     "FileStorage", "BlockBlobStorage".
     :type kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
     :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
      CNAME source. Only one custom domain is supported per storage account at this time. To clear
@@ -3899,7 +4311,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      unencrypted.
     :type encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: 'Hot', 'Cool'.
+     used for billing. Possible values include: "Hot", "Cool".
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
     :param azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
@@ -3910,7 +4322,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     :param network_rule_set: Network rule set.
     :type network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
+     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
     :param routing_preference: Maintains information about the network routing choice opted by the
@@ -3965,6 +4377,53 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self.routing_preference = routing_preference
 
 
+class StorageQueue(Resource):
+    """StorageQueue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param metadata: A name-value pair that represents queue metadata.
+    :type metadata: dict[str, str]
+    :ivar approximate_message_count: Integer indicating an approximate number of messages in the
+     queue. This number is not lower than the actual number of messages in the queue, but could be
+     higher.
+    :vartype approximate_message_count: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'approximate_message_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+        'approximate_message_count': {'key': 'properties.approximateMessageCount', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        super(StorageQueue, self).__init__(**kwargs)
+        self.metadata = metadata
+        self.approximate_message_count = None
+
+
 class StorageSkuListResult(msrest.serialization.Model):
     """The response from the List Storage SKUs operation.
 
@@ -3988,6 +4447,128 @@ class StorageSkuListResult(msrest.serialization.Model):
     ):
         super(StorageSkuListResult, self).__init__(**kwargs)
         self.value = None
+
+
+class Table(Resource):
+    """Properties of the table, including Id, resource name, resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar table_name: Table name under the specified account.
+    :vartype table_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'table_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Table, self).__init__(**kwargs)
+        self.table_name = None
+
+
+class TableServiceProperties(Resource):
+    """The properties of a storage account’s Table service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param cors: Specifies CORS rules for the Table service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Table service.
+    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        **kwargs
+    ):
+        super(TableServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
+
+
+class TagFilter(msrest.serialization.Model):
+    """Blob index tag based filtering for blob objects.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. This is the filter tag name, it can have 1 - 128 characters.
+    :type name: str
+    :param op: Required. This is the comparison operator which is used for object comparison and
+     filtering. Only == (equality operator) is currently supported.
+    :type op: str
+    :param value: Required. This is the filter tag value field used for tag based filtering, it can
+     have 0 - 256 characters.
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'op': {'required': True},
+        'value': {'required': True, 'max_length': 256, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'op': {'key': 'op', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        op: str,
+        value: str,
+        **kwargs
+    ):
+        super(TagFilter, self).__init__(**kwargs)
+        self.name = name
+        self.op = op
+        self.value = value
 
 
 class TagProperty(msrest.serialization.Model):
@@ -4041,7 +4622,7 @@ class UpdateHistoryProperty(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar update: The ImmutabilityPolicy update type of a blob container, possible values include:
-     put, lock and extend. Possible values include: 'put', 'lock', 'extend'.
+     put, lock and extend. Possible values include: "put", "lock", "extend".
     :vartype update: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyUpdateType
     :ivar immutability_period_since_creation_in_days: The immutability period for the blobs in the
      container since the policy creation, in days.
@@ -4093,8 +4674,8 @@ class Usage(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar unit: Gets the unit of measurement. Possible values include: 'Count', 'Bytes', 'Seconds',
-     'Percent', 'CountsPerSecond', 'BytesPerSecond'.
+    :ivar unit: Gets the unit of measurement. Possible values include: "Count", "Bytes", "Seconds",
+     "Percent", "CountsPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2019_06_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in the subscription.
     :vartype current_value: int
@@ -4192,8 +4773,8 @@ class VirtualNetworkRule(msrest.serialization.Model):
     :type virtual_network_resource_id: str
     :ivar action: The action of virtual network rule. Default value: "Allow".
     :vartype action: str
-    :param state: Gets the state of virtual network rule. Possible values include: 'provisioning',
-     'deprovisioning', 'succeeded', 'failed', 'networkSourceDeleted'.
+    :param state: Gets the state of virtual network rule. Possible values include: "provisioning",
+     "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
     :type state: str or ~azure.mgmt.storage.v2019_06_01.models.State
     """
 
