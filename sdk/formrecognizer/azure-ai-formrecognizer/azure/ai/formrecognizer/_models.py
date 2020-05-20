@@ -88,7 +88,7 @@ class TrainingStatus(str, Enum):
     failed = "failed"
 
 
-class CustomFormModelStatus(str, Enum):
+class CustomModelStatus(str, Enum):
     """Status indicating the model's readiness for use.
     """
 
@@ -664,19 +664,19 @@ class FormTableCell(FormContent):
                 )[:1024]
 
 
-class CustomFormModel(object):
+class CustomModel(object):
     """Represents a model trained from custom forms.
 
     :ivar str model_id: The unique identifier of this model.
     :ivar str status:
         Status indicating the model's readiness for use,
-        :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
+        :class:`~azure.ai.formrecognizer.CustomModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
         The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
-    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
+    :ivar list[~azure.ai.formrecognizer.FormModel] models:
         A list of submodels that are part of this model, each of
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
@@ -701,22 +701,22 @@ class CustomFormModel(object):
             status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_modified=model.model_info.last_updated_date_time,
-            models=CustomFormSubModel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubModel._from_generated_labeled(model),
+            models=FormModel._from_generated_unlabeled(model)
+            if model.keys else FormModel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+        return "CustomModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
                 "errors={}, training_documents={})".format(
                     self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
                     repr(self.errors), repr(self.training_documents)
                 )[:1024]
 
 
-class CustomFormSubModel(object):
+class FormModel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
@@ -725,7 +725,7 @@ class CustomFormSubModel(object):
         the field. For models trained with labels, this is the training-time
         label of the field. For models trained without labels, a unique name
         is generated for each field.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
     """
     def __init__(self, **kwargs):
@@ -737,7 +737,7 @@ class CustomFormSubModel(object):
     def _from_generated_unlabeled(cls, model):
         return [cls(
             accuracy=None,
-            fields=CustomFormModelField._from_generated_unlabeled(fields),
+            fields=FormModelField._from_generated_unlabeled(fields),
             form_type="form-" + cluster_id
         ) for cluster_id, fields in model.keys.clusters.items()]
 
@@ -745,18 +745,18 @@ class CustomFormSubModel(object):
     def _from_generated_labeled(cls, model):
         return [cls(
             accuracy=model.train_result.average_model_accuracy,
-            fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
+            fields={field.field_name: FormModelField._from_generated_labeled(field)
                     for field in model.train_result.fields} if model.train_result.fields else None,
             form_type="form-" + model.model_info.model_id
         )] if model.train_result else None
 
     def __repr__(self):
-        return "CustomFormSubModel(accuracy={}, fields={}, form_type={})".format(
+        return "FormModel(accuracy={}, fields={}, form_type={})".format(
             self.accuracy, repr(self.fields), self.form_type
         )[:1024]
 
 
-class CustomFormModelField(object):
+class FormModelField(object):
     """A field that the model will extract from forms it analyzes.
 
     :ivar str label: The form fields label on the form.
@@ -785,7 +785,7 @@ class CustomFormModelField(object):
         }
 
     def __repr__(self):
-        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
+        return "FormModelField(label={}, name={}, accuracy={})".format(
             self.label, self.name, self.accuracy
         )[:1024]
 
@@ -846,12 +846,12 @@ class FormRecognizerError(object):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
-class CustomFormModelInfo(object):
+class CustomModelInfo(object):
     """Custom model information.
 
     :ivar str model_id: The unique identifier of the model.
     :ivar str status:
-        The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
+        The status of the model, :class:`~azure.ai.formrecognizer.CustomModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
         Date and time (UTC) when model training was started.
@@ -875,7 +875,7 @@ class CustomFormModelInfo(object):
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
+        return "CustomModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
             self.model_id, self.status, self.created_on, self.last_modified
         )[:1024]
 
