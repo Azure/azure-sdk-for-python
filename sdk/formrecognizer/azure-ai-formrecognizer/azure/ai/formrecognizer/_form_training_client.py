@@ -325,6 +325,9 @@ class FormTrainingClient(object):
                 :caption: Copy a model from the source resource to the target resource
         """
 
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument

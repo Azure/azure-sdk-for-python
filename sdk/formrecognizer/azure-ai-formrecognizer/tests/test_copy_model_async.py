@@ -19,6 +19,18 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_copy_model_none_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            await client.copy_model(model_id=None, target={})
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_copy_model_empty_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            await client.copy_model(model_id="", target={})
+
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
