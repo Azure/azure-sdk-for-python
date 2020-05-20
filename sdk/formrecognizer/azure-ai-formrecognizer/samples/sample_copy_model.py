@@ -10,7 +10,7 @@
 FILE: sample_copy_model.py
 
 DESCRIPTION:
-    This sample demonstrates how to copy a model from a source Form Recognizer resource
+    This sample demonstrates how to copy a custom model from a source Form Recognizer resource
     to a target Form Recognizer resource.
 
 USAGE:
