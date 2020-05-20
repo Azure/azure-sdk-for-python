@@ -105,6 +105,16 @@ class PollingTwoSteps(AsyncPollingMethod):
     def resource(self):
         return self._deserialization_callback(self._initial_response)
 
+    def get_continuation_token(self):
+        return self._initial_response
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        initial_response = continuation_token
+        deserialization_callback = kwargs['deserialization_callback']
+        return None, initial_response, deserialization_callback
+
 
 @pytest.mark.asyncio
 async def test_poller(client):
@@ -134,6 +144,21 @@ async def test_poller(client):
     method = PollingTwoSteps(sleep=1)
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
 
+    result = await poller.result()
+    assert result == "Treated: "+initial_response
+    assert poller.status() == "succeeded"
+
+    # Test continuation token
+    cont_token = poller.continuation_token()
+
+    method = PollingTwoSteps(sleep=1)
+    new_poller = AsyncLROPoller.from_continuation_token(
+        continuation_token=cont_token,
+        client=client,
+        initial_response=initial_response,
+        deserialization_callback=Model,
+        polling_method=method
+    )
     result = await poller.result()
     assert result == "Treated: "+initial_response
     assert poller.status() == "succeeded"

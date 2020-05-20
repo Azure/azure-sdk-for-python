@@ -131,6 +131,17 @@ class PollingTwoSteps(PollingMethod):
     def resource(self):
         return self._deserialization_callback(self._initial_response)
 
+    def get_continuation_token(self):
+        return self._initial_response
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        initial_response = continuation_token
+        deserialization_callback = kwargs['deserialization_callback']
+        return None, initial_response, deserialization_callback
+
+
 def test_poller(client):
 
     # Same the poller itself doesn't care about the initial_response, and there is no type constraint here
@@ -176,6 +187,22 @@ def test_poller(client):
     with pytest.raises(ValueError) as excinfo:
         poller.remove_done_callback(done_cb)
     assert "Process is complete" in str(excinfo.value)
+
+    # Test continuation token
+    cont_token = poller.continuation_token()
+
+    method = PollingTwoSteps(sleep=1)
+    new_poller = LROPoller.from_continuation_token(
+        continuation_token=cont_token,
+        client=client,
+        initial_response=initial_response,
+        deserialization_callback=Model,
+        polling_method=method
+    )
+    result = poller.result()
+    assert result == "Treated: "+initial_response
+    assert poller.status() == "succeeded"
+
 
 def test_broken_poller(client):
 
