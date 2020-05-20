@@ -20,18 +20,6 @@ parameters:
       PythonVersion: '3.5'
       CoverageArg: ''
       RunForPR: false
-    Linux_Python36:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.6'
-      CoverageArg: ''
-      RunForPR: false
-    Linux_Python37:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.7'
-      CoverageArg: ''
-      RunForPR: false
     Linux_Python38:
       OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
@@ -90,6 +78,7 @@ jobs:
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -145,44 +134,6 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-  - job: 'RunMyPy'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
-    displayName: 'Run MyPy'
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    steps:
-    - template: ../steps/run_mypy.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-
-  - job: 'RunPyLint'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
-    displayName: 'Run Pylint'
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    steps:
-    - template: ../steps/run_pylint.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
