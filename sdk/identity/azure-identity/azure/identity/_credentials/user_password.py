@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from .._internal import InteractiveCredential
+from .._internal import InteractiveCredential, wrap_exceptions
 
 if TYPE_CHECKING:
     from typing import Any
@@ -51,6 +51,7 @@ class UsernamePasswordCredential(InteractiveCredential):
         self._username = username
         self._password = password
 
+    @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
         app = self._get_app()
