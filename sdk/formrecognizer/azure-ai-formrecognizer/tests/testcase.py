@@ -10,11 +10,11 @@
 import os
 import pytest
 import re
+from collections import namedtuple
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
-    FakeResource,
     ResourceGroupPreparer,
 )
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
@@ -23,6 +23,11 @@ from azure_devtools.scenario_tests import (
     ReplayableTest
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
+
+FakeResource = namedtuple(
+    'FakeResource',
+    ['name', 'id', 'location']
+)
 
 
 class AccessTokenReplacer(RecordingProcessor):
@@ -377,7 +382,8 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         else:
             rg = FakeResource(
                 name="rgname",
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname",
+                location="westus"
             )
 
         return {
