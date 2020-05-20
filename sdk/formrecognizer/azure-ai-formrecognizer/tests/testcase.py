@@ -10,11 +10,11 @@
 import os
 import pytest
 import re
-from collections import namedtuple
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
+    FakeResource,
     ResourceGroupPreparer,
 )
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
@@ -23,11 +23,6 @@ from azure_devtools.scenario_tests import (
     ReplayableTest
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
-
-FakeResource = namedtuple(
-    'FakeResource',
-    ['name', 'id', 'location']
-)
 
 
 class AccessTokenReplacer(RecordingProcessor):
@@ -382,12 +377,11 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         else:
             rg = FakeResource(
                 name="rgname",
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname",
-                location="westus"
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
             )
 
         return {
-            'location': 'westus2',
+            'location': 'westus',
             'resource_group': rg,
         }
 
@@ -458,7 +452,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                 form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
 
                 resource_id = resource_group.id + "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = resource_group.location
+                resource_location = "westus"
                 self.test_class_instance.scrubber.register_name_pair(
                     resource_id,
                     "resource_id"
@@ -520,7 +514,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="westus")
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
