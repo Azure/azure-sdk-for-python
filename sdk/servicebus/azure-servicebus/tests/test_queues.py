@@ -582,7 +582,43 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message.complete()
                 count += 1
         assert count == 0
-    
+
+        with queue_client.get_deadletter_receiver(idle_timeout=5) as receiver:
+            for message in receiver:
+                count += 1
+                print_message(message)
+                assert message.user_properties[b'DeadLetterReason'] == b'Testing'
+                assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing'
+                message.complete()
+        assert count == 10
+
+        with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+
+            with queue_client.get_sender() as sender:
+                for i in range(5):
+                    message = Message("Dead lettered message no. {}".format(i))
+                    sender.send(message)
+
+            count = 0
+            messages = receiver.fetch_next()
+            while messages:
+                for message in messages:
+                    print_message(message)
+                    count += 1
+                    message.dead_letter(description="Testing description", reason="Testing reason")
+                messages = receiver.fetch_next()
+
+        assert count == 5
+
+        with queue_client.get_deadletter_receiver(idle_timeout=5) as receiver:
+            count = 0
+            for message in receiver:
+                count += 1
+                print_message(message)
+                assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                message.complete()
+        assert count == 5
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -623,6 +659,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             count = 0
             for message in receiver:
                 print_message(message)
+                assert message.user_properties[b'DeadLetterReason'] == b'Testing queue deadletter'
+                assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing queue deadletter'
                 message.complete()
                 count += 1
         assert count == 10

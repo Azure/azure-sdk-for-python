@@ -42,6 +42,8 @@ REQUEST_RESPONSE_ADD_RULE_OPERATION = VENDOR + b":add-rule"
 REQUEST_RESPONSE_REMOVE_RULE_OPERATION = VENDOR + b":remove-rule"
 REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
 
+RECEIVER_LINK_DEAD_LETTER_REASON = 'DeadLetterReason'
+RECEIVER_LINK_DEAD_LETTER_DESCRIPTION = 'DeadLetterErrorDescription'
 
 class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
