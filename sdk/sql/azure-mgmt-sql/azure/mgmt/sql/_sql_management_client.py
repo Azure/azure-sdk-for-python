@@ -40,8 +40,6 @@ from .operations import FailoverGroupsOperations
 from .operations import Operations
 from .operations import ServerKeysOperations
 from .operations import SyncAgentsOperations
-from .operations import SyncGroupsOperations
-from .operations import SyncMembersOperations
 from .operations import SubscriptionUsagesOperations
 from .operations import VirtualClustersOperations
 from .operations import VirtualNetworkRulesOperations
@@ -104,6 +102,8 @@ from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADAdministratorsOperations
 from .operations import ManagedInstanceOperations
+from .operations import SyncGroupsOperations
+from .operations import SyncMembersOperations
 from . import models
 
 
@@ -167,10 +167,6 @@ class SqlManagementClient(SDKClient):
     :vartype server_keys: azure.mgmt.sql.operations.ServerKeysOperations
     :ivar sync_agents: SyncAgents operations
     :vartype sync_agents: azure.mgmt.sql.operations.SyncAgentsOperations
-    :ivar sync_groups: SyncGroups operations
-    :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
-    :ivar sync_members: SyncMembers operations
-    :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
     :ivar subscription_usages: SubscriptionUsages operations
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_clusters: VirtualClusters operations
@@ -295,6 +291,10 @@ class SqlManagementClient(SDKClient):
     :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar managed_instance_operations: ManagedInstanceOperations operations
     :vartype managed_instance_operations: azure.mgmt.sql.operations.ManagedInstanceOperations
+    :ivar sync_groups: SyncGroups operations
+    :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
+    :ivar sync_members: SyncMembers operations
+    :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -368,10 +368,6 @@ class SqlManagementClient(SDKClient):
         self.server_keys = ServerKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_agents = SyncAgentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.sync_groups = SyncGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_usages = SubscriptionUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -496,4 +492,8 @@ class SqlManagementClient(SDKClient):
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_operations = ManagedInstanceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sync_groups = SyncGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)

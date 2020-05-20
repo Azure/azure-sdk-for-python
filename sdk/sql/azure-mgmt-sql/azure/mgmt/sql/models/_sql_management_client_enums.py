@@ -338,58 +338,6 @@ class SyncMemberDbType(str, Enum):
     sql_server_database = "SqlServerDatabase"
 
 
-class SyncGroupLogType(str, Enum):
-
-    all = "All"
-    error = "Error"
-    warning = "Warning"
-    success = "Success"
-
-
-class SyncConflictResolutionPolicy(str, Enum):
-
-    hub_win = "HubWin"
-    member_win = "MemberWin"
-
-
-class SyncGroupState(str, Enum):
-
-    not_ready = "NotReady"
-    error = "Error"
-    warning = "Warning"
-    progressing = "Progressing"
-    good = "Good"
-
-
-class SyncDirection(str, Enum):
-
-    bidirectional = "Bidirectional"
-    one_way_member_to_hub = "OneWayMemberToHub"
-    one_way_hub_to_member = "OneWayHubToMember"
-
-
-class SyncMemberState(str, Enum):
-
-    sync_in_progress = "SyncInProgress"
-    sync_succeeded = "SyncSucceeded"
-    sync_failed = "SyncFailed"
-    disabled_tombstone_cleanup = "DisabledTombstoneCleanup"
-    disabled_backup_restore = "DisabledBackupRestore"
-    sync_succeeded_with_warnings = "SyncSucceededWithWarnings"
-    sync_cancelling = "SyncCancelling"
-    sync_cancelled = "SyncCancelled"
-    un_provisioned = "UnProvisioned"
-    provisioning = "Provisioning"
-    provisioned = "Provisioned"
-    provision_failed = "ProvisionFailed"
-    de_provisioning = "DeProvisioning"
-    de_provisioned = "DeProvisioned"
-    de_provision_failed = "DeProvisionFailed"
-    reprovisioning = "Reprovisioning"
-    reprovision_failed = "ReprovisionFailed"
-    un_reprovisioned = "UnReprovisioned"
-
-
 class VirtualNetworkRuleState(str, Enum):
 
     initializing = "Initializing"
@@ -727,6 +675,58 @@ class ManagedDatabaseCreateMode(str, Enum):
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
     restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+
+
+class SyncGroupLogType(str, Enum):
+
+    all = "All"
+    error = "Error"
+    warning = "Warning"
+    success = "Success"
+
+
+class SyncConflictResolutionPolicy(str, Enum):
+
+    hub_win = "HubWin"
+    member_win = "MemberWin"
+
+
+class SyncGroupState(str, Enum):
+
+    not_ready = "NotReady"
+    error = "Error"
+    warning = "Warning"
+    progressing = "Progressing"
+    good = "Good"
+
+
+class SyncDirection(str, Enum):
+
+    bidirectional = "Bidirectional"
+    one_way_member_to_hub = "OneWayMemberToHub"
+    one_way_hub_to_member = "OneWayHubToMember"
+
+
+class SyncMemberState(str, Enum):
+
+    sync_in_progress = "SyncInProgress"
+    sync_succeeded = "SyncSucceeded"
+    sync_failed = "SyncFailed"
+    disabled_tombstone_cleanup = "DisabledTombstoneCleanup"
+    disabled_backup_restore = "DisabledBackupRestore"
+    sync_succeeded_with_warnings = "SyncSucceededWithWarnings"
+    sync_cancelling = "SyncCancelling"
+    sync_cancelled = "SyncCancelled"
+    un_provisioned = "UnProvisioned"
+    provisioning = "Provisioning"
+    provisioned = "Provisioned"
+    provision_failed = "ProvisionFailed"
+    de_provisioning = "DeProvisioning"
+    de_provisioned = "DeProvisioned"
+    de_provision_failed = "DeProvisionFailed"
+    reprovisioning = "Reprovisioning"
+    reprovision_failed = "ReprovisionFailed"
+    un_reprovisioned = "UnReprovisioned"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
