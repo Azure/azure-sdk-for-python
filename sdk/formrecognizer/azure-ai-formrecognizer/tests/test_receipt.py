@@ -144,7 +144,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
 
         poller = client.begin_recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -209,7 +209,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
 
         poller = client.begin_recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -379,7 +379,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
 
         poller = client.begin_recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )

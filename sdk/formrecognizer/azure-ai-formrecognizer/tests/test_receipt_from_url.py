@@ -70,7 +70,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         poller = client.begin_recognize_receipts_from_url(
-            url=self.receipt_url_jpg,
+            receipt_url=self.receipt_url_jpg,
             include_text_content=True,
             cls=callback
         )
@@ -132,7 +132,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         poller = client.begin_recognize_receipts_from_url(
-            url=self.receipt_url_png,
+            receipt_url=self.receipt_url_png,
             include_text_content=True,
             cls=callback
         )
