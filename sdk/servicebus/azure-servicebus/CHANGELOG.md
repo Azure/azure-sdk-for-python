@@ -13,6 +13,7 @@
 **BugFixes**
 
 * Fixed bug in setting `description` when dead lettering messages (issue #9242).
+* Increments UAMQP dependency min version to 1.2.8, as a component of fixing the aformentioned dead letter issue.
 
 ## 0.50.2 (2019-12-9)
 
