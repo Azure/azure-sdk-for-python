@@ -7,6 +7,10 @@
 
 - Fix AttributeException in StreamDownloadGenerator #11462
 
+### Features
+
+- Added support for changesets as part of multipart message support #10485
+
 ## 1.5.0 (2020-05-04)
 
 ### Features
