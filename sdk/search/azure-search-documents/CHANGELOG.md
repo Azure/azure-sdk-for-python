@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+**Breaking Changes**
+
+- Reorganized `SearchServiceClient` into `SearchIndexClient` & `SearchIndexerClient`    #11507
+
 ## 1.0.0b3 (2020-05-04)
 
 **Features**

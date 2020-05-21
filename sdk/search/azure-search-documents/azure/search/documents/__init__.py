@@ -39,7 +39,8 @@ from ._service import (
     ComplexField,
     SearchableField,
     SimpleField,
-    SearchServiceClient,
+    SearchIndexClient,
+    SearchIndexerClient,
     edm,
 )
 from ._service._generated.models import (
@@ -129,11 +130,6 @@ from ._service._generated.models import (
     WordDelimiterTokenFilter,
 )
 from ._service._models import PatternAnalyzer, PatternTokenizer
-from ._service._datasources_client import SearchDataSourcesClient
-from ._service._indexers_client import SearchIndexersClient
-from ._service._indexes_client import SearchIndexesClient
-from ._service._skillsets_client import SearchSkillsetsClient
-from ._service._synonym_maps_client import SearchSynonymMapsClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -202,7 +198,6 @@ __all__ = (
     "RegexFlags",
     "ScoringFunction",
     "ScoringProfile",
-    "SearchDataSourcesClient",
     "SearchClient",
     "SearchField",
     "SearchIndex",
@@ -210,14 +205,11 @@ __all__ = (
     "SearchIndexerDataContainer",
     "SearchIndexerDataSource",
     "SearchIndexerSkillset",
-    "SearchIndexersClient",
-    "SearchIndexesClient",
+    "SearchIndexerClient",
+    "SearchIndexClient",
     "SearchItemPaged",
     "SearchQuery",
     "SearchResourceEncryptionKey",
-    "SearchServiceClient",
-    "SearchSkillsetsClient",
-    "SearchSynonymMapsClient",
     "SearchableField",
     "SentimentSkill",
     "ShaperSkill",
