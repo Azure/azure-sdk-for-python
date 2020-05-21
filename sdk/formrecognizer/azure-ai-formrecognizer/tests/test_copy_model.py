@@ -21,7 +21,7 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
@@ -42,7 +42,7 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # give an incorrect region
@@ -56,7 +56,7 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
