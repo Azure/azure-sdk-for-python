@@ -469,7 +469,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         CONNECTION_MONITOR_NAME = self.get_resource_name("connectionmonitor")
         VIRTUAL_MACHINE_EXTENSION_NAME = self.get_resource_name("virtualmachineextension")
 
-        if self._is_live:
+        if self.is_live:
             self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, VIRTUAL_NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
             self.create_vm_extension(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME)
 
