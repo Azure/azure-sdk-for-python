@@ -10,6 +10,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SynonymMap
+from ...aio import SearchClient
 from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
@@ -61,6 +62,16 @@ class SearchIndexClient(HeadersMixin):
 
         """
         return await self._client.close()
+
+    def get_search_client(self, index_name, **kwargs):
+        # type: (str, dict) -> SearchClient
+        """Return a client to perform operations on Search.
+
+        :param index_name: The name of the Search Index
+        :type index_name: str
+        :rtype: ~azure.search.documents.aio.SearchClient
+        """
+        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
     @distributed_trace_async
     async def list_indexes(self, **kwargs):

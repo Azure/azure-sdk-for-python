@@ -20,6 +20,7 @@ from ._utils import (
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+from .. import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -58,6 +59,18 @@ class SearchIndexClient(HeadersMixin):
 
         """
         return self._client.close()
+
+    @distributed_trace
+    def get_search_client(self, index_name, **kwargs):
+        # type: (str, dict) -> SearchClient
+        """Return a client to perform operations on Search
+
+        :param index_name: The name of the Search Index
+        :type index_name: str
+        :rtype: ~azure.search.documents.SearchClient
+
+        """
+        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
     @distributed_trace
     def list_indexes(self, **kwargs):
