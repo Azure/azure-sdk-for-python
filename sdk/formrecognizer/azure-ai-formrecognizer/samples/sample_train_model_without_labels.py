@@ -46,8 +46,8 @@ class TrainModelWithoutLabelsSample(object):
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
-        print("Created on: {}".format(model.requested_on))
-        print("Last modified: {}".format(model.completed_on))
+        print("Requested on: {}".format(model.requested_on))
+        print("Completed on: {}".format(model.completed_on))
 
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on
