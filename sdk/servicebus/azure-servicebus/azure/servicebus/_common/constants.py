@@ -99,6 +99,10 @@ _X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
 _X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
 
 
+DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
+TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
+
+
 class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
     ReceiveAndDelete = constants.ReceiverSettleMode.ReceiveAndDelete

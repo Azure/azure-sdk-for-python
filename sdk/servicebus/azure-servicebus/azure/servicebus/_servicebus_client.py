@@ -12,6 +12,7 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._common._configuration import Configuration
 from ._common.utils import create_authentication
+from ._common.constants import DEAD_LETTER_QUEUE_SUFFIX, TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -83,6 +84,38 @@ class ServiceBusClient(object):
             hostname=self.fully_qualified_namespace,
             sasl=auth,
             debug=self._config.logging_enable
+        )
+
+    def _get_queue_deadletter_receiver(self, queue_name, **kwargs):
+        entity_name = queue_name + (
+            TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if kwargs.get("transfer_deadletter", False)
+            else DEAD_LETTER_QUEUE_SUFFIX
+        )
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            **kwargs
+        )
+
+    def _get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
+        entity_name = topic_name + "/Subscriptions/" + subscription_name + (
+            TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if kwargs.get("transfer_deadletter", False)
+            else DEAD_LETTER_QUEUE_SUFFIX
+        )
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            **kwargs
         )
 
     def close(self):
