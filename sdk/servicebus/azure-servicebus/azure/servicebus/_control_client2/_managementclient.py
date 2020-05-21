@@ -6,7 +6,7 @@ from xml.etree import ElementTree
 from azure.servicebus import ServiceBusSharedKeyCredential
 from azure.servicebus._control_client2._generated import models
 from azure.servicebus._control_client2._generated.models import CreateEntityBody, CreateEntityBodyContent, \
-    QueueDescriptionResponse, QueueDescription
+    QueueDescription
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ class ServiceBusManagementClient:
         et = self._impl.queue.get(queue_name, headers=custom_headers)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueDescription.deserialize(qc_ele, content_type="application/xml")
+        qc = QueueDescription.deserialize(qc_ele)
         return qc
 
     def create_queue(self, queue_name, queue_description=QueueDescription()):
@@ -64,7 +64,6 @@ class ServiceBusManagementClient:
         custom_headers = {"Authorization": sas_token.token.decode("utf-8")}
         create_entity_body = CreateEntityBody(
             content=CreateEntityBodyContent(
-                queue_description=queue_description,
                 entity=queue_description
             )
         )
@@ -72,5 +71,5 @@ class ServiceBusManagementClient:
         et = self._impl.queue.create(queue_name, request_body, headers=custom_headers)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueDescription.deserialize(qc_ele, content_type="application/xml")
+        qc = QueueDescription.deserialize(qc_ele)
         return qc
