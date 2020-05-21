@@ -59,7 +59,6 @@ class SearchIndexClient(HeadersMixin):
         """
         return self._client.close()
 
-    @distributed_trace
     def get_search_client(self, index_name, **kwargs):
         # type: (str, dict) -> SearchClient
         """Return a client to perform operations on Search
