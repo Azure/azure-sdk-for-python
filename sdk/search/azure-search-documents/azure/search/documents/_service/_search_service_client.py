@@ -88,23 +88,6 @@ class SearchServiceClient(SearchServiceClientBase):  # pylint: disable=too-many-
         result = self._client.get_service_statistics(**kwargs)
         return result.as_dict()
 
-    def get_indexes_client(self):
-        # type: () -> SearchIndexesClient
-        """Return a client to perform operations on Search Indexes.
-
-        :return: The Search Indexes client
-        :rtype: SearchIndexesClient
-        """
-        return self._indexes_client
-
-    def get_synonym_maps_client(self):
-        # type: () -> SearchSynonymMapsClient
-        """Return a client to perform operations on Synonym Maps.
-
-        :return: The Synonym Maps client
-        :rtype: SearchSynonymMapsClient
-        """
-        return self._synonym_maps_client
 
     def get_skillsets_client(self):
         # type: () -> SearchSkillsetsClient

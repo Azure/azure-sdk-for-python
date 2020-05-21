@@ -35,6 +35,7 @@ from azure.search.documents import(
     SimpleField,
     edm
 )
+from azure.search.documents._service._search_index_client import SearchIndexClient
 from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
@@ -48,7 +49,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_service_statistics()
         assert isinstance(result, dict)
         assert set(result.keys()) == {"counters", "limits"}
@@ -58,7 +59,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.list_indexes()
         with pytest.raises(StopIteration):
             next(result)
@@ -66,7 +67,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.list_indexes()
 
         first = next(result)
@@ -78,21 +79,21 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index(index_name)
         assert result.name == index_name
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index_statistics(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index_statistics(index_name)
         assert set(result.keys()) == {'document_count', 'storage_size'}
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         client.delete_index(index_name)
         import time
         if self.is_live:
@@ -104,7 +105,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
 
         # First create an index
         name = "hotels"
@@ -159,7 +160,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             fields=fields,
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.create_index(index)
         assert result.name == "hotels"
         assert result.scoring_profiles[0].name == scoring_profile.name
@@ -181,7 +182,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             fields=fields,
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.create_or_update_index(index_name=index.name, index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
@@ -204,7 +205,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
 
         # First create an index
         name = "hotels"
@@ -243,7 +244,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
@@ -252,7 +253,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
@@ -268,7 +269,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
@@ -280,7 +281,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
@@ -300,7 +301,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
@@ -317,7 +318,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         client.create_synonym_map("test-syn-map-1", [
             "USA, United States, United States of America",
         ])
@@ -332,7 +333,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
         ])
@@ -351,7 +352,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = build_synonym_map_from_dict(client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
         ]))
@@ -642,7 +643,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
           "searchable": False
         }]
         index = SearchIndex(name=index_name, fields=fields)
-        ind = client.get_indexes_client().create_index(index)
+        ind = SearchIndexClient(endpoint, AzureKeyCredential(api_key)).create_index(index)
         return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
