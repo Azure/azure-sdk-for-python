@@ -4,7 +4,11 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import CredentialUnavailableError, KnownAuthorities, SharedTokenCacheCredential
+from azure.identity import (
+    AuthenticationRecord,
+    CredentialUnavailableError,
+    SharedTokenCacheCredential,
+)
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
@@ -498,6 +502,98 @@ def test_authority_environment_variable():
     )
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = SharedTokenCacheCredential(transport=transport, _cache=cache)
+    token = credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
+def test_authentication_record_empty_cache():
+    record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
+    transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=TokenCache())
+
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token("scope")
+
+
+def test_authentication_record_no_match():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    authority = "localhost"
+    object_id = "object-id"
+    home_account_id = object_id + "." + tenant_id
+    username = "me"
+    record = AuthenticationRecord(tenant_id, client_id, authority, home_account_id, username)
+
+    transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
+    cache = populated_cache(
+        get_account_event(
+            "not-" + username, "not-" + object_id, "different-" + tenant_id, client_id="not-" + client_id,
+        ),
+    )
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token("scope")
+
+
+def test_authentication_record():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    authority = "localhost"
+    object_id = "object-id"
+    home_account_id = object_id + "." + tenant_id
+    username = "me"
+    record = AuthenticationRecord(tenant_id, client_id, authority, home_account_id, username)
+
+    expected_access_token = "****"
+    expected_refresh_token = "**"
+    account = get_account_event(
+        username, object_id, tenant_id, authority=authority, client_id=client_id, refresh_token=expected_refresh_token
+    )
+    cache = populated_cache(account)
+
+    transport = validating_transport(
+        requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+
+    token = credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
+def test_auth_record_multiple_accounts_for_username():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    authority = "localhost"
+    object_id = "object-id"
+    home_account_id = object_id + "." + tenant_id
+    username = "me"
+    record = AuthenticationRecord(tenant_id, client_id, authority, home_account_id, username)
+
+    expected_access_token = "****"
+    expected_refresh_token = "**"
+    expected_account = get_account_event(
+        username, object_id, tenant_id, authority=authority, client_id=client_id, refresh_token=expected_refresh_token
+    )
+    cache = populated_cache(
+        expected_account,
+        get_account_event(  # this account matches all but the record's tenant
+            username,
+            object_id,
+            "different-" + tenant_id,
+            authority=authority,
+            client_id=client_id,
+            refresh_token="not-" + expected_refresh_token,
+        ),
+    )
+
+    transport = validating_transport(
+        requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+
     token = credential.get_token("scope")
     assert token.token == expected_access_token
 
