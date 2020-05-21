@@ -15,7 +15,6 @@ class TestAuth(TextAnalyticsTest):
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
-        raise ValueError(endpoint)
         text_analytics = TextAnalyticsClient(endpoint, token)
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
