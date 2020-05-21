@@ -32,7 +32,6 @@ class SearchIndexClient(HeadersMixin):
     """A client to interact with Azure search service index.
 
     """
-
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential, **kwargs):
