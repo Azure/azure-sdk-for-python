@@ -5,6 +5,7 @@
 
 ### Bug fixes
 
+- Fixed deadlocks in AsyncBearerTokenCredentialPolicy #11543
 - Fix AttributeException in StreamDownloadGenerator #11462
 
 ### Features
