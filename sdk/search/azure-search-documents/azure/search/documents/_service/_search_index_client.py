@@ -10,42 +10,41 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import SynonymMap
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
+    listize_synonyms,
     get_access_conditions,
+    normalize_endpoint,
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+from .. import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
-    from typing import Any, Dict, List, Union
+    from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexesClient(HeadersMixin):
-    """A client to interact with Azure search service Indexes.
-
-    This class is not normally instantiated directly, instead use
-    `get_skillsets_client()` from a `SearchServiceClient`
+class SearchIndexClient(HeadersMixin):
+    """A client to interact with Azure search service index.
 
     """
-
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
-        self._endpoint = endpoint  # type: str
+        self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
 
     def __enter__(self):
-        # type: () -> SearchIndexesClient
+        # type: () -> SearchIndexClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
@@ -55,10 +54,21 @@ class SearchIndexesClient(HeadersMixin):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchIndexesClient` session.
+        """Close the :class:`~azure.search.documents.SearchIndexClient` session.
 
         """
         return self._client.close()
+
+    def get_search_client(self, index_name, **kwargs):
+        # type: (str, dict) -> SearchClient
+        """Return a client to perform operations on Search
+
+        :param index_name: The name of the Search Index
+        :type index_name: str
+        :rtype: ~azure.search.documents.SearchClient
+
+        """
+        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
     @distributed_trace
     def list_indexes(self, **kwargs):
@@ -258,3 +268,163 @@ class SearchIndexesClient(HeadersMixin):
             index_name=index_name, request=analyze_request, **kwargs
         )
         return result
+
+    @distributed_trace
+    def get_synonym_maps(self, **kwargs):
+        # type: (**Any) -> List[Dict[Any, Any]]
+        """List the Synonym Maps in an Azure Search service.
+
+        :return: List of synonym maps
+        :rtype: list[dict]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START get_synonym_maps]
+                :end-before: [END get_synonym_maps]
+                :language: python
+                :dedent: 4
+                :caption: List Synonym Maps
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.synonym_maps.list(**kwargs)
+        return [listize_synonyms(x) for x in result.as_dict()["synonym_maps"]]
+
+    @distributed_trace
+    def get_synonym_map(self, name, **kwargs):
+        # type: (str, **Any) -> dict
+        """Retrieve a named Synonym Map in an Azure Search service
+
+        :param name: The name of the Synonym Map to get
+        :type name: str
+        :return: The retrieved Synonym Map
+        :rtype: dict
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START get_synonym_map]
+                :end-before: [END get_synonym_map]
+                :language: python
+                :dedent: 4
+                :caption: Get a Synonym Map
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.synonym_maps.get(name, **kwargs)
+        return listize_synonyms(result.as_dict())
+
+    @distributed_trace
+    def delete_synonym_map(self, synonym_map, **kwargs):
+        # type: (Union[str, SynonymMap], **Any) -> None
+        """Delete a named Synonym Map in an Azure Search service. To use access conditions,
+        the SynonymMap model must be provided instead of the name. It is enough to provide
+        the name of the synonym map to delete unconditionally.
+
+        :param name: The Synonym Map to delete
+        :type name: str or ~search.models.SynonymMap
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START delete_synonym_map]
+                :end-before: [END delete_synonym_map]
+                :language: python
+                :dedent: 4
+                :caption: Delete a Synonym Map
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
+        try:
+            name = synonym_map.name
+        except AttributeError:
+            name = synonym_map
+        self._client.synonym_maps.delete(
+            synonym_map_name=name, error_map=error_map, **kwargs
+        )
+
+    @distributed_trace
+    def create_synonym_map(self, name, synonyms, **kwargs):
+        # type: (str, Sequence[str], **Any) -> dict
+        """Create a new Synonym Map in an Azure Search service
+
+        :param name: The name of the Synonym Map to create
+        :type name: str
+        :param synonyms: The list of synonyms in SOLR format
+        :type synonyms: List[str]
+        :return: The created Synonym Map
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START create_synonym_map]
+                :end-before: [END create_synonym_map]
+                :language: python
+                :dedent: 4
+                :caption: Create a Synonym Map
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        solr_format_synonyms = "\n".join(synonyms)
+        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        result = self._client.synonym_maps.create(synonym_map, **kwargs)
+        return listize_synonyms(result.as_dict())
+
+    @distributed_trace
+    def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
+        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> dict
+        """Create a new Synonym Map in an Azure Search service, or update an
+        existing one.
+
+        :param synonym_map: The name of the Synonym Map to create or update
+        :type synonym_map: str or ~azure.search.documents.SynonymMap
+        :param synonyms: A list of synonyms in SOLR format
+        :type synonyms: List[str]
+        :keyword match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :return: The created or updated Synonym Map
+        :rtype: dict
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
+        try:
+            name = synonym_map.name
+            if synonyms:
+                synonym_map.synonyms = "\n".join(synonyms)
+        except AttributeError:
+            name = synonym_map
+            solr_format_synonyms = "\n".join(synonyms)
+            synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        result = self._client.synonym_maps.create_or_update(
+            synonym_map_name=name,
+            synonym_map=synonym_map,
+            error_map=error_map,
+            **kwargs
+        )
+        return listize_synonyms(result.as_dict())
+
+    @distributed_trace
+    def get_service_statistics(self, **kwargs):
+        # type: (**Any) -> dict
+        """Get service level statistics for a search service.
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.get_service_statistics(**kwargs)
+        return result.as_dict()

@@ -2,19 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._search_service_client_async import SearchServiceClient
-
-from ._datasources_client import SearchDataSourcesClient
-from ._indexers_client import SearchIndexersClient
-from ._indexes_client import SearchIndexesClient
-from ._skillsets_client import SearchSkillsetsClient
-from ._synonym_maps_client import SearchSynonymMapsClient
+from ._search_indexer_client import SearchIndexerClient
+from ._search_index_client import SearchIndexClient
 
 __all__ = (
-    "SearchServiceClient",
-    "SearchDataSourcesClient",
-    "SearchIndexersClient",
-    "SearchIndexesClient",
-    "SearchSkillsetsClient",
-    "SearchSynonymMapsClient",
+    "SearchIndexerClient",
+    "SearchIndexClient",
 )

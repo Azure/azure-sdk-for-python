@@ -184,7 +184,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
     except AttributeError:
         raise ValueError("Unable to get e_tag from the model")
 
-def _normalize_endpoint(endpoint):
+def normalize_endpoint(endpoint):
     try:
         if not endpoint.lower().startswith('http'):
             endpoint = "https://" + endpoint
