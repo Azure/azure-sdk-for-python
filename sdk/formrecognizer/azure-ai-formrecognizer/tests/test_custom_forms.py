@@ -58,7 +58,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with self.assertRaises(HttpResponseError):
@@ -73,7 +73,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as stream:
@@ -98,7 +98,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as stream:
@@ -179,7 +179,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -216,7 +216,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []

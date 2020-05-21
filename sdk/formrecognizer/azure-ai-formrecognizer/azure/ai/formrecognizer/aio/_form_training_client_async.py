@@ -8,7 +8,6 @@
 
 import json
 from typing import (
-    Optional,
     Any,
     AsyncIterable,
     Dict,
@@ -96,7 +95,7 @@ class FormTrainingClient(object):
     async def train_model(
             self,
             training_files_url: str,
-            use_training_labels: Optional[bool] = False,
+            use_training_labels: bool,
             **kwargs: Any
     ) -> CustomFormModel:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an

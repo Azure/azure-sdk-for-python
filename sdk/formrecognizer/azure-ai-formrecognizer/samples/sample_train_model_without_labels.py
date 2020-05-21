@@ -40,7 +40,7 @@ class TrainModelWithoutLabelsSample(object):
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
 
         # Default for begin_train_model is `use_training_labels=False`
-        poller = form_training_client.begin_train_model(self.container_sas_url)
+        poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # Custom model information
