@@ -10,7 +10,7 @@
 
 # Core
 /sdk/core/                                                           @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/                                                @xiangyan99 @bryevdv @lmazuel
+/sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
 /sdk/identity/                                                       @chlowell @schaabs

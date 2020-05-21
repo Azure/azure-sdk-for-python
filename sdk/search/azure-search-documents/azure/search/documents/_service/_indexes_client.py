@@ -13,14 +13,14 @@ from ._generated import SearchServiceClient as _SearchServiceClient
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    get_access_conditions
+    get_access_conditions,
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import AnalyzeRequest, AnalyzeResult, Index
+    from ._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -62,11 +62,11 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def list_indexes(self, **kwargs):
-        # type: (**Any) -> ItemPaged[Index]
+        # type: (**Any) -> ItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
-        :rtype: list[~azure.search.documents.Index]
+        :rtype: list[~azure.search.documents.SearchIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -82,13 +82,13 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def get_index(self, index_name, **kwargs):
-        # type: (str, **Any) -> Index
+        # type: (str, **Any) -> SearchIndex
         """
 
         :param index_name: The name of the index to retrieve.
         :type index_name: str
-        :return: Index object
-        :rtype: ~azure.search.documents.Index
+        :return: SearchIndex object
+        :rtype: ~azure.search.documents.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -123,12 +123,12 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def delete_index(self, index, **kwargs):
-        # type: (Union[str, Index], **Any) -> None
+        # type: (Union[str, SearchIndex], **Any) -> None
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions.
 
         :param index: The index to retrieve.
-        :type index: str or ~search.models.Index
+        :type index: str or ~search.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -144,29 +144,26 @@ class SearchIndexesClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             index_name = index.name
         except AttributeError:
             index_name = index
         self._client.indexes.delete(
-            index_name=index_name,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            index_name=index_name, error_map=error_map, **kwargs
         )
 
     @distributed_trace
     def create_index(self, index, **kwargs):
-        # type: (Index, **Any) -> Index
+        # type: (SearchIndex, **Any) -> SearchIndex
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: ~azure.search.documents.Index
+        :type index: ~azure.search.documents.SearchIndex
         :return: The index created
-        :rtype: ~azure.search.documents.Index
+        :rtype: ~azure.search.documents.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -185,19 +182,15 @@ class SearchIndexesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_index(
-        self,
-        index_name,
-        index,
-        allow_index_downtime=None,
-        **kwargs
+        self, index_name, index, allow_index_downtime=None, **kwargs
     ):
-        # type: (str, Index, bool, **Any) -> Index
+        # type: (str, SearchIndex, bool, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.
         :type index_name: str
         :param index: The index object.
-        :type index: ~azure.search.documents.Index
+        :type index: ~azure.search.documents.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -207,7 +200,7 @@ class SearchIndexesClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.Index`
+        :rtype: :class:`~azure.search.documents.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
@@ -223,17 +216,16 @@ class SearchIndexesClient(HeadersMixin):
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map, access_condition = get_access_conditions(
-            index,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
-        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
         patched_index = delistize_flags_for_index(index)
         result = self._client.indexes.create_or_update(
             index_name=index_name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
-            access_condition=access_condition,
             error_map=error_map,
             **kwargs
         )

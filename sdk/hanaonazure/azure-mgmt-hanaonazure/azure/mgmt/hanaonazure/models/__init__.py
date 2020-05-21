@@ -10,65 +10,44 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import Disk
     from ._models_py3 import Display
     from ._models_py3 import ErrorResponse, ErrorResponseException
-    from ._models_py3 import HanaInstance
-    from ._models_py3 import HardwareProfile
-    from ._models_py3 import IpAddress
-    from ._models_py3 import MonitoringDetails
-    from ._models_py3 import NetworkProfile
     from ._models_py3 import Operation
-    from ._models_py3 import OSProfile
+    from ._models_py3 import ProviderInstance
+    from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import SapMonitor
-    from ._models_py3 import StorageProfile
     from ._models_py3 import Tags
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from ._models import Disk
     from ._models import Display
     from ._models import ErrorResponse, ErrorResponseException
-    from ._models import HanaInstance
-    from ._models import HardwareProfile
-    from ._models import IpAddress
-    from ._models import MonitoringDetails
-    from ._models import NetworkProfile
     from ._models import Operation
-    from ._models import OSProfile
+    from ._models import ProviderInstance
+    from ._models import ProxyResource
     from ._models import Resource
     from ._models import SapMonitor
-    from ._models import StorageProfile
     from ._models import Tags
-from ._paged_models import HanaInstancePaged
+    from ._models import TrackedResource
 from ._paged_models import OperationPaged
+from ._paged_models import ProviderInstancePaged
 from ._paged_models import SapMonitorPaged
 from ._hana_management_client_enums import (
-    HanaHardwareTypeNamesEnum,
-    HanaInstanceSizeNamesEnum,
-    HanaInstancePowerStateEnum,
     HanaProvisioningStatesEnum,
 )
 
 __all__ = [
-    'Disk',
     'Display',
     'ErrorResponse', 'ErrorResponseException',
-    'HanaInstance',
-    'HardwareProfile',
-    'IpAddress',
-    'MonitoringDetails',
-    'NetworkProfile',
     'Operation',
-    'OSProfile',
+    'ProviderInstance',
+    'ProxyResource',
     'Resource',
     'SapMonitor',
-    'StorageProfile',
     'Tags',
+    'TrackedResource',
     'OperationPaged',
-    'HanaInstancePaged',
     'SapMonitorPaged',
-    'HanaHardwareTypeNamesEnum',
-    'HanaInstanceSizeNamesEnum',
-    'HanaInstancePowerStateEnum',
+    'ProviderInstancePaged',
     'HanaProvisioningStatesEnum',
 ]

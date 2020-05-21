@@ -35,12 +35,10 @@ class TrainModelWithLabelsSample(object):
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     def train_model_with_labels(self):
-        # [START create_form_training_client]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
-        # [END create_form_training_client]
 
         poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=True)
         model = poller.result()

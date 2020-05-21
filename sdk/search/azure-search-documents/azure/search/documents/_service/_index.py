@@ -6,7 +6,7 @@
 from typing import TYPE_CHECKING
 
 from .edm import Collection, ComplexType
-from ._generated.models import Field
+from ._generated.models import SearchField
 
 if TYPE_CHECKING:
     from typing import Any, Dict, List
@@ -15,7 +15,7 @@ __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
 def SimpleField(**kw):
-    # type: (**Any) -> Dict[str, Any]
+    # type: (**Any) -> SearchField
     """Configure a simple field for an Azure Search Index
 
     :param name: Required. The name of the field, which must be unique within the fields collection
@@ -67,11 +67,11 @@ def SimpleField(**kw):
     result["facetable"] = kw.get("facetable", False)
     result["sortable"] = kw.get("sortable", False)
     result["retrievable"] = not kw.get("hidden", False)
-    return Field(**result)
+    return SearchField(**result)
 
 
 def SearchableField(**kw):
-    # type: (**Any) -> Dict[str, Any]
+    # type: (**Any) -> SearchField
     """Configure a searchable text field for an Azure Search Index
 
     :param name: Required. The name of the field, which must be unique within the fields collection
@@ -204,11 +204,11 @@ def SearchableField(**kw):
         result["index_analyzer"] = kw["index_analyzer"]
     if "synonym_maps" in kw:
         result["synonym_maps"] = kw["synonym_maps"]
-    return Field(**result)
+    return SearchField(**result)
 
 
 def ComplexField(**kw):
-    # type: (**Any) -> Dict[str, Any]
+    # type: (**Any) -> SearchField
     """Configure a Complex or Complex collection field for an Azure Search
     Index
 
@@ -225,4 +225,4 @@ def ComplexField(**kw):
     typ = Collection(ComplexType) if kw.get("collection", False) else ComplexType
     result = {"name": kw.get("name"), "type": typ}  # type: Dict[str, Any]
     result["fields"] = kw.get("fields")
-    return Field(**result)
+    return SearchField(**result)

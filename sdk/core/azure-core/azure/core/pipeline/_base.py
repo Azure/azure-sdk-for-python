@@ -166,6 +166,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         import concurrent.futures
 
         def prepare_requests(req):
+            if req.multipart_mixed_info:
+                # Recursively update changeset "sub requests"
+                Pipeline._prepare_multipart_mixed_request(req)
             context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
