@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents import SynonymMap
+from azure.search.documents.indexes.models import SynonymMap
 
 
 def build_synonym_map_from_dict(synonym_map):

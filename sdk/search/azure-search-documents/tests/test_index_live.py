@@ -20,9 +20,9 @@ BATCH = json.load(open(join(CWD, "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
+from azure.search.documents import SearchClient
+from azure.search.documents.models import (
     AutocompleteQuery,
-    SearchClient,
     SearchQuery,
     SuggestQuery,
 )
