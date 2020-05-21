@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
+    from azure.identity import AuthenticationRecord
 
     CacheItem = Mapping[str, str]
 
@@ -86,13 +87,19 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        authority = kwargs.pop("authority", None)
-        self._authority = normalize_authority(authority) if authority else get_default_authority()
-
-        environment = urlparse(self._authority).netloc
-        self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
-        self._username = username
-        self._tenant_id = kwargs.pop("tenant_id", None)
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+        if self._auth_record:
+            self._authority = self._auth_record.authority
+            self._username = self._auth_record.username
+            self._tenant_id = self._auth_record.tenant_id
+            self._environment_aliases = frozenset((self._authority,))
+        else:
+            authority = kwargs.pop("authority", None)
+            self._authority = normalize_authority(authority) if authority else get_default_authority()
+            environment = urlparse(self._authority).netloc
+            self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
+            self._username = username
+            self._tenant_id = kwargs.pop("tenant_id", None)
 
         cache = kwargs.pop("_cache", None)  # for ease of testing
 
@@ -160,6 +167,14 @@ class SharedTokenCacheBase(ABC):
         if not accounts:
             # cache is empty or contains no refresh token -> user needs to sign in
             raise CredentialUnavailableError(message=NO_ACCOUNTS)
+
+        if self._auth_record:
+            for account in accounts:
+                if account.get("home_account_id") == self._auth_record.home_account_id:
+                    return account
+            raise CredentialUnavailableError(
+                message="The cache contains no account matching the given AuthenticationRecord."
+            )
 
         filtered_accounts = _filtered_accounts(accounts, username, tenant_id)
         if len(filtered_accounts) == 1:

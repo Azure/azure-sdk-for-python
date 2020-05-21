@@ -14,8 +14,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Mapping
-    from azure.core.credentials import AccessToken
+    from typing import Any
     from .._internal import AadClientBase
 
 
@@ -31,6 +30,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
     """
 
     @wrap_exceptions

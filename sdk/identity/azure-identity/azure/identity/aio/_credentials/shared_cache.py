@@ -29,6 +29,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
     """
 
     async def __aenter__(self):
