@@ -247,6 +247,57 @@ class ServiceBusClient(object):
             **kwargs
         )
 
+
+    def get_queue_deadletter_receiver(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusReceiver
+        """Get ServiceBusReceiver for the specific queue.
+
+        :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :param transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
+         deadletter queue. Default is False, using the standard deadletter endpoint.
+        :type transfer_deadletter: bool
+        :rtype: ~azure.servicebus.ServiceBusReceiver
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_receiver_from_sb_client_sync]
+                :end-before: [END create_servicebus_receiver_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
+
+
+        """
+        # pylint: disable=protected-access
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            queue_name=queue_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            is_dead_letter_receiver=True,
+            **kwargs
+        )
+
     def get_topic_sender(self, topic_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
         """Get ServiceBusSender for the specific topic.

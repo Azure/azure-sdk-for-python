@@ -22,7 +22,7 @@ from .utils import utc_from_timestamp, utc_now
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
-    def _create_attribute(self, **kwargs):
+    def _populate_attributes(self, **kwargs):
         if kwargs.get("subscription_name"):
             self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
@@ -38,6 +38,16 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
+        self._message_iter = None
+        self._connection = kwargs.get("connection")
+        self._prefetch = kwargs.get("prefetch")
+
+        if kwargs.get("is_dead_letter_receiver"):
+            if kwargs.get("transfer_deadletter"):
+                #TODO: kibrantn: Helperify these, validate that it works for topic/subscription.
+                self._entity_uri = self._entity_uri +  '/$Transfer' + '/$DeadLetterQueue'
+            else:
+                self._entity_uri = self._entity_uri + '/$DeadLetterQueue'
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
@@ -82,7 +92,7 @@ class SessionReceiverMixin(ReceiverMixin):
         if self._session and self._session.expired:
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
-    def _create_session_attributes(self, **kwargs):
+    def _populate_session_attributes(self, **kwargs):
         self._session_id = kwargs.get("session_id") or NEXT_AVAILABLE
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,

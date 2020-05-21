@@ -606,7 +606,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.receive(1,5)
     
             assert count == 10
-    
+
             with sb_client._get_queue_deadletter_receiver(
                     servicebus_queue.name,
                     idle_timeout=5,
@@ -822,7 +822,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             message.complete()
             renewer.shutdown()
             assert len(messages) == 11
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
