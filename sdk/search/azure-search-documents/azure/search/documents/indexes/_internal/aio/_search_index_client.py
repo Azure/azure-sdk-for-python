@@ -274,11 +274,11 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_synonym_maps(self, **kwargs):
-        # type: (**Any) -> List[Dict[Any, Any]]
+        # type: (**Any) -> List[SynonymMap]
         """List the Synonym Maps in an Azure Search service.
 
         :return: List of synonym maps
-        :rtype: list[dict]
+        :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -293,17 +293,17 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.list(**kwargs)
-        return [listize_synonyms(x) for x in result.as_dict()["synonym_maps"]]
+        return [listize_synonyms(x) for x in result.synonym_maps]
 
     @distributed_trace_async
     async def get_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> dict
+        # type: (str, **Any) -> SynonymMap
         """Retrieve a named Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: dict
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -318,7 +318,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return listize_synonyms(result.as_dict())
+        return listize_synonyms(result)
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -360,7 +360,7 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> dict
+        # type: (str, Sequence[str], **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to create
@@ -368,7 +368,7 @@ class SearchIndexClient(HeadersMixin):
         :param synonyms: A list of synonyms in SOLR format
         :type synonyms: List[str]
         :return: The created Synonym Map
-        :rtype: dict
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
         .. admonition:: Example:
 
@@ -384,11 +384,11 @@ class SearchIndexClient(HeadersMixin):
         solr_format_synonyms = "\n".join(synonyms)
         synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = await self._client.synonym_maps.create(synonym_map, **kwargs)
-        return listize_synonyms(result.as_dict())
+        return listize_synonyms(result)
 
     @distributed_trace_async
     async def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
-        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> dict
+        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
@@ -399,7 +399,7 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
-        :rtype: dict
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -421,7 +421,7 @@ class SearchIndexClient(HeadersMixin):
             error_map=error_map,
             **kwargs
         )
-        return listize_synonyms(result.as_dict())
+        return listize_synonyms(result)
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):
