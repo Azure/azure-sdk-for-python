@@ -130,8 +130,6 @@ from ._service._generated.models import (
     WordDelimiterTokenFilter,
 )
 from ._service._models import PatternAnalyzer, PatternTokenizer
-from ._service._search_indexer_client import SearchIndexerClient
-from ._service._search_index_client import SearchIndexClient
 from ._version import VERSION
 
 __version__ = VERSION
