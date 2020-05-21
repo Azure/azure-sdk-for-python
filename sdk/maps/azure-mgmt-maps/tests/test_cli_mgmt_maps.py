@@ -12,8 +12,8 @@
 # Methods Total   : 10
 # Methods Covered : 10
 # Examples Total  : 10
-# Examples Tested : 10
-# Coverage %      : 100
+# Examples Tested : 9
+# Coverage %      : 90
 # ----------------------
 
 import unittest
