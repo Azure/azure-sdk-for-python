@@ -81,35 +81,40 @@
           "description": "Number of active messages in the queue, topic, or subscription.",
           "type": "integer",
           "xml": {
-            "prefix": "d2p1"
+            "prefix": "d2p1",
+            "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
           }
         },
         "DeadLetterMessageCount": {
           "description": "Number of messages that are dead lettered.",
           "type": "integer",
           "xml": {
-            "prefix": "d2p1"
+            "prefix": "d2p1",
+            "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
           }
         },
         "ScheduledMessageCount": {
           "description": "Number of scheduled messages.",
           "type": "integer",
           "xml": {
-            "prefix": "d2p1"
+            "prefix": "d2p1",
+            "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
           }
         },
         "TransferDeadLetterMessageCount": {
           "description": "Number of messages transferred into dead letters.",
           "type": "integer",
           "xml": {
-            "prefix": "d2p1"
+            "prefix": "d2p1",
+            "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
           }
         },
         "TransferMessageCount": {
           "description": "Number of messages transferred to another queue, topic, or subscription.",
           "type": "integer",
           "xml": {
-            "prefix": "d2p1"
+            "prefix": "d2p1",
+            "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
           }
         }
       },
