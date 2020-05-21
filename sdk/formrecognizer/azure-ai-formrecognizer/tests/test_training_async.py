@@ -23,13 +23,15 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     async def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.train_model("xx")
+            result = await client.train_model("xx", use_training_labels=False)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training(self, client, container_sas_url):
 
-        model = await client.train_model(training_files_url=container_sas_url)
+        model = await client.train_model(
+            training_files_url=container_sas_url,
+            use_training_labels=False)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -51,7 +53,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
@@ -81,7 +83,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(training_files_url=container_sas_url, cls=callback)
+        model = await client.train_model(
+            training_files_url=container_sas_url,
+            use_training_labels=False,
+            cls=callback)
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -99,7 +104,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, cls=callback)
+        model = await client.train_model(container_sas_url, use_training_labels=False, cls=callback)
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -189,13 +194,13 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_files_filter(self, client, container_sas_url):
 
-        model = await client.train_model(training_files_url=container_sas_url, include_sub_folders=True)
+        model = await client.train_model(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
         self.assertEqual(len(model.training_documents), 6)
         self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders
 
-        model = await client.train_model(container_sas_url, prefix="subfolder", include_sub_folders=True)
+        model = await client.train_model(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
         with self.assertRaises(HttpResponseError):
-            model = await client.train_model(training_files_url=container_sas_url, prefix="xxx")
+            model = await client.train_model(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
