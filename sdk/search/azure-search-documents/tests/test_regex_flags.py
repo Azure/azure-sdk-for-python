@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
-from azure.search.documents._service._generated.models import (
+from azure.search.documents.indexes.models import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
+from azure.search.documents.indexes._internal._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from azure.search.documents._service._utils import delistize_flags_for_index, listize_flags_for_index
+from azure.search.documents.indexes._internal._utils import delistize_flags_for_index, listize_flags_for_index
 
 def test_listize_flags_for_index():
     pattern_analyzer = _PatternAnalyzer(

@@ -16,7 +16,7 @@ from search_service_preparer import SearchServicePreparer, SearchResourceGroupPr
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents import(
+from azure.search.documents.indexes.models import(
     AnalyzeRequest,
     AnalyzeResult,
     CorsOptions,
@@ -24,8 +24,6 @@ from azure.search.documents import(
     SearchIndex,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
-    SearchIndexClient,
-    SearchIndexerClient,
     ScoringProfile,
     SearchIndexerSkillset,
     DataSourceCredentials,
@@ -36,6 +34,7 @@ from azure.search.documents import(
     SimpleField,
     edm
 )
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))

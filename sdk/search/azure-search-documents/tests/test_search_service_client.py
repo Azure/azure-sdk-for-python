@@ -11,7 +11,8 @@ except ImportError:
     import mock
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient, SearchIndexClient, SearchIndexerClient
+from azure.search.documents import SearchClient
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -44,7 +45,7 @@ class TestSearchIndexClient(object):
         assert isinstance(search_client, SearchClient)
 
     @mock.patch(
-        "azure.search.documents._service._generated._search_service_client.SearchServiceClient.get_service_statistics"
+        "azure.search.documents.indexes._internal._generated._search_service_client.SearchServiceClient.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)

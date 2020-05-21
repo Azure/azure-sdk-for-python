@@ -19,7 +19,7 @@ from search_service_preparer import SearchServicePreparer, SearchResourceGroupPr
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents import(
+from azure.search.documents.indexes.models import(
     AnalyzeRequest,
     AnalyzeResult,
     CorsOptions,
@@ -37,7 +37,7 @@ from azure.search.documents import(
     SimpleField,
     edm
 )
-from azure.search.documents.aio import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))

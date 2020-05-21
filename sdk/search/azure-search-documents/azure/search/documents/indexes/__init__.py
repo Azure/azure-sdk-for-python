@@ -25,17 +25,12 @@
 # --------------------------------------------------------------------------
 
 from ._internal import (
-    IndexDocumentsBatch,
-    SearchClient,
-    SearchItemPaged,
+    SearchIndexClient,
+    SearchIndexerClient,
 )
-from ._version import VERSION
-
-__version__ = VERSION
 
 
 __all__ = (
-    "IndexDocumentsBatch",
-    "SearchClient",
-    "SearchItemPaged",
+    "SearchIndexerClient",
+    "SearchIndexClient",
 )

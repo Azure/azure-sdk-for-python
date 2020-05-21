@@ -12,7 +12,8 @@ except ImportError:
     import mock
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.aio import SearchClient, SearchIndexClient, SearchIndexerClient
+from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 

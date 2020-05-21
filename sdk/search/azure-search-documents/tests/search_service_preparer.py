@@ -132,7 +132,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         if self.index_batch and self.schema:
             from azure.core.credentials import AzureKeyCredential
             from azure.search.documents import SearchClient
-            from azure.search.documents._index._generated.models import IndexBatch
+            from azure.search.documents._internal._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
             index_client = SearchClient(

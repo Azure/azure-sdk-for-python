@@ -6,12 +6,12 @@
 from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
-from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import SynonymMap
-from ...aio import SearchClient
-from .._utils import (
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
+
+from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import SynonymMap
+from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
     listize_synonyms,
@@ -20,22 +20,18 @@ from .._utils import (
 )
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
+from ... import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
-    from typing import Any, Dict, List, Union
+    from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
 
 class SearchIndexClient(HeadersMixin):
-    """A client to interact with Azure search service Indexes.
-
-    This class is not normally instantiated directly, instead use
-    `get_skillsets_client()` from a `SearchServiceClient`
+    """A client to interact with Azure search service index.
 
     """
-
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -47,35 +43,36 @@ class SearchIndexClient(HeadersMixin):
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
 
-    async def __aenter__(self):
-        # type: () -> SearchIndexesClient
-        await self._client.__aenter__()  # pylint:disable=no-member
+    def __enter__(self):
+        # type: () -> SearchIndexClient
+        self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    async def __aexit__(self, *args):
+    def __exit__(self, *args):
         # type: (*Any) -> None
-        return await self._client.__aexit__(*args)  # pylint:disable=no-member
+        return self._client.__exit__(*args)  # pylint:disable=no-member
 
-    async def close(self):
+    def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchIndexClient` session.
+        """Close the :class:`~azure.search.documents.SearchIndexClient` session.
 
         """
-        return await self._client.close()
+        return self._client.close()
 
     def get_search_client(self, index_name, **kwargs):
         # type: (str, dict) -> SearchClient
-        """Return a client to perform operations on Search.
+        """Return a client to perform operations on Search
 
         :param index_name: The name of the Search Index
         :type index_name: str
-        :rtype: ~azure.search.documents.aio.SearchClient
+        :rtype: ~azure.search.documents.SearchClient
+
         """
         return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
-    @distributed_trace_async
-    async def list_indexes(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[SearchIndex]
+    @distributed_trace
+    def list_indexes(self, **kwargs):
+        # type: (**Any) -> ItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
@@ -85,16 +82,16 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        async def get_next(_token):
-            return await self._client.indexes.list(**kwargs)
+        def get_next(_token):
+            return self._client.indexes.list(**kwargs)
 
-        async def extract_data(response):
+        def extract_data(response):
             return None, [listize_flags_for_index(x) for x in response.indexes]
 
-        return AsyncItemPaged(get_next=get_next, extract_data=extract_data)
+        return ItemPaged(get_next=get_next, extract_data=extract_data)
 
-    @distributed_trace_async
-    async def get_index(self, index_name, **kwargs):
+    @distributed_trace
+    def get_index(self, index_name, **kwargs):
         # type: (str, **Any) -> SearchIndex
         """
 
@@ -106,19 +103,19 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
-                :start-after: [START get_index_async]
-                :end-before: [END get_index_async]
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START get_index]
+                :end-before: [END get_index]
                 :language: python
                 :dedent: 4
                 :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.get(index_name, **kwargs)
+        result = self._client.indexes.get(index_name, **kwargs)
         return listize_flags_for_index(result)
 
-    @distributed_trace_async
-    async def get_index_statistics(self, index_name, **kwargs):
+    @distributed_trace
+    def get_index_statistics(self, index_name, **kwargs):
         # type: (str, **Any) -> dict
         """Returns statistics for the given index, including a document count
         and storage usage.
@@ -131,14 +128,14 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.get_statistics(index_name, **kwargs)
+        result = self._client.indexes.get_statistics(index_name, **kwargs)
         return result.as_dict()
 
-    @distributed_trace_async
-    async def delete_index(self, index, **kwargs):
+    @distributed_trace
+    def delete_index(self, index, **kwargs):
         # type: (Union[str, SearchIndex], **Any) -> None
         """Deletes a search index and all the documents it contains. The model must be
-        provided instead of the name to use the access conditions
+        provided instead of the name to use the access conditions.
 
         :param index: The index to retrieve.
         :type index: str or ~search.models.SearchIndex
@@ -148,9 +145,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
-                :start-after: [START delete_index_async]
-                :end-before: [END delete_index_async]
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START delete_index]
+                :end-before: [END delete_index]
                 :language: python
                 :dedent: 4
                 :caption: Delete an index.
@@ -164,12 +161,12 @@ class SearchIndexClient(HeadersMixin):
             index_name = index.name
         except AttributeError:
             index_name = index
-        await self._client.indexes.delete(
+        self._client.indexes.delete(
             index_name=index_name, error_map=error_map, **kwargs
         )
 
-    @distributed_trace_async
-    async def create_index(self, index, **kwargs):
+    @distributed_trace
+    def create_index(self, index, **kwargs):
         # type: (SearchIndex, **Any) -> SearchIndex
         """Creates a new search index.
 
@@ -181,23 +178,23 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
-                :start-after: [START create_index_async]
-                :end-before: [END create_index_async]
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START create_index]
+                :end-before: [END create_index]
                 :language: python
                 :dedent: 4
                 :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)
-        result = await self._client.indexes.create(patched_index, **kwargs)
+        result = self._client.indexes.create(patched_index, **kwargs)
         return result
 
-    @distributed_trace_async
-    async def create_or_update_index(
+    @distributed_trace
+    def create_or_update_index(
         self, index_name, index, allow_index_downtime=None, **kwargs
     ):
-        # type: (str, SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
+        # type: (str, SearchIndex, bool, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.
@@ -222,9 +219,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
-                :start-after: [START update_index_async]
-                :end-before: [END update_index_async]
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START update_index]
+                :end-before: [END update_index]
                 :language: python
                 :dedent: 4
                 :caption: Update an index.
@@ -235,7 +232,7 @@ class SearchIndexClient(HeadersMixin):
         )
         kwargs.update(access_condition)
         patched_index = delistize_flags_for_index(index)
-        result = await self._client.indexes.create_or_update(
+        result = self._client.indexes.create_or_update(
             index_name=index_name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
@@ -244,8 +241,8 @@ class SearchIndexClient(HeadersMixin):
         )
         return result
 
-    @distributed_trace_async
-    async def analyze_text(self, index_name, analyze_request, **kwargs):
+    @distributed_trace
+    def analyze_text(self, index_name, analyze_request, **kwargs):
         # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
         """Shows how an analyzer breaks text into tokens.
 
@@ -259,21 +256,21 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_text_async.py
-                :start-after: [START simple_analyze_text_async]
-                :end-before: [END simple_analyze_text_async]
+            .. literalinclude:: ../samples/sample_analyze_text.py
+                :start-after: [START simple_analyze_text]
+                :end-before: [END simple_analyze_text]
                 :language: python
                 :dedent: 4
                 :caption: Analyze text
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.analyze(
+        result = self._client.indexes.analyze(
             index_name=index_name, request=analyze_request, **kwargs
         )
         return result
 
-    @distributed_trace_async
-    async def get_synonym_maps(self, **kwargs):
+    @distributed_trace
+    def get_synonym_maps(self, **kwargs):
         # type: (**Any) -> List[Dict[Any, Any]]
         """List the Synonym Maps in an Azure Search service.
 
@@ -283,20 +280,20 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START get_synonym_maps_async]
-                :end-before: [END get_synonym_maps_async]
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START get_synonym_maps]
+                :end-before: [END get_synonym_maps]
                 :language: python
                 :dedent: 4
                 :caption: List Synonym Maps
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.synonym_maps.list(**kwargs)
+        result = self._client.synonym_maps.list(**kwargs)
         return [listize_synonyms(x) for x in result.as_dict()["synonym_maps"]]
 
-    @distributed_trace_async
-    async def get_synonym_map(self, name, **kwargs):
+    @distributed_trace
+    def get_synonym_map(self, name, **kwargs):
         # type: (str, **Any) -> dict
         """Retrieve a named Synonym Map in an Azure Search service
 
@@ -308,20 +305,20 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START get_synonym_map_async]
-                :end-before: [END get_synonym_map_async]
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START get_synonym_map]
+                :end-before: [END get_synonym_map]
                 :language: python
                 :dedent: 4
                 :caption: Get a Synonym Map
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.synonym_maps.get(name, **kwargs)
+        result = self._client.synonym_maps.get(name, **kwargs)
         return listize_synonyms(result.as_dict())
 
-    @distributed_trace_async
-    async def delete_synonym_map(self, synonym_map, **kwargs):
+    @distributed_trace
+    def delete_synonym_map(self, synonym_map, **kwargs):
         # type: (Union[str, SynonymMap], **Any) -> None
         """Delete a named Synonym Map in an Azure Search service. To use access conditions,
         the SynonymMap model must be provided instead of the name. It is enough to provide
@@ -334,12 +331,11 @@ class SearchIndexClient(HeadersMixin):
         :return: None
         :rtype: None
 
-
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START delete_synonym_map_async]
-                :end-before: [END delete_synonym_map_async]
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START delete_synonym_map]
+                :end-before: [END delete_synonym_map]
                 :language: python
                 :dedent: 4
                 :caption: Delete a Synonym Map
@@ -354,27 +350,27 @@ class SearchIndexClient(HeadersMixin):
             name = synonym_map.name
         except AttributeError:
             name = synonym_map
-        await self._client.synonym_maps.delete(
+        self._client.synonym_maps.delete(
             synonym_map_name=name, error_map=error_map, **kwargs
         )
 
-    @distributed_trace_async
-    async def create_synonym_map(self, name, synonyms, **kwargs):
+    @distributed_trace
+    def create_synonym_map(self, name, synonyms, **kwargs):
         # type: (str, Sequence[str], **Any) -> dict
         """Create a new Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to create
         :type name: str
-        :param synonyms: A list of synonyms in SOLR format
+        :param synonyms: The list of synonyms in SOLR format
         :type synonyms: List[str]
         :return: The created Synonym Map
         :rtype: dict
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START create_synonym_map_async]
-                :end-before: [END create_synonym_map_async]
+            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+                :start-after: [START create_synonym_map]
+                :end-before: [END create_synonym_map]
                 :language: python
                 :dedent: 4
                 :caption: Create a Synonym Map
@@ -383,11 +379,11 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         solr_format_synonyms = "\n".join(synonyms)
         synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = await self._client.synonym_maps.create(synonym_map, **kwargs)
+        result = self._client.synonym_maps.create(synonym_map, **kwargs)
         return listize_synonyms(result.as_dict())
 
-    @distributed_trace_async
-    async def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
+    @distributed_trace
+    def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
         # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> dict
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
@@ -415,7 +411,7 @@ class SearchIndexClient(HeadersMixin):
             name = synonym_map
             solr_format_synonyms = "\n".join(synonyms)
             synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = await self._client.synonym_maps.create_or_update(
+        result = self._client.synonym_maps.create_or_update(
             synonym_map_name=name,
             synonym_map=synonym_map,
             error_map=error_map,
@@ -423,12 +419,12 @@ class SearchIndexClient(HeadersMixin):
         )
         return listize_synonyms(result.as_dict())
 
-    @distributed_trace_async
-    async def get_service_statistics(self, **kwargs):
+    @distributed_trace
+    def get_service_statistics(self, **kwargs):
         # type: (**Any) -> dict
         """Get service level statistics for a search service.
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.get_service_statistics(**kwargs)
+        result = self._client.get_service_statistics(**kwargs)
         return result.as_dict()
