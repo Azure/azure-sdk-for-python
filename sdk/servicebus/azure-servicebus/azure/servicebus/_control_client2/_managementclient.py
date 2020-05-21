@@ -1,13 +1,27 @@
+import sys
+import inspect
 from typing import TYPE_CHECKING, Dict, Any, Union
+from xml.etree import ElementTree
 
 from azure.servicebus import ServiceBusSharedKeyCredential
-from azure.servicebus._control_client2._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription, CreateQueueBodyAuthor
-
+from azure.servicebus._control_client2._generated import models
+from azure.servicebus._control_client2._generated.models import CreateEntityBody, CreateEntityBodyContent, \
+    QueueDescriptionResponse, QueueDescription
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+# workaround for issue https://github.com/Azure/azure-sdk-for-python/issues/11568
+# clsmembers = inspect.getmembers(models, inspect.isclass)
+# for _, clazz in clsmembers:
+#     if hasattr(clazz, "_xml_map"):
+#         ns = clazz._xml_map['ns']
+#         if hasattr(clazz, "_attribute_map"):
+#             for mps in clazz._attribute_map.values():
+#                 if 'xml' not in mps:
+#                     mps['xml'] = {'ns': ns}
+# end of workaround
 
 
 class ServiceBusManagementClient:
@@ -33,32 +47,30 @@ class ServiceBusManagementClient:
         :return:
         """
 
-    def create_queue(self, queue_name=None, queue_description=None):
-        # type: (str, "QueueDescription") -> None
+    def get_queue(self, queue_name):
+        # type: (str) -> QueueDescription
+        sas_token = self._credential.get_token(self._endpoint + "/" + queue_name)
+        custom_headers = {"Authorization": sas_token.token.decode("utf-8")}
+        et = self._impl.queue.get(queue_name, headers=custom_headers)
+        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc = QueueDescription.deserialize(qc_ele, content_type="application/xml")
+        return qc
+
+    def create_queue(self, queue_name, queue_description=QueueDescription()):
+        # type: (str, "QueueDescription") -> QueueDescription
         """Create a queue"""
         sas_token = self._credential.get_token(self._endpoint + "/" + queue_name)
         custom_headers = {"Authorization": sas_token.token.decode("utf-8")}
-        body = CreateQueueBody(author=CreateQueueBodyAuthor(), content=CreateQueueBodyContent(type="application/xml", queue_description=QueueDescription()))
-        response = self._impl.queue.create(queue_name, body, headers=custom_headers)
-        print(type(response), response)
-
-    def create_rule(self, topic_path, subscription_name, rule_description):
-        # type: (str, str, "RuleDescription") -> None
-        """
-
-        :param topic_path:
-        :param subscription_name:
-        :param rule_description:
-        :return:
-        """
-
-    def create_subscription(self, topic_path, subscription_name, subscription_description, default_rule):
-        # type: (str, str, "SubscriptionDescription", "RuleDescription") -> None
-        """
-
-        :param topic_path:
-        :param subscription_name:
-        :param subscription_description:
-        :param default_rule:
-        :return:
-        """
+        create_entity_body = CreateEntityBody(
+            content=CreateEntityBodyContent(
+                queue_description=queue_description,
+                entity=queue_description
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        et = self._impl.queue.create(queue_name, request_body, headers=custom_headers)
+        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc = QueueDescription.deserialize(qc_ele, content_type="application/xml")
+        return qc

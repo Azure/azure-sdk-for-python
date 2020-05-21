@@ -21,22 +21,14 @@
     "https"
   ],
   "produces": [
-    "application/atom+xml",
     "application/xml"
   ],
   "consumes": [
-    "application/atom+xml",
     "application/xml"
   ],
   "tags": [
     {
       "name": "Queue Operations"
-    },
-    {
-      "name": "Topic Operations"
-    },
-    {
-      "name": "Subscription Operations"
     }
   ],
   "parameters": {
@@ -51,6 +43,36 @@
     }
   },
   "definitions": {
+    "CreateEntityBody": {
+      "description": "The response from a CreateQueue operation.",
+      "type": "object",
+      "xml":{
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "content": {
+          "description": "TODO: Add description",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "TODO: Add description",
+              "type": "string",
+              "default": "application/xml",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "entity": {
+              "type":"object"
+            }
+          }
+        }
+      }
+    },
     "CountDetails": {
       "description": "Details about the message counts in queue.",
       "type": "object",
@@ -95,39 +117,6 @@
         "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
       }
     },
-    "CreateQueueBody": {
-      "description": "The response from a CreateQueue operation.",
-      "type": "object",
-      "xml":{
-        "name": "entry"
-      },
-      "properties": {
-        "xmlns":{
-          "type":"string",
-          "xml": {
-            "attribute": true
-          },
-          "default": "http://www.w3.org/2005/Atom"
-        },
-        "content": {
-          "description": "TODO: Add description",
-          "type": "object",
-          "properties": {
-            "type": {
-              "description": "TODO: Add description",
-              "type": "string",
-              "default": "application/xml",
-              "xml": {
-                "attribute": true
-              }
-            },
-            "QueueDescription": {
-              "$ref": "#/definitions/QueueDescription"
-            }
-          }
-        }
-      }
-    },
     "EntityAvailabilityStatus": {
       "description": "Availibility status of the entity",
       "type": "string",
@@ -157,36 +146,69 @@
     "QueueDescriptionResponse": {
       "description": "The response from a Queue_Get operation",
       "type": "object",
+      "required": [
+        "id",
+        "published",
+        "created",
+        "author",
+        "link",
+        "content"
+      ],
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
       "properties": {
         "id": {
           "description": "The URL of the GET request",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
         },
         "title": {
           "description": "The name of the queue",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
         },
         "published": {
           "description": "The timestamp for when this queue was published",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
         },
         "updated": {
           "description": "The timestamp for when this queue was last updated",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
         },
         "author": {
           "description": "The author that created this resource",
           "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
           "properties": {
             "name": {
               "description": "The Service Bus namespace",
-              "type": "string"
+              "type": "string",
+              "xml": {
+                "namespace": "http://www.w3.org/2005/Atom"
+              }
             }
           }
         },
         "link": {
           "description": "The URL link of the GET request",
           "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
           "properties": {
             "href": {
               "description": "The URL of the GET request",
@@ -207,6 +229,9 @@
         "content": {
           "description": "Contents of a Queue_Get response",
           "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
           "properties": {
             "type": {
               "description": "Type of content in queue response",
@@ -220,79 +245,97 @@
             }
           }
         }
-      },
-      "required": [
-        "id",
-        "published",
-        "created",
-        "author",
-        "link",
-        "content"
-      ],
-      "xml": {
-        "name": "entry",
-        "namespace": "http://www.w3.org/2005/Atom"
       }
     },
     "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
+      "xml": {
+        "name": "QueueDescription",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
       "properties": {
-        "xmlns": {
-          "type": "string",
-          "xml": {
-            "attribute": true
-          },
-          "default": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        },
         "AccessedAt": {
           "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "AuthorizationRules": {
           "description": "Authorization rules for resource.",
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "xml": {
+              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            }
           }
         },
         "AutoDeleteOnIdle": {
           "description": "ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "CountDetails": {
           "$ref": "#/definitions/CountDetails"
         },
         "CreatedAt": {
           "description": "The exact time the queue was created.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "DeadLetteringOnMessageExpiration": {
           "description": "A value that indicates whether this queue has dead letter support when a message expires.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "DuplicateDetectionHistoryTimeWindow": {
           "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "EntityAvailabilityStatus": {
-          "$ref": "#/definitions/EntityAvailabilityStatus"
+          "$ref": "#/definitions/EntityAvailabilityStatus",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "EnableBatchedOperations": {
           "description": "Value that indicates whether server-side batched operations are enabled.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "EnableExpress": {
           "description": "A value that indicates whether Express Entities are enabled. An express queue holds a message in memory temporarily before writing it to persistent storage.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "EnablePartitioning": {
           "description": "A value that indicates whether the queue is to be partitioned across multiple message brokers.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "IsAnonymousAccessible": {
           "description": "A value indicating if the resource can be accessed without authorization.",
@@ -300,81 +343,86 @@
         },
         "LockDuration": {
           "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "MaxDeliveryCount": {
           "description": "The maximum delivery count. A message is automatically deadlettered after this number of deliveries. Default value is 10.",
-          "type": "integer"
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "MaxSizeInMegabytes": {
           "description": "The maximum size of the queue in megabytes, which is the size of memory allocated for the queue.",
-          "type": "number"
+          "type": "number",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "MessageCount": {
           "description": "The number of messages in the queue.",
-          "type": "integer"
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "RequiresDuplicateDetection": {
           "description": "A value indicating if this queue requires duplicate detection.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "RequiresSession": {
           "description": "A value that indicates whether the queue supports the concept of sessions.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "SizeInBytes": {
           "description": "The size of the queue, in bytes.",
-          "type": "integer"
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "Status": {
           "$ref": "#/definitions/EntityStatus"
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the queue supports ordering.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "UpdatedAt": {
           "description": "The exact time a message was updated in the queue.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         }
-      }
-    },
-    "ServiceBusError": {
-      "description": "The error response from Service Bus.",
-      "type": "object",
-      "properties": {
-        "code": {
-          "description": "The service error code.",
-          "type": "string"
-        },
-        "message": {
-          "description": "The service error message.",
-          "type": "string"
-        }
-      }
-    }
-  },
-  "responses": {
-    "ErrorResponse": {
-      "description": "An error occurred. The possible HTTP status, code, and message strings are listed below",
-      "headers": {
-        "x-ms-request-id": {
-          "description": "A server-generated UUID recorded in the analytics logs for troubleshooting and correlation.",
-          "pattern": "^[{(]?[0-9a-f]{8}[-]?([0-9a-f]{4}[-]?){3}[0-9a-f]{12}[)}]?$",
-          "type": "string"
-        },
-        "x-ms-version": {
-          "description": "The version of the REST protocol used to process the request.",
-          "type": "string"
-        }
-      },
-      "schema": {
-        "$ref": "#/definitions/ServiceBusError"
       }
     }
   },
   "paths": {
     "/{queueName}/": {
+      "parameters": [
+        {
+          "name": "queueName",
+          "in": "path",
+          "description": "The name of the queue relative to the Service Bus namespace.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "operationId": "Queue_Get",
         "summary": "Get Queue",
@@ -385,12 +433,9 @@
         "responses": {
           "200": {
             "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/QueueDescriptionResponse"
+            "schema":{
+              "type": "object"
             }
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
           }
         }
       },
@@ -402,10 +447,10 @@
         "description": "Create a new queue at the provided queuePath",
         "parameters": [
           {
-            "name": "parameters",
+            "name": "requestBody",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/CreateQueueBody"
+              "type": "object"
             },
             "required": true,
             "description": "Parameters required to make a new queue.",
@@ -416,22 +461,11 @@
           "201": {
             "description": "Created -- Create Queue operation completed successfully.",
             "schema": {
-              "$ref": "#/definitions/QueueDescriptionResponse"
+              "type": "object"
             }
           }
         }
-      },
-      "parameters": [
-        {
-          "name": "queueName",
-          "in": "path",
-          "description": "The name of the queue relative to the Service Bus namespace.",
-          "minLength": 1,
-          "x-ms-parameter-location": "method",
-          "required": true,
-          "type": "string"
-        }
-      ]
+      }
     }
   }
 }

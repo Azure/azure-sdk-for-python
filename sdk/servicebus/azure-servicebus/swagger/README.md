@@ -15,12 +15,12 @@ autorest --use=@autorest/python@5.0.0-preview.6
 ```
 ### Settings
 ``` yaml
-input-file: C:/Work/ServiceBus/servicebus-swagger.json
+input-file: servicebus-swagger.json
 output-folder: ../azure/servicebus/_control_client2/_generated
 namespace: azure.service._control_client2
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
-enable-xml: true
+enable-xml: false
 vanilla: true
 clear-output-folder: true
 python: true
