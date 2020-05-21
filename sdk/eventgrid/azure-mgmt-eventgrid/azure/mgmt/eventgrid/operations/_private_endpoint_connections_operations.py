@@ -51,7 +51,8 @@ class PrivateEndpointConnectionsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'.
+         either \\'topics\\' or \\'domains\\'. Possible values include:
+         'topics', 'domains'
         :type parent_type: str
         :param parent_name: The name of the parent resource (namely, either,
          the topic name or domain name).
@@ -178,7 +179,8 @@ class PrivateEndpointConnectionsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'.
+         either \\'topics\\' or \\'domains\\'. Possible values include:
+         'topics', 'domains'
         :type parent_type: str
         :param parent_name: The name of the parent resource (namely, either,
          the topic name or domain name).
@@ -283,7 +285,8 @@ class PrivateEndpointConnectionsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'.
+         either \\'topics\\' or \\'domains\\'. Possible values include:
+         'topics', 'domains'
         :type parent_type: str
         :param parent_name: The name of the parent resource (namely, either,
          the topic name or domain name).
@@ -336,7 +339,8 @@ class PrivateEndpointConnectionsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'.
+         either \\'topics\\' or \\'domains\\'. Possible values include:
+         'topics', 'domains'
         :type parent_type: str
         :param parent_name: The name of the parent resource (namely, either,
          the topic name or domain name).
