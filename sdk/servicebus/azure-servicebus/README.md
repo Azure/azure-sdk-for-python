@@ -13,10 +13,10 @@ Microsoft Azure Service Bus supports a set of cloud-based, message-oriented midd
 * [Service Bus documentation](https://docs.microsoft.com/azure/service-bus-messaging/)
 
 
-## What's new in v0.50.2?
+## What's new in v0.50.3?
 
-As of version 0.50.2 a new AMQP-based API is available for sending and receiving messages. This update involves **breaking changes**.
-Please read [Migration from 0.21.1 to 0.50.2](#migration-from-0211-to-0502) to determine if upgrading is
+As of version 0.50.3 a new AMQP-based API is available for sending and receiving messages. This update involves **breaking changes**.
+Please read [Migration from 0.21.1 to 0.50.3](#migration-from-0211-to-0503) to determine if upgrading is
 right for you at this time.
 
 The new AMQP-based API offers improved message passing reliability, performance and expanded feature support going forward.
@@ -37,21 +37,21 @@ For documentation on the legacy HTTP-based operations please see [Using HTTP-bas
 pip install azure-servicebus
 ```
 
-## Migration from 0.21.1 to 0.50.2
+## Migration from 0.21.1 to 0.50.3
 
-Major breaking changes were introduced in version 0.50.2.
-The original HTTP-based API is still available in v0.50.2 - however it now exists under a new namesapce: `azure.servicebus.control_client`.
+Major breaking changes were introduced in version 0.50.3.
+The original HTTP-based API is still available in v0.50.3 - however it now exists under a new namesapce: `azure.servicebus.control_client`.
 
 ### Should I upgrade?
 
-The new package (v0.50.2) offers no improvements in HTTP-based operations over v0.21.1. The HTTP-based API is identical except that it now
+The new package (v0.50.3) offers no improvements in HTTP-based operations over v0.21.1. The HTTP-based API is identical except that it now
 exists under a new namespace. For this reason if you only wish to use HTTP-based operations (`create_queue`, `delete_queue` etc) - there will be
 no additional benefit in upgrading at this time.
 
 
 ### How do I migrate my code to the new version?
 
-Code written against v0.21.0 can be ported to version 0.50.2 by simply changing the import namespace:
+Code written against v0.21.0 can be ported to version 0.50.3 by simply changing the import namespace:
 
 ```python
 # from azure.servicebus import ServiceBusService  <- This will now raise an ImportError
