@@ -32,7 +32,7 @@ class SearchIndexClient(HeadersMixin):
     """A client to interact with Azure search service index.
 
     """
-    
+
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -55,7 +55,7 @@ class SearchIndexClient(HeadersMixin):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchSynonymMapsClient` session.
+        """Close the :class:`~azure.search.documents.SearchIndexClient` session.
 
         """
         return self._client.close()

@@ -49,7 +49,7 @@ class SearchIndexerClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchIndexersClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchIndexerClient` session.
 
         """
         return await self._client.close()
