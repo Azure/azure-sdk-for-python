@@ -17,19 +17,19 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"name":".test","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.02}],"language":"en","id":".test","url":"https://en.wikipedia.org/wiki/.test","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - b29f051d-c604-41a2-95a1-1ce0d6f011d1
+      - 2e6ffde4-7e1e-4324-9d6c-be089d1a0e41
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Mon, 18 May 2020 15:13:24 GMT
+      - Tue, 19 May 2020 15:32:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '16'
     status:
       code: 200
       message: OK

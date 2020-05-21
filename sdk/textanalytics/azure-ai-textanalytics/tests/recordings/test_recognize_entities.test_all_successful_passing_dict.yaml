@@ -20,7 +20,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?model-version=2020-02-01&showStats=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=2020-02-01&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":68,"transactionsCount":1},"entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"Bill
@@ -35,13 +35,13 @@ interactions:
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 87822952-292e-4beb-8b83-a50c86a979c5
+      - 86aa61a6-13ab-4b21-97a6-985963f68bc5
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Mon, 18 May 2020 15:13:19 GMT
+      - Tue, 19 May 2020 15:32:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -49,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '124'
+      - '212'
     status:
       code: 200
       message: OK

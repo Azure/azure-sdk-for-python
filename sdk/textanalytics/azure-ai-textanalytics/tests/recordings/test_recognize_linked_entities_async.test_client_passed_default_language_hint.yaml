@@ -15,23 +15,23 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: fdc0d0b5-b2bd-4852-802d-11ef73a6f363
+      apim-request-id: 6436a2f5-d341-4983-8d3a-9cb4092a656a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:24 GMT
+      date: Tue, 19 May 2020 15:32:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -48,23 +48,23 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 49cecbc4-7db7-4aa4-a9aa-21e87b0e0d90
+      apim-request-id: 2b6a380f-59a1-4266-8a3b-ec09d0a8df73
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:24 GMT
+      date: Tue, 19 May 2020 15:32:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -81,21 +81,21 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 6b4f049a-9519-4df7-860c-163dccc7767a
+      apim-request-id: 01f7b6e7-4bac-4ade-831d-fef84df87497
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:24 GMT
+      date: Tue, 19 May 2020 15:32:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '14'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 version: 1

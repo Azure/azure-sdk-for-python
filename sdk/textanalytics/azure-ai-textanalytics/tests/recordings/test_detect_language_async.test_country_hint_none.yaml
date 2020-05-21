@@ -13,23 +13,23 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 2f18cf86-1f58-40f8-8f46-0e4a526c1235
+      apim-request-id: 8b55061f-7053-462f-bafb-effcbfb0c2ee
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 18 May 2020 15:13:18 GMT
+      date: Tue, 19 May 2020 15:32:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "This is written in English.", "countryHint":
       ""}]}'
@@ -44,15 +44,15 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 2b7f86d5-ec92-4767-800e-4a81b19ae11f
+      apim-request-id: bff2de57-93e3-4d74-aba3-22a9d299f252
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 18 May 2020 15:13:18 GMT
+      date: Tue, 19 May 2020 15:32:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 - request:
     body: '{"documents": [{"id": "0", "text": "this is written in english", "countryHint":
       ""}]}'
@@ -75,23 +75,23 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: c91f52af-cfee-40ef-938a-e3f08590aca5
+      apim-request-id: dc6d462c-24eb-4ae6-8649-b7265393cc29
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 18 May 2020 15:13:19 GMT
+      date: Tue, 19 May 2020 15:32:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 - request:
     body: '{"documents": [{"id": "0", "text": "this is written in english", "countryHint":
       ""}]}'
@@ -106,21 +106,21 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 93a76680-b164-4678-945f-17f6ce2a9b2a
+      apim-request-id: 35b89c01-ca88-4e19-84b8-580df9386482
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Mon, 18 May 2020 15:13:19 GMT
+      date: Tue, 19 May 2020 15:32:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 version: 1

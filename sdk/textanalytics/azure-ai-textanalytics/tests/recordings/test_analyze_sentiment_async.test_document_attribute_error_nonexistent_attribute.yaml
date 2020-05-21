@@ -12,22 +12,22 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/sentiment?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: d4c7d8a4-dff7-4520-abd6-a72fed6c5b87
+      apim-request-id: 1b6d924c-8d1f-439b-9b4e-d8590fc3863f
       content-type: application/json; charset=utf-8
-      date: Mon, 18 May 2020 15:13:13 GMT
+      date: Tue, 19 May 2020 15:32:31 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '2'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/sentiment?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

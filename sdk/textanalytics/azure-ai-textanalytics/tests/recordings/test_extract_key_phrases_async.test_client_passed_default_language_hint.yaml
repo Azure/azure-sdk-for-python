@@ -15,25 +15,25 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"],"warnings":[]},{"id":"2","keyPhrases":["I
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: ef135164-e723-4cf2-a9da-99d4fe95558c
+      apim-request-id: 3874f02c-f25e-4358-ae05-431e05fe4b0c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:20 GMT
+      date: Tue, 19 May 2020 15:32:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -50,24 +50,24 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 4f99abb9-157b-4596-8a34-cb620b4663a6
+      apim-request-id: 35bb91bb-052f-40e7-b288-edd7ba69dfd4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:20 GMT
+      date: Tue, 19 May 2020 15:32:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -84,23 +84,23 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"],"warnings":[]},{"id":"2","keyPhrases":["I
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 310e8f7d-68de-444d-9e32-26c0403e3ffe
+      apim-request-id: f05d270b-e7d4-4f17-9a39-faa92fd7d7b7
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 18 May 2020 15:13:20 GMT
+      date: Tue, 19 May 2020 15:32:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/keyPhrases?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 version: 1

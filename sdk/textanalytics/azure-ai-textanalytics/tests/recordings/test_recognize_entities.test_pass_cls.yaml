@@ -17,19 +17,19 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"text":"cls","category":"Skill","offset":13,"length":3,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 4ed5fed8-86aa-4c88-987d-7ad37a864653
+      - 9b8ffe94-e826-4ff5-b0d6-859829c6a04e
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Mon, 18 May 2020 15:13:22 GMT
+      - Tue, 19 May 2020 15:32:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '315'
+      - '82'
     status:
       code: 200
       message: OK

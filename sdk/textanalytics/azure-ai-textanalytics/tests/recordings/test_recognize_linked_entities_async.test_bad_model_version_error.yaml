@@ -13,21 +13,21 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
         model version. Possible values are: latest,2020-02-01"}}}'
     headers:
-      apim-request-id: d6df87ea-2ae6-4044-bd24-16ca43118a92
+      apim-request-id: a0dc7747-ab95-4b28-8e23-2ee8737cfc12
       content-type: application/json; charset=utf-8
-      date: Mon, 18 May 2020 15:20:43 GMT
+      date: Tue, 19 May 2020 15:32:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?model-version=bad&showStats=false
 version: 1

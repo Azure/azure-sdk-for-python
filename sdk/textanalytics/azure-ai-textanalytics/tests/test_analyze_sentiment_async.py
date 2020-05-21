@@ -475,9 +475,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.xfail
     async def test_bad_model_version_error(self, client):
-        # marking as xfail since the bad model version change hasn't appeared for sentiment endpoint yet
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:

@@ -13,7 +13,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -21,15 +21,15 @@ interactions:
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: ae9b12bb-88a5-42a9-a994-e4f36fa7a8ff
+      apim-request-id: 9915df1d-95f6-467c-9365-875d63d1854d
       content-type: application/json; charset=utf-8
-      date: Mon, 18 May 2020 15:13:18 GMT
+      date: Tue, 19 May 2020 15:32:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '1'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 version: 1

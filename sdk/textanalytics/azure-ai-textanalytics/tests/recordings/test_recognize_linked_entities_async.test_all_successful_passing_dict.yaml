@@ -14,7 +14,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","statistics":{"charactersCount":50,"transactionsCount":1},"entities":[{"name":"Bill
@@ -27,16 +27,16 @@ interactions:
         Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"confidenceScore":0.9}],"language":"es","id":"Paul
         Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.38}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 3be1e309-b785-46ff-b613-d87554b23237
+      apim-request-id: 7b88065d-79f8-4055-8690-0a4ff1724b95
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
-      date: Mon, 18 May 2020 15:13:24 GMT
+      date: Tue, 19 May 2020 15:32:39 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '22'
     status:
       code: 200
       message: OK
-    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/linking?showStats=true
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=true
 version: 1

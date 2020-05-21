@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I did not like the hotel we stayed
+      at.", "language": "english"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '101'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?model-version=bad&showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
+        model version. Possible values are: latest,2019-10-01,2020-04-01"}}}'
+    headers:
+      apim-request-id: 03cc8819-e818-4ce8-92ba-dfbff2fa1771
+      content-type: application/json; charset=utf-8
+      date: Tue, 19 May 2020 15:32:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?model-version=bad&showStats=false
+version: 1
