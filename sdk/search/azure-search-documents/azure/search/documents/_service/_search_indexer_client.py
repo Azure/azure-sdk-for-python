@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundErr
 
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import SearchIndexerSkillset
-from ._utils import get_access_conditions
+from ._utils import get_access_conditions, normalize_endpoint
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
@@ -35,7 +35,7 @@ class SearchIndexerClient(HeadersMixin):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
-        self._endpoint = endpoint  # type: str
+        self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs

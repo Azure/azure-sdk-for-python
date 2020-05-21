@@ -15,6 +15,7 @@ from .._utils import (
     listize_flags_for_index,
     listize_synonyms,
     get_access_conditions,
+    normalize_endpoint,
 )
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
@@ -39,7 +40,7 @@ class SearchIndexClient(HeadersMixin):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
-        self._endpoint = endpoint  # type: str
+        self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs

@@ -27,7 +27,6 @@ from azure.search.documents import(
     SearchIndex,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
-    SearchServiceClient,
     ScoringProfile,
     SearchIndexerSkillset,
     DataSourceCredentials,
@@ -38,9 +37,7 @@ from azure.search.documents import(
     SimpleField,
     edm
 )
-from azure.search.documents.aio import SearchServiceClient
-from azure.search.documents._service.aio._search_index_client import SearchIndexClient
-from azure.search.documents._service.aio._search_indexer_client import SearchIndexerClient
+from azure.search.documents.aio import SearchIndexClient, SearchIndexerClient
 from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
