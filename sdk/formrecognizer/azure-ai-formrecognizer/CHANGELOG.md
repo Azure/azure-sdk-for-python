@@ -16,7 +16,9 @@
 - `USReceiptType` is renamed to `ReceiptType`
 - `use_training_labels` is now a required positional param in the `begin_training` APIs.
 - `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively.
-For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
+- For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
+- `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the
+`CustomForm` models.
 
 **New features**
 

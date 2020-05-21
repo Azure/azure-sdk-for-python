@@ -34,8 +34,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             use_training_labels=False)
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -56,8 +56,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await client.train_model(container_sas_url, use_training_labels=False)
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -117,8 +117,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await client.train_model(training_files_url=container_sas_url, use_training_labels=True)
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -139,8 +139,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await client.train_model(container_sas_url, use_training_labels=True)
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
