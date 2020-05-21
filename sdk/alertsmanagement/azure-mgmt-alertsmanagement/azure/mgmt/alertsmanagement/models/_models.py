@@ -372,7 +372,9 @@ class AlertModificationItem(Model):
     """Alert modification item.
 
     :param modification_event: Reason for the modification. Possible values
-     include: 'AlertCreated', 'StateChange', 'MonitorConditionChange'
+     include: 'AlertCreated', 'StateChange', 'MonitorConditionChange',
+     'SeverityChange', 'ActionRuleTriggered', 'ActionRuleSuppressed',
+     'ActionsTriggered', 'ActionsSuppressed', 'ActionsFailed'
     :type modification_event: str or
      ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
     :param old_value: Old value
@@ -1306,7 +1308,7 @@ class Scope(Model):
     resources from the scope subscription as well.
 
     :param scope_type: type of target scope. Possible values include:
-     'ResourceGroup', 'Resource'
+     'ResourceGroup', 'Resource', 'Subscription'
     :type scope_type: str or ~azure.mgmt.alertsmanagement.models.ScopeType
     :param values: list of ARM IDs of the given scope type which will be the
      target of the given action rule.
