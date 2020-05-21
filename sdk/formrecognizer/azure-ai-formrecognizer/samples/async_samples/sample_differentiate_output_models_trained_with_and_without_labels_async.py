@@ -41,18 +41,20 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
     async def recognize_custom_forms(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         async with FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
-            with open("sample_forms/forms/Form_1.jpg", "rb") as f:
+            with open(path_to_sample_forms, "rb") as f:
                 stream = f.read()
             forms_with_labeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_with_labels_id, stream=stream
+                model_id=self.model_trained_with_labels_id, form=stream
             )
             forms_with_unlabeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_without_labels_id, stream=stream
+                model_id=self.model_trained_without_labels_id, form=stream
             )
 
             # With a form recognized by a model trained with labels, this 'name' key will be its

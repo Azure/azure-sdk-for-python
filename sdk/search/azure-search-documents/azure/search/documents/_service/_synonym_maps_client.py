@@ -16,7 +16,6 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import Skill
     from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
@@ -130,18 +129,15 @@ class SearchSynonymMapsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            synonym_map,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = synonym_map.name
         except AttributeError:
             name = synonym_map
         self._client.synonym_maps.delete(
-            synonym_map_name=name,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            synonym_map_name=name, error_map=error_map, **kwargs
         )
 
     @distributed_trace
@@ -190,9 +186,9 @@ class SearchSynonymMapsClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            synonym_map,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = synonym_map.name
             if synonyms:
@@ -204,7 +200,6 @@ class SearchSynonymMapsClient(HeadersMixin):
         result = self._client.synonym_maps.create_or_update(
             synonym_map_name=name,
             synonym_map=synonym_map,
-            access_condition=access_condition,
             error_map=error_map,
             **kwargs
         )

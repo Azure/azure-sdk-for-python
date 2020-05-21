@@ -15,7 +15,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import Indexer, IndexerExecutionInfo
+    from ._generated.models import SearchIndexer, SearchIndexerStatus
     from typing import Any, Dict, Optional, Sequence
     from azure.core.credentials import AzureKeyCredential
 
@@ -57,13 +57,13 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def create_indexer(self, indexer, **kwargs):
-        # type: (Indexer, **Any) -> Indexer
-        """Creates a new Indexers.
+        # type: (SearchIndexer, **Any) -> SearchIndexer
+        """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~~azure.search.documents.Indexer
-        :return: The created Indexer
-        :rtype: ~azure.search.documents.Indexer
+        :type indexer: ~~azure.search.documents.SearchIndexer
+        :return: The created SearchIndexer
+        :rtype: ~azure.search.documents.SearchIndexer
 
         .. admonition:: Example:
 
@@ -72,7 +72,7 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END create_indexer]
                 :language: python
                 :dedent: 4
-                :caption: Create an Indexer
+                :caption: Create a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexers.create(indexer, **kwargs)
@@ -80,42 +80,37 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_indexer(self, indexer, name=None, **kwargs):
-        # type: (Indexer, Optional[str], **Any) -> Indexer
+        # type: (SearchIndexer, Optional[str], **Any) -> SearchIndexer
         """Creates a new indexer or updates a indexer if it already exists.
 
         :param name: The name of the indexer to create or update.
         :type name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~azure.search.documents.Indexer
-        :return: The created Indexer
-        :rtype: ~azure.search.documents.Indexer
+        :type indexer: ~azure.search.documents.SearchIndexer
+        :return: The created IndexSearchIndexerer
+        :rtype: ~azure.search.documents.SearchIndexer
         """
-        error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
-        )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        error_map, access_condition = get_access_conditions(
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
         if not name:
             name = indexer.name
         result = self._client.indexers.create_or_update(
-            indexer_name=name,
-            indexer=indexer,
-            access_condition=access_condition,
-            error_map=error_map,
-            **kwargs
+            indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
         )
         return result
 
     @distributed_trace
     def get_indexer(self, name, **kwargs):
-        # type: (str, **Any) -> Indexer
+        # type: (str, **Any) -> SearchIndexer
         """Retrieves a indexer definition.
 
         :param name: The name of the indexer to retrieve.
         :type name: str
-        :return: The Indexer that is fetched.
-        :rtype: ~azure.search.documents.Indexer
+        :return: The SearchIndexer that is fetched.
+        :rtype: ~azure.search.documents.SearchIndexer
 
         .. admonition:: Example:
 
@@ -124,7 +119,7 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END get_indexer]
                 :language: python
                 :dedent: 4
-                :caption: Retrieve an Indexer
+                :caption: Retrieve a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexers.get(name, **kwargs)
@@ -132,10 +127,10 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def get_indexers(self, **kwargs):
-        # type: (**Any) -> Sequence[Indexer]
+        # type: (**Any) -> Sequence[SearchIndexer]
         """Lists all indexers available for a search service.
 
-        :return: List of all the Indexers.
+        :return: List of all the SearchIndexers.
         :rtype: `list[dict]`
 
         .. admonition:: Example:
@@ -145,7 +140,7 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END list_indexer]
                 :language: python
                 :dedent: 4
-                :caption: List all the Indexers
+                :caption: List all the SearchIndexers
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexers.list(**kwargs)
@@ -153,13 +148,13 @@ class SearchIndexersClient(HeadersMixin):
 
     @distributed_trace
     def delete_indexer(self, indexer, **kwargs):
-        # type: (Union[str, Indexer], **Any) -> None
-        """Deletes an indexer. To use access conditions, the Indexer model
+        # type: (Union[str, SearchIndexer], **Any) -> None
+        """Deletes an indexer. To use access conditions, the SearchIndexer model
         must be provided instead of the name. It is enough to provide
         the name of the indexer to delete unconditionally.
 
         :param indexer: The indexer to delete.
-        :type indexer: str or ~azure.search.documents.Indexer
+        :type indexer: str or ~azure.search.documents.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -173,18 +168,18 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END delete_indexer]
                 :language: python
                 :dedent: 4
-                :caption: Delete an Indexer
+                :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            indexer,
-            kwargs.pop('match_condition', MatchConditions.Unconditionally)
+            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         try:
             name = indexer.name
         except AttributeError:
             name = indexer
-        self._client.indexers.delete(name, access_condition=access_condition, error_map=error_map, **kwargs)
+        self._client.indexers.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def run_indexer(self, name, **kwargs):
@@ -204,7 +199,7 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END run_indexer]
                 :language: python
                 :dedent: 4
-                :caption: Run an Indexer
+                :caption: Run a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         self._client.indexers.run(name, **kwargs)
@@ -227,21 +222,21 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END reset_indexer]
                 :language: python
                 :dedent: 4
-                :caption: Reset an Indexer's change tracking state
+                :caption: Reset a SearchIndexer's change tracking state
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name, **kwargs):
-        # type: (str, **Any) -> IndexerExecutionInfo
+        # type: (str, **Any) -> SearchIndexerStatus
         """Get the status of the indexer.
 
         :param name: The name of the indexer to fetch the status.
         :type name: str
 
-        :return: IndexerExecutionInfo
-        :rtype: IndexerExecutionInfo
+        :return: SearchIndexerStatus
+        :rtype: SearchIndexerStatus
 
         .. admonition:: Example:
 
@@ -250,7 +245,7 @@ class SearchIndexersClient(HeadersMixin):
                 :end-before: [END get_indexer_status]
                 :language: python
                 :dedent: 4
-                :caption: Get an Indexer's status
+                :caption: Get a SearchIndexer's status
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return self._client.indexers.get_status(name, **kwargs)

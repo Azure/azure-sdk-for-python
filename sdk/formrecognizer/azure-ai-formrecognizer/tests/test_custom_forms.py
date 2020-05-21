@@ -25,20 +25,20 @@ class TestCustomForms(FormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+            poller = client.begin_recognize_custom_forms(model_id="xx", form=myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=b"xx", content_type="image/jpeg")
+            poller = client.begin_recognize_custom_forms(model_id="xx", form=b"xx", content_type="image/jpeg")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
+            poller = client.begin_recognize_custom_forms(model_id="xx", form="https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -50,7 +50,7 @@ class TestCustomForms(FormRecognizerTest):
         with self.assertRaises(ValueError):
             poller = client.begin_recognize_custom_forms(
                 model_id="xxx",
-                stream=myfile,
+                form=myfile,
             )
 
     @GlobalFormRecognizerAccountPreparer()
@@ -89,7 +89,6 @@ class TestCustomForms(FormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.label_data.text)
@@ -116,7 +115,6 @@ class TestCustomForms(FormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.label_data.text)
@@ -143,7 +141,6 @@ class TestCustomForms(FormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -174,7 +171,6 @@ class TestCustomForms(FormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.value_data.bounding_box)
 

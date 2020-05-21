@@ -31,8 +31,7 @@ class RecognizeReceiptsSampleAsync(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     async def recognize_receipts(self):
-        # the sample forms are located in this file's parent's parent's files.
-        path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/receipt/contoso-allinone.jpg")
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         # [START recognize_receipts_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -41,7 +40,7 @@ class RecognizeReceiptsSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                receipts = await form_recognizer_client.recognize_receipts(stream=f.read())
+                receipts = await form_recognizer_client.recognize_receipts(receipt=f.read())
 
             for idx, receipt in enumerate(receipts):
                 print("--------Recognizing receipt #{}--------".format(idx))

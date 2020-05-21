@@ -18,7 +18,36 @@ from devtools_testutils import (
     ResourceGroupPreparer,
 )
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
-from azure_devtools.scenario_tests import ReplayableTest
+from azure_devtools.scenario_tests import (
+    RecordingProcessor,
+    ReplayableTest
+)
+from azure_devtools.scenario_tests.utilities import is_text_payload
+
+
+class AccessTokenReplacer(RecordingProcessor):
+    """Replace the access token in a request/response body."""
+
+    def __init__(self, replacement='redacted'):
+        self._replacement = replacement
+
+    def process_request(self, request):
+        import re
+        if is_text_payload(request) and request.body:
+            body = str(request.body)
+            body = re.sub(r'"accessToken": "([0-9a-f-]{36})"', r'"accessToken": 00000000-0000-0000-0000-000000000000', body)
+            request.body = body
+        return request
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            body['accessToken'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 
 class FakeTokenCredential(object):
@@ -37,6 +66,8 @@ class FormRecognizerTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
+        self.recording_processors.append(AccessTokenReplacer())
+
         # URL samples
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
@@ -155,7 +186,6 @@ class FormRecognizerTest(AzureTestCase):
         b = form_fields
         for label, a in actual_fields.items():
             self.assertEqual(label, b[label].name)
-            self.assertEqual(a.page, b[label].page_number)
             self.assertEqual(a.confidence, b[label].confidence if a.confidence is not None else 1.0)
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
@@ -221,7 +251,6 @@ class FormRecognizerTest(AzureTestCase):
         self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
         self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
-        self.assertEqual(receipt_field.page_number, actual_field.page)
         if read_results:
             self.assertTextContentTransformCorrect(
                 receipt_field.value_data.text_content,
@@ -350,7 +379,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
             )
 
         return {
-            'location': 'westus2',
+            'location': 'westus',
             'resource_group': rg,
         }
 
@@ -365,10 +394,10 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
         return {
-            'location': 'westus2',
+            'location': 'westus',
             'resource_group': FormRecognizerTest._RESOURCE_GROUP,
             'form_recognizer_account': form_recognizer_account,
-            'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY,
+            'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY
         }
 
 
@@ -382,6 +411,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
         self.multipage_test = kwargs.get("multipage", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
+        self.copy = kwargs.get("copy", False)
 
     def _load_settings(self):
         try:
@@ -414,6 +444,30 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
             return {"client": client,
                     "container_sas_url": container_sas_url,
                     "blob_sas_url": blob_sas_url}
+        if self.copy:
+            if self.is_live:
+                resource_group = kwargs.get("resource_group")
+                subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+                form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
+
+                resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
+                              "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
+                resource_location = "westus"
+                self.test_class_instance.scrubber.register_name_pair(
+                    resource_id,
+                    "resource_id"
+                )
+            else:
+                resource_location = "westus"
+                resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
+
+            return {
+                "client": client,
+                "container_sas_url": container_sas_url,
+                "location": resource_location,
+                "resource_id": resource_id
+            }
+
         else:
             return {"client": client,
                     "container_sas_url": container_sas_url}
@@ -460,7 +514,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="westus")
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
@@ -476,6 +530,7 @@ def form_recognizer_account():
                 test_case, **rg_kwargs)
             FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
             FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
+            FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
             yield
         finally:
             form_recognizer_preparer.remove_resource(

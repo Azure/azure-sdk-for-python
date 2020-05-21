@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents import Index, RegexFlags, PatternAnalyzer, PatternTokenizer
+from azure.search.documents import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
 from azure.search.documents._service._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
@@ -23,7 +23,7 @@ def test_listize_flags_for_index():
     )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = Index(
+    index = SearchIndex(
         name="test",
         fields=None,
         analyzers=analyzers,
@@ -50,7 +50,7 @@ def test_listize_multi_flags_for_index():
     )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = Index(
+    index = SearchIndex(
         name="test",
         fields=None,
         analyzers=analyzers,
@@ -79,7 +79,7 @@ def test_listize_flags_for_index_enum():
     )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = Index(
+    index = SearchIndex(
         name="test",
         fields=None,
         analyzers=analyzers,
@@ -106,7 +106,7 @@ def test_delistize_flags_for_index():
     )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = Index(
+    index = SearchIndex(
         name="test",
         fields=None,
         analyzers=analyzers,
@@ -133,7 +133,7 @@ def test_delistize_multi_flags_for_index():
     )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = Index(
+    index = SearchIndex(
         name="test",
         fields=None,
         analyzers=analyzers,
