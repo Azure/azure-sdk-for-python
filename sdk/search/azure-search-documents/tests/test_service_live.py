@@ -36,6 +36,7 @@ from azure.search.documents import(
     edm
 )
 from azure.search.documents._service._search_index_client import SearchIndexClient
+from azure.search.documents._service._search_indexer_client import SearchIndexerClient
 from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
@@ -372,7 +373,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
 
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
@@ -390,7 +391,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -403,7 +404,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -419,7 +420,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -437,7 +438,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -451,7 +452,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -467,7 +468,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_inplace(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -483,7 +484,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -513,7 +514,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_datasource(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         result = client.create_datasource(data_source)
         assert result.name == "sample-datasource"
@@ -522,7 +523,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         result = client.create_datasource(data_source)
         assert len(client.get_datasources()) == 1
@@ -532,7 +533,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_datasource(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         result = client.get_datasource("sample-datasource")
@@ -541,7 +542,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_list_datasource(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source1 = self._create_datasource()
         data_source2 = self._create_datasource(name="another-sample")
         created1 = client.create_datasource(data_source1)
@@ -553,7 +554,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         assert len(client.get_datasources()) == 1
@@ -567,7 +568,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         etag = created.e_tag
@@ -585,7 +586,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         etag = created.e_tag
@@ -603,7 +604,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource_string_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         etag = created.e_tag
@@ -631,8 +632,8 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
             credentials=credentials,
             container=container
         )
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
-        ds = client.get_datasources_client().create_datasource(data_source)
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
+        ds = client.create_datasource(data_source)
 
         index_name = id_name
         fields = [
@@ -649,7 +650,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert result.name == "sample-indexer"
@@ -659,7 +660,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
@@ -669,7 +670,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_reset_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
@@ -679,7 +680,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_run_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
@@ -690,7 +691,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         created = client.create_indexer(indexer)
         result = client.get_indexer("sample-indexer")
@@ -699,7 +700,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_list_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer1 = self._prepare_indexer(endpoint, api_key)
         indexer2 = self._prepare_indexer(endpoint, api_key, name="another-indexer", ds_name="another-datasource", id_name="another-index")
         created1 = client.create_indexer(indexer1)
@@ -711,7 +712,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         created = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
@@ -725,7 +726,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_indexer_status(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         status = client.get_indexer_status("sample-indexer")
@@ -734,7 +735,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         created = client.create_indexer(indexer)
         etag = created.e_tag
@@ -750,7 +751,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
+        client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         etag = result.e_tag
