@@ -24,18 +24,12 @@
 #
 # --------------------------------------------------------------------------
 
-from ._internal import (
-    IndexDocumentsBatch,
-    SearchClient,
-    SearchItemPaged,
+from ._internal.aio import (
+    SearchIndexClient,
+    SearchIndexerClient,
 )
-from ._version import VERSION
-
-__version__ = VERSION
-
 
 __all__ = (
-    "IndexDocumentsBatch",
-    "SearchClient",
-    "SearchItemPaged",
+    "SearchIndexClient",
+    "SearchIndexerClient",
 )

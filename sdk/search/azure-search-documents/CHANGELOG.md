@@ -5,6 +5,7 @@
 **Breaking Changes**
 
 - Reorganized `SearchServiceClient` into `SearchIndexClient` & `SearchIndexerClient`    #11507
+- Split searchindex.json and searchservice.json models and operations into separate namespaces #11508
 
 ## 1.0.0b3 (2020-05-04)
 

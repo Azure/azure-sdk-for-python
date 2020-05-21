@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents import ComplexField, SearchableField, SimpleField, edm
+from azure.search.documents.indexes.models import ComplexField, SearchableField, SimpleField, edm
 
 def test_edm_contents():
     assert edm.String == "Edm.String"
