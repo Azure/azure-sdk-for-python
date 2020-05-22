@@ -15,7 +15,7 @@ from enum import Enum
 class KeySource(str, Enum):
 
     microsoft_batch = "Microsoft.Batch"  #: Batch creates and manages the encryption keys used to protect the account data.
-    microsoft_key_vault = "Microsoft.KeyVault"  #: The encryption keys used to protect the account data are stored in an external key vault.
+    microsoft_key_vault = "Microsoft.KeyVault"  #: The encryption keys used to protect the account data are stored in an external key vault. If this is set then the Batch Account identity must be set to `SystemAssigned` and a valid Key Identifier must also be supplied under the keyVaultProperties.
 
 
 class PoolAllocationMode(str, Enum):
@@ -28,6 +28,12 @@ class PublicNetworkAccessType(str, Enum):
 
     enabled = "Enabled"  #: Enables connectivity to Azure Batch through public DNS.
     disabled = "Disabled"  #: Disables public connectivity and enables private connectivity to Azure Batch Service through private endpoint resource.
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"  #: Batch account has a system assigned identity with it.
+    none = "None"  #: Batch account has no identity associated with it. Setting `None` in update account will remove existing identities.
 
 
 class ProvisioningState(str, Enum):
@@ -186,16 +192,6 @@ class CertificateVisibility(str, Enum):
     start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
     task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
-
-
-class ContainerType(str, Enum):
-
-    docker_compatible = "DockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
-
-
-class ResourceType(str, Enum):
-
-    batch_accounts = "Microsoft.Batch/batchAccounts"  #: The Batch account resource type.
 
 
 class NameAvailabilityReason(str, Enum):
