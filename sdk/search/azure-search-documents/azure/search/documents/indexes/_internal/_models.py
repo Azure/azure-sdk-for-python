@@ -91,7 +91,8 @@ class PatternTokenizer(LexicalTokenizer):
 
 
 class SearchResourceEncryptionKey(msrest.serialization.Model):
-    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
+    used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
     All required parameters must be populated in order to send to Azure.
 
