@@ -163,6 +163,7 @@ def test_poller(client):
     assert poller.done()
     assert result == "Treated: "+initial_response
     assert poller.status() == "succeeded"
+    assert poller.polling_method() is method
     done_cb.assert_called_once_with(method)
 
     # Test with a basic Model
@@ -196,12 +197,12 @@ def test_poller(client):
         continuation_token=cont_token,
         client=client,
         initial_response=initial_response,
-        deserialization_callback=Model,
+        deserialization_callback=deserialization_callback,
         polling_method=method
     )
-    result = poller.result()
+    result = new_poller.result()
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
+    assert new_poller.status() == "succeeded"
 
 
 def test_broken_poller(client):

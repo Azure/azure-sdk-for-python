@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+import asyncio
 import time
 try:
     from unittest import mock
@@ -89,6 +90,7 @@ class PollingTwoSteps(AsyncPollingMethod):
         """Empty run, no polling.
         """
         self._finished = True
+        await asyncio.sleep(self._sleep) # Give me time to add callbacks!
 
     def status(self):
         """Return the current status as a string.
@@ -129,12 +131,18 @@ async def test_poller(client):
 
     method = AsyncNoPolling()
 
-    poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    raw_poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    poller = asyncio.ensure_future(raw_poller.result())
 
-    result = await poller.result()
+    done_cb = mock.MagicMock()
+    poller.add_done_callback(done_cb)
+
+    result = await poller
     assert poller.done()
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
+    assert raw_poller.status() == "succeeded"
+    assert raw_poller.polling_method() is method
+    done_cb.assert_called_once_with(poller)
 
     # Test with a basic Model
     poller = AsyncLROPoller(client, initial_response, Model, method)
@@ -142,26 +150,34 @@ async def test_poller(client):
 
     # Test poller that method do a run
     method = PollingTwoSteps(sleep=1)
-    poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    raw_poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    poller = asyncio.ensure_future(raw_poller.result())
 
-    result = await poller.result()
+    done_cb = mock.MagicMock()
+    done_cb2 = mock.MagicMock()
+    poller.add_done_callback(done_cb)
+    poller.remove_done_callback(done_cb2)
+
+    result = await poller
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
+    assert raw_poller.status() == "succeeded"
+    done_cb.assert_called_once_with(poller)
+    done_cb2.assert_not_called()
 
     # Test continuation token
-    cont_token = poller.continuation_token()
+    cont_token = raw_poller.continuation_token()
 
     method = PollingTwoSteps(sleep=1)
     new_poller = AsyncLROPoller.from_continuation_token(
         continuation_token=cont_token,
         client=client,
         initial_response=initial_response,
-        deserialization_callback=Model,
+        deserialization_callback=deserialization_callback,
         polling_method=method
     )
-    result = await poller.result()
+    result = await new_poller.result()
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
+    assert new_poller.status() == "succeeded"
 
 
 @pytest.mark.asyncio

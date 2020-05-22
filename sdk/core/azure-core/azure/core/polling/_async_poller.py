@@ -128,6 +128,11 @@ class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
 
         self._polling_method.initialize(client, initial_response, deserialization_callback)
 
+    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method
+
     def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 

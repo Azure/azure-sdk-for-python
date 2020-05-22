@@ -196,6 +196,12 @@ class LROPoller(Generic[PollingReturnType]):
                 call(self._polling_method)
             callbacks, self._callbacks = self._callbacks, []
 
+    def polling_method(self):
+        # type: () -> PollingMethod[PollingReturnType]
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method
+
     def continuation_token(self):
         # type: () -> str
         """Return a continuation token that allows to restart the poller later.
