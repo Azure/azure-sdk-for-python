@@ -6,6 +6,7 @@ from azure.servicebus._control_client2._generated import models
 from azure.servicebus._control_client2._generated.models import CreateEntityBody, CreateEntityBodyContent, \
     QueueDescription
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
+from . import constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -49,7 +50,7 @@ class ServiceBusManagementClient:
         # type: (str) -> QueueDescription
         sas_token = self._credential.get_token(self._endpoint + "/" + queue_name)
         custom_headers = {"Authorization": sas_token.token.decode("utf-8")}
-        et = self._impl.queue.get(queue_name, headers=custom_headers)
+        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers=custom_headers)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueDescription.deserialize(qc_ele)

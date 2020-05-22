@@ -13,7 +13,7 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
 from ._configuration import ServiceBusManagementClientConfiguration
 from .operations import QueueOperations

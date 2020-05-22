@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
+    "version": "2017_04",
     "title": "ServiceBusManagementClient",
     "description": "Azure Service Bus client for managing Queues, Topics, and Subscriptions.",
     "x-ms-code-generation-settings": {
@@ -39,6 +39,23 @@
       "required": true,
       "type": "string",
       "x-ms-skip-url-encoding": true,
+      "x-ms-parameter-location": "client"
+    },
+    "Enrich": {
+      "name": "enrich",
+      "in": "query",
+      "description": "A query parameter that sets enrich to true or false.",
+      "type": "boolean",
+      "default": false,
+      "x-ms-parameter-location": "method"
+    },
+    "ApiVersion": {
+      "name": "api-version",
+      "in": "query",
+      "type": "string",
+      "default": "2017-04",
+      "description": "Specifies the version of the REST protocol used for processing the request. This is required when using shared key authorization.",
+      "minLength": 1,
       "x-ms-parameter-location": "client"
     }
   },
@@ -443,6 +460,14 @@
         "description": "Get the details about the Queue with the given queueName.",
         "tags": [
           "Queue Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Enrich"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
         ],
         "responses": {
           "200": {

@@ -1,0 +1,7 @@
+ATOM_NAMESPACE = "http://www.w3.org/2005/Atom"
+SERVICE_BUS_NAMESPACE = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+XML_SCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
+XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
+SERIALIZATION_NAMESPACE = "http://schemas.microsoft.com/2003/10/Serialization/"
+ATOM_CONTENT_TYPE = "application/atom+xml"
+API_VERSION = "2017-04"

@@ -15,7 +15,7 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
 
 class ServiceBusManagementClientConfiguration(Configuration):
