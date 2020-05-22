@@ -1,7 +1,5 @@
-import sys
 import inspect
 from typing import TYPE_CHECKING, Dict, Any, Union
-from xml.etree import ElementTree
 
 from azure.servicebus import ServiceBusSharedKeyCredential
 from azure.servicebus._control_client2._generated import models
@@ -13,14 +11,14 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 # workaround for issue https://github.com/Azure/azure-sdk-for-python/issues/11568
-# clsmembers = inspect.getmembers(models, inspect.isclass)
-# for _, clazz in clsmembers:
-#     if hasattr(clazz, "_xml_map"):
-#         ns = clazz._xml_map['ns']
-#         if hasattr(clazz, "_attribute_map"):
-#             for mps in clazz._attribute_map.values():
-#                 if 'xml' not in mps:
-#                     mps['xml'] = {'ns': ns}
+clsmembers = inspect.getmembers(models, inspect.isclass)
+for _, clazz in clsmembers:
+    if hasattr(clazz, "_xml_map"):
+        ns = clazz._xml_map['ns']
+        if hasattr(clazz, "_attribute_map"):
+            for mps in clazz._attribute_map.values():
+                if 'xml' not in mps:
+                    mps['xml'] = {'ns': ns}
 # end of workaround
 
 

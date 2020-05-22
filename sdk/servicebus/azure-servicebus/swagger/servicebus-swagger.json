@@ -285,7 +285,10 @@
           }
         },
         "CountDetails": {
-          "$ref": "#/definitions/CountDetails"
+          "$ref": "#/definitions/CountDetails",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "CreatedAt": {
           "description": "The exact time the queue was created.",
@@ -344,7 +347,10 @@
         },
         "IsAnonymousAccessible": {
           "description": "A value indicating if the resource can be accessed without authorization.",
-          "type": "boolean"
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "LockDuration": {
           "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
@@ -396,7 +402,10 @@
           }
         },
         "Status": {
-          "$ref": "#/definitions/EntityStatus"
+          "$ref": "#/definitions/EntityStatus",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the queue supports ordering.",

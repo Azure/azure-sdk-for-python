@@ -194,7 +194,7 @@ class QueueDescription(msrest.serialization.Model):
         'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool'},
+        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'lock_duration': {'key': 'LockDuration', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'float', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
