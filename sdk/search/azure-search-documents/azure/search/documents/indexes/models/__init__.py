@@ -42,7 +42,6 @@ from .._internal._generated.models import (
     ConditionalSkill,
     CorsOptions,
     CustomAnalyzer,
-    DataSourceCredentials,
     DictionaryDecompounderTokenFilter,
     DistanceScoringFunction,
     DistanceScoringParameters,
@@ -87,7 +86,6 @@ from .._internal._generated.models import (
     SearchIndex,
     SearchIndexer,
     SearchIndexerDataContainer,
-    SearchIndexerDataSource,
     SearchIndexerSkillset,
     ScoringFunction,
     ScoringProfile,
@@ -116,6 +114,7 @@ from .._internal._generated.models import (
 from .._internal._models import (
     PatternAnalyzer,
     PatternTokenizer,
+    SearchIndexerDataSource,
     SearchResourceEncryptionKey,
     SynonymMap,
 )
@@ -134,7 +133,6 @@ __all__ = (
     "ConditionalSkill",
     "CorsOptions",
     "CustomAnalyzer",
-    "DataSourceCredentials",
     "DictionaryDecompounderTokenFilter",
     "DistanceScoringFunction",
     "DistanceScoringParameters",
