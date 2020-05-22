@@ -256,13 +256,13 @@ class SearchIndexerClient(HeadersMixin):
 
     @distributed_trace
     def create_datasource(self, data_source, **kwargs):
-        # type: (SearchIndexerDataSource, **Any) -> SearchIndexerDataSource
+        # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
         """Creates a new datasource.
 
         :param data_source: The definition of the datasource to create.
-        :type data_source: ~search.models.SearchIndexerDataSource
-        :return: The created SearchIndexerDataSource
-        :rtype: ~search.models.SearchIndexerDataSource
+        :type data_source: ~search.models.SearchIndexerDataSourceConnection
+        :return: The created SearchIndexerDataSourceConnection
+        :rtype: ~search.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
@@ -280,16 +280,16 @@ class SearchIndexerClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (SearchIndexerDataSource, Optional[str], **Any) -> SearchIndexerDataSource
+        # type: (SearchIndexerDataSourceConnection, Optional[str], **Any) -> SearchIndexerDataSourceConnection
         """Creates a new datasource or updates a datasource if it already exists.
         :param name: The name of the datasource to create or update.
         :type name: str
         :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~search.models.SearchIndexerDataSource
+        :type data_source: ~search.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :return: The created SearchIndexerDataSource
-        :rtype: ~search.models.SearchIndexerDataSource
+        :return: The created SearchIndexerDataSourceConnection
+        :rtype: ~search.models.SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -309,13 +309,13 @@ class SearchIndexerClient(HeadersMixin):
 
     @distributed_trace
     def get_datasource(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerDataSource
+        # type: (str, **Any) -> SearchIndexerDataSourceConnection
         """Retrieves a datasource definition.
 
         :param name: The name of the datasource to retrieve.
         :type name: str
-        :return: The SearchIndexerDataSource that is fetched.
-        :rtype: ~search.models.SearchIndexerDataSource
+        :return: The SearchIndexerDataSourceConnection that is fetched.
+        :rtype: ~search.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
@@ -324,7 +324,7 @@ class SearchIndexerClient(HeadersMixin):
                 :end-before: [END get_data_source]
                 :language: python
                 :dedent: 4
-                :caption: Retrieve a SearchIndexerDataSource
+                :caption: Retrieve a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
@@ -332,11 +332,11 @@ class SearchIndexerClient(HeadersMixin):
 
     @distributed_trace
     def get_datasources(self, **kwargs):
-        # type: (**Any) -> Sequence[SearchIndexerDataSource]
+        # type: (**Any) -> Sequence[SearchIndexerDataSourceConnection]
         """Lists all datasources available for a search service.
 
         :return: List of all the data sources.
-        :rtype: `list[~search.models.SearchIndexerDataSource]`
+        :rtype: `list[~search.models.SearchIndexerDataSourceConnection]`
 
         .. admonition:: Example:
 
@@ -345,7 +345,7 @@ class SearchIndexerClient(HeadersMixin):
                 :end-before: [END list_data_source]
                 :language: python
                 :dedent: 4
-                :caption: List all the SearchIndexerDataSources
+                :caption: List all the SearchIndexerDataSourceConnections
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
@@ -353,13 +353,13 @@ class SearchIndexerClient(HeadersMixin):
 
     @distributed_trace
     def delete_datasource(self, data_source, **kwargs):
-        # type: (Union[str, SearchIndexerDataSource], **Any) -> None
+        # type: (Union[str, SearchIndexerDataSourceConnection], **Any) -> None
         """Deletes a datasource. To use access conditions, the Datasource model must be
         provided instead of the name. It is enough to provide the name of the datasource
         to delete unconditionally
 
         :param data_source: The datasource to delete.
-        :type data_source: str or ~search.models.SearchIndexerDataSource
+        :type data_source: str or ~search.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -372,7 +372,7 @@ class SearchIndexerClient(HeadersMixin):
                 :end-before: [END delete_data_source]
                 :language: python
                 :dedent: 4
-                :caption: Delete a SearchIndexerDataSource
+                :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(

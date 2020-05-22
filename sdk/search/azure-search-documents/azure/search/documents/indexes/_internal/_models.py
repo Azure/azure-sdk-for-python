@@ -195,25 +195,25 @@ class SynonymMap(msrest.serialization.Model):
         self.e_tag = kwargs.get('e_tag', None)
 
 
-class SearchIndexerDataSource(msrest.serialization.Model):
-    """Represents a datasource definition, which can be used to configure an indexer.
+class SearchIndexerDataSourceConnection(msrest.serialization.Model):
+    """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the datasource.
+    :param name: Required. The name of the datasource connection.
     :type name: str
-    :param description: The description of the datasource.
+    :param description: The description of the datasource connection.
     :type description: str
-    :param type: Required. The type of the datasource. Possible values include: "azuresql",
+    :param type: Required. The type of the datasource connection. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql".
     :type type: str or ~azure.search.documents.models.SearchIndexerDataSourceType
-    :param connection_string: The connection string for the datasource.
+    :param connection_string: The connection string for the datasource connection.
     :type connection_string: str
-    :param container: Required. The data container for the datasource.
+    :param container: Required. The data container for the datasource connection.
     :type container: ~azure.search.documents.models.SearchIndexerDataContainer
-    :param data_change_detection_policy: The data change detection policy for the datasource.
+    :param data_change_detection_policy: The data change detection policy for the datasource connection.
     :type data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
-    :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
+    :param data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
     :type data_deletion_detection_policy:
      ~azure.search.documents.models.DataDeletionDetectionPolicy
     :param e_tag: The ETag of the data source.
@@ -242,7 +242,7 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(SearchIndexerDataSource, self).__init__(**kwargs)
+        super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.description = kwargs.get('description', None)
         self.type = kwargs['type']

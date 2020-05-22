@@ -114,7 +114,7 @@ from .._internal._generated.models import (
 from .._internal._models import (
     PatternAnalyzer,
     PatternTokenizer,
-    SearchIndexerDataSource,
+    SearchIndexerDataSourceConnection,
     SearchResourceEncryptionKey,
     SynonymMap,
 )

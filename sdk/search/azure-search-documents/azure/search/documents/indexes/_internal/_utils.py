@@ -27,6 +27,7 @@ from ._models import (
     PatternAnalyzer,
     PatternTokenizer,
     SynonymMap,
+    SearchIndexerDataSourceConnection,
     SearchResourceEncryptionKey,
 )
 
@@ -200,7 +201,7 @@ def unpack_search_resource_encryption_key(search_resource_encryption_key):
     )
 
 def pack_search_indexer_data_source(search_indexer_data_source):
-    # type: (SearchIndexerDataSource) -> _SearchIndexerDataSource
+    # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
     if not search_indexer_data_source:
         return None
     credentials = DataSourceCredentials(
@@ -218,14 +219,14 @@ def pack_search_indexer_data_source(search_indexer_data_source):
     )
 
 def unpack_search_indexer_data_source(search_indexer_data_source):
-    # type: (_SearchIndexerDataSource) -> SearchIndexerDataSource
+    # type: (_SearchIndexerDataSource) -> SearchIndexerDataSourceConnection
     if not search_indexer_data_source:
         return None
-    return _SearchIndexerDataSource(
+    return SearchIndexerDataSourceConnection(
         name=search_indexer_data_source.name,
         description=search_indexer_data_source.description,
         type=search_indexer_data_source.type,
-        credentials=search_indexer_data_source.credentials.connection_string,
+        connection_string=search_indexer_data_source.credentials.connection_string,
         container=search_indexer_data_source.container,
         data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
         data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,

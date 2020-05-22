@@ -29,7 +29,7 @@ from azure.search.documents.indexes.models import(
     OutputFieldMappingEntry,
     ScoringProfile,
     SearchIndexerSkillset,
-    SearchIndexerDataSource,
+    SearchIndexerDataSourceConnection,
     SearchIndexerDataContainer,
     SearchIndexer,
     SynonymMap,
@@ -500,7 +500,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
     def _create_datasource(self, name="sample-datasource"):
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=name,
             type="azureblob",
             connection_string=CONNECTION_STRING,
@@ -605,7 +605,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
         self.scrubber.register_name_pair(con_str, 'connection_string')
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=ds_name,
             type="azureblob",
             connection_string=con_str,
