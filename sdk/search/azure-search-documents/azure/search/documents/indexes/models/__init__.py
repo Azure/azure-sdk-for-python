@@ -103,7 +103,6 @@ from .._internal._generated.models import (
     StopAnalyzer,
     StopwordsTokenFilter,
     Suggester,
-    SynonymMap,
     SynonymTokenFilter,
     TagScoringFunction,
     TagScoringParameters,
