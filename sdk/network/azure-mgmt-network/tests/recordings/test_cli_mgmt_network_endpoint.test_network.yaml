@@ -20,10 +20,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"12600025-9351-42f1-8d5e-3f85d202ea06\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"202c372a-1926-483e-82c8-f63d45621e0c\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"e971c193-9b8c-47cb-bb1e-a6af7e81e650\",\r\n    \"\
+        \   \"resourceGuid\": \"cc14bdc3-db35-4eaa-b9de-9c9949c831f1\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -32,7 +32,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a818eed8-0e45-4dd7-9d16-d376639dcd63?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9c823703-968d-4ef7-b504-ec97148eddbb?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -40,7 +40,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:33:57 GMT
+      - Fri, 22 May 2020 09:35:43 GMT
       expires:
       - '-1'
       pragma:
@@ -53,9 +53,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 12040bda-5770-4f12-a04c-55bfd075e1a1
+      - 10e159d7-0282-438a-937c-dd72b3729ded
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -71,97 +71,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a818eed8-0e45-4dd7-9d16-d376639dcd63?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 18:34:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - ab8a9a0b-64ea-4794-986b-e4e0d24b3c1f
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a818eed8-0e45-4dd7-9d16-d376639dcd63?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 18:34:13 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 0a85afe8-4cf3-4ba9-812f-c89026f263f1
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a818eed8-0e45-4dd7-9d16-d376639dcd63?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9c823703-968d-4ef7-b504-ec97148eddbb?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -173,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:24 GMT
+      - Fri, 22 May 2020 09:35:47 GMT
       expires:
       - '-1'
       pragma:
@@ -190,7 +100,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1363e545-fbf0-4eaa-b899-bd23d0043146
+      - a2891429-a9e1-48d4-9676-62bc3ff41752
     status:
       code: 200
       message: OK
@@ -210,10 +120,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"774692b2-7c99-48d4-ac4e-f9a5fccce2ec\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"948fb1d7-675e-4b61-83ef-7f7a609d2b0f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"e971c193-9b8c-47cb-bb1e-a6af7e81e650\",\r\n    \"\
+        \    \"resourceGuid\": \"cc14bdc3-db35-4eaa-b9de-9c9949c831f1\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -226,9 +136,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:24 GMT
+      - Fri, 22 May 2020 09:35:48 GMT
       etag:
-      - W/"774692b2-7c99-48d4-ac4e-f9a5fccce2ec"
+      - W/"948fb1d7-675e-4b61-83ef-7f7a609d2b0f"
       expires:
       - '-1'
       pragma:
@@ -245,7 +155,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b9f7046d-ab7d-49c6-81a7-b7dff67ab9c2
+      - a3b36049-954d-45ab-8082-9b0324796730
     status:
       code: 200
       message: OK
@@ -270,14 +180,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnet1\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
-        ,\r\n  \"etag\": \"W/\\\"78b14653-a05b-4b6d-8ef4-91379e5fc672\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"c32520ce-cd8b-40d0-923c-b49bbaf3e19c\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ba330d3-c307-4dd4-814d-d9687ddf7806?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7262e919-63b8-45dc-82f4-ca947d74855b?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -285,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:25 GMT
+      - Fri, 22 May 2020 09:35:48 GMT
       expires:
       - '-1'
       pragma:
@@ -298,9 +208,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 87fd8bb0-332e-4174-9295-6008cd5d5e34
+      - 3b5f28f0-dd52-41b5-a8e5-ada68f2caab4
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -316,7 +226,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ba330d3-c307-4dd4-814d-d9687ddf7806?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7262e919-63b8-45dc-82f4-ca947d74855b?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -328,7 +238,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:28 GMT
+      - Fri, 22 May 2020 09:35:52 GMT
       expires:
       - '-1'
       pragma:
@@ -345,7 +255,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8140ad55-730e-41ec-82d5-db45fc96a7b5
+      - dc5facad-74d6-4850-a8c3-d612e9fe8648
     status:
       code: 200
       message: OK
@@ -365,7 +275,7 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnet1\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
-        ,\r\n  \"etag\": \"W/\\\"330f16e1-ece8-46fb-b8d2-4d516d73071f\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"37b5c967-87a4-4045-917d-1d93cf15ad79\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\r\
@@ -378,9 +288,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:30 GMT
+      - Fri, 22 May 2020 09:35:52 GMT
       etag:
-      - W/"330f16e1-ece8-46fb-b8d2-4d516d73071f"
+      - W/"37b5c967-87a4-4045-917d-1d93cf15ad79"
       expires:
       - '-1'
       pragma:
@@ -397,7 +307,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - dc153297-4f57-4382-8039-c91f1dde0c1c
+      - 30cad73b-144b-4bfb-b502-daa109749c2f
     status:
       code: 200
       message: OK
@@ -422,14 +332,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnet2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet2\"\
-        ,\r\n  \"etag\": \"W/\\\"10e516d1-fa27-4895-8f25-fc9d2e7c3ef7\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"cc373413-5341-4bd5-93ad-162ee0af86bc\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.1.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/8b4d2316-aa9f-44a1-a271-16313ef6b19e?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9b08baad-1bb3-44bc-bfe9-a193e9329f48?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -437,7 +347,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:36 GMT
+      - Fri, 22 May 2020 09:35:53 GMT
       expires:
       - '-1'
       pragma:
@@ -450,9 +360,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 16edfa68-21d0-40f1-8dbd-ff230fcc5c6a
+      - 8933e936-15c7-4164-aed1-669168a9a97c
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -468,7 +378,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/8b4d2316-aa9f-44a1-a271-16313ef6b19e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9b08baad-1bb3-44bc-bfe9-a193e9329f48?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -480,7 +390,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:39 GMT
+      - Fri, 22 May 2020 09:35:56 GMT
       expires:
       - '-1'
       pragma:
@@ -497,7 +407,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1cca263d-18ef-4a70-ba98-b55471097695
+      - e9344fff-97a5-4ec8-be12-3964b2f6c61e
     status:
       code: 200
       message: OK
@@ -517,7 +427,7 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnet2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet2\"\
-        ,\r\n  \"etag\": \"W/\\\"fbffaf46-ba8e-4187-b7ac-7c776ccb40c8\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"a58e9879-da15-4775-9c6f-acc9122fafb2\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.1.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -530,9 +440,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:39 GMT
+      - Fri, 22 May 2020 09:35:56 GMT
       etag:
-      - W/"fbffaf46-ba8e-4187-b7ac-7c776ccb40c8"
+      - W/"a58e9879-da15-4775-9c6f-acc9122fafb2"
       expires:
       - '-1'
       pragma:
@@ -549,7 +459,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - db1db633-4a0b-4369-972b-dde218fefef4
+      - 4ac0f528-d27f-417f-8fac-b3e392add5fb
     status:
       code: 200
       message: OK
@@ -574,13 +484,13 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"loadbalancer\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer\"\
-        ,\r\n  \"etag\": \"W/\\\"a54fb2bb-4011-4732-a50e-812a2edc9cba\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"8c38f20f-8bf6-42fb-a5ca-bf9815b60617\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/loadBalancers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"ce97bec3-fb8e-4b22-8f98-e631eb4f642c\",\r\n    \"\
+        \   \"resourceGuid\": \"ceb6d241-f564-4c88-ac16-0cdb8653e214\",\r\n    \"\
         frontendIPConfigurations\": [\r\n      {\r\n        \"name\": \"myIPConfiguration\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"a54fb2bb-4011-4732-a50e-812a2edc9cba\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"8c38f20f-8bf6-42fb-a5ca-bf9815b60617\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/loadBalancers/frontendIPConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -594,7 +504,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b91188cd-69d7-43b9-ae48-e368d03b7994?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9ad8bc21-7429-4218-b662-61a4c57fb670?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -602,7 +512,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:42 GMT
+      - Fri, 22 May 2020 09:36:01 GMT
       expires:
       - '-1'
       pragma:
@@ -615,9 +525,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 767b1b12-e3af-43a5-9cfe-a2222c43ba1a
+      - 1b02e5c1-31bd-4520-bf82-ab481c389f5a
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1190'
+      - '1196'
     status:
       code: 201
       message: Created
@@ -633,7 +543,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b91188cd-69d7-43b9-ae48-e368d03b7994?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9ad8bc21-7429-4218-b662-61a4c57fb670?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -645,7 +555,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:53 GMT
+      - Fri, 22 May 2020 09:36:11 GMT
       expires:
       - '-1'
       pragma:
@@ -662,7 +572,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 64c61f78-ba39-43b2-b255-da0da8980b7a
+      - fb5e5f5f-98da-41ed-9a50-236e64d9d0c7
     status:
       code: 200
       message: OK
@@ -682,13 +592,13 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"loadbalancer\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer\"\
-        ,\r\n  \"etag\": \"W/\\\"22d7258d-29b4-4dcd-8ea8-02f713786734\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"abb33009-1191-4c4a-a89f-38dc21067077\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/loadBalancers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"ce97bec3-fb8e-4b22-8f98-e631eb4f642c\",\r\n    \"\
+        \    \"resourceGuid\": \"ceb6d241-f564-4c88-ac16-0cdb8653e214\",\r\n    \"\
         frontendIPConfigurations\": [\r\n      {\r\n        \"name\": \"myIPConfiguration\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"22d7258d-29b4-4dcd-8ea8-02f713786734\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"abb33009-1191-4c4a-a89f-38dc21067077\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/loadBalancers/frontendIPConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -706,9 +616,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:53 GMT
+      - Fri, 22 May 2020 09:36:11 GMT
       etag:
-      - W/"22d7258d-29b4-4dcd-8ea8-02f713786734"
+      - W/"abb33009-1191-4c4a-a89f-38dc21067077"
       expires:
       - '-1'
       pragma:
@@ -725,7 +635,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 029d1ca8-dcac-42ce-9665-6d831fc1e1b2
+      - bbb4acba-f826-479f-98ed-038d30fae3f2
     status:
       code: 200
       message: OK
@@ -755,12 +665,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
-        ,\r\n  \"etag\": \"W/\\\"f69fcc97-abd6-4bf2-8f9e-7df506a662c5\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"31fb9d1c-4528-47b3-9a63-1ab8f78c7bc9\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateLinkServices\",\r\n  \"location\":\
         \ \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"c12a570e-d099-459c-ad6f-c7eb6c98ec01\",\r\n \
+        ,\r\n    \"resourceGuid\": \"1cce34b7-7d38-4a24-b3d8-5627aab78a3e\",\r\n \
         \   \"fqdns\": [\r\n      \"fqdn1\",\r\n      \"fqdn2\",\r\n      \"fqdn3\"\
-        \r\n    ],\r\n    \"alias\": \"myservice.e92a8422-9d25-46c9-ad27-ec214c197095.eastus.azure.privatelinkservice\"\
+        \r\n    ],\r\n    \"alias\": \"myservice.b22148c2-9b31-4b25-9eaf-9816afc344c7.eastus.azure.privatelinkservice\"\
         ,\r\n    \"visibility\": {\r\n      \"subscriptions\": [\r\n        \"00000000-0000-0000-0000-000000000000\"\
         \r\n      ]\r\n    },\r\n    \"autoApproval\": {\r\n      \"subscriptions\"\
         : [\r\n        \"00000000-0000-0000-0000-000000000000\"\r\n      ]\r\n   \
@@ -768,20 +678,20 @@ interactions:
         : [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
         \r\n      }\r\n    ],\r\n    \"ipConfigurations\": [\r\n      {\r\n      \
         \  \"name\": \"myIPConfiguration\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/ipConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"f69fcc97-abd6-4bf2-8f9e-7df506a662c5\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"31fb9d1c-4528-47b3-9a63-1ab8f78c7bc9\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateLinkServices/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
         subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"privateEndpointConnections\"\
-        : [],\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.9b1a8035-d895-4bce-a404-43b85f6bc12a\"\
+        : [],\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.56b5047e-8f19-4e07-86be-e1236f9d84f7\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/373944d3-76f0-49fc-9793-b65f7594c25a?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0bfba129-b21c-42eb-aa71-59fe0019d485?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -789,7 +699,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:34:56 GMT
+      - Fri, 22 May 2020 09:36:17 GMT
       expires:
       - '-1'
       pragma:
@@ -802,9 +712,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a0d73a4c-8161-4d78-bf95-55097bd0b7a0
+      - 4d985f0e-1b39-48a6-ac3b-99e90f4a0c4e
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1189'
+      - '1195'
     status:
       code: 201
       message: Created
@@ -820,7 +730,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/373944d3-76f0-49fc-9793-b65f7594c25a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0bfba129-b21c-42eb-aa71-59fe0019d485?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -832,7 +742,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:07 GMT
+      - Fri, 22 May 2020 09:36:27 GMT
       expires:
       - '-1'
       pragma:
@@ -849,7 +759,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 261a6582-d0b2-4f35-85d0-e7b5c1c38b64
+      - f54e6be1-52a8-4b0f-a2f3-5b5b5fef5c22
     status:
       code: 200
       message: OK
@@ -869,12 +779,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
-        ,\r\n  \"etag\": \"W/\\\"a88e08fc-ba97-4ded-8f27-b3e6e76c0dd4\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"aec71826-5b98-4056-9fd2-ee8cf4033653\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateLinkServices\",\r\n  \"location\":\
         \ \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"c12a570e-d099-459c-ad6f-c7eb6c98ec01\",\r\n \
+        ,\r\n    \"resourceGuid\": \"1cce34b7-7d38-4a24-b3d8-5627aab78a3e\",\r\n \
         \   \"fqdns\": [\r\n      \"fqdn1\",\r\n      \"fqdn2\",\r\n      \"fqdn3\"\
-        \r\n    ],\r\n    \"alias\": \"myservice.e92a8422-9d25-46c9-ad27-ec214c197095.eastus.azure.privatelinkservice\"\
+        \r\n    ],\r\n    \"alias\": \"myservice.b22148c2-9b31-4b25-9eaf-9816afc344c7.eastus.azure.privatelinkservice\"\
         ,\r\n    \"visibility\": {\r\n      \"subscriptions\": [\r\n        \"00000000-0000-0000-0000-000000000000\"\
         \r\n      ]\r\n    },\r\n    \"autoApproval\": {\r\n      \"subscriptions\"\
         : [\r\n        \"00000000-0000-0000-0000-000000000000\"\r\n      ]\r\n   \
@@ -882,14 +792,14 @@ interactions:
         : [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
         \r\n      }\r\n    ],\r\n    \"ipConfigurations\": [\r\n      {\r\n      \
         \  \"name\": \"myIPConfiguration\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/ipConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"a88e08fc-ba97-4ded-8f27-b3e6e76c0dd4\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"aec71826-5b98-4056-9fd2-ee8cf4033653\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateLinkServices/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
         subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"privateEndpointConnections\"\
-        : [],\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.9b1a8035-d895-4bce-a404-43b85f6bc12a\"\
+        : [],\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.56b5047e-8f19-4e07-86be-e1236f9d84f7\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
@@ -899,9 +809,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:07 GMT
+      - Fri, 22 May 2020 09:36:27 GMT
       etag:
-      - W/"a88e08fc-ba97-4ded-8f27-b3e6e76c0dd4"
+      - W/"aec71826-5b98-4056-9fd2-ee8cf4033653"
       expires:
       - '-1'
       pragma:
@@ -918,7 +828,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 4954a2dd-9f1c-46fe-9838-f0891e701262
+      - 08b2029e-6b8b-48ea-8509-934cbe408106
     status:
       code: 200
       message: OK
@@ -944,13 +854,13 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
-        ,\r\n  \"etag\": \"W/\\\"c975f6ac-25cc-4a06-9d59-fde39c7a4eef\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"974b8895-6aa0-4bde-8b3c-74fbd1f3e7f3\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
         eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"109555b7-cc28-47f0-b139-f55c21a2bf4d\",\r\n \
+        ,\r\n    \"resourceGuid\": \"dc1b21c4-8d6b-4efb-8fa1-b8699e442061\",\r\n \
         \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
         myService\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myService\"\
-        ,\r\n        \"etag\": \"W/\\\"c975f6ac-25cc-4a06-9d59-fde39c7a4eef\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"974b8895-6aa0-4bde-8b3c-74fbd1f3e7f3\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
         ,\r\n          \"privateLinkServiceConnectionState\": {\r\n            \"\
@@ -960,13 +870,13 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
         \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet2\"\
         \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.d45d2c33-031f-4189-96e3-8ac9e9334a12\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.3d48d9a4-ee18-4ee7-a871-24e4fa0dbf4e\"\
         \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e1ff3e2-2645-47fc-8cae-508116febf85?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/67961039-7912-4b8f-8c19-5c4097fb8a02?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -974,7 +884,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:10 GMT
+      - Fri, 22 May 2020 09:36:32 GMT
       expires:
       - '-1'
       pragma:
@@ -987,9 +897,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8c11364e-9ecc-4ee6-87c4-e1378b557672
+      - 43a23bf7-873c-4d5c-81ff-c234255f3e33
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -1005,7 +915,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e1ff3e2-2645-47fc-8cae-508116febf85?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/67961039-7912-4b8f-8c19-5c4097fb8a02?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1017,7 +927,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:21 GMT
+      - Fri, 22 May 2020 09:36:42 GMT
       expires:
       - '-1'
       pragma:
@@ -1034,7 +944,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 55d290ed-32cf-4010-90fa-483685be59df
+      - 1d0eac56-419c-4e56-af1a-7edc0cf02824
     status:
       code: 200
       message: OK
@@ -1050,52 +960,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e1ff3e2-2645-47fc-8cae-508116febf85?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 18:35:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 6355565f-7fcb-4b1d-bc72-6f511b9307be
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e1ff3e2-2645-47fc-8cae-508116febf85?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/67961039-7912-4b8f-8c19-5c4097fb8a02?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1107,7 +972,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:42 GMT
+      - Fri, 22 May 2020 09:36:52 GMT
       expires:
       - '-1'
       pragma:
@@ -1124,7 +989,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 24891af5-26c0-41d5-a085-9c2aa27e7576
+      - bd481b4f-1eb0-4b8c-b330-992e1a7b6b1f
     status:
       code: 200
       message: OK
@@ -1144,13 +1009,13 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
-        ,\r\n  \"etag\": \"W/\\\"5923c1ed-f79b-48e2-bd81-1a5cb2eaf7ec\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"a5a45059-387c-4d48-8ccc-893c3b4b9805\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
         eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"109555b7-cc28-47f0-b139-f55c21a2bf4d\",\r\n \
+        ,\r\n    \"resourceGuid\": \"dc1b21c4-8d6b-4efb-8fa1-b8699e442061\",\r\n \
         \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
         myService\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myService\"\
-        ,\r\n        \"etag\": \"W/\\\"5923c1ed-f79b-48e2-bd81-1a5cb2eaf7ec\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"a5a45059-387c-4d48-8ccc-893c3b4b9805\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
         ,\r\n          \"privateLinkServiceConnectionState\": {\r\n            \"\
@@ -1160,7 +1025,7 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
         \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet2\"\
         \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.d45d2c33-031f-4189-96e3-8ac9e9334a12\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.3d48d9a4-ee18-4ee7-a871-24e4fa0dbf4e\"\
         \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1170,9 +1035,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:43 GMT
+      - Fri, 22 May 2020 09:36:53 GMT
       etag:
-      - W/"5923c1ed-f79b-48e2-bd81-1a5cb2eaf7ec"
+      - W/"a5a45059-387c-4d48-8ccc-893c3b4b9805"
       expires:
       - '-1'
       pragma:
@@ -1189,7 +1054,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c8f4c45f-e856-4d73-8344-29f59a2697dd
+      - f30bb1ae-6ac9-4732-bf90-69673be929cd
     status:
       code: 200
       message: OK
@@ -1209,12 +1074,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
-        ,\r\n  \"etag\": \"W/\\\"b9922bf7-30ae-43e3-bc56-47ce9cb1458d\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"523a5fd8-507e-4dbe-9a8c-cf65e41e80d3\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateLinkServices\",\r\n  \"location\":\
         \ \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"c12a570e-d099-459c-ad6f-c7eb6c98ec01\",\r\n \
+        ,\r\n    \"resourceGuid\": \"1cce34b7-7d38-4a24-b3d8-5627aab78a3e\",\r\n \
         \   \"fqdns\": [\r\n      \"fqdn1\",\r\n      \"fqdn2\",\r\n      \"fqdn3\"\
-        \r\n    ],\r\n    \"alias\": \"myservice.e92a8422-9d25-46c9-ad27-ec214c197095.eastus.azure.privatelinkservice\"\
+        \r\n    ],\r\n    \"alias\": \"myservice.b22148c2-9b31-4b25-9eaf-9816afc344c7.eastus.azure.privatelinkservice\"\
         ,\r\n    \"visibility\": {\r\n      \"subscriptions\": [\r\n        \"00000000-0000-0000-0000-000000000000\"\
         \r\n      ]\r\n    },\r\n    \"autoApproval\": {\r\n      \"subscriptions\"\
         : [\r\n        \"00000000-0000-0000-0000-000000000000\"\r\n      ]\r\n   \
@@ -1222,25 +1087,25 @@ interactions:
         : [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
         \r\n      }\r\n    ],\r\n    \"ipConfigurations\": [\r\n      {\r\n      \
         \  \"name\": \"myIPConfiguration\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/ipConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"b9922bf7-30ae-43e3-bc56-47ce9cb1458d\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"523a5fd8-507e-4dbe-9a8c-cf65e41e80d3\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateLinkServices/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
         subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"privateEndpointConnections\"\
-        : [\r\n      {\r\n        \"name\": \"myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n        \"etag\": \"W/\\\"b9922bf7-30ae-43e3-bc56-47ce9cb1458d\\\"\"\
+        : [\r\n      {\r\n        \"name\": \"myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n        \"etag\": \"W/\\\"523a5fd8-507e-4dbe-9a8c-cf65e41e80d3\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateEndpoint\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
         \r\n          },\r\n          \"privateLinkServiceConnectionState\": {\r\n\
         \            \"status\": \"Approved\",\r\n            \"description\": \"\
         Approved\",\r\n            \"actionsRequired\": \"None\"\r\n          },\r\
-        \n          \"linkIdentifier\": \"536964069\"\r\n        },\r\n        \"\
+        \n          \"linkIdentifier\": \"536881108\"\r\n        },\r\n        \"\
         type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
         \r\n      }\r\n    ],\r\n    \"networkInterfaces\": [\r\n      {\r\n     \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.9b1a8035-d895-4bce-a404-43b85f6bc12a\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.56b5047e-8f19-4e07-86be-e1236f9d84f7\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1250,9 +1115,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:43 GMT
+      - Fri, 22 May 2020 09:36:54 GMT
       etag:
-      - W/"b9922bf7-30ae-43e3-bc56-47ce9cb1458d"
+      - W/"523a5fd8-507e-4dbe-9a8c-cf65e41e80d3"
       expires:
       - '-1'
       pragma:
@@ -1269,12 +1134,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b65e47d3-c514-4fab-ba1c-18f84304720e
+      - 1aa3259a-6218-4a2c-9159-f72d4c87b276
     status:
       code: 200
       message: OK
 - request:
-    body: '{"name": "myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d", "properties":
+    body: '{"name": "myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061", "properties":
       {"privateLinkServiceConnectionState": {"status": "Approved", "description":
       "approved it for some reason."}}}'
     headers:
@@ -1291,22 +1156,22 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n  \"etag\": \"W/\\\"0277c9f9-f788-4ac1-a75f-bdd9a8261ccb\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n  \"etag\": \"W/\\\"888dfe34-fe18-4f21-a91b-784e7b0db46b\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         privateEndpoint\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
         \r\n    },\r\n    \"privateLinkServiceConnectionState\": {\r\n      \"status\"\
         : \"Approved\",\r\n      \"description\": \"approved it for some reason.\"\
         ,\r\n      \"actionsRequired\": \"\"\r\n    },\r\n    \"linkIdentifier\":\
-        \ \"536964069\"\r\n  },\r\n  \"type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
+        \ \"536881108\"\r\n  },\r\n  \"type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
         \r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9b88aa9b-d6bf-4c7f-897b-7d0a24af8d77?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/df9879b8-8191-4255-a350-4ef99116f82e?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -1314,7 +1179,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:44 GMT
+      - Fri, 22 May 2020 09:36:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1331,9 +1196,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f149485c-7ac0-45ac-a9f1-7a8e0417005a
+      - d65b400a-b48c-4239-9645-8661b8b4c6cd
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1187'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -1362,7 +1227,7 @@ interactions:
       string: '{}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationStatuses/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTswMzM1NTc3OS1lZjBkLTRjY2ItYjMxMC00MzZjNjZkMThjZjQ=?api-version=2018-09-01
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationStatuses/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTtlNzM3ZDQ3OC0yMGRjLTQ4OGQtOTU3NS04OTdhNWNiYjFmYmQ=?api-version=2018-09-01
       cache-control:
       - private
       content-length:
@@ -1370,9 +1235,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:35:49 GMT
+      - Fri, 22 May 2020 09:37:02 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationResults/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTswMzM1NTc3OS1lZjBkLTRjY2ItYjMxMC00MzZjNjZkMThjZjQ=?api-version=2018-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationResults/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTtlNzM3ZDQ3OC0yMGRjLTQ4OGQtOTU3NS04OTdhNWNiYjFmYmQ=?api-version=2018-09-01
       server:
       - Microsoft-IIS/10.0
       strict-transport-security:
@@ -1401,7 +1266,7 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-privatedns/0.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationStatuses/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTswMzM1NTc3OS1lZjBkLTRjY2ItYjMxMC00MzZjNjZkMThjZjQ=?api-version=2018-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsOperationStatuses/RnJvbnRFbmRBc3luY09wZXJhdGlvbjtVcHNlcnRQcml2YXRlRG5zWm9uZTtlNzM3ZDQ3OC0yMGRjLTQ4OGQtOTU3NS04OTdhNWNiYjFmYmQ=?api-version=2018-09-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1413,7 +1278,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:20 GMT
+      - Fri, 22 May 2020 09:37:33 GMT
       server:
       - Microsoft-IIS/10.0
       strict-transport-security:
@@ -1449,7 +1314,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsZones/www.zone1.com?api-version=2018-09-01
   response:
     body:
-      string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_cli_mgmt_network_endpoint_test_network89b511ec\/providers\/Microsoft.Network\/privateDnsZones\/www.zone1.com","name":"www.zone1.com","type":"Microsoft.Network\/privateDnsZones","etag":"b0056fe0-d5c6-41b7-86ce-c9d834f8560a","location":"global","properties":{"maxNumberOfRecordSets":25000,"maxNumberOfVirtualNetworkLinks":1000,"maxNumberOfVirtualNetworkLinksWithRegistration":100,"numberOfRecordSets":1,"numberOfVirtualNetworkLinks":0,"numberOfVirtualNetworkLinksWithRegistration":0,"provisioningState":"Succeeded"}}'
+      string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_cli_mgmt_network_endpoint_test_network89b511ec\/providers\/Microsoft.Network\/privateDnsZones\/www.zone1.com","name":"www.zone1.com","type":"Microsoft.Network\/privateDnsZones","etag":"6a97ca46-6bb8-4c4d-a595-dc4b4488764d","location":"global","properties":{"maxNumberOfRecordSets":25000,"maxNumberOfVirtualNetworkLinks":1000,"maxNumberOfVirtualNetworkLinksWithRegistration":100,"numberOfRecordSets":1,"numberOfVirtualNetworkLinks":0,"numberOfVirtualNetworkLinksWithRegistration":0,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - private
@@ -1458,9 +1323,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:20 GMT
+      - Fri, 22 May 2020 09:37:33 GMT
       etag:
-      - b0056fe0-d5c6-41b7-86ce-c9d834f8560a
+      - 6a97ca46-6bb8-4c4d-a595-dc4b4488764d
       server:
       - Microsoft-IIS/10.0
       strict-transport-security:
@@ -1501,12 +1366,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateDnsZoneGroup\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup\"\
-        ,\r\n  \"etag\": \"W/\\\"c2cbb9fa-da6b-4b25-bc12-bb9c93d62f57\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"5ba5fb78-8772-4cf3-8e8c-b49f15016e71\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups\",\r\
         \n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         privateDnsZoneConfigs\": [\r\n      {\r\n        \"name\": \"zone1\",\r\n\
         \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup/privateDnsZoneConfigs/zone1\"\
-        ,\r\n        \"etag\": \"W/\\\"c2cbb9fa-da6b-4b25-bc12-bb9c93d62f57\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"5ba5fb78-8772-4cf3-8e8c-b49f15016e71\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups/privateDnsZoneConfigs\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"privateDnsZoneId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsZones/www.zone1.com\"\
@@ -1514,7 +1379,7 @@ interactions:
         \n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/da89b369-68da-4716-a348-2badeee963da?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/536da374-4ab2-486c-a9b8-72958d870a1f?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -1522,7 +1387,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:22 GMT
+      - Fri, 22 May 2020 09:37:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1535,9 +1400,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1e007610-180f-47d0-88bb-1780a4d13836
+      - 6f4aab8c-0493-42db-b712-1059d99988a3
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1186'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -1553,7 +1418,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/da89b369-68da-4716-a348-2badeee963da?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/536da374-4ab2-486c-a9b8-72958d870a1f?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1565,7 +1430,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:32 GMT
+      - Fri, 22 May 2020 09:37:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1582,7 +1447,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 89268966-9870-40de-96f8-3162a0d0c6ea
+      - 34bad4bf-dfb0-425c-9219-5704a90b41f8
     status:
       code: 200
       message: OK
@@ -1602,12 +1467,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateDnsZoneGroup\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup\"\
-        ,\r\n  \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups\",\r\
         \n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n   \
         \ \"privateDnsZoneConfigs\": [\r\n      {\r\n        \"name\": \"zone1\",\r\
         \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup/privateDnsZoneConfigs/zone1\"\
-        ,\r\n        \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups/privateDnsZoneConfigs\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateDnsZoneId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsZones/www.zone1.com\"\
@@ -1621,9 +1486,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:32 GMT
+      - Fri, 22 May 2020 09:37:46 GMT
       etag:
-      - W/"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3"
+      - W/"ca147b0d-9a48-4c39-96e9-e0410104dd1f"
       expires:
       - '-1'
       pragma:
@@ -1640,7 +1505,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9d003cc9-61e7-4c99-a7b3-1a1bcf626577
+      - 66d55c31-5446-4f7c-975c-790fb6cbd59f
     status:
       code: 200
       message: OK
@@ -1660,12 +1525,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateDnsZoneGroup\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup\"\
-        ,\r\n  \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups\",\r\
         \n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n   \
         \ \"privateDnsZoneConfigs\": [\r\n      {\r\n        \"name\": \"zone1\",\r\
         \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateDnsZoneGroups/myPrivateDnsZoneGroup/privateDnsZoneConfigs/zone1\"\
-        ,\r\n        \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateEndpoints/privateDnsZoneGroups/privateDnsZoneConfigs\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateDnsZoneId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateDnsZones/www.zone1.com\"\
@@ -1679,9 +1544,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:33 GMT
+      - Fri, 22 May 2020 09:37:47 GMT
       etag:
-      - W/"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3"
+      - W/"ca147b0d-9a48-4c39-96e9-e0410104dd1f"
       expires:
       - '-1'
       pragma:
@@ -1698,7 +1563,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 4ef2ed89-9827-48cf-8ea9-e75cc4f7a808
+      - 65177244-7150-4f49-94c4-1b71175bc5b1
     status:
       code: 200
       message: OK
@@ -1714,18 +1579,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n  \"etag\": \"W/\\\"81acb66e-2089-4e25-b132-706397991494\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n  \"etag\": \"W/\\\"01930179-b148-476a-98ef-05c413c848e6\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         privateEndpoint\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
         \r\n    },\r\n    \"privateLinkServiceConnectionState\": {\r\n      \"status\"\
         : \"Approved\",\r\n      \"description\": \"approved it for some reason.\"\
         ,\r\n      \"actionsRequired\": \"\"\r\n    },\r\n    \"linkIdentifier\":\
-        \ \"536964069\"\r\n  },\r\n  \"type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
+        \ \"536881108\"\r\n  },\r\n  \"type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
         \r\n}"
     headers:
       cache-control:
@@ -1735,9 +1600,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:33 GMT
+      - Fri, 22 May 2020 09:37:47 GMT
       etag:
-      - W/"81acb66e-2089-4e25-b132-706397991494"
+      - W/"01930179-b148-476a-98ef-05c413c848e6"
       expires:
       - '-1'
       pragma:
@@ -1754,7 +1619,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6e26b15d-192d-4325-b2e7-e00a78887db6
+      - 4a96937a-9989-44ce-a228-36b980cbbcc7
     status:
       code: 200
       message: OK
@@ -1774,13 +1639,13 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
-        ,\r\n  \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
         eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"109555b7-cc28-47f0-b139-f55c21a2bf4d\",\r\n \
+        ,\r\n    \"resourceGuid\": \"dc1b21c4-8d6b-4efb-8fa1-b8699e442061\",\r\n \
         \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
         myService\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myService\"\
-        ,\r\n        \"etag\": \"W/\\\"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"ca147b0d-9a48-4c39-96e9-e0410104dd1f\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
         ,\r\n          \"privateLinkServiceConnectionState\": {\r\n            \"\
@@ -1790,7 +1655,7 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
         \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet2\"\
         \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.d45d2c33-031f-4189-96e3-8ac9e9334a12\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.3d48d9a4-ee18-4ee7-a871-24e4fa0dbf4e\"\
         \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1800,9 +1665,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:33 GMT
+      - Fri, 22 May 2020 09:37:47 GMT
       etag:
-      - W/"cd6e4f91-4dda-4b83-a3b2-8aa3b47c9ac3"
+      - W/"ca147b0d-9a48-4c39-96e9-e0410104dd1f"
       expires:
       - '-1'
       pragma:
@@ -1819,7 +1684,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 5c4ab9d6-e71f-4cbf-a305-eb8d943e0c4d
+      - e4df5972-63a2-4049-b47c-2b1ac36b2b7c
     status:
       code: 200
       message: OK
@@ -1839,12 +1704,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService\"\
-        ,\r\n  \"etag\": \"W/\\\"81acb66e-2089-4e25-b132-706397991494\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"01930179-b148-476a-98ef-05c413c848e6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateLinkServices\",\r\n  \"location\":\
         \ \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"c12a570e-d099-459c-ad6f-c7eb6c98ec01\",\r\n \
+        ,\r\n    \"resourceGuid\": \"1cce34b7-7d38-4a24-b3d8-5627aab78a3e\",\r\n \
         \   \"fqdns\": [\r\n      \"fqdn1\",\r\n      \"fqdn2\",\r\n      \"fqdn3\"\
-        \r\n    ],\r\n    \"alias\": \"myservice.e92a8422-9d25-46c9-ad27-ec214c197095.eastus.azure.privatelinkservice\"\
+        \r\n    ],\r\n    \"alias\": \"myservice.b22148c2-9b31-4b25-9eaf-9816afc344c7.eastus.azure.privatelinkservice\"\
         ,\r\n    \"visibility\": {\r\n      \"subscriptions\": [\r\n        \"00000000-0000-0000-0000-000000000000\"\
         \r\n      ]\r\n    },\r\n    \"autoApproval\": {\r\n      \"subscriptions\"\
         : [\r\n        \"00000000-0000-0000-0000-000000000000\"\r\n      ]\r\n   \
@@ -1852,25 +1717,25 @@ interactions:
         : [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/loadBalancers/loadbalancer/frontendIPConfigurations/myIPConfiguration\"\
         \r\n      }\r\n    ],\r\n    \"ipConfigurations\": [\r\n      {\r\n      \
         \  \"name\": \"myIPConfiguration\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/ipConfigurations/myIPConfiguration\"\
-        ,\r\n        \"etag\": \"W/\\\"81acb66e-2089-4e25-b132-706397991494\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"01930179-b148-476a-98ef-05c413c848e6\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/privateLinkServices/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
         subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/virtualNetworks/virtualnetwork/subnets/subnet1\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"privateEndpointConnections\"\
-        : [\r\n      {\r\n        \"name\": \"myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d\"\
-        ,\r\n        \"etag\": \"W/\\\"81acb66e-2089-4e25-b132-706397991494\\\"\"\
+        : [\r\n      {\r\n        \"name\": \"myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061\"\
+        ,\r\n        \"etag\": \"W/\\\"01930179-b148-476a-98ef-05c413c848e6\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateEndpoint\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
         \r\n          },\r\n          \"privateLinkServiceConnectionState\": {\r\n\
         \            \"status\": \"Approved\",\r\n            \"description\": \"\
         approved it for some reason.\",\r\n            \"actionsRequired\": \"\"\r\
-        \n          },\r\n          \"linkIdentifier\": \"536964069\"\r\n        },\r\
+        \n          },\r\n          \"linkIdentifier\": \"536881108\"\r\n        },\r\
         \n        \"type\": \"Microsoft.Network/privateLinkServices/privateEndpointConnections\"\
         \r\n      }\r\n    ],\r\n    \"networkInterfaces\": [\r\n      {\r\n     \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.9b1a8035-d895-4bce-a404-43b85f6bc12a\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/networkInterfaces/myService.nic.56b5047e-8f19-4e07-86be-e1236f9d84f7\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1880,9 +1745,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:34 GMT
+      - Fri, 22 May 2020 09:37:48 GMT
       etag:
-      - W/"81acb66e-2089-4e25-b132-706397991494"
+      - W/"01930179-b148-476a-98ef-05c413c848e6"
       expires:
       - '-1'
       pragma:
@@ -1899,10 +1764,61 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 13b17af6-3710-4cf9-a507-742022f7cec6
+      - 94680419-0543-4cbe-b4bb-6f50a1134da8
     status:
       code: 200
       message: OK
+- request:
+    body: '{"privateLinkServiceAlias": "mypls.00000000-0000-0000-0000-000000000000.azure.privatelinkservice"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '98'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/locations/eastus/checkPrivateLinkServiceVisibility?api-version=2020-04-01
+  response:
+    body:
+      string: 'null'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/93d10632-9dba-4dab-9763-ec8705fbd40e?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 May 2020 09:37:48 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/93d10632-9dba-4dab-9763-ec8705fbd40e?api-version=2020-04-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 746f965a-4c48-49ac-8842-55546ee5664e
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
 - request:
     body: null
     headers:
@@ -1923,17 +1839,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4f820fa2-0e61-4914-a300-69bdefd0f6d6?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/11792569-f796-4d84-bfc0-c47f9663067d?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 18:36:34 GMT
+      - Fri, 22 May 2020 09:37:49 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/4f820fa2-0e61-4914-a300-69bdefd0f6d6?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/11792569-f796-4d84-bfc0-c47f9663067d?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -1944,9 +1860,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7d37c720-8ff4-4f98-aed5-75fceca94ba3
+      - 0d8c433b-b638-452f-99c3-27e5b3383515
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -1962,7 +1878,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4f820fa2-0e61-4914-a300-69bdefd0f6d6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/11792569-f796-4d84-bfc0-c47f9663067d?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1974,7 +1890,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:45 GMT
+      - Fri, 22 May 2020 09:37:59 GMT
       expires:
       - '-1'
       pragma:
@@ -1991,7 +1907,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2bfd3cb8-2d07-4508-8d6a-2273cc2f70fa
+      - abb0f712-b449-47f7-8a5b-f2fc760d58ae
     status:
       code: 200
       message: OK
@@ -2009,23 +1925,23 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.109555b7-cc28-47f0-b139-f55c21a2bf4d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_test_network89b511ec/providers/Microsoft.Network/privateLinkServices/myService/privateEndpointConnections/myPrivateEndpoint.dc1b21c4-8d6b-4efb-8fa1-b8699e442061?api-version=2020-04-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e40e3c5a-512e-4775-9deb-732ca79bf310?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/def0468f-f5d7-475b-83c5-9cf6ebba5370?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 18:36:45 GMT
+      - Fri, 22 May 2020 09:37:59 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/e40e3c5a-512e-4775-9deb-732ca79bf310?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/def0468f-f5d7-475b-83c5-9cf6ebba5370?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -2036,9 +1952,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2e91a751-b251-4229-bc89-f5ca8b3a465e
+      - 105ec28d-5bc7-438c-bba6-21b8bb4bebbd
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -2054,7 +1970,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e40e3c5a-512e-4775-9deb-732ca79bf310?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/def0468f-f5d7-475b-83c5-9cf6ebba5370?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -2066,7 +1982,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:36:55 GMT
+      - Fri, 22 May 2020 09:38:10 GMT
       expires:
       - '-1'
       pragma:
@@ -2083,7 +1999,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b4a8b01e-ce2e-4ed6-acfa-895c20c286b9
+      - 7c8dd6a5-f09e-43fc-a660-ffeaa6398df5
     status:
       code: 200
       message: OK
@@ -2109,17 +2025,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/52580c62-b9da-45ec-b227-dbbda5c438ad?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a402c583-2fc8-47d7-9571-7d724a1319c8?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 18:36:56 GMT
+      - Fri, 22 May 2020 09:38:10 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/52580c62-b9da-45ec-b227-dbbda5c438ad?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/a402c583-2fc8-47d7-9571-7d724a1319c8?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -2130,9 +2046,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 96aba92c-2ffd-4e5c-8bb3-52119a1990a0
+      - d4191c63-0890-4bf8-a467-b919c352d9b2
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14997'
     status:
       code: 202
       message: Accepted
@@ -2148,7 +2064,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/52580c62-b9da-45ec-b227-dbbda5c438ad?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a402c583-2fc8-47d7-9571-7d724a1319c8?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2160,7 +2076,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:37:07 GMT
+      - Fri, 22 May 2020 09:38:21 GMT
       expires:
       - '-1'
       pragma:
@@ -2177,7 +2093,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2d9bad18-2ea7-4e15-976d-120a93b5dc71
+      - d7d0d2a1-3547-48ce-9b9b-428b184826b9
     status:
       code: 200
       message: OK
@@ -2193,7 +2109,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/52580c62-b9da-45ec-b227-dbbda5c438ad?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a402c583-2fc8-47d7-9571-7d724a1319c8?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -2205,7 +2121,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:37:18 GMT
+      - Fri, 22 May 2020 09:38:31 GMT
       expires:
       - '-1'
       pragma:
@@ -2222,7 +2138,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ac8621b8-9a7f-4fea-a602-263fbee8c9be
+      - 5d9542e8-30b4-4520-b59f-f0179a91de5f
     status:
       code: 200
       message: OK
@@ -2248,17 +2164,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/3a27d841-5fbf-42b7-9fb6-22bdf10f831a?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c845d018-182f-4048-8917-79f5a1174c77?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 18:37:19 GMT
+      - Fri, 22 May 2020 09:38:32 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/3a27d841-5fbf-42b7-9fb6-22bdf10f831a?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/c845d018-182f-4048-8917-79f5a1174c77?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -2269,9 +2185,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 78365546-2f0d-4b0a-8ddc-6a326f0c525b
+      - 2c99865d-a714-4445-80af-b3e961ea5d6e
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -2287,19 +2203,19 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/3a27d841-5fbf-42b7-9fb6-22bdf10f831a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c845d018-182f-4048-8917-79f5a1174c77?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '29'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 18:37:28 GMT
+      - Fri, 22 May 2020 09:38:42 GMT
       expires:
       - '-1'
       pragma:
@@ -2316,7 +2232,52 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d4f28acd-1ee1-43d3-8c86-cbe855638526
+      - 48980d63-80f3-4508-9a77-dba38cf4c153
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c845d018-182f-4048-8917-79f5a1174c77?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 May 2020 09:38:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - c703eefd-7ea0-4034-b91c-30bfb1c04b2a
     status:
       code: 200
       message: OK

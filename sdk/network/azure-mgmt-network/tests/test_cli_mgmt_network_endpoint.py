@@ -25,6 +25,7 @@
 import unittest
 
 import azure.mgmt.network as az_network
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -302,7 +303,14 @@ class MgmtNetworkTest(AzureMgmtTestCase):
           "private_link_service_alias": "mypls.00000000-0000-0000-0000-000000000000.azure.privatelinkservice"
         }
         # [ZIM] SDK fails for some reason here
-        # result = self.mgmt_client.private_link_services.check_private_link_service_visibility_by_resource_group(resource_group_name=RESOURCE_GROUP, location=LOCATION, parameters=BODY)
+        # TODO: it seems like that this api has been changed to LRO method, but not updated in swagger.
+        try:
+            result = self.mgmt_client.private_link_services.check_private_link_service_visibility_by_resource_group(resource_group_name=RESOURCE_GROUP, location=LOCATION, parameters=BODY)
+        except HttpResponseError as e:
+            if e.message == "Operation returned an invalid status 'Accepted'":
+                pass
+            else:
+                raise e
 
         # # /PrivateLinkServices/post/Check private link service visibility[post]
         # BODY = {
