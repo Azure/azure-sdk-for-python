@@ -23,7 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Generic, TypeVar, Any
+from collections.abc import Awaitable
+from typing import Callable, Any, Tuple, Generic, TypeVar, Generator
+
 from ._poller import NoPolling as _NoPolling
 
 
@@ -48,6 +50,21 @@ class AsyncPollingMethod(Generic[PollingReturnType]):
     def resource(self) -> PollingReturnType:
         raise NotImplementedError("This method needs to be implemented")
 
+    def get_continuation_token(self) -> str:
+        raise TypeError(
+            "Polling method '{}' doesn't support get_continuation_token".format(
+                self.__class__.__name__
+            )
+        )
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
+        raise TypeError(
+            "Polling method '{}' doesn't support from_continuation_token".format(
+                cls.__name__
+            )
+        )
+
 
 class AsyncNoPolling(_NoPolling):
     """An empty async poller that returns the deserialized initial response.
@@ -61,6 +78,9 @@ class AsyncNoPolling(_NoPolling):
 async def async_poller(client, initial_response, deserialization_callback, polling_method):
     """Async Poller for long running operations.
 
+    .. deprecated:: 1.5.0
+       Use :class:`AsyncLROPoller` instead.
+
     :param client: A pipeline service client.
     :type client: ~azure.core.PipelineClient
     :param initial_response: The initial call response
@@ -71,15 +91,100 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :param polling_method: The polling strategy to adopt
     :type polling_method: ~azure.core.polling.PollingMethod
     """
+    poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
+    return await poller
 
-    # This implicit test avoids bringing in an explicit dependency on Model directly
-    try:
-        deserialization_callback = deserialization_callback.deserialize
-    except AttributeError:
-        pass
 
-    # Might raise a CloudError
-    polling_method.initialize(client, initial_response, deserialization_callback)
+class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
+    """Async poller for long running operations.
 
-    await polling_method.run()
-    return polling_method.resource()
+    :param client: A pipeline service client
+    :type client: ~azure.core.PipelineClient
+    :param initial_response: The initial call response
+    :type initial_response:
+     ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
+    :type deserialization_callback: callable or msrest.serialization.Model
+    :param polling_method: The polling strategy to adopt
+    :type polling_method: ~azure.core.polling.AsyncPollingMethod
+    """
+
+    def __init__(
+            self,
+            client: Any,
+            initial_response: Any,
+            deserialization_callback: Callable,
+            polling_method: AsyncPollingMethod[PollingReturnType]
+        ):
+        self._polling_method = polling_method
+        self._done = False
+
+        # This implicit test avoids bringing in an explicit dependency on Model directly
+        try:
+            deserialization_callback = deserialization_callback.deserialize # type: ignore
+        except AttributeError:
+            pass
+
+        self._polling_method.initialize(client, initial_response, deserialization_callback)
+
+    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method
+
+    def continuation_token(self) -> str:
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
+        return self._polling_method.get_continuation_token()
+
+    @classmethod
+    def from_continuation_token(
+            cls,
+            polling_method: AsyncPollingMethod[PollingReturnType],
+            continuation_token: str,
+            **kwargs
+        ) -> "AsyncLROPoller[PollingReturnType]":
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+    def status(self) -> str:
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
+        return self._polling_method.status()
+
+    async def result(self) -> PollingReturnType:
+        """Return the result of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        await self.wait()
+        return self._polling_method.resource()
+
+    def __await__(self) -> Generator[Any, None, PollingReturnType]:
+        return self.result().__await__()
+
+    async def wait(self) -> None:
+        """Wait on the long running operation.
+
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        await self._polling_method.run()
+        self._done = True
+
+    def done(self) -> bool:
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
+        return self._done

@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+import asyncio
 import time
 try:
     from unittest import mock
@@ -30,9 +31,8 @@ except ImportError:
     import mock
 
 import pytest
-import six
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.polling import *
 from msrest.serialization import Model
 
@@ -40,36 +40,12 @@ from msrest.serialization import Model
 @pytest.fixture
 def client():
     # The poller itself don't use it, so we don't need something functionnal
-    return PipelineClient("https://baseurl")
+    return AsyncPipelineClient("https://baseurl")
 
 
-def test_abc_polling():
-    abc_polling = PollingMethod()
-
-    with pytest.raises(NotImplementedError):
-        abc_polling.initialize(None, None, None)
-
-    with pytest.raises(NotImplementedError):
-        abc_polling.run()
-
-    with pytest.raises(NotImplementedError):
-        abc_polling.status()
-
-    with pytest.raises(NotImplementedError):
-        abc_polling.finished()
-
-    with pytest.raises(NotImplementedError):
-        abc_polling.resource()
-
-    with pytest.raises(TypeError):
-        abc_polling.get_continuation_token()
-
-    with pytest.raises(TypeError):
-        abc_polling.from_continuation_token("token")
-
-
-def test_no_polling(client):
-    no_polling = NoPolling()
+@pytest.mark.asyncio
+async def test_no_polling(client):
+    no_polling = AsyncNoPolling()
 
     initial_response = "initial response"
     def deserialization_cb(response):
@@ -77,13 +53,13 @@ def test_no_polling(client):
         return "Treated: "+response
 
     no_polling.initialize(client, initial_response, deserialization_cb)
-    no_polling.run() # Should no raise and do nothing
+    await no_polling.run() # Should no raise and do nothing
     assert no_polling.status() == "succeeded"
     assert no_polling.finished()
     assert no_polling.resource() == "Treated: "+initial_response
 
     continuation_token = no_polling.get_continuation_token()
-    assert isinstance(continuation_token, six.string_types)
+    assert isinstance(continuation_token, str)
 
     no_polling_revived_args = NoPolling.from_continuation_token(
         continuation_token,
@@ -97,7 +73,7 @@ def test_no_polling(client):
     assert no_polling_revived.resource() == "Treated: "+initial_response
 
 
-class PollingTwoSteps(PollingMethod):
+class PollingTwoSteps(AsyncPollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
     def __init__(self, sleep=0):
@@ -110,11 +86,11 @@ class PollingTwoSteps(PollingMethod):
         self._deserialization_callback = deserialization_callback
         self._finished = False
 
-    def run(self):
+    async def run(self):
         """Empty run, no polling.
         """
         self._finished = True
-        time.sleep(self._sleep) # Give me time to add callbacks!
+        await asyncio.sleep(self._sleep) # Give me time to add callbacks!
 
     def status(self):
         """Return the current status as a string.
@@ -142,7 +118,8 @@ class PollingTwoSteps(PollingMethod):
         return None, initial_response, deserialization_callback
 
 
-def test_poller(client):
+@pytest.mark.asyncio
+async def test_poller(client):
 
     # Same the poller itself doesn't care about the initial_response, and there is no type constraint here
     initial_response = "Initial response"
@@ -152,63 +129,62 @@ def test_poller(client):
         assert response == initial_response
         return "Treated: "+response
 
-    method = NoPolling()
+    method = AsyncNoPolling()
 
-    poller = LROPoller(client, initial_response, deserialization_callback, method)
+    raw_poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    poller = asyncio.ensure_future(raw_poller.result())
 
     done_cb = mock.MagicMock()
     poller.add_done_callback(done_cb)
 
-    result = poller.result()
+    result = await poller
     assert poller.done()
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
-    assert poller.polling_method() is method
-    done_cb.assert_called_once_with(method)
+    assert raw_poller.status() == "succeeded"
+    assert raw_poller.polling_method() is method
+    done_cb.assert_called_once_with(poller)
 
     # Test with a basic Model
-    poller = LROPoller(client, initial_response, Model, method)
+    poller = AsyncLROPoller(client, initial_response, Model, method)
     assert poller._polling_method._deserialization_callback == Model.deserialize
 
     # Test poller that method do a run
     method = PollingTwoSteps(sleep=1)
-    poller = LROPoller(client, initial_response, deserialization_callback, method)
+    raw_poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+    poller = asyncio.ensure_future(raw_poller.result())
 
     done_cb = mock.MagicMock()
     done_cb2 = mock.MagicMock()
     poller.add_done_callback(done_cb)
     poller.remove_done_callback(done_cb2)
 
-    result = poller.result()
+    result = await poller
     assert result == "Treated: "+initial_response
-    assert poller.status() == "succeeded"
-    done_cb.assert_called_once_with(method)
+    assert raw_poller.status() == "succeeded"
+    done_cb.assert_called_once_with(poller)
     done_cb2.assert_not_called()
 
-    with pytest.raises(ValueError) as excinfo:
-        poller.remove_done_callback(done_cb)
-    assert "Process is complete" in str(excinfo.value)
-
     # Test continuation token
-    cont_token = poller.continuation_token()
+    cont_token = raw_poller.continuation_token()
 
     method = PollingTwoSteps(sleep=1)
-    new_poller = LROPoller.from_continuation_token(
+    new_poller = AsyncLROPoller.from_continuation_token(
         continuation_token=cont_token,
         client=client,
         initial_response=initial_response,
         deserialization_callback=deserialization_callback,
         polling_method=method
     )
-    result = new_poller.result()
+    result = await new_poller.result()
     assert result == "Treated: "+initial_response
     assert new_poller.status() == "succeeded"
 
 
-def test_broken_poller(client):
+@pytest.mark.asyncio
+async def test_broken_poller(client):
 
     class NoPollingError(PollingTwoSteps):
-        def run(self):
+        async def run(self):
             raise ValueError("Something bad happened")
 
     initial_response = "Initial response"
@@ -216,8 +192,8 @@ def test_broken_poller(client):
         return "Treated: "+response
 
     method = NoPollingError()
-    poller = LROPoller(client, initial_response, deserialization_callback, method)
+    poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
 
     with pytest.raises(ValueError) as excinfo:
-        poller.result()
+        await poller.result()
     assert "Something bad happened" in str(excinfo.value)
