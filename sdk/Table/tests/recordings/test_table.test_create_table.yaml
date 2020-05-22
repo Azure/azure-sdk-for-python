@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"TableName": "Tables"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '23'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      User-Agent:
+      - azsdk-python-azuretable/unknown Python/3.8.3 (Windows-10-10.0.18362-SP0)
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:fa2fea1a-f002-0015-6b4b-3048b6000000\nTime:2020-05-22T15:14:43.9458401Z"}}}'
+    headers:
+      content-length:
+      - '202'
+      content-type:
+      - application/json
+      date:
+      - Fri, 22 May 2020 15:14:43 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ResourceNotFound
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+version: 1
