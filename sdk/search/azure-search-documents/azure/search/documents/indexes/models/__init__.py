@@ -35,7 +35,6 @@ from .._internal._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
-    AzureActiveDirectoryApplicationCredentials,
     CharFilter,
     CjkBigramTokenFilter,
     ClassicTokenizer,
@@ -90,7 +89,6 @@ from .._internal._generated.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSource,
     SearchIndexerSkillset,
-    SearchResourceEncryptionKey,
     ScoringFunction,
     ScoringProfile,
     SentimentSkill,
@@ -103,7 +101,6 @@ from .._internal._generated.models import (
     StopAnalyzer,
     StopwordsTokenFilter,
     Suggester,
-    SynonymMap,
     SynonymTokenFilter,
     TagScoringFunction,
     TagScoringParameters,
@@ -116,7 +113,12 @@ from .._internal._generated.models import (
     WebApiSkill,
     WordDelimiterTokenFilter,
 )
-from .._internal._models import PatternAnalyzer, PatternTokenizer
+from .._internal._models import (
+    PatternAnalyzer,
+    PatternTokenizer,
+    SearchResourceEncryptionKey,
+    SynonymMap,
+)
 
 
 __all__ = (
@@ -124,7 +126,6 @@ __all__ = (
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
-    "AzureActiveDirectoryApplicationCredentials",
     "CharFilter",
     "CjkBigramTokenFilter",
     "ClassicTokenizer",

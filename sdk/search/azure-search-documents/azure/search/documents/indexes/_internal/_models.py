@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import msrest.serialization
 from ._generated.models import LexicalAnalyzer, LexicalTokenizer
 
 
@@ -87,3 +88,108 @@ class PatternTokenizer(LexicalTokenizer):
         self.pattern = kwargs.get("pattern", r"\W+")
         self.flags = kwargs.get("flags", None)
         self.group = kwargs.get("group", -1)
+
+
+class SearchResourceEncryptionKey(msrest.serialization.Model):
+    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
+    used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
+     at rest.
+    :type key_name: str
+    :param key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+     your data at rest.
+    :type key_version: str
+    :param vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
+     contains the key to be used to encrypt your data at rest. An example URI might be https://my-
+     keyvault-name.vault.azure.net.
+    :type vault_uri: str
+    :param application_id: Required. An AAD Application ID that was granted the required access
+     permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
+     Application ID should not be confused with the Object ID for your AAD Application.
+    :type application_id: str
+    :param application_secret: The authentication key of the specified AAD application.
+    :type application_secret: str
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+        'vault_uri': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyVaultKeyName', 'type': 'str'},
+        'key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
+        'vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'application_secret': {'key': 'applicationSecret', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchResourceEncryptionKey, self).__init__(**kwargs)
+        self.key_name = kwargs['key_name']
+        self.key_version = kwargs['key_version']
+        self.vault_uri = kwargs['vault_uri']
+        self.application_id = kwargs.get('application_id', None)
+        self.application_secret = kwargs.get('application_secret', None)
+
+
+class SynonymMap(msrest.serialization.Model):
+    """Represents a synonym map definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the synonym map.
+    :type name: str
+    :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
+     supported. Default value: "solr".
+    :vartype format: str
+    :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
+     rules must be separated by newlines.
+    :type synonyms: str
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your data when you
+     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+     Search will ignore attempts to set this property to null. You can change this property as
+     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+     customer-managed keys is not available for free search services, and is only available for paid
+     services created on or after January 1, 2019.
+    :type encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
+    :param e_tag: The ETag of the synonym map.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'format': {'required': True, 'constant': True},
+        'synonyms': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'format': {'key': 'format', 'type': 'str'},
+        'synonyms': {'key': 'synonyms', 'type': '[str]'},
+        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    format = "solr"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SynonymMap, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.synonyms = kwargs['synonyms']
+        self.encryption_key = kwargs.get('encryption_key', None)
+        self.e_tag = kwargs.get('e_tag', None)
