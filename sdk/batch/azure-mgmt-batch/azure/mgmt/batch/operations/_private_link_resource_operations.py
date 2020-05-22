@@ -145,7 +145,7 @@ class PrivateLinkResourceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
-            'privateLinkResourceName': self._serialize.url("private_link_resource_name", private_link_resource_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$')
+            'privateLinkResourceName': self._serialize.url("private_link_resource_name", private_link_resource_name, 'str', max_length=101, min_length=1, pattern=r'^[a-zA-Z0-9_-]+\.?[a-fA-F0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
