@@ -181,7 +181,7 @@ __all__ = (
     "SearchIndex",
     "SearchIndexer",
     "SearchIndexerDataContainer",
-    "SearchIndexerDataSource",
+    "SearchIndexerDataSourceConnection",
     "SearchIndexerSkillset",
     "SearchResourceEncryptionKey",
     "SearchableField",
