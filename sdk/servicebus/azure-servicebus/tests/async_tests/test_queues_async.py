@@ -768,7 +768,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive(max_wait_time=10)
             assert not messages
 
-            async with await sb_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            async with sb_client._get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
