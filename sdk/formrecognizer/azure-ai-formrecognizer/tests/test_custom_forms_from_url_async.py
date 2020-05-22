@@ -67,7 +67,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
@@ -85,7 +85,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         forms = await fr_client.recognize_custom_forms_from_url(
             model.model_id,
@@ -148,7 +148,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 
@@ -181,7 +181,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 

@@ -6,11 +6,12 @@
 
 # pylint: disable=protected-access
 
+import json
 from typing import (
-    Optional,
     Any,
-    Union,
     AsyncIterable,
+    Dict,
+    Union,
     TYPE_CHECKING,
 )
 from azure.core.polling import async_poller
@@ -19,8 +20,14 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._form_recognizer_client_async import FormRecognizerClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
-from .._generated.models import TrainRequest, TrainSourceFilter
-from .._generated.models import Model
+from .._generated.models import (
+    TrainRequest,
+    TrainSourceFilter,
+    Model,
+    CopyRequest,
+    CopyOperationResult,
+    CopyAuthorizationResult
+)
 from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
     CustomFormModelInfo,
@@ -28,8 +35,9 @@ from .._models import (
     CustomFormModel
 )
 from .._user_agent import USER_AGENT
-from .._polling import TrainingPolling
+from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -87,7 +95,7 @@ class FormTrainingClient(object):
     async def train_model(
             self,
             training_files_url: str,
-            use_training_labels: Optional[bool] = False,
+            use_training_labels: bool,
             **kwargs: Any
     ) -> CustomFormModel:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
@@ -246,6 +254,100 @@ class FormTrainingClient(object):
             **kwargs
         )
         return CustomFormModel._from_generated(response)
+
+    @distributed_trace_async
+    async def get_copy_authorization(
+            self,
+            resource_id: str,
+            resource_region: str,
+            **kwargs: Any
+    ) -> Dict[str, Union[str, int]]:
+        """Generate authorization for copying a custom model into the target Form Recognizer resource.
+        This should be called by the target resource (where the model will be copied to)
+        and the output can be passed as the `target` parameter into :func:`~copy_model()`.
+
+        :param str resource_id: Azure Resource Id of the target Form Recognizer resource
+            where the model will be copied to.
+        :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
+            region name supported by Cognitive Services.
+        :return: A dictionary with values for the copy authorization -
+            "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
+        :rtype: Dict[str, Union[str, int]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_copy_model_async.py
+                :start-after: [START get_copy_authorization_async]
+                :end-before: [END get_copy_authorization_async]
+                :language: python
+                :dedent: 8
+                :caption: Authorize the target resource to receive the copied model
+        """
+
+        response = await self._client.generate_model_copy_authorization(  # type: ignore
+            cls=lambda pipeline_response, deserialized, response_headers: pipeline_response,
+            error_map=error_map,
+            **kwargs
+        )  # type: PipelineResponse
+        target = json.loads(response.http_response.text())
+        target["resourceId"] = resource_id
+        target["resourceRegion"] = resource_region
+        return target
+
+    @distributed_trace_async
+    async def copy_model(
+        self,
+        model_id: str,
+        target: dict,
+        **kwargs: Any
+    ) -> CustomFormModelInfo:
+        """Copy a custom model stored in this resource (the source) to the user specified
+        target Form Recognizer resource. This should be called with the source Form Recognizer resource
+        (with the model that is intended to be copied). The `target` parameter should be supplied from the
+        target resource's output from calling the :func:`~get_copy_authorization()` method.
+
+        :param str model_id: Model identifier of the model to copy to target resource.
+        :param dict target:
+            The copy authorization generated from the target resource's call to
+            :func:`~get_copy_authorization()`.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+            no Retry-After header is present.
+        :return: CustomFormModelInfo
+        :rtype: ~azure.ai.formrecognizer.CustomFormModelInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_copy_model_async.py
+                :start-after: [START copy_model_async]
+                :end-before: [END copy_model_async]
+                :language: python
+                :dedent: 8
+                :caption: Copy a model from the source resource to the target resource
+        """
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+
+        def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            copy_result = self._client._deserialize(CopyOperationResult, raw_response)
+            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
+
+        return await self._client.copy_custom_model(  # type: ignore
+            model_id=model_id,
+            copy_request=CopyRequest(
+                target_resource_id=target["resourceId"],
+                target_resource_region=target["resourceRegion"],
+                copy_authorization=CopyAuthorizationResult(
+                    access_token=target["accessToken"],
+                    model_id=target["modelId"],
+                    expiration_date_time_ticks=target["expirationDateTimeTicks"]
+                )
+            ),
+            cls=kwargs.pop("cls", _copy_callback),
+            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
+            error_map=error_map,
+            **kwargs
+        )
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.
