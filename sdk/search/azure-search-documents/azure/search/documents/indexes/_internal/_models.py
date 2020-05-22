@@ -90,6 +90,55 @@ class PatternTokenizer(LexicalTokenizer):
         self.group = kwargs.get("group", -1)
 
 
+class SearchResourceEncryptionKey(msrest.serialization.Model):
+    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
+     at rest.
+    :type key_name: str
+    :param key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+     your data at rest.
+    :type key_version: str
+    :param vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
+     contains the key to be used to encrypt your data at rest. An example URI might be https://my-
+     keyvault-name.vault.azure.net.
+    :type vault_uri: str
+    :param application_id: Required. An AAD Application ID that was granted the required access
+     permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
+     Application ID should not be confused with the Object ID for your AAD Application.
+    :type application_id: str
+    :param application_secret: The authentication key of the specified AAD application.
+    :type application_secret: str
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+        'vault_uri': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyVaultKeyName', 'type': 'str'},
+        'key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
+        'vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'application_secret': {'key': 'applicationSecret', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchResourceEncryptionKey, self).__init__(**kwargs)
+        self.key_name = kwargs['key_name']
+        self.key_version = kwargs['key_version']
+        self.vault_uri = kwargs['vault_uri']
+        self.application_id = kwargs.get('application_id', None)
+        self.application_secret = kwargs.get('application_secret', None)
+
+
 class SynonymMap(msrest.serialization.Model):
     """Represents a synonym map definition.
 

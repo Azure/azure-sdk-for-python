@@ -15,6 +15,7 @@ from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
     listize_synonyms,
+    pack_search_resource_encryption_key,
     get_access_conditions,
     normalize_endpoint,
 )
@@ -411,6 +412,7 @@ class SearchIndexClient(HeadersMixin):
             name = synonym_map.name
             if synonyms:
                 synonym_map.synonyms = "\n".join(synonyms)
+            synonym_map.encryption_key = pack_search_resource_encryption_key(synonym_map.encryption_key)
         except AttributeError:
             name = synonym_map
             solr_format_synonyms = "\n".join(synonyms)

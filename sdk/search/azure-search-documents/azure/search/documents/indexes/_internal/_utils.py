@@ -14,12 +14,19 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._generated.models import (
+    AzureActiveDirectoryApplicationCredentials,
+    SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SynonymMap as _SynonymMap,
     SearchIndex,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from ._models import PatternAnalyzer, PatternTokenizer, SynonymMap
+from ._models import (
+    PatternAnalyzer,
+    PatternTokenizer,
+    SynonymMap,
+    SearchResourceEncryptionKey,
+)
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -159,10 +166,36 @@ def listize_synonyms(synonym_map):
     return SynonymMap(
         name=synonym_map.name,
         synonyms=synonym_map.synonyms.split("\n"),
-        encryption_key=synonym_map.encryption_key,
+        encryption_key=unpack_search_resource_encryption_key(synonym_map.encryption_key),
         e_tag=synonym_map.e_tag
     )
 
+def pack_search_resource_encryption_key(search_resource_encryption_key):
+    # type: (SearchResourceEncryptionKey) -> _SearchResourceEncryptionKey
+    if not search_resource_encryption_key:
+        return None
+    access_credentials = AzureActiveDirectoryApplicationCredentials(
+        application_id=search_resource_encryption_key.application_id,
+        application_secret=search_resource_encryption_key.application_secret
+    )
+    return _SearchResourceEncryptionKey(
+        key_name=search_resource_encryption_key.key_name,
+        key_version=search_resource_encryption_key.key_version,
+        vault_uri=search_resource_encryption_key.vault_uri,
+        access_credentials=access_credentials
+    )
+
+def unpack_search_resource_encryption_key(search_resource_encryption_key):
+    # type: (_SearchResourceEncryptionKey) -> SearchResourceEncryptionKey
+    if not search_resource_encryption_key:
+        return None
+    return SearchResourceEncryptionKey(
+        key_name=search_resource_encryption_key.key_name,
+        key_version=search_resource_encryption_key.key_version,
+        vault_uri=search_resource_encryption_key.vault_uri,
+        application_id=search_resource_encryption_key.access_credentials.application_id,
+        application_secret=search_resource_encryption_key.access_credentials.application_secret
+    )
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
     # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], Dict[str, bool]]
