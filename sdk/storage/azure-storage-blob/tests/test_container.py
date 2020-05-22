@@ -28,7 +28,6 @@ from azure.storage.blob import (
     generate_container_sas,
     PartialBatchErrorException
 )
-from azure.identity import ClientSecretCredential
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
 import pytest
