@@ -15,6 +15,8 @@ from azure.core.exceptions import (
 )
 from ._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
+    DataSourceCredentials,
+    SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SynonymMap as _SynonymMap,
     SearchIndex,
@@ -25,6 +27,7 @@ from ._models import (
     PatternAnalyzer,
     PatternTokenizer,
     SynonymMap,
+    SearchIndexerDataSourceConnection,
     SearchResourceEncryptionKey,
 )
 
@@ -195,6 +198,39 @@ def unpack_search_resource_encryption_key(search_resource_encryption_key):
         vault_uri=search_resource_encryption_key.vault_uri,
         application_id=search_resource_encryption_key.access_credentials.application_id,
         application_secret=search_resource_encryption_key.access_credentials.application_secret
+    )
+
+def pack_search_indexer_data_source(search_indexer_data_source):
+    # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
+    if not search_indexer_data_source:
+        return None
+    credentials = DataSourceCredentials(
+        connection_string=search_indexer_data_source.connection_string
+    )
+    return _SearchIndexerDataSource(
+        name=search_indexer_data_source.name,
+        description=search_indexer_data_source.description,
+        type=search_indexer_data_source.type,
+        credentials=credentials,
+        container=search_indexer_data_source.container,
+        data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
+        data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
+        e_tag=search_indexer_data_source.e_tag
+    )
+
+def unpack_search_indexer_data_source(search_indexer_data_source):
+    # type: (_SearchIndexerDataSource) -> SearchIndexerDataSourceConnection
+    if not search_indexer_data_source:
+        return None
+    return SearchIndexerDataSourceConnection(
+        name=search_indexer_data_source.name,
+        description=search_indexer_data_source.description,
+        type=search_indexer_data_source.type,
+        connection_string=search_indexer_data_source.credentials.connection_string,
+        container=search_indexer_data_source.container,
+        data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
+        data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
+        e_tag=search_indexer_data_source.e_tag
     )
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
