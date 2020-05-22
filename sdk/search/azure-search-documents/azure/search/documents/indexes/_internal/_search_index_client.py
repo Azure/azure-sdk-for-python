@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import SynonymMap
+from ._generated.models import SynonymMap as _SynonymMap
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
@@ -378,7 +378,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        synonym_map = _SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = self._client.synonym_maps.create(synonym_map, **kwargs)
         return listize_synonyms(result)
 
@@ -410,7 +410,7 @@ class SearchIndexClient(HeadersMixin):
         except AttributeError:
             name = synonym_map
             solr_format_synonyms = "\n".join(synonyms)
-            synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+            synonym_map = _SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = self._client.synonym_maps.create_or_update(
             synonym_map_name=name,
             synonym_map=synonym_map,

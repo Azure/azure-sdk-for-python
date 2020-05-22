@@ -14,12 +14,12 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._generated.models import (
-    SynonymMap,
+    SynonymMap as _SynonymMap,
     SearchIndex,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from ._models import PatternAnalyzer, PatternTokenizer
+from ._models import PatternAnalyzer, PatternTokenizer, SynonymMap
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -155,9 +155,13 @@ def listize_flags_for_index(index):
 
 
 def listize_synonyms(synonym_map):
-    # type: (SynonymMap) -> SynonymMap
-    synonym_map.synonyms = synonym_map.synonyms.split("\n")
-    return synonym_map
+    # type: (_SynonymMap) -> SynonymMap
+    return SynonymMap(
+        name=synonym_map.name,
+        synonyms=synonym_map.synonyms.split("\n"),
+        encryption_key=synonym_map.encryption_key,
+        e_tag=synonym_map.e_tag
+    )
 
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):

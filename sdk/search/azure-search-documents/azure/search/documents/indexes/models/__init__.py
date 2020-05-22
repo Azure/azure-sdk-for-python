@@ -116,7 +116,11 @@ from .._internal._generated.models import (
     WebApiSkill,
     WordDelimiterTokenFilter,
 )
-from .._internal._models import PatternAnalyzer, PatternTokenizer
+from .._internal._models import (
+    PatternAnalyzer,
+    PatternTokenizer,
+    SynonymMap,
+)
 
 
 __all__ = (
