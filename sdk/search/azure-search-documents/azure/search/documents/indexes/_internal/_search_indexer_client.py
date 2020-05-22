@@ -25,9 +25,6 @@ if TYPE_CHECKING:
 class SearchIndexerClient(HeadersMixin):
     """A client to interact with Azure search service Indexers.
 
-    This class is not normally instantiated directly, instead use
-    `get_indexers_client()` from a `SearchServiceClient`
-
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str

@@ -38,7 +38,6 @@ from azure.search.documents.indexes.models import(
     SearchFieldDataType
 )
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
-from _test_utils import build_synonym_map_from_dict
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
@@ -275,9 +274,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
@@ -303,16 +302,15 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        sm_result = build_synonym_map_from_dict(result)
-        etag = sm_result.e_tag
+        etag = result.e_tag
 
         await client.create_or_update_synonym_map("test-syn-map", [
                     "Washington, Wash. => WA",
                 ])
 
-        sm_result.e_tag = etag
+        result.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_synonym_map(sm_result, match_condition=MatchConditions.IfNotModified)
+            await client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
             assert len(client.get_synonym_maps()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -325,9 +323,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
@@ -344,8 +342,8 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         result = await client.get_synonym_maps()
         assert isinstance(result, list)
-        assert all(isinstance(x, dict) for x in result)
-        assert set(x['name'] for x in result) == {"test-syn-map-1", "test-syn-map-2"}
+        assert all(isinstance(x, SynonymMap) for x in result)
+        assert set(x.name for x in result) == {"test-syn-map-1", "test-syn-map-2"}
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -360,9 +358,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "Washington, Wash. => WA",
         ]
 

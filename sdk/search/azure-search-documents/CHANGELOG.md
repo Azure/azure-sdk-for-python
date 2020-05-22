@@ -5,8 +5,9 @@
 **Breaking Changes**
 
 - Reorganized `SearchServiceClient` into `SearchIndexClient` & `SearchIndexerClient`    #11507
-- Splitted searchindex.json and searchservice.json models and operations into separate namespaces #11508
+- Split searchindex.json and searchservice.json models and operations into separate namespaces #11508
 - Renamed `edm` to `SearchFieldDataType`    #11511
+- Now Search Synonym Map creation/update returns a model    #11514
 
 ## 1.0.0b3 (2020-05-04)
 
