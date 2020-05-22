@@ -299,3 +299,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :type pipeline: azure.core.pipeline
         """
         return AioHttpStreamDownloadGenerator(pipeline, self)
+
+    def __getstate__(self):
+        # Be sure body is loaded in memory, otherwise not pickable and let it throw
+        self.body()
+
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        from multidict import MultiDict  # I know it's importable since aiohttp is loaded
+        state['headers'] = MultiDict(self.headers)  # MultiDictProxy is not pickable
+        return state

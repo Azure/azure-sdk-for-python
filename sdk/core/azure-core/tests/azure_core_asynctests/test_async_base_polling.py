@@ -42,7 +42,7 @@ from msrest import Deserializer
 from azure.core.polling import async_poller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import PipelineResponse, AsyncPipeline
+from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
 from azure.core.polling.async_base_polling import (
@@ -88,6 +88,12 @@ CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 
 @pytest.fixture
+def client():
+    # The poller itself don't use it, so we don't need something functionnal
+    return AsyncPipelineClient("https://baseurl")
+
+
+@pytest.fixture
 def async_pipeline_client_builder():
     """Build a client that use the "send" callback as final transport layer
 
@@ -116,6 +122,42 @@ def deserialization_cb():
     def cb(pipeline_response):
         return json.loads(pipeline_response.http_response.text())
     return cb
+
+
+@pytest.fixture
+def polling_response():
+    polling = AsyncLROBasePolling()
+    headers = {}
+
+    response = Response()
+    response.headers = headers
+    response.status_code = 200
+
+    polling._pipeline_response = PipelineResponse(
+        None,
+        AsyncioRequestsTransportResponse(
+            None,
+            response,
+        ),
+        PipelineContext(None)
+    )
+    polling._initial_response = polling._pipeline_response
+    return polling, headers
+
+
+def test_base_polling_continuation_token(client, polling_response):
+    polling, _ = polling_response
+
+    continuation_token = polling.get_continuation_token()
+    assert isinstance(continuation_token, str)
+
+    polling_args = AsyncLROBasePolling.from_continuation_token(
+        continuation_token,
+        deserialization_callback="deserialization_callback",
+        client=client,
+    )
+    new_polling = AsyncLROBasePolling()
+    new_polling.initialize(*polling_args)
 
 
 @pytest.mark.asyncio
