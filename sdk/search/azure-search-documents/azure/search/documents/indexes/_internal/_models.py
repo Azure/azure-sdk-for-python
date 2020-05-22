@@ -231,7 +231,7 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'credentials', 'type': 'str'},
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
         'container': {'key': 'container', 'type': 'SearchIndexerDataContainer'},
         'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
         'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
