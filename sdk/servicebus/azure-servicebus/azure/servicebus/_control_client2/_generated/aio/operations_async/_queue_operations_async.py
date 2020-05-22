@@ -42,6 +42,8 @@ class QueueOperations:
     async def get(
         self,
         queue_name: str,
+        enrich: Optional[bool] = False,
+        api_version: Optional[str] = "2017_04",
         **kwargs
     ) -> object:
         """Get the details about the Queue with the given queueName.
@@ -50,6 +52,10 @@ class QueueOperations:
 
         :param queue_name: The name of the queue relative to the Service Bus namespace.
         :type queue_name: str
+        :param enrich: A query parameter that sets enrich to true or false.
+        :type enrich: bool
+        :param api_version: Api Version.
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -69,6 +75,10 @@ class QueueOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if enrich is not None:
+            query_parameters['enrich'] = self._serialize.query("enrich", enrich, 'bool')
+        if api_version is not None:
+            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
