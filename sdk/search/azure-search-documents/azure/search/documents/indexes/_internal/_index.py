@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from .SearchFieldDataType import Collection, ComplexType
+from ._edm import Collection, ComplexType
 from ._generated.models import SearchField
 
 if TYPE_CHECKING:
