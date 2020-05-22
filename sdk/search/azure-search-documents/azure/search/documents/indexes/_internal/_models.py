@@ -193,3 +193,61 @@ class SynonymMap(msrest.serialization.Model):
         self.synonyms = kwargs['synonyms']
         self.encryption_key = kwargs.get('encryption_key', None)
         self.e_tag = kwargs.get('e_tag', None)
+
+
+class SearchIndexerDataSourceConnection(msrest.serialization.Model):
+    """Represents a datasource connection definition, which can be used to configure an indexer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the datasource connection.
+    :type name: str
+    :param description: The description of the datasource connection.
+    :type description: str
+    :param type: Required. The type of the datasource connection. Possible values include: "azuresql",
+     "cosmosdb", "azureblob", "azuretable", "mysql".
+    :type type: str or ~azure.search.documents.models.SearchIndexerDataSourceType
+    :param connection_string: The connection string for the datasource connection.
+    :type connection_string: str
+    :param container: Required. The data container for the datasource connection.
+    :type container: ~azure.search.documents.models.SearchIndexerDataContainer
+    :param data_change_detection_policy: The data change detection policy for the datasource connection.
+    :type data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
+    :param data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
+    :type data_deletion_detection_policy:
+     ~azure.search.documents.models.DataDeletionDetectionPolicy
+    :param e_tag: The ETag of the data source.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'connection_string': {'required': True},
+        'container': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'container': {'key': 'container', 'type': 'SearchIndexerDataContainer'},
+        'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
+        'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.description = kwargs.get('description', None)
+        self.type = kwargs['type']
+        self.connection_string = kwargs['connection_string']
+        self.container = kwargs['container']
+        self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
+        self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
+        self.e_tag = kwargs.get('e_tag', None)

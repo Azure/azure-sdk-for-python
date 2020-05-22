@@ -26,8 +26,7 @@ from azure.search.documents.indexes.models import(
     OutputFieldMappingEntry,
     ScoringProfile,
     SearchIndexerSkillset,
-    DataSourceCredentials,
-    SearchIndexerDataSource,
+    SearchIndexerDataSourceConnection,
     SearchIndexer,
     SearchIndexerDataContainer,
     SynonymMap,
@@ -497,12 +496,11 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
     def _create_datasource(self, name="sample-datasource"):
-        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=name,
             type="azureblob",
-            credentials=credentials,
+            connection_string=CONNECTION_STRING,
             container=container
         )
         return data_source
@@ -620,12 +618,11 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     def _prepare_indexer(self, endpoint, api_key, name="sample-indexer", ds_name="sample-datasource", id_name="hotels"):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
         self.scrubber.register_name_pair(con_str, 'connection_string')
-        credentials = DataSourceCredentials(connection_string=con_str)
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=ds_name,
             type="azureblob",
-            credentials=credentials,
+            connection_string=con_str,
             container=container
         )
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
