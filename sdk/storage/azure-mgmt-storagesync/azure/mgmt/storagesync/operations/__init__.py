@@ -11,6 +11,8 @@
 
 from ._operations import Operations
 from ._storage_sync_services_operations import StorageSyncServicesOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._sync_groups_operations import SyncGroupsOperations
 from ._cloud_endpoints_operations import CloudEndpointsOperations
 from ._server_endpoints_operations import ServerEndpointsOperations
@@ -21,6 +23,8 @@ from ._operation_status_operations import OperationStatusOperations
 __all__ = [
     'Operations',
     'StorageSyncServicesOperations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionsOperations',
     'SyncGroupsOperations',
     'CloudEndpointsOperations',
     'ServerEndpointsOperations',
