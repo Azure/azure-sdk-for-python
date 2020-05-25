@@ -330,24 +330,25 @@ class LinkedService(Model):
     resource.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionLinkedService,
-    AzureDataExplorerLinkedService, SapTableLinkedService,
-    GoogleAdWordsLinkedService, OracleServiceCloudLinkedService,
-    DynamicsAXLinkedService, ResponsysLinkedService,
-    AzureDatabricksLinkedService, AzureDataLakeAnalyticsLinkedService,
-    HDInsightOnDemandLinkedService, SalesforceMarketingCloudLinkedService,
-    NetezzaLinkedService, VerticaLinkedService, ZohoLinkedService,
-    XeroLinkedService, SquareLinkedService, SparkLinkedService,
-    ShopifyLinkedService, ServiceNowLinkedService, QuickBooksLinkedService,
-    PrestoLinkedService, PhoenixLinkedService, PaypalLinkedService,
-    MarketoLinkedService, AzureMariaDBLinkedService, MariaDBLinkedService,
-    MagentoLinkedService, JiraLinkedService, ImpalaLinkedService,
-    HubspotLinkedService, HiveLinkedService, HBaseLinkedService,
-    GreenplumLinkedService, GoogleBigQueryLinkedService, EloquaLinkedService,
-    DrillLinkedService, CouchbaseLinkedService, ConcurLinkedService,
-    AzurePostgreSqlLinkedService, AmazonMWSLinkedService, SapHanaLinkedService,
-    SapBWLinkedService, SftpServerLinkedService, FtpServerLinkedService,
-    HttpLinkedService, AzureSearchLinkedService, CustomDataSourceLinkedService,
+    sub-classes are: SharePointOnlineListLinkedService, SnowflakeLinkedService,
+    AzureFunctionLinkedService, AzureDataExplorerLinkedService,
+    SapTableLinkedService, GoogleAdWordsLinkedService,
+    OracleServiceCloudLinkedService, DynamicsAXLinkedService,
+    ResponsysLinkedService, AzureDatabricksLinkedService,
+    AzureDataLakeAnalyticsLinkedService, HDInsightOnDemandLinkedService,
+    SalesforceMarketingCloudLinkedService, NetezzaLinkedService,
+    VerticaLinkedService, ZohoLinkedService, XeroLinkedService,
+    SquareLinkedService, SparkLinkedService, ShopifyLinkedService,
+    ServiceNowLinkedService, QuickBooksLinkedService, PrestoLinkedService,
+    PhoenixLinkedService, PaypalLinkedService, MarketoLinkedService,
+    AzureMariaDBLinkedService, MariaDBLinkedService, MagentoLinkedService,
+    JiraLinkedService, ImpalaLinkedService, HubspotLinkedService,
+    HiveLinkedService, HBaseLinkedService, GreenplumLinkedService,
+    GoogleBigQueryLinkedService, EloquaLinkedService, DrillLinkedService,
+    CouchbaseLinkedService, ConcurLinkedService, AzurePostgreSqlLinkedService,
+    AmazonMWSLinkedService, SapHanaLinkedService, SapBWLinkedService,
+    SftpServerLinkedService, FtpServerLinkedService, HttpLinkedService,
+    AzureSearchLinkedService, CustomDataSourceLinkedService,
     AmazonRedshiftLinkedService, AmazonS3LinkedService,
     RestServiceLinkedService, SapOpenHubLinkedService, SapEccLinkedService,
     SapCloudForCustomerLinkedService, SalesforceServiceCloudLinkedService,
@@ -402,7 +403,7 @@ class LinkedService(Model):
     }
 
     _subtype_map = {
-        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
+        'type': {'SharePointOnlineList': 'SharePointOnlineListLinkedService', 'Snowflake': 'SnowflakeLinkedService', 'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
     }
 
     def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, **kwargs) -> None:
@@ -514,7 +515,8 @@ class Dataset(Model):
     data stores, such as tables, files, folders, and documents.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GoogleAdWordsObjectDataset, AzureDataExplorerTableDataset,
+    sub-classes are: SharePointOnlineListResourceDataset, SnowflakeDataset,
+    GoogleAdWordsObjectDataset, AzureDataExplorerTableDataset,
     OracleServiceCloudObjectDataset, DynamicsAXResourceDataset,
     ResponsysObjectDataset, SalesforceMarketingCloudObjectDataset,
     VerticaTableDataset, NetezzaTableDataset, ZohoObjectDataset,
@@ -544,8 +546,8 @@ class Dataset(Model):
     CosmosDbSqlApiCollectionDataset, CustomDataset, CassandraTableDataset,
     AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset,
     AzureTableDataset, AzureBlobDataset, BinaryDataset, OrcDataset,
-    JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
-    AmazonS3Dataset
+    JsonDataset, DelimitedTextDataset, ParquetDataset, ExcelDataset,
+    AvroDataset, AmazonS3Dataset
 
     All required parameters must be populated in order to send to Azure.
 
@@ -595,7 +597,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'SharePointOnlineListResource': 'SharePointOnlineListResourceDataset', 'SnowflakeTable': 'SnowflakeDataset', 'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Excel': 'ExcelDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
@@ -675,14 +677,16 @@ class CopySource(Model):
     """A copy activity source.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: HttpSource, AzureBlobFSSource, AzureDataLakeStoreSource,
-    Office365Source, CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource,
-    WebSource, OracleSource, AzureDataExplorerSource, HdfsSource,
-    FileSystemSource, RestSource, SalesforceServiceCloudSource, ODataSource,
+    sub-classes are: SharePointOnlineListSource, SnowflakeSource, HttpSource,
+    AzureBlobFSSource, AzureDataLakeStoreSource, Office365Source,
+    CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource, WebSource,
+    OracleSource, AzureDataExplorerSource, HdfsSource, FileSystemSource,
+    RestSource, SalesforceServiceCloudSource, ODataSource,
     MicrosoftAccessSource, RelationalSource, CommonDataServiceForAppsSource,
     DynamicsCrmSource, DynamicsSource, CosmosDbSqlApiSource,
     DocumentDbCollectionSource, BlobSource, TabularSource, BinarySource,
-    OrcSource, JsonSource, DelimitedTextSource, ParquetSource, AvroSource
+    OrcSource, JsonSource, DelimitedTextSource, ParquetSource, ExcelSource,
+    AvroSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -717,7 +721,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'WebSource': 'WebSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'RestSource': 'RestSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'ODataSource': 'ODataSource', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'CosmosDbSqlApiSource': 'CosmosDbSqlApiSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'TabularSource': 'TabularSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'SharePointOnlineListSource': 'SharePointOnlineListSource', 'SnowflakeSource': 'SnowflakeSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'WebSource': 'WebSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'RestSource': 'RestSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'ODataSource': 'ODataSource', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'CosmosDbSqlApiSource': 'CosmosDbSqlApiSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'TabularSource': 'TabularSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'ExcelSource': 'ExcelSource', 'AvroSource': 'AvroSource'}
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -1395,6 +1399,10 @@ class AmazonS3ReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -1417,11 +1425,12 @@ class AmazonS3ReadSettings(StoreReadSettings):
         'prefix': {'key': 'prefix', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(AmazonS3ReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
@@ -1429,6 +1438,7 @@ class AmazonS3ReadSettings(StoreReadSettings):
         self.prefix = prefix
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AmazonS3ReadSettings'
@@ -1689,7 +1699,7 @@ class CopySink(Model):
     SalesforceSink, AzureDataExplorerSink, CommonDataServiceForAppsSink,
     DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
     AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
-    SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
+    SnowflakeSink, SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
     CosmosDbSqlApiSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
     BinarySink, ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
     SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, OrcSink,
@@ -1737,7 +1747,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SnowflakeSink': 'SnowflakeSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -2310,6 +2320,10 @@ class AzureBlobFSReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -2331,17 +2345,19 @@ class AzureBlobFSReadSettings(StoreReadSettings):
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(AzureBlobFSReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AzureBlobFSReadSettings'
@@ -2705,6 +2721,10 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -2727,11 +2747,12 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
         'prefix': {'key': 'prefix', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(AzureBlobStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
@@ -2739,6 +2760,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
         self.prefix = prefix
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AzureBlobStorageReadSettings'
@@ -3613,6 +3635,10 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -3634,17 +3660,19 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(AzureDataLakeStoreReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AzureDataLakeStoreReadSettings'
@@ -3815,14 +3843,34 @@ class AzureFileStorageLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param host: Required. Host name of the server. Type: string (or
-     Expression with resultType string).
+    :param host: Host name of the server. Type: string (or Expression with
+     resultType string).
     :type host: object
     :param user_id: User ID to logon the server. Type: string (or Expression
      with resultType string).
     :type user_id: object
     :param password: Password to logon the server.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param connection_string: The connection string. It is mutually exclusive
+     with sasUri property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :type connection_string: object
+    :param account_key: The Azure key vault secret reference of accountKey in
+     connection string.
+    :type account_key:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param sas_uri: SAS URI of the Azure File resource. It is mutually
+     exclusive with connectionString property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :type sas_uri: object
+    :param sas_token: The Azure key vault secret reference of sasToken in sas
+     uri.
+    :type sas_token:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param file_share: The azure file share name. It is required when auth
+     with accountKey/sasToken. Type: string (or Expression with resultType
+     string).
+    :type file_share: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -3831,7 +3879,6 @@ class AzureFileStorageLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'host': {'required': True},
     }
 
     _attribute_map = {
@@ -3844,14 +3891,24 @@ class AzureFileStorageLinkedService(LinkedService):
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'user_id': {'key': 'typeProperties.userId', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
+        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'object'},
+        'sas_token': {'key': 'typeProperties.sasToken', 'type': 'AzureKeyVaultSecretReference'},
+        'file_share': {'key': 'typeProperties.fileShare', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, host, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, user_id=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, host=None, user_id=None, password=None, connection_string=None, account_key=None, sas_uri=None, sas_token=None, file_share=None, encrypted_credential=None, **kwargs) -> None:
         super(AzureFileStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.host = host
         self.user_id = user_id
         self.password = password
+        self.connection_string = connection_string
+        self.account_key = account_key
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
+        self.file_share = file_share
         self.encrypted_credential = encrypted_credential
         self.type = 'AzureFileStorage'
 
@@ -3914,6 +3971,9 @@ class AzureFileStorageReadSettings(StoreReadSettings):
     :param wildcard_file_name: Azure File Storage wildcardFileName. Type:
      string (or Expression with resultType string).
     :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Azure File name starting from
+     root path. Type: string (or Expression with resultType string).
+    :type prefix: object
     :param file_list_path: Point to a text file that lists each file (relative
      path to the path configured in the dataset) that you want to copy. Type:
      string (or Expression with resultType string).
@@ -3921,6 +3981,10 @@ class AzureFileStorageReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -3940,19 +4004,23 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(AzureFileStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
+        self.prefix = prefix
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AzureFileStorageReadSettings'
@@ -6478,6 +6546,72 @@ class BinaryDataset(Dataset):
         self.type = 'Binary'
 
 
+class FormatReadSettings(Model):
+    """Format read settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BinaryReadSettings, JsonReadSettings,
+    DelimitedTextReadSettings
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'BinaryReadSettings': 'BinaryReadSettings', 'JsonReadSettings': 'JsonReadSettings', 'DelimitedTextReadSettings': 'DelimitedTextReadSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(FormatReadSettings, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = None
+
+
+class BinaryReadSettings(FormatReadSettings):
+    """Binary read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param compression_properties: Compression settings.
+    :type compression_properties:
+     ~azure.mgmt.datafactory.models.CompressionReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'compression_properties': {'key': 'compressionProperties', 'type': 'CompressionReadSettings'},
+    }
+
+    def __init__(self, *, additional_properties=None, compression_properties=None, **kwargs) -> None:
+        super(BinaryReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.compression_properties = compression_properties
+        self.type = 'BinaryReadSettings'
+
+
 class BinarySink(CopySink):
     """A copy activity Binary sink.
 
@@ -6554,6 +6688,8 @@ class BinarySource(CopySource):
     :type type: str
     :param store_settings: Binary store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param format_settings: Binary format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.BinaryReadSettings
     """
 
     _validation = {
@@ -6567,11 +6703,13 @@ class BinarySource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'BinaryReadSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, format_settings=None, **kwargs) -> None:
         super(BinarySource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.store_settings = store_settings
+        self.format_settings = format_settings
         self.type = 'BinarySource'
 
 
@@ -7680,6 +7818,40 @@ class ComponentSetup(CustomSetupBase):
         self.component_name = component_name
         self.license_key = license_key
         self.type = 'ComponentSetup'
+
+
+class CompressionReadSettings(Model):
+    """Compression read settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ZipDeflateReadSettings
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'ZipDeflateReadSettings': 'ZipDeflateReadSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(CompressionReadSettings, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = None
 
 
 class ConcurLinkedService(LinkedService):
@@ -10342,6 +10514,8 @@ class DeleteActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LogStorageSettings
     :param dataset: Required. Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
+    :param store_settings: Delete activity store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
     """
 
     _validation = {
@@ -10365,15 +10539,17 @@ class DeleteActivity(ExecutionActivity):
         'enable_logging': {'key': 'typeProperties.enableLogging', 'type': 'object'},
         'log_storage_settings': {'key': 'typeProperties.logStorageSettings', 'type': 'LogStorageSettings'},
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
+        'store_settings': {'key': 'typeProperties.storeSettings', 'type': 'StoreReadSettings'},
     }
 
-    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, recursive=None, max_concurrent_connections: int=None, enable_logging=None, log_storage_settings=None, **kwargs) -> None:
+    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, recursive=None, max_concurrent_connections: int=None, enable_logging=None, log_storage_settings=None, store_settings=None, **kwargs) -> None:
         super(DeleteActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.recursive = recursive
         self.max_concurrent_connections = max_concurrent_connections
         self.enable_logging = enable_logging
         self.log_storage_settings = log_storage_settings
         self.dataset = dataset
+        self.store_settings = store_settings
         self.type = 'Delete'
 
 
@@ -10503,40 +10679,6 @@ class DelimitedTextDataset(Dataset):
         self.type = 'DelimitedText'
 
 
-class FormatReadSettings(Model):
-    """Format read settings.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DelimitedTextReadSettings
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'DelimitedTextReadSettings': 'DelimitedTextReadSettings'}
-    }
-
-    def __init__(self, *, additional_properties=None, **kwargs) -> None:
-        super(FormatReadSettings, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.type = None
-
-
 class DelimitedTextReadSettings(FormatReadSettings):
     """Delimited text read settings.
 
@@ -10551,6 +10693,9 @@ class DelimitedTextReadSettings(FormatReadSettings):
      when reading data from input files. Type: integer (or Expression with
      resultType integer).
     :type skip_line_count: object
+    :param compression_properties: Compression settings.
+    :type compression_properties:
+     ~azure.mgmt.datafactory.models.CompressionReadSettings
     """
 
     _validation = {
@@ -10561,11 +10706,13 @@ class DelimitedTextReadSettings(FormatReadSettings):
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
+        'compression_properties': {'key': 'compressionProperties', 'type': 'CompressionReadSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, skip_line_count=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, skip_line_count=None, compression_properties=None, **kwargs) -> None:
         super(DelimitedTextReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.skip_line_count = skip_line_count
+        self.compression_properties = compression_properties
         self.type = 'DelimitedTextReadSettings'
 
 
@@ -11379,6 +11526,12 @@ class DynamicsAXSource(TabularSource):
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:05:00. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
     """
 
     _validation = {
@@ -11394,11 +11547,13 @@ class DynamicsAXSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, http_request_timeout=None, **kwargs) -> None:
         super(DynamicsAXSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.query = query
+        self.http_request_timeout = http_request_timeout
         self.type = 'DynamicsAXSource'
 
 
@@ -12266,6 +12421,144 @@ class EnvironmentVariableSetup(CustomSetupBase):
         self.type = 'EnvironmentVariableSetup'
 
 
+class ExcelDataset(Dataset):
+    """Excel dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param location: Required. The location of the excel storage.
+    :type location: ~azure.mgmt.datafactory.models.DatasetLocation
+    :param sheet_name: Required. The sheet of excel file. Type: string (or
+     Expression with resultType string).
+    :type sheet_name: object
+    :param range: The partial data of one sheet. Type: string (or Expression
+     with resultType string).
+    :type range: object
+    :param first_row_as_header: When used as input, treat the first row of
+     data as headers. When used as output,write the headers into the output as
+     the first row of data. The default value is false. Type: boolean (or
+     Expression with resultType boolean).
+    :type first_row_as_header: object
+    :param compression: The data compression method used for the json dataset.
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
+    :param null_value: The null value string. Type: string (or Expression with
+     resultType string).
+    :type null_value: object
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+        'location': {'required': True},
+        'sheet_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
+        'sheet_name': {'key': 'typeProperties.sheetName', 'type': 'object'},
+        'range': {'key': 'typeProperties.range', 'type': 'object'},
+        'first_row_as_header': {'key': 'typeProperties.firstRowAsHeader', 'type': 'object'},
+        'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
+        'null_value': {'key': 'typeProperties.nullValue', 'type': 'object'},
+    }
+
+    def __init__(self, *, linked_service_name, location, sheet_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, range=None, first_row_as_header=None, compression=None, null_value=None, **kwargs) -> None:
+        super(ExcelDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.location = location
+        self.sheet_name = sheet_name
+        self.range = range
+        self.first_row_as_header = first_row_as_header
+        self.compression = compression
+        self.null_value = null_value
+        self.type = 'Excel'
+
+
+class ExcelSource(CopySource):
+    """A copy activity excel source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param store_settings: Excel store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
+    }
+
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, additional_columns=None, **kwargs) -> None:
+        super(ExcelSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.store_settings = store_settings
+        self.additional_columns = additional_columns
+        self.type = 'ExcelSource'
+
+
 class ExecuteDataFlowActivity(ExecutionActivity):
     """Execute data flow activity.
 
@@ -12518,6 +12811,40 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         self.property_overrides = property_overrides
         self.log_location = log_location
         self.type = 'ExecuteSSISPackage'
+
+
+class ExportSettings(Model):
+    """Export command settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SnowflakeExportCopyCommand
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'SnowflakeExportCopyCommand': 'SnowflakeExportCopyCommand'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ExportSettings, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = None
 
 
 class ExposureControlRequest(Model):
@@ -13068,12 +13395,20 @@ class FileServerReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
     :param modified_datetime_end: The end of file's modified datetime. Type:
      string (or Expression with resultType string).
     :type modified_datetime_end: object
+    :param file_filter: Specify a filter to be used to select a subset of
+     files in the folderPath rather than all files. Type: string (or Expression
+     with resultType string).
+    :type file_filter: object
     """
 
     _validation = {
@@ -13089,19 +13424,23 @@ class FileServerReadSettings(StoreReadSettings):
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+        'file_filter': {'key': 'fileFilter', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, file_filter=None, **kwargs) -> None:
         super(FileServerReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.file_filter = file_filter
         self.type = 'FileServerReadSettings'
 
 
@@ -13468,6 +13807,13 @@ class FtpReadSettings(StoreReadSettings):
     :param wildcard_file_name: Ftp wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param file_list_path: Point to a text file that lists each file (relative
      path to the path configured in the dataset) that you want to copy. Type:
      string (or Expression with resultType string).
@@ -13488,15 +13834,19 @@ class FtpReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, use_binary_transfer: bool=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, partition_root_path=None, file_list_path=None, use_binary_transfer: bool=None, **kwargs) -> None:
         super(FtpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
+        self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.file_list_path = file_list_path
         self.use_binary_transfer = use_binary_transfer
         self.type = 'FtpReadSettings'
@@ -13670,6 +14020,10 @@ class GetMetadataActivity(ExecutionActivity):
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param field_list: Fields of metadata to get from dataset.
     :type field_list: list[object]
+    :param store_settings: GetMetadata activity store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param format_settings: GetMetadata activity format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.FormatReadSettings
     """
 
     _validation = {
@@ -13689,12 +14043,16 @@ class GetMetadataActivity(ExecutionActivity):
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
         'field_list': {'key': 'typeProperties.fieldList', 'type': '[object]'},
+        'store_settings': {'key': 'typeProperties.storeSettings', 'type': 'StoreReadSettings'},
+        'format_settings': {'key': 'typeProperties.formatSettings', 'type': 'FormatReadSettings'},
     }
 
-    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, field_list=None, **kwargs) -> None:
+    def __init__(self, *, name: str, dataset, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, field_list=None, store_settings=None, format_settings=None, **kwargs) -> None:
         super(GetMetadataActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.dataset = dataset
         self.field_list = field_list
+        self.store_settings = store_settings
+        self.format_settings = format_settings
         self.type = 'GetMetadata'
 
 
@@ -14367,6 +14725,10 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -14389,11 +14751,12 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         'prefix': {'key': 'prefix', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(GoogleCloudStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
@@ -14401,6 +14764,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         self.prefix = prefix
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'GoogleCloudStorageReadSettings'
@@ -14941,6 +15305,10 @@ class HdfsReadSettings(StoreReadSettings):
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -14964,18 +15332,20 @@ class HdfsReadSettings(StoreReadSettings):
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, **kwargs) -> None:
         super(HdfsReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.file_list_path = file_list_path
         self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.distcp_settings = distcp_settings
@@ -16254,6 +16624,13 @@ class HttpReadSettings(StoreReadSettings):
     :param request_timeout: Specifies the timeout for a HTTP client to get
      HTTP response from HTTP server.
     :type request_timeout: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     """
 
     _validation = {
@@ -16268,14 +16645,18 @@ class HttpReadSettings(StoreReadSettings):
         'request_body': {'key': 'requestBody', 'type': 'object'},
         'additional_headers': {'key': 'additionalHeaders', 'type': 'object'},
         'request_timeout': {'key': 'requestTimeout', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, request_timeout=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, request_timeout=None, enable_partition_discovery: bool=None, partition_root_path=None, **kwargs) -> None:
         super(HttpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.request_method = request_method
         self.request_body = request_body
         self.additional_headers = additional_headers
         self.request_timeout = request_timeout
+        self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.type = 'HttpReadSettings'
 
 
@@ -16855,6 +17236,40 @@ class ImpalaSource(TabularSource):
         super(ImpalaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.query = query
         self.type = 'ImpalaSource'
+
+
+class ImportSettings(Model):
+    """Import command settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SnowflakeImportCopyCommand
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'SnowflakeImportCopyCommand': 'SnowflakeImportCopyCommand'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ImportSettings, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = None
 
 
 class InformixLinkedService(LinkedService):
@@ -17660,6 +18075,8 @@ class IntegrationRuntimeSsisProperties(Model):
      properties for a SSIS integration runtime.
     :type express_custom_setup_properties:
      list[~azure.mgmt.datafactory.models.CustomSetupBase]
+    :param package_stores: Package stores for the SSIS Integration Runtime.
+    :type package_stores: list[~azure.mgmt.datafactory.models.PackageStore]
     """
 
     _attribute_map = {
@@ -17670,9 +18087,10 @@ class IntegrationRuntimeSsisProperties(Model):
         'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
         'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
+        'package_stores': {'key': 'packageStores', 'type': '[PackageStore]'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, express_custom_setup_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, express_custom_setup_properties=None, package_stores=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
@@ -17681,6 +18099,7 @@ class IntegrationRuntimeSsisProperties(Model):
         self.data_proxy_properties = data_proxy_properties
         self.edition = edition
         self.express_custom_setup_properties = express_custom_setup_properties
+        self.package_stores = package_stores
 
 
 class IntegrationRuntimeStatus(Model):
@@ -18169,6 +18588,37 @@ class JsonFormat(DatasetStorageFormat):
         self.type = 'JsonFormat'
 
 
+class JsonReadSettings(FormatReadSettings):
+    """Json read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param compression_properties: Compression settings.
+    :type compression_properties:
+     ~azure.mgmt.datafactory.models.CompressionReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'compression_properties': {'key': 'compressionProperties', 'type': 'CompressionReadSettings'},
+    }
+
+    def __init__(self, *, additional_properties=None, compression_properties=None, **kwargs) -> None:
+        super(JsonReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.compression_properties = compression_properties
+        self.type = 'JsonReadSettings'
+
+
 class JsonSink(CopySink):
     """A copy activity Json sink.
 
@@ -18249,6 +18699,8 @@ class JsonSource(CopySource):
     :type type: str
     :param store_settings: Json store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param format_settings: Json format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.JsonReadSettings
     :param additional_columns: Specifies the additional columns to be added to
      source data. Type: array of objects (or Expression with resultType array
      of objects).
@@ -18267,12 +18719,14 @@ class JsonSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'JsonReadSettings'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, additional_columns=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, format_settings=None, additional_columns=None, **kwargs) -> None:
         super(JsonSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.store_settings = store_settings
+        self.format_settings = format_settings
         self.additional_columns = additional_columns
         self.type = 'JsonSource'
 
@@ -20801,6 +21255,12 @@ class ODataSource(CopySource):
     :param query: OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:05:00. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
     :param additional_columns: Specifies the additional columns to be added to
      source data. Type: array of objects (or Expression with resultType array
      of objects).
@@ -20819,12 +21279,14 @@ class ODataSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, additional_columns=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, http_request_timeout=None, additional_columns=None, **kwargs) -> None:
         super(ODataSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
+        self.http_request_timeout = http_request_timeout
         self.additional_columns = additional_columns
         self.type = 'ODataSource'
 
@@ -22179,6 +22641,35 @@ class OrcSource(CopySource):
         self.store_settings = store_settings
         self.additional_columns = additional_columns
         self.type = 'OrcSource'
+
+
+class PackageStore(Model):
+    """Package store for the SSIS integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the package store
+    :type name: str
+    :param package_store_linked_service: Required. The package store linked
+     service reference.
+    :type package_store_linked_service:
+     ~azure.mgmt.datafactory.models.EntityReference
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'package_store_linked_service': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'package_store_linked_service': {'key': 'packageStoreLinkedService', 'type': 'EntityReference'},
+    }
+
+    def __init__(self, *, name: str, package_store_linked_service, **kwargs) -> None:
+        super(PackageStore, self).__init__(**kwargs)
+        self.name = name
+        self.package_store_linked_service = package_store_linked_service
 
 
 class ParameterSpecification(Model):
@@ -25787,6 +26278,12 @@ class SapCloudForCustomerSink(CopySink):
      'Insert'. Possible values include: 'Insert', 'Update'
     :type write_behavior: str or
      ~azure.mgmt.datafactory.models.SapCloudForCustomerSinkWriteBehavior
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:05:00. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
     """
 
     _validation = {
@@ -25802,11 +26299,13 @@ class SapCloudForCustomerSink(CopySink):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, write_behavior=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, write_behavior=None, http_request_timeout=None, **kwargs) -> None:
         super(SapCloudForCustomerSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.write_behavior = write_behavior
+        self.http_request_timeout = http_request_timeout
         self.type = 'SapCloudForCustomerSink'
 
 
@@ -25843,6 +26342,12 @@ class SapCloudForCustomerSource(TabularSource):
     :param query: SAP Cloud for Customer OData query. For example, "$top=1".
      Type: string (or Expression with resultType string).
     :type query: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:05:00. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
     """
 
     _validation = {
@@ -25858,11 +26363,13 @@ class SapCloudForCustomerSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, http_request_timeout=None, **kwargs) -> None:
         super(SapCloudForCustomerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.query = query
+        self.http_request_timeout = http_request_timeout
         self.type = 'SapCloudForCustomerSource'
 
 
@@ -26024,6 +26531,12 @@ class SapEccSource(TabularSource):
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:05:00. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
     """
 
     _validation = {
@@ -26039,11 +26552,13 @@ class SapEccSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, additional_columns=None, query=None, http_request_timeout=None, **kwargs) -> None:
         super(SapEccSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.query = query
+        self.http_request_timeout = http_request_timeout
         self.type = 'SapEccSource'
 
 
@@ -26071,8 +26586,8 @@ class SapHanaLinkedService(LinkedService):
     :param connection_string: SAP HANA ODBC connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param server: Required. Host name of the SAP HANA server. Type: string
-     (or Expression with resultType string).
+    :param server: Host name of the SAP HANA server. Type: string (or
+     Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the SAP HANA server. Possible values include: 'Basic', 'Windows'
@@ -26091,7 +26606,6 @@ class SapHanaLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
     }
 
     _attribute_map = {
@@ -26109,7 +26623,7 @@ class SapHanaLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, server=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
         super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
         self.server = server
@@ -27630,6 +28144,13 @@ class SftpReadSettings(StoreReadSettings):
     :param wildcard_file_name: Sftp wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param partition_root_path: Specify the root path where partition
+     discovery starts from. Type: string (or Expression with resultType
+     string).
+    :type partition_root_path: object
     :param file_list_path: Point to a text file that lists each file (relative
      path to the path configured in the dataset) that you want to copy. Type:
      string (or Expression with resultType string).
@@ -27653,16 +28174,20 @@ class SftpReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'partition_root_path': {'key': 'partitionRootPath', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, partition_root_path=None, file_list_path=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
         super(SftpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
+        self.enable_partition_discovery = enable_partition_discovery
+        self.partition_root_path = partition_root_path
         self.file_list_path = file_list_path
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
@@ -27820,6 +28345,195 @@ class SftpWriteSettings(StoreWriteSettings):
         self.operation_timeout = operation_timeout
         self.use_temp_file_rename = use_temp_file_rename
         self.type = 'SftpWriteSettings'
+
+
+class SharePointOnlineListLinkedService(LinkedService):
+    """SharePoint Online List linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param site_url: Required. The URL of the SharePoint Online site. For
+     example, https://contoso.sharepoint.com/sites/siteName. Type: string (or
+     Expression with resultType string).
+    :type site_url: object
+    :param tenant_id: Required. The tenant ID under which your application
+     resides. You can find it from Azure portal Active Directory overview page.
+     Type: string (or Expression with resultType string).
+    :type tenant_id: object
+    :param service_principal_id: Required. The application (client) ID of your
+     application registered in Azure Active Directory. Make sure to grant
+     SharePoint site permission to this application. Type: string (or
+     Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_key: Required. The client secret of your
+     application registered in Azure Active Directory. Type: string (or
+     Expression with resultType string).
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'site_url': {'required': True},
+        'tenant_id': {'required': True},
+        'service_principal_id': {'required': True},
+        'service_principal_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'site_url': {'key': 'typeProperties.siteUrl', 'type': 'object'},
+        'tenant_id': {'key': 'typeProperties.tenantId', 'type': 'object'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, *, site_url, tenant_id, service_principal_id, service_principal_key, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, encrypted_credential=None, **kwargs) -> None:
+        super(SharePointOnlineListLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.site_url = site_url
+        self.tenant_id = tenant_id
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.encrypted_credential = encrypted_credential
+        self.type = 'SharePointOnlineList'
+
+
+class SharePointOnlineListResourceDataset(Dataset):
+    """The sharepoint online list resource dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param list_name: The name of the SharePoint Online list. Type: string (or
+     Expression with resultType string).
+    :type list_name: object
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'list_name': {'key': 'typeProperties.listName', 'type': 'object'},
+    }
+
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, list_name=None, **kwargs) -> None:
+        super(SharePointOnlineListResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.list_name = list_name
+        self.type = 'SharePointOnlineListResource'
+
+
+class SharePointOnlineListSource(CopySource):
+    """A copy activity source for sharePoint online list source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query: The OData query to filter the data in SharePoint Online
+     list. For example, "$top=1". Type: string (or Expression with resultType
+     string).
+    :type query: object
+    :param http_request_timeout: The wait time to get a response from
+     SharePoint Online. Default value is 5 minutes (00:05:00). Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
+    }
+
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, http_request_timeout=None, **kwargs) -> None:
+        super(SharePointOnlineListSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.query = query
+        self.http_request_timeout = http_request_timeout
+        self.type = 'SharePointOnlineListSource'
 
 
 class ShopifyLinkedService(LinkedService):
@@ -28033,6 +28747,323 @@ class SkipErrorFile(Model):
         super(SkipErrorFile, self).__init__(**kwargs)
         self.file_missing = file_missing
         self.data_inconsistency = data_inconsistency
+
+
+class SnowflakeDataset(Dataset):
+    """The snowflake dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param snowflake_dataset_schema: The schema name of the Snowflake
+     database. Type: string (or Expression with resultType string).
+    :type snowflake_dataset_schema: object
+    :param table: The table name of the Snowflake database. Type: string (or
+     Expression with resultType string).
+    :type table: object
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'snowflake_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+    }
+
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, snowflake_dataset_schema=None, table=None, **kwargs) -> None:
+        super(SnowflakeDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.snowflake_dataset_schema = snowflake_dataset_schema
+        self.table = table
+        self.type = 'SnowflakeTable'
+
+
+class SnowflakeExportCopyCommand(ExportSettings):
+    """Snowflake export command settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param additional_copy_options: Additional copy options directly passed to
+     snowflake Copy Command. Type: key value pairs (value should be string
+     type) (or Expression with resultType object). Example:
+     "additionalCopyOptions": { "DATE_FORMAT": "MM/DD/YYYY", "TIME_FORMAT":
+     "'HH24:MI:SS.FF'" }
+    :type additional_copy_options: dict[str, object]
+    :param additional_format_options: Additional format options directly
+     passed to snowflake Copy Command. Type: key value pairs (value should be
+     string type) (or Expression with resultType object). Example:
+     "additionalFormatOptions": { "OVERWRITE": "TRUE", "MAX_FILE_SIZE":
+     "'FALSE'" }
+    :type additional_format_options: dict[str, object]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'additional_copy_options': {'key': 'additionalCopyOptions', 'type': '{object}'},
+        'additional_format_options': {'key': 'additionalFormatOptions', 'type': '{object}'},
+    }
+
+    def __init__(self, *, additional_properties=None, additional_copy_options=None, additional_format_options=None, **kwargs) -> None:
+        super(SnowflakeExportCopyCommand, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.additional_copy_options = additional_copy_options
+        self.additional_format_options = additional_format_options
+        self.type = 'SnowflakeExportCopyCommand'
+
+
+class SnowflakeImportCopyCommand(ImportSettings):
+    """Snowflake import command settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param additional_copy_options: Additional copy options directly passed to
+     snowflake Copy Command. Type: key value pairs (value should be string
+     type) (or Expression with resultType object). Example:
+     "additionalCopyOptions": { "DATE_FORMAT": "MM/DD/YYYY", "TIME_FORMAT":
+     "'HH24:MI:SS.FF'" }
+    :type additional_copy_options: dict[str, object]
+    :param additional_format_options: Additional format options directly
+     passed to snowflake Copy Command. Type: key value pairs (value should be
+     string type) (or Expression with resultType object). Example:
+     "additionalFormatOptions": { "FORCE": "TRUE", "LOAD_UNCERTAIN_FILES":
+     "'FALSE'" }
+    :type additional_format_options: dict[str, object]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'additional_copy_options': {'key': 'additionalCopyOptions', 'type': '{object}'},
+        'additional_format_options': {'key': 'additionalFormatOptions', 'type': '{object}'},
+    }
+
+    def __init__(self, *, additional_properties=None, additional_copy_options=None, additional_format_options=None, **kwargs) -> None:
+        super(SnowflakeImportCopyCommand, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.additional_copy_options = additional_copy_options
+        self.additional_format_options = additional_format_options
+        self.type = 'SnowflakeImportCopyCommand'
+
+
+class SnowflakeLinkedService(LinkedService):
+    """Snowflake linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param connection_string: Required. The connection string of snowflake.
+     Type: string, SecureString.
+    :type connection_string: object
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'connection_string': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, password=None, encrypted_credential=None, **kwargs) -> None:
+        super(SnowflakeLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_string = connection_string
+        self.password = password
+        self.encrypted_credential = encrypted_credential
+        self.type = 'Snowflake'
+
+
+class SnowflakeSink(CopySink):
+    """A copy activity snowflake sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
+     with resultType string).
+    :type pre_copy_script: object
+    :param import_settings: Snowflake import settings.
+    :type import_settings:
+     ~azure.mgmt.datafactory.models.SnowflakeImportCopyCommand
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'import_settings': {'key': 'importSettings', 'type': 'SnowflakeImportCopyCommand'},
+    }
+
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None, import_settings=None, **kwargs) -> None:
+        super(SnowflakeSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.pre_copy_script = pre_copy_script
+        self.import_settings = import_settings
+        self.type = 'SnowflakeSink'
+
+
+class SnowflakeSource(CopySource):
+    """A copy activity snowflake source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query: Snowflake Sql query. Type: string (or Expression with
+     resultType string).
+    :type query: object
+    :param export_settings: Snowflake export settings.
+    :type export_settings:
+     ~azure.mgmt.datafactory.models.SnowflakeExportCopyCommand
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'object'},
+        'export_settings': {'key': 'exportSettings', 'type': 'SnowflakeExportCopyCommand'},
+    }
+
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, export_settings=None, **kwargs) -> None:
+        super(SnowflakeSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.query = query
+        self.export_settings = export_settings
+        self.type = 'SnowflakeSource'
 
 
 class SparkLinkedService(LinkedService):
@@ -29698,7 +30729,7 @@ class SSISPackageLocation(Model):
      with resultType string).
     :type package_path: object
     :param type: The type of SSIS package location. Possible values include:
-     'SSISDB', 'File', 'InlinePackage'
+     'SSISDB', 'File', 'InlinePackage', 'PackageStore'
     :type type: str or ~azure.mgmt.datafactory.models.SsisPackageLocationType
     :param package_password: Password of the package.
     :type package_password: ~azure.mgmt.datafactory.models.SecretBase
@@ -29708,6 +30739,10 @@ class SSISPackageLocation(Model):
     :param configuration_path: The configuration file of the package
      execution. Type: string (or Expression with resultType string).
     :type configuration_path: object
+    :param configuration_access_credential: The configuration file access
+     credential.
+    :type configuration_access_credential:
+     ~azure.mgmt.datafactory.models.SSISAccessCredential
     :param package_name: The package name.
     :type package_name: str
     :param package_content: The embedded package content. Type: string (or
@@ -29727,19 +30762,21 @@ class SSISPackageLocation(Model):
         'package_password': {'key': 'typeProperties.packagePassword', 'type': 'SecretBase'},
         'access_credential': {'key': 'typeProperties.accessCredential', 'type': 'SSISAccessCredential'},
         'configuration_path': {'key': 'typeProperties.configurationPath', 'type': 'object'},
+        'configuration_access_credential': {'key': 'typeProperties.configurationAccessCredential', 'type': 'SSISAccessCredential'},
         'package_name': {'key': 'typeProperties.packageName', 'type': 'str'},
         'package_content': {'key': 'typeProperties.packageContent', 'type': 'object'},
         'package_last_modified_date': {'key': 'typeProperties.packageLastModifiedDate', 'type': 'str'},
         'child_packages': {'key': 'typeProperties.childPackages', 'type': '[SSISChildPackage]'},
     }
 
-    def __init__(self, *, package_path=None, type=None, package_password=None, access_credential=None, configuration_path=None, package_name: str=None, package_content=None, package_last_modified_date: str=None, child_packages=None, **kwargs) -> None:
+    def __init__(self, *, package_path=None, type=None, package_password=None, access_credential=None, configuration_path=None, configuration_access_credential=None, package_name: str=None, package_content=None, package_last_modified_date: str=None, child_packages=None, **kwargs) -> None:
         super(SSISPackageLocation, self).__init__(**kwargs)
         self.package_path = package_path
         self.type = type
         self.package_password = package_password
         self.access_credential = access_credential
         self.configuration_path = configuration_path
+        self.configuration_access_credential = configuration_access_credential
         self.package_name = package_name
         self.package_content = package_content
         self.package_last_modified_date = package_last_modified_date
@@ -32252,6 +33289,37 @@ class XeroSource(TabularSource):
         super(XeroSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
         self.query = query
         self.type = 'XeroSource'
+
+
+class ZipDeflateReadSettings(CompressionReadSettings):
+    """The ZipDeflate compression read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param preserve_zip_file_name_as_folder: Preserve the zip file name as
+     folder path. Type: boolean (or Expression with resultType boolean).
+    :type preserve_zip_file_name_as_folder: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'preserve_zip_file_name_as_folder': {'key': 'preserveZipFileNameAsFolder', 'type': 'object'},
+    }
+
+    def __init__(self, *, additional_properties=None, preserve_zip_file_name_as_folder=None, **kwargs) -> None:
+        super(ZipDeflateReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.preserve_zip_file_name_as_folder = preserve_zip_file_name_as_folder
+        self.type = 'ZipDeflateReadSettings'
 
 
 class ZohoLinkedService(LinkedService):
