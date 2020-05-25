@@ -92,11 +92,11 @@ class MgmtMixedRealityClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.remote_rendering_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, remote_rendering_account=BODY)
 
         # /SpatialAnchorsAccounts/patch/Update spatial anchors account[patch]
-                TAGS = {
-                  "heroine": "juliet",
-                  "hero": "romeo"
-                }
-                result = self.mgmt_client.spatial_anchors_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, location=AZURE_LOCATION, tags=TAGS)
+        TAGS = {
+          "heroine": "juliet",
+          "hero": "romeo"
+        }
+        result = self.mgmt_client.spatial_anchors_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, location=AZURE_LOCATION, tags=TAGS)
 
         # //post/CheckLocalNameAvailability[post]
         result = self.mgmt_client.check_name_availability_local(location=AZURE_LOCATION, name="MyAccount", type="Microsoft.MixedReality/spatialAnchorsAccounts")
