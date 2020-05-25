@@ -75,7 +75,6 @@ setup(
         'azure.common',
         'azure.profiles'
     ],
-    install_requires=["adal", "msrestazure"],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
     }
