@@ -105,7 +105,7 @@ class MgmtMixedRealityClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.spatial_anchors_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, location=AZURE_LOCATION, tags=TAGS)
 
         # //post/CheckLocalNameAvailability[post]
-        result = self.mgmt_client.check_name_availability_local(azure_location=AZURE_LOCATION, name="MyAccount", type="Microsoft.MixedReality/spatialAnchorsAccounts")
+        result = self.mgmt_client.check_name_availability_local(location=AZURE_LOCATION, name="MyAccount", type="Microsoft.MixedReality/spatialAnchorsAccounts")
 
         # /RemoteRenderingAccounts/delete/Delete remote rendering account[delete]
         result = self.mgmt_client.remote_rendering_accounts.delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
