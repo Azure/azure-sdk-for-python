@@ -21,7 +21,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2020-05-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"335421f9-7600-4e47-80ea-bdc1d724accb"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d5efd4a6-5a0c-4ca5-87bc-83561d237a14"}}'
     headers:
       cache-control:
       - no-cache
@@ -30,13 +30,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:27 GMT
+      - Mon, 25 May 2020 14:36:02 GMT
       expires:
       - '-1'
       location:
       - subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount
       ms-cv:
-      - 2EdiCROo4E+52Hv6+U/HUg.0
+      - 2SfUfiuU9k2m4bZV1Gt6ig.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -70,7 +70,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2020-04-06-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"1dc61e42-18f8-49a4-a8bf-3dd166707912","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"c732081f-6055-486f-80e1-ca2576df24a9"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"fb896ed1-57fc-4f7e-ac5c-c21051d56cd5","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"cb19e00c-3d40-4d83-a82b-a0b6d26cecdb"}}'
     headers:
       cache-control:
       - no-cache
@@ -79,13 +79,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:33 GMT
+      - Mon, 25 May 2020 14:36:08 GMT
       expires:
       - '-1'
       location:
       - subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount
       ms-cv:
-      - VBIJp26oLE2OtqXt5TDVLg.0
+      - cvGF45ZK+UqqT1IK6w1lag.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -115,7 +115,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2020-04-06-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"1dc61e42-18f8-49a4-a8bf-3dd166707912","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"c732081f-6055-486f-80e1-ca2576df24a9"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"fb896ed1-57fc-4f7e-ac5c-c21051d56cd5","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"cb19e00c-3d40-4d83-a82b-a0b6d26cecdb"}}'
     headers:
       cache-control:
       - no-cache
@@ -124,11 +124,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:33 GMT
+      - Mon, 25 May 2020 14:36:08 GMT
       expires:
       - '-1'
       ms-cv:
-      - mek6HU7uVkGSEn001J92TQ.0
+      - 3FRWLMM/Lk+BVtxo2xy6mg.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -160,7 +160,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2020-05-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"335421f9-7600-4e47-80ea-bdc1d724accb"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d5efd4a6-5a0c-4ca5-87bc-83561d237a14"}}'
     headers:
       cache-control:
       - no-cache
@@ -169,11 +169,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:33 GMT
+      - Mon, 25 May 2020 14:36:08 GMT
       expires:
       - '-1'
       ms-cv:
-      - rB7pjwTGQ06Tx2eLYTG10w.0
+      - otFvRRDEq0aEIwZjl+uE6g.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -209,7 +209,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount/regenerateKeys?api-version=2020-04-06-preview
   response:
     body:
-      string: '{"primaryKey":"+zJrDuQF+mnd2XTEHHuQjyQ/KIuitu3U3IrqHMJix5Q=","secondaryKey":"0RByxhWJSpxoO0iUrIuk7KPECVKBlH4vySBgqO8r/rE="}'
+      string: '{"primaryKey":"EDu0rTgqDBmtJXnzPC+Pv6NizphmfmX3VFNyHq/JOuw=","secondaryKey":"BqYW8k9SWJ/FbgfaIwP2GYM3vxEA3jFkv5QPbKq6QBw="}'
     headers:
       cache-control:
       - no-cache
@@ -218,11 +218,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:34 GMT
+      - Mon, 25 May 2020 14:36:09 GMT
       expires:
       - '-1'
       ms-cv:
-      - Cfgqu0ffoU6fFUwRFU4yhA.0
+      - 3ZjOD5FnE0OBcQiuZxCMiQ.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -234,7 +234,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -260,7 +260,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount/regenerateKeys?api-version=2020-05-01
   response:
     body:
-      string: '{"primaryKey":"sry7DvPsEFzc8UFmOvP5tdLWGQe3cKVAUUJ2QqxCsTs=","secondaryKey":"WjaadlRdANf0nrkJyg2C2crYdskEvYhbIqkYO5DD56c="}'
+      string: '{"primaryKey":"EGBr5LLwZFsyGjTh+6r6MPITH2DH3JUqt+pS9oLf8G8=","secondaryKey":"5BHT2aHZzZJ/FyaU7ozHpVuumhEscISsPCmOsa90p5A="}'
     headers:
       cache-control:
       - no-cache
@@ -269,11 +269,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:35 GMT
+      - Mon, 25 May 2020 14:36:10 GMT
       expires:
       - '-1'
       ms-cv:
-      - cpUan2ahR0StQPCZTaFiaA.0
+      - krMuNd5950e+hNf+DxGh+w.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -285,7 +285,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -312,7 +312,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2020-04-06-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"1dc61e42-18f8-49a4-a8bf-3dd166707912","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"c732081f-6055-486f-80e1-ca2576df24a9"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"fb896ed1-57fc-4f7e-ac5c-c21051d56cd5","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"mixedreality.azure.com","accountId":"cb19e00c-3d40-4d83-a82b-a0b6d26cecdb"}}'
     headers:
       cache-control:
       - no-cache
@@ -321,11 +321,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:37 GMT
+      - Mon, 25 May 2020 14:36:12 GMT
       expires:
       - '-1'
       ms-cv:
-      - TTgbhIoJi0yNIYxBmOuhwA.0
+      - dwAOTUn0nEaC1i8RPyI28Q.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -363,7 +363,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2020-05-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"335421f9-7600-4e47-80ea-bdc1d724accb"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d5efd4a6-5a0c-4ca5-87bc-83561d237a14"}}'
     headers:
       cache-control:
       - no-cache
@@ -372,11 +372,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:39 GMT
+      - Mon, 25 May 2020 14:36:14 GMT
       expires:
       - '-1'
       ms-cv:
-      - nTtmQVItRkSzx1EGq0dkZA.0
+      - ThFq6KBOuE6SxWJxNw7EGA.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -423,11 +423,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 May 2020 11:45:40 GMT
+      - Mon, 25 May 2020 14:36:14 GMT
       expires:
       - '-1'
       ms-cv:
-      - +ajqEj5lxUyvsjsRONOdyw.0
+      - zQnk5xJHxk+phDN0hgfrHA.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -468,11 +468,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 25 May 2020 11:45:43 GMT
+      - Mon, 25 May 2020 14:36:18 GMT
       expires:
       - '-1'
       ms-cv:
-      - M2NT4Nuq40O9xTQIaw6MLQ.0
+      - G3N+W0GtHUiIM/tEgOaj3g.0
       pragma:
       - no-cache
       strict-transport-security:
@@ -511,11 +511,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 25 May 2020 11:45:46 GMT
+      - Mon, 25 May 2020 14:36:21 GMT
       expires:
       - '-1'
       ms-cv:
-      - pbt8B8e5cEi0EnhEQvrhiA.0
+      - 9asu5pEc+0OP8jcSm6oT3w.0
       pragma:
       - no-cache
       strict-transport-security:
