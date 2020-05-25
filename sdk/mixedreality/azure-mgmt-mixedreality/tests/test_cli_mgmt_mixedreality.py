@@ -39,91 +39,91 @@ class MgmtMixedRealityClientTest(AzureMgmtTestCase):
         RESOURCE_GROUP = resource_group.name
         ACCOUNT_NAME = "myAccount"
 
-# /SpatialAnchorsAccounts/put/Create spatial anchor account[put]
-BODY = {
-  "location": AZURE_LOCATION
-}
-result = self.mgmt_client.spatial_anchors_accounts.create(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, spatial_anchors_account=BODY)
+        # /SpatialAnchorsAccounts/put/Create spatial anchor account[put]
+        BODY = {
+          "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.spatial_anchors_accounts.create(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, spatial_anchors_account=BODY)
 
-# /RemoteRenderingAccounts/put/Create remote rendering account[put]
-BODY = {
-  "identity": {
-    "type": "SystemAssigned"
-  },
-  "location": AZURE_LOCATION
-}
-result = self.mgmt_client.remote_rendering_accounts.create(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, remote_rendering_account=BODY)
+        # /RemoteRenderingAccounts/put/Create remote rendering account[put]
+        BODY = {
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.remote_rendering_accounts.create(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, remote_rendering_account=BODY)
 
-# /RemoteRenderingAccounts/get/Get remote rendering account[get]
-result = self.mgmt_client.remote_rendering_accounts.get(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
+        # /RemoteRenderingAccounts/get/Get remote rendering account[get]
+        result = self.mgmt_client.remote_rendering_accounts.get(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
 
-# /SpatialAnchorsAccounts/get/Get spatial anchors account[get]
-result = self.mgmt_client.spatial_anchors_accounts.get(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
+        # /SpatialAnchorsAccounts/get/Get spatial anchors account[get]
+        result = self.mgmt_client.spatial_anchors_accounts.get(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
 
-# /RemoteRenderingAccounts/get/List remote rendering accounts by resource group[get]
-result = self.mgmt_client.remote_rendering_accounts.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        # /RemoteRenderingAccounts/get/List remote rendering accounts by resource group[get]
+        result = self.mgmt_client.remote_rendering_accounts.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
-# /SpatialAnchorsAccounts/get/List spatial anchor accounts by resource group[get]
-result = self.mgmt_client.spatial_anchors_accounts.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        # /SpatialAnchorsAccounts/get/List spatial anchor accounts by resource group[get]
+        result = self.mgmt_client.spatial_anchors_accounts.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
-# /RemoteRenderingAccounts/get/List remote rendering accounts by subscription[get]
-result = self.mgmt_client.remote_rendering_accounts.list_by_subscription()
+        # /RemoteRenderingAccounts/get/List remote rendering accounts by subscription[get]
+        result = self.mgmt_client.remote_rendering_accounts.list_by_subscription()
 
-# /SpatialAnchorsAccounts/get/List spatial anchors accounts by subscription[get]
-result = self.mgmt_client.spatial_anchors_accounts.list_by_subscription()
+        # /SpatialAnchorsAccounts/get/List spatial anchors accounts by subscription[get]
+        result = self.mgmt_client.spatial_anchors_accounts.list_by_subscription()
 
-# /Operations/get/List available operations[get]
-result = self.mgmt_client.operations.list()
+        # /Operations/get/List available operations[get]
+        result = self.mgmt_client.operations.list()
 
-# /RemoteRenderingAccounts/post/Regenerate remote rendering account keys[post]
-BODY = {
-  "serial": "1"
-}
-result = self.mgmt_client.remote_rendering_accounts.regenerate_keys(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, regenerate=BODY)
+        # /RemoteRenderingAccounts/post/Regenerate remote rendering account keys[post]
+        BODY = {
+          "serial": "1"
+        }
+        result = self.mgmt_client.remote_rendering_accounts.regenerate_keys(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, regenerate=BODY)
 
-# /SpatialAnchorsAccounts/post/Regenerate spatial anchors account keys[post]
-BODY = {
-  "serial": "1"
-}
-result = self.mgmt_client.spatial_anchors_accounts.regenerate_keys(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, regenerate=BODY)
+        # /SpatialAnchorsAccounts/post/Regenerate spatial anchors account keys[post]
+        BODY = {
+          "serial": "1"
+        }
+        result = self.mgmt_client.spatial_anchors_accounts.regenerate_keys(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, regenerate=BODY)
 
-# /RemoteRenderingAccounts/patch/Update remote rendering account[patch]
-BODY = {
-  "identity": {
-    "type": "SystemAssigned"
-  },
-  "location": AZURE_LOCATION,
-  "tags": {
-    "heroine": "juliet",
-    "hero": "romeo"
-  }
-}
-result = self.mgmt_client.remote_rendering_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, remote_rendering_account=BODY)
+        # /RemoteRenderingAccounts/patch/Update remote rendering account[patch]
+        BODY = {
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "location": AZURE_LOCATION,
+          "tags": {
+            "heroine": "juliet",
+            "hero": "romeo"
+          }
+        }
+        result = self.mgmt_client.remote_rendering_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, remote_rendering_account=BODY)
 
-# /SpatialAnchorsAccounts/patch/Update spatial anchors account[patch]
-BODY = {
-  "location": AZURE_LOCATION,
-  "tags": {
-    "heroine": "juliet",
-    "hero": "romeo"
-  }
-}
-result = self.mgmt_client.spatial_anchors_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, spatial_anchors_account=BODY)
+        # /SpatialAnchorsAccounts/patch/Update spatial anchors account[patch]
+        BODY = {
+          "location": AZURE_LOCATION,
+          "tags": {
+            "heroine": "juliet",
+            "hero": "romeo"
+          }
+        }
+        result = self.mgmt_client.spatial_anchors_accounts.update(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME, spatial_anchors_account=BODY)
 
-# //post/CheckLocalNameAvailability[post]
-BODY = {
-  "name": "MyAccount",
-  "type": "Microsoft.MixedReality/spatialAnchorsAccounts"
-}
-result = self.mgmt_client.check_name_availability_local(azure_location=AZURE_LOCATION, check_name_availability=BODY)
+        # //post/CheckLocalNameAvailability[post]
+        BODY = {
+          "name": "MyAccount",
+          "type": "Microsoft.MixedReality/spatialAnchorsAccounts"
+        }
+        result = self.mgmt_client.check_name_availability_local(azure_location=AZURE_LOCATION, check_name_availability=BODY)
 
-# /RemoteRenderingAccounts/delete/Delete remote rendering account[delete]
-result = self.mgmt_client.remote_rendering_accounts.delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
+        # /RemoteRenderingAccounts/delete/Delete remote rendering account[delete]
+        result = self.mgmt_client.remote_rendering_accounts.delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
 
-# /SpatialAnchorsAccounts/delete/Delete spatial anchors account[delete]
-result = self.mgmt_client.spatial_anchors_accounts.delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
+        # /SpatialAnchorsAccounts/delete/Delete spatial anchors account[delete]
+        result = self.mgmt_client.spatial_anchors_accounts.delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+        #------------------------------------------------------------------------------
+        if __name__ == '__main__':
+            unittest.main()
