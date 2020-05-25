@@ -1063,11 +1063,16 @@ class SavedSearch(ProxyResource):
     :type category: str
     :param display_name: Required. Saved search display name.
     :type display_name: str
-    :param query: Required. The query expression for the saved search. Please
-     see
-     https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-search-reference
-     for reference.
+    :param query: Required. The query expression for the saved search.
     :type query: str
+    :param function_alias: The function alias if query serves as a function.
+    :type function_alias: str
+    :param function_parameters: The optional function parameters if query
+     serves as a function. Value should be in the following format:
+     'param-name1:type1 = default_value1, param-name2:type2 = default_value2'.
+     For more examples and proper syntax please refer to
+     https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
+    :type function_parameters: str
     :param version: The version number of the query language. The current
      version is 2 and is the default.
     :type version: long
@@ -1092,6 +1097,8 @@ class SavedSearch(ProxyResource):
         'category': {'key': 'properties.category', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
+        'function_alias': {'key': 'properties.functionAlias', 'type': 'str'},
+        'function_parameters': {'key': 'properties.functionParameters', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'long'},
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
@@ -1102,6 +1109,8 @@ class SavedSearch(ProxyResource):
         self.category = kwargs.get('category', None)
         self.display_name = kwargs.get('display_name', None)
         self.query = kwargs.get('query', None)
+        self.function_alias = kwargs.get('function_alias', None)
+        self.function_parameters = kwargs.get('function_parameters', None)
         self.version = kwargs.get('version', None)
         self.tags = kwargs.get('tags', None)
 
