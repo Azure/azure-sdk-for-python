@@ -87,8 +87,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
         self.assertEqual(labeled_model_from_train.status, labeled_model_from_get.status)
-        self.assertEqual(labeled_model_from_train.created_on, labeled_model_from_get.created_on)
-        self.assertEqual(labeled_model_from_train.last_modified, labeled_model_from_get.last_modified)
+        self.assertEqual(labeled_model_from_train.requested_on, labeled_model_from_get.requested_on)
+        self.assertEqual(labeled_model_from_train.completed_on, labeled_model_from_get.completed_on)
         self.assertEqual(labeled_model_from_train.errors, labeled_model_from_get.errors)
         for a, b in zip(labeled_model_from_train.training_documents, labeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -104,8 +104,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertIsNotNone(model.status)
-            self.assertIsNotNone(model.created_on)
-            self.assertIsNotNone(model.last_modified)
+            self.assertIsNotNone(model.requested_on)
+            self.assertIsNotNone(model.completed_on)
 
         await client.delete_model(labeled_model_from_train.model_id)
 
@@ -121,8 +121,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
         self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
-        self.assertEqual(unlabeled_model_from_train.created_on, unlabeled_model_from_get.created_on)
-        self.assertEqual(unlabeled_model_from_train.last_modified, unlabeled_model_from_get.last_modified)
+        self.assertEqual(unlabeled_model_from_train.requested_on, unlabeled_model_from_get.requested_on)
+        self.assertEqual(unlabeled_model_from_train.completed_on, unlabeled_model_from_get.completed_on)
         self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
         for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -137,8 +137,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertIsNotNone(model.status)
-            self.assertIsNotNone(model.created_on)
-            self.assertIsNotNone(model.last_modified)
+            self.assertIsNotNone(model.requested_on)
+            self.assertIsNotNone(model.completed_on)
 
         await client.delete_model(unlabeled_model_from_train.model_id)
 
