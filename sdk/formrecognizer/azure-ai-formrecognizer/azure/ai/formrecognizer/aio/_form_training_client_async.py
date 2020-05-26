@@ -177,6 +177,10 @@ class FormTrainingClient(object):
                 :dedent: 12
                 :caption: Delete a custom model.
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         return await self._client.delete_custom_model(
             model_id=model_id,
             error_map=error_map,
@@ -247,6 +251,10 @@ class FormTrainingClient(object):
                 :dedent: 12
                 :caption: Get a custom model with a model ID.
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         response = await self._client.get_custom_model(
             model_id=model_id,
             include_keys=True,
@@ -326,6 +334,10 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: Copy a model from the source resource to the target resource
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument

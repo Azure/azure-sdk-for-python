@@ -277,6 +277,9 @@ class FormRecognizerClient(object):
                 :caption: Recognize fields and values from a custom form.
         """
 
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         content_type = kwargs.pop("content_type", None)
@@ -322,6 +325,9 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
