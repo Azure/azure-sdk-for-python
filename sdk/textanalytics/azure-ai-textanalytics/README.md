@@ -23,6 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
+> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
 ### Authenticate the client
 #### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].

@@ -7,6 +7,7 @@
 - Added `text` property to `SentenceSentiment`
 
 **Breaking changes**
+- Now targets only the service's v3.0 API, instead of the v3.0-preview.1 API
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
