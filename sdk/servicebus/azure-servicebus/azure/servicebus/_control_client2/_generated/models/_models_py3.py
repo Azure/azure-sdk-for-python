@@ -14,51 +14,6 @@ import msrest.serialization
 from ._service_bus_management_client_enums import *
 
 
-class CountDetails(msrest.serialization.Model):
-    """Details about the message counts in queue.
-
-    :param active_message_count: Number of active messages in the queue, topic, or subscription.
-    :type active_message_count: int
-    :param dead_letter_message_count: Number of messages that are dead lettered.
-    :type dead_letter_message_count: int
-    :param scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: int
-    :param transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :type transfer_dead_letter_message_count: int
-    :param transfer_message_count: Number of messages transferred to another queue, topic, or
-     subscription.
-    :type transfer_message_count: int
-    """
-
-    _attribute_map = {
-        'active_message_count': {'key': 'ActiveMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'dead_letter_message_count': {'key': 'DeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'scheduled_message_count': {'key': 'ScheduledMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'transfer_dead_letter_message_count': {'key': 'TransferDeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'transfer_message_count': {'key': 'TransferMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-    }
-    _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'
-    }
-
-    def __init__(
-        self,
-        *,
-        active_message_count: Optional[int] = None,
-        dead_letter_message_count: Optional[int] = None,
-        scheduled_message_count: Optional[int] = None,
-        transfer_dead_letter_message_count: Optional[int] = None,
-        transfer_message_count: Optional[int] = None,
-        **kwargs
-    ):
-        super(CountDetails, self).__init__(**kwargs)
-        self.active_message_count = active_message_count
-        self.dead_letter_message_count = dead_letter_message_count
-        self.scheduled_message_count = scheduled_message_count
-        self.transfer_dead_letter_message_count = transfer_dead_letter_message_count
-        self.transfer_message_count = transfer_message_count
-
-
 class CreateEntityBody(msrest.serialization.Model):
     """The response from a CreateQueue operation.
 
@@ -112,21 +67,116 @@ class CreateEntityBodyContent(msrest.serialization.Model):
         self.entity = entity
 
 
-class QueueDescription(msrest.serialization.Model):
-    """Description of a Service Bus queue resource.
+class MessageCountDetails(msrest.serialization.Model):
+    """Details about the message counts in queue.
 
+    :param active_message_count: Number of active messages in the queue, topic, or subscription.
+    :type active_message_count: int
+    :param dead_letter_message_count: Number of messages that are dead lettered.
+    :type dead_letter_message_count: int
+    :param scheduled_message_count: Number of scheduled messages.
+    :type scheduled_message_count: int
+    :param transfer_dead_letter_message_count: Number of messages transferred into dead letters.
+    :type transfer_dead_letter_message_count: int
+    :param transfer_message_count: Number of messages transferred to another queue, topic, or
+     subscription.
+    :type transfer_message_count: int
+    """
+
+    _attribute_map = {
+        'active_message_count': {'key': 'ActiveMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'dead_letter_message_count': {'key': 'DeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'scheduled_message_count': {'key': 'ScheduledMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'transfer_dead_letter_message_count': {'key': 'TransferDeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'transfer_message_count': {'key': 'TransferMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+    }
+    _xml_map = {
+        'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'
+    }
+
+    def __init__(
+        self,
+        *,
+        active_message_count: Optional[int] = None,
+        dead_letter_message_count: Optional[int] = None,
+        scheduled_message_count: Optional[int] = None,
+        transfer_dead_letter_message_count: Optional[int] = None,
+        transfer_message_count: Optional[int] = None,
+        **kwargs
+    ):
+        super(MessageCountDetails, self).__init__(**kwargs)
+        self.active_message_count = active_message_count
+        self.dead_letter_message_count = dead_letter_message_count
+        self.scheduled_message_count = scheduled_message_count
+        self.transfer_dead_letter_message_count = transfer_dead_letter_message_count
+        self.transfer_message_count = transfer_message_count
+
+
+class QueueMetrics(msrest.serialization.Model):
+    """Service Bus queue metrics.
+
+    :param queue_name: Name of the queue.
+    :type queue_name: str
     :param accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
+    :param created_at: The exact time the queue was created.
+    :type created_at: ~datetime.datetime
+    :param updated_at: The exact time a message was updated in the queue.
+    :type updated_at: ~datetime.datetime
+    :param size_in_bytes: The size of the queue, in bytes.
+    :type size_in_bytes: int
+    :param message_count: The number of messages in the queue.
+    :type message_count: int
+    :param message_count_details: Details about the message counts in queue.
+    :type message_count_details: ~azure.service._control_client2.models.MessageCountDetails
+    """
+
+    _attribute_map = {
+        'queue_name': {'key': 'QueueName', 'type': 'str'},
+        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
+    }
+    _xml_map = {
+        'name': 'QueueMetrics', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        *,
+        queue_name: Optional[str] = None,
+        accessed_at: Optional[datetime.datetime] = None,
+        created_at: Optional[datetime.datetime] = None,
+        updated_at: Optional[datetime.datetime] = None,
+        size_in_bytes: Optional[int] = None,
+        message_count: Optional[int] = None,
+        message_count_details: Optional["MessageCountDetails"] = None,
+        **kwargs
+    ):
+        super(QueueMetrics, self).__init__(**kwargs)
+        self.queue_name = queue_name
+        self.accessed_at = accessed_at
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.size_in_bytes = size_in_bytes
+        self.message_count = message_count
+        self.message_count_details = message_count_details
+
+
+class QueueProperties(msrest.serialization.Model):
+    """Description of a Service Bus queue resource.
+
+    :param queue_name: Name of the queue.
+    :type queue_name: str
     :param authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[str]
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :param count_details: Details about the message counts in queue.
-    :type count_details: ~azure.service._control_client2.models.CountDetails
-    :param created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
     :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
@@ -163,31 +213,23 @@ class QueueDescription(msrest.serialization.Model):
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
     :type max_size_in_megabytes: float
-    :param message_count: The number of messages in the queue.
-    :type message_count: int
     :param requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
     :param requires_session: A value that indicates whether the queue supports the concept of
      sessions.
     :type requires_session: bool
-    :param size_in_bytes: The size of the queue, in bytes.
-    :type size_in_bytes: int
     :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
     :type status: str or ~azure.service._control_client2.models.EntityStatus
     :param support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
-    :param updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'queue_name': {'key': 'QueueName', 'type': 'str'},
         'authorization_rules': {'key': 'AuthorizationRules', 'type': '[str]', 'xml': {'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'count_details': {'key': 'CountDetails', 'type': 'CountDetails'},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -199,13 +241,10 @@ class QueueDescription(msrest.serialization.Model):
         'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'float', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'status': {'key': 'Status', 'type': 'str'},
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -214,11 +253,9 @@ class QueueDescription(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        accessed_at: Optional[datetime.datetime] = None,
+        queue_name: Optional[str] = None,
         authorization_rules: Optional[List[str]] = None,
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
-        count_details: Optional["CountDetails"] = None,
-        created_at: Optional[datetime.datetime] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[datetime.timedelta] = None,
         duplicate_detection_history_time_window: Optional[datetime.timedelta] = None,
@@ -230,21 +267,16 @@ class QueueDescription(msrest.serialization.Model):
         lock_duration: Optional[datetime.timedelta] = None,
         max_delivery_count: Optional[int] = None,
         max_size_in_megabytes: Optional[float] = None,
-        message_count: Optional[int] = None,
         requires_duplicate_detection: Optional[bool] = None,
         requires_session: Optional[bool] = None,
-        size_in_bytes: Optional[int] = None,
         status: Optional[Union[str, "EntityStatus"]] = None,
         support_ordering: Optional[bool] = None,
-        updated_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(QueueDescription, self).__init__(**kwargs)
-        self.accessed_at = accessed_at
+        super(QueueProperties, self).__init__(**kwargs)
+        self.queue_name = queue_name
         self.authorization_rules = authorization_rules
         self.auto_delete_on_idle = auto_delete_on_idle
-        self.count_details = count_details
-        self.created_at = created_at
         self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
         self.default_message_time_to_live = default_message_time_to_live
         self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
@@ -256,156 +288,7 @@ class QueueDescription(msrest.serialization.Model):
         self.lock_duration = lock_duration
         self.max_delivery_count = max_delivery_count
         self.max_size_in_megabytes = max_size_in_megabytes
-        self.message_count = message_count
         self.requires_duplicate_detection = requires_duplicate_detection
         self.requires_session = requires_session
-        self.size_in_bytes = size_in_bytes
         self.status = status
         self.support_ordering = support_ordering
-        self.updated_at = updated_at
-
-
-class QueueDescriptionResponse(msrest.serialization.Model):
-    """The response from a Queue_Get operation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The URL of the GET request.
-    :type id: str
-    :param title: The name of the queue.
-    :type title: str
-    :param published: Required. The timestamp for when this queue was published.
-    :type published: str
-    :param updated: The timestamp for when this queue was last updated.
-    :type updated: ~datetime.datetime
-    :param author: Required. The author that created this resource.
-    :type author: ~azure.service._control_client2.models.QueueDescriptionResponseAuthor
-    :param link: Required. The URL link of the GET request.
-    :type link: ~azure.service._control_client2.models.QueueDescriptionResponseLink
-    :param content: Required. Contents of a Queue_Get response.
-    :type content: ~azure.service._control_client2.models.QueueDescriptionResponseContent
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'published': {'required': True},
-        'author': {'required': True},
-        'link': {'required': True},
-        'content': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'published': {'key': 'published', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'author': {'key': 'author', 'type': 'QueueDescriptionResponseAuthor'},
-        'link': {'key': 'link', 'type': 'QueueDescriptionResponseLink'},
-        'content': {'key': 'content', 'type': 'QueueDescriptionResponseContent'},
-    }
-    _xml_map = {
-        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        published: str,
-        author: "QueueDescriptionResponseAuthor",
-        link: "QueueDescriptionResponseLink",
-        content: "QueueDescriptionResponseContent",
-        title: Optional[str] = None,
-        updated: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(QueueDescriptionResponse, self).__init__(**kwargs)
-        self.id = id
-        self.title = title
-        self.published = published
-        self.updated = updated
-        self.author = author
-        self.link = link
-        self.content = content
-
-
-class QueueDescriptionResponseAuthor(msrest.serialization.Model):
-    """The author that created this resource.
-
-    :param name: The Service Bus namespace.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-    }
-    _xml_map = {
-        'ns': 'http://www.w3.org/2005/Atom'
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
-        super(QueueDescriptionResponseAuthor, self).__init__(**kwargs)
-        self.name = name
-
-
-class QueueDescriptionResponseContent(msrest.serialization.Model):
-    """Contents of a Queue_Get response.
-
-    :param type: Type of content in queue response.
-    :type type: str
-    :param queue_description: Description of a Service Bus queue resource.
-    :type queue_description: ~azure.service._control_client2.models.QueueDescription
-    """
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'queue_description': {'key': 'QueueDescription', 'type': 'QueueDescription'},
-    }
-    _xml_map = {
-        'ns': 'http://www.w3.org/2005/Atom'
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        queue_description: Optional["QueueDescription"] = None,
-        **kwargs
-    ):
-        super(QueueDescriptionResponseContent, self).__init__(**kwargs)
-        self.type = type
-        self.queue_description = queue_description
-
-
-class QueueDescriptionResponseLink(msrest.serialization.Model):
-    """The URL link of the GET request.
-
-    :param href: The URL of the GET request.
-    :type href: str
-    :param rel: What the link href is relative to.
-    :type rel: str
-    """
-
-    _attribute_map = {
-        'href': {'key': 'href', 'type': 'str', 'xml': {'attr': True}},
-        'rel': {'key': 'rel', 'type': 'str', 'xml': {'attr': True}},
-    }
-    _xml_map = {
-        'ns': 'http://www.w3.org/2005/Atom'
-    }
-
-    def __init__(
-        self,
-        *,
-        href: Optional[str] = None,
-        rel: Optional[str] = None,
-        **kwargs
-    ):
-        super(QueueDescriptionResponseLink, self).__init__(**kwargs)
-        self.href = href
-        self.rel = rel

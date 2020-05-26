@@ -9,7 +9,7 @@ from azure.servicebus import ServiceBusSharedKeyCredential
 from azure.servicebus._control_client2._generated import models
 from azure.servicebus._control_client2._generated._configuration import ServiceBusManagementClientConfiguration
 from azure.servicebus._control_client2._generated.models import CreateEntityBody, CreateEntityBodyContent, \
-    QueueDescription
+    QueueProperties, QueueMetrics
 from azure.servicebus._control_client2._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from .._common.constants import JWT_TOKEN_SCOPE
 
@@ -26,9 +26,11 @@ for _, clazz in clsmembers:
     if hasattr(clazz, "_xml_map"):
         ns = clazz._xml_map['ns']
         if hasattr(clazz, "_attribute_map"):
-            for mps in clazz._attribute_map.values():
-                if 'xml' not in mps:
-                    mps['xml'] = {'ns': ns}
+            for mpkey, mpvalue in clazz._attribute_map.items():
+                if 'xml' not in mpvalue:
+                    mpvalue['xml'] = {'ns': ns}
+                    if mpkey == "message_count_details":
+                        mpvalue['xml']['name'] = "CountDetails"
 # end of workaround
 
 
@@ -85,16 +87,28 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
-    def get_queue(self, queue_name):
-        # type: (str) -> QueueDescription
+    def get_queue_properties(self, queue_name):
+        # type: (str) -> QueueProperties
         et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueDescription.deserialize(qc_ele)
+        qc = QueueProperties.deserialize(qc_ele)
+        qc.queue_name = queue_name
         return qc
 
-    def create_queue(self, queue_name, queue_description=QueueDescription()):
-        # type: (str, "QueueDescription") -> QueueDescription
+    def get_queue_metrics(self, queue_name):
+        # type: (str) -> QueueMetrics
+        et = self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
+        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc = QueueMetrics.deserialize(qc_ele)
+        for e in qc_ele:
+            print(e)
+        qc.queue_name = queue_name
+        return qc
+
+    def create_queue(self, queue_name, queue_description=QueueProperties()):
+        # type: (str, "QueueDescription") -> QueueProperties
         """Create a queue"""
         create_entity_body = CreateEntityBody(
             content=CreateEntityBodyContent(
@@ -105,5 +119,5 @@ class ServiceBusManagementClient:
         et = self._impl.queue.create(queue_name, request_body)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueDescription.deserialize(qc_ele)
+        qc = QueueProperties.deserialize(qc_ele)
         return qc

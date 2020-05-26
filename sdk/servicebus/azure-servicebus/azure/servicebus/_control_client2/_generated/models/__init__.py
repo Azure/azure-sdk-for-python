@@ -7,23 +7,17 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import CountDetails
     from ._models_py3 import CreateEntityBody
     from ._models_py3 import CreateEntityBodyContent
-    from ._models_py3 import QueueDescription
-    from ._models_py3 import QueueDescriptionResponse
-    from ._models_py3 import QueueDescriptionResponseAuthor
-    from ._models_py3 import QueueDescriptionResponseContent
-    from ._models_py3 import QueueDescriptionResponseLink
+    from ._models_py3 import MessageCountDetails
+    from ._models_py3 import QueueMetrics
+    from ._models_py3 import QueueProperties
 except (SyntaxError, ImportError):
-    from ._models import CountDetails  # type: ignore
     from ._models import CreateEntityBody  # type: ignore
     from ._models import CreateEntityBodyContent  # type: ignore
-    from ._models import QueueDescription  # type: ignore
-    from ._models import QueueDescriptionResponse  # type: ignore
-    from ._models import QueueDescriptionResponseAuthor  # type: ignore
-    from ._models import QueueDescriptionResponseContent  # type: ignore
-    from ._models import QueueDescriptionResponseLink  # type: ignore
+    from ._models import MessageCountDetails  # type: ignore
+    from ._models import QueueMetrics  # type: ignore
+    from ._models import QueueProperties  # type: ignore
 
 from ._service_bus_management_client_enums import (
     EntityAvailabilityStatus,
@@ -31,14 +25,11 @@ from ._service_bus_management_client_enums import (
 )
 
 __all__ = [
-    'CountDetails',
     'CreateEntityBody',
     'CreateEntityBodyContent',
-    'QueueDescription',
-    'QueueDescriptionResponse',
-    'QueueDescriptionResponseAuthor',
-    'QueueDescriptionResponseContent',
-    'QueueDescriptionResponseLink',
+    'MessageCountDetails',
+    'QueueMetrics',
+    'QueueProperties',
     'EntityAvailabilityStatus',
     'EntityStatus',
 ]
