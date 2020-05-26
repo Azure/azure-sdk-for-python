@@ -11,6 +11,10 @@
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
+## 1.0.0b5
+
+- This was a broken release
+
 ## 1.0.0b4 (2020-04-07)
 
 **Breaking changes**
