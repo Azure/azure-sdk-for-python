@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from .edm import Collection, ComplexType
+from ._edm import Collection, ComplexType
 from ._generated.models import SearchField
 
 if TYPE_CHECKING:
@@ -21,14 +21,15 @@ def SimpleField(**kw):
     :param name: Required. The name of the field, which must be unique within the fields collection
      of the index or parent field.
     :type name: str
-    :param type: Required. The data type of the field. Possible values include: edm.String,
-     edm.Int32, edm.Int64, edm.Double, edm.Boolean, edm.DateTimeOffset,
-     edm.GeographyPoint, edm.ComplexType, from `azure.search.documents.edm`.
+    :param type: Required. The data type of the field. Possible values include: SearchFieldDataType.String,
+     SearchFieldDataType.Int32, SearchFieldDataType.Int64, SearchFieldDataType.Double, SearchFieldDataType.Boolean,
+     SearchFieldDataType.DateTimeOffset, SearchFieldDataType.GeographyPoint, SearchFieldDataType.ComplexType,
+     from `azure.search.documents.SearchFieldDataType`.
     :type type: str
     :param key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
-     type Edm.String. Key fields can be used to look up documents directly and update or delete
-     specific documents. Default is False
+     type SearchFieldDataType.String. Key fields can be used to look up documents directly and
+     update or delete specific documents. Default is False
     :type key: bool
     :param hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
@@ -39,10 +40,10 @@ def SimpleField(**kw):
     :type retrievable: bool
     :param filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
-     Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
-     comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
-     $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property
-     must be null for complex fields. Default is False
+     SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
+     not undergo word-breaking, so comparisons are for exact matches only. For example, if you
+     set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but
+     $filter=f eq 'sunny day' will. This property must be null for complex fields. Default is False
     :type filterable: bool
     :param sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
@@ -56,8 +57,8 @@ def SimpleField(**kw):
     :param facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
      (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
-     on). Fields of type edm.GeographyPoint or Collection(edm.GeographyPoint) cannot be facetable.
-     Default is False.
+     on). Fields of type SearchFieldDataType.GeographyPoint or
+     Collection(SearchFieldDataType.GeographyPoint) cannot be facetable. Default is False.
     :type facetable: bool
     """
     result = {"name": kw.get("name"), "type": kw.get("type")}  # type: Dict[str, Any]
@@ -77,12 +78,12 @@ def SearchableField(**kw):
     :param name: Required. The name of the field, which must be unique within the fields collection
      of the index or parent field.
     :type name: str
-    :param type: Required. The data type of the field. Possible values include: edm.String
-     and Collection(edm.String), from `azure.search.documents.edm`.
+    :param type: Required. The data type of the field. Possible values include: SearchFieldDataType.String
+     and Collection(SearchFieldDataType.String), from `azure.search.documents.SearchFieldDataType`.
     :type type: str
     :param key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
-     type Edm.String. Key fields can be used to look up documents directly and update or delete
+     type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is False
     :type key: bool
     :param hidden: A value indicating whether the field can be returned in a search result.
