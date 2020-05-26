@@ -20,7 +20,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -31,13 +31,13 @@ interactions:
         is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 0ac20ef1-6d03-4990-99fd-44e17345fe73
+      - 490558fa-49b0-4d4a-b404-72ad1bd4a616
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Tue, 19 May 2020 15:32:31 GMT
+      - Tue, 26 May 2020 17:34:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -45,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '7'
     status:
       code: 200
       message: OK

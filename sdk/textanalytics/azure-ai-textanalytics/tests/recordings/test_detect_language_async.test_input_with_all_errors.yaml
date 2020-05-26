@@ -15,7 +15,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -30,9 +30,9 @@ interactions:
         size to: 5120 text elements. For additional details on the data limitations
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 76ae9fd7-8815-4677-a8f6-211da60e0d52
+      apim-request-id: e8bb63b0-4ba6-4154-916c-a957a9ca29f2
       content-type: application/json; charset=utf-8
-      date: Tue, 19 May 2020 15:32:33 GMT
+      date: Tue, 26 May 2020 17:34:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -40,5 +40,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 version: 1

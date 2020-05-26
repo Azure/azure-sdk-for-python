@@ -19,19 +19,19 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"one"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"two"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"three"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"four"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"five"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - f2a75ad8-3630-4a7a-95d2-8ba7f51f3d5e
+      - 2c055f95-ffa7-4f0f-bee2-e4283b5ae29e
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=5
       date:
-      - Tue, 19 May 2020 15:32:31 GMT
+      - Tue, 26 May 2020 17:34:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '105'
+      - '96'
     status:
       code: 200
       message: OK

@@ -128,7 +128,7 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 def text_analytics_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog', location='CentralUSEUAP')
+    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog')
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)

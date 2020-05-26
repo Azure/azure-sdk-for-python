@@ -13,7 +13,7 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -22,9 +22,9 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en,es"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 7c65b144-7ba2-4146-9b0c-ba2ab2907317
+      apim-request-id: 63be7fd9-7066-4990-8179-4d89ad05f792
       content-type: application/json; charset=utf-8
-      date: Tue, 19 May 2020 15:32:38 GMT
+      date: Tue, 26 May 2020 17:34:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -32,5 +32,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 version: 1

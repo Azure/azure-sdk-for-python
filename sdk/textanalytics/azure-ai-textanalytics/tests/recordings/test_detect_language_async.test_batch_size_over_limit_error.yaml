@@ -727,21 +727,21 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 1000 records are permitted."}}}'
     headers:
-      apim-request-id: f82f22ff-56d6-43ba-bdd0-e0a3e5dbad0b
+      apim-request-id: 0d6a826a-0450-477c-8974-223f29a80f55
       content-type: application/json; charset=utf-8
-      date: Tue, 19 May 2020 15:32:33 GMT
+      date: Tue, 26 May 2020 17:34:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 version: 1
