@@ -303,16 +303,14 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
         result = result.result()
    
-    @unittest.skip('problem with non-existing resource')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_disaster_recovery_configs(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        NAMESPACE_NAME = self.get_resource_name("namespacetest")
-        NAMESPACE_NAME_2 = self.get_resource_name("namespace2test")
+        NAMESPACE_NAME = self.get_resource_name("namespace2test")
+        NAMESPACE_NAME_2 = self.get_resource_name("namespacetest")
         AUTHORIZATION_RULE_NAME = self.get_resource_name("authorizationrule")
         DISASTER_RECOVERY_CONFIG_NAME = self.get_resource_name("disasterdecoveryconfigtest")
-
 
         # NamespaceCreate[put]
         BODY = {
@@ -353,6 +351,12 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_create_or_update(resource_group.name, NAMESPACE_NAME_2, BODY)
         second_namespace = result.result()
 
+        # DRCCheckNameAvailability[post]
+        BODY = {
+          "name": "sdk-DisasterRecovery-9474"
+        }
+        result = self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group.name, NAMESPACE_NAME, BODY)
+
         # EHAliasCreate[put]
         BODY = {
           # "partner_namespace": NAMESPACE_NAME_2
@@ -386,12 +390,6 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
         # EHAliasFailOver[post]
         result = self.mgmt_client.disaster_recovery_configs.fail_over(resource_group.name, NAMESPACE_NAME_2, DISASTER_RECOVERY_CONFIG_NAME)
-
-        # DRCCheckNameAvailability[post]
-        BODY = {
-          "name": "sdk-DisasterRecovery-9474"
-        }
-        result = self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group.name, NAMESPACE_NAME, BODY)
 
         # EHAliasDelete[delete]
         while True:
