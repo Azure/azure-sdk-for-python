@@ -1100,7 +1100,7 @@ class BlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-expiry-option'] = self._serialize.header("expiry_options", expiry_options, 'str')
         if expires_on is not None:
-            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'str')
+            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'rfc-1123')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)

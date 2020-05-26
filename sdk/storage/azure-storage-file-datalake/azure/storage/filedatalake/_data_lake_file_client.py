@@ -239,8 +239,22 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=FileProperties._deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+
+    def set_file_expiry(self, expiry_options, expires_on=None, **kwargs):
+        # type: (**Any) -> None
+        """Sets the time a file will expire and be deleted.
+
+        :param str expiry_options:
+            Required. Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
+        :param datetime expires_on:
+            The time to set the file to expiry
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        return self._blob_client._client.blob.set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]

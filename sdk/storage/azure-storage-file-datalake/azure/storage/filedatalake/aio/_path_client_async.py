@@ -357,7 +357,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :rtype: DirectoryProperties or FileProperties
         """
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
-        path_properties.__class__ = DirectoryProperties
         return path_properties
 
     async def set_metadata(self, metadata,  # type: Dict[str, str]

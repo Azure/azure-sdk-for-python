@@ -676,6 +676,28 @@ class FileTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_properties())
 
+    async def _test_set_expiry(self):
+        # Arrange
+        directory_client = await self._create_directory_and_return_client()
+
+        metadata = {'hello': 'world', 'number': '42'}
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        expires_on = datetime.utcnow() + timedelta(hours=1)
+        file_client = await directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+        await file_client.set_file_expiry("Absolute", expires_on=expires_on)
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(properties)
+        self.assertIsNotNone(properties.expiry_time)
+
+    @record
+    def test_set_expiry_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_expiry())
+
     async def _test_rename_file_with_non_used_name(self):
         file_client = await self._create_file_and_return_client()
         data_bytes = b"abc"

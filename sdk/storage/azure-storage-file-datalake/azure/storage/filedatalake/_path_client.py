@@ -529,7 +529,6 @@ class PathClient(StorageAccountHostsMixin):
                 :caption: Getting the properties for a file/directory.
         """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
-        path_properties.__class__ = DirectoryProperties
         return path_properties
 
     def set_metadata(self, metadata,  # type: Dict[str, str]

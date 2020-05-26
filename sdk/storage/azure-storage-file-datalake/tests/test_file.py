@@ -559,6 +559,24 @@ class FileTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     @record
+    def test_set_expiry(self):
+        # Arrange
+        directory_client = self._create_directory_and_return_client()
+
+        metadata = {'hello': 'world', 'number': '42'}
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        expires_on = datetime.utcnow() + timedelta(hours=1)
+        file_client = directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+        file_client.set_file_expiry("Absolute", expires_on=expires_on)
+        properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(properties)
+        self.assertIsNotNone(properties.expiry_time)
+
+    @record
     def test_rename_file_with_non_used_name(self):
         file_client = self._create_file_and_return_client()
         data_bytes = b"abc"

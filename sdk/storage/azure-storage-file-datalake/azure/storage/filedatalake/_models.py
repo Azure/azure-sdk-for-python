@@ -17,7 +17,7 @@ from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
-from ._deserialize import return_headers_and_deserialized_path_list
+from ._deserialize import return_headers_and_deserialized_path_list, deserialize_metadata
 from ._generated.models import Path
 from ._shared.models import DictMixin
 from ._shared.response_handlers import process_storage_error
@@ -129,33 +129,24 @@ class DirectoryProperties(DictMixin):
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
-        super(DirectoryProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
         self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
         self.deleted_time = None
         self.remaining_retention_days = None
 
     @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        directory_props = DirectoryProperties()
-        directory_props.name = blob_properties.name
-        directory_props.etag = blob_properties.etag
-        directory_props.deleted = blob_properties.deleted
-        directory_props.metadata = blob_properties.metadata
-        directory_props.lease = blob_properties.lease
-        directory_props.lease.__class__ = LeaseProperties
-        directory_props.last_modified = blob_properties.last_modified
-        directory_props.creation_time = blob_properties.creation_time
-        directory_props.deleted_time = blob_properties.deleted_time
-        directory_props.remaining_retention_days = blob_properties.remaining_retention_days
-        return directory_props
+    def _deserialize_dir_properties(cls, response, obj, headers):
+        metadata = deserialize_metadata(response, obj, headers)
+        dir_properties = cls(
+            metadata=metadata,
+            **headers
+        )
+        return dir_properties
 
 
 class FileProperties(DictMixin):
@@ -177,37 +168,32 @@ class FileProperties(DictMixin):
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
-        super(FileProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
         self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
-        self.size = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.size = kwargs.get('Content-Length')
         self.deleted_time = None
+        self.expiry_time = kwargs.get("x-ms-expiry-time")
         self.remaining_retention_days = None
-        self.content_settings = None
+        self.content_settings = ContentSettings(**kwargs)
 
     @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        file_props = FileProperties()
-        file_props.name = blob_properties.name
-        file_props.etag = blob_properties.etag
-        file_props.deleted = blob_properties.deleted
-        file_props.metadata = blob_properties.metadata
-        file_props.lease = blob_properties.lease
-        file_props.lease.__class__ = LeaseProperties
-        file_props.last_modified = blob_properties.last_modified
-        file_props.creation_time = blob_properties.creation_time
-        file_props.size = blob_properties.size
-        file_props.deleted_time = blob_properties.deleted_time
-        file_props.remaining_retention_days = blob_properties.remaining_retention_days
-        file_props.content_settings = blob_properties.content_settings
-        return file_props
+    def _deserialize_file_properties(cls, response, obj, headers):
+        metadata = deserialize_metadata(response, obj, headers)
+        file_properties = cls(
+            metadata=metadata,
+            **headers
+        )
+        if 'Content-Range' in headers:
+            if 'x-ms-blob-content-md5' in headers:
+                file_properties.content_settings.content_md5 = headers['x-ms-blob-content-md5']
+            else:
+                file_properties.content_settings.content_md5 = None
+        return file_properties
 
 
 class PathProperties(object):
@@ -326,10 +312,10 @@ class LeaseProperties(BlobLeaseProperties):
     :ivar str duration:
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
-    def __init__(self):
-        self.status = None
-        self.state = None
-        self.duration = None
+    def __init__(self, **kwargs):
+        super(LeaseProperties, self).__init__(
+            **kwargs
+        )
 
 
 class ContentSettings(BlobContentSettings):

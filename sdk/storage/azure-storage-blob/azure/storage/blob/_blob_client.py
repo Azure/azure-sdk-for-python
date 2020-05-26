@@ -35,7 +35,6 @@ from ._generated.models import ( # pylint: disable=unused-import
     AppendPositionAccessConditions,
     SequenceNumberAccessConditions,
     StorageErrorException,
-    UserDelegationKey,
     CpkInfo)
 from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
@@ -43,7 +42,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock
+from ._models import BlobType, BlobBlock, BlobProperties
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
 
@@ -51,9 +50,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
-        ContainerProperties,
-        BlobProperties,
-        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -788,13 +784,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                cls=deserialize_blob_properties,
+                cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
-        blob_props.container = self.container_name
+        if isinstance(blob_props, BlobProperties):
+            blob_props.container = self.container_name
         return blob_props # type: ignore
 
     def _set_http_headers_options(self, content_settings=None, **kwargs):

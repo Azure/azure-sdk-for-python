@@ -230,8 +230,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=DirectoryProperties._deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     def rename_directory(self, new_name,  # type: str
                          **kwargs):
