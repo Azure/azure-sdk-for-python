@@ -1,5 +1,9 @@
 # Release History
 
+## 8.0.1 (2020-05-26)
+### Bugfixes
+- Fix issues in PrivateEndpointConnection get and update methods due to mistakes in the Swagger specification causing validation to fail.
+
 ## 8.0.0 (2020-04-10)
 ### REST API version
 - This version targets REST API version 2020-03-01.
