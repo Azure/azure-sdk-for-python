@@ -48,7 +48,7 @@ class AadClient(AadClientBase):
         return MsalTransportAdapter(**kwargs)
 
     @wrap_exceptions
-    async def _obtain_token(
+    async def _obtain_token(  # pylint:disable=invalid-overridden-method
         self, scopes: "Iterable[str]", fn: "Callable", loop: "asyncio.AbstractEventLoop", executor=None, **kwargs: "Any"
     ) -> "AccessToken":
         now = int(time.time())
