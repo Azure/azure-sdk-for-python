@@ -61,18 +61,24 @@ def _build_auth_record(response):
     """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request"""
 
     try:
-        client_info = json.loads(_decode_client_info(response["client_info"]))
         id_token = response["id_token_claims"]
+
+        if "client_info" in response:
+            client_info = json.loads(_decode_client_info(response["client_info"]))
+            home_account_id = "{uid}.{utid}".format(**client_info)
+        else:
+            # MSAL uses the subject claim as home_account_id when the STS doesn't provide client_info
+            home_account_id = id_token["sub"]
 
         return AuthenticationRecord(
             authority=urlparse(id_token["iss"]).netloc,  # "iss" is the URL of the issuing tenant
             client_id=id_token["aud"],
-            home_account_id="{uid}.{utid}".format(**client_info),
+            home_account_id=home_account_id,
             tenant_id=id_token["tid"],  # tenant which issued the token, not necessarily user's home tenant
             username=id_token["preferred_username"],
         )
     except (KeyError, ValueError):
-        # surprising: msal.ClientApplication always requests client_info and an id token, whose shapes shouldn't change
+        # surprising: msal.ClientApplication always requests an id token, whose shape shouldn't change
         return None
 
 
