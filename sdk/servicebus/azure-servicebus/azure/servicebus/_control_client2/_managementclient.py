@@ -87,7 +87,7 @@ class ServiceBusManagementClient:
 
     def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
-        et = self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
+        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueDescription.deserialize(qc_ele)
