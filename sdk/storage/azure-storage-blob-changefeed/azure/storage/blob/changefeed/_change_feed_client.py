@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.paging import ItemPaged
 from azure.storage.blob import BlobServiceClient
 
-from ._deserialize import parse_connection_str
+from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
 if TYPE_CHECKING:
     from datetime import datetime
