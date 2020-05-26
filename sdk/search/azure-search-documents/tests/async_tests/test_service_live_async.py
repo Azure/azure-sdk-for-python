@@ -72,7 +72,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer()
     async def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.list_indexes()
+        result = client.list_indexes()
 
         with pytest.raises(StopAsyncIteration):
             await result.__anext__()
@@ -81,7 +81,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.list_indexes()
+        result = client.list_indexes()
 
         first = await result.__anext__()
         assert first.name == index_name
@@ -111,7 +111,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         import time
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
-        result = await client.list_indexes()
+        result = client.list_indexes()
         with pytest.raises(StopAsyncIteration):
             await result.__anext__()
 

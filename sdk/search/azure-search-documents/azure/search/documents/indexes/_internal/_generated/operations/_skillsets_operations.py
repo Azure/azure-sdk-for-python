@@ -28,7 +28,7 @@ class SkillsetsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.search.documents.models
+    :type models: ~azure.search.documents.indexes.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -59,7 +59,7 @@ class SkillsetsOperations(object):
         :type skillset_name: str
         :param skillset: The skillset containing one or more skills to create or update in a search
          service.
-        :type skillset: ~azure.search.documents.models.SearchIndexerSkillset
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -67,10 +67,10 @@ class SkillsetsOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
@@ -155,7 +155,7 @@ class SkillsetsOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -218,10 +218,10 @@ class SkillsetsOperations(object):
         :param skillset_name: The name of the skillset to retrieve.
         :type skillset_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
@@ -283,10 +283,10 @@ class SkillsetsOperations(object):
          properties.
         :type select: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSkillsetsResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ListSkillsetsResult
+        :rtype: ~azure.search.documents.indexes.models.ListSkillsetsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListSkillsetsResult"]
@@ -345,12 +345,12 @@ class SkillsetsOperations(object):
         """Creates a new skillset in a search service.
 
         :param skillset: The skillset containing one or more skills to create in a search service.
-        :type skillset: ~azure.search.documents.models.SearchIndexerSkillset
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]

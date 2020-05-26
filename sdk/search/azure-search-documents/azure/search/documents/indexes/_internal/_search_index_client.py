@@ -83,13 +83,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        def get_next(_token):
-            return self._client.indexes.list(**kwargs)
-
-        def extract_data(response):
-            return None, [listize_flags_for_index(x) for x in response.indexes]
-
-        return ItemPaged(get_next=get_next, extract_data=extract_data)
+        return self._client.indexes.list(cls=lambda objs: [listize_flags_for_index(x) for x in  objs], **kwargs)
 
     @distributed_trace
     def get_index(self, index_name, **kwargs):

@@ -27,10 +27,10 @@ class SearchServiceClientOperationsMixin:
         """Gets service level statistics for a search service.
 
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceStatistics or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ServiceStatistics
+        :rtype: ~azure.search.documents.indexes.models.ServiceStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceStatistics"]

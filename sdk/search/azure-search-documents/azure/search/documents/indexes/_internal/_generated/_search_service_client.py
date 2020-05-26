@@ -29,15 +29,15 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
     """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
-    :vartype data_sources: azure.search.documents.operations.DataSourcesOperations
+    :vartype data_sources: azure.search.documents.indexes.operations.DataSourcesOperations
     :ivar indexers: IndexersOperations operations
-    :vartype indexers: azure.search.documents.operations.IndexersOperations
+    :vartype indexers: azure.search.documents.indexes.operations.IndexersOperations
     :ivar skillsets: SkillsetsOperations operations
-    :vartype skillsets: azure.search.documents.operations.SkillsetsOperations
+    :vartype skillsets: azure.search.documents.indexes.operations.SkillsetsOperations
     :ivar synonym_maps: SynonymMapsOperations operations
-    :vartype synonym_maps: azure.search.documents.operations.SynonymMapsOperations
+    :vartype synonym_maps: azure.search.documents.indexes.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.search.documents.operations.IndexesOperations
+    :vartype indexes: azure.search.documents.indexes.operations.IndexesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
