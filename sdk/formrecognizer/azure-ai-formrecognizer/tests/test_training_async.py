@@ -63,7 +63,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
         for sub in model.models:
             self.assertIsNotNone(sub.form_type)
@@ -146,7 +146,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
         for sub in model.models:
             self.assertIsNotNone(sub.form_type)
