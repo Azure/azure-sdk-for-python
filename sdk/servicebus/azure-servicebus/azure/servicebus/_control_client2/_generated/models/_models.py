@@ -101,26 +101,26 @@ class QueueDescription(msrest.serialization.Model):
 
     :param accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
-    :type accessed_at: str
+    :type accessed_at: ~datetime.datetime
     :param authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[str]
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
+    :type auto_delete_on_idle: ~datetime.timedelta
     :param count_details: Details about the message counts in queue.
     :type count_details: ~azure.service._control_client2.models.CountDetails
     :param created_at: The exact time the queue was created.
-    :type created_at: str
+    :type created_at: ~datetime.datetime
     :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
     :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
+    :type default_message_time_to_live: ~datetime.timedelta
     :param duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: str
+    :type duplicate_detection_history_time_window: ~datetime.timedelta
     :param entity_availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
@@ -140,7 +140,7 @@ class QueueDescription(msrest.serialization.Model):
     :param lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
-    :type lock_duration: str
+    :type lock_duration: ~datetime.timedelta
     :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
     :type max_delivery_count: int
@@ -163,24 +163,24 @@ class QueueDescription(msrest.serialization.Model):
     :param support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
     :param updated_at: The exact time a message was updated in the queue.
-    :type updated_at: str
+    :type updated_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'accessed_at': {'key': 'AccessedAt', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'authorization_rules': {'key': 'AuthorizationRules', 'type': '[str]', 'xml': {'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'count_details': {'key': 'CountDetails', 'type': 'CountDetails'},
-        'created_at': {'key': 'CreatedAt', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str'},
         'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'lock_duration': {'key': 'LockDuration', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'float', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -189,7 +189,7 @@ class QueueDescription(msrest.serialization.Model):
         'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'status': {'key': 'Status', 'type': 'str'},
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -237,7 +237,7 @@ class QueueDescriptionResponse(msrest.serialization.Model):
     :param published: Required. The timestamp for when this queue was published.
     :type published: str
     :param updated: The timestamp for when this queue was last updated.
-    :type updated: str
+    :type updated: ~datetime.datetime
     :param author: Required. The author that created this resource.
     :type author: ~azure.service._control_client2.models.QueueDescriptionResponseAuthor
     :param link: Required. The URL link of the GET request.
@@ -258,7 +258,7 @@ class QueueDescriptionResponse(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'published': {'key': 'published', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'updated': {'key': 'updated', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'author': {'key': 'author', 'type': 'QueueDescriptionResponseAuthor'},
         'link': {'key': 'link', 'type': 'QueueDescriptionResponseLink'},
         'content': {'key': 'content', 'type': 'QueueDescriptionResponseContent'},
