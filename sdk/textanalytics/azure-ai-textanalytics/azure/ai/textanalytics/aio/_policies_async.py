@@ -16,10 +16,10 @@ class AsyncTextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
         self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncTextAnalyticsResponseHookPolicy, self).__init__()
 
-    async def on_request(self, request):
+    async def on_request(self, request):  # pylint: disable=invalid-overridden-method
         self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
 
-    async def on_response(self, request, response):
+    async def on_response(self, request, response):  # pylint: disable=invalid-overridden-method
         if self._response_callback:
             data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
             statistics = data.get("statistics", None)
