@@ -1,6 +1,6 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (2020-05-27)
 
 **New features**
 - We now have a `warnings` property on each document-level response object returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
