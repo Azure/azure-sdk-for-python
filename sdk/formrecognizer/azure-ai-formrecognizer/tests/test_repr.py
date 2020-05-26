@@ -207,13 +207,13 @@ class TestRepr():
             status=_models.CustomFormModelStatus.creating,
             created_on=datetime.datetime(1, 1, 1),
             last_modified=datetime.datetime(1, 1, 1),
-            models=[custom_form_sub_model[0], custom_form_sub_model[0]],
+            submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
             errors=[form_recognizer_error[0]],
             training_documents=[training_document_info[0], training_document_info[0]]
         )
 
         model_repr = "CustomFormModel(model_id=1, status=creating, created_on=0001-01-01 00:00:00, " \
-            "last_modified=0001-01-01 00:00:00, models=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
+            "last_modified=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
                 custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1]
             )[:1024]
 

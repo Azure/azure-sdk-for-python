@@ -51,7 +51,7 @@ class TrainModelWithoutLabelsSample(object):
 
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on
-        for submodel in model.models:
+        for submodel in model.submodels:
             print("...The submodel has form type '{}'".format(submodel.form_type))
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have label '{}'".format(

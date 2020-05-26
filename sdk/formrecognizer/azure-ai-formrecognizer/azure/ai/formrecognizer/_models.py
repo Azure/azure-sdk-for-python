@@ -676,7 +676,7 @@ class CustomFormModel(object):
         The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
-    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
+    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] submodels:
         A list of submodels that are part of this model, each of
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
@@ -690,7 +690,7 @@ class CustomFormModel(object):
         self.status = kwargs.get("status", None)
         self.created_on = kwargs.get("created_on", None)
         self.last_modified = kwargs.get("last_modified", None)
-        self.models = kwargs.get("models", None)
+        self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", [])
 
@@ -701,7 +701,7 @@ class CustomFormModel(object):
             status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_modified=model.model_info.last_updated_date_time,
-            models=CustomFormSubModel._from_generated_unlabeled(model)
+            submodels=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
@@ -709,9 +709,9 @@ class CustomFormModel(object):
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, submodels={}, " \
                 "errors={}, training_documents={})".format(
-                    self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
+                    self.model_id, self.status, self.created_on, self.last_modified, repr(self.submodels),
                     repr(self.errors), repr(self.training_documents)
                 )[:1024]
 

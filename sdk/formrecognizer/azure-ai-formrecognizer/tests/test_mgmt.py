@@ -71,7 +71,7 @@ class TestManagement(FormRecognizerTest):
             self.assertEqual(a.errors, b.errors)
             self.assertEqual(a.page_count, b.page_count)
             self.assertEqual(a.status, b.status)
-        for a, b in zip(labeled_model_from_train.models, labeled_model_from_get.models):
+        for a, b in zip(labeled_model_from_train.submodels, labeled_model_from_get.submodels):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
@@ -107,7 +107,7 @@ class TestManagement(FormRecognizerTest):
             self.assertEqual(a.errors, b.errors)
             self.assertEqual(a.page_count, b.page_count)
             self.assertEqual(a.status, b.status)
-        for a, b in zip(unlabeled_model_from_train.models, unlabeled_model_from_get.models):
+        for a, b in zip(unlabeled_model_from_train.submodels, unlabeled_model_from_get.submodels):
             for field1, field2 in zip(a.fields.items(), b.fields.items()):
                 self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
