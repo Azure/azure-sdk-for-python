@@ -17,6 +17,9 @@
   the keyword argument `interactive_browser_tenant_id`, or set the environment
   variable `AZURE_TENANT_ID`.
   ([#11548](https://github.com/Azure/azure-sdk-for-python/issues/11548))
+- `SharedTokenCacheCredential` can be initialized with an `AuthenticationRecord`
+  provided by a user credential.
+  ([#11448](https://github.com/Azure/azure-sdk-for-python/issues/11448))
 - The user authentication API added to `DeviceCodeCredential` and
   `InteractiveBrowserCredential` in 1.4.0b3 is available on
   `UsernamePasswordCredential` as well.
