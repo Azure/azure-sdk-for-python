@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -16,7 +17,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -28,7 +29,7 @@ class IndexesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.search.documents.models
+    :type models: ~azure.search.documents.indexes.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -53,18 +54,18 @@ class IndexesOperations(object):
         """Creates a new search index.
 
         :param index: The definition of the index to create.
-        :type index: ~azure.search.documents.models.SearchIndex
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndex or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -117,64 +118,83 @@ class IndexesOperations(object):
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ListIndexesResult"
+        # type: (...) -> Iterable["models.ListIndexesResult"]
         """Lists all indexes available for a search service.
 
         :param select: Selects which top-level properties of the index definitions to retrieve.
-         Specified as a comma-separated list of JSON property names, or '*' for all properties. The
-         default is all properties.
+     Specified as a comma-separated list of JSON property names, or '*' for all properties. The
+     default is all properties.
         :type select: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListIndexesResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ListIndexesResult
+        :return: An iterator like instance of ListIndexesResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.ListIndexesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListIndexesResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            if _x_ms_client_request_id is not None:
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
+            header_parameters['Accept'] = 'application/json'
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('ListIndexesResult', pipeline_response)
+            list_of_elem = deserialized.indexes
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.SearchError, response)
-            raise HttpResponseError(response=response, model=error)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        deserialized = self._deserialize('ListIndexesResult', pipeline_response)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
 
-        if cls:
-          return cls(pipeline_response, deserialized, {})
+            if response.status_code not in [200]:
+                error = self._deserialize(models.SearchError, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
     list.metadata = {'url': '/indexes'}  # type: ignore
 
     def create_or_update(
@@ -193,7 +213,7 @@ class IndexesOperations(object):
         :param index_name: The definition of the index to create or update.
         :type index_name: str
         :param index: The definition of the index to create or update.
-        :type index: ~azure.search.documents.models.SearchIndex
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -207,16 +227,16 @@ class IndexesOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndex or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -297,7 +317,7 @@ class IndexesOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -306,7 +326,7 @@ class IndexesOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -360,16 +380,16 @@ class IndexesOperations(object):
         :param index_name: The name of the index to retrieve.
         :type index_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndex or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -423,16 +443,16 @@ class IndexesOperations(object):
         :param index_name: The name of the index for which to retrieve statistics.
         :type index_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GetIndexStatisticsResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.GetIndexStatisticsResult
+        :rtype: ~azure.search.documents.indexes.models.GetIndexStatisticsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GetIndexStatisticsResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -487,18 +507,18 @@ class IndexesOperations(object):
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
         :param request: The text and analyzer or analysis components to test.
-        :type request: ~azure.search.documents.models.AnalyzeRequest
+        :type request: ~azure.search.documents.indexes.models.AnalyzeRequest
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.AnalyzeResult
+        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id

@@ -28,7 +28,7 @@ class IndexersOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.search.documents.models
+    :type models: ~azure.search.documents.indexes.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,7 +55,7 @@ class IndexersOperations(object):
         :param indexer_name: The name of the indexer to reset.
         :type indexer_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -114,7 +114,7 @@ class IndexersOperations(object):
         :param indexer_name: The name of the indexer to run.
         :type indexer_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -176,7 +176,7 @@ class IndexersOperations(object):
         :param indexer_name: The name of the indexer to create or update.
         :type indexer_name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~azure.search.documents.models.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -184,10 +184,10 @@ class IndexersOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
@@ -272,7 +272,7 @@ class IndexersOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -335,10 +335,10 @@ class IndexersOperations(object):
         :param indexer_name: The name of the indexer to retrieve.
         :type indexer_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
@@ -400,10 +400,10 @@ class IndexersOperations(object):
          properties.
         :type select: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListIndexersResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ListIndexersResult
+        :rtype: ~azure.search.documents.indexes.models.ListIndexersResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListIndexersResult"]
@@ -462,12 +462,12 @@ class IndexersOperations(object):
         """Creates a new indexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~azure.search.documents.models.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexer"]
@@ -532,10 +532,10 @@ class IndexersOperations(object):
         :param indexer_name: The name of the indexer for which to retrieve status.
         :type indexer_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerStatus or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerStatus
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerStatus"]
