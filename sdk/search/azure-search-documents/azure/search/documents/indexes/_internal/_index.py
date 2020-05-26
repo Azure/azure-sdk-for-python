@@ -15,6 +15,7 @@ __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
 class SearchField(msrest.serialization.Model):
+    # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
     All required parameters must be populated in order to send to Azure.
@@ -218,9 +219,9 @@ def SimpleField(**kw):
     :type is_hidden: bool
     :param filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
-     SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do 
-     not undergo word-breaking, so comparisons are for exact matches only. For example, if you 
-     set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but 
+     SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
+     not undergo word-breaking, so comparisons are for exact matches only. For example, if you
+     set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but
      $filter=f eq 'sunny day' will. This property must be null for complex fields. Default is False
     :type filterable: bool
     :param sortable: A value indicating whether to enable the field to be referenced in $orderby
@@ -408,6 +409,7 @@ def ComplexField(**kw):
 
 
 class SearchIndex(msrest.serialization.Model):
+    # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
     All required parameters must be populated in order to send to Azure.

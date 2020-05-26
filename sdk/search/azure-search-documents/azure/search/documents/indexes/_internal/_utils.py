@@ -186,7 +186,7 @@ def unpack_search_index(search_index):
             for x in search_index.analyzers
         ]
     else:
-        analyzers= None
+        analyzers = None
     if search_index.tokenizers:
         tokenizers = [
             listize_flags_for_pattern_tokenizer(x)  # type: ignore
@@ -345,7 +345,7 @@ def pack_search_field(search_field):
         return None
     if isinstance(search_field, dict):
         name = search_field.get("name")
-        type = search_field.get("type")
+        field_type = search_field.get("type")
         key = search_field.get("key")
         is_hidden = search_field.get("is_hidden")
         searchable = search_field.get("searchable")
@@ -360,7 +360,7 @@ def pack_search_field(search_field):
         fields = [pack_search_field(x) for x in fields] if fields else None
         return _SearchField(
             name=name,
-            type=type,
+            type=field_type,
             key=key,
             retrievable=not is_hidden,
             searchable=searchable,
