@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-storage-blob-changefeed"
-NAMESPACE_NAME = "azure.storage.blobchangefeed"
+NAMESPACE_NAME = "azure.storage.blob.changefeed"
 PACKAGE_PPRINT_NAME = "Azure Storage Blob ChangeFeed"
 
 # a-b-c => a/b/c
