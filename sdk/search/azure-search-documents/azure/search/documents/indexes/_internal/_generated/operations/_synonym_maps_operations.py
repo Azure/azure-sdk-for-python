@@ -28,7 +28,7 @@ class SynonymMapsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.search.documents.models
+    :type models: ~azure.search.documents.indexes.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class SynonymMapsOperations(object):
         :param synonym_map_name: The name of the synonym map to create or update.
         :type synonym_map_name: str
         :param synonym_map: The definition of the synonym map to create or update.
-        :type synonym_map: ~azure.search.documents.models.SynonymMap
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -66,10 +66,10 @@ class SynonymMapsOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]
@@ -154,7 +154,7 @@ class SynonymMapsOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -217,10 +217,10 @@ class SynonymMapsOperations(object):
         :param synonym_map_name: The name of the synonym map to retrieve.
         :type synonym_map_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]
@@ -282,10 +282,10 @@ class SynonymMapsOperations(object):
          properties.
         :type select: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSynonymMapsResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ListSynonymMapsResult
+        :rtype: ~azure.search.documents.indexes.models.ListSynonymMapsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListSynonymMapsResult"]
@@ -344,12 +344,12 @@ class SynonymMapsOperations(object):
         """Creates a new synonym map.
 
         :param synonym_map: The definition of the synonym map to create.
-        :type synonym_map: ~azure.search.documents.models.SynonymMap
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]

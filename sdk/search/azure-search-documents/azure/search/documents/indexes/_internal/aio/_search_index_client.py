@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
@@ -74,8 +75,8 @@ class SearchIndexClient(HeadersMixin):
         """
         return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
-    @distributed_trace_async
-    async def list_indexes(self, **kwargs):
+    @distributed_trace
+    def list_indexes(self, **kwargs):
         # type: (**Any) -> AsyncItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
@@ -86,13 +87,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        async def get_next(_token):
-            return await self._client.indexes.list(**kwargs)
-
-        async def extract_data(response):
-            return None, [listize_flags_for_index(x) for x in response.indexes]
-
-        return AsyncItemPaged(get_next=get_next, extract_data=extract_data)
+        return self._client.indexes.list(cls=lambda objs: [listize_flags_for_index(x) for x in  objs], **kwargs)
 
     @distributed_trace_async
     async def get_index(self, index_name, **kwargs):

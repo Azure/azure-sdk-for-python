@@ -86,16 +86,16 @@ class AnalyzeRequest(msrest.serialization.Model):
      "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
-    :type analyzer: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param tokenizer: The name of the tokenizer to use to break the given text. If this parameter
      is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
      are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
      "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
      "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
-    :type tokenizer: str or ~azure.search.documents.models.LexicalTokenizerName
+    :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
     :param token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
-    :type token_filters: list[str or ~azure.search.documents.models.TokenFilterName]
+    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :param char_filters: An optional list of character filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :type char_filters: list[str]
@@ -137,7 +137,7 @@ class AnalyzeResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param tokens: Required. The list of tokens returned by the analyzer specified in the request.
-    :type tokens: list[~azure.search.documents.models.AnalyzedTokenInfo]
+    :type tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
     """
 
     _validation = {
@@ -401,7 +401,8 @@ class CjkBigramTokenFilter(TokenFilter):
      limited to 128 characters.
     :type name: str
     :param ignore_scripts: The scripts to ignore.
-    :type ignore_scripts: list[str or ~azure.search.documents.models.CjkBigramTokenFilterScripts]
+    :type ignore_scripts: list[str or
+     ~azure.search.documents.indexes.models.CjkBigramTokenFilterScripts]
     :param output_unigrams: A value indicating whether to output both unigrams and bigrams (if
      true), or just bigrams (if false). Default is false.
     :type output_unigrams: bool
@@ -694,10 +695,10 @@ class SearchIndexerSkill(msrest.serialization.Model):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -758,10 +759,10 @@ class ConditionalSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -887,11 +888,11 @@ class CustomAnalyzer(LexicalAnalyzer):
      "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
      "standard_v2", "uax_url_email", "whitespace".
-    :type tokenizer: str or ~azure.search.documents.models.LexicalTokenizerName
+    :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
     :param token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
-    :type token_filters: list[str or ~azure.search.documents.models.TokenFilterName]
+    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :param char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
@@ -1132,7 +1133,7 @@ class ScoringFunction(msrest.serialization.Model):
     :param interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     """
 
     _validation = {
@@ -1183,9 +1184,9 @@ class DistanceScoringFunction(ScoringFunction):
     :param interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     :param parameters: Required. Parameter values for the distance scoring function.
-    :type parameters: ~azure.search.documents.models.DistanceScoringParameters
+    :type parameters: ~azure.search.documents.indexes.models.DistanceScoringParameters
     """
 
     _validation = {
@@ -1271,7 +1272,7 @@ class EdgeNGramTokenFilter(TokenFilter):
     :type max_gram: int
     :param side: Specifies which side of the input the n-gram should be generated from. Default is
      "front". Possible values include: "front", "back".
-    :type side: str or ~azure.search.documents.models.EdgeNGramTokenFilterSide
+    :type side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
     """
 
     _validation = {
@@ -1322,7 +1323,7 @@ class EdgeNGramTokenFilterV2(TokenFilter):
     :type max_gram: int
     :param side: Specifies which side of the input the n-gram should be generated from. Default is
      "front". Possible values include: "front", "back".
-    :type side: str or ~azure.search.documents.models.EdgeNGramTokenFilterSide
+    :type side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
     """
 
     _validation = {
@@ -1374,7 +1375,7 @@ class EdgeNGramTokenizer(LexicalTokenizer):
     :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
     :type max_gram: int
     :param token_chars: Character classes to keep in the tokens.
-    :type token_chars: list[str or ~azure.search.documents.models.TokenCharacterKind]
+    :type token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
     """
 
     _validation = {
@@ -1467,17 +1468,17 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param categories: A list of entity categories that should be extracted.
-    :type categories: list[str or ~azure.search.documents.models.EntityCategory]
+    :type categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
     :type default_language_code: str or
-     ~azure.search.documents.models.EntityRecognitionSkillLanguage
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
     :param include_typeless_entities: Determines whether or not to include entities which are well
      known but don't conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined types will not
@@ -1541,7 +1542,7 @@ class FieldMapping(msrest.serialization.Model):
      name by default.
     :type target_field_name: str
     :param mapping_function: A function to apply to each source field value before indexing.
-    :type mapping_function: ~azure.search.documents.models.FieldMappingFunction
+    :type mapping_function: ~azure.search.documents.indexes.models.FieldMappingFunction
     """
 
     _validation = {
@@ -1617,9 +1618,9 @@ class FreshnessScoringFunction(ScoringFunction):
     :param interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     :param parameters: Required. Parameter values for the freshness scoring function.
-    :type parameters: ~azure.search.documents.models.FreshnessScoringParameters
+    :type parameters: ~azure.search.documents.indexes.models.FreshnessScoringParameters
     """
 
     _validation = {
@@ -1764,17 +1765,18 @@ class ImageAnalysisSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "en", "es", "ja", "pt", "zh".
-    :type default_language_code: str or ~azure.search.documents.models.ImageAnalysisSkillLanguage
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.ImageAnalysisSkillLanguage
     :param visual_features: A list of visual features.
-    :type visual_features: list[str or ~azure.search.documents.models.VisualFeature]
+    :type visual_features: list[str or ~azure.search.documents.indexes.models.VisualFeature]
     :param details: A string indicating which domain-specific details to return.
-    :type details: list[str or ~azure.search.documents.models.ImageDetail]
+    :type details: list[str or ~azure.search.documents.indexes.models.ImageDetail]
     """
 
     _validation = {
@@ -1824,7 +1826,7 @@ class IndexerExecutionResult(msrest.serialization.Model):
 
     :ivar status: Required. The outcome of this indexer execution. Possible values include:
      "transientFailure", "success", "inProgress", "reset".
-    :vartype status: str or ~azure.search.documents.models.IndexerExecutionStatus
+    :vartype status: str or ~azure.search.documents.indexes.models.IndexerExecutionStatus
     :ivar error_message: The error message indicating the top-level error, if any.
     :vartype error_message: str
     :ivar start_time: The start time of this indexer execution.
@@ -1832,9 +1834,9 @@ class IndexerExecutionResult(msrest.serialization.Model):
     :ivar end_time: The end time of this indexer execution, if the execution has already completed.
     :vartype end_time: ~datetime.datetime
     :ivar errors: Required. The item-level indexing errors.
-    :vartype errors: list[~azure.search.documents.models.SearchIndexerError]
+    :vartype errors: list[~azure.search.documents.indexes.models.SearchIndexerError]
     :ivar warnings: Required. The item-level indexing warnings.
-    :vartype warnings: list[~azure.search.documents.models.SearchIndexerWarning]
+    :vartype warnings: list[~azure.search.documents.indexes.models.SearchIndexerWarning]
     :ivar item_count: Required. The number of items that were processed during this indexer
      execution. This includes both successfully processed items and items where indexing was
      attempted but failed.
@@ -1975,7 +1977,7 @@ class InputFieldMappingEntry(msrest.serialization.Model):
     :param source_context: The source context used for selecting recursive inputs.
     :type source_context: str
     :param inputs: The recursive inputs used when creating a complex type.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     """
 
     _validation = {
@@ -2071,15 +2073,15 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl", "pt-
      PT", "pt-BR", "ru", "es", "sv".
     :type default_language_code: str or
-     ~azure.search.documents.models.KeyPhraseExtractionSkillLanguage
+     ~azure.search.documents.indexes.models.KeyPhraseExtractionSkillLanguage
     :param max_key_phrase_count: A number indicating how many key phrases to return. If absent, all
      identified key phrases will be returned.
     :type max_key_phrase_count: int
@@ -2266,10 +2268,10 @@ class LanguageDetectionSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -2401,7 +2403,7 @@ class ListDataSourcesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_sources: Required. The datasources in the Search service.
-    :vartype data_sources: list[~azure.search.documents.models.SearchIndexerDataSource]
+    :vartype data_sources: list[~azure.search.documents.indexes.models.SearchIndexerDataSource]
     """
 
     _validation = {
@@ -2428,7 +2430,7 @@ class ListIndexersResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar indexers: Required. The indexers in the Search service.
-    :vartype indexers: list[~azure.search.documents.models.SearchIndexer]
+    :vartype indexers: list[~azure.search.documents.indexes.models.SearchIndexer]
     """
 
     _validation = {
@@ -2455,7 +2457,7 @@ class ListIndexesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar indexes: Required. The indexes in the Search service.
-    :vartype indexes: list[~azure.search.documents.models.SearchIndex]
+    :vartype indexes: list[~azure.search.documents.indexes.models.SearchIndex]
     """
 
     _validation = {
@@ -2482,7 +2484,7 @@ class ListSkillsetsResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar skillsets: Required. The skillsets defined in the Search service.
-    :vartype skillsets: list[~azure.search.documents.models.SearchIndexerSkillset]
+    :vartype skillsets: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
     """
 
     _validation = {
@@ -2509,7 +2511,7 @@ class ListSynonymMapsResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar synonym_maps: Required. The synonym maps in the Search service.
-    :vartype synonym_maps: list[~azure.search.documents.models.SynonymMap]
+    :vartype synonym_maps: list[~azure.search.documents.indexes.models.SynonymMap]
     """
 
     _validation = {
@@ -2671,9 +2673,9 @@ class MagnitudeScoringFunction(ScoringFunction):
     :param interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     :param parameters: Required. Parameter values for the magnitude scoring function.
-    :type parameters: ~azure.search.documents.models.MagnitudeScoringParameters
+    :type parameters: ~azure.search.documents.indexes.models.MagnitudeScoringParameters
     """
 
     _validation = {
@@ -2805,10 +2807,10 @@ class MergeSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param insert_pre_tag: The tag indicates the start of the merged text. By default, the tag is
      an empty space.
     :type insert_pre_tag: str
@@ -2879,7 +2881,8 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
      "marathi", "norwegianBokmaal", "polish", "portuguese", "portugueseBrazilian", "punjabi",
      "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovak", "slovenian", "spanish",
      "swedish", "tamil", "telugu", "turkish", "ukrainian", "urdu".
-    :type language: str or ~azure.search.documents.models.MicrosoftStemmingTokenizerLanguage
+    :type language: str or
+     ~azure.search.documents.indexes.models.MicrosoftStemmingTokenizerLanguage
     """
 
     _validation = {
@@ -2939,7 +2942,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer):
      "marathi", "norwegianBokmaal", "polish", "portuguese", "portugueseBrazilian", "punjabi",
      "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovenian", "spanish", "swedish",
      "tamil", "telugu", "thai", "ukrainian", "urdu", "vietnamese".
-    :type language: str or ~azure.search.documents.models.MicrosoftTokenizerLanguage
+    :type language: str or ~azure.search.documents.indexes.models.MicrosoftTokenizerLanguage
     """
 
     _validation = {
@@ -3082,7 +3085,7 @@ class NGramTokenizer(LexicalTokenizer):
     :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
     :type max_gram: int
     :param token_chars: Character classes to keep in the tokens.
-    :type token_chars: list[str or ~azure.search.documents.models.TokenCharacterKind]
+    :type token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
     """
 
     _validation = {
@@ -3136,18 +3139,19 @@ class OcrSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param text_extraction_algorithm: A value indicating which algorithm to use for extracting
      text. Default is printed. Possible values include: "printed", "handwritten".
-    :type text_extraction_algorithm: str or ~azure.search.documents.models.TextExtractionAlgorithm
+    :type text_extraction_algorithm: str or
+     ~azure.search.documents.indexes.models.TextExtractionAlgorithm
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "zh-Hans", "zh-Hant", "cs", "da", "nl", "en", "fi", "fr", "de", "el",
      "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr", "ar", "ro", "sr-Cyrl", "sr-
      Latn", "sk".
-    :type default_language_code: str or ~azure.search.documents.models.OcrSkillLanguage
+    :type default_language_code: str or ~azure.search.documents.indexes.models.OcrSkillLanguage
     :param should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
     :type should_detect_orientation: bool
@@ -3304,7 +3308,7 @@ class PatternAnalyzer(LexicalAnalyzer):
     :type pattern: str
     :param flags: Regular expression flags. Possible values include: "CANON_EQ",
      "CASE_INSENSITIVE", "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", "UNIX_LINES".
-    :type flags: str or ~azure.search.documents.models.RegexFlags
+    :type flags: str or ~azure.search.documents.indexes.models.RegexFlags
     :param stopwords: A list of stopwords.
     :type stopwords: list[str]
     """
@@ -3496,7 +3500,7 @@ class PatternTokenizer(LexicalTokenizer):
     :type pattern: str
     :param flags: Regular expression flags. Possible values include: "CANON_EQ",
      "CASE_INSENSITIVE", "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", "UNIX_LINES".
-    :type flags: str or ~azure.search.documents.models.RegexFlags
+    :type flags: str or ~azure.search.documents.indexes.models.RegexFlags
     :param group: The zero-based ordinal of the matching group in the regular expression pattern to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
@@ -3547,7 +3551,7 @@ class PhoneticTokenFilter(TokenFilter):
     :param encoder: The phonetic encoder to use. Default is "metaphone". Possible values include:
      "metaphone", "doubleMetaphone", "soundex", "refinedSoundex", "caverphone1", "caverphone2",
      "cologne", "nysiis", "koelnerPhonetik", "haasePhonetik", "beiderMorse".
-    :type encoder: str or ~azure.search.documents.models.PhoneticEncoder
+    :type encoder: str or ~azure.search.documents.indexes.models.PhoneticEncoder
     :param replace_original_tokens: A value indicating whether encoded tokens should replace
      original tokens. If false, encoded tokens are added as synonyms. Default is true.
     :type replace_original_tokens: bool
@@ -3641,13 +3645,14 @@ class ScoringProfile(msrest.serialization.Model):
     :type name: str
     :param text_weights: Parameters that boost scoring based on text matches in certain index
      fields.
-    :type text_weights: ~azure.search.documents.models.TextWeights
+    :type text_weights: ~azure.search.documents.indexes.models.TextWeights
     :param functions: The collection of functions that influence the scoring of documents.
-    :type functions: list[~azure.search.documents.models.ScoringFunction]
+    :type functions: list[~azure.search.documents.indexes.models.ScoringFunction]
     :param function_aggregation: A value indicating how the results of individual scoring functions
      should be combined. Defaults to "Sum". Ignored if there are no scoring functions. Possible
      values include: "sum", "average", "minimum", "maximum", "firstMatching".
-    :type function_aggregation: str or ~azure.search.documents.models.ScoringFunctionAggregation
+    :type function_aggregation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionAggregation
     """
 
     _validation = {
@@ -3689,7 +3694,7 @@ class SearchError(msrest.serialization.Model):
     :ivar message: Required. A human-readable representation of the error.
     :vartype message: str
     :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.search.documents.models.SearchError]
+    :vartype details: list[~azure.search.documents.indexes.models.SearchError]
     """
 
     _validation = {
@@ -3725,7 +3730,7 @@ class SearchField(msrest.serialization.Model):
     :param type: Required. The data type of the field. Possible values include: "Edm.String",
      "Edm.Int32", "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset",
      "Edm.GeographyPoint", "Edm.ComplexType".
-    :type type: str or ~azure.search.documents.models.SearchFieldDataType
+    :type type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :param key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type Edm.String. Key fields can be used to look up documents directly and update or delete
@@ -3793,7 +3798,7 @@ class SearchField(msrest.serialization.Model):
      "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
-    :type analyzer: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param search_analyzer: The name of the analyzer used at search time for the field. This option
      can be used only with searchable fields. It must be set together with indexAnalyzer and it
      cannot be set together with the analyzer option. This property cannot be set to the name of a
@@ -3816,7 +3821,7 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type search_analyzer: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type search_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param index_analyzer: The name of the analyzer used at indexing time for the field. This
      option can be used only with searchable fields. It must be set together with searchAnalyzer and
      it cannot be set together with the analyzer option.  This property cannot be set to the name of
@@ -3839,7 +3844,7 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type index_analyzer: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -3848,7 +3853,7 @@ class SearchField(msrest.serialization.Model):
     :type synonym_maps: list[str]
     :param fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :type fields: list[~azure.search.documents.models.SearchField]
+    :type fields: list[~azure.search.documents.indexes.models.SearchField]
     """
 
     _validation = {
@@ -3914,25 +3919,25 @@ class SearchIndex(msrest.serialization.Model):
     :param name: Required. The name of the index.
     :type name: str
     :param fields: Required. The fields of the index.
-    :type fields: list[~azure.search.documents.models.SearchField]
+    :type fields: list[~azure.search.documents.indexes.models.SearchField]
     :param scoring_profiles: The scoring profiles for the index.
-    :type scoring_profiles: list[~azure.search.documents.models.ScoringProfile]
+    :type scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
     :param default_scoring_profile: The name of the scoring profile to use if none is specified in
      the query. If this property is not set and no scoring profile is specified in the query, then
      default scoring (tf-idf) will be used.
     :type default_scoring_profile: str
     :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-    :type cors_options: ~azure.search.documents.models.CorsOptions
+    :type cors_options: ~azure.search.documents.indexes.models.CorsOptions
     :param suggesters: The suggesters for the index.
-    :type suggesters: list[~azure.search.documents.models.Suggester]
+    :type suggesters: list[~azure.search.documents.indexes.models.Suggester]
     :param analyzers: The analyzers for the index.
-    :type analyzers: list[~azure.search.documents.models.LexicalAnalyzer]
+    :type analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
     :param tokenizers: The tokenizers for the index.
-    :type tokenizers: list[~azure.search.documents.models.LexicalTokenizer]
+    :type tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
     :param token_filters: The token filters for the index.
-    :type token_filters: list[~azure.search.documents.models.TokenFilter]
+    :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :param char_filters: The character filters for the index.
-    :type char_filters: list[~azure.search.documents.models.CharFilter]
+    :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -3941,12 +3946,12 @@ class SearchIndex(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :param similarity: The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined at index
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
-    :type similarity: ~azure.search.documents.models.Similarity
+    :type similarity: ~azure.search.documents.indexes.models.Similarity
     :param e_tag: The ETag of the index.
     :type e_tag: str
     """
@@ -4023,15 +4028,15 @@ class SearchIndexer(msrest.serialization.Model):
     :param target_index_name: Required. The name of the index to which this indexer writes data.
     :type target_index_name: str
     :param schedule: The schedule for this indexer.
-    :type schedule: ~azure.search.documents.models.IndexingSchedule
+    :type schedule: ~azure.search.documents.indexes.models.IndexingSchedule
     :param parameters: Parameters for indexer execution.
-    :type parameters: ~azure.search.documents.models.IndexingParameters
+    :type parameters: ~azure.search.documents.indexes.models.IndexingParameters
     :param field_mappings: Defines mappings between fields in the data source and corresponding
      target fields in the index.
-    :type field_mappings: list[~azure.search.documents.models.FieldMapping]
+    :type field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
     :param output_field_mappings: Output field mappings are applied after enrichment and
      immediately before indexing.
-    :type output_field_mappings: list[~azure.search.documents.models.FieldMapping]
+    :type output_field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
     :param is_disabled: A value indicating whether the indexer is disabled. Default is false.
     :type is_disabled: bool
     :param e_tag: The ETag of the indexer.
@@ -4133,16 +4138,17 @@ class SearchIndexerDataSource(msrest.serialization.Model):
     :type description: str
     :param type: Required. The type of the datasource. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql".
-    :type type: str or ~azure.search.documents.models.SearchIndexerDataSourceType
+    :type type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
     :param credentials: Required. Credentials for the datasource.
-    :type credentials: ~azure.search.documents.models.DataSourceCredentials
+    :type credentials: ~azure.search.documents.indexes.models.DataSourceCredentials
     :param container: Required. The data container for the datasource.
-    :type container: ~azure.search.documents.models.SearchIndexerDataContainer
+    :type container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
     :param data_change_detection_policy: The data change detection policy for the datasource.
-    :type data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
+    :type data_change_detection_policy:
+     ~azure.search.documents.indexes.models.DataChangeDetectionPolicy
     :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
     :type data_deletion_detection_policy:
-     ~azure.search.documents.models.DataDeletionDetectionPolicy
+     ~azure.search.documents.indexes.models.DataDeletionDetectionPolicy
     :param e_tag: The ETag of the data source.
     :type e_tag: str
     """
@@ -4296,10 +4302,11 @@ class SearchIndexerSkillset(msrest.serialization.Model):
     :param description: Required. The description of the skillset.
     :type description: str
     :param skills: Required. A list of skills in the skillset.
-    :type skills: list[~azure.search.documents.models.SearchIndexerSkill]
+    :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
     :param cognitive_services_account: Details about cognitive services to be used when running
      skills.
-    :type cognitive_services_account: ~azure.search.documents.models.CognitiveServicesAccount
+    :type cognitive_services_account:
+     ~azure.search.documents.indexes.models.CognitiveServicesAccount
     :param e_tag: The ETag of the skillset.
     :type e_tag: str
     """
@@ -4345,14 +4352,14 @@ class SearchIndexerStatus(msrest.serialization.Model):
 
     :ivar status: Required. Overall indexer status. Possible values include: "unknown", "error",
      "running".
-    :vartype status: str or ~azure.search.documents.models.IndexerStatus
+    :vartype status: str or ~azure.search.documents.indexes.models.IndexerStatus
     :ivar last_result: The result of the most recent or an in-progress indexer execution.
-    :vartype last_result: ~azure.search.documents.models.IndexerExecutionResult
+    :vartype last_result: ~azure.search.documents.indexes.models.IndexerExecutionResult
     :ivar execution_history: Required. History of the recent indexer executions, sorted in reverse
      chronological order.
-    :vartype execution_history: list[~azure.search.documents.models.IndexerExecutionResult]
+    :vartype execution_history: list[~azure.search.documents.indexes.models.IndexerExecutionResult]
     :ivar limits: Required. The execution limits for the indexer.
-    :vartype limits: ~azure.search.documents.models.SearchIndexerLimits
+    :vartype limits: ~azure.search.documents.indexes.models.SearchIndexerLimits
     """
 
     _validation = {
@@ -4449,7 +4456,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
     :param access_credentials: Optional Azure Active Directory credentials used for accessing your
      Azure Key Vault. Not required if using managed identity instead.
     :type access_credentials:
-     ~azure.search.documents.models.AzureActiveDirectoryApplicationCredentials
+     ~azure.search.documents.indexes.models.AzureActiveDirectoryApplicationCredentials
     """
 
     _validation = {
@@ -4501,14 +4508,15 @@ class SentimentSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
      "ru", "es", "sv", "tr".
-    :type default_language_code: str or ~azure.search.documents.models.SentimentSkillLanguage
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
     """
 
     _validation = {
@@ -4549,19 +4557,19 @@ class ServiceCounters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param document_counter: Required. Total number of documents across all indexes in the service.
-    :type document_counter: ~azure.search.documents.models.ResourceCounter
+    :type document_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param index_counter: Required. Total number of indexes.
-    :type index_counter: ~azure.search.documents.models.ResourceCounter
+    :type index_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param indexer_counter: Required. Total number of indexers.
-    :type indexer_counter: ~azure.search.documents.models.ResourceCounter
+    :type indexer_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param data_source_counter: Required. Total number of data sources.
-    :type data_source_counter: ~azure.search.documents.models.ResourceCounter
+    :type data_source_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param storage_size_counter: Required. Total size of used storage in bytes.
-    :type storage_size_counter: ~azure.search.documents.models.ResourceCounter
+    :type storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param synonym_map_counter: Required. Total number of synonym maps.
-    :type synonym_map_counter: ~azure.search.documents.models.ResourceCounter
+    :type synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param skillset_counter: Required. Total number of skillsets.
-    :type skillset_counter: ~azure.search.documents.models.ResourceCounter
+    :type skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
     _validation = {
@@ -4651,9 +4659,9 @@ class ServiceStatistics(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param counters: Required. Service level resource counters.
-    :type counters: ~azure.search.documents.models.ServiceCounters
+    :type counters: ~azure.search.documents.indexes.models.ServiceCounters
     :param limits: Required. Service level general limits.
-    :type limits: ~azure.search.documents.models.ServiceLimits
+    :type limits: ~azure.search.documents.indexes.models.ServiceLimits
     """
 
     _validation = {
@@ -4698,10 +4706,10 @@ class ShaperSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -4821,7 +4829,7 @@ class SnowballTokenFilter(TokenFilter):
      "catalan", "danish", "dutch", "english", "finnish", "french", "german", "german2", "hungarian",
      "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian", "russian",
      "spanish", "swedish", "turkish".
-    :type language: str or ~azure.search.documents.models.SnowballTokenFilterLanguage
+    :type language: str or ~azure.search.documents.indexes.models.SnowballTokenFilterLanguage
     """
 
     _validation = {
@@ -4905,16 +4913,16 @@ class SplitSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "de", "en", "es", "fi", "fr", "it", "ko", "pt".
-    :type default_language_code: str or ~azure.search.documents.models.SplitSkillLanguage
+    :type default_language_code: str or ~azure.search.documents.indexes.models.SplitSkillLanguage
     :param text_split_mode: A value indicating which split mode to perform. Possible values
      include: "pages", "sentences".
-    :type text_split_mode: str or ~azure.search.documents.models.TextSplitMode
+    :type text_split_mode: str or ~azure.search.documents.indexes.models.TextSplitMode
     :param maximum_page_length: The desired maximum page length. Default is 10000.
     :type maximum_page_length: int
     """
@@ -5045,7 +5053,7 @@ class StemmerTokenFilter(TokenFilter):
      "latvian", "norwegian", "lightNorwegian", "minimalNorwegian", "lightNynorsk", "minimalNynorsk",
      "portuguese", "lightPortuguese", "minimalPortuguese", "portugueseRslp", "romanian", "russian",
      "lightRussian", "spanish", "lightSpanish", "swedish", "lightSwedish", "turkish".
-    :type language: str or ~azure.search.documents.models.StemmerTokenFilterLanguage
+    :type language: str or ~azure.search.documents.indexes.models.StemmerTokenFilterLanguage
     """
 
     _validation = {
@@ -5132,7 +5140,7 @@ class StopwordsTokenFilter(TokenFilter):
      "finnish", "french", "galician", "german", "greek", "hindi", "hungarian", "indonesian",
      "irish", "italian", "latvian", "norwegian", "persian", "portuguese", "romanian", "russian",
      "sorani", "spanish", "swedish", "thai", "turkish".
-    :type stopwords_list: str or ~azure.search.documents.models.StopwordsList
+    :type stopwords_list: str or ~azure.search.documents.indexes.models.StopwordsList
     :param ignore_case: A value indicating whether to ignore case. If true, all words are converted
      to lower case first. Default is false.
     :type ignore_case: bool
@@ -5239,7 +5247,7 @@ class SynonymMap(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :param e_tag: The ETag of the synonym map.
     :type e_tag: str
     """
@@ -5353,9 +5361,9 @@ class TagScoringFunction(ScoringFunction):
     :param interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     :param parameters: Required. Parameter values for the tag scoring function.
-    :type parameters: ~azure.search.documents.models.TagScoringParameters
+    :type parameters: ~azure.search.documents.indexes.models.TagScoringParameters
     """
 
     _validation = {
@@ -5435,10 +5443,10 @@ class TextTranslationSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param default_to_language_code: Required. The language code to translate documents into for
      documents that don't specify the to language explicitly. Possible values include: "af", "ar",
      "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
@@ -5447,7 +5455,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur",
      "vi", "cy", "yua".
     :type default_to_language_code: str or
-     ~azure.search.documents.models.TextTranslationSkillLanguage
+     ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :param default_from_language_code: The language code to translate documents from for documents
      that don't specify the from language explicitly. Possible values include: "af", "ar", "bn",
      "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
@@ -5456,7 +5464,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
      "yua".
     :type default_from_language_code: str or
-     ~azure.search.documents.models.TextTranslationSkillLanguage
+     ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :param suggested_from: The language code to translate documents from when neither the
      fromLanguageCode input nor the defaultFromLanguageCode parameter are provided, and the
      automatic language detection is unsuccessful. Default is en. Possible values include: "af",
@@ -5465,7 +5473,8 @@ class TextTranslationSkill(SearchIndexerSkill):
      "sw", "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru",
      "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk",
      "ur", "vi", "cy", "yua".
-    :type suggested_from: str or ~azure.search.documents.models.TextTranslationSkillLanguage
+    :type suggested_from: str or
+     ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     """
 
     _validation = {
@@ -5676,10 +5685,10 @@ class WebApiSkill(SearchIndexerSkill):
     :type context: str
     :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :type inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :param uri: Required. The url for the Web API.
     :type uri: str
     :param http_headers: The headers required to make the http request.
