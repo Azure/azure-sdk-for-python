@@ -205,6 +205,7 @@
         "updated": {
           "description": "The timestamp for when this queue was last updated",
           "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://www.w3.org/2005/Atom"
           }
@@ -280,6 +281,7 @@
         "AccessedAt": {
           "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
           "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -297,6 +299,7 @@
         "AutoDeleteOnIdle": {
           "description": "ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
           "type": "string",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -310,6 +313,7 @@
         "CreatedAt": {
           "description": "The exact time the queue was created.",
           "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -324,6 +328,7 @@
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
           "type": "string",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -331,6 +336,7 @@
         "DuplicateDetectionHistoryTimeWindow": {
           "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
           "type": "string",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -372,6 +378,7 @@
         "LockDuration": {
           "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
           "type": "string",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -434,6 +441,7 @@
         "UpdatedAt": {
           "description": "The exact time a message was updated in the queue.",
           "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
