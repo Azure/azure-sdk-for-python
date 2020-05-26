@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:19 GMT
+      - Tue, 26 May 2020 06:13:30 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/496458c3-e80c-4ee9-a87a-4c5e6a066847?monitor=true&api-version=2019-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/8ddc7edf-5aca-4901-b94f-0b059e85c964?monitor=true&api-version=2019-06-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1186'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -60,10 +60,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/496458c3-e80c-4ee9-a87a-4c5e6a066847?monitor=true&api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/8ddc7edf-5aca-4901-b94f-0b059e85c964?monitor=true&api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-20T05:01:18.9872028Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-26T06:13:30.1214415Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:01:36 GMT
+      - Tue, 26 May 2020 06:13:47 GMT
       expires:
       - '-1'
       pragma:
@@ -106,18 +106,18 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"virualnetwork111\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111\"\
-        ,\r\n  \"etag\": \"W/\\\"e2bdeee3-2285-44dc-8aea-8078e6e3492b\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"c837e8e8-5cee-4e15-ad7f-f7ce05456790\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westeurope\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"395ea34f-4645-417d-8538-0b30a6dbd462\",\r\n    \"\
+        \   \"resourceGuid\": \"5586aef3-1a31-488a-8ba2-15f08a167622\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -126,7 +126,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/3f2f7fa1-82f2-4374-956f-e5e701600a3c?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/e4e5f5c5-8c61-459d-8c53-b42be13298a1?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -134,7 +134,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:39 GMT
+      - Tue, 26 May 2020 06:13:53 GMT
       expires:
       - '-1'
       pragma:
@@ -147,9 +147,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c599187b-616a-4484-a4b8-cb6471aa8414
+      - 1d324e52-6b37-4e90-a1b8-3ca34b7ca573
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -164,9 +164,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/3f2f7fa1-82f2-4374-956f-e5e701600a3c?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/e4e5f5c5-8c61-459d-8c53-b42be13298a1?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -178,7 +178,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:42 GMT
+      - Tue, 26 May 2020 06:13:57 GMT
       expires:
       - '-1'
       pragma:
@@ -195,7 +195,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 854cae6d-bd4a-483b-bc69-f6baf227b335
+      - 035988e7-864e-4c91-87bc-cd57f287f381
     status:
       code: 200
       message: OK
@@ -210,16 +210,16 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"virualnetwork111\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111\"\
-        ,\r\n  \"etag\": \"W/\\\"020ae2f9-a061-4f32-ba65-737e71d316cd\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"39f40589-3e30-4e1a-9323-2faf8bb405ec\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westeurope\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"395ea34f-4645-417d-8538-0b30a6dbd462\",\r\n    \"\
+        \    \"resourceGuid\": \"5586aef3-1a31-488a-8ba2-15f08a167622\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -232,9 +232,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:42 GMT
+      - Tue, 26 May 2020 06:13:57 GMT
       etag:
-      - W/"020ae2f9-a061-4f32-ba65-737e71d316cd"
+      - W/"39f40589-3e30-4e1a-9323-2faf8bb405ec"
       expires:
       - '-1'
       pragma:
@@ -251,7 +251,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 90cafb37-1049-41fa-bc75-e35e525ecea7
+      - d63399bd-cc3d-4efe-8db7-5b4ae07a1016
     status:
       code: 200
       message: OK
@@ -271,22 +271,22 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnet111\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111\"\
-        ,\r\n  \"etag\": \"W/\\\"f40721ea-cfe1-4188-a52b-b02540983461\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b45ebcfb-0663-4529-b635-f3cb7ce56106\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
         \r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/93e0d04d-a054-4228-8a42-446c88f611c5?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/55e02c89-8cb1-4b27-9873-8f7b9386171f?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -294,7 +294,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:42 GMT
+      - Tue, 26 May 2020 06:13:58 GMT
       expires:
       - '-1'
       pragma:
@@ -307,9 +307,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6c85b2fe-90f9-43be-9907-3959eeb1474a
+      - f6edf3cc-e018-4395-9f84-84a7889ea9cb
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -324,9 +324,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/93e0d04d-a054-4228-8a42-446c88f611c5?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/55e02c89-8cb1-4b27-9873-8f7b9386171f?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -338,7 +338,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:46 GMT
+      - Tue, 26 May 2020 06:14:02 GMT
       expires:
       - '-1'
       pragma:
@@ -355,7 +355,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7c412bc9-9485-47ea-a307-586b3f295e8d
+      - 000b1243-109b-4262-bc81-2c5e4acd890b
     status:
       code: 200
       message: OK
@@ -370,13 +370,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnet111\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111\"\
-        ,\r\n  \"etag\": \"W/\\\"d4f72a63-3a17-4875-a4e7-bf6326d10ea6\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"6652ce4a-c91e-4108-b9c7-859fbac78636\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
@@ -389,9 +389,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:47 GMT
+      - Tue, 26 May 2020 06:14:02 GMT
       etag:
-      - W/"d4f72a63-3a17-4875-a4e7-bf6326d10ea6"
+      - W/"6652ce4a-c91e-4108-b9c7-859fbac78636"
       expires:
       - '-1'
       pragma:
@@ -408,7 +408,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b7ce719d-01a9-461e-a837-543614c68e26
+      - 61120437-d21d-4675-bbb6-602135b5e095
     status:
       code: 200
       message: OK
@@ -429,21 +429,21 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"endpoint123xxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx\"\
-        ,\r\n  \"etag\": \"W/\\\"46f5b63c-240b-48ca-846e-6a1971718500\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"427ca301-56f8-48e5-9594-a97fc4d385c4\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
         westeurope\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"7cd0cf76-2ed1-47f9-a439-227d2108ec57\",\r\n \
+        ,\r\n    \"resourceGuid\": \"20d72b6b-102b-4def-936a-a1a7559bf658\",\r\n \
         \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
         myconnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx/privateLinkServiceConnections/myconnection\"\
-        ,\r\n        \"etag\": \"W/\\\"46f5b63c-240b-48ca-846e-6a1971718500\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"427ca301-56f8-48e5-9594-a97fc4d385c4\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn\"\
         ,\r\n          \"groupIds\": [\r\n            \"blob\"\r\n          ],\r\n\
@@ -453,21 +453,21 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
         \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111\"\
         \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/networkInterfaces/endpoint123xxx.nic.a44448ad-4837-4a17-aa5a-eee83a96e8f0\"\
-        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/networkInterfaces/endpoint123xxx.nic.d5aefaed-e9a8-47fa-ac83-7a58468a3eb1\"\
+        \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/0a0bd4a1-ecc3-4c1b-9b78-a0ea0adf4dba?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/302e75ba-f830-463c-a8c8-499cf6e859e2?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '2062'
+      - '2033'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:01:49 GMT
+      - Tue, 26 May 2020 06:14:08 GMT
       expires:
       - '-1'
       pragma:
@@ -480,9 +480,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 91f4fe9d-d699-4043-9015-ab1f18ae7a96
+      - d31f6af9-06b8-477e-b1a1-a7e3727bb691
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -497,101 +497,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/0a0bd4a1-ecc3-4c1b-9b78-a0ea0adf4dba?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 20 May 2020 05:02:03 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 93c7c140-f637-47a2-a939-d39dc838b758
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/0a0bd4a1-ecc3-4c1b-9b78-a0ea0adf4dba?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 20 May 2020 05:02:13 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 8525f75b-50f0-4b36-bc33-3f118e10f93b
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/0a0bd4a1-ecc3-4c1b-9b78-a0ea0adf4dba?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westeurope/operations/302e75ba-f830-463c-a8c8-499cf6e859e2?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -603,7 +511,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:23 GMT
+      - Tue, 26 May 2020 06:14:17 GMT
       expires:
       - '-1'
       pragma:
@@ -620,7 +528,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c2765906-9e0e-41f2-90d3-5f97e180c7b5
+      - e9a796a2-a270-4cb8-b7ce-8f9175b7ffe9
     status:
       code: 200
       message: OK
@@ -635,19 +543,19 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"endpoint123xxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx\"\
-        ,\r\n  \"etag\": \"W/\\\"406fdcb2-835a-4148-b15e-3899aedbb7dc\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"2f418f7c-5c6b-418a-bf9c-3ef37c998075\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
         westeurope\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"7cd0cf76-2ed1-47f9-a439-227d2108ec57\",\r\n \
+        ,\r\n    \"resourceGuid\": \"20d72b6b-102b-4def-936a-a1a7559bf658\",\r\n \
         \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
         myconnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx/privateLinkServiceConnections/myconnection\"\
-        ,\r\n        \"etag\": \"W/\\\"406fdcb2-835a-4148-b15e-3899aedbb7dc\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"2f418f7c-5c6b-418a-bf9c-3ef37c998075\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn\"\
         ,\r\n          \"groupIds\": [\r\n            \"blob\"\r\n          ],\r\n\
@@ -658,22 +566,19 @@ interactions:
         \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
         \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/virtualNetworks/virualnetwork111/subnets/subnet111\"\
         \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/networkInterfaces/endpoint123xxx.nic.a44448ad-4837-4a17-aa5a-eee83a96e8f0\"\
-        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": [\r\n      {\r\n      \
-        \  \"fqdn\": \"storageaccountxxyyzzn.blob.core.windows.net\",\r\n        \"\
-        ipAddresses\": [\r\n          \"10.0.0.4\"\r\n        ]\r\n      }\r\n   \
-        \ ]\r\n  }\r\n}"
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/networkInterfaces/endpoint123xxx.nic.d5aefaed-e9a8-47fa-ac83-7a58468a3eb1\"\
+        \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2223'
+      - '2047'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:23 GMT
+      - Tue, 26 May 2020 06:14:18 GMT
       etag:
-      - W/"406fdcb2-835a-4148-b15e-3899aedbb7dc"
+      - W/"2f418f7c-5c6b-418a-bf9c-3ef37c998075"
       expires:
       - '-1'
       pragma:
@@ -690,7 +595,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7dfacaee-c273-4eca-8802-cb0d56149c86
+      - 56244747-63e1-430f-bc8f-1c996d44299f
     status:
       code: 200
       message: OK
@@ -722,7 +627,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:24 GMT
+      - Tue, 26 May 2020 06:14:18 GMT
       expires:
       - '-1'
       pragma:
@@ -738,7 +643,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1185'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -780,7 +685,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:27 GMT
+      - Tue, 26 May 2020 06:14:19 GMT
       expires:
       - '-1'
       pragma:
@@ -796,7 +701,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1184'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -819,7 +724,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-20T05:02:28.8071323Z","lastModifiedTime":"2020-05-20T05:02:28.8071323Z","state":"Enabled"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-26T06:14:21.0053940Z","lastModifiedTime":"2020-05-26T06:14:21.0053940Z","state":"Enabled"}}'
     headers:
       cache-control:
       - no-cache
@@ -828,7 +733,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:28 GMT
+      - Tue, 26 May 2020 06:14:20 GMT
       expires:
       - '-1'
       pragma:
@@ -840,7 +745,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1183'
+      - '1196'
     status:
       code: 201
       message: Created
@@ -867,7 +772,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-05-20T05:02:30.1024763Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-05-26T06:14:21.4858835Z"}}'
     headers:
       cache-control:
       - no-cache
@@ -876,7 +781,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:29 GMT
+      - Tue, 26 May 2020 06:14:20 GMT
       expires:
       - '-1'
       pragma:
@@ -892,7 +797,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1182'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -924,9 +829,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:31 GMT
+      - Tue, 26 May 2020 06:14:21 GMT
       etag:
-      - '"0x8D7FC7B00A21FE4"'
+      - '"0x8D8013C083D5F94"'
       expires:
       - '-1'
       pragma:
@@ -938,7 +843,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1181'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -957,7 +862,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn?api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","name":"storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-20T05:01:18.9872028Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","name":"storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-26T06:13:30.1214415Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -966,7 +871,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:32 GMT
+      - Tue, 26 May 2020 06:14:21 GMT
       expires:
       - '-1'
       pragma:
@@ -981,6 +886,55 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"privateLinkServiceConnectionState": {"status": "Rejected",
+      "description": "Auto-Approved"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '109'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51?api-version=2019-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","name":"storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Rejected","description":"Auto-Approved","actionRequired":"None"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '764'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 May 2020 06:14:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1193'
     status:
       code: 200
       message: OK
@@ -1012,9 +966,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:32 GMT
+      - Tue, 26 May 2020 06:14:24 GMT
       etag:
-      - '"0x8D7FC7B0177756D"'
+      - '"0x8D8013C0A169CE8"'
       expires:
       - '-1'
       pragma:
@@ -1026,7 +980,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1180'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -1050,7 +1004,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b01d18574\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c0a570c9f\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -1059,9 +1013,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:33 GMT
+      - Tue, 26 May 2020 06:14:24 GMT
       etag:
-      - '"8d7fc7b01d18574"'
+      - '"8d8013c0a570c9f"'
       expires:
       - '-1'
       pragma:
@@ -1077,7 +1031,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1179'
+      - '1191'
     status:
       code: 200
       message: OK
@@ -1093,14 +1047,14 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"8d7fc7b01d18574"'
+      - '"8d8013c0a570c9f"'
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b022e862c\"","properties":{"immutabilityPeriodSinceCreationInDays":0,"state":"Deleted"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c0a976c00\"","properties":{"immutabilityPeriodSinceCreationInDays":0,"state":"Deleted"}}'
     headers:
       cache-control:
       - no-cache
@@ -1109,9 +1063,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:33 GMT
+      - Tue, 26 May 2020 06:14:25 GMT
       etag:
-      - '"8d7fc7b022e862c"'
+      - '"8d8013c0a976c00"'
       expires:
       - '-1'
       pragma:
@@ -1127,7 +1081,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
@@ -1151,7 +1105,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b0299cb56\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c0ad56926\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -1160,9 +1114,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:34 GMT
+      - Tue, 26 May 2020 06:14:25 GMT
       etag:
-      - '"8d7fc7b0299cb56"'
+      - '"8d8013c0ad56926"'
       expires:
       - '-1'
       pragma:
@@ -1178,7 +1132,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1178'
+      - '1190'
     status:
       code: 200
       message: OK
@@ -1197,7 +1151,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b0299cb56\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c0ad56926\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -1206,9 +1160,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:34 GMT
+      - Tue, 26 May 2020 06:14:25 GMT
       etag:
-      - '"8d7fc7b0299cb56"'
+      - '"8d8013c0ad56926"'
       expires:
       - '-1'
       pragma:
@@ -1241,7 +1195,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz","name":"containernamexxyyzz","type":"Microsoft.Storage/storageAccounts/blobServices/containers","etag":"\"0x8D7FC7B029C066B\"","properties":{"deleted":false,"remainingRetentionDays":0,"defaultEncryptionScope":"$account-encryption-key","denyEncryptionScopeOverride":false,"publicAccess":"None","leaseStatus":"Unlocked","leaseState":"Available","lastModifiedTime":"2020-05-20T05:02:35.0000000Z","immutabilityPolicy":{"etag":"\"8d7fc7b0299cb56\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"},"updateHistory":[{"allowProtectedAppendWrites":true,"update":"put","immutabilityPeriodSinceCreationInDays":3,"timestamp":"2020-05-20T05:02:35.1181280Z","objectIdentifier":"20d81029-94cd-4923-a766-994415ff73bd","tenantId":"00000000-0000-0000-0000-000000000000"}]},"legalHold":{"hasLegalHold":false,"tags":[]},"hasImmutabilityPolicy":true,"hasLegalHold":false}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz","name":"containernamexxyyzz","type":"Microsoft.Storage/storageAccounts/blobServices/containers","etag":"\"0x8D8013C0AD7784A\"","properties":{"deleted":false,"remainingRetentionDays":0,"defaultEncryptionScope":"$account-encryption-key","denyEncryptionScopeOverride":false,"publicAccess":"None","leaseStatus":"Unlocked","leaseState":"Available","lastModifiedTime":"2020-05-26T06:14:26.0000000Z","immutabilityPolicy":{"etag":"\"8d8013c0ad56926\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"},"updateHistory":[{"allowProtectedAppendWrites":true,"update":"put","immutabilityPeriodSinceCreationInDays":3,"timestamp":"2020-05-26T06:14:26.4505314Z","objectIdentifier":"123743cc-88ef-49ee-920e-13958fe5697d","tenantId":"00000000-0000-0000-0000-000000000000"}]},"legalHold":{"hasLegalHold":false,"tags":[]},"hasImmutabilityPolicy":true,"hasLegalHold":false}}'
     headers:
       cache-control:
       - no-cache
@@ -1250,9 +1204,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:34 GMT
+      - Tue, 26 May 2020 06:14:26 GMT
       etag:
-      - '"0x8D7FC7B029C066B"'
+      - '"0x8D8013C0AD7784A"'
       expires:
       - '-1'
       pragma:
@@ -1282,10 +1236,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","name":"storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionRequired":"None"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","name":"storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Rejected","description":"Auto-Approved","actionRequired":"None"}}}'
     headers:
       cache-control:
       - no-cache
@@ -1294,7 +1248,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:35 GMT
+      - Tue, 26 May 2020 06:14:26 GMT
       expires:
       - '-1'
       pragma:
@@ -1327,7 +1281,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01&$expand=stats
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","etag":"\"0x8D7FC7B00A21FE4\"","properties":{"shareUsageBytes":0,"lastModifiedTime":"2020-05-20T05:02:31.0000000Z","shareQuota":5120}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","etag":"\"0x8D8013C083D5F94\"","properties":{"shareUsageBytes":0,"lastModifiedTime":"2020-05-26T06:14:22.0000000Z","shareQuota":5120}}'
     headers:
       cache-control:
       - no-cache
@@ -1336,9 +1290,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:35 GMT
+      - Tue, 26 May 2020 06:14:26 GMT
       etag:
-      - '"0x8D7FC7B00A21FE4"'
+      - '"0x8D8013C083D5F94"'
       expires:
       - '-1'
       pragma:
@@ -1371,7 +1325,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-05-20T05:02:30.1024763Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-05-26T06:14:21.4858835Z"}}'
     headers:
       cache-control:
       - no-cache
@@ -1380,7 +1334,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1413,7 +1367,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-20T05:02:28.8071323Z","lastModifiedTime":"2020-05-20T05:02:28.8071323Z","state":"Enabled"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-26T06:14:21.0053940Z","lastModifiedTime":"2020-05-26T06:14:21.0053940Z","state":"Enabled"}}'
     headers:
       cache-control:
       - no-cache
@@ -1422,7 +1376,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1465,7 +1419,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1507,7 +1461,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1549,7 +1503,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:29 GMT
       expires:
       - '-1'
       pragma:
@@ -1591,7 +1545,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:29 GMT
       expires:
       - '-1'
       pragma:
@@ -1624,7 +1578,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn?api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","name":"storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-20T05:01:18.9872028Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","name":"storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Rejected","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-26T06:13:30.1214415Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -1633,7 +1587,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:36 GMT
+      - Tue, 26 May 2020 06:14:29 GMT
       expires:
       - '-1'
       pragma:
@@ -1679,7 +1633,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:37 GMT
+      - Tue, 26 May 2020 06:14:30 GMT
       expires:
       - '-1'
       pragma:
@@ -1695,7 +1649,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -1727,7 +1681,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:37 GMT
+      - Tue, 26 May 2020 06:14:30 GMT
       expires:
       - '-1'
       pragma:
@@ -1743,7 +1697,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -1766,7 +1720,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/lease?api-version=2019-06-01
   response:
     body:
-      string: '{"leaseId":"86a2352a-a0eb-4638-8b38-f9f16a558cfb"}'
+      string: '{"leaseId":"c4e14c1f-1632-4cab-a8d1-357cb67bf0ac"}'
     headers:
       cache-control:
       - no-cache
@@ -1775,9 +1729,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:38 GMT
+      - Tue, 26 May 2020 06:14:30 GMT
       etag:
-      - '"0x8D7FC7B04851CA9"'
+      - '"0x8D8013C0D37AA09"'
       expires:
       - '-1'
       pragma:
@@ -1793,12 +1747,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1190'
+      - '1197'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"action": "Break", "leaseId": "86a2352a-a0eb-4638-8b38-f9f16a558cfb"}'
+    body: '{"action": "Break", "leaseId": "c4e14c1f-1632-4cab-a8d1-357cb67bf0ac"}'
     headers:
       Accept:
       - application/json
@@ -1825,9 +1779,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:38 GMT
+      - Tue, 26 May 2020 06:14:31 GMT
       etag:
-      - '"0x8D7FC7B04851CA9"'
+      - '"0x8D8013C0D37AA09"'
       expires:
       - '-1'
       pragma:
@@ -1843,7 +1797,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1189'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -1875,9 +1829,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:39 GMT
+      - Tue, 26 May 2020 06:14:31 GMT
       etag:
-      - '"0x8D7FC7B05A7151E"'
+      - '"0x8D8013C0DF0E2D2"'
       expires:
       - '-1'
       pragma:
@@ -1893,7 +1847,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1177'
+      - '1189'
     status:
       code: 200
       message: OK
@@ -1925,9 +1879,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:40 GMT
+      - Tue, 26 May 2020 06:14:32 GMT
       etag:
-      - '"0x8D7FC7B06039700"'
+      - '"0x8D8013C0E3F569B"'
       expires:
       - '-1'
       pragma:
@@ -1943,7 +1897,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1176'
+      - '1188'
     status:
       code: 200
       message: OK
@@ -1966,7 +1920,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-20T05:02:28.8071323Z","lastModifiedTime":"2020-05-20T05:02:28.8071323Z","state":"Enabled"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/encryptionScopes/encryptionscopexxyyzz","type":"Microsoft.Storage/storageAccounts/encryptionScopes","name":"encryptionscopexxyyzz","properties":{"source":"Microsoft.Storage","keyVaultProperties":{},"creationTime":"2020-05-26T06:14:21.0053940Z","lastModifiedTime":"2020-05-26T06:14:21.0053940Z","state":"Enabled"}}'
     headers:
       cache-control:
       - no-cache
@@ -1975,7 +1929,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:40 GMT
+      - Tue, 26 May 2020 06:14:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1991,7 +1945,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1175'
+      - '1187'
     status:
       code: 200
       message: OK
@@ -2021,7 +1975,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:41 GMT
+      - Tue, 26 May 2020 06:14:33 GMT
       expires:
       - '-1'
       pragma:
@@ -2033,7 +1987,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -2056,7 +2010,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/regenerateKey?api-version=2019-06-01
   response:
     body:
-      string: '{"keys":[{"keyName":"key1","value":"He+tX4zh/EKmRLeJ0ygb7eokfs0Ojh5desVqTrz+P35Kj/MdeaiFcRTIdwRNowTCTy4038o9OQU/x7bA9RJTQA==","permissions":"FULL"},{"keyName":"key2","value":"zxH1Ggtf5Omj4eZUDQ8EIxKweGv7DihAA2a+b5M/KqnRnofD7nRkcQhRo6giF71Rp4BBxwRdT01tffb+wLhIOw==","permissions":"FULL"}]}'
+      string: '{"keys":[{"keyName":"key1","value":"fFuuOOELCtPYES2P9dfJKgA7Nb54/s1393QC7Tyuun4/YzQQJW9xTU91goV7Qzw5QuLb/TRUMGlY7eQhHZr1Tg==","permissions":"FULL"},{"keyName":"key2","value":"L1yYk7fuCfKcCfVbC5qQ+86MyKnV6YE+L3qhtD0ehjte9R7c60e6gV9sZMzZ9ewoloCeGh77ajZ1MaklV1Rwpw==","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -2065,7 +2019,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:42 GMT
+      - Tue, 26 May 2020 06:14:33 GMT
       expires:
       - '-1'
       pragma:
@@ -2081,7 +2035,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1187'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -2102,7 +2056,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/listKeys?api-version=2019-06-01&$expand=kerb
   response:
     body:
-      string: '{"keys":[{"keyName":"key1","value":"He+tX4zh/EKmRLeJ0ygb7eokfs0Ojh5desVqTrz+P35Kj/MdeaiFcRTIdwRNowTCTy4038o9OQU/x7bA9RJTQA==","permissions":"FULL"},{"keyName":"key2","value":"zxH1Ggtf5Omj4eZUDQ8EIxKweGv7DihAA2a+b5M/KqnRnofD7nRkcQhRo6giF71Rp4BBxwRdT01tffb+wLhIOw==","permissions":"FULL"}]}'
+      string: '{"keys":[{"keyName":"key1","value":"fFuuOOELCtPYES2P9dfJKgA7Nb54/s1393QC7Tyuun4/YzQQJW9xTU91goV7Qzw5QuLb/TRUMGlY7eQhHZr1Tg==","permissions":"FULL"},{"keyName":"key2","value":"L1yYk7fuCfKcCfVbC5qQ+86MyKnV6YE+L3qhtD0ehjte9R7c60e6gV9sZMzZ9ewoloCeGh77ajZ1MaklV1Rwpw==","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -2111,7 +2065,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:43 GMT
+      - Tue, 26 May 2020 06:14:33 GMT
       expires:
       - '-1'
       pragma:
@@ -2127,7 +2081,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '11998'
+      - '11999'
     status:
       code: 200
       message: OK
@@ -2151,7 +2105,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn?api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","name":"storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-20T05:01:19.0809242Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-20T05:01:18.9872028Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn","name":"storageaccountxxyyzzn","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","name":"storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51","type":"Microsoft.Storage/storageAccounts/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Network/privateEndpoints/endpoint123xxx"},"privateLinkServiceConnectionState":{"status":"Rejected","description":"Auto-Approved","actionRequired":"None"}}}],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-26T06:13:30.2151976Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-26T06:13:30.1214415Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzzn.dfs.core.windows.net/","web":"https://storageaccountxxyyzzn.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzzn.blob.core.windows.net/","queue":"https://storageaccountxxyyzzn.queue.core.windows.net/","table":"https://storageaccountxxyyzzn.table.core.windows.net/","file":"https://storageaccountxxyyzzn.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -2160,57 +2114,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:44 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1174'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      If-Match:
-      - '"8d7fc7b0299cb56"'
-      User-Agent:
-      - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/lock?api-version=2019-06-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b08cb4d88\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Locked"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '507'
-      content-type:
-      - application/json
-      date:
-      - Wed, 20 May 2020 05:02:44 GMT
-      etag:
-      - '"8d7fc7b08cb4d88"'
+      - Tue, 26 May 2020 06:14:34 GMT
       expires:
       - '-1'
       pragma:
@@ -2231,7 +2135,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"immutabilityPeriodSinceCreationInDays": 100}}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -2240,29 +2144,27 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '62'
-      Content-Type:
-      - application/json
+      - '0'
       If-Match:
-      - '"8d7fc7b08cb4d88"'
+      - '"8d8013c0ad56926"'
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/extend?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/lock?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d7fc7b0919fa73\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":100,"state":"Locked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c0fd5b8e9\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":3,"state":"Locked"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '509'
+      - '507'
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:46 GMT
+      - Tue, 26 May 2020 06:14:34 GMT
       etag:
-      - '"8d7fc7b0919fa73"'
+      - '"8d8013c0fd5b8e9"'
       expires:
       - '-1'
       pragma:
@@ -2278,7 +2180,59 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1185'
+      - '1193'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"immutabilityPeriodSinceCreationInDays": 100}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '62'
+      Content-Type:
+      - application/json
+      If-Match:
+      - '"8d8013c0fd5b8e9"'
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/extend?api-version=2019-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d8013c101153fc\"","properties":{"allowProtectedAppendWrites":true,"immutabilityPeriodSinceCreationInDays":100,"state":"Locked"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '509'
+      content-type:
+      - application/json
+      date:
+      - Tue, 26 May 2020 06:14:35 GMT
+      etag:
+      - '"8d8013c101153fc"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1192'
     status:
       code: 200
       message: OK
@@ -2310,7 +2264,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 20 May 2020 05:02:46 GMT
+      - Tue, 26 May 2020 06:14:36 GMT
       expires:
       - '-1'
       pragma:
@@ -2354,7 +2308,49 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:47 GMT
+      - Tue, 26 May 2020 06:14:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.fa29f3c6-ff57-4d2b-9a46-2eb770e6ca51?api-version=2019-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Tue, 26 May 2020 06:14:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2384,7 +2380,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/privateEndpointConnections/storageaccountxxyyzzn.c899c9e9-62ec-4fc6-bce1-79ce1d25fe61?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -2396,7 +2392,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:49 GMT
+      - Tue, 26 May 2020 06:14:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2426,7 +2422,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -2438,7 +2434,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:52 GMT
+      - Tue, 26 May 2020 06:14:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2468,48 +2464,6 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn/managementPolicies/default?api-version=2019-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      content-type:
-      - text/plain; charset=utf-8
-      date:
-      - Wed, 20 May 2020 05:02:52 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14994'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-storage/10.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzn?api-version=2019-06-01
   response:
     body:
@@ -2522,7 +2476,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 20 May 2020 05:02:56 GMT
+      - Tue, 26 May 2020 06:14:44 GMT
       expires:
       - '-1'
       pragma:
@@ -2534,7 +2488,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14993'
+      - '14994'
     status:
       code: 200
       message: OK

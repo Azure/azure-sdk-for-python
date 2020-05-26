@@ -333,8 +333,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
             self.mgmt_client.blob_services.set_service_properties(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         )
 
-        # TODO: don't have encryption scopes
-        # # StorageAccountPutEncryptionScope[put]
+        # StorageAccountPutEncryptionScope[put]
         BODY = {
           "source": "Microsoft.Storage",
           "state": "Enabled"
@@ -403,12 +402,14 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         # StorageAccountPutPrivateEndpointConnection[put]
         BODY = {
           "private_link_service_connection_state": {
-            "status": "Approved",
+            # "status": "Approved",
+            "status": "Rejected",  # it has been approved, so test `Rejected`
             "description": "Auto-Approved"
           }
         }
-        # [ZIM] this api stopped working
-        # result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
+        )
 
         # PutContainers[put]
         result = self.event_loop.run_until_complete(

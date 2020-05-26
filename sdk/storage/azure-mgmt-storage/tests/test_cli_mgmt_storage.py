@@ -24,10 +24,11 @@
 #   file_shares:  5/5
 #   management_policies:  3/3
 #   operations:  1/1
+#   object_replication_policies_operations: 0/4
 #   private_endpoint_connections:  3/3
 #   private_link_resources:  1/1
 #   skus:  1/1
-#   storage_accounts:  11/14
+#   storage_accounts:  10/14
 #   usages:  1/1
 
 import datetime as dt
@@ -116,7 +117,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
             return result.result().id
         else:
             return "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + group_name + "/providers/Microsoft.Network/privateEndpoints/" + endpoint_name
-        
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storage(self, resource_group):
@@ -124,6 +124,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = "storageaccountxxyyzzn"  # TODO: need change a random name, if need run live test again.
+        DEST_STORAGE_ACCOUNT_NAME = "storageaccountxxyyzznnx"
         FILE_SERVICE_NAME = "fileservicexxyyzz"
         SHARE_NAME = "filesharenamexxyyzz"
         BLOB_SERVICE_NAME = "blobservicexxyyzz"
@@ -138,6 +139,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         PROBES = "probe123"
         PRIVATE_ENDPOINT = "endpoint123xxx"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
+        OBJECT_REPLICATION_POLICY_NAME = "default"
 
         # StorageAccountCreate[put]
         BODY = {
@@ -174,6 +176,18 @@ class MgmtStorageTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.storage_accounts.begin_create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         storageaccount = result.result()
+
+        # Create destination storage account
+        # result = self.mgmt_client.storage_accounts.begin_create(resource_group.name, DEST_STORAGE_ACCOUNT_NAME, BODY)
+
+        # TODO: [Kaihui] feature is unavailable
+        # Create object replication policy
+        # BODY = {
+        #   "source_account": STORAGE_ACCOUNT_NAME,
+        #   "destination_account": DEST_STORAGE_ACCOUNT_NAME,
+        #   "rules": []
+        # }
+        # result = self.mgmt_client.object_replication_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, OBJECT_REPLICATION_POLICY_NAME, BODY)
 
         self.create_endpoint(
           resource_group.name,
@@ -387,12 +401,12 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountPutPrivateEndpointConnection[put]
         BODY = {
           "private_link_service_connection_state": {
-            "status": "Approved",
+            # "status": "Approved",
+            "status": "Rejected",  # it has been approved, so test `Rejected`
             "description": "Auto-Approved"
           }
         }
-        # [ZIM] this api stopped working
-        # result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
+        result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
 
         # PutContainers[put]
         result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, {})
@@ -423,6 +437,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
           CONTAINER_NAME,
           parameters=BODY)
         ETAG = result.etag
+
+        # TODO: [Kaihui] feature is unavailable
+        # Get object replication policy
+        # result = self.mgmt_client.object_replication_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME, OBJECT_REPLICATION_POLICY_NAME)
 
         # GetImmutabilityPolicy[get]
         result = self.mgmt_client.blob_containers.get_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
@@ -459,6 +477,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         # StorageAccountEncryptionScopeList[get]
         result = self.mgmt_client.encryption_scopes.list(resource_group.name, STORAGE_ACCOUNT_NAME)
+
+        # TODO: [Kaihui] feature is unavailable
+        # List object replication policy
+        # result = self.mgmt_client.object_replication_policies.list(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # ListBlobServices[get]
         result = self.mgmt_client.blob_services.list(resource_group.name, STORAGE_ACCOUNT_NAME)
@@ -664,6 +686,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         # StorageAccountFailover
         # [ZIM] tis testcase fails
+        # TODO: [Kaihui] about this issue: https://github.com/Azure/azure-sdk-for-python/issues/11292
         # result = self.mgmt_client.storage_accounts.begin_failover(resource_group.name, STORAGE_ACCOUNT_NAME)
         #result = result.result()
 
@@ -696,6 +719,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         # StorageAccountDeleteManagementPolicies[delete]
         result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
+
+        # TODO: [Kaihui] feature is unavailable
+        # Delete object replication policy
+        # result = self.mgmt_client.object_replication_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME, OBJECT_REPLICATION_POLICY_NAME)
 
         # StorageAccountDelete[delete]
         result = self.mgmt_client.storage_accounts.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
