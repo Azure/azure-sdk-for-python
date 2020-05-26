@@ -28,7 +28,7 @@ from .._internal import (
     ComplexField,
     SearchableField,
     SimpleField,
-    edm,
+    SearchFieldDataType,
 )
 from .._internal._generated.models import (
     AnalyzeRequest,
@@ -208,5 +208,5 @@ __all__ = (
     "UniqueTokenFilter",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
-    "edm",
+    "SearchFieldDataType",
 )

@@ -31,7 +31,7 @@ from azure.search.documents.indexes.models import(
     SearchIndexerDataContainer,
     SynonymMap,
     SimpleField,
-    edm
+    SearchFieldDataType
 )
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
@@ -143,8 +143,8 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-            SimpleField(name="hotelId", type=edm.String, key=True),
-            SimpleField(name="baseRate", type=edm.Double)
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
         ]
         scoring_profile = ScoringProfile(
             name="MyProfile"
@@ -169,8 +169,8 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-            SimpleField(name="hotelId", type=edm.String, key=True),
-            SimpleField(name="baseRate", type=edm.Double)
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
         ]
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
