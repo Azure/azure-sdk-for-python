@@ -24,18 +24,21 @@
 #
 # --------------------------------------------------------------------------
 
-from ._internal import (
-    IndexDocumentsBatch,
-    SearchClient,
-    SearchItemPaged,
+from .._internal import (
+    AutocompleteQuery,
+    IndexAction,
+    IndexingResult,
+    SearchQuery,
+    SuggestQuery,
+    odata,
 )
-from ._version import VERSION
-
-__version__ = VERSION
 
 
 __all__ = (
-    "IndexDocumentsBatch",
-    "SearchClient",
-    "SearchItemPaged",
+    "AutocompleteQuery",
+    "IndexAction",
+    "IndexingResult",
+    "SearchQuery",
+    "SuggestQuery",
+    "odata",
 )

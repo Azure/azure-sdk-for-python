@@ -2,20 +2,33 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import asyncio
+import functools
 import pytest
 
 try:
     from unittest import mock
 except ImportError:
     import mock
-
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
+def await_prepared_test(test_fn):
+    """Synchronous wrapper for async test methods. Used to avoid making changes
+    upstream to AbstractPreparer (which doesn't await the functions it wraps)
+    """
+
+    @functools.wraps(test_fn)
+    def run(test_class_instance, *args, **kwargs):
+        trim_kwargs_from_test_function(test_fn, kwargs)
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+
+    return run
 
 class TestSearchIndexClient(object):
     def test_index_init(self):
@@ -43,16 +56,6 @@ class TestSearchIndexClient(object):
         client = SearchIndexClient("endpoint", credential)
         search_client = client.get_search_client('index')
         assert isinstance(search_client, SearchClient)
-
-    @mock.patch(
-        "azure.search.documents.indexes._internal._generated._search_service_client.SearchServiceClient.get_service_statistics"
-    )
-    def test_get_service_statistics(self, mock_get_stats):
-        client = SearchIndexClient("endpoint", CREDENTIAL)
-        client.get_service_statistics()
-        assert mock_get_stats.called
-        assert mock_get_stats.call_args[0] == ()
-        assert mock_get_stats.call_args[1] == {"headers": client._headers}
 
     def test_index_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")

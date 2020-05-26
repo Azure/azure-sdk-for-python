@@ -7,6 +7,7 @@ from ._index import (  # pylint: disable=unused-import
     SearchableField,
     SimpleField,
 )
-from ._search_service_client import SearchServiceClient  # pylint: disable=unused-import
+from ._search_index_client import SearchIndexClient  # pylint: disable=unused-import
+from ._search_indexer_client import SearchIndexerClient  # pylint: disable=unused-import
 
 from . import edm  # pylint: disable=unused-import

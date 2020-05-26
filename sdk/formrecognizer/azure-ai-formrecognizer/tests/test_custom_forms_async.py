@@ -60,7 +60,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with self.assertRaises(HttpResponseError):
             form = await fr_client.recognize_custom_forms(
@@ -73,7 +73,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -94,7 +94,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -168,7 +168,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 
@@ -204,7 +204,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 

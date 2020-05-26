@@ -69,7 +69,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
@@ -89,7 +89,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
@@ -159,7 +159,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -193,7 +193,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []

@@ -14,11 +14,22 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._generated.models import (
+    AzureActiveDirectoryApplicationCredentials,
+    DataSourceCredentials,
+    SearchIndexerDataSource as _SearchIndexerDataSource,
+    SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
+    SynonymMap as _SynonymMap,
     SearchIndex,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from ._models import PatternAnalyzer, PatternTokenizer
+from ._models import (
+    PatternAnalyzer,
+    PatternTokenizer,
+    SynonymMap,
+    SearchIndexerDataSourceConnection,
+    SearchResourceEncryptionKey,
+)
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -154,10 +165,73 @@ def listize_flags_for_index(index):
 
 
 def listize_synonyms(synonym_map):
-    # type: (dict) -> dict
-    synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
-    return synonym_map
+    # type: (_SynonymMap) -> SynonymMap
+    return SynonymMap(
+        name=synonym_map.name,
+        synonyms=synonym_map.synonyms.split("\n"),
+        encryption_key=unpack_search_resource_encryption_key(synonym_map.encryption_key),
+        e_tag=synonym_map.e_tag
+    )
 
+def pack_search_resource_encryption_key(search_resource_encryption_key):
+    # type: (SearchResourceEncryptionKey) -> _SearchResourceEncryptionKey
+    if not search_resource_encryption_key:
+        return None
+    access_credentials = AzureActiveDirectoryApplicationCredentials(
+        application_id=search_resource_encryption_key.application_id,
+        application_secret=search_resource_encryption_key.application_secret
+    )
+    return _SearchResourceEncryptionKey(
+        key_name=search_resource_encryption_key.key_name,
+        key_version=search_resource_encryption_key.key_version,
+        vault_uri=search_resource_encryption_key.vault_uri,
+        access_credentials=access_credentials
+    )
+
+def unpack_search_resource_encryption_key(search_resource_encryption_key):
+    # type: (_SearchResourceEncryptionKey) -> SearchResourceEncryptionKey
+    if not search_resource_encryption_key:
+        return None
+    return SearchResourceEncryptionKey(
+        key_name=search_resource_encryption_key.key_name,
+        key_version=search_resource_encryption_key.key_version,
+        vault_uri=search_resource_encryption_key.vault_uri,
+        application_id=search_resource_encryption_key.access_credentials.application_id,
+        application_secret=search_resource_encryption_key.access_credentials.application_secret
+    )
+
+def pack_search_indexer_data_source(search_indexer_data_source):
+    # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
+    if not search_indexer_data_source:
+        return None
+    credentials = DataSourceCredentials(
+        connection_string=search_indexer_data_source.connection_string
+    )
+    return _SearchIndexerDataSource(
+        name=search_indexer_data_source.name,
+        description=search_indexer_data_source.description,
+        type=search_indexer_data_source.type,
+        credentials=credentials,
+        container=search_indexer_data_source.container,
+        data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
+        data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
+        e_tag=search_indexer_data_source.e_tag
+    )
+
+def unpack_search_indexer_data_source(search_indexer_data_source):
+    # type: (_SearchIndexerDataSource) -> SearchIndexerDataSourceConnection
+    if not search_indexer_data_source:
+        return None
+    return SearchIndexerDataSourceConnection(
+        name=search_indexer_data_source.name,
+        description=search_indexer_data_source.description,
+        type=search_indexer_data_source.type,
+        connection_string=search_indexer_data_source.credentials.connection_string,
+        container=search_indexer_data_source.container,
+        data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
+        data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
+        e_tag=search_indexer_data_source.e_tag
+    )
 
 def get_access_conditions(model, match_condition=MatchConditions.Unconditionally):
     # type: (Any, MatchConditions) -> Tuple[Dict[int, Any], Dict[str, bool]]
@@ -184,7 +258,7 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
     except AttributeError:
         raise ValueError("Unable to get e_tag from the model")
 
-def _normalize_endpoint(endpoint):
+def normalize_endpoint(endpoint):
     try:
         if not endpoint.lower().startswith('http'):
             endpoint = "https://" + endpoint

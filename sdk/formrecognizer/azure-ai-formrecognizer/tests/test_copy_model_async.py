@@ -22,7 +22,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
@@ -41,7 +41,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         # give an incorrect region
         target = await client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
@@ -53,7 +53,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
