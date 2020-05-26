@@ -636,6 +636,36 @@ class ErrorAdditionalInfo(Model):
         self.info = None
 
 
+class ErrorContract(Model):
+    """Error details.
+
+    Contains details when the response code indicates an error.
+
+    :param error: The details of the error.
+    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorContract, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorContractException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorContract'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorContractException, self).__init__(deserialize, response, 'ErrorContract', *args)
+
+
 class ErrorResponse(Model):
     """The resource management error response.
 
@@ -1063,11 +1093,16 @@ class SavedSearch(ProxyResource):
     :type category: str
     :param display_name: Required. Saved search display name.
     :type display_name: str
-    :param query: Required. The query expression for the saved search. Please
-     see
-     https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-search-reference
-     for reference.
+    :param query: Required. The query expression for the saved search.
     :type query: str
+    :param function_alias: The function alias if query serves as a function.
+    :type function_alias: str
+    :param function_parameters: The optional function parameters if query
+     serves as a function. Value should be in the following format:
+     'param-name1:type1 = default_value1, param-name2:type2 = default_value2'.
+     For more examples and proper syntax please refer to
+     https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
+    :type function_parameters: str
     :param version: The version number of the query language. The current
      version is 2 and is the default.
     :type version: long
@@ -1092,6 +1127,8 @@ class SavedSearch(ProxyResource):
         'category': {'key': 'properties.category', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
+        'function_alias': {'key': 'properties.functionAlias', 'type': 'str'},
+        'function_parameters': {'key': 'properties.functionParameters', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'long'},
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
@@ -1102,6 +1139,8 @@ class SavedSearch(ProxyResource):
         self.category = kwargs.get('category', None)
         self.display_name = kwargs.get('display_name', None)
         self.query = kwargs.get('query', None)
+        self.function_alias = kwargs.get('function_alias', None)
+        self.function_parameters = kwargs.get('function_parameters', None)
         self.version = kwargs.get('version', None)
         self.tags = kwargs.get('tags', None)
 
@@ -1451,6 +1490,45 @@ class StorageInsightStatus(Model):
         self.description = kwargs.get('description', None)
 
 
+class Table(ProxyResource):
+    """Workspace data table definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param retention_in_days: The data table data retention in days, between
+     30 and 730. Setting this property to null will default to the workspace
+     retention.
+    :type retention_in_days: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Table, self).__init__(**kwargs)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+
+
 class Tag(Model):
     """A tag of a saved search.
 
@@ -1549,6 +1627,8 @@ class Workspace(TrackedResource):
      Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
      for all other Skus.
     :type retention_in_days: int
+    :param workspace_capping: The daily volume cap for ingestion.
+    :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
     :param public_network_access_for_ingestion: The network access type for
      accessing Log Analytics ingestion. Possible values include: 'Enabled',
      'Disabled'. Default value: "Enabled" .
@@ -1587,6 +1667,7 @@ class Workspace(TrackedResource):
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
@@ -1599,10 +1680,47 @@ class Workspace(TrackedResource):
         self.customer_id = None
         self.sku = kwargs.get('sku', None)
         self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.workspace_capping = kwargs.get('workspace_capping', None)
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
         self.private_link_scoped_resources = None
         self.e_tag = kwargs.get('e_tag', None)
+
+
+class WorkspaceCapping(Model):
+    """The daily volume cap for ingestion.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param daily_quota_gb: The workspace daily quota for ingestion. -1 means
+     unlimited.
+    :type daily_quota_gb: float
+    :ivar quota_next_reset_time: The time when the quota will be rest.
+    :vartype quota_next_reset_time: datetime
+    :ivar data_ingestion_status: The status of data ingestion for this
+     workspace. Possible values include: 'RespectQuota', 'ForceOn', 'ForceOff',
+     'OverQuota', 'SubscriptionSuspended', 'ApproachingQuota'
+    :vartype data_ingestion_status: str or
+     ~azure.mgmt.loganalytics.models.DataIngestionStatus
+    """
+
+    _validation = {
+        'quota_next_reset_time': {'readonly': True},
+        'data_ingestion_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'daily_quota_gb': {'key': 'dailyQuotaGb', 'type': 'float'},
+        'quota_next_reset_time': {'key': 'quotaNextResetTime', 'type': 'iso-8601'},
+        'data_ingestion_status': {'key': 'dataIngestionStatus', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkspaceCapping, self).__init__(**kwargs)
+        self.daily_quota_gb = kwargs.get('daily_quota_gb', None)
+        self.quota_next_reset_time = None
+        self.data_ingestion_status = None
 
 
 class WorkspacePatch(AzureEntityResource):
@@ -1635,6 +1753,8 @@ class WorkspacePatch(AzureEntityResource):
      Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
      for all other Skus.
     :type retention_in_days: int
+    :param workspace_capping: The daily volume cap for ingestion.
+    :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
     :param public_network_access_for_ingestion: The network access type for
      accessing Log Analytics ingestion. Possible values include: 'Enabled',
      'Disabled'. Default value: "Enabled" .
@@ -1672,6 +1792,7 @@ class WorkspacePatch(AzureEntityResource):
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
@@ -1684,6 +1805,7 @@ class WorkspacePatch(AzureEntityResource):
         self.customer_id = None
         self.sku = kwargs.get('sku', None)
         self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.workspace_capping = kwargs.get('workspace_capping', None)
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
         self.private_link_scoped_resources = None
@@ -1802,22 +1924,42 @@ class WorkspacePurgeStatusResponse(Model):
 class WorkspaceSku(Model):
     """The SKU (tier) of a workspace.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include:
      'Free', 'Standard', 'Premium', 'PerNode', 'PerGB2018', 'Standalone',
      'CapacityReservation'
     :type name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
+    :param capacity_reservation_level: The capacity reservation level for this
+     workspace, when CapacityReservation sku is selected.
+    :type capacity_reservation_level: int
+    :ivar max_capacity_reservation_level: The maximum capacity reservation
+     level available for this workspace, when CapacityReservation sku is
+     selected.
+    :vartype max_capacity_reservation_level: int
+    :ivar last_sku_update: The last time when the sku was updated.
+    :vartype last_sku_update: datetime
     """
 
     _validation = {
         'name': {'required': True},
+        'max_capacity_reservation_level': {'readonly': True},
+        'last_sku_update': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'int'},
+        'max_capacity_reservation_level': {'key': 'maxCapacityReservationLevel', 'type': 'int'},
+        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(WorkspaceSku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.capacity_reservation_level = kwargs.get('capacity_reservation_level', None)
+        self.max_capacity_reservation_level = None
+        self.last_sku_update = None
