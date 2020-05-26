@@ -64,7 +64,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :returns: A change feed client.
-        :rtype: ~azure.storage.blobchangefeed.ChangeFeedClient
+        :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
 
         .. admonition:: Example:
 

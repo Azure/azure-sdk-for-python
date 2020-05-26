@@ -22,7 +22,7 @@ USAGE:
 
 import os
 from datetime import datetime
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 
 class ChangeFeedSamples(object):

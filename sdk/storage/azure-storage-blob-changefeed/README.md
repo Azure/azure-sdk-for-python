@@ -57,7 +57,7 @@ You can omit the credential if your account URL already has a SAS token.
 Once you have your account URL and credentials ready, you can create the ChangeFeedClient:
 
 ```python
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 service = ChangeFeedClient(account_url="https://<my-storage-account-name>.dfs.core.windows.net/", credential=credential)
 ```
@@ -83,7 +83,7 @@ The following sections provide several code snippets covering some of the most c
 Create the ChangeFeedClient using the connection string to your Azure Storage account.
 
 ```python
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 service = ChangeFeedClient.from_connection_string(conn_str="my_connection_string")
 ```
@@ -92,7 +92,7 @@ List all events within a time range.
 
 ```python
 from datetime import datetime
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
@@ -110,7 +110,7 @@ for event in events:
 List all events.
 
 ```python
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
@@ -126,7 +126,7 @@ for event in events:
 List events by page.
 
 ```python
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
@@ -153,9 +153,9 @@ headers, can be enabled on a client with the `logging_enable` argument:
 ```python
 import sys
 import logging
-from azure.storage.blobchangefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
-# Create a logger for the 'azure.storage.blobchangefeed' SDK
+# Create a logger for the 'azure.storage.blob.changefeed' SDK
 logger = logging.getLogger('azure.storage')
 logger.setLevel(logging.DEBUG)
 

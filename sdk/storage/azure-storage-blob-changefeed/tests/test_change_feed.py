@@ -11,7 +11,7 @@ from datetime import datetime
 from math import ceil
 
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-from azure.storage.blobchangefeed import (
+from azure.storage.blob.changefeed import (
     ChangeFeedClient,
 )
 
