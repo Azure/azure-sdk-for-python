@@ -33,7 +33,7 @@ class ChangeFeedPaged(PageIterator):
         The current page of listed results.
     :vartype current_page: list(dict)
 
-    :param ~azure.storage.blob.ContainerClient:
+    :param ~azure.storage.blob.ContainerClient or ~azure.storage.blob.aio.ContainerClient:
         the client to get change feed events.
     :param int results_per_page:
         The maximum number of blobs to retrieve per
@@ -386,10 +386,7 @@ class ChangeFeedStreamer(object):
         start_point = self._point
 
         # EOF
-        if self._point + size > self._download_offset:
-            self._point = self._download_offset
-        else:
-            self._point += size
+        self._point = min(self._point + size, self._download_offset)
 
         # seek the cursor's relative position in the buffer
         self._buf.seek(start_point - self._chunk_file_start)
