@@ -14,15 +14,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8?api-version=2017-10-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"loginServer":"pyacrb3e116b8.azurecr.io","creationDate":"2020-05-06T08:00:44.0685199Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8","name":"pyacrb3e116b8","location":"eastus","tags":{},"properties":{"loginServer":"pyacrb3e116b8.azurecr.io","creationDate":"2020-05-15T13:05:45.0867599Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
     headers:
       cache-control:
       - no-cache
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:46 GMT
+      - Fri, 15 May 2020 13:05:46 GMT
       expires:
       - '-1'
       pragma:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -66,8 +66,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -83,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:51 GMT
+      - Fri, 15 May 2020 13:05:50 GMT
       expires:
       - '-1'
       pragma:
@@ -99,7 +99,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -113,8 +113,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -130,7 +130,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:51 GMT
+      - Fri, 15 May 2020 13:05:50 GMT
       expires:
       - '-1'
       pragma:
@@ -163,8 +163,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
@@ -180,7 +180,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:53 GMT
+      - Fri, 15 May 2020 13:05:52 GMT
       expires:
       - '-1'
       pragma:
@@ -196,7 +196,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -210,8 +210,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -227,7 +227,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:54 GMT
+      - Fri, 15 May 2020 13:05:52 GMT
       expires:
       - '-1'
       pragma:
@@ -257,8 +257,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -274,7 +274,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:54 GMT
+      - Fri, 15 May 2020 13:05:53 GMT
       expires:
       - '-1'
       pragma:
@@ -290,7 +290,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -306,15 +306,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_webhookb3e116b8/providers/Microsoft.ContainerRegistry/registries/pyacrb3e116b8/webhooks/pyacrb3e116b8/ping?api-version=2017-10-01
   response:
     body:
-      string: '{"id":"bc07085c-2753-4478-90f9-916a613da90e"}'
+      string: '{"id":"149dc2d0-9658-4c7d-97a7-ad6051c7aaff"}'
     headers:
       cache-control:
       - no-cache
@@ -323,7 +323,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 May 2020 08:00:55 GMT
+      - Fri, 15 May 2020 13:05:53 GMT
       expires:
       - '-1'
       pragma:
@@ -339,7 +339,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -355,8 +355,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -370,7 +370,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 06 May 2020 08:00:58 GMT
+      - Fri, 15 May 2020 13:05:56 GMT
       expires:
       - '-1'
       pragma:
@@ -398,8 +398,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Windows-10-10.0.17763-SP0) msrest/0.6.13 msrest_azure/0.4.34
-        azure-mgmt-containerregistry/3.0.0rc11 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
+        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -413,7 +413,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 06 May 2020 08:01:01 GMT
+      - Fri, 15 May 2020 13:06:00 GMT
       expires:
       - '-1'
       pragma:
