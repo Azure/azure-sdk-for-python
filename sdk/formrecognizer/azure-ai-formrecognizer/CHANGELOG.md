@@ -20,6 +20,7 @@
 - `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the
 `CustomFormModel`  and `CustomFormModelInfo` models.
 - `models` property of `CustomFormModel` is renamed to `submodels`
+- `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 
 **New features**
 

@@ -118,8 +118,8 @@ def custom_form_model_field():
 
 @pytest.fixture
 def custom_form_sub_model(custom_form_model_field):
-    model = _models.CustomFormSubModel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
-    model_repr = "CustomFormSubModel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
+    model = _models.CustomFormSubmodel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
+    model_repr = "CustomFormSubmodel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

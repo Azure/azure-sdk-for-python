@@ -676,7 +676,7 @@ class CustomFormModel(object):
         The date and time (UTC) when model training was requested.
     :ivar ~datetime.datetime completed_on:
         Date and time (UTC) when model training completed.
-    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] submodels:
+    :ivar list[~azure.ai.formrecognizer.CustomFormSubmodel] submodels:
         A list of submodels that are part of this model, each of
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
@@ -701,8 +701,8 @@ class CustomFormModel(object):
             status=model.model_info.status,
             requested_on=model.model_info.created_date_time,
             completed_on=model.model_info.last_updated_date_time,
-            submodels=CustomFormSubModel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubModel._from_generated_labeled(model),
+            submodels=CustomFormSubmodel._from_generated_unlabeled(model)
+            if model.keys else CustomFormSubmodel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
@@ -716,7 +716,7 @@ class CustomFormModel(object):
                 )[:1024]
 
 
-class CustomFormSubModel(object):
+class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
@@ -751,7 +751,7 @@ class CustomFormSubModel(object):
         )] if model.train_result else None
 
     def __repr__(self):
-        return "CustomFormSubModel(accuracy={}, fields={}, form_type={})".format(
+        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})".format(
             self.accuracy, repr(self.fields), self.form_type
         )[:1024]
 
