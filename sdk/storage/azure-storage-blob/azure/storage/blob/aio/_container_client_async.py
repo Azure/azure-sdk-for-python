@@ -236,12 +236,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
 
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
         :param str deleted_container_name:
             Specifies the name of the deleted container to restore.
-            Servivce Version 2019-12-12 and laster.
         :param str deleted_container_version:
             Specifies the version of the deleted container to restore.
-            Servivce Version 2019-12-12 and laster.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
