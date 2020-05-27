@@ -30,6 +30,7 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
+
 class GetBoundingBoxesSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -49,10 +50,11 @@ class GetBoundingBoxesSampleAsync(object):
         async with form_recognizer_client:
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
-                forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, form=f.read(), include_text_content=True
+                poller = await form_recognizer_client.begin_recognize_custom_forms(
+                    model_id=self.model_id, form=f, include_text_content=True
                 )
 
+            forms = await poller.result()
             for idx, form in enumerate(forms):
                 print("--------RECOGNIZING FORM #{}--------".format(idx))
                 print("Form has type {}".format(form.form_type))
