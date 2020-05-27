@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling.base_polling import (
     LocationPolling,

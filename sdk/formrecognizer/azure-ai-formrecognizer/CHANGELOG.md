@@ -4,21 +4,31 @@
 
 **Breaking Changes**
 
-- `training_files` parameter of `begin_train_model` is renamed to `training_files_url`
-- `use_labels` parameter of `begin_train_model` is renamed to `use_training_labels`
+- All asynchronous long running methods now return an instance of a `AsyncLROPoller` from `azure-core`
+- All asynchronous long running methods are renamed with the `begin_` prefix to indicate that a `AsyncLROPoller` is returned:
+    - `train_model` is renamed to `begin_training`
+    - `recognize_receipts` is renamed to `begin_recognize_receipts`
+    - `recognize_receipts_from_url` is renamed to `begin_recognize_receipts_from_url`
+    - `recognize_content` is renamed to `begin_recognize_content`
+    - `recognize_content_from_url` is renamed to `begin_recognize_content_from_url`
+    - `recognize_custom_forms` is renamed to `begin_recognize_custom_forms`
+    - `recognize_custom_forms_from_url` is renamed to `begin_recognize_custom_forms_from_url`
+- All long running operations now accept the keyword argument `continuation_token` to restart the poller from a saved state
+- Sync method `begin_train_model` renamed to `begin_training`
+- `training_files` parameter of `begin_training` is renamed to `training_files_url`
+- `use_labels` parameter of `begin_training` is renamed to `use_training_labels`
 - `list_model_infos` method has been renamed to `list_custom_models`
 - Removed `get_form_training_client` from `FormRecognizerClient`
 - Added `get_form_recognizer_client` to `FormTrainingClient`
-- A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_train_model()` or `train_model()` methods
+- A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_training` methods
 - `PageRange` is renamed to `FormPageRange`
-- `FormField` does not have a page_number.
+- `FormField` does not have a page_number
 - `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
 - `USReceiptType` is renamed to `ReceiptType`
-- `use_training_labels` is now a required positional param in the `begin_training` APIs.
-- `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively.
-- For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
-- `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the
-`CustomFormModel`  and `CustomFormModelInfo` models.
+- `use_training_labels` is now a required positional param in the `begin_training` APIs
+- `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively
+- For `begin_recognize_receipt` methods, parameters have been renamed to `receipt` and `receipt_url`
+- `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the `CustomFormModel`  and `CustomFormModelInfo` models
 
 **New features**
 
