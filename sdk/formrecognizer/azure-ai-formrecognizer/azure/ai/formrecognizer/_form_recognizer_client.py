@@ -66,7 +66,7 @@ class FormRecognizerClient(object):
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             **kwargs

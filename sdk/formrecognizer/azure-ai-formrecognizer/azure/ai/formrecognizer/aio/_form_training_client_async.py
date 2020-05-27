@@ -85,7 +85,7 @@ class FormTrainingClient(object):
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
-            credential=self._credential,
+            credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             **kwargs
@@ -143,7 +143,7 @@ class FormTrainingClient(object):
 
         if continuation_token:
             return AsyncLROPoller.from_continuation_token(
-                polling_method=AsyncLROBasePolling(
+                polling_method=AsyncLROBasePolling(  # type: ignore
                     timeout=polling_interval,
                     lro_algorithms=[TrainingPolling()],
                     **kwargs
@@ -171,7 +171,7 @@ class FormTrainingClient(object):
             self._client._client,
             response,
             deserialization_callback,
-            AsyncLROBasePolling(
+            AsyncLROBasePolling(  # type: ignore
                 timeout=polling_interval,
                 lro_algorithms=[TrainingPolling()],
                 **kwargs
