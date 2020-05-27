@@ -12,24 +12,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22,"text":"I
+        will go to the park."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38,"text":"I
+        did not like the hotel we stayed at."}],"warnings":[]},{"id":"3","sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36,"text":"The
+        restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: f4328b44-9d5e-43e2-ae2f-7ac3af561158
+      apim-request-id: 8ff17158-d7a4-4b73-a500-6fb91e13ab6a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 02 Apr 2020 15:06:17 GMT
+      date: Tue, 26 May 2020 17:34:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '101'
+      x-envoy-upstream-service-time: '86'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

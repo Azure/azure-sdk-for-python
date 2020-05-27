@@ -12,24 +12,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.15,"neutral":0.81,"negative":0.04},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.15,"neutral":0.81,"negative":0.04},"offset":0,"length":41}]},{"id":"4","sentiment":"neutral","documentScores":{"positive":0.38,"neutral":0.48,"negative":0.14},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.38,"neutral":0.48,"negative":0.14},"offset":0,"length":39}]},{"id":"3","sentiment":"neutral","documentScores":{"positive":0.15,"neutral":0.79,"negative":0.06},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.15,"neutral":0.79,"negative":0.06},"offset":0,"length":4}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\"\
+        :{\"positive\":0.15,\"neutral\":0.81,\"negative\":0.04},\"sentences\":[{\"\
+        sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\"\
+        :0.81,\"negative\":0.04},\"offset\":0,\"length\":41,\"text\":\"I should take\
+        \ my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"4\",\"sentiment\"\
+        :\"neutral\",\"confidenceScores\":{\"positive\":0.38,\"neutral\":0.48,\"negative\"\
+        :0.14},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"\
+        positive\":0.38,\"neutral\":0.48,\"negative\":0.14},\"offset\":0,\"length\"\
+        :39,\"text\":\"Este es un document escrito en Espa\xF1ol.\"}],\"warnings\"\
+        :[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\"\
+        :0.15,\"neutral\":0.79,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
+        neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\"\
+        :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
+        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
-      apim-request-id: 810f4c88-8722-421b-9df0-1af53de89ecd
+      apim-request-id: 2b602cff-f54a-401e-8f52-a2a05e84dc73
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 02 Apr 2020 15:06:21 GMT
+      date: Tue, 26 May 2020 17:34:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '146'
+      x-envoy-upstream-service-time: '123'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

@@ -14,21 +14,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?model-version=bad&showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=bad&showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
-        is incorrect. Allowed values are latest,2019-10-01,2020-02-01"}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
+        model version. Possible values are: latest,2020-04-01,2019-10-01,2020-02-01"}}}'
     headers:
       apim-request-id:
-      - 562305b2-24e4-4a92-8fd7-ce1f1afa7d7a
+      - b4e8e727-33bb-4660-a20e-979c3b4b0ca3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Apr 2020 15:07:20 GMT
+      - Tue, 26 May 2020 17:34:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

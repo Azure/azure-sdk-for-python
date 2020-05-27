@@ -15,21 +15,21 @@ interactions:
       - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3}]},{"id":"3","sentiment":"neutral","documentScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5}]},{"id":"4","sentiment":"neutral","documentScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4}]},{"id":"5","sentiment":"neutral","documentScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4}]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"one"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"two"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"three"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"four"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"five"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 272cc09d-757b-44a0-8f21-97add1137ed1
+      apim-request-id: 1a7f0e7d-7715-4774-9072-906c245bed3c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=5
-      date: Fri, 15 May 2020 16:02:12 GMT
+      date: Tue, 26 May 2020 17:34:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '87'
+      x-envoy-upstream-service-time: '114'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

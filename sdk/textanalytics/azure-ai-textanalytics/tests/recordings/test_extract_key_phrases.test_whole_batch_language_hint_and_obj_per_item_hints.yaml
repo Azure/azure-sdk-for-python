@@ -16,25 +16,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
       string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take my cat\"\
-        ,\"the veterinarian\"]},{\"id\":\"2\",\"keyPhrases\":[\"document escrito\"\
-        ,\"Espa\xF1ol\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\
-        \"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
+        ,\"the veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"document\
+        \ escrito\",\"Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2019-10-01\"}"
     headers:
       apim-request-id:
-      - 3ab09d0b-2d83-4534-8ef1-0b1777c7ffc2
+      - fd06c9f0-d236-4a89-b5f4-4b78bae6f92d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 02 Apr 2020 15:07:05 GMT
+      - Tue, 26 May 2020 17:34:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '8'
     status:
       code: 200
       message: OK

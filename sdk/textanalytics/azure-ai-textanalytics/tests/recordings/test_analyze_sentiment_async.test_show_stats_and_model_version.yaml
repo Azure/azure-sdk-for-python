@@ -12,26 +12,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"offset":0,"length":2}]},{"id":"0","sentiment":"negative","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"offset":0,"length":2}]},{"id":"19","sentiment":"neutral","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.3,"neutral":0.67,"negative":0.03},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.3,"neutral":0.67,"negative":0.03},"offset":0,"length":2}]},{"id":"1","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"offset":0,"length":2}]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'
+      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"confidenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"offset":0,"length":2,"text":":)"}],"warnings":[]},{"id":"0","sentiment":"negative","statistics":{"charactersCount":2,"transactionsCount":1},"confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"offset":0,"length":2,"text":":("}],"warnings":[]},{"id":"19","sentiment":"neutral","statistics":{"charactersCount":2,"transactionsCount":1},"confidenceScores":{"positive":0.3,"neutral":0.67,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.3,"neutral":0.67,"negative":0.03},"offset":0,"length":2,"text":":P"}],"warnings":[]},{"id":"1","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"confidenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.89,"neutral":0.1,"negative":0.01},"offset":0,"length":2,"text":":D"}],"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 65b0d88a-bef9-4cfb-b8f9-e5ec070d26fe
+      apim-request-id: b6da687c-3ad7-4c76-ba4a-d8fe17d5c7cb
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Thu, 02 Apr 2020 15:06:18 GMT
+      date: Tue, 26 May 2020 17:34:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '109'
+      x-envoy-upstream-service-time: '96'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?model-version=latest&showStats=true
 version: 1
