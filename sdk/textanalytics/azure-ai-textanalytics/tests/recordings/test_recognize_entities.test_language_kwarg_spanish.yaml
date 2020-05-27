@@ -14,23 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
-        Gates","type":"Person","offset":0,"length":10,"score":0.8},{"text":"Microsoft","type":"Organization","offset":25,"length":9,"score":0.98}]}],"errors":[],"modelVersion":"2020-02-01"}'
+        Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.8},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 197567be-b542-4538-8a76-5d098b5ed384
+      - 4e0f7b58-34a8-42b3-bf68-5d490b985c2c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 02 Apr 2020 15:07:26 GMT
+      - Tue, 26 May 2020 17:34:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

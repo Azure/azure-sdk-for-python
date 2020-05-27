@@ -16,24 +16,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","detectedLanguages":[{"name":"(Unknown)","iso6391Name":"(Unknown)","score":0.0}],"statistics":{"charactersCount":2,"transactionsCount":1}},{"id":"0","detectedLanguages":[{"name":"(Unknown)","iso6391Name":"(Unknown)","score":0.0}],"statistics":{"charactersCount":2,"transactionsCount":1}},{"id":"19","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}],"statistics":{"charactersCount":2,"transactionsCount":1}},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}],"statistics":{"charactersCount":2,"transactionsCount":1}}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
+      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"0","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"19","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"1","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - d1abc569-556b-4c71-917e-5ee1b0e5f51c
+      - c6d95dec-06b1-4774-9cca-39e8ddab134a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Thu, 02 Apr 2020 15:06:34 GMT
+      - Tue, 26 May 2020 17:34:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '8'
     status:
       code: 200
       message: OK

@@ -16,24 +16,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","keyPhrases":["This was the best day","my"]},{"id":"1","keyPhrases":["like
-        the hotel we stayed","It was too expensive","I did"]},{"id":"2","keyPhrases":["as
-        good as I hoped","The restaurant was"]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","keyPhrases":["This was the best day","my"],"warnings":[]},{"id":"1","keyPhrases":["like
+        the hotel we stayed","It was too expensive","I did"],"warnings":[]},{"id":"2","keyPhrases":["as
+        good as I hoped","The restaurant was"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - b9fc63db-54b4-4996-98cc-b581e9fe9c1d
+      - 9e472bda-bc16-43a0-9953-fc78f84f3477
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 02 Apr 2020 15:07:04 GMT
+      - Tue, 26 May 2020 17:34:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
