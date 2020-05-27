@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
@@ -20,14 +20,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"One"}],"warnings":[]},{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"Two"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"Three"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"Four"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"Five"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":3,"text":"Six"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 594f8fde-9799-4f29-b39d-f209dd3c61a1
+      apim-request-id: 8948d7ba-a5a4-457f-b644-e31ac16ac800
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
-      date: Tue, 26 May 2020 17:34:30 GMT
+      date: Wed, 27 May 2020 16:04:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '90'
+      x-envoy-upstream-service-time: '115'
     status:
       code: 200
       message: OK

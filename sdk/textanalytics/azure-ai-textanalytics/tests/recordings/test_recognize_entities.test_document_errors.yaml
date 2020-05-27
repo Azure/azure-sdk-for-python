@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
@@ -33,11 +33,11 @@ interactions:
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - d80541d0-e3f1-44c1-808b-dd4374e5eced
+      - 4cca0bb8-8e3c-473d-b3b5-0b4a2a138348
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 17:34:34 GMT
+      - Wed, 27 May 2020 16:04:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
