@@ -15,28 +15,26 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/clusters/MyClusterNameXarqRnd?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd","name":"MyClusterNameXarqRnd","type":"Microsoft.Kusto/Clusters","etag":"\"\"","location":"West
-        US","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"properties":{"enableStreamingIngest":true,"state":"Creating","provisioningState":"Creating"},"identity":{"type":"SystemAssigned"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd","name":"MyClusterNameXarqRnd","type":"Microsoft.Kusto/Clusters","etag":"\"\"","location":"westus","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"properties":{"enableStreamingIngest":true,"state":"Creating","provisioningState":"Creating"},"identity":{"type":"SystemAssigned"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:04:58 GMT
+      - Wed, 27 May 2020 02:12:35 GMT
       etag:
       - '""'
       expires:
@@ -44,7 +42,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -66,29 +64,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:05:28 GMT
+      - Wed, 27 May 2020 02:13:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -114,29 +111,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:05:58 GMT
+      - Wed, 27 May 2020 02:13:36 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=68eda2333691511c17b2574619a79876611dd86be1c55aa848d58cf2408b7c02;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -162,29 +158,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:06:28 GMT
+      - Wed, 27 May 2020 02:14:06 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -210,29 +205,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:06:58 GMT
+      - Wed, 27 May 2020 02:14:38 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=aac07ba7dd5c68c1e84340e2ab9868de44ccb72bc55d43945b6902c6f5c7910e;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -258,29 +252,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:07:29 GMT
+      - Wed, 27 May 2020 02:15:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -306,29 +299,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:07:59 GMT
+      - Wed, 27 May 2020 02:15:37 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=2d81217236c12dee3b920ef52d54d0d1a725b7c965cbd7887d87a7ecd1390208;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -354,29 +346,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:08:29 GMT
+      - Wed, 27 May 2020 02:16:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -402,29 +393,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:08:59 GMT
+      - Wed, 27 May 2020 02:16:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -450,29 +440,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:09:29 GMT
+      - Wed, 27 May 2020 02:17:09 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=ca551cadca44d207ca552ac7e358c18e9b5d2f87c9aaccfc3f596c8b40d4a863;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -498,29 +487,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:10:00 GMT
+      - Wed, 27 May 2020 02:17:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -546,29 +534,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:10:30 GMT
+      - Wed, 27 May 2020 02:18:10 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=68eda2333691511c17b2574619a79876611dd86be1c55aa848d58cf2408b7c02;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -594,29 +581,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:11:00 GMT
+      - Wed, 27 May 2020 02:18:40 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -642,29 +628,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:11:30 GMT
+      - Wed, 27 May 2020 02:19:10 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -690,29 +675,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:12:01 GMT
+      - Wed, 27 May 2020 02:19:42 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -738,269 +722,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:12:31 GMT
+      - Wed, 27 May 2020 02:20:12 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '285'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '470'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:13:01 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '284'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '470'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:13:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '283'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '470'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:14:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '282'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '470'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:14:32 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '281'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '470'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:15:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=aac07ba7dd5c68c1e84340e2ab9868de44ccb72bc55d43945b6902c6f5c7910e;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1026,29 +769,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Running","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:05:00.8203681Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Running"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '470'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:15:33 GMT
+      - Wed, 27 May 2020 02:20:42 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=68eda2333691511c17b2574619a79876611dd86be1c55aa848d58cf2408b7c02;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1074,29 +816,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/cebcbed4-9f65-4212-97b8-b32494d595ed?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/cebcbed4-9f65-4212-97b8-b32494d595ed","name":"cebcbed4-9f65-4212-97b8-b32494d595ed","status":"Succeeded","startTime":"2020-03-23T10:04:58.3046551Z","endTime":"2020-03-23T10:15:58.5029658Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"314f5e8c-5a94-4c73-be6a-cddde1b795fb","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Running","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:12:37.2208106Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '474'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:03 GMT
+      - Wed, 27 May 2020 02:21:12 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=aac07ba7dd5c68c1e84340e2ab9868de44ccb72bc55d43945b6902c6f5c7910e;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1122,23 +863,70 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/3f3aea24-2fd2-4016-9c60-90ba797740a8?api-version=2020-02-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/3f3aea24-2fd2-4016-9c60-90ba797740a8","name":"3f3aea24-2fd2-4016-9c60-90ba797740a8","status":"Succeeded","startTime":"2020-05-27T02:12:33.8997574Z","endTime":"2020-05-27T02:21:30.4316923Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterCreateExternal","RootActivityId":"7d5c854d-6838-4c48-8041-1d0e969c49b7","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '473'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 May 2020 02:21:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '286'
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/clusters/MyClusterNameXarqRnd?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd","name":"MyClusterNameXarqRnd","type":"Microsoft.Kusto/Clusters","etag":"\"\"","location":"West
-        US","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"tags":{},"properties":{"state":"Running","stateReason":null,"uri":"https://myclusternamexarqrnd.westus.kusto.windows.net","dataIngestionUri":"https://ingest-myclusternamexarqrnd.westus.kusto.windows.net","trustedExternalTenants":[],"virtualNetworkConfiguration":null,"optimizedAutoscale":null,"enableDiskEncryption":false,"enableStreamingIngest":true,"keyVaultProperties":null,"languageExtensions":{"value":[]},"provisioningState":"Succeeded"},"identity":{"principalId":"4c4fc6d7-044c-410d-be8f-5ed9f71ccc8e","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"}}'
+        US","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"tags":{},"properties":{"state":"Running","stateReason":null,"uri":"https://myclusternamexarqrnd.westus.kusto.windows.net","dataIngestionUri":"https://ingest-myclusternamexarqrnd.westus.kusto.windows.net","trustedExternalTenants":[],"virtualNetworkConfiguration":null,"optimizedAutoscale":null,"enableDiskEncryption":false,"enableStreamingIngest":true,"keyVaultProperties":null,"languageExtensions":{"value":[]},"enablePurge":null,"provisioningState":"Succeeded"},"identity":{"principalId":"4c4fc6d7-044c-410d-be8f-5ed9f71ccc8e","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '924'
+      - '943'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:03 GMT
+      - Wed, 27 May 2020 02:21:43 GMT
       etag:
       - '""'
       expires:
@@ -1146,7 +934,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1177,28 +965,26 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/clusters/MyClusterNameXarqRnd/databases/MyDatabase?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd/Databases/MyDatabase","name":"MyClusterNameXarqRnd/MyDatabase","type":"Microsoft.Kusto/Clusters/Databases","etag":"\"\"","location":"West
-        US","kind":"ReadWrite","properties":{"softDeletePeriod":"P1D","provisioningState":"Creating"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd/Databases/MyDatabase","name":"MyClusterNameXarqRnd/MyDatabase","type":"Microsoft.Kusto/Clusters/Databases","etag":"\"\"","location":"westus","kind":"ReadWrite","properties":{"softDeletePeriod":"P1D","provisioningState":"Creating"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationResults/a8c5019a-b88c-4318-aac3-4724f248d5af?api-version=2020-02-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/7b43ddcc-a29d-4ebd-826d-586b0a7107b7?api-version=2020-02-15
       cache-control:
       - no-cache
       content-length:
-      - '410'
+      - '409'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:04 GMT
+      - Wed, 27 May 2020 02:21:45 GMT
       etag:
       - '""'
       expires:
@@ -1206,7 +992,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=ca551cadca44d207ca552ac7e358c18e9b5d2f87c9aaccfc3f596c8b40d4a863;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -1228,29 +1014,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/a8c5019a-b88c-4318-aac3-4724f248d5af?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationResults/7b43ddcc-a29d-4ebd-826d-586b0a7107b7?api-version=2020-02-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/a8c5019a-b88c-4318-aac3-4724f248d5af","name":"a8c5019a-b88c-4318-aac3-4724f248d5af","status":"Succeeded","startTime":"2020-03-23T10:16:04.8200988Z","endTime":"2020-03-23T10:16:08.8005305Z","percentComplete":1.0,"properties":{"OperationKind":"DatabaseCreate","RootActivityId":"51e64c4d-d98f-4584-8780-0328cd0e1a9e","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/westus/operationresults/7b43ddcc-a29d-4ebd-826d-586b0a7107b7","name":"7b43ddcc-a29d-4ebd-826d-586b0a7107b7","status":"Succeeded","startTime":"2020-05-27T02:21:46.037806Z","endTime":"2020-05-27T02:21:47.6006983Z","percentComplete":1.0,"properties":{"OperationKind":"DatabaseCreate","RootActivityId":"fb718344-dd76-4494-828e-7f8f00e1ea5a","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '467'
+      - '465'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:34 GMT
+      - Wed, 27 May 2020 02:22:17 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=bf171968557f7483abc0913a42c0207b9017c552b91766911eca876583df224c;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1276,23 +1061,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/clusters/MyClusterNameXarqRnd/databases/MyDatabase?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd/Databases/MyDatabase","name":"MyClusterNameXarqRnd/MyDatabase","type":"Microsoft.Kusto/Clusters/Databases","etag":"\"\"","location":"West
-        US","kind":"ReadWrite","tags":{},"properties":{"isFollowed":false,"softDeletePeriodInDays":1,"softDeletePeriod":"P1D","hotCachePeriodInDays":0,"hotCachePeriod":null,"statistics":{"size":0.0},"provisioningState":"Succeeded"}}'
+        US","kind":"ReadWrite","tags":{},"properties":{"isFollowed":false,"softDeletePeriodInDays":1,"softDeletePeriod":"P1D","hotCachePeriodInDays":0,"statistics":{"size":0.0},"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '540'
+      - '518'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:34 GMT
+      - Wed, 27 May 2020 02:22:18 GMT
       etag:
       - '""'
       expires:
@@ -1300,7 +1085,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1326,8 +1111,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -1335,16 +1120,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd/Databases/MyDatabase","name":"MyClusterNameXarqRnd/MyDatabase","type":"Microsoft.Kusto/Clusters/Databases","etag":"\"\"","location":"West
-        US","kind":"ReadWrite","tags":{},"properties":{"isFollowed":false,"softDeletePeriodInDays":1,"softDeletePeriod":"P1D","hotCachePeriodInDays":0,"hotCachePeriod":null,"statistics":{"size":0.0},"provisioningState":"Succeeded"}}'
+        US","kind":"ReadWrite","tags":{},"properties":{"isFollowed":false,"softDeletePeriodInDays":1,"softDeletePeriod":"P1D","hotCachePeriodInDays":0,"statistics":{"size":0.0},"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '540'
+      - '518'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:35 GMT
+      - Wed, 27 May 2020 02:22:18 GMT
       etag:
       - '""'
       expires:
@@ -1352,7 +1137,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1378,8 +1163,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -1387,16 +1172,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kusto_test_kusto_adjusted440a1037/providers/Microsoft.Kusto/Clusters/MyClusterNameXarqRnd","name":"MyClusterNameXarqRnd","type":"Microsoft.Kusto/Clusters","etag":"\"\"","location":"West
-        US","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"tags":{},"properties":{"state":"Running","stateReason":null,"uri":"https://myclusternamexarqrnd.westus.kusto.windows.net","dataIngestionUri":"https://ingest-myclusternamexarqrnd.westus.kusto.windows.net","trustedExternalTenants":[],"virtualNetworkConfiguration":null,"optimizedAutoscale":null,"enableDiskEncryption":false,"enableStreamingIngest":true,"keyVaultProperties":null,"languageExtensions":{"value":[]},"provisioningState":"Succeeded"},"identity":{"principalId":"4c4fc6d7-044c-410d-be8f-5ed9f71ccc8e","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"}}'
+        US","sku":{"name":"Standard_L8s","tier":"Standard","capacity":2},"tags":{},"properties":{"state":"Running","stateReason":null,"uri":"https://myclusternamexarqrnd.westus.kusto.windows.net","dataIngestionUri":"https://ingest-myclusternamexarqrnd.westus.kusto.windows.net","trustedExternalTenants":[],"virtualNetworkConfiguration":null,"optimizedAutoscale":null,"enableDiskEncryption":false,"enableStreamingIngest":true,"keyVaultProperties":null,"languageExtensions":{"value":[]},"enablePurge":null,"provisioningState":"Succeeded"},"identity":{"principalId":"4c4fc6d7-044c-410d-be8f-5ed9f71ccc8e","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '924'
+      - '943'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:35 GMT
+      - Wed, 27 May 2020 02:22:18 GMT
       etag:
       - '""'
       expires:
@@ -1404,7 +1189,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=bf171968557f7483abc0913a42c0207b9017c552b91766911eca876583df224c;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1434,8 +1219,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1451,13 +1236,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:16:36 GMT
+      - Wed, 27 May 2020 02:22:20 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=68eda2333691511c17b2574619a79876611dd86be1c55aa848d58cf2408b7c02;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1485,8 +1270,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1497,21 +1282,21 @@ interactions:
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationResults/96b673fc-889a-487a-a2b8-266ec4e707b9?api-version=2020-02-15
+        US/operationResults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77?api-version=2020-02-15
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 23 Mar 2020 10:16:36 GMT
+      - Wed, 27 May 2020 02:22:20 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/96b673fc-889a-487a-a2b8-266ec4e707b9?api-version=2020-02-15&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77?api-version=2020-02-15&operationResultResponseType=Location
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=2d81217236c12dee3b920ef52d54d0d1a725b7c965cbd7887d87a7ecd1390208;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -1533,14 +1318,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/96b673fc-889a-487a-a2b8-266ec4e707b9?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/96b673fc-889a-487a-a2b8-266ec4e707b9","name":"96b673fc-889a-487a-a2b8-266ec4e707b9","status":"Running","startTime":"2020-03-23T10:16:36.9217085Z","endTime":"2020-03-23T10:16:37.7655431Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterResume","RootActivityId":"edb7fa6d-5ecc-4f6f-991e-6dd5f96c6adf","provisioningState":"Running"}}'
+        US/operationresults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77","name":"ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77","status":"Running","startTime":"2020-05-27T02:22:20.6525681Z","endTime":"2020-05-27T02:22:21.5432021Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterResume","RootActivityId":"9e55ca24-fb8e-47cb-8a64-94a284372b95","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1549,13 +1334,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:17:06 GMT
+      - Wed, 27 May 2020 02:22:51 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1581,14 +1366,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/96b673fc-889a-487a-a2b8-266ec4e707b9?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/96b673fc-889a-487a-a2b8-266ec4e707b9","name":"96b673fc-889a-487a-a2b8-266ec4e707b9","status":"Succeeded","startTime":"2020-03-23T10:16:36.9217085Z","endTime":"2020-03-23T10:17:14.8652326Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterResume","RootActivityId":"edb7fa6d-5ecc-4f6f-991e-6dd5f96c6adf","provisioningState":"Succeeded"}}'
+        US/operationresults/ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77","name":"ddc88f9f-6f6a-4b11-a96e-3bf4b8a2ac77","status":"Succeeded","startTime":"2020-05-27T02:22:20.6525681Z","endTime":"2020-05-27T02:22:56.4720061Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterResume","RootActivityId":"9e55ca24-fb8e-47cb-8a64-94a284372b95","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -1597,13 +1382,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:17:37 GMT
+      - Wed, 27 May 2020 02:23:22 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1631,8 +1416,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1643,21 +1428,21 @@ interactions:
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+        US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 23 Mar 2020 10:17:38 GMT
+      - Wed, 27 May 2020 02:23:23 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15&operationResultResponseType=Location
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -1679,14 +1464,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1695,109 +1480,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:18:08 GMT
+      - Wed, 27 May 2020 02:23:54 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '299'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:18:38 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '298'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:19:08 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1823,14 +1512,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1839,13 +1528,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:19:39 GMT
+      - Wed, 27 May 2020 02:24:25 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1871,14 +1560,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1887,13 +1576,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:20:09 GMT
+      - Wed, 27 May 2020 02:24:55 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=68eda2333691511c17b2574619a79876611dd86be1c55aa848d58cf2408b7c02;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1919,14 +1608,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1935,13 +1624,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:20:39 GMT
+      - Wed, 27 May 2020 02:25:25 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -1967,14 +1656,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -1983,13 +1672,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:21:09 GMT
+      - Wed, 27 May 2020 02:25:56 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=2d81217236c12dee3b920ef52d54d0d1a725b7c965cbd7887d87a7ecd1390208;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2015,14 +1704,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2031,13 +1720,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:21:39 GMT
+      - Wed, 27 May 2020 02:26:25 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2063,14 +1752,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2079,13 +1768,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:22:10 GMT
+      - Wed, 27 May 2020 02:26:56 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2111,14 +1800,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2127,13 +1816,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:22:40 GMT
+      - Wed, 27 May 2020 02:27:26 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1cb1584d379d535b4e204d8b026c51e3639a903faa0012321764a71240054f98;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2159,14 +1848,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2175,13 +1864,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:23:10 GMT
+      - Wed, 27 May 2020 02:27:57 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2207,14 +1896,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2223,13 +1912,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:23:41 GMT
+      - Wed, 27 May 2020 02:28:27 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=bf171968557f7483abc0913a42c0207b9017c552b91766911eca876583df224c;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2255,14 +1944,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2271,13 +1960,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:24:11 GMT
+      - Wed, 27 May 2020 02:28:58 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2303,14 +1992,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2319,13 +2008,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:24:41 GMT
+      - Wed, 27 May 2020 02:29:28 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=aac07ba7dd5c68c1e84340e2ab9868de44ccb72bc55d43945b6902c6f5c7910e;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2351,14 +2040,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2367,205 +2056,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:25:11 GMT
+      - Wed, 27 May 2020 02:29:58 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=432ef3d4dab42dca9b00bb4c90a041b0d3d477d7dbfaf4534da5813ade4f9397;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '289'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:25:41 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=2d81217236c12dee3b920ef52d54d0d1a725b7c965cbd7887d87a7ecd1390208;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '288'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:26:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '287'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:26:42 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '286'
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '463'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Mar 2020 10:27:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      set-cookie:
-      - ARRAffinity=f977ea28325f4c100ed19c1a7ed6395c7554e0af5ce62499bbee5975165c7757;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2591,14 +2088,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2607,13 +2104,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:27:43 GMT
+      - Wed, 27 May 2020 02:30:29 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=86446098da8de5f00b83089ea395bfc10c8d53c3a1350acab6a5cba5ddab4ec2;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2623,7 +2120,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '284'
+      - '289'
       x-powered-by:
       - ASP.NET
     status:
@@ -2639,14 +2136,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2655,13 +2152,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:28:13 GMT
+      - Wed, 27 May 2020 02:30:59 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=1c5c29bcda1f855b3b361d64bb5c7ead5fec452c7427aa2499563d7dbfee3122;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2671,7 +2168,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '283'
+      - '288'
       x-powered-by:
       - ASP.NET
     status:
@@ -2687,14 +2184,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Running","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:17:38.8421363Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Running"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
     headers:
       cache-control:
       - no-cache
@@ -2703,13 +2200,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:28:43 GMT
+      - Wed, 27 May 2020 02:31:29 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=aac07ba7dd5c68c1e84340e2ab9868de44ccb72bc55d43945b6902c6f5c7910e;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2719,7 +2216,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '282'
+      - '287'
       x-powered-by:
       - ASP.NET
     status:
@@ -2735,14 +2232,62 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc?api-version=2020-02-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
-        US/operationresults/b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","name":"b4aeb0fa-63e9-4be5-8e9b-986a9698eafc","status":"Succeeded","startTime":"2020-03-23T10:17:38.2171113Z","endTime":"2020-03-23T10:29:13.7560061Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"33aeeed4-bbee-454f-86db-f38d768cb113","provisioningState":"Succeeded"}}'
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Running","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:23:25.0938018Z","percentComplete":0.5,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Running"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '463'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 May 2020 02:32:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - ARRAffinity=5e5ff28fa92b1291bfb4f40aa52246624376877d08d84d2a201c9bf6f1ffae6d;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '286'
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-kusto/0.7.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West%20US/operationResults/9c180104-310e-4400-a2d0-8e0555d500fc?api-version=2020-02-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kusto/locations/West
+        US/operationresults/9c180104-310e-4400-a2d0-8e0555d500fc","name":"9c180104-310e-4400-a2d0-8e0555d500fc","status":"Succeeded","startTime":"2020-05-27T02:23:24.2655471Z","endTime":"2020-05-27T02:32:15.0700931Z","percentComplete":1.0,"properties":{"OperationKind":"ClusterSuspend","RootActivityId":"d07b3131-2f89-4394-9878-b2e36efeaa49","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -2751,13 +2296,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 10:29:13 GMT
+      - Wed, 27 May 2020 02:32:30 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       set-cookie:
-      - ARRAffinity=ca551cadca44d207ca552ac7e358c18e9b5d2f87c9aaccfc3f596c8b40d4a863;Path=/;HttpOnly;Domain=rp-kustorpwus-website.azurewebsites.net
+      - ARRAffinity=6ded3081dd2d6cad0ae75c8e86bc94d4b70b07ecd8cd87933120a00a3d4c8d60;Path=/;HttpOnly;Domain=armrp-kustorpwus.kusto.windows.net
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -2767,7 +2312,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '281'
+      - '285'
       x-powered-by:
       - ASP.NET
     status:
