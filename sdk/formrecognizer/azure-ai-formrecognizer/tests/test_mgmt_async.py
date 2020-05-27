@@ -81,8 +81,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        labeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=True)
-
+        poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        labeled_model_from_train = await poller.result()
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
@@ -115,8 +115,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model_unlabeled(self, client, container_sas_url):
-        unlabeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=False)
-
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        unlabeled_model_from_train = await poller.result()
         unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
 
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
@@ -155,6 +155,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             assert transport.session is not None
             async with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+                await frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
             await ftc.get_account_properties()
             assert transport.session is not None

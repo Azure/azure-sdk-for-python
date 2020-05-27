@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
@@ -23,13 +24,13 @@ class TestTraining(FormRecognizerTest):
     def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = client.begin_train_model("xx", use_training_labels=False)
+            poller = client.begin_training("xx", use_training_labels=False)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_training(self, client, container_sas_url):
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=False)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -52,7 +53,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_training_multipage(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -83,7 +84,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=False, cls=callback)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -102,7 +103,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False, cls=callback)
+        poller = client.begin_training(container_sas_url, use_training_labels=False, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -113,7 +114,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_training_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=True)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -137,7 +138,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_training_multipage_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -169,7 +170,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=True, cls=callback)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -188,7 +189,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=True, cls=callback)
+        poller = client.begin_training(container_sas_url, use_training_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -199,16 +200,28 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_training_with_files_filter(self, client, container_sas_url):
 
-        poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
         model = poller.result()
         self.assertEqual(len(model.training_documents), 6)
         self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
+        poller = client.begin_training(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
         model = poller.result()
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_train_model(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
+            poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
             model = poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_training_continuation_token(self, client, container_sas_url):
+
+        initial_poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
+
+        cont_token = initial_poller.continuation_token()
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)

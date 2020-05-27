@@ -345,3 +345,15 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(returned_model, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_receipt_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+
+        initial_poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+
+        cont_token = initial_poller.continuation_token()
+        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)
