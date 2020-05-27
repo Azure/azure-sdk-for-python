@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
@@ -19,9 +19,9 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: df5fdab8-fa0d-47f5-8e9d-97023bea58e8
+      apim-request-id: 385ce968-5986-4757-b0c3-04a25d2add42
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 17:34:27 GMT
+      date: Wed, 27 May 2020 16:04:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
@@ -23,14 +23,14 @@ interactions:
         number of documents in the request have exceeded the data limitations. See
         https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 16a74a1a-1a79-46a8-9b08-579b8033522a
+      apim-request-id: 0a49f930-1013-4910-a2bb-fccc11c0bad1
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
-      date: Tue, 26 May 2020 17:34:37 GMT
+      date: Wed, 27 May 2020 16:04:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '20'
     status:
       code: 200
       message: OK

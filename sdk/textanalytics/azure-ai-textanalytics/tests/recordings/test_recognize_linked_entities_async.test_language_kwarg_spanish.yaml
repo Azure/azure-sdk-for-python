@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?model-version=latest&showStats=true
@@ -22,14 +22,14 @@ interactions:
         ejecutivo","matches":[{"text":"CEO","offset":18,"length":3,"confidenceScore":0.22}],"language":"es","id":"Director
         ejecutivo","url":"https://es.wikipedia.org/wiki/Director_ejecutivo","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 3a8afa0f-8807-4650-96d8-47864ef25cfb
+      apim-request-id: 57277e14-35ba-43da-b230-1cb759b32506
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Tue, 26 May 2020 17:34:38 GMT
+      date: Wed, 27 May 2020 16:04:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK
