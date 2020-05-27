@@ -119,3 +119,8 @@ class ServiceBusManagementClient:
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueProperties.deserialize(qc_ele)
         return qc
+
+    def delete_queue(self, queue_name):
+        # type: (str) -> None
+        """Create a queue"""
+        et = self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
