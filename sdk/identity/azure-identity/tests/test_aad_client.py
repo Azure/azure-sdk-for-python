@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import json
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._constants import EnvironmentVariables
@@ -53,7 +54,7 @@ def test_error_reporting():
     error_description = "something went wrong"
     error_response = {"error": error_name, "error_description": error_description}
 
-    response = Mock(status_code=403, json=lambda: error_response)
+    response = Mock(status_code=403, json=lambda: error_response, text=json.dumps(error_response))
     transport = Mock(return_value=response)
     session = Mock(get=transport, post=transport)
     client = MockClient("tenant id", "client id", session=session)
