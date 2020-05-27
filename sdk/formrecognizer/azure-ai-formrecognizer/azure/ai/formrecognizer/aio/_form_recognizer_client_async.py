@@ -8,12 +8,13 @@
 
 from typing import (
     Any,
-    List,
     IO,
     Union,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import AsyncLROPoller
+from azure.core.polling.base_polling import OperationResourcePolling
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
@@ -28,11 +29,6 @@ from .._polling import AnalyzePolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import (
-        RecognizedReceipt,
-        FormPage,
-        RecognizedForm
-    )
 
 
 class FormRecognizerClient(object):
@@ -87,11 +83,11 @@ class FormRecognizerClient(object):
         return prepare_us_receipt(analyze_result)
 
     @distributed_trace_async
-    async def recognize_receipts(
+    async def begin_recognize_receipts(
             self,
             receipt: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> List["RecognizedReceipt"]:
+    ) -> AsyncLROPoller:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -106,8 +102,10 @@ class FormRecognizerClient(object):
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of RecognizedReceipt.
-        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -121,6 +119,7 @@ class FormRecognizerClient(object):
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
@@ -130,22 +129,27 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(receipt)
 
-        return await self._client.analyze_receipt_async(  # type: ignore
+        return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 
     @distributed_trace_async
-    async def recognize_receipts_from_url(
+    async def begin_recognize_receipts_from_url(
             self,
             receipt_url: str,
             **kwargs: Any
-    ) -> List["RecognizedReceipt"]:
+    ) -> AsyncLROPoller:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
@@ -156,8 +160,10 @@ class FormRecognizerClient(object):
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of RecognizedReceipt.
-        :rtype: list[~azure.ai.formrecognizer.RecognizedReceipt]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -171,14 +177,20 @@ class FormRecognizerClient(object):
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
         include_text_content = kwargs.pop("include_text_content", False)
 
-        return await self._client.analyze_receipt_async(  # type: ignore
+        return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 
@@ -187,7 +199,7 @@ class FormRecognizerClient(object):
         return prepare_content_result(analyze_result)
 
     @distributed_trace_async
-    async def recognize_content(self, form: Union[bytes, IO[bytes]], **kwargs: Any) -> List["FormPage"]:
+    async def begin_recognize_content(self, form: Union[bytes, IO[bytes]], **kwargs: Any) -> AsyncLROPoller:
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -199,8 +211,10 @@ class FormRecognizerClient(object):
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of FormPage.
-        :rtype: list[~azure.ai.formrecognizer.FormPage]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -214,6 +228,7 @@ class FormRecognizerClient(object):
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
@@ -221,17 +236,22 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(form)
 
-        return await self._client.analyze_layout_async(  # type: ignore
+        return await self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
-            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 
     @distributed_trace_async
-    async def recognize_content_from_url(self, form_url: str, **kwargs: Any) -> List["FormPage"]:
+    async def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> AsyncLROPoller:
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
@@ -239,27 +259,35 @@ class FormRecognizerClient(object):
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of FormPage.
-        :rtype: list[~azure.ai.formrecognizer.FormPage]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        return await self._client.analyze_layout_async(  # type: ignore
+        continuation_token = kwargs.pop("continuation_token", None)
+        return await self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
             cls=kwargs.pop("cls", self._content_callback),
-            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 
     @distributed_trace_async
-    async def recognize_custom_forms(
+    async def begin_recognize_custom_forms(
             self,
             model_id: str,
             form: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> List["RecognizedForm"]:
+    ) -> AsyncLROPoller:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -275,8 +303,10 @@ class FormRecognizerClient(object):
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of RecognizedForm.
-        :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -294,6 +324,7 @@ class FormRecognizerClient(object):
 
         cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
@@ -308,24 +339,29 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return await self._client.analyze_with_custom_model(  # type: ignore
+        return await self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,
             model_id=model_id,
             include_text_details=include_text_content,
             content_type=content_type,
             cls=deserialization_callback,
-            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[AnalyzePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 
     @distributed_trace_async
-    async def recognize_custom_forms_from_url(
+    async def begin_recognize_custom_forms_from_url(
             self,
             model_id: str,
             form_url: str,
             **kwargs: Any
-    ) -> List["RecognizedForm"]:
+    ) -> AsyncLROPoller:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.
@@ -337,8 +373,10 @@ class FormRecognizerClient(object):
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
-        :return: A list of RecognizedForm.
-        :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -347,6 +385,7 @@ class FormRecognizerClient(object):
 
         cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
         include_text_content = kwargs.pop("include_text_content", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
@@ -354,13 +393,18 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return await self._client.analyze_with_custom_model(  # type: ignore
+        return await self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},
             model_id=model_id,
             include_text_details=include_text_content,
             cls=deserialization_callback,
-            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval,
+                lro_algorithms=[AnalyzePolling(operation_location_header="Operation-Location")],
+                **kwargs
+            ),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 

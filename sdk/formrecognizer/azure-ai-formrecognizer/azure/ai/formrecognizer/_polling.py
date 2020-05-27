@@ -4,17 +4,26 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling.base_polling import (
     LocationPolling,
     OperationResourcePolling,
     _is_empty,
     _as_json,
-    BadResponse
+    BadResponse,
+    OperationFailed
 )
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import (
+        HttpResponse,
+        AsyncHttpResponse,
+        HttpRequest,
+    )
+
+    ResponseType = Union[HttpResponse, AsyncHttpResponse]
+    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
 def raise_error(response, errors, message):
@@ -27,11 +36,36 @@ class TrainingPolling(LocationPolling):
     """Polling method overrides for training endpoints.
     """
 
+    def __init__(self, location_header="location"):
+        self._location_header = location_header
+        self._location_url = None
+
+    def can_poll(self, pipeline_response):
+        # type: (PipelineResponseType) -> bool
+        """Answer if this polling method could be used.
+        """
+        response = pipeline_response.http_response
+        return self._location_header in response.headers
+
     def get_polling_url(self):
         # type: () -> str
         """Return the polling URL.
         """
         return self._location_url + "?includeKeys=true"
+
+    def set_initial_status(self, pipeline_response):
+        # type: (PipelineResponseType) -> str
+        """Process first response after initiating long running operation.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        response = pipeline_response.http_response
+
+        self._location_url = response.headers[self._location_header]
+
+        if response.status_code in {200, 201, 202, 204} and self._location_url:
+            return "InProgress"
+        raise OperationFailed("Operation failed or canceled")
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
         # type: (PipelineResponse) -> str
