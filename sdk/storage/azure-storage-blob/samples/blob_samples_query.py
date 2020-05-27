@@ -7,10 +7,10 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: blob_samples_quick_query.py
+FILE: blob_samples_query.py
 DESCRIPTION:
     This sample demos how to read quick query data.
-USAGE: python blob_samples_quick_query.py
+USAGE: python blob_samples_query.py
     Set the environment variables with your own values before running the sample.
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
@@ -31,7 +31,7 @@ def main():
     container_name = "quickquerycontainer"
     container_client = blob_service_client.get_container_client(container_name)
     container_client.create_container()
-    # [START quick_query]
+    # [START query]
     errors = []
 
     def progress_callback(error, bytes_processed, total_bytes):
@@ -45,14 +45,14 @@ def main():
 
     # upload the csv file
     blob_client = blob_service_client.get_blob_client(container_name, "csvfile")
-    with open("./sample-blobs/quick_query.csv", "rb") as stream:
+    with open("./sample-blobs/query.csv", "rb") as stream:
         blob_client.upload_blob(stream)
 
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
-    reader = blob_client.quick_query(query_expression, progress_callback=progress_callback)
+    reader = blob_client.query(query_expression, progress_callback=progress_callback)
     content = reader.readall()
-    # [END quick_query]
+    # [END query]
     print(content)
 
     container_client.delete_container()

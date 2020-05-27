@@ -101,7 +101,7 @@ class StorageQuickQueryTest(StorageTestCase):
             else:
                 print(bytes_processed)
 
-        resp = blob_client.quick_query("SELECT * from BlobStorage", progress_callback=progress_callback)
+        resp = blob_client.query("SELECT * from BlobStorage", progress_callback=progress_callback)
         resp.readall()
 
         self.assertEqual(len(errors), 0)
@@ -138,8 +138,8 @@ class StorageQuickQueryTest(StorageTestCase):
         output_seri = DelimitedTextConfiguration(column_separator=';', field_quote="'", record_separator='.',
                                                  escape_char='\\', headers_present=True
                                                  )
-        resp = blob_client.quick_query("SELECT * from BlobStorage", progress_callback=progress_callback,
-                                       input_serialization=input_seri, output_serialization=output_seri)
+        resp = blob_client.query("SELECT * from BlobStorage", progress_callback=progress_callback,
+                                 input_serialization=input_seri, output_serialization=output_seri)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
@@ -180,11 +180,11 @@ class StorageQuickQueryTest(StorageTestCase):
             else:
                 print(bytes_processed)
 
-        input_seri = JsonTextConfiguration(record_separator='\n')
-        output_seri = JsonTextConfiguration(record_separator=';')
+        input_seri = '\n'
+        output_seri = ';'
 
-        resp = blob_client.quick_query("SELECT * from BlobStorage", progress_callback=progress_callback,
-                                       input_serialization=input_seri, output_serialization=output_seri)
+        resp = blob_client.query("SELECT * from BlobStorage", progress_callback=progress_callback,
+                                 input_serialization=input_seri, output_serialization=output_seri)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)

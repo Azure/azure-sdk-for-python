@@ -6,8 +6,8 @@
 
 from io import BytesIO
 
-from avro.datafile import DataFileReader
-from avro.io import DatumReader
+from ._shared.avro.datafile import DataFileReader
+from ._shared.avro.avro_io import DatumReader
 
 from ._models import QuickQueryError
 

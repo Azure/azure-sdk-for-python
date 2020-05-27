@@ -115,9 +115,10 @@ def get_quick_query_serialization_info(serialization_settings=None):
         if isinstance(serialization_settings, DelimitedTextConfiguration):
             qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
                                          delimited_text_configuration=serialization_settings)
-        elif isinstance(serialization_settings, JsonTextConfiguration):
+        elif isinstance(serialization_settings, str):
             qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
-                                         json_text_configuration=serialization_settings)
+                                         json_text_configuration=JsonTextConfiguration(
+                                             record_separator=serialization_settings))
         else:
             raise ValueError("the class type of serialization settings should be either DelimitedTextConfiguration"
                              "or JsonTextConfiguration")

@@ -650,26 +650,26 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def quick_query(self, query_expression,  # type: str
-                    **kwargs):
+    def query(self, query_expression,  # type: str
+              **kwargs):
         # type: (str, **Any) -> QuickQueryReader
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
         This operations returns a QuickQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
-            Required. a query statement
+            Required. a query statement.
         :keyword func(~azure.storage.blob.QuickQueryError, int, int) progress_callback:
             Callback where the caller can track progress of the operation as well as the quick query failures.
         :keyword input_serialization:
             Optional. Defines the input serialization for a blob quick query request.
-            It could be delimited (CSV) serialization or JSON serialization.
-        :paramtype input_serialization: ~azure.storage.blob.DelimitedTextConfiguration or
-            ~azure.storage.blob.JsonTextConfiguration
+            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
+            When the input_serialization is set for JSON records, only a record separator in str format is needed.
+        :paramtype input_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str
         :keyword output_serialization:
             Optional. Defines the output serialization for a blob quick query request.
-            It could be delimited (CSV) serialization or JSON serialization.
-        :paramtype output_serialization: ~azure.storage.blob.DelimitedTextConfiguration or
-            ~azure.storage.blob.JsonTextConfiguration
+            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
+            When the input_serialization is set for JSON records, only a record separator in str format is needed.
+        :paramtype output_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -703,9 +703,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/blob_samples_quick_query.py
-                :start-after: [START quick_query]
-                :end-before: [END quick_query]
+            .. literalinclude:: ../samples/blob_samples_query.py
+                :start-after: [START query]
+                :end-before: [END query]
                 :language: python
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.

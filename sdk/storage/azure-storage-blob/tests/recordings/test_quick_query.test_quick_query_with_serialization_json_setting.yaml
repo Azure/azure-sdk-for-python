@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utqqcontainer81b11b3f?restype=container
+    uri: https://storagename.blob.core.windows.net/utqqcontainer81b11b3f?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -56,7 +56,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: DELETE
-    uri: https://storagename.blob.preprod.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f
+    uri: https://storagename.blob.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f
   response:
     body:
       string: ''
@@ -102,7 +102,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f
+    uri: https://storagename.blob.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: POST
-    uri: https://storagename.blob.preprod.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f?comp=query
+    uri: https://storagename.blob.core.windows.net/utqqcontainer81b11b3f/csvfile81b11b3f?comp=query
   response:
     body:
       string: !!binary |

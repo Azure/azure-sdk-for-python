@@ -11,69 +11,32 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 21 Apr 2020 00:37:12 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utqqcontainerfdc51926?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:0626ef1a-201e-000f-5d74-1722f9000000\nTime:2020-04-21T00:37:12.6035986Z</Message></Error>"
-    headers:
-      content-length:
-      - '230'
-      content-type:
-      - application/xml
-      date:
-      - Tue, 21 Apr 2020 00:37:11 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ContainerAlreadyExists
-      x-ms-version:
-      - '2019-12-12'
-    status:
-      code: 409
-      message: The specified container already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Tue, 21 Apr 2020 00:37:19 GMT
-      x-ms-version:
-      - '2019-12-12'
-    method: DELETE
-    uri: https://storagename.blob.core.windows.net/utqqcontainerfdc51926/csvfilefdc51926
+    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1?restype=container
   response:
     body:
       string: ''
     headers:
+      content-length:
+      - '0'
       date:
-      - Tue, 21 Apr 2020 00:37:18 GMT
+      - Wed, 27 May 2020 21:08:39 GMT
+      etag:
+      - '"0x8D80282219CBACC"'
+      last-modified:
+      - Wed, 27 May 2020 21:08:40 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-ms-delete-type-permanent:
-      - 'true'
       x-ms-version:
       - '2019-12-12'
     status:
-      code: 202
-      message: Accepted
+      code: 201
+      message: Created
 - request:
     body: "Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\nEvent
       Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\nEvent Hubs - Azure Storage
@@ -111,31 +74,31 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 21 Apr 2020 00:37:21 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utqqcontainerfdc51926/csvfilefdc51926
+    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1/csvfileea8e0dd1
   response:
     body:
       string: ''
     headers:
+      content-length:
+      - '0'
       content-md5:
       - 6qNUJItG1aexpFSF0g7WyA==
       date:
-      - Tue, 21 Apr 2020 00:37:21 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       etag:
-      - '"0x8D7E58C27A5AC07"'
+      - '"0x8D8028221B0EF22"'
       last-modified:
-      - Tue, 21 Apr 2020 00:37:21 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
       x-ms-content-crc64:
       - Egm6/9FcUeU=
       x-ms-request-server-encrypted:
@@ -148,9 +111,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT * from BlobStorage</Expression><InputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>,</ColumnSeparator><FieldQuote>"</FieldQuote><RecordSeparator>
-
-      </RecordSeparator><EscapeChar /><HasHeaders>false</HasHeaders></DelimitedTextConfiguration></Format></InputSerialization><OutputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>;</ColumnSeparator><FieldQuote>''</FieldQuote><RecordSeparator>.</RecordSeparator><EscapeChar>\</EscapeChar><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></OutputSerialization></QueryRequest>'
+      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT * from BlobStorage</Expression></QueryRequest>'
     headers:
       Accept:
       - application/xml
@@ -159,17 +120,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '715'
+      - '144'
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 21 Apr 2020 00:37:24 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       x-ms-version:
       - '2019-12-12'
     method: POST
-    uri: https://storagename.blob.core.windows.net/utqqcontainerfdc51926/csvfilefdc51926?comp=query
+    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1/csvfileea8e0dd1?comp=query
   response:
     body:
       string: !!binary |
@@ -207,60 +168,59 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAQJh7tFnKJkC680WoIsnrFQLEJAC+JFNl
-        cnZpY2U7UGFja2FnZTtWZXJzaW9uO1JlcG9QYXRoO01pc3NpbmdEb2NzLkFwcCBDb25maWd1cmF0
-        aW9uO2F6dXJlLWRhdGEtYXBwY29uZmlndXJhdGlvbjsnMS4wLjEnO2FwcGNvbmZpZ3VyYXRpb247
-        RkFMU0UuRXZlbnQgSHViczthenVyZS1tZXNzYWdpbmctZXZlbnRodWJzOyc1LjAuMSc7ZXZlbnRo
-        dWJzO0ZBTFNFLkV2ZW50IEh1YnMgLSBBenVyZSBTdG9yYWdlIENoZWNrcG9pbnRTdG9yZTthenVy
-        ZS1tZXNzYWdpbmctZXZlbnRodWJzLWNoZWNrcG9pbnRzdG9yZS1ibG9iOycxLjAuMSc7ZXZlbnRo
-        dWJzO0ZBTFNFLklkZW50aXR5O2F6dXJlLWlkZW50aXR5OycxLjEuMC1iZXRhLjEnO2lkZW50aXR5
-        O0ZBTFNFLktleSBWYXVsdCAtIENlcnRpZmljYXRlczthenVyZS1zZWN1cml0eS1rZXl2YXVsdC1j
-        ZXJ0aWZpY2F0ZXM7JzQuMC4wJztrZXl2YXVsdDtGQUxTRS5LZXkgVmF1bHQgLSBLZXlzO2F6dXJl
-        LXNlY3VyaXR5LWtleXZhdWx0LWtleXM7JzQuMi4wLWJldGEuMSc7a2V5dmF1bHQ7RkFMU0UuS2V5
-        IFZhdWx0IC0gU2VjcmV0czthenVyZS1zZWN1cml0eS1rZXl2YXVsdC1zZWNyZXRzOyc0LjEuMCc7
-        a2V5dmF1bHQ7RkFMU0UuU3RvcmFnZSAtIEJsb2JzO2F6dXJlLXN0b3JhZ2UtYmxvYjsnMTIuNC4w
-        JztzdG9yYWdlO0ZBTFNFLlN0b3JhZ2UgLSBCbG9icyBCYXRjaDthenVyZS1zdG9yYWdlLWJsb2It
-        YmF0Y2g7JzEyLjQuMC1iZXRhLjEnO3N0b3JhZ2U7RkFMU0UuU3RvcmFnZSAtIEJsb2JzIENyeXB0
-        b2dyYXBoeTthenVyZS1zdG9yYWdlLWJsb2ItY3J5cHRvZ3JhcGh5OycxMi40LjAnO3N0b3JhZ2U7
-        RkFMU0UuU3RvcmFnZSAtIEZpbGUgU2hhcmVzO2F6dXJlLXN0b3JhZ2UtZmlsZS1zaGFyZTsnMTIu
-        Mi4wJztzdG9yYWdlO0ZBTFNFLlN0b3JhZ2UgLSBRdWV1ZXM7YXp1cmUtc3RvcmFnZS1xdWV1ZTsn
-        MTIuMy4wJztzdG9yYWdlO0ZBTFNFLlRleHQgQW5hbHl0aWNzO2F6dXJlLWFpLXRleHRhbmFseXRp
-        Y3M7JzEuMC4wLWJldGEuMic7dGV4dGFuYWx5dGljcztGQUxTRS5UcmFjaW5nO2F6dXJlLWNvcmUt
-        dHJhY2luZy1vcGVudGVsZW1ldHJ5OycxLjAuMC1iZXRhLjInO2NvcmU7RkFMU0UuU2VydmljZTtQ
-        YWNrYWdlO1ZlcnNpb247UmVwb1BhdGg7TWlzc2luZ0RvY3MuQXBwIENvbmZpZ3VyYXRpb247YXp1
-        cmUtZGF0YS1hcHBjb25maWd1cmF0aW9uOycxLjAuMSc7YXBwY29uZmlndXJhdGlvbjtGQUxTRS5F
-        dmVudCBIdWJzO2F6dXJlLW1lc3NhZ2luZy1ldmVudGh1YnM7JzUuMC4xJztldmVudGh1YnM7RkFM
-        U0UuRXZlbnQgSHVicyAtIEF6dXJlIFN0b3JhZ2UgQ2hlY2twb2ludFN0b3JlO2F6dXJlLW1lc3Nh
-        Z2luZy1ldmVudGh1YnMtY2hlY2twb2ludHN0b3JlLWJsb2I7JzEuMC4xJztldmVudGh1YnM7RkFM
-        U0UuSWRlbnRpdHk7YXp1cmUtaWRlbnRpdHk7JzEuMS4wLWJldGEuMSc7aWRlbnRpdHk7RkFMU0Uu
-        S2V5IFZhdWx0IC0gQ2VydGlmaWNhdGVzO2F6dXJlLXNlY3VyaXR5LWtleXZhdWx0LWNlcnRpZmlj
-        YXRlczsnNC4wLjAnO2tleXZhdWx0O0ZBTFNFLktleSBWYXVsdCAtIEtleXM7YXp1cmUtc2VjdXJp
-        dHkta2V5dmF1bHQta2V5czsnNC4yLjAtYmV0YS4xJztrZXl2YXVsdDtGQUxTRS5LZXkgVmF1bHQg
-        LSBTZWNyZXRzO2F6dXJlLXNlY3VyaXR5LWtleXZhdWx0LXNlY3JldHM7JzQuMS4wJztrZXl2YXVs
-        dDtGQUxTRS5TdG9yYWdlIC0gQmxvYnM7YXp1cmUtc3RvcmFnZS1ibG9iOycxMi40LjAnO3N0b3Jh
-        Z2U7RkFMU0UuU3RvcmFnZSAtIEJsb2JzIEJhdGNoO2F6dXJlLXN0b3JhZ2UtYmxvYi1iYXRjaDsn
-        MTIuNC4wLWJldGEuMSc7c3RvcmFnZTtGQUxTRS5TdG9yYWdlIC0gQmxvYnMgQ3J5cHRvZ3JhcGh5
-        O2F6dXJlLXN0b3JhZ2UtYmxvYi1jcnlwdG9ncmFwaHk7JzEyLjQuMCc7c3RvcmFnZTtGQUxTRS5T
-        dG9yYWdlIC0gRmlsZSBTaGFyZXM7YXp1cmUtc3RvcmFnZS1maWxlLXNoYXJlOycxMi4yLjAnO3N0
-        b3JhZ2U7RkFMU0UuU3RvcmFnZSAtIFF1ZXVlczthenVyZS1zdG9yYWdlLXF1ZXVlOycxMi4zLjAn
-        O3N0b3JhZ2U7RkFMU0UuVGV4dCBBbmFseXRpY3M7YXp1cmUtYWktdGV4dGFuYWx5dGljczsnMS4w
-        LjAtYmV0YS4yJzt0ZXh0YW5hbHl0aWNzO0ZBTFNFLlRyYWNpbmc7YXp1cmUtY29yZS10cmFjaW5n
-        LW9wZW50ZWxlbWV0cnk7JzEuMC4wLWJldGEuMic7Y29yZTtGQUxTRS5TZXJ2aWNlO1BhY2thZ2U7
-        VmVyc2lvbjtSZXBvUGF0aDtNaXNzaW5nRG9jcy5BcHAgQ29uZmlndXJhdGlvbjthenVyZS1kYXRh
-        LWFwcGNvbmZpZ3VyYXRpb247JzEuMC4xJzthcHBjb25maWd1cmF0aW9uO0ZBTFNFLkV2ZW50IEh1
-        YnM7YXp1cmUtbWVzc2FnaW5nLWV2ZW50aHViczsnNS4wLjEnO2V2ZW50aHVicztGQUxTRS5AmHu0
-        WcomQLrzRagiyesVAgoEhCSEJECYe7RZyiZAuvNFqCLJ6xUCBgaEJECYe7RZyiZAuvNFqCLJ6xU=
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoA/Ph5PAAL/kiSdydZxH53yALMIwDGI1Nl
+        cnZpY2UsUGFja2FnZSxWZXJzaW9uLFJlcG9QYXRoLE1pc3NpbmdEb2NzCkFwcCBDb25maWd1cmF0
+        aW9uLGF6dXJlLWRhdGEtYXBwY29uZmlndXJhdGlvbiwxLjAuMSxhcHBjb25maWd1cmF0aW9uLEZB
+        TFNFCkV2ZW50IEh1YnMsYXp1cmUtbWVzc2FnaW5nLWV2ZW50aHVicyw1LjAuMSxldmVudGh1YnMs
+        RkFMU0UKRXZlbnQgSHVicyAtIEF6dXJlIFN0b3JhZ2UgQ2hlY2twb2ludFN0b3JlLGF6dXJlLW1l
+        c3NhZ2luZy1ldmVudGh1YnMtY2hlY2twb2ludHN0b3JlLWJsb2IsMS4wLjEsZXZlbnRodWJzLEZB
+        TFNFCklkZW50aXR5LGF6dXJlLWlkZW50aXR5LDEuMS4wLWJldGEuMSxpZGVudGl0eSxGQUxTRQpL
+        ZXkgVmF1bHQgLSBDZXJ0aWZpY2F0ZXMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtY2VydGlmaWNh
+        dGVzLDQuMC4wLGtleXZhdWx0LEZBTFNFCktleSBWYXVsdCAtIEtleXMsYXp1cmUtc2VjdXJpdHkt
+        a2V5dmF1bHQta2V5cyw0LjIuMC1iZXRhLjEsa2V5dmF1bHQsRkFMU0UKS2V5IFZhdWx0IC0gU2Vj
+        cmV0cyxhenVyZS1zZWN1cml0eS1rZXl2YXVsdC1zZWNyZXRzLDQuMS4wLGtleXZhdWx0LEZBTFNF
+        ClN0b3JhZ2UgLSBCbG9icyxhenVyZS1zdG9yYWdlLWJsb2IsMTIuNC4wLHN0b3JhZ2UsRkFMU0UK
+        U3RvcmFnZSAtIEJsb2JzIEJhdGNoLGF6dXJlLXN0b3JhZ2UtYmxvYi1iYXRjaCwxMi40LjAtYmV0
+        YS4xLHN0b3JhZ2UsRkFMU0UKU3RvcmFnZSAtIEJsb2JzIENyeXB0b2dyYXBoeSxhenVyZS1zdG9y
+        YWdlLWJsb2ItY3J5cHRvZ3JhcGh5LDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBGaWxl
+        IFNoYXJlcyxhenVyZS1zdG9yYWdlLWZpbGUtc2hhcmUsMTIuMi4wLHN0b3JhZ2UsRkFMU0UKU3Rv
+        cmFnZSAtIFF1ZXVlcyxhenVyZS1zdG9yYWdlLXF1ZXVlLDEyLjMuMCxzdG9yYWdlLEZBTFNFClRl
+        eHQgQW5hbHl0aWNzLGF6dXJlLWFpLXRleHRhbmFseXRpY3MsMS4wLjAtYmV0YS4yLHRleHRhbmFs
+        eXRpY3MsRkFMU0UKVHJhY2luZyxhenVyZS1jb3JlLXRyYWNpbmctb3BlbnRlbGVtZXRyeSwxLjAu
+        MC1iZXRhLjIsY29yZSxGQUxTRQpTZXJ2aWNlLFBhY2thZ2UsVmVyc2lvbixSZXBvUGF0aCxNaXNz
+        aW5nRG9jcwpBcHAgQ29uZmlndXJhdGlvbixhenVyZS1kYXRhLWFwcGNvbmZpZ3VyYXRpb24sMS4w
+        LjEsYXBwY29uZmlndXJhdGlvbixGQUxTRQpFdmVudCBIdWJzLGF6dXJlLW1lc3NhZ2luZy1ldmVu
+        dGh1YnMsNS4wLjEsZXZlbnRodWJzLEZBTFNFCkV2ZW50IEh1YnMgLSBBenVyZSBTdG9yYWdlIENo
+        ZWNrcG9pbnRTdG9yZSxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLWNoZWNrcG9pbnRzdG9yZS1i
+        bG9iLDEuMC4xLGV2ZW50aHVicyxGQUxTRQpJZGVudGl0eSxhenVyZS1pZGVudGl0eSwxLjEuMC1i
+        ZXRhLjEsaWRlbnRpdHksRkFMU0UKS2V5IFZhdWx0IC0gQ2VydGlmaWNhdGVzLGF6dXJlLXNlY3Vy
+        aXR5LWtleXZhdWx0LWNlcnRpZmljYXRlcyw0LjAuMCxrZXl2YXVsdCxGQUxTRQpLZXkgVmF1bHQg
+        LSBLZXlzLGF6dXJlLXNlY3VyaXR5LWtleXZhdWx0LWtleXMsNC4yLjAtYmV0YS4xLGtleXZhdWx0
+        LEZBTFNFCktleSBWYXVsdCAtIFNlY3JldHMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtc2VjcmV0
+        cyw0LjEuMCxrZXl2YXVsdCxGQUxTRQpTdG9yYWdlIC0gQmxvYnMsYXp1cmUtc3RvcmFnZS1ibG9i
+        LDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBCYXRjaCxhenVyZS1zdG9yYWdl
+        LWJsb2ItYmF0Y2gsMTIuNC4wLWJldGEuMSxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBD
+        cnlwdG9ncmFwaHksYXp1cmUtc3RvcmFnZS1ibG9iLWNyeXB0b2dyYXBoeSwxMi40LjAsc3RvcmFn
+        ZSxGQUxTRQpTdG9yYWdlIC0gRmlsZSBTaGFyZXMsYXp1cmUtc3RvcmFnZS1maWxlLXNoYXJlLDEy
+        LjIuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBRdWV1ZXMsYXp1cmUtc3RvcmFnZS1xdWV1ZSwx
+        Mi4zLjAsc3RvcmFnZSxGQUxTRQpUZXh0IEFuYWx5dGljcyxhenVyZS1haS10ZXh0YW5hbHl0aWNz
+        LDEuMC4wLWJldGEuMix0ZXh0YW5hbHl0aWNzLEZBTFNFClRyYWNpbmcsYXp1cmUtY29yZS10cmFj
+        aW5nLW9wZW50ZWxlbWV0cnksMS4wLjAtYmV0YS4yLGNvcmUsRkFMU0UKU2VydmljZSxQYWNrYWdl
+        LFZlcnNpb24sUmVwb1BhdGgsTWlzc2luZ0RvY3MKQXBwIENvbmZpZ3VyYXRpb24sYXp1cmUtZGF0
+        YS1hcHBjb25maWd1cmF0aW9uLDEuMC4xLGFwcGNvbmZpZ3VyYXRpb24sRkFMU0UKRXZlbnQgSHVi
+        cyxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLDUuMC4xLGV2ZW50aHVicyxGQUxTRQr8+Hk8AAv+
+        SJJ3J1nEfnfIAgoEhCSEJPz4eTwAC/5IkncnWcR+d8gCBgaEJPz4eTwAC/5IkncnWcR+d8g=
     headers:
       accept-ranges:
       - bytes
       content-type:
       - avro/binary
       date:
-      - Tue, 21 Apr 2020 00:37:24 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       etag:
-      - '"0x8D7E58C27A5AC07"'
+      - '"0x8D8028221B0EF22"'
       last-modified:
-      - Tue, 21 Apr 2020 00:37:21 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -268,7 +228,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 21 Apr 2020 00:37:21 GMT
+      - Wed, 27 May 2020 21:08:40 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
