@@ -242,15 +242,18 @@ class DataLakeFileClient(PathClient):
         """
         return self._get_path_properties(cls=FileProperties._deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
 
-    def set_file_expiry(self, expiry_options, expires_on=None, **kwargs):
-        # type: (**Any) -> None
+    def set_file_expiry(self, expiry_options,  # type: str
+                        expires_on=None,   # type: Optional[Union[datetime, int]]
+                        **kwargs):
+        # type: (str, Optional[Union[datetime, int]], **Any) -> None
         """Sets the time a file will expire and be deleted.
 
         :param str expiry_options:
             Required. Indicates mode of the expiry time.
             Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
-        :param datetime expires_on:
-            The time to set the file to expiry
+        :param datetime or int expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
