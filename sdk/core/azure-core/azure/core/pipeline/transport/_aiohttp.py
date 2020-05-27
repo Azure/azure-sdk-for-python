@@ -307,6 +307,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
-        from multidict import MultiDict  # I know it's importable since aiohttp is loaded
-        state['headers'] = MultiDict(self.headers)  # MultiDictProxy is not pickable
+        from multidict import CIMultiDict  # I know it's importable since aiohttp is loaded
+        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
