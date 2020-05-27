@@ -82,7 +82,7 @@
           },
           "properties": {
             "type": {
-              "description": "TODO: Add description",
+              "description": "MIME type of content.",
               "type": "string",
               "default": "application/xml",
               "xml": {
@@ -92,9 +92,8 @@
             "QueueProperties": {
               "description": "Queue information to create.",
               "$ref": "#/definitions/QueueProperties",
-              "xml": {
-                "name": "QueueDescription",
-                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              "xml":{
+                "name": "QueueDescription"
               }
             }
           }
@@ -189,7 +188,6 @@
       "description": "Service Bus queue metrics.",
       "type": "object",
       "xml": {
-        "name": "QueueMetrics",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
