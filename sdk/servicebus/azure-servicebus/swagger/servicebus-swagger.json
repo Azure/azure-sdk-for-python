@@ -29,6 +29,12 @@
   "tags": [
     {
       "name": "Queue Operations"
+    },
+    {
+      "name": "Topic Operations"
+    },
+    {
+      "name": "Subscription Operations"
     }
   ],
   "parameters": {
@@ -60,8 +66,8 @@
     }
   },
   "definitions": {
-    "CreateEntityBody": {
-      "description": "The response from a CreateQueue operation.",
+    "CreateQueueBody": {
+      "description": "The request body for creating a queue.",
       "type": "object",
       "xml":{
         "name": "entry",
@@ -83,8 +89,13 @@
                 "attribute": true
               }
             },
-            "entity": {
-              "type":"object"
+            "QueueProperties": {
+              "description": "Queue information to create.",
+              "$ref": "#/definitions/QueueProperties",
+              "xml": {
+                "name": "QueueDescription",
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
             }
           }
         }
@@ -310,9 +321,16 @@
           }
         },
         "AutoDeleteOnIdle": {
-          "description": "ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
+          "description": "ISO 8601 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
           "type": "string",
-          "format": "duration",
+          "format": "iso8601",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -327,7 +345,7 @@
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
           "type": "string",
-          "format": "duration",
+          "format": "iso8601",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -335,7 +353,7 @@
         "DuplicateDetectionHistoryTimeWindow": {
           "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
           "type": "string",
-          "format": "duration",
+          "format": "iso8601",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -377,7 +395,7 @@
         "LockDuration": {
           "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
           "type": "string",
-          "format": "duration",
+          "format": "iso8601",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -423,6 +441,39 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         }
+      }
+    },
+    "ServiceBusManagementError": {
+      "description": "The error response from Service Bus.",
+      "type": "object",
+      "properties": {
+        "Code": {
+          "description": "The service error code.",
+          "type": "integer"
+        },
+        "Detail": {
+          "description": "The service error message.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "ServiceBusManagementErrorResponse": {
+      "description": "An error occurred. The possible HTTP status, code, and message strings are listed below",
+      "headers": {
+        "x-ms-request-id": {
+          "description": "A server-generated UUID recorded in the analytics logs for troubleshooting and correlation.",
+          "pattern": "^[{(]?[0-9a-f]{8}[-]?([0-9a-f]{4}[-]?){3}[0-9a-f]{12}[)}]?$",
+          "type": "string"
+        },
+        "x-ms-version": {
+          "description": "The version of the REST protocol used to process the request.",
+          "type": "string"
+        }
+      },
+      "schema": {
+        "$ref": "#/definitions/ServiceBusManagementError"
       }
     }
   },
@@ -479,6 +530,9 @@
             "required": true,
             "description": "Parameters required to make a new queue.",
             "x-ms-parameter-location": "method"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
           }
         ],
         "responses": {
