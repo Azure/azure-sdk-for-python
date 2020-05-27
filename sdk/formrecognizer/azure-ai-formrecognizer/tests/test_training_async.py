@@ -37,8 +37,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -60,8 +60,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -124,8 +124,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -147,8 +147,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:

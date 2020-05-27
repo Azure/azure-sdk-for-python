@@ -51,8 +51,8 @@ class TrainModelWithLabelsSampleAsync(object):
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Created on: {}".format(model.created_on))
-            print("Last modified: {}".format(model.last_modified))
+            print("Requested on: {}".format(model.requested_on))
+            print("Completed on: {}".format(model.completed_on))
 
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on

@@ -1,6 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": []}'
+    body: '{"documents": [{"id": "1", "text": "This won''t actually create a warning
+      :''(", "language": "en"}]}'
     headers:
       Accept:
       - application/json
@@ -9,25 +10,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '17'
+      - '98'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innerError":{"code":"MissingInputRecords","message":"Missing
-        input records."}}}'
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 424cd8b9-b706-475f-8301-f00737529a62
+      - 91f75c3c-c46e-4aec-897c-d753c496931a
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 02 Apr 2020 15:06:32 GMT
+      - Wed, 27 May 2020 16:04:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,8 +37,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '70'
     status:
-      code: 400
-      message: Bad Request
+      code: 200
+      message: OK
 version: 1

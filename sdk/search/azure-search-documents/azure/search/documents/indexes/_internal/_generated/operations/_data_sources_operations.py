@@ -28,7 +28,7 @@ class DataSourcesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.search.documents.models
+    :type models: ~azure.search.documents.indexes.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class DataSourcesOperations(object):
         :param data_source_name: The name of the datasource to create or update.
         :type data_source_name: str
         :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~azure.search.documents.models.SearchIndexerDataSource
+        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -66,10 +66,10 @@ class DataSourcesOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerDataSource
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]
@@ -154,7 +154,7 @@ class DataSourcesOperations(object):
          if the ETag on the server does not match this value.
         :type if_none_match: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -217,10 +217,10 @@ class DataSourcesOperations(object):
         :param data_source_name: The name of the datasource to retrieve.
         :type data_source_name: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerDataSource
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]
@@ -282,10 +282,10 @@ class DataSourcesOperations(object):
          properties.
         :type select: str
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListDataSourcesResult or the result of cls(response)
-        :rtype: ~azure.search.documents.models.ListDataSourcesResult
+        :rtype: ~azure.search.documents.indexes.models.ListDataSourcesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListDataSourcesResult"]
@@ -344,12 +344,12 @@ class DataSourcesOperations(object):
         """Creates a new datasource.
 
         :param data_source: The definition of the datasource to create.
-        :type data_source: ~azure.search.documents.models.SearchIndexerDataSource
+        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource or the result of cls(response)
-        :rtype: ~azure.search.documents.models.SearchIndexerDataSource
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerDataSource"]

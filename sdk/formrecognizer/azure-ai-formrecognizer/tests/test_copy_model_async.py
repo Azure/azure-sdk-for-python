@@ -46,8 +46,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         copied_model = await client.get_custom_model(copy.model_id)
 
         self.assertEqual(copy.status, "succeeded")
-        self.assertIsNotNone(copy.created_on)
-        self.assertIsNotNone(copy.last_modified)
+        self.assertIsNotNone(copy.requested_on)
+        self.assertIsNotNone(copy.completed_on)
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
@@ -88,9 +88,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
         actual = raw_response[0]
         copy = raw_response[1]
-        self.assertEqual(copy.created_on, actual.created_date_time)
+        self.assertEqual(copy.requested_on, actual.created_date_time)
         self.assertEqual(copy.status, actual.status)
-        self.assertEqual(copy.last_modified, actual.last_updated_date_time)
+        self.assertEqual(copy.completed_on, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()
