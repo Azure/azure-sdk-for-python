@@ -440,8 +440,8 @@ class TestReceiptFromStream(FormRecognizerTest):
             receipt = fd.read()
 
         initial_poller = client.begin_recognize_receipts(receipt)
-
         cont_token = initial_poller.continuation_token()
         poller = client.begin_recognize_receipts(receipt, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

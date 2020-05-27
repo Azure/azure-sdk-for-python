@@ -145,7 +145,7 @@ class FormTrainingClient(object):
             return AsyncLROPoller.from_continuation_token(
                 polling_method=AsyncLROBasePolling(
                     timeout=polling_interval,
-                    lro_algorithms=[TrainingPolling(location_header="Location")],
+                    lro_algorithms=[TrainingPolling()],
                     **kwargs
                 ),
                 continuation_token=continuation_token,
@@ -173,7 +173,7 @@ class FormTrainingClient(object):
             deserialization_callback,
             AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[TrainingPolling(location_header="Location")],
+                lro_algorithms=[TrainingPolling()],
                 **kwargs
             )
         )
@@ -381,7 +381,7 @@ class FormTrainingClient(object):
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[CopyPolling(operation_location_header="Operation-Location")],
+                lro_algorithms=[CopyPolling()],
                 **kwargs
             ),
             error_map=error_map,

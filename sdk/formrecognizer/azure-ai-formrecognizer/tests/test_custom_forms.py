@@ -353,7 +353,6 @@ class TestCustomForms(FormRecognizerTest):
             model.model_id,
             myfile
         )
-
         cont_token = initial_poller.continuation_token()
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
@@ -362,3 +361,4 @@ class TestCustomForms(FormRecognizerTest):
         )
         result = poller.result()
         self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

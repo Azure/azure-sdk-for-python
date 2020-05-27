@@ -357,16 +357,17 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
-        initial_poller = await fr_client.begin_begin_recognize_custom_forms(
+        initial_poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile
         )
 
         cont_token = initial_poller.continuation_token()
-        poller = await fr_client.begin_begin_recognize_custom_forms(
+        poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
             continuation_token=cont_token
         )
         result = await poller.result()
         self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

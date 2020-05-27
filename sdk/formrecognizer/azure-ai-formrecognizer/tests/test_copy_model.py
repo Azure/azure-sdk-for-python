@@ -113,7 +113,6 @@ class TestCopyModel(FormRecognizerTest):
         model = poller.result()
 
         target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
-
         initial_poller = client.begin_copy_model(model.model_id, target=target)
         cont_token = initial_poller.continuation_token()
 
@@ -123,3 +122,4 @@ class TestCopyModel(FormRecognizerTest):
 
         copied_model = client.get_custom_model(result.model_id)
         self.assertIsNotNone(copied_model)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

@@ -14,7 +14,6 @@ from typing import (
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
-from azure.core.polling.base_polling import OperationResourcePolling
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
@@ -136,7 +135,6 @@ class FormRecognizerClient(object):
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
                 **kwargs
             ),
             error_map=error_map,
@@ -186,7 +184,6 @@ class FormRecognizerClient(object):
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
                 **kwargs
             ),
             error_map=error_map,
@@ -242,7 +239,6 @@ class FormRecognizerClient(object):
             cls=kwargs.pop("cls", self._content_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
                 **kwargs
             ),
             error_map=error_map,
@@ -273,7 +269,6 @@ class FormRecognizerClient(object):
             cls=kwargs.pop("cls", self._content_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[OperationResourcePolling(operation_location_header="Operation-Location")],
                 **kwargs
             ),
             error_map=error_map,
@@ -347,7 +342,7 @@ class FormRecognizerClient(object):
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[AnalyzePolling(operation_location_header="Operation-Location")],
+                lro_algorithms=[AnalyzePolling()],
                 **kwargs
             ),
             error_map=error_map,
@@ -400,7 +395,7 @@ class FormRecognizerClient(object):
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
-                lro_algorithms=[AnalyzePolling(operation_location_header="Operation-Location")],
+                lro_algorithms=[AnalyzePolling()],
                 **kwargs
             ),
             error_map=error_map,

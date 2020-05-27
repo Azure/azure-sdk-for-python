@@ -225,8 +225,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     async def test_training_continuation_token(self, client, container_sas_url):
 
         initial_poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
-
         cont_token = initial_poller.continuation_token()
         poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, continuation_token=cont_token)
         result = await poller.result()
         self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

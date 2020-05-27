@@ -313,8 +313,8 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_continuation_token(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
-        model = poller.result()
+        training_poller = client.begin_training(container_sas_url, use_training_labels=False)
+        model = training_poller.result()
 
         initial_poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
@@ -329,3 +329,4 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         )
         result = poller.result()
         self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

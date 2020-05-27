@@ -156,10 +156,10 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account,
                                       AzureKeyCredential(form_recognizer_account_key))
-        inital_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
-
-        cont_token = inital_poller.continuation_token()
+        initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
+        cont_token = initial_poller.continuation_token()
 
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

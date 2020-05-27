@@ -263,10 +263,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                                       AzureKeyCredential(form_recognizer_account_key))
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
-        inital_poller = await client.begin_recognize_content(myfile)
-
-        cont_token = inital_poller.continuation_token()
+        initial_poller = await client.begin_recognize_content(myfile)
+        cont_token = initial_poller.continuation_token()
 
         poller = await client.begin_recognize_content(myfile, continuation_token=cont_token)
         result = await poller.result()
         self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

@@ -326,7 +326,6 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             model.model_id,
             self.form_url_jpg
         )
-
         cont_token = initial_poller.continuation_token()
         poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
@@ -335,3 +334,4 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         )
         result = await poller.result()
         self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
