@@ -14,6 +14,7 @@ import pytest
 import sys
 import locale
 import os
+from azure.storage.tables import TableServiceClient
 from time import time
 from wsgiref.handlers import format_date_time
 from dateutil.tz import tzutc
@@ -50,7 +51,6 @@ from azure.core.exceptions import (
 #     generate_account_sas,
 #     generate_table_sas
 # )
-
 
 from azure.storage.tables._generated import (
     AzureTable,
@@ -105,59 +105,24 @@ class StorageTableTest(TableTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         current_time = format_date_time(time())
-        api_version = '3.0'
-        string_params = {
-            'verb': 'GET',
-            'Content-Encoding': '',
-            'Content-Language': '',
-            'Content-Length': '',
-            'Content-MD5': '',
-            'Content-Type': '',
-            'Date': '',
-            'If-Modified-Since': '',
-            'If-Match': '',
-            'If-None-Match': '',
-            'If-Unmodified-Since': '',
-            'Range': '',
-            'CanonicalizedHeaders': 'x-ms-date:' + current_time + 'x-ms-version:' + api_version,
-            'CanonicalizedResource': '/' + storage_account.name
-        }
-
-        string_to_sign = (string_params['verb'] + '\n'
-                          + string_params['Content-Encoding'] + '\n'
-                          + string_params['Content-Language'] + '\n'
-                          + string_params['Content-Length'] + '\n'
-                          + string_params['Content-MD5'] + '\n'
-                          + string_params['Content-Type'] + '\n'
-                          + string_params['Date'] + '\n'
-                          + string_params['If-Modified-Since'] + '\n'
-                          + string_params['If-Match'] + '\n'
-                          + string_params['If-None-Match'] + '\n'
-                          + string_params['If-Unmodified-Since'] + '\n'
-                          + string_params['Range'] + '\n'
-                          + string_params['CanonicalizedHeaders']
-                          + string_params['CanonicalizedResource'])
-
-        signed_string = base64.b64encode(
-         hmac.new(base64.b64decode(storage_account_key), msg=string_to_sign.encode('utf-8'),
-                    digestmod=hashlib.sha256).digest()).decode()
-
-        authorization = 'SharedKey ' + storage_account.name + ':' + signed_string
-        headers = {}
-        headers['x-ms-date'] = current_time
-        headers['Authorization'] = authorization
-        headers['Method'] = 'GET'
-        headers['ContentType'] = 'application/json'
-        headers['Accept-Charset'] = 'utf-8'
-        pipeline = _create_pipeline(storage_account, storage_account_key)
-        table_client = AzureTable(self.account_url(storage_account, "table"), pipeline=pipeline)
+        # authorization = 'foo'
+        # headers = {}
+        # headers['x-ms-date'] = current_time
+        # headers['Authorization'] = authorization
+        # headers['Method'] = 'GET'
+        # headers['ContentType'] = 'application/json'
+        # headers['Accept-Charset'] = 'utf-8'
+        # pipeline = _create_pipeline(storage_account, storage_account_key)
+        # table_client = AzureTable(self.account_url(storage_account, "table"), pipeline=pipeline)
         table_name = "myTable"
-        table_properties = TableProperties(table_name=table_name)
-        response = table_client.table.create(table_properties, headers=headers)
-        self.assertEqual(response.table_name, table_name)
+        # table_properties = TableProperties(table_name=table_name)
+        # response = table_client.table.create(table_properties, headers=headers)
+        # self.assertEqual(response.table_name, table_name)
 
     # # Arrange
-    # ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        response = ts.create_table(table_name)
+        assert response.table_name == table_name
     # table_name = self._get_table_reference()
     # table_client = ts.get_table_client(table_name)
     #
