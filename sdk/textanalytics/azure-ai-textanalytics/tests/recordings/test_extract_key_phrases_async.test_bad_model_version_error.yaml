@@ -10,18 +10,18 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?model-version=bad&showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?model-version=bad&showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
-        is incorrect. Allowed values are latest,2019-10-01"}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
+        model version. Possible values are: latest,2019-10-01"}}}'
     headers:
-      apim-request-id: ff0eae61-7240-4649-adba-b2e267d327b3
+      apim-request-id: af886bd9-4232-4a60-82e6-fe9e203dee2c
       content-type: application/json; charset=utf-8
-      date: Thu, 02 Apr 2020 15:07:07 GMT
+      date: Tue, 26 May 2020 17:34:32 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -29,5 +29,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?model-version=bad&showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?model-version=bad&showStats=false
 version: 1

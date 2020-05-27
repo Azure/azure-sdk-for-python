@@ -36,7 +36,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
-        response = client.recognize_entities(docs, show_stats=True)
+        response = client.recognize_entities(docs, model_version="2020-02-01", show_stats=True)
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
@@ -44,8 +44,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.grapheme_offset)
-                self.assertIsNotNone(entity.grapheme_length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -57,14 +55,12 @@ class TestRecognizeEntities(TextAnalyticsTest):
             TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de")
         ]
 
-        response = client.recognize_entities(docs)
+        response = client.recognize_entities(docs, model_version="2020-02-01")
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.grapheme_offset)
-                self.assertIsNotNone(entity.grapheme_length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -104,6 +100,16 @@ class TestRecognizeEntities(TextAnalyticsTest):
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_too_many_documents(self, client):
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.recognize_entities(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -421,7 +427,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         try:
             result = client.recognize_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -442,6 +448,19 @@ class TestRecognizeEntities(TextAnalyticsTest):
         self.assertIsNotNone(doc_errors[1].error.message)
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for recognize_entities. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.recognize_entities(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

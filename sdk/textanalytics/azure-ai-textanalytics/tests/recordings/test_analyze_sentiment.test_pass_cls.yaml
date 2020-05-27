@@ -14,22 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"neutral","documentScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"offset":0,"length":28}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"offset":0,"length":28,"text":"Test
+        passing cls to endpoint"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 77c3bec8-8326-46a0-b130-d4309ed11b6d
+      - 3f236df7-a1f0-46ee-a724-6f8c601962b0
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 02 Apr 2020 15:06:00 GMT
+      - Tue, 26 May 2020 17:34:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '113'
+      - '94'
     status:
       code: 200
       message: OK
