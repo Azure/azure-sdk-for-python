@@ -150,9 +150,8 @@ def serialize_blob_tags_header(tags=None):
 
 def serialize_blob_tags(tags=None):
     # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
+    tag_list = list()
     if tags:
-        tag_list = list()
         for tag_key, tag_value in tags.items():
             tag_list.append(BlobTag(key=tag_key, value=tag_value))
-        return BlobTags(blob_tag_set=tag_list)
-    return None
+    return BlobTags(blob_tag_set=tag_list)

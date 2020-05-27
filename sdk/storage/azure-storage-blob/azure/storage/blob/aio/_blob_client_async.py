@@ -1373,12 +1373,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def set_blob_tags(self, tags=None, **kwargs):
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
         """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
+            Each call to this operation replaces all existing tags attached to the blob. To remove all
+            tags from the blob, call this operation with no tags set.
 
         .. versionadded:: 12.4.0
             This operation was introduced in API version '2019-12-12'.
 
         :param tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
         :type tags: dict(str, str)
         :keyword str version_id:
             The version id parameter is an opaque DateTime
