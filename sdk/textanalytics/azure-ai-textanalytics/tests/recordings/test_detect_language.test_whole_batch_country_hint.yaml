@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
@@ -25,13 +25,13 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - c374fd8f-2d9b-480a-a5a5-95061f4f9366
+      - 7c10929f-a3ce-447b-97bb-2b2effbbe4a8
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Tue, 26 May 2020 17:34:30 GMT
+      - Wed, 27 May 2020 16:04:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

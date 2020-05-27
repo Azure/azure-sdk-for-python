@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
@@ -20,14 +20,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 93d82dc7-2c6a-46f6-b626-dce1d93b61c5
+      apim-request-id: 5aaa40f7-9c67-4d73-8952-cbf0e13b0888
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Tue, 26 May 2020 17:34:38 GMT
+      date: Wed, 27 May 2020 16:04:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '13'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 200
       message: OK
@@ -45,7 +45,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
@@ -53,14 +53,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 51f07e7e-f840-40e3-a341-af2dc28b6a49
+      apim-request-id: 9b8a2579-bc39-43fd-960e-6da02d3e54e7
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Tue, 26 May 2020 17:34:38 GMT
+      date: Wed, 27 May 2020 16:04:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
@@ -78,7 +78,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
@@ -86,14 +86,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: c5fc8f9f-2535-4850-adae-bac291a8a2f8
+      apim-request-id: 950b828f-c508-4a3a-b48c-b74b45c50c0a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Tue, 26 May 2020 17:34:38 GMT
+      date: Wed, 27 May 2020 16:04:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '11'
+      x-envoy-upstream-service-time: '13'
     status:
       code: 200
       message: OK

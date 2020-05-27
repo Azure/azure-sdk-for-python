@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
@@ -26,13 +26,13 @@ interactions:
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - fc5bfecc-026d-402e-a03c-5f9a829d1a84
+      - 5e0c1a1a-1235-4685-a91a-a0a834564b63
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Tue, 26 May 2020 17:34:31 GMT
+      - Wed, 27 May 2020 16:04:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '7'
     status:
       code: 200
       message: OK
@@ -61,7 +61,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
@@ -74,7 +74,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Tue, 26 May 2020 17:34:31 GMT
+      - Wed, 27 May 2020 16:04:07 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -95,7 +95,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
@@ -105,13 +105,13 @@ interactions:
         food"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - b26d4b09-9458-413e-9e05-c1d1bd3ee3d6
+      - 85a7e542-1269-4356-8172-0d21386f8c13
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Tue, 26 May 2020 17:34:31 GMT
+      - Wed, 27 May 2020 16:04:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -119,7 +119,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '6'
     status:
       code: 200
       message: OK

@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
@@ -25,13 +25,13 @@ interactions:
         Gates","Paul Allen","Microsoft"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - b9382c8f-da3e-4e62-b976-6d34ddd21b56
+      - 5b9acd66-8653-4a60-9354-718e0d250543
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Tue, 26 May 2020 17:34:31 GMT
+      - Wed, 27 May 2020 16:04:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '6'
     status:
       code: 200
       message: OK

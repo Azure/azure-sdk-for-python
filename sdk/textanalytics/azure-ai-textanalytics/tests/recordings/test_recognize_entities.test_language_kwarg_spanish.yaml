@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=latest&showStats=true
@@ -24,13 +24,13 @@ interactions:
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.8},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 4e0f7b58-34a8-42b3-bf68-5d490b985c2c
+      - 6f270806-bb42-491e-8cf0-97a0aac23f39
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Tue, 26 May 2020 17:34:33 GMT
+      - Wed, 27 May 2020 16:04:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '12'
+      - '19'
     status:
       code: 200
       message: OK
