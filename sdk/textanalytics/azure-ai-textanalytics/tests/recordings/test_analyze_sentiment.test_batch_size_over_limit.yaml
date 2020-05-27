@@ -758,7 +758,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
@@ -768,11 +768,11 @@ interactions:
         request contains too many records. Max 1000 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 328aebf1-a48e-4d68-90a6-ab310d6d16b8
+      - 3c8df611-834f-4fdb-b8e8-2429e2d30e26
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 17:34:24 GMT
+      - Wed, 27 May 2020 16:04:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
