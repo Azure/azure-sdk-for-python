@@ -568,6 +568,8 @@ class RedisInstanceDetails(Model):
     :vartype zone: str
     :ivar shard_id: If clustering is enabled, the Shard ID of Redis Instance
     :vartype shard_id: int
+    :ivar is_master: Specifies whether the instance is a master node.
+    :vartype is_master: bool
     """
 
     _validation = {
@@ -575,6 +577,7 @@ class RedisInstanceDetails(Model):
         'non_ssl_port': {'readonly': True},
         'zone': {'readonly': True},
         'shard_id': {'readonly': True},
+        'is_master': {'readonly': True},
     }
 
     _attribute_map = {
@@ -582,6 +585,7 @@ class RedisInstanceDetails(Model):
         'non_ssl_port': {'key': 'nonSslPort', 'type': 'int'},
         'zone': {'key': 'zone', 'type': 'str'},
         'shard_id': {'key': 'shardId', 'type': 'int'},
+        'is_master': {'key': 'isMaster', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -590,6 +594,7 @@ class RedisInstanceDetails(Model):
         self.non_ssl_port = None
         self.zone = None
         self.shard_id = None
+        self.is_master = None
 
 
 class RedisLinkedServer(Model):
@@ -747,30 +752,29 @@ class RedisPatchSchedule(ProxyResource):
 class RedisRebootParameters(Model):
     """Specifies which Redis node(s) to reboot.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param reboot_type: Required. Which Redis node(s) to reboot. Depending on
-     this value data loss is possible. Possible values include: 'PrimaryNode',
+    :param reboot_type: Which Redis node(s) to reboot. Depending on this value
+     data loss is possible. Possible values include: 'PrimaryNode',
      'SecondaryNode', 'AllNodes'
     :type reboot_type: str or ~azure.mgmt.redis.models.RebootType
     :param shard_id: If clustering is enabled, the ID of the shard to be
      rebooted.
     :type shard_id: int
+    :param ports: A list of redis instances to reboot, specified by
+     per-instance SSL ports or non-SSL ports.
+    :type ports: list[int]
     """
-
-    _validation = {
-        'reboot_type': {'required': True},
-    }
 
     _attribute_map = {
         'reboot_type': {'key': 'rebootType', 'type': 'str'},
         'shard_id': {'key': 'shardId', 'type': 'int'},
+        'ports': {'key': 'ports', 'type': '[int]'},
     }
 
-    def __init__(self, *, reboot_type, shard_id: int=None, **kwargs) -> None:
+    def __init__(self, *, reboot_type=None, shard_id: int=None, ports=None, **kwargs) -> None:
         super(RedisRebootParameters, self).__init__(**kwargs)
         self.reboot_type = reboot_type
         self.shard_id = shard_id
+        self.ports = ports
 
 
 class RedisRegenerateKeyParameters(Model):

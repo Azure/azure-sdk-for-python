@@ -743,7 +743,7 @@ class RedisOperations(object):
     regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/regenerateKey'}
 
     def force_reboot(
-            self, resource_group_name, name, reboot_type, shard_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """Reboot specified Redis node(s). This operation requires write
         permission to the cache resource. There can be potential data loss.
 
@@ -751,13 +751,8 @@ class RedisOperations(object):
         :type resource_group_name: str
         :param name: The name of the Redis cache.
         :type name: str
-        :param reboot_type: Which Redis node(s) to reboot. Depending on this
-         value data loss is possible. Possible values include: 'PrimaryNode',
-         'SecondaryNode', 'AllNodes'
-        :type reboot_type: str or ~azure.mgmt.redis.models.RebootType
-        :param shard_id: If clustering is enabled, the ID of the shard to be
-         rebooted.
-        :type shard_id: int
+        :param parameters: Specifies which Redis node(s) to reboot.
+        :type parameters: ~azure.mgmt.redis.models.RedisRebootParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -768,8 +763,6 @@ class RedisOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.RedisRebootParameters(reboot_type=reboot_type, shard_id=shard_id)
-
         # Construct URL
         url = self.force_reboot.metadata['url']
         path_format_arguments = {
