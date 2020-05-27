@@ -310,6 +310,8 @@ class AccountSasPermissions(object):
         Permits write permissions to the specified resource type.
     :param bool delete:
         Valid for Container and Object resource types, except for queue messages.
+    :param bool delete_version:
+        Delete the blob version for the versioning enabled storage account.
     :param bool list:
         Valid for Service and Container resource types only.
     :param bool add:
@@ -324,18 +326,20 @@ class AccountSasPermissions(object):
         Valid for the following Object resource type only: queue messages.
     """
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False):
+                 add=False, create=False, update=False, process=False, delete_version=False):
         self.read = read
         self.write = write
         self.delete = delete
+        self.delete_version = delete_version
         self.list = list
         self.add = add
         self.create = create
         self.update = update
         self.process = process
         self._str = (('r' if self.read else '') +
-                     ('w' if  self.write else '') +
+                     ('w' if self.write else '') +
                      ('d' if self.delete else '') +
+                     ('x' if self.delete_version else '') +
                      ('l' if self.list else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +

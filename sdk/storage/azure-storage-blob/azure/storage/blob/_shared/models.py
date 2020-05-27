@@ -325,9 +325,9 @@ class AccountSasPermissions(object):
     :param bool process:
         Valid for the following Object resource type only: queue messages.
     """
-    def __init__(self, read=False, write=False, delete=False, delete_version=False,
+    def __init__(self, read=False, write=False, delete=False,
                  list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False):
+                 add=False, create=False, update=False, process=False, delete_version=False):
         self.read = read
         self.write = write
         self.delete = delete
@@ -338,7 +338,7 @@ class AccountSasPermissions(object):
         self.update = update
         self.process = process
         self._str = (('r' if self.read else '') +
-                     ('w' if  self.write else '') +
+                     ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_version else '') +
                      ('l' if self.list else '') +

@@ -474,7 +474,6 @@ def generate_blob_sas(
         container_name,  # type: str
         blob_name,  # type: str
         snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
         account_key=None,  # type: Optional[str]
         user_delegation_key=None,  # type: Optional[UserDelegationKey]
         permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
@@ -482,6 +481,7 @@ def generate_blob_sas(
         start=None,  # type: Optional[Union[datetime, str]]
         policy_id=None,  # type: Optional[str]
         ip=None,  # type: Optional[str]
+        version_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> Any
@@ -500,6 +500,10 @@ def generate_blob_sas(
         An optional blob snapshot ID.
     :param str version_id:
         An optional blob version ID. This parameter is only for versioning enabled account
+
+        .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
         Either `account_key` or `user_delegation_key` must be specified.
