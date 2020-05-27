@@ -1,43 +1,51 @@
 interactions:
 - request:
-    body: '{"TableName": "Tables"}'
+    body: '{"TableName": "myTable"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
+      Accept-Charset:
+      - utf-8
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '23'
+      - '24'
       Content-Type:
       - application/json;odata=nometadata
+      ContentType:
+      - application/json
       DataServiceVersion:
       - '3.0'
+      Method:
+      - GET
       User-Agent:
-      - azsdk-python-azuretable/unknown Python/3.8.3 (Windows-10-10.0.18362-SP0)
+      - python-requests/2.23.0
+      x-ms-date:
+      - Tue, 26 May 2020 20:58:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:fa2fea1a-f002-0015-6b4b-3048b6000000\nTime:2020-05-22T15:14:43.9458401Z"}}}'
+      string: '{"odata.error":{"code":"AuthenticationFailed","message":{"lang":"en-US","value":"Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:00a78c25-e002-0072-18a0-331e96000000\nTime:2020-05-26T20:58:25.8322358Z"}}}'
     headers:
       content-length:
-      - '202'
+      - '299'
       content-type:
       - application/json
       date:
-      - Fri, 22 May 2020 15:14:43 GMT
+      - Tue, 26 May 2020 20:58:24 GMT
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       x-ms-error-code:
-      - ResourceNotFound
-      x-ms-version:
-      - '2019-02-02'
+      - AuthenticationFailed
     status:
-      code: 404
-      message: The specified resource does not exist.
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
 version: 1

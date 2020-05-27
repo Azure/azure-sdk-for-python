@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 from sys import version_info
 
+from pyparsing import unicode
+
 if version_info < (3,):
     def _str(value):
         if isinstance(value, unicode):

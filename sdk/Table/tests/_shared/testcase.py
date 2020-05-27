@@ -13,6 +13,10 @@ import os.path
 import time
 from datetime import datetime, timedelta
 
+from azure.storage.tables import generate_account_sas
+from azure.storage.tables._shared.models import ResourceTypes, AccountSasPermissions
+from pyparsing import basestring
+
 try:
     import unittest.mock as mock
 except ImportError:
@@ -153,7 +157,7 @@ class TableTestCase(AzureMgmtTestCase):
             if endpoint_type == "cosmos":
                 return "https://{}.table.cosmos.azure.com".format(account.name)
             else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
+                raise ValueError("Unknown storage type {}".format(endpoint_type))
         except AttributeError: # Didn't find "primary_endpoints"
             return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
 
