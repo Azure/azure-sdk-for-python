@@ -32,6 +32,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     @wrap_exceptions
