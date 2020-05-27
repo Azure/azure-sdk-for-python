@@ -2005,6 +2005,80 @@ class Deinterlace(Model):
         self.mode = mode
 
 
+class EdgePolicies(Model):
+    """EdgePolicies.
+
+    :param usage_data_collection_policy:
+    :type usage_data_collection_policy:
+     ~azure.mgmt.media.models.EdgeUsageDataCollectionPolicy
+    """
+
+    _attribute_map = {
+        'usage_data_collection_policy': {'key': 'usageDataCollectionPolicy', 'type': 'EdgeUsageDataCollectionPolicy'},
+    }
+
+    def __init__(self, *, usage_data_collection_policy=None, **kwargs) -> None:
+        super(EdgePolicies, self).__init__(**kwargs)
+        self.usage_data_collection_policy = usage_data_collection_policy
+
+
+class EdgeUsageDataCollectionPolicy(Model):
+    """EdgeUsageDataCollectionPolicy.
+
+    :param data_collection_frequency: Usage data collection frequency in ISO
+     8601 duration format e.g. PT10M , PT5H.
+    :type data_collection_frequency: str
+    :param data_reporting_frequency: Usage data reporting frequency in ISO
+     8601 duration format e.g. PT10M , PT5H.
+    :type data_reporting_frequency: str
+    :param max_allowed_unreported_usage_duration: Maximum time for which the
+     functionality of the device will not be hampered for not reporting the
+     usage data.
+    :type max_allowed_unreported_usage_duration: str
+    :param event_hub_details: Details of Event Hub where the usage will be
+     reported.
+    :type event_hub_details: ~azure.mgmt.media.models.EdgeUsageDataEventHub
+    """
+
+    _attribute_map = {
+        'data_collection_frequency': {'key': 'dataCollectionFrequency', 'type': 'str'},
+        'data_reporting_frequency': {'key': 'dataReportingFrequency', 'type': 'str'},
+        'max_allowed_unreported_usage_duration': {'key': 'maxAllowedUnreportedUsageDuration', 'type': 'str'},
+        'event_hub_details': {'key': 'eventHubDetails', 'type': 'EdgeUsageDataEventHub'},
+    }
+
+    def __init__(self, *, data_collection_frequency: str=None, data_reporting_frequency: str=None, max_allowed_unreported_usage_duration: str=None, event_hub_details=None, **kwargs) -> None:
+        super(EdgeUsageDataCollectionPolicy, self).__init__(**kwargs)
+        self.data_collection_frequency = data_collection_frequency
+        self.data_reporting_frequency = data_reporting_frequency
+        self.max_allowed_unreported_usage_duration = max_allowed_unreported_usage_duration
+        self.event_hub_details = event_hub_details
+
+
+class EdgeUsageDataEventHub(Model):
+    """EdgeUsageDataEventHub.
+
+    :param name: Name of the Event Hub where usage will be reported.
+    :type name: str
+    :param namespace: Namespace of the Event Hub where usage will be reported.
+    :type namespace: str
+    :param token: SAS token needed to interact with Event Hub.
+    :type token: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, namespace: str=None, token: str=None, **kwargs) -> None:
+        super(EdgeUsageDataEventHub, self).__init__(**kwargs)
+        self.name = name
+        self.namespace = namespace
+        self.token = token
+
+
 class EnabledProtocols(Model):
     """Class to specify which protocols are enabled.
 
@@ -3515,6 +3589,22 @@ class ListContentKeysResponse(Model):
     def __init__(self, *, content_keys=None, **kwargs) -> None:
         super(ListContentKeysResponse, self).__init__(**kwargs)
         self.content_keys = content_keys
+
+
+class ListEdgePoliciesInput(Model):
+    """ListEdgePoliciesInput.
+
+    :param device_id: Unique identifier of the edge device.
+    :type device_id: str
+    """
+
+    _attribute_map = {
+        'device_id': {'key': 'deviceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, device_id: str=None, **kwargs) -> None:
+        super(ListEdgePoliciesInput, self).__init__(**kwargs)
+        self.device_id = device_id
 
 
 class ListPathsResponse(Model):
