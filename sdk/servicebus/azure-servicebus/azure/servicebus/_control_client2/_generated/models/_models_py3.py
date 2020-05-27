@@ -291,7 +291,7 @@ class QueueProperties(msrest.serialization.Model):
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
-        'name': 'QueueProperties', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
