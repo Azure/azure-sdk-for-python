@@ -104,6 +104,24 @@ class ReleaseStats:
             row += 1
         return row if ws.cell(row, 1).value == d else None
 
+    def align_date_axis(self, long_matrix_name, short_matrix_name):
+        ws_long = self.wb[long_matrix_name]
+        ws_short = self.wb[short_matrix_name]
+
+        col_count = 1
+        while ws_short.cell(1, col_count+1).value:
+            col_count += 1
+        row_long, row_short = 2, 2
+        while ws_long.cell(row_long, 1).value:
+            if not ws_short.cell(row_short, 1).value or ws_long.cell(row_long, 1).value< ws_short.cell(row_short, 1).value:
+                ws_short.insert_rows(row_short)
+                ws_short.cell(row_short, 1, ws_long.cell(row_long, 1).value)
+            elif ws_long.cell(row_long, 1).value > ws_short.cell(row_short, 1).value:
+                row_long -= 1
+            row_short += 1
+            row_long += 1
+
+
     def gen_latest_sum(self, days, matrix_sheet_name, threshold):
         logging.info("Generating accumulate sum in {} days with threshold {}".format(
             days, threshold))
@@ -276,7 +294,9 @@ def build_release_stats(xls_file, threshold, start_date):
                     continue
                 stats.add_provider(
                     package_name, os.path.join(root, file), start_date)
+    stats.align_date_axis(SHEET_PACKAGE_MATRIX, SHEET_BREAKING_MATRIX)
     stats.gen_latest_sum(90, SHEET_BREAKING_MATRIX, threshold-1)
+    stats.gen_latest_sum(90, SHEET_PACKAGE_MATRIX, threshold-1)
     stats.gen_latest_sum(180, SHEET_BREAKING_MATRIX, threshold)
     stats.gen_pivot_table()
     stats.sum_matrix_sheets()
