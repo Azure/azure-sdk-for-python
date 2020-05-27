@@ -36,22 +36,21 @@ class TrainModelWithLabelsSampleAsync(object):
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     async def train_model_with_labels(self):
-        # [START create_form_training_client_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
         form_training_client = FormTrainingClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
-        # [END create_form_training_client_async]
-        async with form_training_client:
 
+        async with form_training_client:
             model = await form_training_client.train_model(self.container_sas_url, use_training_labels=True)
+
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Created on: {}".format(model.created_on))
-            print("Last modified: {}".format(model.last_modified))
+            print("Requested on: {}".format(model.requested_on))
+            print("Completed on: {}".format(model.completed_on))
 
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on

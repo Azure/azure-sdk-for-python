@@ -6,13 +6,14 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Any, TYPE_CHECKING, List
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler_async import BaseHandlerAsync
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from ._async_message import ReceivedMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
+class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -255,8 +256,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):

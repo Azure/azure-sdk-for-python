@@ -143,7 +143,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -207,7 +207,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )
@@ -338,8 +338,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.merchant_name.value, 'Bilbo Baggins')
         self.assertEqual(receipt.merchant_phone_number.value, '+15555555555')
         self.assertEqual(receipt.subtotal.value, 300.0)
-        # TODO: revert after service side fix
-        self.assertIsNotNone(receipt.total.value)
+        self.assertEqual(receipt.total.value, 100.0)
         self.assertEqual(receipt.page_range.first_page, 1)
         self.assertEqual(receipt.page_range.last_page, 1)
         self.assertFormPagesHasValues(receipt.pages)
@@ -373,7 +372,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         result = await client.recognize_receipts(
-            stream=myfile,
+            receipt=myfile,
             include_text_content=True,
             cls=callback
         )

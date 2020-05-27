@@ -5,7 +5,7 @@
 
 import pytest
 
-from azure.search.documents._index._generated.models import IndexAction
+from azure.search.documents.models import IndexAction
 
 from azure.search.documents import IndexDocumentsBatch
 

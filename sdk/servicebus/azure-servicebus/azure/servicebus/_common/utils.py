@@ -61,26 +61,6 @@ def utc_now():
     return datetime.datetime.now(tz=TZ_UTC)
 
 
-def get_running_loop():
-    try:
-        import asyncio  # pylint: disable=import-error
-        return asyncio.get_running_loop()
-    except AttributeError:  # 3.5 / 3.6
-        loop = None
-        try:
-            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
-        except AttributeError:
-            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
-        if loop is None:
-            _log.warning('No running event loop')
-            loop = asyncio.get_event_loop()
-        return loop
-    except RuntimeError:
-        # For backwards compatibility, create new event loop
-        _log.warning('No running event loop')
-        return asyncio.get_event_loop()
-
-
 def parse_conn_str(conn_str):
     endpoint = None
     shared_access_key_name = None

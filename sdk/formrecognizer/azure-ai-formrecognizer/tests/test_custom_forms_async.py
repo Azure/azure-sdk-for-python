@@ -22,25 +22,37 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            await client.recognize_custom_forms(model_id=None, form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            await client.recognize_custom_forms(model_id="", form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.recognize_custom_forms(model_id="xx", stream=myfile)
+            result = await client.recognize_custom_forms(model_id="xx", form=myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.recognize_custom_forms(model_id="xx", stream=b"xx", content_type="image/jpeg")
+            result = await client.recognize_custom_forms(model_id="xx", form=b"xx", content_type="image/jpeg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            result = await client.recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
+            result = await client.recognize_custom_forms(model_id="xx", form="https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -52,7 +64,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ValueError):
             poller = await client.recognize_custom_forms(
                 model_id="xxx",
-                stream=myfile,
+                form=myfile,
             )
 
     @GlobalFormRecognizerAccountPreparer()
@@ -60,7 +72,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with self.assertRaises(HttpResponseError):
             form = await fr_client.recognize_custom_forms(
@@ -73,7 +85,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -85,7 +97,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.label_data.text)
@@ -95,7 +106,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -111,7 +122,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.label_data.text)
@@ -133,7 +143,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
             self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.page_number)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -162,7 +171,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
                 self.assertIsNotNone(field.name)
-                self.assertIsNotNone(field.page_number)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.value_data.bounding_box)
 
@@ -172,7 +180,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 
@@ -208,7 +216,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 

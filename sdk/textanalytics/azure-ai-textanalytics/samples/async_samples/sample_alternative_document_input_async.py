@@ -51,7 +51,7 @@ class AlternativeDocumentInputSampleAsync(object):
                 print("Document text: {}".format(documents[idx]))
                 print("Language detected: {}".format(doc.primary_language.name))
                 print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-                print("Confidence score: {}\n".format(doc.primary_language.score))
+                print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
             if doc.is_error:
                 print(doc.id, doc.error)
 

@@ -4,12 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
+from uamqp import Source
 from .message import ReceivedMessage
 from .constants import (
-    NEXT_AVAILABLE, 
-    SESSION_FILTER, 
-    SESSION_LOCKED_UNTIL, 
-    DATETIMEOFFSET_EPOCH, 
+    NEXT_AVAILABLE,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
+    DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
     ReceiveSettleMode
 )
@@ -18,7 +19,6 @@ from ..exceptions import (
     SessionLockExpired
 )
 from .utils import utc_from_timestamp, utc_now
-from uamqp import Source
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -52,10 +52,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._entity_uri
 
     def _on_attach(self, source, target, properties, error):
-        return
+        pass
 
     def _populate_message_properties(self, message):
-        return
+        pass
 
 
 class SessionReceiverMixin(ReceiverMixin):

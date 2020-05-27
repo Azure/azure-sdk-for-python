@@ -234,12 +234,12 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 else:
                     await asyncio.sleep(retry_interval)
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.status_code == 416:
+                    resp = await self.pipeline.run(self.request, stream=True, headers=headers)
+                    if resp.http_response.status_code == 416:
                         raise
                     chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
-                        raise StopIteration()
+                        raise StopAsyncIteration()
                     self.downloaded += len(chunk)
                     return chunk
                 continue
@@ -299,3 +299,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :type pipeline: azure.core.pipeline
         """
         return AioHttpStreamDownloadGenerator(pipeline, self)
+
+    def __getstate__(self):
+        # Be sure body is loaded in memory, otherwise not pickable and let it throw
+        self.body()
+
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        from multidict import MultiDict  # I know it's importable since aiohttp is loaded
+        state['headers'] = MultiDict(self.headers)  # MultiDictProxy is not pickable
+        return state

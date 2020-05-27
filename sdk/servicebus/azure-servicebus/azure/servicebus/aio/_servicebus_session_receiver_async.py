@@ -5,8 +5,7 @@
 import logging
 from typing import Any, TYPE_CHECKING, List, Union
 
-from .._common.receiver_mixins import ReceiverMixin, SessionReceiverMixin
-from .._common.constants import ReceiveSettleMode
+from .._common.receiver_mixins import SessionReceiverMixin
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_async import ServiceBusSession
 
@@ -88,7 +87,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         cls,
         conn_str: str,
         **kwargs: Any
-    ) -> "ServiceBusReceiver":
+    ) -> "ServiceBusSessionReceiver":
         """Create a ServiceBusSessionReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -134,8 +133,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)
-
+        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore
 
     @property
     def session(self):

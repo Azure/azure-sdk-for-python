@@ -10,7 +10,7 @@
 FILE: sample_recognize_content_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and content information from a document
+    This sample demonstrates how to extract text and content information from a document
     given through a file.
 
 USAGE:
@@ -23,7 +23,6 @@ USAGE:
 
 import os
 import asyncio
-from pathlib import Path
 
 
 def format_bounding_box(bounding_box):
@@ -37,8 +36,7 @@ class RecognizeContentSampleAsync(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     async def recognize_content(self):
-        # the sample forms are located in this file's parent's parent's files.
-        path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Invoice_1.pdf")
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -47,7 +45,7 @@ class RecognizeContentSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                contents = await form_recognizer_client.recognize_content(stream=f.read())
+                contents = await form_recognizer_client.recognize_content(form=f.read())
 
             for idx, content in enumerate(contents):
                 print("----Recognizing content from page #{}----".format(idx))

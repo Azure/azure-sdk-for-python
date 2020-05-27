@@ -5,6 +5,10 @@
   optional keyword arguments `executor` or `loop`. Prior versions of the method
   didn't use these correctly, provoking exceptions, and internal changes in this
   version have made them obsolete.
+- The user authentication API added to `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` in 1.4.0b3 is available on
+  `UsernamePasswordCredential` as well.
+  ([#11449](https://github.com/Azure/azure-sdk-for-python/issues/11449))
 - The optional persistent cache for `DeviceCodeCredential` and
   `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
   macOS as well as Windows.
