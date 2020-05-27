@@ -634,7 +634,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
+        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.

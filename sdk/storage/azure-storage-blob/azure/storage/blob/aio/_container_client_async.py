@@ -510,7 +510,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> AsyncItemPaged[BlobProperties]
+        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> AsyncItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.

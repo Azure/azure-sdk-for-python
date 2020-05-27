@@ -41,10 +41,10 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    async def _create_block_blob(self, blob_tags=None, container_name=None):
+    async def _create_block_blob(self, tags=None, container_name=None):
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(container_name or self.container_name, blob_name)
-        resp = await blob_client.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True, blob_tags=blob_tags)
+        resp = await blob_client.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True, tags=tags)
         return blob_client, resp
 
     async def _create_empty_block_blob(self):
@@ -53,16 +53,16 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         resp = await blob_client.upload_blob(b'', length=0, overwrite=True)
         return blob_client, resp
 
-    async def _create_append_blob(self, blob_tags=None):
+    async def _create_append_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
-        resp = await blob_client.create_append_blob(blob_tags=blob_tags)
+        resp = await blob_client.create_append_blob(tags=tags)
         return blob_client, resp
 
-    async def _create_page_blob(self, blob_tags=None):
+    async def _create_page_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
-        resp = await blob_client.create_page_blob(blob_tags=blob_tags, size=512)
+        resp = await blob_client.create_page_blob(tags=tags, size=512)
         return blob_client, resp
 
     async def _create_container(self, prefix="container"):
@@ -82,8 +82,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         blob_client, _ = await self._create_block_blob()
 
         # Act
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        resp = await blob_client.set_blob_tags(blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        resp = await blob_client.set_blob_tags(tags)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -98,8 +98,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         # TODO: enable versionid for this account and test set tag for a version
 
         # Act
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        resp = await blob_client.set_blob_tags(blob_tags, version_id=resp['version_id'])
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        resp = await blob_client.set_blob_tags(tags, version_id=resp['version_id'])
 
         # Assert
         self.assertIsNotNone(resp)
@@ -111,8 +111,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         blob_client, resp = await self._create_block_blob()
 
         # Act
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        await blob_client.set_blob_tags(blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        await blob_client.set_blob_tags(tags)
 
         resp = await blob_client.get_blob_tags()
 
@@ -120,14 +120,14 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
         for key, value in resp.items():
-            self.assertEqual(blob_tags[key], value)
+            self.assertEqual(tags[key], value)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_tags_for_a_snapshot(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
-        blob_client, resp = await self._create_block_blob(blob_tags=blob_tags)
+        tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
+        blob_client, resp = await self._create_block_blob(tags=tags)
 
         snapshot = await blob_client.create_snapshot()
         snapshot_client = self.bsc.get_blob_client(self.container_name, blob_client.blob_name, snapshot=snapshot)
@@ -138,14 +138,14 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
         for key, value in resp.items():
-            self.assertEqual(blob_tags[key], value)
+            self.assertEqual(tags[key], value)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_upload_block_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        blob_client, resp = await self._create_block_blob(blob_tags=blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob_client, resp = await self._create_block_blob(tags=tags)
 
         resp = await blob_client.get_blob_tags()
 
@@ -157,23 +157,23 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_returns_tags_num(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        blob_client, resp = await self._create_block_blob(blob_tags=blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob_client, resp = await self._create_block_blob(tags=tags)
 
         resp = await blob_client.get_blob_properties()
         downloaded = await blob_client.download_blob()
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertEqual(resp.tag_count, len(blob_tags))
-        self.assertEqual(downloaded.properties.tag_count, len(blob_tags))
+        self.assertEqual(resp.tag_count, len(tags))
+        self.assertEqual(downloaded.properties.tag_count, len(tags))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_append_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
-        blob_client, resp = await self._create_append_blob(blob_tags=blob_tags)
+        tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
+        blob_client, resp = await self._create_append_blob(tags=tags)
 
         resp = await blob_client.get_blob_tags()
 
@@ -185,8 +185,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        blob_client, resp = await self._create_page_blob(blob_tags=blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob_client, resp = await self._create_page_blob(tags=tags)
 
         resp = await blob_client.get_blob_tags()
 
@@ -198,7 +198,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_commit_block_list_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_empty_block_blob()
 
         await blob_client.stage_block('1', b'AAA')
@@ -207,19 +207,19 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        await blob_client.commit_block_list(block_list, blob_tags=blob_tags)
+        await blob_client.commit_block_list(block_list, tags=tags)
 
         resp = await blob_client.get_blob_tags()
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertEqual(len(resp), len(blob_tags))
+        self.assertEqual(len(resp), len(tags))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_start_copy_from_url_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_block_blob()
 
         # Act
@@ -227,7 +227,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             self.account_url(storage_account, "blob"), self.container_name, blob_client.blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        copy = await copyblob.start_copy_from_url(sourceblob, blob_tags=blob_tags)
+        copy = await copyblob.start_copy_from_url(sourceblob, tags=tags)
 
         # Assert
         self.assertIsNotNone(copy)
@@ -242,22 +242,22 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertEqual(len(resp), len(blob_tags))
+        self.assertEqual(len(resp), len(tags))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_blobs_returns_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        await self._create_block_blob(blob_tags=blob_tags)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        await self._create_block_blob(tags=tags)
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs(include="tags")
 
         #Assert
         async for blob in blob_list:
-            self.assertEqual(blob.tag_count, len(blob_tags))
-            for key, value in blob.blob_tags.items():
-                self.assertEqual(blob_tags[key], value)
+            self.assertEqual(blob.tag_count, len(tags))
+            for key, value in blob.tags.items():
+                self.assertEqual(tags[key], value)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -267,11 +267,11 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         container_name2 = await self._create_container(prefix="container2")
         container_name3 = await self._create_container(prefix="container3")
 
-        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        await self._create_block_blob(blob_tags=blob_tags)
-        await self._create_block_blob(blob_tags=blob_tags, container_name=container_name1)
-        await self._create_block_blob(blob_tags=blob_tags, container_name=container_name2)
-        await self._create_block_blob(blob_tags=blob_tags, container_name=container_name3)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        await self._create_block_blob(tags=tags)
+        await self._create_block_blob(tags=tags, container_name=container_name1)
+        await self._create_block_blob(tags=tags, container_name=container_name2)
+        await self._create_block_blob(tags=tags, container_name=container_name3)
 
         where = "\"tag1\"='firsttag'"
         blob_list = self.bsc.filter_blobs(where=where, results_per_page=2).by_page()

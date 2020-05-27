@@ -488,9 +488,9 @@ class BlobProperties(DictMixin):
         Dictionary<policy_id, Dictionary<rule_id, status of replication(complete,failed)>
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
-    :ivar bool tag_count:
+    :ivar int tag_count:
         Tags count on this blob.
-    :ivar dict(str, str) blob_tags:
+    :ivar dict(str, str) tags:
         Key value pair of tags on this blob.
     """
 
@@ -527,7 +527,7 @@ class BlobProperties(DictMixin):
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
         self.tag_count = kwargs.get('x-ms-tag-count')
-        self.blob_tags = None
+        self.tags = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -558,11 +558,11 @@ class BlobProperties(DictMixin):
         blob.version_id = generated.version_id
         blob.is_current_version = generated.is_current_version
         blob.tag_count = generated.properties.tag_count
-        blob.blob_tags = blob._parse_tags(generated.blob_tags)  # pylint: disable=protected-access
+        blob.tags = blob._parse_tags(generated.blob_tags)  # pylint: disable=protected-access
         return blob
 
-    @classmethod
-    def _parse_tags(cls, generated_tags):
+    @staticmethod
+    def _parse_tags(generated_tags):
         # type: (Optional[List[BlobTag]]) -> Union[Dict[str, str], None]
         """Deserialize a list of BlobTag objects into a dict.
         """
@@ -684,7 +684,7 @@ class FilteredBlobPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
+    :vartype current_page: list(~azure.storage.blob.FilteredBlob)
     :ivar str container: The container that the blobs are listed from.
 
     :param callable command: Function to retrieve the next page of items.
