@@ -5,6 +5,12 @@
   optional keyword arguments `executor` or `loop`. Prior versions of the method
   didn't use these correctly, provoking exceptions, and internal changes in this
   version have made them obsolete.
+- When constructing `DefaultAzureCredential`, you can now configure a tenant ID
+  for `InteractiveBrowserCredential`. When none is specified, the credential
+  authenticates users in their home tenants. To specify a different tenant, use
+  the keyword argument `interactive_browser_tenant_id`, or set the environment
+  variable `AZURE_TENANT_ID`.
+  ([#11548](https://github.com/Azure/azure-sdk-for-python/issues/11548))
 - The user authentication API added to `DeviceCodeCredential` and
   `InteractiveBrowserCredential` in 1.4.0b3 is available on
   `UsernamePasswordCredential` as well.
