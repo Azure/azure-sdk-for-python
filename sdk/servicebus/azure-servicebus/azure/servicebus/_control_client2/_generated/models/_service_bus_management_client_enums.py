@@ -8,6 +8,14 @@
 
 from enum import Enum
 
+class AccessRights(str, Enum):
+    """Access rights of the entity
+    """
+
+    manage = "Manage"
+    send = "Send"
+    listen = "Listen"
+
 class EntityAvailabilityStatus(str, Enum):
     """Availibility status of the entity
     """

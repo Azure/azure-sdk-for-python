@@ -14,6 +14,50 @@ import msrest.serialization
 from ._service_bus_management_client_enums import *
 
 
+class AuthorizationRule(msrest.serialization.Model):
+    """Authorization rule of an entity.
+
+    :param claim_type:
+    :type claim_type: str
+    :param created_time:
+    :type created_time: ~datetime.datetime
+    :param key_name:
+    :type key_name: str
+    :param modified_time:
+    :type modified_time: ~datetime.datetime
+    :param rights: Access rights of the entity.
+    :type rights: list[str]
+    """
+
+    _attribute_map = {
+        'claim_type': {'key': 'ClaimType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'key_name': {'key': 'KeyName', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'rights': {'key': 'Rights', 'type': '[str]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+    _xml_map = {
+        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        *,
+        claim_type: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        key_name: Optional[str] = None,
+        modified_time: Optional[datetime.datetime] = None,
+        rights: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.claim_type = claim_type
+        self.created_time = created_time
+        self.key_name = key_name
+        self.modified_time = modified_time
+        self.rights = rights
+
+
 class CreateEntityBody(msrest.serialization.Model):
     """The response from a CreateQueue operation.
 
@@ -173,7 +217,7 @@ class QueueProperties(msrest.serialization.Model):
     :param queue_name: Name of the queue.
     :type queue_name: str
     :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules: list[str]
+    :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
@@ -228,7 +272,7 @@ class QueueProperties(msrest.serialization.Model):
 
     _attribute_map = {
         'queue_name': {'key': 'QueueName', 'type': 'str'},
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[str]', 'xml': {'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -247,14 +291,14 @@ class QueueProperties(msrest.serialization.Model):
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
-        'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'QueueProperties', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
         self,
         *,
         queue_name: Optional[str] = None,
-        authorization_rules: Optional[List[str]] = None,
+        authorization_rules: Optional[List["AuthorizationRule"]] = None,
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[datetime.timedelta] = None,

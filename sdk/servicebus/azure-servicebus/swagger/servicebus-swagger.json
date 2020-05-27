@@ -139,6 +139,15 @@
         "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
       }
     },
+    "AccessRights": {
+      "description": "Access rights of the entity",
+      "type": "string",
+      "enum": [
+        "Manage",
+        "Send",
+        "Listen"
+      ]
+    },
     "EntityAvailabilityStatus": {
       "description": "Availibility status of the entity",
       "type": "string",
@@ -224,11 +233,61 @@
         }
       }
     },
+    "AuthorizationRule": {
+      "description": "Authorization rule of an entity",
+      "type": "object",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "ClaimType":{
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedTime":{
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "KeyName":{
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "ModifiedTime":{
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Rights": {
+          "description": "Access rights of the entity",
+          "type": "array",
+          "xml": {
+            "wrapped": true,
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          },
+          "items": {
+            "type": "string",
+            "xml": {
+              "name": "AccessRights",
+              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            }
+          }
+        }
+      }
+    },
     "QueueProperties": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
       "xml": {
-        "name": "QueueDescription",
+        "name": "QueueProperties",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -239,8 +298,12 @@
         "AuthorizationRules": {
           "description": "Authorization rules for resource.",
           "type": "array",
+          "xml": {
+            "wrapped": true,
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          },
           "items": {
-            "type": "string",
+            "$ref": "#/definitions/AuthorizationRule",
             "xml": {
               "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
             }

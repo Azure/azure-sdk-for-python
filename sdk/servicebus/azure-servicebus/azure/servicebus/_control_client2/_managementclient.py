@@ -102,8 +102,6 @@ class ServiceBusManagementClient:
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueMetrics.deserialize(qc_ele)
-        for e in qc_ele:
-            print(e)
         qc.queue_name = queue_name
         return qc
 

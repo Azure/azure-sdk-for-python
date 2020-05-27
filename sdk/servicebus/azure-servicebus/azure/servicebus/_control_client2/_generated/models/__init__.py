@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AuthorizationRule
     from ._models_py3 import CreateEntityBody
     from ._models_py3 import CreateEntityBodyContent
     from ._models_py3 import MessageCountDetails
     from ._models_py3 import QueueMetrics
     from ._models_py3 import QueueProperties
 except (SyntaxError, ImportError):
+    from ._models import AuthorizationRule  # type: ignore
     from ._models import CreateEntityBody  # type: ignore
     from ._models import CreateEntityBodyContent  # type: ignore
     from ._models import MessageCountDetails  # type: ignore
@@ -20,16 +22,19 @@ except (SyntaxError, ImportError):
     from ._models import QueueProperties  # type: ignore
 
 from ._service_bus_management_client_enums import (
+    AccessRights,
     EntityAvailabilityStatus,
     EntityStatus,
 )
 
 __all__ = [
+    'AuthorizationRule',
     'CreateEntityBody',
     'CreateEntityBodyContent',
     'MessageCountDetails',
     'QueueMetrics',
     'QueueProperties',
+    'AccessRights',
     'EntityAvailabilityStatus',
     'EntityStatus',
 ]
