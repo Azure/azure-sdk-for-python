@@ -33,6 +33,40 @@ class ProvisioningState(str, Enum):
     moving = "Moving"
 
 
+class PrivateLinkServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class ServiceKind(str, Enum):
+
+    signal_r = "SignalR"
+    raw_web_sockets = "RawWebSockets"
+
+
+class FeatureFlags(str, Enum):
+
+    service_mode = "ServiceMode"
+    enable_connectivity_logs = "EnableConnectivityLogs"
+    enable_messaging_logs = "EnableMessagingLogs"
+
+
+class ACLAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class SignalRRequestType(str, Enum):
+
+    client_connection = "ClientConnection"
+    server_connection = "ServerConnection"
+    restapi = "RESTAPI"
+
+
 class KeyType(str, Enum):
 
     primary = "Primary"
