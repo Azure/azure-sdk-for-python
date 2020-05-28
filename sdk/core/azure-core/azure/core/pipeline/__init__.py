@@ -91,7 +91,7 @@ class PipelineContext(dict):
         dict_reduced_result = list(reduced[1])
         dict_reduced_result[2] = saved_context
         reduced[1] = tuple(dict_reduced_result)
-       return tuple(reduced)
+        return tuple(reduced)
 
     def __setstate__(self, state):
         self.__dict__.update(state)
