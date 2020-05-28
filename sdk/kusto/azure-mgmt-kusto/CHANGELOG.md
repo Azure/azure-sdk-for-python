@@ -4,7 +4,7 @@
 
 **Bugfixes**
 
-- The type of parameter is_followed is changed from bool to string
+- The type of parameter is_followed is changed from string to bool
 
 ## 0.7.0 (2020-03-20)
 
