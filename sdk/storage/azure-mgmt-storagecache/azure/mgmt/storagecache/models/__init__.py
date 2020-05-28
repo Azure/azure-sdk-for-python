@@ -12,6 +12,7 @@
 try:
     from ._models_py3 import ApiOperation
     from ._models_py3 import ApiOperationDisplay
+    from ._models_py3 import AscOperation
     from ._models_py3 import Cache
     from ._models_py3 import CacheEncryptionSettings
     from ._models_py3 import CacheHealth
@@ -23,6 +24,7 @@ try:
     from ._models_py3 import ClfsTarget
     from ._models_py3 import ClfsTargetProperties
     from ._models_py3 import CloudErrorBody
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import KeyVaultKeyReference
     from ._models_py3 import KeyVaultKeyReferenceSourceVault
     from ._models_py3 import NamespaceJunction
@@ -42,6 +44,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ApiOperation
     from ._models import ApiOperationDisplay
+    from ._models import AscOperation
     from ._models import Cache
     from ._models import CacheEncryptionSettings
     from ._models import CacheHealth
@@ -53,6 +56,7 @@ except (SyntaxError, ImportError):
     from ._models import ClfsTarget
     from ._models import ClfsTargetProperties
     from ._models import CloudErrorBody
+    from ._models import ErrorResponse
     from ._models import KeyVaultKeyReference
     from ._models import KeyVaultKeyReferenceSourceVault
     from ._models import NamespaceJunction
@@ -86,6 +90,7 @@ from ._storage_cache_management_client_enums import (
 __all__ = [
     'ApiOperation',
     'ApiOperationDisplay',
+    'AscOperation',
     'Cache',
     'CacheEncryptionSettings',
     'CacheHealth',
@@ -97,6 +102,7 @@ __all__ = [
     'ClfsTarget',
     'ClfsTargetProperties',
     'CloudErrorBody',
+    'ErrorResponse',
     'KeyVaultKeyReference',
     'KeyVaultKeyReferenceSourceVault',
     'NamespaceJunction',

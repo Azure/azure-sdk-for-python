@@ -58,6 +58,42 @@ class ApiOperationDisplay(Model):
         self.resource = resource
 
 
+class AscOperation(Model):
+    """The status of operation.
+
+    :param id: The operation Id.
+    :type id: str
+    :param name: The operation name.
+    :type name: str
+    :param start_time: The start time of the operation.
+    :type start_time: str
+    :param end_time: The end time of the operation.
+    :type end_time: str
+    :param status: The status of the operation.
+    :type status: str
+    :param error: The error detail of the operation if any.
+    :type error: ~azure.mgmt.storagecache.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, start_time: str=None, end_time: str=None, status: str=None, error=None, **kwargs) -> None:
+        super(AscOperation, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.start_time = start_time
+        self.end_time = end_time
+        self.status = status
+        self.error = error
+
+
 class Cache(Model):
     """A Cache instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
@@ -517,6 +553,26 @@ class CloudErrorBody(Model):
         self.details = details
         self.message = message
         self.target = target
+
+
+class ErrorResponse(Model):
+    """Describes the format of Error response.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class KeyVaultKeyReference(Model):
