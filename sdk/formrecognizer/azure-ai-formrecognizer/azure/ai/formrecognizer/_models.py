@@ -579,6 +579,8 @@ class USReceiptItem(object):
 class FormTable(object):
     """Information about the extracted table contained on a page.
 
+    :ivar int page_number:
+        The 1-based number of the page in which this table is present.
     :ivar list[~azure.ai.formrecognizer.FormTableCell] cells:
         List of cells contained in the table.
     :ivar int row_count:
@@ -588,13 +590,14 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
+        self.page_number = kwargs.get("page_number", None)
         self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
     def __repr__(self):
-        return "FormTable(cells={}, row_count={}, column_count={})".format(
-            repr(self.cells), self.row_count, self.column_count
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})".format(
+            self.page_number, repr(self.cells), self.row_count, self.column_count
         )[:1024]
 
 

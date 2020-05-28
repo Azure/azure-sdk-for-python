@@ -53,8 +53,8 @@ def form_table_cell(bounding_box, form_word):
 
 @pytest.fixture
 def form_table(form_table_cell):
-    model = _models.FormTable(cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4)
-    model_repr = "FormTable(cells=[{}, {}], row_count=3, column_count=4)".format(form_table_cell[1], form_table_cell[1])[:1024]
+    model = _models.FormTable(page_number=1, cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4)
+    model_repr = "FormTable(page_number=1, cells=[{}, {}], row_count=3, column_count=4)".format(form_table_cell[1], form_table_cell[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
