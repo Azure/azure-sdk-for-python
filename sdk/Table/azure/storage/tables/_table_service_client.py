@@ -78,7 +78,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         response = self._client.table.delete(table=table_name)
         return response
 
-    def query_table_entities(self, table_name):
+    def query_table(self, table_name):
         response = self._client.table.query_entities(table_name=table_name)
         return response
 

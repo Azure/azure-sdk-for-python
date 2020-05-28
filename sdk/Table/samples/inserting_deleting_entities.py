@@ -21,12 +21,14 @@ class InsertDeleteEntity(object):
 
         from azure.storage.tables import TableServiceClient
         from azure.storage.tables._generated.operations._service_operations import HttpResponseError
+        from azure.storage.tables._generated.operations._service_operations import ResourceExistsError
         table_client = TableServiceClient(account_url=self.account_url,credential=self.credential)
         try:
             inserted_entity = table_client.insert_entity(table_name=self.table_name)
-        except HttpResponseError as e:
-            print(e.response)
-        return inserted_entity
+            print(inserted_entity)
+        except HttpResponseError and ResourceExistsError:
+            raise ResourceExistsError
+            print(HttpResponseError.response)
 
     def delete_entity(self):
         """Deletes the specified entity in a table.
@@ -49,9 +51,11 @@ class InsertDeleteEntity(object):
 
         from azure.storage.tables import TableServiceClient
         from azure.storage.tables._generated.operations._service_operations import HttpResponseError
+        from azure.storage.tables._generated.operations._service_operations import ResourceNotFoundError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.credential)
         try:
             deleted_entity = table_client.delete_entity(table_name=self.table_name)
-        except HttpResponseError as e:
-            print(e.response)
-        return deleted_entity
+            print(deleted_entity)
+        except HttpResponseError and ResourceNotFoundError:
+            raise ResourceNotFoundError
+            print(HttpResponseError.response)
