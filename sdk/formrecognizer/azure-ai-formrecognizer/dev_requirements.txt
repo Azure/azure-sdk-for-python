@@ -1,7 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
 -e ../../cognitiveservices/azure-mgmt-cognitiveservices
-git+https://github.com/Azure/azure-sdk-for-python@pipeline_context_whitelist#subdirectory=sdk/core/azure-core&egg=azure-core
+../../core/azure-core
 -e ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.5'
 msrest>=0.6.12
