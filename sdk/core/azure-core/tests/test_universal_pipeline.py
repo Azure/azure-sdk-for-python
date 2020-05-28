@@ -25,6 +25,7 @@
 #
 #--------------------------------------------------------------------------
 import logging
+import pickle
 try:
     from unittest import mock
 except ImportError:
@@ -55,6 +56,37 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
+
+def test_pipeline_context():
+    kwargs={
+        'stream':True,
+        'cont_token':"bla"
+    }
+    context = PipelineContext('transport', **kwargs)
+    context['foo'] = 'bar'
+    context['xyz'] = '123'
+    context['deserialized_data'] = 'marvelous'
+
+    assert context['foo'] == 'bar'
+    assert context.options == kwargs
+
+    with pytest.raises(TypeError):
+        context.clear()
+
+    with pytest.raises(TypeError):
+        context.update({})
+
+    assert context.pop('foo') == 'bar'
+    assert 'foo' not in context
+
+    serialized = pickle.dumps(context)
+
+    revived_context = pickle.loads(serialized)
+    assert revived_context.options == kwargs
+    assert revived_context.transport is None
+    assert 'deserialized_data' in revived_context
+    assert len(revived_context) == 1
+
 
 def test_request_history():
     class Non_deep_copiable(object):
