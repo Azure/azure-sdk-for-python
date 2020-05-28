@@ -4,8 +4,8 @@
 
 **Breaking Changes**
 
-- All asynchronous long running methods now return an instance of a `AsyncLROPoller` from `azure-core`
-- All asynchronous long running methods are renamed with the `begin_` prefix to indicate that a `AsyncLROPoller` is returned:
+- All asynchronous long running operation methods now return an instance of an `AsyncLROPoller` from `azure-core`
+- All asynchronous long running operation methods are renamed with the `begin_` prefix to indicate that an `AsyncLROPoller` is returned:
     - `train_model` is renamed to `begin_training`
     - `recognize_receipts` is renamed to `begin_recognize_receipts`
     - `recognize_receipts_from_url` is renamed to `begin_recognize_receipts_from_url`
@@ -13,7 +13,7 @@
     - `recognize_content_from_url` is renamed to `begin_recognize_content_from_url`
     - `recognize_custom_forms` is renamed to `begin_recognize_custom_forms`
     - `recognize_custom_forms_from_url` is renamed to `begin_recognize_custom_forms_from_url`
-- All long running operations now accept the keyword argument `continuation_token` to restart the poller from a saved state
+- All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 - Sync method `begin_train_model` renamed to `begin_training`
 - `training_files` parameter of `begin_training` is renamed to `training_files_url`
 - `use_labels` parameter of `begin_training` is renamed to `use_training_labels`
@@ -35,6 +35,10 @@
 - Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+
+**Dependency updates**
+
+- Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.6.0 or greater
 
 ## 1.0.0b2 (2020-05-06)
 
