@@ -23,9 +23,7 @@ from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
-    TOKEN_TYPE_SASTOKEN,
-    DEAD_LETTER_QUEUE_SUFFIX,
-    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
+    TOKEN_TYPE_SASTOKEN
 )
 
 _log = logging.getLogger(__name__)
