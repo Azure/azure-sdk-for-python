@@ -92,3 +92,36 @@ class AnalyzePolling(OperationResourcePolling):
                 if errors:
                     raise_error(response, errors, message="")
         return status
+
+
+class CopyPolling(OperationResourcePolling):
+    """Polling method overrides for copy endpoint.
+
+    """
+
+    def get_status(self, pipeline_response):  # pylint: disable=no-self-use
+        # type: (PipelineResponse) -> str
+        """Process the latest status update retrieved from an "Operation-Location" header.
+        Raise errors for issues occurring during the copy model operation.
+
+        :param azure.core.pipeline.PipelineResponse pipeline_response: The response to extract the status.
+        :raises: BadResponse if response has no body, or body does not contain status.
+            HttpResponseError if there is an error with the input document.
+        """
+        response = pipeline_response.http_response
+        if _is_empty(response):
+            raise BadResponse(
+                "The response from long running operation does not contain a body."
+            )
+
+        body = _as_json(response)
+        status = body.get("status")
+        if not status:
+            raise BadResponse("No status found in body")
+        if status.lower() == "failed":
+            copy_result = body.get("copyResult")
+            if copy_result:
+                errors = copy_result.get("errors")
+                if errors:
+                    raise_error(response, errors, message="")
+        return status

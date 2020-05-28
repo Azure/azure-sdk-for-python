@@ -65,8 +65,8 @@ class ManageCustomModelsSampleAsync(object):
             custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
             print("Model ID: {}".format(custom_model.model_id))
             print("Status: {}".format(custom_model.status))
-            print("Created on: {}".format(custom_model.created_on))
-            print("Last modified: {}".format(custom_model.last_modified))
+            print("Requested on: {}".format(custom_model.requested_on))
+            print("Completed on: {}".format(custom_model.completed_on))
             # [END get_custom_model_async]
 
             # Finally, we will delete this model by ID

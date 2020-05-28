@@ -63,6 +63,15 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_text_document_input(self, client):
@@ -80,6 +89,15 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
+
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -120,6 +138,18 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    async def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            await client.analyze_sentiment(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -451,7 +481,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         try:
             result = await client.analyze_sentiment(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -472,6 +502,19 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertIsNotNone(doc_errors[1].error.message)
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_document_warnings(self, client):
+        # No warnings actually returned for analyze_sentiment. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = await client.analyze_sentiment(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

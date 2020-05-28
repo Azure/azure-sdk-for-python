@@ -69,8 +69,21 @@ class PipelineContext(dict):
         self.options = kwargs
         self._protected = ["transport", "options"]
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['transport']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self.transport = None
+
     def __setitem__(self, key, item):
-        if key in self._protected:
+        # If reloaded from pickle, _protected might not be here until restored by pickle
+        # this explains the hasattr test
+        if hasattr(self, '_protected') and key in self._protected:
             raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 

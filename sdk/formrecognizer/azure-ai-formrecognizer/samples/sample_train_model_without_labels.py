@@ -40,14 +40,14 @@ class TrainModelWithoutLabelsSample(object):
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
 
         # Default for begin_train_model is `use_training_labels=False`
-        poller = form_training_client.begin_train_model(self.container_sas_url)
+        poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
-        print("Created on: {}".format(model.created_on))
-        print("Last modified: {}".format(model.last_modified))
+        print("Requested on: {}".format(model.requested_on))
+        print("Completed on: {}".format(model.completed_on))
 
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on

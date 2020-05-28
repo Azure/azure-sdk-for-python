@@ -1,6 +1,19 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `InteractiveBrowserCredential` raises `CredentialUnavailableError` when it
+  can't start an HTTP server on `localhost`.
+  ([#11665](https://github.com/Azure/azure-sdk-for-python/pull/11665))
+- When constructing `DefaultAzureCredential`, you can now configure a tenant ID
+  for `InteractiveBrowserCredential`. When none is specified, the credential
+  authenticates users in their home tenants. To specify a different tenant, use
+  the keyword argument `interactive_browser_tenant_id`, or set the environment
+  variable `AZURE_TENANT_ID`.
+  ([#11548](https://github.com/Azure/azure-sdk-for-python/issues/11548))
+- The user authentication API added to `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` in 1.4.0b3 is available on
+  `UsernamePasswordCredential` as well.
+  ([#11449](https://github.com/Azure/azure-sdk-for-python/issues/11449))
 - The optional persistent cache for `DeviceCodeCredential` and
   `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
   macOS as well as Windows.

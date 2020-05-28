@@ -14,7 +14,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -57,7 +57,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/a4f17142-743a-4052-ba45-8b09bc57ba33?api-version=2020-03-01
   response:
@@ -104,7 +104,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -153,7 +153,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -200,7 +200,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -251,7 +251,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -302,7 +302,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
@@ -355,7 +355,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -398,7 +398,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.1 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-1495797e-f9af-436d-ad44-ec39195f19a5?api-version=2020-03-01
   response:

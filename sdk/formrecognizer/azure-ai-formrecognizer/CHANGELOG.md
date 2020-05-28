@@ -14,13 +14,15 @@
 - `FormField` does not have a page_number.
 - `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
 - `USReceiptType` is renamed to `ReceiptType`
+- `use_training_labels` is now a required positional param in the `begin_training` APIs.
 - `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively.
-For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
-
-
+- For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
+- `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the
+`CustomFormModel`  and `CustomFormModelInfo` models.
 
 **New features**
 
+- Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
 
