@@ -142,3 +142,16 @@ class StorageInsightPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(StorageInsightPaged, self).__init__(*args, **kwargs)
+class TablePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Table <azure.mgmt.loganalytics.models.Table>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Table]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TablePaged, self).__init__(*args, **kwargs)
