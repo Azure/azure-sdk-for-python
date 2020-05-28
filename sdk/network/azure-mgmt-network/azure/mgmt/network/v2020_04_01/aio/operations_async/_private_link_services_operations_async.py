@@ -741,23 +741,12 @@ class PrivateLinkServicesOperations:
         )
     list_private_endpoint_connections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections'}  # type: ignore
 
-    async def check_private_link_service_visibility(
+    async def _check_private_link_service_visibility_initial(
         self,
         location: str,
         parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
         **kwargs
     ) -> "models.PrivateLinkServiceVisibility":
-        """Checks whether the subscription is visible to private link service.
-
-        :param location: The location of the domain name.
-        :type location: str
-        :param parameters: The request body of CheckPrivateLinkService API call.
-        :type parameters: ~azure.mgmt.network.v2020_04_01.models.CheckPrivateLinkServiceVisibilityRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkServiceVisibility, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_04_01.models.PrivateLinkServiceVisibility
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
@@ -765,7 +754,7 @@ class PrivateLinkServicesOperations:
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.check_private_link_service_visibility.metadata['url']  # type: ignore
+        url = self._check_private_link_service_visibility_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
@@ -790,38 +779,77 @@ class PrivateLinkServicesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+    _check_private_link_service_visibility_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}  # type: ignore
+
+    async def check_private_link_service_visibility(
+        self,
+        location: str,
+        parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
+        **kwargs
+    ) -> "models.PrivateLinkServiceVisibility":
+        """Checks whether the subscription is visible to private link service.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param parameters: The request body of CheckPrivateLinkService API call.
+        :type parameters: ~azure.mgmt.network.v2020_04_01.models.CheckPrivateLinkServiceVisibilityRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: PrivateLinkServiceVisibility, or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2020_04_01.models.PrivateLinkServiceVisibility
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        raw_result = await self._check_private_link_service_visibility_initial(
+            location=location,
+            parameters=parameters,
+            cls=lambda x,y,z: x,
+            **kwargs
+        )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     check_private_link_service_visibility.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}  # type: ignore
 
-    async def check_private_link_service_visibility_by_resource_group(
+    async def _check_private_link_service_visibility_by_resource_group_initial(
         self,
         location: str,
         resource_group_name: str,
         parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
         **kwargs
     ) -> "models.PrivateLinkServiceVisibility":
-        """Checks whether the subscription is visible to private link service in the specified resource group.
-
-        :param location: The location of the domain name.
-        :type location: str
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param parameters: The request body of CheckPrivateLinkService API call.
-        :type parameters: ~azure.mgmt.network.v2020_04_01.models.CheckPrivateLinkServiceVisibilityRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkServiceVisibility, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_04_01.models.PrivateLinkServiceVisibility
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
@@ -829,7 +857,7 @@ class PrivateLinkServicesOperations:
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.check_private_link_service_visibility_by_resource_group.metadata['url']  # type: ignore
+        url = self._check_private_link_service_visibility_by_resource_group_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -855,16 +883,72 @@ class PrivateLinkServicesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+    _check_private_link_service_visibility_by_resource_group_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}  # type: ignore
+
+    async def check_private_link_service_visibility_by_resource_group(
+        self,
+        location: str,
+        resource_group_name: str,
+        parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
+        **kwargs
+    ) -> "models.PrivateLinkServiceVisibility":
+        """Checks whether the subscription is visible to private link service in the specified resource group.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param parameters: The request body of CheckPrivateLinkService API call.
+        :type parameters: ~azure.mgmt.network.v2020_04_01.models.CheckPrivateLinkServiceVisibilityRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: PrivateLinkServiceVisibility, or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2020_04_01.models.PrivateLinkServiceVisibility
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        raw_result = await self._check_private_link_service_visibility_by_resource_group_initial(
+            location=location,
+            resource_group_name=resource_group_name,
+            parameters=parameters,
+            cls=lambda x,y,z: x,
+            **kwargs
+        )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     check_private_link_service_visibility_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}  # type: ignore
 
     def list_auto_approved_private_link_services(

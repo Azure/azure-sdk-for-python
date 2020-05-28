@@ -297,18 +297,22 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # /PrivateEndpoints/get/List all private endpoints[get]
         result = self.mgmt_client.private_endpoints.list_by_subscription()
 
-        # /PrivateLinkServices/post/Check private link service visibility[post]
+        # /PrivateLinkServices/post/Check private link service visibility by resource group[post]
         BODY = {
           "private_link_service_alias": "mypls.00000000-0000-0000-0000-000000000000.azure.privatelinkservice"
         }
         # [ZIM] SDK fails for some reason here
-        # result = self.mgmt_client.private_link_services.check_private_link_service_visibility_by_resource_group(resource_group_name=RESOURCE_GROUP, location=LOCATION, parameters=BODY)
+        # [Kaihui] Tested as long running operation
+        result = self.mgmt_client.private_link_services.begin_check_private_link_service_visibility_by_resource_group(resource_group_name=RESOURCE_GROUP, location=LOCATION, parameters=BODY)
+        result = result.result()
 
-        # # /PrivateLinkServices/post/Check private link service visibility[post]
-        # BODY = {
-        #   "private_link_service_alias": "mypls.00000000-0000-0000-0000-000000000000.azure.privatelinkservice"
-        # }
-        # result = self.mgmt_client.private_link_services.check_private_link_service_visibility_by_resource_group(resource_group_name=RESOURCE_GROUP, location=LOCATION, parameters=BODY)
+        # /PrivateLinkServices/post/Check private link service visibility[post]
+        BODY = {
+          "private_link_service_alias": "mypls.00000000-0000-0000-0000-000000000000.azure.privatelinkservice"
+        }
+        # [Kaihui] Tested as long running operation
+        result = self.mgmt_client.private_link_services.begin_check_private_link_service_visibility(location=LOCATION, parameters=BODY)
+        result = result.result()
 
         # /PrivateDnsZoneGroups/delete/Delete private dns zone group[delete]
         result = self.mgmt_client.private_dns_zone_groups.begin_delete(resource_group_name=RESOURCE_GROUP, private_endpoint_name=PRIVATE_ENDPOINT_NAME, private_dns_zone_group_name=PRIVATE_DNS_ZONE_GROUP_NAME)
