@@ -25,16 +25,20 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient, DataSource, DataContainer, DataSourceCredentials
+from azure.search.documents.indexes import SearchIndexerClient
+from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
-client = service_client.get_datasources_client()
+client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
 def create_data_source():
     # [START create_data_source]
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    data_source = DataSource(name="sample-datasource", type="azureblob", credentials=credentials, container=container)
+    container = SearchIndexerDataContainer(name='searchcontainer')
+    data_source = SearchIndexerDataSourceConnection(
+        name="sample-datasource",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container
+    )
     result = client.create_datasource(data_source)
     print(result)
     print("Create new Data Source - sample-datasource")

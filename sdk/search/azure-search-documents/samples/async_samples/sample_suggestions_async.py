@@ -32,7 +32,7 @@ async def suggest_query():
     # [START suggest_query_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
-    from azure.search.documents import SuggestQuery
+    from azure.search.documents.models import SuggestQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
