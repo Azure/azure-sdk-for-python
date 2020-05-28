@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._queue_operations_async import QueueOperations
+from ._queues_operations_async import QueuesOperations
 
 __all__ = [
     'QueueOperations',
+    'QueuesOperations',
 ]

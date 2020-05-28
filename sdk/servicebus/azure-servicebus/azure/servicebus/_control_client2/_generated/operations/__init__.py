@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._queue_operations import QueueOperations
+from ._queues_operations import QueuesOperations
 
 __all__ = [
     'QueueOperations',
+    'QueuesOperations',
 ]

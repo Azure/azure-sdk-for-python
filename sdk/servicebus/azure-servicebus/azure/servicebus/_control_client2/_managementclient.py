@@ -1,5 +1,5 @@
 import inspect
-from typing import TYPE_CHECKING, Dict, Any, Union
+from typing import TYPE_CHECKING, Dict, Any, Union, List
 
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
@@ -87,7 +87,7 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
-    def get_queue_properties(self, queue_name):
+    def get_queue(self, queue_name):
         # type: (str) -> QueueProperties
         et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
@@ -106,7 +106,7 @@ class ServiceBusManagementClient:
         return qc
 
     def create_queue(self, queue_name, queue_description=QueueProperties()):
-        # type: (str, "QueueDescription") -> QueueProperties
+        # type: (str, "QueueProperties") -> QueueProperties
         """Create a queue"""
         create_entity_body = CreateEntityBody(
             content=CreateEntityBodyContent(
@@ -118,9 +118,40 @@ class ServiceBusManagementClient:
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueProperties.deserialize(qc_ele)
+        qc.queue_name = queue_name
+        return qc
+
+    def update_queue(self, queue_name, queue_description=QueueProperties()):
+        # type: (str, "QueueProperties") -> QueueProperties
+        """Update a queue"""
+        create_entity_body = CreateEntityBody(
+            content=CreateEntityBodyContent(
+                entity=queue_description
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        et = self._impl.queue.create(queue_name, request_body, headers={"If-Match": "*"})
+        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        qc_ele = content_ele.find(
+            "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc = QueueProperties.deserialize(qc_ele)
+        qc.queue_name = queue_name
         return qc
 
     def delete_queue(self, queue_name):
         # type: (str) -> None
         """Create a queue"""
-        et = self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+        self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+
+    def list_queues(self, skip=0, max_count=100):
+        # type: (int, int) -> List[QueueProperties]
+        et = self._impl.queues.get(skip=skip, top=max_count, api_version=constants.API_VERSION)
+        entries = et.findall("{http://www.w3.org/2005/Atom}entry")
+        queue_properties = []
+        for entry in entries:
+            entity_name = et.find("{http://www.w3.org/2005/Atom}title").text
+            qc_ele = entry.find("{http://www.w3.org/2005/Atom}content").find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+            queue_property = QueueProperties.deserialize(qc_ele)
+            queue_property.queue_name = entity_name
+            queue_properties.append(queue_property)
+        return queue_properties

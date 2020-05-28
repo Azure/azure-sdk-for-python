@@ -487,6 +487,12 @@
             "schema": {
               "type": "object"
             }
+          },
+          "200": {
+            "description": "Update -- Update Queue operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
           }
         }
       },
@@ -498,6 +504,41 @@
           "Queue Operations"
         ],
         "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema":{
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/$Resources/queues": {
+      "get": {
+        "operationId": "Queues_Get",
+        "summary": "Get Queues",
+        "description": "Get the details about the Queues of the given ServiceBus namespace.",
+        "tags": [
+          "Queue Operations"
+        ],
+        "parameters": [
+          {
+            "name": "$skip",
+            "type": "integer",
+            "in": "query",
+            "default": 0
+          },
+          {
+            "name": "$top",
+            "type": "integer",
+            "in": "query",
+            "default": 100
+          },
           {
             "$ref": "#/parameters/ApiVersion"
           }
