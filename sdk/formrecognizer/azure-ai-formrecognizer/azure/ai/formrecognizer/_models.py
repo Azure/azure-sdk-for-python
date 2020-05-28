@@ -867,6 +867,8 @@ class CustomFormModelInfo(object):
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
+        if model.status == "succeeded":  # map copy status to model status
+            model.status = "ready"
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
