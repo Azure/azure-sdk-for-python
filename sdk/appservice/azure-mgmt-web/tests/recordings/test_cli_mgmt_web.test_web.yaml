@@ -14,26 +14,26 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-web/0.42.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2018-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza","name":"myappxyza","type":"Microsoft.Web/serverfarms","kind":"app","location":"West
-        US 2","properties":{"serverFarmId":9497,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
-        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_9497","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
+        US 2","properties":{"serverFarmId":15042,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
+        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_15042","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1362'
+      - '1364'
       content-type:
       - application/json
       date:
-      - Sun, 19 Apr 2020 07:49:52 GMT
+      - Fri, 05 Jun 2020 10:02:20 GMT
       expires:
       - '-1'
       pragma:
@@ -67,26 +67,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-web/0.42.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2018-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza","name":"myappxyza","type":"Microsoft.Web/serverfarms","kind":"app","location":"West
-        US 2","properties":{"serverFarmId":9497,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
-        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_9497","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
+        US 2","properties":{"serverFarmId":15042,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
+        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_15042","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1362'
+      - '1364'
       content-type:
       - application/json
       date:
-      - Sun, 19 Apr 2020 07:49:55 GMT
+      - Fri, 05 Jun 2020 10:02:20 GMT
       expires:
       - '-1'
       pragma:
@@ -120,12 +120,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-web/0.42.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2018-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza?api-version=2019-08-01
   response:
     body:
       string: ''
@@ -135,7 +135,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 19 Apr 2020 07:50:00 GMT
+      - Fri, 05 Jun 2020 10:02:23 GMT
       expires:
       - '-1'
       pragma:

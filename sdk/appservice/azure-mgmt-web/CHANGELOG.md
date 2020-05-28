@@ -1,5 +1,15 @@
 # Release History
 
+## 0.47.0 (2020-06-03)
+
+**Features**
+
+  - Added operation WebAppsOperations.get_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.update_scm_allowed
+  - Added operation WebAppsOperations.update_ftp_allowed
+  - Added operation WebAppsOperations.get_scm_allowed
+  - Added operation WebAppsOperations.get_ftp_allowed
+
 ## 0.46.0 (2020-04-10)
 
 **Features**
