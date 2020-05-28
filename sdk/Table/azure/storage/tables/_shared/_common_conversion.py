@@ -11,6 +11,7 @@ import sys
 from io import (SEEK_SET)
 
 from dateutil.tz import tzutc
+from pyparsing import unicode
 
 from ._error import (
     _ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM,

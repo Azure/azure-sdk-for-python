@@ -236,20 +236,20 @@ def test_list_tables_with_marker(self, resource_group, location, storage_account
     self.assertNotEqual(tables1, tables2)
 
 
-@pytest.mark.skip("pending")
-@GlobalStorageAccountPreparer()
-def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
     # Arrange
-    ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-    table = self._create_table(ts)
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table = self._create_table(ts)
 
     # Act
-    deleted = table.delete_table()
+        deleted = table.delete_table()
 
     # Assert
-    self.assertIsNone(deleted)
-    existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-    self.assertEqual(existing, [])
+        self.assertIsNone(deleted)
+    #existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
+    #self.assertEqual(existing, [])
 
 
 @pytest.mark.skip("pending")

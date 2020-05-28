@@ -50,11 +50,10 @@ from .policies import (
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
-    QueueMessagePolicy,
     ExponentialRetry,
 )
 from .._version import VERSION
-from .._generated.models import StorageErrorException
+# from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -63,6 +62,7 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
+    "table": {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"},
     "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
 }
 
@@ -80,7 +80,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file-share", "dfs"]:
+        if service not in ["blob", "queue", "file-share", "dfs", "table"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
@@ -230,19 +230,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         policies = [
-            QueueMessagePolicy(),
             config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
+            # StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
+            # StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
-            StorageResponseHook(**kwargs),
+            # StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
@@ -291,7 +289,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):
@@ -328,7 +326,9 @@ def format_shared_key_credential(account, credential):
             raise ValueError("Shared key credential missing 'account_name")
         if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
+        print('SharedKey ', credential)
         return SharedKeyCredentialPolicy(**credential)
+    print(credential)
     return credential
 
 
@@ -386,6 +386,7 @@ def create_configuration(**kwargs):
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
+# all can be ignored
     # Storage settings
     config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
     config.copy_polling_interval = 15

@@ -6,12 +6,13 @@
 
 import logging
 import sys
+from os import name
 
 try:
     from urllib.parse import urlparse, unquote, parse_qsl
 except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import unquote # type: ignore
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import unquote  # type: ignore
 
 try:
     from yarl import URL
@@ -41,7 +42,6 @@ from ._error import (
 )
 
 logger = logging.getLogger(__name__)
-
 
 
 # wraps a given exception with the desired exception type
@@ -85,7 +85,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         return request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        uri_path = request.path.split('?')[0]
+        #uri_path = request.path.split('?')[0]
+        uri_path = urlparse(request.url).path
 
         # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
         # as this is how the emulator works
@@ -94,7 +95,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             uri_path = uri_path.replace(DEV_ACCOUNT_SECONDARY_NAME, DEV_ACCOUNT_NAME, 1)
 
         return '/' + self.account_name + uri_path
-
 
     def _get_canonicalized_headers(self, request):
         string_to_sign = ''
@@ -118,18 +118,16 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
+    def on_request(self, request):  # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+        self.sign_request(request.http_request)
+
     def sign_request(self, request):
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(
                 request,
-                [
-                    'content-encoding', 'content-language', 'content-length',
-                    'content-md5', 'content-type', 'date', 'if-modified-since',
-                    'if-match', 'if-none-match', 'if-unmodified-since', 'byte_range'
-                ]
+                ['content-md5', 'content-type', 'x-ms-date'],
             ) + \
-            self._get_canonicalized_headers(request) + \
             self._get_canonicalized_resource(request) + \
             self._get_canonicalized_resource_query(request)
 
@@ -146,22 +144,3 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 string_to_sign += '\n' + name.lower() + ':' + value
 
         return string_to_sign
-
-    def sign_request(self, request):
-        pass
-
-    def __init__(self, sas_token):
-        # ignore ?-prefix (added by tools such as Azure Portal) on sas tokens
-        # doing so avoids double question marks when signing
-        if sas_token[0] == '?':
-            sas_token = sas_token[1:]
-
-        self.sas_qs = parse_qsl(sas_token)
-
-    def sign_request(self, request):
-        # if 'sig' is present, then the request has already been signed
-        # as is the case when performing retries
-        if 'sig' in request.query:
-            return
-
-        request.query.update(self.sas_qs)
