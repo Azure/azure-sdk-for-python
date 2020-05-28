@@ -653,7 +653,7 @@
     }
   },
   "paths": {
-    "/{queueName}/": {
+    "/{queueName}": {
       "parameters": [
         {
           "name": "queueName",
