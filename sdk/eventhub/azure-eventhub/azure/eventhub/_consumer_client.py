@@ -84,8 +84,11 @@ class EventHubConsumerClient(ClientBase):
      If a checkpoint store is not provided, the checkpoint will be maintained internally
      in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
     :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+    :keyword load_balancing_strategy: TODO: add description
+    :paramtype load_balancing_strategy: ~azure.eventhub.LoadBalancingStrategy
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
      between two load-balancing evaluations. Default is 10 seconds.
+    :keyword float partition_ownership_expiration_interval: TODO: add description
 
     .. admonition:: Example:
 
@@ -193,8 +196,11 @@ class EventHubConsumerClient(ClientBase):
          If a checkpoint store is not provided, the checkpoint will be maintained internally
          in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
         :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+        :keyword load_balancing_strategy: TODO: add description
+        :paramtype load_balancing_strategy: ~azure.eventhub.LoadBalancingStrategy
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
+        :keyword float partition_ownership_expiration_interval: TODO: add description
         :rtype: ~azure.eventhub.EventHubConsumerClient
 
         .. admonition:: Example:
