@@ -69,6 +69,8 @@ try:
     from ._models_py3 import CsmOperationDescription
     from ._models_py3 import CsmOperationDescriptionProperties
     from ._models_py3 import CsmOperationDisplay
+    from ._models_py3 import CsmPublishingCredentialsPoliciesCollection
+    from ._models_py3 import CsmPublishingCredentialsPoliciesEntity
     from ._models_py3 import CsmPublishingProfileOptions
     from ._models_py3 import CsmSlotEntity
     from ._models_py3 import CsmUsageQuota
@@ -322,6 +324,8 @@ except (SyntaxError, ImportError):
     from ._models import CsmOperationDescription
     from ._models import CsmOperationDescriptionProperties
     from ._models import CsmOperationDisplay
+    from ._models import CsmPublishingCredentialsPoliciesCollection
+    from ._models import CsmPublishingCredentialsPoliciesEntity
     from ._models import CsmPublishingProfileOptions
     from ._models import CsmSlotEntity
     from ._models import CsmUsageQuota
@@ -707,6 +711,8 @@ __all__ = [
     'CsmOperationDescription',
     'CsmOperationDescriptionProperties',
     'CsmOperationDisplay',
+    'CsmPublishingCredentialsPoliciesCollection',
+    'CsmPublishingCredentialsPoliciesEntity',
     'CsmPublishingProfileOptions',
     'CsmSlotEntity',
     'CsmUsageQuota',
