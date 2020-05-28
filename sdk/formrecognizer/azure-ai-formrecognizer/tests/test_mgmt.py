@@ -31,6 +31,18 @@ class TestManagement(FormRecognizerTest):
             result = client.get_custom_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
+    def test_get_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            result = client.get_custom_model("")
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_get_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            result = client.get_custom_model(None)
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -43,6 +55,18 @@ class TestManagement(FormRecognizerTest):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             client.delete_model("xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_delete_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            result = client.delete_model(None)
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_delete_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            result = client.delete_model("")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_account_properties(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -63,8 +87,8 @@ class TestManagement(FormRecognizerTest):
 
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
         self.assertEqual(labeled_model_from_train.status, labeled_model_from_get.status)
-        self.assertEqual(labeled_model_from_train.created_on, labeled_model_from_get.created_on)
-        self.assertEqual(labeled_model_from_train.last_modified, labeled_model_from_get.last_modified)
+        self.assertEqual(labeled_model_from_train.requested_on, labeled_model_from_get.requested_on)
+        self.assertEqual(labeled_model_from_train.completed_on, labeled_model_from_get.completed_on)
         self.assertEqual(labeled_model_from_train.errors, labeled_model_from_get.errors)
         for a, b in zip(labeled_model_from_train.training_documents, labeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -80,8 +104,8 @@ class TestManagement(FormRecognizerTest):
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertIsNotNone(model.status)
-            self.assertIsNotNone(model.created_on)
-            self.assertIsNotNone(model.last_modified)
+            self.assertIsNotNone(model.requested_on)
+            self.assertIsNotNone(model.completed_on)
 
         client.delete_model(labeled_model_from_train.model_id)
 
@@ -92,15 +116,15 @@ class TestManagement(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_mgmt_model_unlabeled(self, client, container_sas_url):
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         unlabeled_model_from_train = poller.result()
 
         unlabeled_model_from_get = client.get_custom_model(unlabeled_model_from_train.model_id)
 
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
         self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
-        self.assertEqual(unlabeled_model_from_train.created_on, unlabeled_model_from_get.created_on)
-        self.assertEqual(unlabeled_model_from_train.last_modified, unlabeled_model_from_get.last_modified)
+        self.assertEqual(unlabeled_model_from_train.requested_on, unlabeled_model_from_get.requested_on)
+        self.assertEqual(unlabeled_model_from_train.completed_on, unlabeled_model_from_get.completed_on)
         self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
         for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -115,8 +139,8 @@ class TestManagement(FormRecognizerTest):
         for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertIsNotNone(model.status)
-            self.assertIsNotNone(model.created_on)
-            self.assertIsNotNone(model.last_modified)
+            self.assertIsNotNone(model.requested_on)
+            self.assertIsNotNone(model.completed_on)
 
         client.delete_model(unlabeled_model_from_train.model_id)
 

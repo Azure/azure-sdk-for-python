@@ -36,7 +36,7 @@ class TextAnalyticsTest(AzureTestCase):
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT_STABLE")
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:

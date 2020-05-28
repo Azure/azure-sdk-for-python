@@ -10,7 +10,7 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, InteractiveBrowserCredential
+from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
@@ -299,6 +299,14 @@ def test_no_browser():
         client_id="client-id", server_class=Mock(), transport=transport, _cache=TokenCache()
     )
     with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
+        credential.get_token("scope")
+
+
+def test_cannot_bind_port():
+    """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
+
+    credential = InteractiveBrowserCredential(server_class=Mock(side_effect=socket.error))
+    with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
 

@@ -8,7 +8,6 @@
 
 import json
 from typing import (
-    Optional,
     Any,
     Iterable,
     Dict,
@@ -88,8 +87,8 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_train_model(self, training_files_url, use_training_labels=False, **kwargs):
-        # type: (str, Optional[bool], Any) -> LROPoller
+    def begin_train_model(self, training_files_url, use_training_labels, **kwargs):
+        # type: (str, bool, Any) -> LROPoller
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -172,6 +171,9 @@ class FormTrainingClient(object):
                 :caption: Delete a custom model.
         """
 
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         self._client.delete_custom_model(
             model_id=model_id,
             error_map=error_map,
@@ -245,6 +247,10 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: Get a custom model with a model ID.
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
+
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
         return CustomFormModel._from_generated(response)
 
@@ -317,6 +323,9 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: Copy a model from the source resource to the target resource
         """
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 

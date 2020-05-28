@@ -16,7 +16,7 @@ from search_service_preparer import SearchServicePreparer, SearchResourceGroupPr
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents import(
+from azure.search.documents.indexes.models import(
     AnalyzeRequest,
     AnalyzeResult,
     CorsOptions,
@@ -24,19 +24,16 @@ from azure.search.documents import(
     SearchIndex,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
-    SearchIndexClient,
-    SearchIndexerClient,
     ScoringProfile,
     SearchIndexerSkillset,
-    DataSourceCredentials,
-    SearchIndexerDataSource,
+    SearchIndexerDataSourceConnection,
     SearchIndexer,
     SearchIndexerDataContainer,
     SynonymMap,
     SimpleField,
-    edm
+    SearchFieldDataType
 )
-from _test_utils import build_synonym_map_from_dict
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
@@ -146,8 +143,8 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-            SimpleField(name="hotelId", type=edm.String, key=True),
-            SimpleField(name="baseRate", type=edm.Double)
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
         ]
         scoring_profile = ScoringProfile(
             name="MyProfile"
@@ -172,8 +169,8 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
-            SimpleField(name="hotelId", type=edm.String, key=True),
-            SimpleField(name="baseRate", type=edm.Double)
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
         ]
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
@@ -258,9 +255,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
@@ -286,16 +283,15 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        sm_result = build_synonym_map_from_dict(result)
-        etag = sm_result.e_tag
+        etag = result.e_tag
 
         client.create_or_update_synonym_map("test-syn-map", [
             "Washington, Wash. => WA",
         ])
 
-        sm_result.e_tag = etag
+        result.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.delete_synonym_map(sm_result, match_condition=MatchConditions.IfNotModified)
+            client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
             assert len(client.get_synonym_maps()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
@@ -308,9 +304,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         assert len(client.get_synonym_maps()) == 1
         result = client.get_synonym_map("test-syn-map")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
@@ -327,8 +323,8 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         result = client.get_synonym_maps()
         assert isinstance(result, list)
-        assert all(isinstance(x, dict) for x in result)
-        assert set(x['name'] for x in result) == {"test-syn-map-1", "test-syn-map-2"}
+        assert all(isinstance(x, SynonymMap) for x in result)
+        assert set(x.name for x in result) == {"test-syn-map-1", "test-syn-map-2"}
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -343,9 +339,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ])
         assert len(client.get_synonym_maps()) == 1
         result = client.get_synonym_map("test-syn-map")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-syn-map"
-        assert result["synonyms"] == [
+        assert isinstance(result, SynonymMap)
+        assert result.name == "test-syn-map"
+        assert result.synonyms == [
             "Washington, Wash. => WA",
         ]
 
@@ -353,9 +349,9 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = build_synonym_map_from_dict(client.create_synonym_map("test-syn-map", [
+        result = client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
-        ]))
+        ])
         etag = result.e_tag
 
         client.create_or_update_synonym_map("test-syn-map", [
@@ -500,12 +496,11 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
     def _create_datasource(self, name="sample-datasource"):
-        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=name,
             type="azureblob",
-            credentials=credentials,
+            connection_string=CONNECTION_STRING,
             container=container
         )
         return data_source
@@ -623,12 +618,11 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     def _prepare_indexer(self, endpoint, api_key, name="sample-indexer", ds_name="sample-datasource", id_name="hotels"):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
         self.scrubber.register_name_pair(con_str, 'connection_string')
-        credentials = DataSourceCredentials(connection_string=con_str)
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSource(
+        data_source = SearchIndexerDataSourceConnection(
             name=ds_name,
             type="azureblob",
-            credentials=credentials,
+            connection_string=con_str,
             container=container
         )
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))

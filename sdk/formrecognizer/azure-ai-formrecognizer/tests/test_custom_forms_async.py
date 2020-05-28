@@ -22,6 +22,18 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            await client.recognize_custom_forms(model_id=None, form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            await client.recognize_custom_forms(model_id="", form=b"xx")
+
+    @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -60,7 +72,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with self.assertRaises(HttpResponseError):
             form = await fr_client.recognize_custom_forms(
@@ -73,7 +85,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -94,7 +106,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -168,7 +180,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 
@@ -204,7 +216,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         responses = []
 

@@ -19,10 +19,22 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_copy_model_none_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            await client.copy_model(model_id=None, target={})
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_copy_model_empty_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            await client.copy_model(model_id="", target={})
+
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
@@ -31,8 +43,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         copied_model = await client.get_custom_model(copy.model_id)
 
         self.assertEqual(copy.status, "succeeded")
-        self.assertIsNotNone(copy.created_on)
-        self.assertIsNotNone(copy.last_modified)
+        self.assertIsNotNone(copy.requested_on)
+        self.assertIsNotNone(copy.completed_on)
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
@@ -41,7 +53,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         # give an incorrect region
         target = await client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
@@ -53,7 +65,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
-        model = await client.train_model(container_sas_url)
+        model = await client.train_model(container_sas_url, use_training_labels=False)
 
         target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
 
@@ -69,9 +81,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
         actual = raw_response[0]
         copy = raw_response[1]
-        self.assertEqual(copy.created_on, actual.created_date_time)
+        self.assertEqual(copy.requested_on, actual.created_date_time)
         self.assertEqual(copy.status, actual.status)
-        self.assertEqual(copy.last_modified, actual.last_updated_date_time)
+        self.assertEqual(copy.completed_on, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()

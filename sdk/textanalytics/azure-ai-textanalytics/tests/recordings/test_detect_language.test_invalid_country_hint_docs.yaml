@@ -14,25 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Country Hint.","innerError":{"code":"InvalidCountryHint","message":"Country
+        Country Hint.","innererror":{"code":"InvalidCountryHint","message":"Country
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 5733723d-19a8-4190-85f8-a76a21a4bc85
+      - d1cdc481-db3c-472f-b935-12a0680a9a11
       content-type:
       - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=0
       date:
-      - Fri, 15 May 2020 15:26:19 GMT
+      - Wed, 27 May 2020 16:04:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '1'
     status:
       code: 200
       message: OK

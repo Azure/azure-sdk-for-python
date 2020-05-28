@@ -20,6 +20,18 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            client.begin_recognize_custom_forms_from_url(model_id=None, form_url="https://badurl.jpg")
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with self.assertRaises(ValueError):
+            client.begin_recognize_custom_forms_from_url(model_id="", form_url="https://badurl.jpg")
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_custom_form_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
@@ -69,7 +81,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
@@ -89,7 +101,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
@@ -159,7 +171,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -193,7 +205,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url)
+        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []

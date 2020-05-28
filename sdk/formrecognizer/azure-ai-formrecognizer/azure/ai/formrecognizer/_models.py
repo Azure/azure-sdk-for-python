@@ -672,9 +672,9 @@ class CustomFormModel(object):
         Status indicating the model's readiness for use,
         :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
-    :ivar ~datetime.datetime created_on:
-        The date and time (UTC) when model training was started.
-    :ivar ~datetime.datetime last_modified:
+    :ivar ~datetime.datetime requested_on:
+        The date and time (UTC) when model training was requested.
+    :ivar ~datetime.datetime completed_on:
         Date and time (UTC) when model training completed.
     :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
         A list of submodels that are part of this model, each of
@@ -688,8 +688,8 @@ class CustomFormModel(object):
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
         self.status = kwargs.get("status", None)
-        self.created_on = kwargs.get("created_on", None)
-        self.last_modified = kwargs.get("last_modified", None)
+        self.requested_on = kwargs.get("requested_on", None)
+        self.completed_on = kwargs.get("completed_on", None)
         self.models = kwargs.get("models", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", [])
@@ -699,8 +699,8 @@ class CustomFormModel(object):
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
-            created_on=model.model_info.created_date_time,
-            last_modified=model.model_info.last_updated_date_time,
+            requested_on=model.model_info.created_date_time,
+            completed_on=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
@@ -709,9 +709,9 @@ class CustomFormModel(object):
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, created_on={}, last_modified={}, models={}, " \
+        return "CustomFormModel(model_id={}, status={}, requested_on={}, completed_on={}, models={}, " \
                 "errors={}, training_documents={})".format(
-                    self.model_id, self.status, self.created_on, self.last_modified, repr(self.models),
+                    self.model_id, self.status, self.requested_on, self.completed_on, repr(self.models),
                     repr(self.errors), repr(self.training_documents)
                 )[:1024]
 
@@ -853,30 +853,30 @@ class CustomFormModelInfo(object):
     :ivar str status:
         The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
-    :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when model training was started.
-    :ivar ~datetime.datetime last_modified:
+    :ivar ~datetime.datetime requested_on:
+        Date and time (UTC) when model training was requested.
+    :ivar ~datetime.datetime completed_on:
         Date and time (UTC) when model training completed.
     """
 
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
         self.status = kwargs.get("status", None)
-        self.created_on = kwargs.get("created_on", None)
-        self.last_modified = kwargs.get("last_modified", None)
+        self.requested_on = kwargs.get("requested_on", None)
+        self.completed_on = kwargs.get("completed_on", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
-            created_on=model.created_date_time,
-            last_modified=model.last_updated_date_time
+            requested_on=model.created_date_time,
+            completed_on=model.last_updated_date_time
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, created_on={}, last_modified={})".format(
-            self.model_id, self.status, self.created_on, self.last_modified
+        return "CustomFormModelInfo(model_id={}, status={}, requested_on={}, completed_on={})".format(
+            self.model_id, self.status, self.requested_on, self.completed_on
         )[:1024]
 
 
