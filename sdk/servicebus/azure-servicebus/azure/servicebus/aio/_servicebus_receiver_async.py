@@ -126,7 +126,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 entity_name=str(entity_name),
                 **kwargs
             )
+        self._message_iter = None
         self._populate_attributes(**kwargs)
+        self._connection = kwargs.get("connection")
 
     async def __anext__(self):
         self._check_live()

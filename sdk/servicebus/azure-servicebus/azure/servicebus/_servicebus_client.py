@@ -344,6 +344,7 @@ class ServiceBusClient(object):
         )
 
     def get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> ServiceBusReceiver
         """Get ServiceBusReceiver for the sub Dead Letter Queue of the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.

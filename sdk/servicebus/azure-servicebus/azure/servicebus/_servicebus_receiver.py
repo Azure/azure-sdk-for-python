@@ -82,7 +82,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword bool is_dead_letter_receiver: Should this receiver connect to the dead-letter-queue associated
      with the specified entity, instead of the entity itself.  Default is `False`.
     :keyword bool transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
-     deadletter queue. Default is False, using the standard deadletter endpoint.  Only valid if 
+     deadletter queue. Default is False, using the standard deadletter endpoint. Only valid if
      is_dead_letter_receiver is `True`, default is `False` regardless.
 
     .. admonition:: Example:
@@ -126,7 +126,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 entity_name=entity_name,
                 **kwargs
             )
+        self._message_iter = None
         self._populate_attributes(**kwargs)
+        self._connection = kwargs.get("connection")
 
     def __iter__(self):
         return self

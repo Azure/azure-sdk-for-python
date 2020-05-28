@@ -47,9 +47,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
-        self._message_iter = None
-        self._connection = kwargs.get("connection")
-        self._prefetch = kwargs.get("prefetch")
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
