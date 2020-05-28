@@ -89,11 +89,14 @@ class SharedTokenCacheBase(ABC):
 
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
+            # authenticate in the tenant that produced the record unless 'tenant_id' specifies another
+            authenticating_tenant = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+            self._tenant_id = self._auth_record.tenant_id
             self._authority = self._auth_record.authority
             self._username = self._auth_record.username
-            self._tenant_id = self._auth_record.tenant_id
             self._environment_aliases = frozenset((self._authority,))
         else:
+            authenticating_tenant = "common"
             authority = kwargs.pop("authority", None)
             self._authority = normalize_authority(authority) if authority else get_default_authority()
             environment = urlparse(self._authority).netloc
@@ -117,7 +120,7 @@ class SharedTokenCacheBase(ABC):
         if cache:
             self._cache = cache
             self._client = self._get_auth_client(
-                authority=self._authority, cache=cache, **kwargs
+                authority=self._authority, tenant_id=authenticating_tenant, cache=cache, **kwargs
             )  # type: Optional[AadClientBase]
         else:
             self._client = None

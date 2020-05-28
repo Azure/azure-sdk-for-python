@@ -662,3 +662,17 @@ async def test_auth_record_multiple_accounts_for_username():
 
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
+
+
+def test_authentication_record_authenticating_tenant():
+    """when given a record and 'tenant_id', the credential should authenticate in the latter"""
+
+    expected_tenant_id = "tenant-id"
+    record = AuthenticationRecord("not- " + expected_tenant_id, "...", "...", "...", "...")
+
+    with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
+        SharedTokenCacheCredential(authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id)
+
+    assert get_auth_client.call_count == 1
+    _, kwargs = get_auth_client.call_args
+    assert kwargs["tenant_id"] == expected_tenant_id

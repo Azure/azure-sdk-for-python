@@ -68,4 +68,4 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
