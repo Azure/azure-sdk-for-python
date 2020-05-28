@@ -94,7 +94,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
-    async def test_queue_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+    async def test_topic_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
 
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
@@ -109,7 +109,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 prefetch=10
             ) as receiver:
 
-                async with sb_client.get_queue_sender(servicebus_topic.name) as sender:
+                async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
                         await sender.send(message)
@@ -138,7 +138,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            async with sb_client._get_subscription_deadletter_receiver(
+            async with sb_client.get_subscription_deadletter_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 idle_timeout=5,

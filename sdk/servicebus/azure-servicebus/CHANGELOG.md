@@ -2,6 +2,10 @@
 
 ## 7.0.0b3 (Unreleased)
 
+**New Features**
+
+* Added methods `get_queue_deadletter_receiver` and `get_subscription_deadletter_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for the sub dead-letter-queue of the target entity.
+
 **BugFixes**
 
 * Fixed bug where reason and description not being set when dead-lettering messages.

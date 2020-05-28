@@ -12,7 +12,6 @@ from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from .._common._configuration import Configuration
-from .._common.utils import generate_dead_letter_entity_name
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -87,39 +86,6 @@ class ServiceBusClient(object):
             debug=self._config.logging_enable
         )
 
-    def _get_queue_deadletter_receiver(self, queue_name, **kwargs):
-        entity_name = generate_dead_letter_entity_name(
-            queue_name=queue_name,
-            is_transfer_deadletter=kwargs.get("transfer_deadletter", False)
-        )
-        return ServiceBusReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
-            entity_name=entity_name,
-            credential=self._credential,
-            logging_enable=self._config.logging_enable,
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
-            connection=self._connection,
-            **kwargs
-        )
-
-    def _get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
-        entity_name = generate_dead_letter_entity_name(
-            topic_name=topic_name,
-            subscription_name=subscription_name,
-            is_transfer_deadletter=kwargs.get("transfer_deadletter", False)
-        )
-        return ServiceBusReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
-            entity_name=entity_name,
-            credential=self._credential,
-            logging_enable=self._config.logging_enable,
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
-            connection=self._connection,
-            **kwargs
-        )
-
     @classmethod
     def from_connection_string(
         cls,
@@ -140,7 +106,7 @@ class ServiceBusClient(object):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :rtype: ~azure.servicebus.ServiceBusClient
+        :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
 
@@ -178,14 +144,12 @@ class ServiceBusClient(object):
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
-        :raises: :class:`ServiceBusConnectionError`
-         :class:`ServiceBusAuthorizationError`
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START create_sb_client_from_conn_str_async]
-                :end-before: [END create_sb_client_from_conn_str_async]
+                :start-after: [START create_servicebus_sender_from_sb_client_async]
+                :end-before: [END create_servicebus_sender_from_sb_client_async]
                 :language: python
                 :dedent: 4
                 :caption: Create a new instance of the ServiceBusClient from connection string.
@@ -223,14 +187,12 @@ class ServiceBusClient(object):
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
-        :raises: :class:`ServiceBusConnectionError`
-         :class:`ServiceBusAuthorizationError`
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START create_servicebus_sender_from_sb_client_async]
-                :end-before: [END create_servicebus_sender_from_sb_client_async]
+                :start-after: [START create_servicebus_receiver_from_sb_client_async]
+                :end-before: [END create_servicebus_receiver_from_sb_client_async]
                 :language: python
                 :dedent: 4
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
@@ -245,6 +207,57 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            **kwargs
+        )
+
+    def get_queue_deadletter_receiver(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusReceiver
+        """Get ServiceBusReceiver for the sub Dead Letter Queue under the specific Queue.
+
+        :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
+         Default value is 0.8.
+        :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :rtype: ~azure.servicebus.ServiceBusReceiver
+        :keyword bool transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
+         deadletter queue. Default is False, using the standard deadletter endpoint.
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_queue_deadletter_receiver_from_sb_client_async]
+                :end-before: [END create_queue_deadletter_receiver_from_sb_client_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver for Dead Letter Queue from ServiceBusClient.
+
+
+        """
+        # pylint: disable=protected-access
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            queue_name=queue_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            is_dead_letter_receiver=True,
             **kwargs
         )
 
@@ -305,7 +318,7 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-        :rtype: ~azure.servicebus.ServiceBusReceiver
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
 
@@ -328,6 +341,57 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            **kwargs
+        )
+
+    def get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
+        """Get ServiceBusReceiver for the sub Dead Letter Queue under the specific topic subscription.
+
+        :param str topic_name: The name of specific Service Bus Topic the client connects to.
+        :param str subscription_name: The name of specific Service Bus Subscription
+         under the given Service Bus Topic.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
+         will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
+         Default value is 0.8.
+        :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :keyword bool transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
+         deadletter queue. Default is False, using the standard deadletter endpoint.
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_subscription_deadletter_receiver_from_sb_client_async]
+                :end-before: [END create_subscription_deadletter_receiver_from_sb_client_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver for Dead Letter Queue from ServiceBusClient.
+
+
+        """
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            is_dead_letter_receiver=True,
             **kwargs
         )
 
@@ -358,7 +422,7 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-        :rtype: ~azure.servicebus.ServiceBusReceiver
+        :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 
         .. admonition:: Example:
 
@@ -408,8 +472,6 @@ class ServiceBusClient(object):
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
-        :raises: :class:`ServiceBusConnectionError`
-         :class:`ServiceBusAuthorizationError`
 
         .. admonition:: Example:
 

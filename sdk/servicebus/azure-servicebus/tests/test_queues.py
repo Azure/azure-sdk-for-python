@@ -441,7 +441,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", description="Testing description")
     
             count = 0
-            with sb_client._get_queue_deadletter_receiver(servicebus_queue.name,
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
                                                    idle_timeout=5) as receiver:
                 for message in receiver:
                     count += 1
@@ -562,7 +562,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client._get_queue_deadletter_receiver(
+            with sb_client.get_queue_deadletter_receiver(
                     servicebus_queue.name,
                     idle_timeout=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
@@ -607,7 +607,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
 
-            with sb_client._get_queue_deadletter_receiver(
+            with sb_client.get_queue_deadletter_receiver(
                     servicebus_queue.name,
                     idle_timeout=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
@@ -845,7 +845,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive(5, max_wait_time=10)
             assert not messages
 
-            with sb_client._get_queue_deadletter_receiver(
+            with sb_client.get_queue_deadletter_receiver(
                     servicebus_queue.name,
                     idle_timeout=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:

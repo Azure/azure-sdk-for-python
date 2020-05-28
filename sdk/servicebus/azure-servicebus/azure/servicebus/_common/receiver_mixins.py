@@ -12,6 +12,8 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
+    DEAD_LETTER_QUEUE_SUFFIX,
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     ReceiveSettleMode
 )
 from ..exceptions import (
@@ -30,6 +32,13 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         else:
             self.entity_path = self._entity_name
 
+        if kwargs.get("is_dead_letter_receiver", False):
+            self.entity_path = "{}{}".format(
+                self.entity_path,
+                (TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
+                 if kwargs.get("transfer_deadletter", False) else DEAD_LETTER_QUEUE_SUFFIX)
+            )
+
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
@@ -41,13 +50,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._message_iter = None
         self._connection = kwargs.get("connection")
         self._prefetch = kwargs.get("prefetch")
-
-        if kwargs.get("is_dead_letter_receiver"):
-            if kwargs.get("transfer_deadletter"):
-                #TODO: kibrantn: Helperify these, validate that it works for topic/subscription.
-                self._entity_uri = self._entity_uri +  '/$Transfer' + '/$DeadLetterQueue'
-            else:
-                self._entity_uri = self._entity_uri + '/$DeadLetterQueue'
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)

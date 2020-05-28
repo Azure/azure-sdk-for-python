@@ -251,7 +251,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            async with sb_client._get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -351,7 +351,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     messages = await receiver.receive()
             assert count == 10
 
-            async with sb_client._get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as session:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as session:
                 count = 0
                 async for message in session:
                     print_message(_logger, message)

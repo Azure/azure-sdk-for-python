@@ -143,21 +143,6 @@ def create_authentication(client):
     )
 
 
-def generate_dead_letter_entity_name(
-        queue_name=None,
-        topic_name=None,
-        subscription_name=None,
-        is_transfer_deadletter=False
-):
-    entity_name = queue_name if queue_name else (topic_name + "/Subscriptions/" + subscription_name)
-    entity_name = "{}{}".format(
-        entity_name,
-        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if is_transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX
-    )
-
-    return entity_name
-
-
 class AutoLockRenew(object):
     """Auto renew locks for messages and sessions using a background thread pool.
 

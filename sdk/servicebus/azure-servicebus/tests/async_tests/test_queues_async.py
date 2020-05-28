@@ -404,7 +404,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            async with sb_client._get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -514,7 +514,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            async with sb_client._get_queue_deadletter_receiver(
+            async with sb_client.get_queue_deadletter_receiver(
                     servicebus_queue.name,
                     idle_timeout=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
@@ -553,7 +553,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            async with sb_client._get_queue_deadletter_receiver(
+            async with sb_client.get_queue_deadletter_receiver(
                 servicebus_queue.name,
                 idle_timeout=5,
                 mode=ReceiveSettleMode.PeekLock
@@ -768,7 +768,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive(max_wait_time=10)
             assert not messages
 
-            async with sb_client._get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
