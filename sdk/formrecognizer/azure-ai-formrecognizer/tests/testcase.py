@@ -117,18 +117,18 @@ class FormRecognizerTest(AzureTestCase):
         if unlabeled:
             if actual.keys.clusters:
                 for cluster_id, fields in actual.keys.clusters.items():
-                    self.assertEqual(cluster_id, model.models[int(cluster_id)].form_type[-1])
-                    for field_idx, model_field in model.models[int(cluster_id)].fields.items():
+                    self.assertEqual(cluster_id, model.submodels[int(cluster_id)].form_type[-1])
+                    for field_idx, model_field in model.submodels[int(cluster_id)].fields.items():
                         self.assertIn(model_field.label, fields)
 
         else:
             if actual.train_result:
                 if actual.train_result.fields:
                     for a in actual.train_result.fields:
-                        self.assertEqual(model.models[0].fields[a.field_name].name, a.field_name)
-                        self.assertEqual(model.models[0].fields[a.field_name].accuracy, a.accuracy)
-                    self.assertEqual(model.models[0].form_type, "form-"+model.model_id)
-                    self.assertEqual(model.models[0].accuracy, actual.train_result.average_model_accuracy)
+                        self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
+                        self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
+                    self.assertEqual(model.submodels[0].form_type, "form-"+model.model_id)
+                    self.assertEqual(model.submodels[0].accuracy, actual.train_result.average_model_accuracy)
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
         for page, actual_page in zip(pages, actual_read):

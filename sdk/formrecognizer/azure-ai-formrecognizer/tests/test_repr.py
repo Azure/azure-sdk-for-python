@@ -118,8 +118,8 @@ def custom_form_model_field():
 
 @pytest.fixture
 def custom_form_sub_model(custom_form_model_field):
-    model = _models.CustomFormSubModel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
-    model_repr = "CustomFormSubModel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
+    model = _models.CustomFormSubmodel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
+    model_repr = "CustomFormSubmodel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -207,13 +207,13 @@ class TestRepr():
             status=_models.CustomFormModelStatus.creating,
             requested_on=datetime.datetime(1, 1, 1),
             completed_on=datetime.datetime(1, 1, 1),
-            models=[custom_form_sub_model[0], custom_form_sub_model[0]],
+            submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
             errors=[form_recognizer_error[0]],
             training_documents=[training_document_info[0], training_document_info[0]]
         )
 
         model_repr = "CustomFormModel(model_id=1, status=creating, requested_on=0001-01-01 00:00:00, " \
-            "completed_on=0001-01-01 00:00:00, models=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
+            "completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
                 custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1]
             )[:1024]
 
