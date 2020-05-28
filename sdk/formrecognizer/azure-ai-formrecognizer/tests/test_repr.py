@@ -81,8 +81,8 @@ def form_field_one(field_text, form_field_two):
 
 @pytest.fixture
 def page_range():
-    model = _models.FormPageRange(first_page=1, last_page=100)
-    model_repr = "FormPageRange(first_page=1, last_page=100)"
+    model = _models.FormPageRange(first_page_number=1, last_page_number=100)
+    model_repr = "FormPageRange(first_page_number=1, last_page_number=100)"
     assert repr(model) == model_repr
     return model, model_repr
 

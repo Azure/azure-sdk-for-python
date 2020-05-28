@@ -120,17 +120,17 @@ class Point(namedtuple("Point", "x y")):
         return super(Point, cls).__new__(cls, x, y)
 
 
-class FormPageRange(namedtuple("FormPageRange", "first_page last_page")):
+class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the form.
 
-    :ivar int first_page: The first page number of the form.
-    :ivar int last_page: The last page number of the form.
+    :ivar int first_page_number: The first page number of the form.
+    :ivar int last_page_number: The last page number of the form.
     """
 
     __slots__ = ()
 
-    def __new__(cls, first_page, last_page):
-        return super(FormPageRange, cls).__new__(cls, first_page, last_page)
+    def __new__(cls, first_page_number, last_page_number):
+        return super(FormPageRange, cls).__new__(cls, first_page_number, last_page_number)
 
 
 class FormContent(object):
@@ -163,7 +163,7 @@ class RecognizedForm(object):
         without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input form.
+        The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
@@ -191,7 +191,7 @@ class RecognizedReceipt(RecognizedForm):
         without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input form.
+        The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
@@ -239,7 +239,7 @@ class USReceipt(RecognizedReceipt):  # pylint: disable=too-many-instance-attribu
         A dictionary of the fields found on the receipt.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input receipt.
+        The first and last page number of the input receipt.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         Contains page metadata such as page width, length, text angle, unit.
         If `include_text_content=True` is passed, contains a list
