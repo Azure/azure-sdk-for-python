@@ -1,5 +1,6 @@
 import platform
 import pytest
+import uamqp
 from packaging import version
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
