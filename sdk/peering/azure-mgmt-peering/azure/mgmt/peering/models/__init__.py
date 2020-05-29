@@ -15,6 +15,7 @@ try:
     from ._models_py3 import ContactDetail
     from ._models_py3 import DirectConnection
     from ._models_py3 import DirectPeeringFacility
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExchangeConnection
     from ._models_py3 import ExchangePeeringFacility
@@ -28,6 +29,7 @@ try:
     from ._models_py3 import PeeringLocationPropertiesExchange
     from ._models_py3 import PeeringPropertiesDirect
     from ._models_py3 import PeeringPropertiesExchange
+    from ._models_py3 import PeeringReceivedRoute
     from ._models_py3 import PeeringRegisteredAsn
     from ._models_py3 import PeeringRegisteredPrefix
     from ._models_py3 import PeeringService
@@ -47,6 +49,7 @@ except (SyntaxError, ImportError):
     from ._models import ContactDetail
     from ._models import DirectConnection
     from ._models import DirectPeeringFacility
+    from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExchangeConnection
     from ._models import ExchangePeeringFacility
@@ -60,6 +63,7 @@ except (SyntaxError, ImportError):
     from ._models import PeeringLocationPropertiesExchange
     from ._models import PeeringPropertiesDirect
     from ._models import PeeringPropertiesExchange
+    from ._models import PeeringReceivedRoute
     from ._models import PeeringRegisteredAsn
     from ._models import PeeringRegisteredPrefix
     from ._models import PeeringService
@@ -77,6 +81,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import PeerAsnPaged
 from ._paged_models import PeeringLocationPaged
 from ._paged_models import PeeringPaged
+from ._paged_models import PeeringReceivedRoutePaged
 from ._paged_models import PeeringRegisteredAsnPaged
 from ._paged_models import PeeringRegisteredPrefixPaged
 from ._paged_models import PeeringServiceCountryPaged
@@ -107,6 +112,7 @@ __all__ = [
     'ContactDetail',
     'DirectConnection',
     'DirectPeeringFacility',
+    'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
     'ExchangeConnection',
     'ExchangePeeringFacility',
@@ -120,6 +126,7 @@ __all__ = [
     'PeeringLocationPropertiesExchange',
     'PeeringPropertiesDirect',
     'PeeringPropertiesExchange',
+    'PeeringReceivedRoute',
     'PeeringRegisteredAsn',
     'PeeringRegisteredPrefix',
     'PeeringService',
@@ -139,6 +146,7 @@ __all__ = [
     'PeeringLocationPaged',
     'PeeringRegisteredAsnPaged',
     'PeeringRegisteredPrefixPaged',
+    'PeeringReceivedRoutePaged',
     'PeeringServiceCountryPaged',
     'PeeringServiceLocationPaged',
     'PeeringServicePrefixPaged',
