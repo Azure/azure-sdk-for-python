@@ -198,7 +198,8 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params,  # type: "models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        """Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination in the specified resource group.
+        """Generates a unique VPN profile for P2S clients for VirtualWan and associated
+        VpnServerConfiguration combination in the specified resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

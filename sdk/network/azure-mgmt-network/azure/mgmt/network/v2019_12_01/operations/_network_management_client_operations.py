@@ -99,6 +99,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
         :type bsl_request: ~azure.mgmt.network.v2019_12_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -113,13 +114,15 @@ class NetworkManagementClientOperationsMixin(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._put_bastion_shareable_link_initial(
-            resource_group_name=resource_group_name,
-            bastion_host_name=bastion_host_name,
-            bsl_request=bsl_request,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._put_bastion_shareable_link_initial(
+                resource_group_name=resource_group_name,
+                bastion_host_name=bastion_host_name,
+                bsl_request=bsl_request,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -134,7 +137,15 @@ class NetworkManagementClientOperationsMixin(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_put_bastion_shareable_link.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/createShareableLinks'}  # type: ignore
 
     def _delete_bastion_shareable_link_initial(
@@ -203,6 +214,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
         :type bsl_request: ~azure.mgmt.network.v2019_12_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -217,13 +229,15 @@ class NetworkManagementClientOperationsMixin(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_bastion_shareable_link_initial(
-            resource_group_name=resource_group_name,
-            bastion_host_name=bastion_host_name,
-            bsl_request=bsl_request,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_bastion_shareable_link_initial(
+                resource_group_name=resource_group_name,
+                bastion_host_name=bastion_host_name,
+                bsl_request=bsl_request,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -235,7 +249,15 @@ class NetworkManagementClientOperationsMixin(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete_bastion_shareable_link.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/deleteShareableLinks'}  # type: ignore
 
     def get_bastion_shareable_link(
@@ -381,6 +403,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param bastion_host_name: The name of the Bastion Host.
         :type bastion_host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -395,12 +418,14 @@ class NetworkManagementClientOperationsMixin(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_active_sessions_initial(
-            resource_group_name=resource_group_name,
-            bastion_host_name=bastion_host_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_active_sessions_initial(
+                resource_group_name=resource_group_name,
+                bastion_host_name=bastion_host_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -415,7 +440,15 @@ class NetworkManagementClientOperationsMixin(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_active_sessions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/getActiveSessions'}  # type: ignore
 
     def disconnect_active_sessions(
@@ -678,7 +711,8 @@ class NetworkManagementClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination in the specified resource group.
+        """Generates a unique VPN profile for P2S clients for VirtualWan and associated
+    VpnServerConfiguration combination in the specified resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -689,6 +723,7 @@ class NetworkManagementClientOperationsMixin(object):
      operation.
         :type vpn_client_params: ~azure.mgmt.network.v2019_12_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -703,13 +738,15 @@ class NetworkManagementClientOperationsMixin(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._generatevirtualwanvpnserverconfigurationvpnprofile_initial(
-            resource_group_name=resource_group_name,
-            virtual_wan_name=virtual_wan_name,
-            vpn_client_params=vpn_client_params,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._generatevirtualwanvpnserverconfigurationvpnprofile_initial(
+                resource_group_name=resource_group_name,
+                virtual_wan_name=virtual_wan_name,
+                vpn_client_params=vpn_client_params,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -724,5 +761,13 @@ class NetworkManagementClientOperationsMixin(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_generatevirtualwanvpnserverconfigurationvpnprofile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/GenerateVpnProfile'}  # type: ignore

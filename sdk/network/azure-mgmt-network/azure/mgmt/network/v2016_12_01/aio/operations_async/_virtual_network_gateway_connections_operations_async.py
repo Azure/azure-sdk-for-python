@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -100,7 +100,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
 
-    async def create_or_update(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
@@ -118,6 +118,7 @@ class VirtualNetworkGatewayConnectionsOperations:
      connection operation.
         :type parameters: ~azure.mgmt.network.v2016_12_01.models.VirtualNetworkGatewayConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -132,13 +133,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -153,8 +156,16 @@ class VirtualNetworkGatewayConnectionsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
 
     async def get(
         self,
@@ -254,7 +265,7 @@ class VirtualNetworkGatewayConnectionsOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
@@ -268,6 +279,7 @@ class VirtualNetworkGatewayConnectionsOperations:
      connection.
         :type virtual_network_gateway_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -282,12 +294,14 @@ class VirtualNetworkGatewayConnectionsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -299,8 +313,16 @@ class VirtualNetworkGatewayConnectionsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}  # type: ignore
 
     async def _set_shared_key_initial(
         self,
@@ -359,14 +381,16 @@ class VirtualNetworkGatewayConnectionsOperations:
         return deserialized
     _set_shared_key_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey'}  # type: ignore
 
-    async def set_shared_key(
+    async def begin_set_shared_key(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
         parameters: "models.ConnectionSharedKey",
         **kwargs
     ) -> "models.ConnectionSharedKey":
-        """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the virtual network gateway connection shared key for passed virtual network gateway connection in the specified resource group through Network resource provider.
+        """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the virtual network gateway
+    connection shared key for passed virtual network gateway connection in the specified resource
+    group through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -376,6 +400,7 @@ class VirtualNetworkGatewayConnectionsOperations:
      Shared key operation throughNetwork resource provider.
         :type parameters: ~azure.mgmt.network.v2016_12_01.models.ConnectionSharedKey
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -390,13 +415,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._set_shared_key_initial(
-            resource_group_name=resource_group_name,
-            virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._set_shared_key_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -411,8 +438,16 @@ class VirtualNetworkGatewayConnectionsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    set_shared_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_set_shared_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey'}  # type: ignore
 
     async def get_shared_key(
         self,
@@ -420,7 +455,8 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         **kwargs
     ) -> "models.ConnectionSharedKey":
-        """The Get VirtualNetworkGatewayConnectionSharedKey operation retrieves information about the specified virtual network gateway connection shared key through Network resource provider.
+        """The Get VirtualNetworkGatewayConnectionSharedKey operation retrieves information about the
+        specified virtual network gateway connection shared key through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -476,7 +512,8 @@ class VirtualNetworkGatewayConnectionsOperations:
         resource_group_name: str,
         **kwargs
     ) -> AsyncIterable["models.VirtualNetworkGatewayConnectionListResult"]:
-        """The List VirtualNetworkGatewayConnections operation retrieves all the virtual network gateways connections created.
+        """The List VirtualNetworkGatewayConnections operation retrieves all the virtual network gateways
+    connections created.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -592,14 +629,16 @@ class VirtualNetworkGatewayConnectionsOperations:
         return deserialized
     _reset_shared_key_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey/reset'}  # type: ignore
 
-    async def reset_shared_key(
+    async def begin_reset_shared_key(
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
         parameters: "models.ConnectionResetSharedKey",
         **kwargs
     ) -> "models.ConnectionResetSharedKey":
-        """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the virtual network gateway connection shared key for passed virtual network gateway connection in the specified resource group through Network resource provider.
+        """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the virtual network gateway
+    connection shared key for passed virtual network gateway connection in the specified resource
+    group through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -610,6 +649,7 @@ class VirtualNetworkGatewayConnectionsOperations:
      shared key operation through network resource provider.
         :type parameters: ~azure.mgmt.network.v2016_12_01.models.ConnectionResetSharedKey
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -624,13 +664,15 @@ class VirtualNetworkGatewayConnectionsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._reset_shared_key_initial(
-            resource_group_name=resource_group_name,
-            virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._reset_shared_key_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -645,5 +687,13 @@ class VirtualNetworkGatewayConnectionsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    reset_shared_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey/reset'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_reset_shared_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/sharedkey/reset'}  # type: ignore

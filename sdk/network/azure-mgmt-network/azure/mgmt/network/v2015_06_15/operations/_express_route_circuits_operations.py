@@ -103,6 +103,7 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -117,12 +118,14 @@ class ExpressRouteCircuitsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            circuit_name=circuit_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                circuit_name=circuit_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -134,7 +137,15 @@ class ExpressRouteCircuitsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}  # type: ignore
 
     def get(
@@ -269,6 +280,7 @@ class ExpressRouteCircuitsOperations(object):
         :param parameters: Parameters supplied to the create or update express route circuit operation.
         :type parameters: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -283,13 +295,15 @@ class ExpressRouteCircuitsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            circuit_name=circuit_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                circuit_name=circuit_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -304,7 +318,15 @@ class ExpressRouteCircuitsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}  # type: ignore
 
     def list_arp_table(
@@ -314,7 +336,8 @@ class ExpressRouteCircuitsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ExpressRouteCircuitsArpTableListResult"]
-        """The ListArpTable from ExpressRouteCircuit operation retrieves the currently advertised arp table associated with the ExpressRouteCircuits in a resource group.
+        """The ListArpTable from ExpressRouteCircuit operation retrieves the currently advertised arp
+    table associated with the ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -386,7 +409,8 @@ class ExpressRouteCircuitsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ExpressRouteCircuitsRoutesTableListResult"]
-        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the currently advertised routes table associated with the ExpressRouteCircuits in a resource group.
+        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the currently advertised
+    routes table associated with the ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -458,7 +482,8 @@ class ExpressRouteCircuitsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ExpressRouteCircuitsStatsListResult"]
-        """The ListStats ExpressRouteCircuit operation retrieves all the stats from a ExpressRouteCircuits in a resource group.
+        """The ListStats ExpressRouteCircuit operation retrieves all the stats from a ExpressRouteCircuits
+    in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

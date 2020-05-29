@@ -46,7 +46,8 @@ class AvailablePrivateEndpointTypesOperations:
         location: str,
         **kwargs
     ) -> AsyncIterable["models.AvailablePrivateEndpointTypesResult"]:
-        """Returns all of the resource types that can be linked to a Private Endpoint in this subscription in this region.
+        """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
+    in this region.
 
         :param location: The location of the domain name.
         :type location: str
@@ -114,7 +115,8 @@ class AvailablePrivateEndpointTypesOperations:
         resource_group_name: str,
         **kwargs
     ) -> AsyncIterable["models.AvailablePrivateEndpointTypesResult"]:
-        """Returns all of the resource types that can be linked to a Private Endpoint in this subscription in this region.
+        """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
+    in this region.
 
         :param location: The location of the domain name.
         :type location: str

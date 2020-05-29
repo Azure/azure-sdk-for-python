@@ -16,7 +16,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -194,7 +194,8 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params: "models.VirtualWanVpnProfileParameters",
         **kwargs
     ) -> "models.VpnProfileResponse":
-        """Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination in the specified resource group.
+        """Generates a unique VPN profile for P2S clients for VirtualWan and associated
+        VpnServerConfiguration combination in the specified resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

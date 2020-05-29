@@ -48,7 +48,8 @@ class VpnLinkConnectionsOperations:
         connection_name: str,
         **kwargs
     ) -> AsyncIterable["models.ListVpnSiteLinkConnectionsResult"]:
-        """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn connection.
+        """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
+    connection.
 
         :param resource_group_name: The resource group name of the VpnGateway.
         :type resource_group_name: str

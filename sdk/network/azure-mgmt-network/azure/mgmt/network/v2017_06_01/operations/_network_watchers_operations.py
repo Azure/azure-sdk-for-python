@@ -231,6 +231,7 @@ class NetworkWatchersOperations(object):
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -245,12 +246,14 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -262,7 +265,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}  # type: ignore
 
     def list(
@@ -538,6 +549,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the IP flow to be verified.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.VerificationIPFlowParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -552,13 +564,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._verify_ip_flow_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._verify_ip_flow_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -573,7 +587,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_verify_ip_flow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'}  # type: ignore
 
     def _get_next_hop_initial(
@@ -651,6 +673,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the source and destination endpoint.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.NextHopParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -665,13 +688,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_next_hop_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_next_hop_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -686,7 +711,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_next_hop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'}  # type: ignore
 
     def _get_vm_security_rules_initial(
@@ -764,6 +797,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the VM to check security groups for.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.SecurityGroupViewParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -778,13 +812,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_vm_security_rules_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_vm_security_rules_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -799,7 +835,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_vm_security_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'}  # type: ignore
 
     def _get_troubleshooting_initial(
@@ -877,6 +921,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the resource to troubleshoot.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.TroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -891,13 +936,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_troubleshooting_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_troubleshooting_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -912,7 +959,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_troubleshooting.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'}  # type: ignore
 
     def _get_troubleshooting_result_initial(
@@ -990,6 +1045,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the resource to query the troubleshooting result.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.QueryTroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -1004,13 +1060,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_troubleshooting_result_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_troubleshooting_result_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1025,7 +1083,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_troubleshooting_result.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'}  # type: ignore
 
     def _set_flow_log_configuration_initial(
@@ -1103,6 +1169,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the configuration of flow log.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.FlowLogInformation
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -1117,13 +1184,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._set_flow_log_configuration_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._set_flow_log_configuration_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1138,7 +1207,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_set_flow_log_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'}  # type: ignore
 
     def _get_flow_log_status_initial(
@@ -1216,6 +1293,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define a resource to query flow log status.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.FlowLogStatusParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -1230,13 +1308,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_flow_log_status_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_flow_log_status_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1251,7 +1331,15 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_flow_log_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'}  # type: ignore
 
     def _check_connectivity_initial(
@@ -1320,7 +1408,8 @@ class NetworkWatchersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a given endpoint including another VM or an arbitrary remote server.
+        """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a
+    given endpoint including another VM or an arbitrary remote server.
 
         :param resource_group_name: The name of the network watcher resource group.
         :type resource_group_name: str
@@ -1329,6 +1418,7 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that determine how the connectivity check will be performed.
         :type parameters: ~azure.mgmt.network.v2017_06_01.models.ConnectivityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -1343,13 +1433,15 @@ class NetworkWatchersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._check_connectivity_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._check_connectivity_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1364,5 +1456,13 @@ class NetworkWatchersOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_check_connectivity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'}  # type: ignore
