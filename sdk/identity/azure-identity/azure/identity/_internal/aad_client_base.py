@@ -103,9 +103,8 @@ class AadClientBase(ABC):
             data["client_secret"] = client_secret
 
         request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
         )
-        request.set_formdata_body(data)
         return request
 
     def _get_refresh_token_request(self, scopes, refresh_token):
@@ -118,9 +117,8 @@ class AadClientBase(ABC):
             "client_id": self._client_id,
         }
         request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
         )
-        request.set_formdata_body(data)
         return request
 
 
