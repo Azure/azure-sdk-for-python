@@ -13,9 +13,7 @@ from .._common.constants import (
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
-    MESSAGE_RENEW_LOCK,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION
+    MESSAGE_RENEW_LOCK
 )
 from .._common.utils import utc_from_timestamp
 from ._async_utils import get_running_loop
@@ -31,14 +29,19 @@ class ReceivedMessage(sync_message.ReceivedMessage):
     async def _settle_message(  # type: ignore
             self,
             settle_operation,
-            dead_letter_details=None
+            dead_letter_reason=None,
+            dead_letter_description=None,
     ):
         try:
             if not self._is_deferred_message:
                 try:
                     await get_running_loop().run_in_executor(
                         None,
-                        self._settle_via_receiver_link(settle_operation, dead_letter_details)
+                        self._settle_via_receiver_link(
+                            settle_operation,
+                            dead_letter_reason=dead_letter_reason,
+                            dead_letter_description=dead_letter_description
+                        )
                     )
                     return
                 except RuntimeError as exception:
@@ -48,7 +51,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
                         settle_operation,
                         exception
                     )
-            await self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+            await self._settle_via_mgmt_link(settle_operation,
+                                             dead_letter_reason=dead_letter_reason,
+                                             dead_letter_description=dead_letter_description)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
@@ -86,13 +91,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-
-        details = {
-            RECEIVER_LINK_DEAD_LETTER_REASON: reason,
-            RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
-        }
-
-        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
+        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
         self._settled = True
 
     async def abandon(self) -> None:  # type: ignore

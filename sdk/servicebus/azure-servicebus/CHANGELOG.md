@@ -8,7 +8,8 @@
 
 **BugFixes**
 
-* Fixed bug where reason and description not being set when dead-lettering messages.
+* Updated uAMQP dependency to 1.2.8.
+    * Fixed bug where reason and description were not being set when dead-lettering messages.
 
 ## 7.0.0b2 (2020-05-04)
 

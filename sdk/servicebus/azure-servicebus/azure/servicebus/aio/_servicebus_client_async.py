@@ -212,7 +212,9 @@ class ServiceBusClient(object):
 
     def get_queue_deadletter_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
-        """Get ServiceBusReceiver for the sub Dead Letter Queue under the specific Queue.
+        """Get ServiceBusReceiver for the dead-letter queue which is the secondary subqueue provided by
+         the specific Queue, it holds messages that can't be delivered to any receiver or messages that can't
+         be processed.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
@@ -232,9 +234,9 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-        :rtype: ~azure.servicebus.ServiceBusReceiver
-        :keyword bool transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
-         deadletter queue. Default is False, using the standard deadletter endpoint.
+        :keyword bool transfer_deadletter: Whether to connect to the transfer dead-letter queue, or the standard
+         dead-letter queue. The transfer dead letter queue holds messages that have failed to be transferred in
+         ForwardTo or SendVia scenarios. Default is False, using the standard dead-letter endpoint.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -346,7 +348,9 @@ class ServiceBusClient(object):
 
     def get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
-        """Get ServiceBusReceiver for the sub Dead Letter Queue under the specific topic subscription.
+        """Get ServiceBusReceiver for the dead-letter queue which is the secondary subqueue provided by
+         the specific topic subscription, it holds messages that can't be delivered to any receiver or messages that
+         can't be processed.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
         :param str subscription_name: The name of specific Service Bus Subscription
@@ -368,8 +372,9 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-        :keyword bool transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
-         deadletter queue. Default is False, using the standard deadletter endpoint.
+        :keyword bool transfer_deadletter: Whether to connect to the transfer dead-letter queue, or the standard
+         dead-letter queue. The transfer dead letter queue holds messages that have failed to be transferred in
+         ForwardTo or SendVia scenarios. Default is False, using the standard dead-letter endpoint.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:

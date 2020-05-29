@@ -541,8 +541,8 @@ class ReceivedMessage(PeekMessage):
         except AttributeError:
             pass
 
-    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
-        # type: (str, Dict[str, Any]) -> Callable
+    def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
+        # type: (str, Optional[str], Optional[str]) -> Callable
         # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
@@ -557,19 +557,14 @@ class ReceivedMessage(PeekMessage):
                 [self.lock_token],
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            reason = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_REASON) if dead_letter_details else None
-            description = dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION) \
-                if dead_letter_details else None
-            mgmt_dead_letter_details = {
-                MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
-                MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""
-            }
-
             return functools.partial(
                 self._receiver._settle_message,
                 SETTLEMENT_DEADLETTER,
                 [self.lock_token],
-                dead_letter_details=mgmt_dead_letter_details
+                dead_letter_details={
+                    MGMT_REQUEST_DEAD_LETTER_REASON: dead_letter_reason or "",
+                    MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: dead_letter_description or ""
+                }
             )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(
@@ -579,8 +574,8 @@ class ReceivedMessage(PeekMessage):
             )
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
-        # type: (str, Dict[str, Any]) -> Callable
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
+        # type: (str, Optional[str], Optional[str]) -> Callable
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(self.message.accept)
         if settle_operation == MESSAGE_ABANDON:
@@ -589,10 +584,11 @@ class ReceivedMessage(PeekMessage):
             return functools.partial(
                 self.message.reject,
                 condition=DEADLETTERNAME,
-                description=(
-                    dead_letter_details.get(RECEIVER_LINK_DEAD_LETTER_DESCRIPTION) if dead_letter_details else None
-                ),
-                info=dead_letter_details
+                description=dead_letter_description,
+                info={
+                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: dead_letter_description
+                }
             )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(self.message.modify, True, True)
@@ -601,13 +597,16 @@ class ReceivedMessage(PeekMessage):
     def _settle_message(
             self,
             settle_operation,
-            dead_letter_details=None
+            dead_letter_reason=None,
+            dead_letter_description=None,
     ):
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Optional[str], Optional[str]) -> None
         try:
             if not self._is_deferred_message:
                 try:
-                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
+                    self._settle_via_receiver_link(settle_operation,
+                                                   dead_letter_reason=dead_letter_reason,
+                                                   dead_letter_description=dead_letter_description)()
                     return
                 except RuntimeError as exception:
                     _LOGGER.info(
@@ -616,7 +615,9 @@ class ReceivedMessage(PeekMessage):
                         settle_operation,
                         exception
                     )
-            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+            self._settle_via_mgmt_link(settle_operation,
+                                       dead_letter_reason=dead_letter_reason,
+                                       dead_letter_description=dead_letter_description)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
@@ -655,13 +656,7 @@ class ReceivedMessage(PeekMessage):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-
-        details = {
-            RECEIVER_LINK_DEAD_LETTER_REASON: reason,
-            RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: description
-        }
-
-        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
+        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
         self._settled = True
 
     def abandon(self):
