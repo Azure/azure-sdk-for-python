@@ -9,7 +9,7 @@ from .._internal.aad_client import AadClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any, Optional, Sequence
     from azure.core.credentials import AccessToken
 
 
@@ -59,7 +59,7 @@ class AuthorizationCodeCredential(object):
 
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(
-                code=self._authorization_code, redirect_uri=self._redirect_uri, scopes=scopes, **kwargs
+                scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
             )
             self._authorization_code = None  # auth codes are single-use
             return token
@@ -73,9 +73,11 @@ class AuthorizationCodeCredential(object):
         return token
 
     def _redeem_refresh_token(self, scopes, **kwargs):
-        # type: (Iterable[str], **Any) -> Optional[AccessToken]
+        # type: (Sequence[str], **Any) -> Optional[AccessToken]
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
-            token = self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
+            if "secret" not in refresh_token:
+                continue
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
             if token:
                 return token
         return None

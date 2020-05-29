@@ -2,21 +2,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 from unittest.mock import Mock
 
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
+import msal
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
+from helpers_async import async_validating_transport, AsyncMockTransport
+
+pytestmark = pytest.mark.asyncio
 
 
-@pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
@@ -25,7 +24,6 @@ async def test_no_scopes():
         await credential.get_token()
 
 
-@pytest.mark.asyncio
 async def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
@@ -41,7 +39,6 @@ async def test_policies_configurable():
     assert policy.on_request.called
 
 
-@pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
     credential = AuthorizationCodeCredential(
@@ -53,7 +50,6 @@ async def test_close():
     assert transport.__aexit__.call_count == 1
 
 
-@pytest.mark.asyncio
 async def test_context_manager():
     transport = AsyncMockTransport()
     credential = AuthorizationCodeCredential(
@@ -67,7 +63,6 @@ async def test_context_manager():
     assert transport.__aexit__.call_count == 1
 
 
-@pytest.mark.asyncio
 async def test_user_agent():
     transport = async_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
@@ -81,87 +76,64 @@ async def test_user_agent():
     await credential.get_token("scope")
 
 
-@pytest.mark.asyncio
 async def test_auth_code_credential():
     client_id = "client id"
     tenant_id = "tenant"
     expected_code = "auth code"
-    redirect_uri = "https://foo.bar"
-    expected_token = AccessToken("token", 42)
+    redirect_uri = "https://localhost"
+    expected_access_token = "access"
+    expected_refresh_token = "refresh"
+    expected_scope = "scope"
 
-    mock_client = Mock(spec=object)
-    obtain_by_auth_code = Mock(return_value=expected_token)
-    mock_client.obtain_token_by_authorization_code = wrap_in_future(obtain_by_auth_code)
+    auth_response = build_aad_response(access_token=expected_access_token, refresh_token=expected_refresh_token)
+    transport = async_validating_transport(
+        requests=[
+            Request(  # first call should redeem the auth code
+                url_substring=tenant_id,
+                required_data={
+                    "client_id": client_id,
+                    "code": expected_code,
+                    "grant_type": "authorization_code",
+                    "redirect_uri": redirect_uri,
+                    "scope": expected_scope,
+                },
+            ),
+            Request(  # third call should redeem the refresh token
+                url_substring=tenant_id,
+                required_data={
+                    "client_id": client_id,
+                    "grant_type": "refresh_token",
+                    "refresh_token": expected_refresh_token,
+                    "scope": expected_scope,
+                },
+            ),
+        ],
+        responses=[mock_response(json_payload=auth_response)] * 2,
+    )
+    cache = msal.TokenCache()
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
         tenant_id=tenant_id,
         authorization_code=expected_code,
         redirect_uri=redirect_uri,
-        client=mock_client,
+        transport=transport,
+        cache=cache,
     )
 
     # first call should redeem the auth code
-    token = await credential.get_token("scope")
-    assert token is expected_token
-    assert obtain_by_auth_code.call_count == 1
-    _, kwargs = obtain_by_auth_code.call_args
-    assert kwargs["code"] == expected_code
+    token = await credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 1
 
     # no auth code -> credential should return cached token
-    mock_client.obtain_token_by_authorization_code = None  # raise if credential calls this again
-    mock_client.get_cached_access_token = lambda *_: expected_token
-    token = await credential.get_token("scope")
-    assert token is expected_token
+    token = await credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 1
 
-    # no auth code, no cached token -> credential should use refresh token
-    mock_client.get_cached_access_token = lambda *_: None
-    mock_client.get_cached_refresh_tokens = lambda *_: ["this is a refresh token"]
-    mock_client.obtain_token_by_refresh_token = wrap_in_future(lambda *_, **__: expected_token)
-    token = await credential.get_token("scope")
-    assert token is expected_token
-
-
-@pytest.mark.asyncio
-async def test_custom_executor_used():
-    credential = AuthorizationCodeCredential(
-        client_id="client id", tenant_id="tenant id", authorization_code="auth code", redirect_uri="https://foo.bar"
-    )
-
-    executor = Mock()
-
-    with pytest.raises(ClientAuthenticationError):
-        await credential.get_token("scope", executor=executor)
-
-    assert executor.submit.call_count == 1
-
-
-@pytest.mark.asyncio
-async def test_custom_loop_used():
-    credential = AuthorizationCodeCredential(
-        client_id="client id", tenant_id="tenant id", authorization_code="auth code", redirect_uri="https://foo.bar"
-    )
-
-    loop = Mock()
-
-    with pytest.raises(ClientAuthenticationError):
-        await credential.get_token("scope", loop=loop)
-
-    assert loop.run_in_executor.call_count == 1
-
-
-@pytest.mark.asyncio
-async def test_custom_loop_and_executor_used():
-    credential = AuthorizationCodeCredential(
-        client_id="client id", tenant_id="tenant id", authorization_code="auth code", redirect_uri="https://foo.bar"
-    )
-
-    executor = Mock()
-    loop = Mock()
-
-    with pytest.raises(ClientAuthenticationError):
-        await credential.get_token("scope", executor=executor, loop=loop)
-
-    assert loop.run_in_executor.call_count == 1
-    executor_arg, _ = loop.run_in_executor.call_args[0]
-    assert executor_arg is executor
+    # no auth code, no cached token -> credential should redeem refresh token
+    cached_access_token = cache.find(cache.CredentialType.ACCESS_TOKEN)[0]
+    cache.remove_at(cached_access_token)
+    token = await credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 2
