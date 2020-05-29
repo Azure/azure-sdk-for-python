@@ -30,8 +30,8 @@ async def test_error_reporting():
     client = AadClient("tenant id", "client id", transport=transport)
 
     fns = [
-        functools.partial(client.obtain_token_by_authorization_code, "code", "uri", ("scope",)),
-        functools.partial(client.obtain_token_by_refresh_token, "refresh token", ("scope",)),
+        functools.partial(client.obtain_token_by_authorization_code, ("scope",), "code", "uri"),
+        functools.partial(client.obtain_token_by_refresh_token, ("scope",), "refresh token"),
     ]
 
     # exceptions raised for AAD errors should contain AAD's error description
