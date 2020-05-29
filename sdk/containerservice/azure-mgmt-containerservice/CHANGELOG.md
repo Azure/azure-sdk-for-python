@@ -1,5 +1,17 @@
 # Release History
 
+## 9.1.0 (2020-06-03)
+
+**Features**
+
+  - Model AgentPool has a new parameter node_image_version
+  - Model AgentPool has a new parameter upgrade_settings
+  - Model AgentPoolUpgradeProfile has a new parameter latest_node_image_version
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_image_version
+  - Model ManagedClusterAgentPoolProfile has a new parameter upgrade_settings
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_image_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter upgrade_settings
+
 ## 9.0.1 (2020-04-09)
 
 **Bugfixes**
