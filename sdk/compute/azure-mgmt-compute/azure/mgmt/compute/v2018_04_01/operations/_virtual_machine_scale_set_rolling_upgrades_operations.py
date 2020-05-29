@@ -102,6 +102,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -116,12 +117,14 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._cancel_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._cancel_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -133,7 +136,15 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/rollingUpgrades/cancel'}  # type: ignore
 
     def _start_os_upgrade_initial(
@@ -185,13 +196,16 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Starts a rolling upgrade to move all virtual machine scale set instances to the latest available Platform Image OS version. Instances which are already running the latest available OS version are not affected.
+        """Starts a rolling upgrade to move all virtual machine scale set instances to the latest
+    available Platform Image OS version. Instances which are already running the latest available
+    OS version are not affected.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -206,12 +220,14 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._start_os_upgrade_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._start_os_upgrade_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -223,7 +239,15 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_start_os_upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/osRollingUpgrade'}  # type: ignore
 
     def get_latest(

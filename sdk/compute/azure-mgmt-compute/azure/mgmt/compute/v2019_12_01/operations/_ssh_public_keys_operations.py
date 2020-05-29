@@ -50,7 +50,8 @@ class SshPublicKeysOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.SshPublicKeysGroupListResult"]
-        """Lists all of the SSH public keys in the subscription. Use the nextLink property in the response to get the next page of SSH public keys.
+        """Lists all of the SSH public keys in the subscription. Use the nextLink property in the response
+    to get the next page of SSH public keys.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SshPublicKeysGroupListResult or the result of cls(response)
@@ -115,7 +116,8 @@ class SshPublicKeysOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.SshPublicKeysGroupListResult"]
-        """Lists all of the SSH public keys in the specified resource group. Use the nextLink property in the response to get the next page of SSH public keys.
+        """Lists all of the SSH public keys in the specified resource group. Use the nextLink property in
+    the response to get the next page of SSH public keys.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -431,7 +433,9 @@ class SshPublicKeysOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SshPublicKeyGenerateKeyPairResult"
-        """Generates and returns a public/private key pair and populates the SSH public key resource with the public key. The length of the key will be 3072 bits. This operation can only be performed once per SSH public key resource.
+        """Generates and returns a public/private key pair and populates the SSH public key resource with
+        the public key. The length of the key will be 3072 bits. This operation can only be performed
+        once per SSH public key resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

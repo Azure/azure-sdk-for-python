@@ -119,7 +119,8 @@ class VirtualMachineImagesOperations:
         orderby: Optional[str] = None,
         **kwargs
     ) -> List["models.VirtualMachineImageResource"]:
-        """Gets a list of all virtual machine image versions for the specified location, publisher, offer, and SKU.
+        """Gets a list of all virtual machine image versions for the specified location, publisher, offer,
+        and SKU.
 
         :param location: The name of a supported Azure region.
         :type location: str

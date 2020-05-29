@@ -106,13 +106,15 @@ class LogAnalyticsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Export logs that show Api requests made by this subscription in the given time window to show throttling activities.
+        """Export logs that show Api requests made by this subscription in the given time window to show
+    throttling activities.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
         :type parameters: ~azure.mgmt.compute.v2019_07_01.models.RequestRateByIntervalInput
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -127,12 +129,14 @@ class LogAnalyticsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._export_request_rate_by_interval_initial(
-            location=location,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._export_request_rate_by_interval_initial(
+                location=location,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -147,7 +151,15 @@ class LogAnalyticsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_export_request_rate_by_interval.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}  # type: ignore
 
     def _export_throttled_requests_initial(
@@ -210,13 +222,15 @@ class LogAnalyticsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Export logs that show total throttled Api requests for this subscription in the given time window.
+        """Export logs that show total throttled Api requests for this subscription in the given time
+    window.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getThrottledRequests Api.
         :type parameters: ~azure.mgmt.compute.v2019_07_01.models.LogAnalyticsInputBase
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -231,12 +245,14 @@ class LogAnalyticsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._export_throttled_requests_initial(
-            location=location,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._export_throttled_requests_initial(
+                location=location,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -251,5 +267,13 @@ class LogAnalyticsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_export_throttled_requests.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}  # type: ignore

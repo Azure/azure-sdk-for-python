@@ -114,6 +114,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -128,13 +129,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._reimage_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._reimage_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -149,7 +152,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_reimage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage'}  # type: ignore
 
     def _reimage_all_initial(
@@ -210,7 +221,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Allows you to re-image all the disks ( including data disks ) in the a VM scale set instance. This operation is only supported for managed disks.
+        """Allows you to re-image all the disks ( including data disks ) in the a VM scale set instance.
+    This operation is only supported for managed disks.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -219,6 +231,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -233,13 +246,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._reimage_all_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._reimage_all_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -254,7 +269,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_reimage_all.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall'}  # type: ignore
 
     def _deallocate_initial(
@@ -315,7 +338,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Deallocates a specific virtual machine in a VM scale set. Shuts down the virtual machine and releases the compute resources it uses. You are not billed for the compute resources of this virtual machine once it is deallocated.
+        """Deallocates a specific virtual machine in a VM scale set. Shuts down the virtual machine and
+    releases the compute resources it uses. You are not billed for the compute resources of this
+    virtual machine once it is deallocated.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -324,6 +349,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -338,13 +364,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._deallocate_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._deallocate_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -359,7 +387,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_deallocate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate'}  # type: ignore
 
     def _delete_initial(
@@ -429,6 +465,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -443,13 +480,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -464,7 +503,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}'}  # type: ignore
 
     def get(
@@ -734,7 +781,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Power off (stop) a virtual machine in a VM scale set. Note that resources are still attached and you are getting charged for the resources. Instead, use deallocate to release resources and avoid charges.
+        """Power off (stop) a virtual machine in a VM scale set. Note that resources are still attached
+    and you are getting charged for the resources. Instead, use deallocate to release resources and
+    avoid charges.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -743,6 +792,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -757,13 +807,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._power_off_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._power_off_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -778,7 +830,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_power_off.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff'}  # type: ignore
 
     def _restart_initial(
@@ -848,6 +908,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -862,13 +923,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._restart_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._restart_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -883,7 +946,15 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart'}  # type: ignore
 
     def _start_initial(
@@ -953,6 +1024,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -967,13 +1039,15 @@ class VirtualMachineScaleSetVMsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._start_initial(
-            resource_group_name=resource_group_name,
-            vm_scale_set_name=vm_scale_set_name,
-            instance_id=instance_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._start_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -988,5 +1062,13 @@ class VirtualMachineScaleSetVMsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start'}  # type: ignore

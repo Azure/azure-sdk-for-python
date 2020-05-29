@@ -48,7 +48,9 @@ class DedicatedHostGroupsOperations:
         parameters: "models.DedicatedHostGroup",
         **kwargs
     ) -> "models.DedicatedHostGroup":
-        """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host Groups please see [Dedicated Host Documentation] (https://go.microsoft.com/fwlink/?linkid=2082596).
+        """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host
+        Groups please see [Dedicated Host Documentation]
+        (https://go.microsoft.com/fwlink/?linkid=2082596).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -289,7 +291,8 @@ class DedicatedHostGroupsOperations:
         resource_group_name: str,
         **kwargs
     ) -> AsyncIterable["models.DedicatedHostGroupListResult"]:
-        """Lists all of the dedicated host groups in the specified resource group. Use the nextLink property in the response to get the next page of dedicated host groups.
+        """Lists all of the dedicated host groups in the specified resource group. Use the nextLink
+    property in the response to get the next page of dedicated host groups.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -355,7 +358,8 @@ class DedicatedHostGroupsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.DedicatedHostGroupListResult"]:
-        """Lists all of the dedicated host groups in the subscription. Use the nextLink property in the response to get the next page of dedicated host groups.
+        """Lists all of the dedicated host groups in the subscription. Use the nextLink property in the
+    response to get the next page of dedicated host groups.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DedicatedHostGroupListResult or the result of cls(response)

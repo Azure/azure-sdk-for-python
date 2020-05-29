@@ -426,7 +426,8 @@ class AvailabilitySetsOperations:
         availability_set_name: str,
         **kwargs
     ) -> AsyncIterable["models.VirtualMachineSizeListResult"]:
-        """Lists all available virtual machine sizes that can be used to create a new virtual machine in an existing availability set.
+        """Lists all available virtual machine sizes that can be used to create a new virtual machine in
+    an existing availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

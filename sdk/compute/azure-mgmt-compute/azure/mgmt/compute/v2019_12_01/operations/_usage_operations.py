@@ -51,7 +51,8 @@ class UsageOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ListUsagesResult"]
-        """Gets, for the specified location, the current compute resource usage information as well as the limits for compute resources under the subscription.
+        """Gets, for the specified location, the current compute resource usage information as well as the
+    limits for compute resources under the subscription.
 
         :param location: The location for which resource usage is queried.
         :type location: str
