@@ -57,7 +57,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._delete_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -174,7 +174,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.check_existence_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -217,7 +217,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._create_or_update_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -349,7 +349,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.get_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -409,7 +409,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.cancel_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -451,7 +451,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._validate_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -582,7 +582,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.export_template_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -643,7 +643,7 @@ class DeploymentsOperations:
                 # Construct URL
                 url = self.list_at_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+                    'scope': self._serialize.url("scope", scope, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AliasPath
     from ._models_py3 import AliasPattern
     from ._models_py3 import BasicDependency
+    from ._models_py3 import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import DebugSetting
     from ._models_py3 import Dependency
     from ._models_py3 import Deployment
@@ -35,7 +36,6 @@ try:
     from ._models_py3 import GenericResourceFilter
     from ._models_py3 import HttpMessage
     from ._models_py3 import Identity
-    from ._models_py3 import IdentityUserAssignedIdentitiesValue
     from ._models_py3 import OnErrorDeployment
     from ._models_py3 import OnErrorDeploymentExtended
     from ._models_py3 import Operation
@@ -78,6 +78,7 @@ except (SyntaxError, ImportError):
     from ._models import AliasPath  # type: ignore
     from ._models import AliasPattern  # type: ignore
     from ._models import BasicDependency  # type: ignore
+    from ._models import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import DebugSetting  # type: ignore
     from ._models import Dependency  # type: ignore
     from ._models import Deployment  # type: ignore
@@ -102,7 +103,6 @@ except (SyntaxError, ImportError):
     from ._models import GenericResourceFilter  # type: ignore
     from ._models import HttpMessage  # type: ignore
     from ._models import Identity  # type: ignore
-    from ._models import IdentityUserAssignedIdentitiesValue  # type: ignore
     from ._models import OnErrorDeployment  # type: ignore
     from ._models import OnErrorDeploymentExtended  # type: ignore
     from ._models import Operation  # type: ignore
@@ -159,6 +159,7 @@ __all__ = [
     'AliasPath',
     'AliasPattern',
     'BasicDependency',
+    'ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties',
     'DebugSetting',
     'Dependency',
     'Deployment',
@@ -183,7 +184,6 @@ __all__ = [
     'GenericResourceFilter',
     'HttpMessage',
     'Identity',
-    'IdentityUserAssignedIdentitiesValue',
     'OnErrorDeployment',
     'OnErrorDeploymentExtended',
     'Operation',

@@ -26,7 +26,6 @@ try:
     from ._models_py3 import ScriptLog
     from ._models_py3 import ScriptLogsList
     from ._models_py3 import ScriptStatus
-    from ._models_py3 import StorageAccountConfiguration
     from ._models_py3 import SystemData
     from ._models_py3 import UserAssignedIdentity
 except (SyntaxError, ImportError):
@@ -49,7 +48,6 @@ except (SyntaxError, ImportError):
     from ._models import ScriptLog  # type: ignore
     from ._models import ScriptLogsList  # type: ignore
     from ._models import ScriptStatus  # type: ignore
-    from ._models import StorageAccountConfiguration  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import UserAssignedIdentity  # type: ignore
 
@@ -80,7 +78,6 @@ __all__ = [
     'ScriptLog',
     'ScriptLogsList',
     'ScriptStatus',
-    'StorageAccountConfiguration',
     'SystemData',
     'UserAssignedIdentity',
     'CleanupOptions',

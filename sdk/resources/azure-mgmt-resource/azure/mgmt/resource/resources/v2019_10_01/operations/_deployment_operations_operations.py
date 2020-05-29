@@ -74,7 +74,7 @@ class DeploymentOperationsOperations(object):
         # Construct URL
         url = self.get_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
@@ -136,7 +136,7 @@ class DeploymentOperationsOperations(object):
                 # Construct URL
                 url = self.list_at_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+                    'scope': self._serialize.url("scope", scope, 'str'),
                     'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
