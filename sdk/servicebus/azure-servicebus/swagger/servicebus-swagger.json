@@ -349,7 +349,7 @@
         "AutoDeleteOnIdle": {
           "description": "ISO 8601 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
           "type": "string",
-          "format": "iso8601",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -357,6 +357,7 @@
         "CreatedAt": {
           "description": "The exact time the queue was created.",
           "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -371,7 +372,7 @@
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
           "type": "string",
-          "format": "iso8601",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -379,7 +380,7 @@
         "DuplicateDetectionHistoryTimeWindow": {
           "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
           "type": "string",
-          "format": "iso8601",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -421,7 +422,7 @@
         "LockDuration": {
           "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
           "type": "string",
-          "format": "iso8601",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -435,7 +436,7 @@
         },
         "MaxSizeInMegabytes": {
           "description": "The maximum size of the queue in megabytes, which is the size of memory allocated for the queue.",
-          "type": "number",
+          "type": "integer",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -510,23 +511,9 @@
           }
         },
         "AutoDeleteOnIdle": {
-          "description": "ISO 8601 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
+          "description": "ISO 8601 timeSpan idle interval after which the topic is automatically deleted. The minimum duration is 5 minutes.",
           "type": "string",
-          "format": "iso8601",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "CreatedAt": {
-          "description": "The exact time the queue was created.",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "DeadLetteringOnMessageExpiration": {
-          "description": "A value that indicates whether this queue has dead letter support when a message expires.",
-          "type": "boolean",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -534,7 +521,7 @@
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
           "type": "string",
-          "format": "iso8601",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -542,13 +529,7 @@
         "DuplicateDetectionHistoryTimeWindow": {
           "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
           "type": "string",
-          "format": "iso8601",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "EntityAvailabilityStatus": {
-          "$ref": "#/definitions/EntityAvailabilityStatus",
+          "format": "duration",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -560,58 +541,20 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "EnableExpress": {
-          "description": "A value that indicates whether Express Entities are enabled. An express queue holds a message in memory temporarily before writing it to persistent storage.",
-          "type": "boolean",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
         "EnablePartitioning": {
-          "description": "A value that indicates whether the queue is to be partitioned across multiple message brokers.",
+          "description": "A value that indicates whether the topic is to be partitioned across multiple message brokers.",
           "type": "boolean",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "IsAnonymousAccessible": {
-          "description": "A value indicating if the resource can be accessed without authorization.",
-          "type": "boolean",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "LockDuration": {
-          "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
-          "type": "string",
-          "format": "iso8601",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "MaxDeliveryCount": {
-          "description": "The maximum delivery count. A message is automatically deadlettered after this number of deliveries. Default value is 10.",
-          "type": "integer",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
         "MaxSizeInMegabytes": {
-          "description": "The maximum size of the queue in megabytes, which is the size of memory allocated for the queue.",
-          "type": "number",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "description": "The maximum size of the topic in megabytes, which is the size of memory allocated for the topic.",
+          "type": "integer",
+          "format": "int64"
         },
         "RequiresDuplicateDetection": {
-          "description": "A value indicating if this queue requires duplicate detection.",
-          "type": "boolean",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "RequiresSession": {
-          "description": "A value that indicates whether the queue supports the concept of sessions.",
+          "description": "A value indicating if this topic requires duplicate detection.",
           "type": "boolean",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
@@ -624,11 +567,15 @@
           }
         },
         "SupportOrdering": {
-          "description": "A value that indicates whether the queue supports ordering.",
+          "description": "A value that indicates whether the topic supports ordering.",
           "type": "boolean",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
+        },
+        "UserMetadata": {
+          "description": "Metadata associated with the topic.",
+          "type": "string"
         }
       }
     }
@@ -758,7 +705,7 @@
     },
     "/$Resources/{entityType}": {
       "get": {
-        "operationId": "Gets a list of all the entities in Service Bus.",
+        "operationId": "listEntities",
         "summary": "Get Queues or topics",
         "description": "Get the details about the entities of the given Service Bus namespace.",
         "tags": [
