@@ -9,6 +9,7 @@
 - Renamed `edm` to `SearchFieldDataType`    #11511
 - Now Search Synonym Map creation/update returns a model    #11514
 - Renaming  #11565
+
   SearchIndexerDataSource -> SearchIndexerDataSourceConnection
   SearchField.SynonymMaps -> SearchField.SynonymMapNames
   SearchField.Analyzer -> SearchField.AnalyzerName
@@ -21,7 +22,7 @@
   Similarity -> SimilarityAlgorithm
   Suggester -> SearchSuggester
   PathHierarchyTokenizerV2 -> PathHierarchyTokenizer
-    
+- Renamed DataSource methods to DataSourceConnection    #11693
   
 
 ## 1.0.0b3 (2020-05-04)

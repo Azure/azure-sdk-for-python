@@ -495,22 +495,22 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
-    def _create_datasource(self, name="sample-datasource"):
+    def _create_data_source_connection(self, name="sample-datasource"):
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSourceConnection(
+        data_source_connection = SearchIndexerDataSourceConnection(
             name=name,
             type="azureblob",
             connection_string=CONNECTION_STRING,
             container=container
         )
-        return data_source
+        return data_source_connection
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_datasource(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        result = client.create_datasource(data_source)
+        data_source_connection = self._create_data_source_connection()
+        result = client.create_data_source_connection(data_source_connection)
         assert result.name == "sample-datasource"
         assert result.type == "azureblob"
 
@@ -518,30 +518,30 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        result = client.create_datasource(data_source)
-        assert len(client.get_datasources()) == 1
-        client.delete_datasource("sample-datasource")
-        assert len(client.get_datasources()) == 0
+        data_source_connection = self._create_data_source_connection()
+        result = client.create_data_source_connection(data_source_connection)
+        assert len(client.get_data_source_connections()) == 1
+        client.delete_data_source_connection("sample-datasource")
+        assert len(client.get_data_source_connections()) == 0
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_datasource(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        created = client.create_datasource(data_source)
-        result = client.get_datasource("sample-datasource")
+        data_source_connection = self._create_data_source_connection()
+        created = client.create_data_source_connection(data_source_connection)
+        result = client.get_data_source_connection("sample-datasource")
         assert result.name == "sample-datasource"
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_list_datasource(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source1 = self._create_datasource()
-        data_source2 = self._create_datasource(name="another-sample")
-        created1 = client.create_datasource(data_source1)
-        created2 = client.create_datasource(data_source2)
-        result = client.get_datasources()
+        data_source_connection1 = self._create_data_source_connection()
+        data_source_connection2 = self._create_data_source_connection(name="another-sample")
+        created1 = client.create_data_source_connection(data_source_connection1)
+        created2 = client.create_data_source_connection(data_source_connection2)
+        result = client.get_data_source_connections()
         assert isinstance(result, list)
         assert set(x.name for x in result) == {"sample-datasource", "another-sample"}
 
@@ -549,13 +549,13 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        created = client.create_datasource(data_source)
-        assert len(client.get_datasources()) == 1
-        data_source.description = "updated"
-        client.create_or_update_datasource(data_source)
-        assert len(client.get_datasources()) == 1
-        result = client.get_datasource("sample-datasource")
+        data_source_connection = self._create_data_source_connection()
+        created = client.create_data_source_connection(data_source_connection)
+        assert len(client.get_data_source_connections()) == 1
+        data_source_connection.description = "updated"
+        client.create_or_update_data_source_connection(data_source_connection)
+        assert len(client.get_data_source_connections()) == 1
+        result = client.get_data_source_connection("sample-datasource")
         assert result.name == "sample-datasource"
         assert result.description == "updated"
 
@@ -563,54 +563,54 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        created = client.create_datasource(data_source)
+        data_source_connection = self._create_data_source_connection()
+        created = client.create_data_source_connection(data_source_connection)
         etag = created.e_tag
 
-        # Now update the data source
-        data_source.description = "updated"
-        client.create_or_update_datasource(data_source)
+        # Now update the data source connection
+        data_source_connection.description = "updated"
+        client.create_or_update_data_source_connection(data_source_connection)
 
-        # prepare data source
-        data_source.e_tag = etag # reset to the original datasource
-        data_source.description = "changed"
+        # prepare data source connection
+        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.description = "changed"
         with pytest.raises(HttpResponseError):
-            client.create_or_update_datasource(data_source, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        created = client.create_datasource(data_source)
+        data_source_connection = self._create_data_source_connection()
+        created = client.create_data_source_connection(data_source_connection)
         etag = created.e_tag
 
-        # Now update the data source
-        data_source.description = "updated"
-        client.create_or_update_datasource(data_source)
+        # Now update the data source connection
+        data_source_connection.description = "updated"
+        client.create_or_update_data_source_connection(data_source_connection)
 
-        # prepare data source
-        data_source.e_tag = etag # reset to the original datasource
+        # prepare data source connection
+        data_source_connection.e_tag = etag # reset to the original data source connection
         with pytest.raises(HttpResponseError):
-            client.delete_datasource(data_source, match_condition=MatchConditions.IfNotModified)
-            assert len(client.get_datasources()) == 1
+            client.delete_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
+            assert len(client.get_data_source_connections()) == 1
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource_string_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        data_source = self._create_datasource()
-        created = client.create_datasource(data_source)
+        data_source_connection = self._create_data_source_connection()
+        created = client.create_data_source_connection(data_source_connection)
         etag = created.e_tag
 
-        # Now update the data source
-        data_source.description = "updated"
-        client.create_or_update_datasource(data_source)
+        # Now update the data source connection
+        data_source_connection.description = "updated"
+        client.create_or_update_data_source_connection(data_source_connection)
 
-        # prepare data source
-        data_source.e_tag = etag # reset to the original datasource
+        # prepare data source connection
+        data_source_connection.e_tag = etag # reset to the original data source connection
         with pytest.raises(ValueError):
-            client.delete_datasource(data_source.name, match_condition=MatchConditions.IfNotModified)
+            client.delete_data_source_connection(data_source_connection.name, match_condition=MatchConditions.IfNotModified)
 
 
 class SearchIndexersClientTest(AzureMgmtTestCase):
@@ -619,14 +619,14 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
         self.scrubber.register_name_pair(con_str, 'connection_string')
         container = SearchIndexerDataContainer(name='searchcontainer')
-        data_source = SearchIndexerDataSourceConnection(
+        data_source_connection = SearchIndexerDataSourceConnection(
             name=ds_name,
             type="azureblob",
             connection_string=con_str,
             container=container
         )
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-        ds = client.create_datasource(data_source)
+        ds = client.create_data_source_connection(data_source_connection)
 
         index_name = id_name
         fields = [
