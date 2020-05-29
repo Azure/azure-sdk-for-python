@@ -706,9 +706,9 @@
     "/$Resources/{entityType}": {
       "parameters": [
         {
-          "name": "queueOrTopicName",
+          "name": "entityType",
           "in": "path",
-          "description": "The name of the queue or topic relative to the Service Bus namespace.",
+          "description": "List all queues or all topics of the service bus. Value can be \"queues\" or \"topics\" ",
           "minLength": 1,
           "x-ms-parameter-location": "method",
           "required": true,
