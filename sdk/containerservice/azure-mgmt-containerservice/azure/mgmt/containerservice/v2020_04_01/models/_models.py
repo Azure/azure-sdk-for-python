@@ -61,7 +61,8 @@ class AgentPool(SubResource):
     :ivar type: Resource type
     :vartype type: str
     :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
+     values must be in the range of 0 to 100 (inclusive) for user pools and in
+     the range of 1 to 100 (inclusive) for system pools. The default value is
      1.
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
@@ -116,7 +117,7 @@ class AgentPool(SubResource):
      'Standard_NC6s_v3', 'Standard_ND12s', 'Standard_ND24rs', 'Standard_ND24s',
      'Standard_ND6s', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceVMSizeTypes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -130,7 +131,7 @@ class AgentPool(SubResource):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OSType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OSType
     :param max_count: Maximum number of nodes for auto-scaling
     :type max_count: int
     :param min_count: Minimum number of nodes for auto-scaling
@@ -140,10 +141,19 @@ class AgentPool(SubResource):
     :param agent_pool_type: AgentPoolType represents types of an agent pool.
      Possible values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type agent_pool_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.AgentPoolType
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolType
+    :param mode: AgentPoolMode represents mode of an agent pool. Possible
+     values include: 'System', 'User'
+    :type mode: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolMode
     :param orchestrator_version: Version of orchestrator specified when
      creating the managed cluster.
     :type orchestrator_version: str
+    :param node_image_version: Version of node image
+    :type node_image_version: str
+    :param upgrade_settings: Settings for upgrading the agentpool
+    :type upgrade_settings:
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolUpgradeSettings
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
@@ -154,15 +164,20 @@ class AgentPool(SubResource):
     :type enable_node_public_ip: bool
     :param scale_set_priority: ScaleSetPriority to be used to specify virtual
      machine scale set priority. Default to regular. Possible values include:
-     'Low', 'Regular'. Default value: "Regular" .
+     'Spot', 'Regular'. Default value: "Regular" .
     :type scale_set_priority: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetPriority
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetPriority
     :param scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to
-     specify eviction policy for low priority virtual machine scale set.
-     Default to Delete. Possible values include: 'Delete', 'Deallocate'.
-     Default value: "Delete" .
+     specify eviction policy for Spot virtual machine scale set. Default to
+     Delete. Possible values include: 'Delete', 'Deallocate'. Default value:
+     "Delete" .
     :type scale_set_eviction_policy: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetEvictionPolicy
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetEvictionPolicy
+    :param spot_max_price: SpotMaxPrice to be used to specify the maximum
+     price you are willing to pay in US Dollars. Possible values are any
+     decimal value greater than zero or -1 which indicates default price to be
+     up-to on-demand.
+    :type spot_max_price: float
     :param tags: Agent pool tags to be persisted on the agent pool virtual
      machine scale set.
     :type tags: dict[str, str]
@@ -195,12 +210,16 @@ class AgentPool(SubResource):
         'min_count': {'key': 'properties.minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'properties.enableAutoScaling', 'type': 'bool'},
         'agent_pool_type': {'key': 'properties.type', 'type': 'str'},
+        'mode': {'key': 'properties.mode', 'type': 'str'},
         'orchestrator_version': {'key': 'properties.orchestratorVersion', 'type': 'str'},
+        'node_image_version': {'key': 'properties.nodeImageVersion', 'type': 'str'},
+        'upgrade_settings': {'key': 'properties.upgradeSettings', 'type': 'AgentPoolUpgradeSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
         'enable_node_public_ip': {'key': 'properties.enableNodePublicIP', 'type': 'bool'},
         'scale_set_priority': {'key': 'properties.scaleSetPriority', 'type': 'str'},
         'scale_set_eviction_policy': {'key': 'properties.scaleSetEvictionPolicy', 'type': 'str'},
+        'spot_max_price': {'key': 'properties.spotMaxPrice', 'type': 'float'},
         'tags': {'key': 'properties.tags', 'type': '{str}'},
         'node_labels': {'key': 'properties.nodeLabels', 'type': '{str}'},
         'node_taints': {'key': 'properties.nodeTaints', 'type': '[str]'},
@@ -218,12 +237,16 @@ class AgentPool(SubResource):
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
         self.agent_pool_type = kwargs.get('agent_pool_type', None)
+        self.mode = kwargs.get('mode', None)
         self.orchestrator_version = kwargs.get('orchestrator_version', None)
+        self.node_image_version = kwargs.get('node_image_version', None)
+        self.upgrade_settings = kwargs.get('upgrade_settings', None)
         self.provisioning_state = None
         self.availability_zones = kwargs.get('availability_zones', None)
         self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
         self.scale_set_priority = kwargs.get('scale_set_priority', "Regular")
         self.scale_set_eviction_policy = kwargs.get('scale_set_eviction_policy', "Delete")
+        self.spot_max_price = kwargs.get('spot_max_price', None)
         self.tags = kwargs.get('tags', None)
         self.node_labels = kwargs.get('node_labels', None)
         self.node_taints = kwargs.get('node_taints', None)
@@ -243,7 +266,7 @@ class AgentPoolAvailableVersions(Model):
     :vartype type: str
     :param agent_pool_versions: List of versions available for agent pool.
     :type agent_pool_versions:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]
     """
 
     _validation = {
@@ -312,11 +335,14 @@ class AgentPoolUpgradeProfile(Model):
      from Linux and Windows. Default to Linux. Possible values include:
      'Linux', 'Windows'. Default value: "Linux" .
     :type os_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OSType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OSType
     :param upgrades: List of orchestrator types and versions available for
      upgrade.
     :type upgrades:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.AgentPoolUpgradeProfilePropertiesUpgradesItem]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolUpgradeProfilePropertiesUpgradesItem]
+    :param latest_node_image_version: LatestNodeImageVersion is the latest AKS
+     supported node image version.
+    :type latest_node_image_version: str
     """
 
     _validation = {
@@ -334,6 +360,7 @@ class AgentPoolUpgradeProfile(Model):
         'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
         'os_type': {'key': 'properties.osType', 'type': 'str'},
         'upgrades': {'key': 'properties.upgrades', 'type': '[AgentPoolUpgradeProfilePropertiesUpgradesItem]'},
+        'latest_node_image_version': {'key': 'properties.latestNodeImageVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -344,6 +371,7 @@ class AgentPoolUpgradeProfile(Model):
         self.kubernetes_version = kwargs.get('kubernetes_version', None)
         self.os_type = kwargs.get('os_type', "Linux")
         self.upgrades = kwargs.get('upgrades', None)
+        self.latest_node_image_version = kwargs.get('latest_node_image_version', None)
 
 
 class AgentPoolUpgradeProfilePropertiesUpgradesItem(Model):
@@ -366,12 +394,29 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(Model):
         self.is_preview = kwargs.get('is_preview', None)
 
 
+class AgentPoolUpgradeSettings(Model):
+    """Settings for upgrading an agentpool.
+
+    :param max_surge: Count or percentage of additional nodes to be added
+     during upgrade. If empty uses AKS default
+    :type max_surge: str
+    """
+
+    _attribute_map = {
+        'max_surge': {'key': 'maxSurge', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AgentPoolUpgradeSettings, self).__init__(**kwargs)
+        self.max_surge = kwargs.get('max_surge', None)
+
+
 class CloudError(Model):
     """An error response from the Container service.
 
     :param error: Details about the error.
     :type error:
-     ~azure.mgmt.containerservice.v2019_11_01.models.CloudErrorBody
+     ~azure.mgmt.containerservice.v2020_04_01.models.CloudErrorBody
     """
 
     _attribute_map = {
@@ -409,7 +454,7 @@ class CloudErrorBody(Model):
     :type target: str
     :param details: A list of additional details about the error.
     :type details:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.CloudErrorBody]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -435,7 +480,7 @@ class ContainerServiceDiagnosticsProfile(Model):
     :param vm_diagnostics: Required. Profile for diagnostics on the container
      service VMs.
     :type vm_diagnostics:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceVMDiagnostics
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceVMDiagnostics
     """
 
     _validation = {
@@ -462,7 +507,7 @@ class ContainerServiceLinuxProfile(Model):
     :param ssh: Required. SSH configuration for Linux-based VMs running on
      Azure.
     :type ssh:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceSshConfiguration
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceSshConfiguration
     """
 
     _validation = {
@@ -547,7 +592,7 @@ class ContainerServiceMasterProfile(Model):
      'Standard_NC6s_v3', 'Standard_ND12s', 'Standard_ND24rs', 'Standard_ND24s',
      'Standard_ND6s', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceVMSizeTypes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -563,7 +608,7 @@ class ContainerServiceMasterProfile(Model):
      choose for you based on the orchestrator choice. Possible values include:
      'StorageAccount', 'ManagedDisks'
     :type storage_profile: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceStorageProfileTypes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FQDN for the master pool.
     :vartype fqdn: str
     """
@@ -604,11 +649,15 @@ class ContainerServiceNetworkProfile(Model):
      network. Possible values include: 'azure', 'kubenet'. Default value:
      "kubenet" .
     :type network_plugin: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.NetworkPlugin
+     ~azure.mgmt.containerservice.v2020_04_01.models.NetworkPlugin
     :param network_policy: Network policy used for building Kubernetes
      network. Possible values include: 'calico', 'azure'
     :type network_policy: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.NetworkPolicy
+     ~azure.mgmt.containerservice.v2020_04_01.models.NetworkPolicy
+    :param network_mode: Network mode used for building Kubernetes network.
+     Possible values include: 'transparent', 'bridge'
+    :type network_mode: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.NetworkMode
     :param pod_cidr: A CIDR notation IP range from which to assign pod IPs
      when kubenet is used. Default value: "10.244.0.0/16" .
     :type pod_cidr: str
@@ -628,14 +677,14 @@ class ContainerServiceNetworkProfile(Model):
      values include: 'loadBalancer', 'userDefinedRouting'. Default value:
      "loadBalancer" .
     :type outbound_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OutboundType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OutboundType
     :param load_balancer_sku: The load balancer sku for the managed cluster.
      Possible values include: 'standard', 'basic'
     :type load_balancer_sku: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.LoadBalancerSku
+     ~azure.mgmt.containerservice.v2020_04_01.models.LoadBalancerSku
     :param load_balancer_profile: Profile of the cluster load balancer.
     :type load_balancer_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterLoadBalancerProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterLoadBalancerProfile
     """
 
     _validation = {
@@ -648,6 +697,7 @@ class ContainerServiceNetworkProfile(Model):
     _attribute_map = {
         'network_plugin': {'key': 'networkPlugin', 'type': 'str'},
         'network_policy': {'key': 'networkPolicy', 'type': 'str'},
+        'network_mode': {'key': 'networkMode', 'type': 'str'},
         'pod_cidr': {'key': 'podCidr', 'type': 'str'},
         'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
         'dns_service_ip': {'key': 'dnsServiceIP', 'type': 'str'},
@@ -661,6 +711,7 @@ class ContainerServiceNetworkProfile(Model):
         super(ContainerServiceNetworkProfile, self).__init__(**kwargs)
         self.network_plugin = kwargs.get('network_plugin', "kubenet")
         self.network_policy = kwargs.get('network_policy', None)
+        self.network_mode = kwargs.get('network_mode', None)
         self.pod_cidr = kwargs.get('pod_cidr', "10.244.0.0/16")
         self.service_cidr = kwargs.get('service_cidr', "10.0.0.0/16")
         self.dns_service_ip = kwargs.get('dns_service_ip', "10.0.0.10")
@@ -678,7 +729,7 @@ class ContainerServiceSshConfiguration(Model):
     :param public_keys: Required. The list of SSH public keys used to
      authenticate with Linux-based VMs. Only expect one key specified.
     :type public_keys:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceSshPublicKey]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceSshPublicKey]
     """
 
     _validation = {
@@ -786,7 +837,7 @@ class CredentialResults(Model):
 
     :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
     :vartype kubeconfigs:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.CredentialResult]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.CredentialResult]
     """
 
     _validation = {
@@ -881,22 +932,22 @@ class ManagedCluster(Resource):
     :vartype private_fqdn: str
     :param agent_pool_profiles: Properties of the agent pool.
     :type agent_pool_profiles:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAgentPoolProfile]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterAgentPoolProfile]
     :param linux_profile: Profile for Linux VMs in the container service
      cluster.
     :type linux_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceLinuxProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceLinuxProfile
     :param windows_profile: Profile for Windows VMs in the container service
      cluster.
     :type windows_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterWindowsProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterWindowsProfile
     :param service_principal_profile: Information about a service principal
      identity for the cluster to use for manipulating Azure APIs.
     :type service_principal_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterServicePrincipalProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterServicePrincipalProfile
     :param addon_profiles: Profile of managed cluster add-on.
     :type addon_profiles: dict[str,
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAddonProfile]
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterAddonProfile]
     :param node_resource_group: Name of the resource group containing agent
      pool nodes.
     :type node_resource_group: str
@@ -908,20 +959,30 @@ class ManagedCluster(Resource):
     :type enable_pod_security_policy: bool
     :param network_profile: Profile of network configuration.
     :type network_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceNetworkProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceNetworkProfile
     :param aad_profile: Profile of Azure Active Directory configuration.
     :type aad_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAADProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterAADProfile
+    :param auto_scaler_profile: Parameters to be applied to the
+     cluster-autoscaler when enabled
+    :type auto_scaler_profile:
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterPropertiesAutoScalerProfile
     :param api_server_access_profile: Access profile for managed cluster API
      server.
     :type api_server_access_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAPIServerAccessProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterAPIServerAccessProfile
+    :param disk_encryption_set_id: ResourceId of the disk encryption set to
+     use for enabling encryption at rest.
+    :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterPropertiesIdentityProfileValue]
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterPropertiesIdentityProfileValue]
     :param identity: The identity of the managed cluster, if configured.
     :type identity:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterIdentity
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterIdentity
+    :param sku: The managed cluster SKU.
+    :type sku:
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterSKU
     """
 
     _validation = {
@@ -957,9 +1018,12 @@ class ManagedCluster(Resource):
         'enable_pod_security_policy': {'key': 'properties.enablePodSecurityPolicy', 'type': 'bool'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
+        'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
+        'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
         'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
         'identity': {'key': 'identity', 'type': 'ManagedClusterIdentity'},
+        'sku': {'key': 'sku', 'type': 'ManagedClusterSKU'},
     }
 
     def __init__(self, **kwargs):
@@ -980,19 +1044,25 @@ class ManagedCluster(Resource):
         self.enable_pod_security_policy = kwargs.get('enable_pod_security_policy', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.aad_profile = kwargs.get('aad_profile', None)
+        self.auto_scaler_profile = kwargs.get('auto_scaler_profile', None)
         self.api_server_access_profile = kwargs.get('api_server_access_profile', None)
+        self.disk_encryption_set_id = kwargs.get('disk_encryption_set_id', None)
         self.identity_profile = kwargs.get('identity_profile', None)
         self.identity = kwargs.get('identity', None)
+        self.sku = kwargs.get('sku', None)
 
 
 class ManagedClusterAADProfile(Model):
     """AADProfile specifies attributes for Azure Active Directory integration.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param client_app_id: Required. The client AAD application ID.
+    :param managed: Whether to enable managed AAD.
+    :type managed: bool
+    :param admin_group_object_ids: AAD group object IDs that will have admin
+     role of the cluster.
+    :type admin_group_object_ids: list[str]
+    :param client_app_id: The client AAD application ID.
     :type client_app_id: str
-    :param server_app_id: Required. The server AAD application ID.
+    :param server_app_id: The server AAD application ID.
     :type server_app_id: str
     :param server_app_secret: The server AAD application secret.
     :type server_app_secret: str
@@ -1001,12 +1071,9 @@ class ManagedClusterAADProfile(Model):
     :type tenant_id: str
     """
 
-    _validation = {
-        'client_app_id': {'required': True},
-        'server_app_id': {'required': True},
-    }
-
     _attribute_map = {
+        'managed': {'key': 'managed', 'type': 'bool'},
+        'admin_group_object_ids': {'key': 'adminGroupObjectIDs', 'type': '[str]'},
         'client_app_id': {'key': 'clientAppID', 'type': 'str'},
         'server_app_id': {'key': 'serverAppID', 'type': 'str'},
         'server_app_secret': {'key': 'serverAppSecret', 'type': 'str'},
@@ -1015,6 +1082,8 @@ class ManagedClusterAADProfile(Model):
 
     def __init__(self, **kwargs):
         super(ManagedClusterAADProfile, self).__init__(**kwargs)
+        self.managed = kwargs.get('managed', None)
+        self.admin_group_object_ids = kwargs.get('admin_group_object_ids', None)
         self.client_app_id = kwargs.get('client_app_id', None)
         self.server_app_id = kwargs.get('server_app_id', None)
         self.server_app_secret = kwargs.get('server_app_secret', None)
@@ -1078,7 +1147,7 @@ class ManagedClusterAddonProfile(Model):
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
     :vartype identity:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAddonProfileIdentity
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1151,7 +1220,8 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     sending a request.
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
+     values must be in the range of 0 to 100 (inclusive) for user pools and in
+     the range of 1 to 100 (inclusive) for system pools. The default value is
      1.
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
@@ -1206,7 +1276,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
      'Standard_NC6s_v3', 'Standard_ND12s', 'Standard_ND24rs', 'Standard_ND24s',
      'Standard_ND6s', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceVMSizeTypes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -1220,7 +1290,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OSType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OSType
     :param max_count: Maximum number of nodes for auto-scaling
     :type max_count: int
     :param min_count: Minimum number of nodes for auto-scaling
@@ -1230,10 +1300,19 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :param type: AgentPoolType represents types of an agent pool. Possible
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.AgentPoolType
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolType
+    :param mode: AgentPoolMode represents mode of an agent pool. Possible
+     values include: 'System', 'User'
+    :type mode: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolMode
     :param orchestrator_version: Version of orchestrator specified when
      creating the managed cluster.
     :type orchestrator_version: str
+    :param node_image_version: Version of node image
+    :type node_image_version: str
+    :param upgrade_settings: Settings for upgrading the agentpool
+    :type upgrade_settings:
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolUpgradeSettings
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
@@ -1244,15 +1323,20 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :type enable_node_public_ip: bool
     :param scale_set_priority: ScaleSetPriority to be used to specify virtual
      machine scale set priority. Default to regular. Possible values include:
-     'Low', 'Regular'. Default value: "Regular" .
+     'Spot', 'Regular'. Default value: "Regular" .
     :type scale_set_priority: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetPriority
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetPriority
     :param scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to
-     specify eviction policy for low priority virtual machine scale set.
-     Default to Delete. Possible values include: 'Delete', 'Deallocate'.
-     Default value: "Delete" .
+     specify eviction policy for Spot virtual machine scale set. Default to
+     Delete. Possible values include: 'Delete', 'Deallocate'. Default value:
+     "Delete" .
     :type scale_set_eviction_policy: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetEvictionPolicy
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetEvictionPolicy
+    :param spot_max_price: SpotMaxPrice to be used to specify the maximum
+     price you are willing to pay in US Dollars. Possible values are any
+     decimal value greater than zero or -1 which indicates default price to be
+     up-to on-demand.
+    :type spot_max_price: float
     :param tags: Agent pool tags to be persisted on the agent pool virtual
      machine scale set.
     :type tags: dict[str, str]
@@ -1279,12 +1363,16 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
+        'node_image_version': {'key': 'nodeImageVersion', 'type': 'str'},
+        'upgrade_settings': {'key': 'upgradeSettings', 'type': 'AgentPoolUpgradeSettings'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
         'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
         'scale_set_priority': {'key': 'scaleSetPriority', 'type': 'str'},
         'scale_set_eviction_policy': {'key': 'scaleSetEvictionPolicy', 'type': 'str'},
+        'spot_max_price': {'key': 'spotMaxPrice', 'type': 'float'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'node_labels': {'key': 'nodeLabels', 'type': '{str}'},
         'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
@@ -1302,12 +1390,16 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
         self.type = kwargs.get('type', None)
+        self.mode = kwargs.get('mode', None)
         self.orchestrator_version = kwargs.get('orchestrator_version', None)
+        self.node_image_version = kwargs.get('node_image_version', None)
+        self.upgrade_settings = kwargs.get('upgrade_settings', None)
         self.provisioning_state = None
         self.availability_zones = kwargs.get('availability_zones', None)
         self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
         self.scale_set_priority = kwargs.get('scale_set_priority', "Regular")
         self.scale_set_eviction_policy = kwargs.get('scale_set_eviction_policy', "Delete")
+        self.spot_max_price = kwargs.get('spot_max_price', None)
         self.tags = kwargs.get('tags', None)
         self.node_labels = kwargs.get('node_labels', None)
         self.node_taints = kwargs.get('node_taints', None)
@@ -1322,7 +1414,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     All required parameters must be populated in order to send to Azure.
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
+     values must be in the range of 0 to 100 (inclusive) for user pools and in
+     the range of 1 to 100 (inclusive) for system pools. The default value is
      1.
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
@@ -1377,7 +1470,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      'Standard_NC6s_v3', 'Standard_ND12s', 'Standard_ND24rs', 'Standard_ND24s',
      'Standard_ND6s', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ContainerServiceVMSizeTypes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -1391,7 +1484,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
     :type os_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OSType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OSType
     :param max_count: Maximum number of nodes for auto-scaling
     :type max_count: int
     :param min_count: Minimum number of nodes for auto-scaling
@@ -1401,10 +1494,19 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :param type: AgentPoolType represents types of an agent pool. Possible
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.AgentPoolType
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolType
+    :param mode: AgentPoolMode represents mode of an agent pool. Possible
+     values include: 'System', 'User'
+    :type mode: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolMode
     :param orchestrator_version: Version of orchestrator specified when
      creating the managed cluster.
     :type orchestrator_version: str
+    :param node_image_version: Version of node image
+    :type node_image_version: str
+    :param upgrade_settings: Settings for upgrading the agentpool
+    :type upgrade_settings:
+     ~azure.mgmt.containerservice.v2020_04_01.models.AgentPoolUpgradeSettings
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
@@ -1415,15 +1517,20 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :type enable_node_public_ip: bool
     :param scale_set_priority: ScaleSetPriority to be used to specify virtual
      machine scale set priority. Default to regular. Possible values include:
-     'Low', 'Regular'. Default value: "Regular" .
+     'Spot', 'Regular'. Default value: "Regular" .
     :type scale_set_priority: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetPriority
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetPriority
     :param scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to
-     specify eviction policy for low priority virtual machine scale set.
-     Default to Delete. Possible values include: 'Delete', 'Deallocate'.
-     Default value: "Delete" .
+     specify eviction policy for Spot virtual machine scale set. Default to
+     Delete. Possible values include: 'Delete', 'Deallocate'. Default value:
+     "Delete" .
     :type scale_set_eviction_policy: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ScaleSetEvictionPolicy
+     ~azure.mgmt.containerservice.v2020_04_01.models.ScaleSetEvictionPolicy
+    :param spot_max_price: SpotMaxPrice to be used to specify the maximum
+     price you are willing to pay in US Dollars. Possible values are any
+     decimal value greater than zero or -1 which indicates default price to be
+     up-to on-demand.
+    :type spot_max_price: float
     :param tags: Agent pool tags to be persisted on the agent pool virtual
      machine scale set.
     :type tags: dict[str, str]
@@ -1454,12 +1561,16 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
+        'node_image_version': {'key': 'nodeImageVersion', 'type': 'str'},
+        'upgrade_settings': {'key': 'upgradeSettings', 'type': 'AgentPoolUpgradeSettings'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
         'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
         'scale_set_priority': {'key': 'scaleSetPriority', 'type': 'str'},
         'scale_set_eviction_policy': {'key': 'scaleSetEvictionPolicy', 'type': 'str'},
+        'spot_max_price': {'key': 'spotMaxPrice', 'type': 'float'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'node_labels': {'key': 'nodeLabels', 'type': '{str}'},
         'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
@@ -1512,7 +1623,7 @@ class ManagedClusterIdentity(Model):
      cluster, service principal will be used instead. Possible values include:
      'SystemAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.ResourceIdentityType
+     ~azure.mgmt.containerservice.v2020_04_01.models.ResourceIdentityType
     """
 
     _validation = {
@@ -1539,19 +1650,19 @@ class ManagedClusterLoadBalancerProfile(Model):
     :param managed_outbound_ips: Desired managed outbound IPs for the cluster
      load balancer.
     :type managed_outbound_ips:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterLoadBalancerProfileManagedOutboundIPs
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterLoadBalancerProfileManagedOutboundIPs
     :param outbound_ip_prefixes: Desired outbound IP Prefix resources for the
      cluster load balancer.
     :type outbound_ip_prefixes:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterLoadBalancerProfileOutboundIPPrefixes
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterLoadBalancerProfileOutboundIPPrefixes
     :param outbound_ips: Desired outbound IP resources for the cluster load
      balancer.
     :type outbound_ips:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterLoadBalancerProfileOutboundIPs
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterLoadBalancerProfileOutboundIPs
     :param effective_outbound_ips: The effective outbound IP resources of the
      cluster load balancer.
     :type effective_outbound_ips:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ResourceReference]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ResourceReference]
     :param allocated_outbound_ports: Desired number of allocated SNAT ports
      per VM. Allowed values must be in the range of 0 to 64000 (inclusive). The
      default value is 0 which results in Azure dynamically allocating ports.
@@ -1614,7 +1725,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(Model):
 
     :param public_ip_prefixes: A list of public IP prefix resources.
     :type public_ip_prefixes:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ResourceReference]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ResourceReference]
     """
 
     _attribute_map = {
@@ -1631,7 +1742,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(Model):
 
     :param public_ips: A list of public IP resources.
     :type public_ips:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ResourceReference]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ResourceReference]
     """
 
     _attribute_map = {
@@ -1657,11 +1768,11 @@ class ManagedClusterPoolUpgradeProfile(Model):
      from Linux and Windows. Default to Linux. Possible values include:
      'Linux', 'Windows'. Default value: "Linux" .
     :type os_type: str or
-     ~azure.mgmt.containerservice.v2019_11_01.models.OSType
+     ~azure.mgmt.containerservice.v2020_04_01.models.OSType
     :param upgrades: List of orchestrator types and versions available for
      upgrade.
     :type upgrades:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterPoolUpgradeProfileUpgradesItem]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterPoolUpgradeProfileUpgradesItem]
     """
 
     _validation = {
@@ -1702,6 +1813,54 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(Model):
         super(ManagedClusterPoolUpgradeProfileUpgradesItem, self).__init__(**kwargs)
         self.kubernetes_version = kwargs.get('kubernetes_version', None)
         self.is_preview = kwargs.get('is_preview', None)
+
+
+class ManagedClusterPropertiesAutoScalerProfile(Model):
+    """Parameters to be applied to the cluster-autoscaler when enabled.
+
+    :param balance_similar_node_groups:
+    :type balance_similar_node_groups: str
+    :param scan_interval:
+    :type scan_interval: str
+    :param scale_down_delay_after_add:
+    :type scale_down_delay_after_add: str
+    :param scale_down_delay_after_delete:
+    :type scale_down_delay_after_delete: str
+    :param scale_down_delay_after_failure:
+    :type scale_down_delay_after_failure: str
+    :param scale_down_unneeded_time:
+    :type scale_down_unneeded_time: str
+    :param scale_down_unready_time:
+    :type scale_down_unready_time: str
+    :param scale_down_utilization_threshold:
+    :type scale_down_utilization_threshold: str
+    :param max_graceful_termination_sec:
+    :type max_graceful_termination_sec: str
+    """
+
+    _attribute_map = {
+        'balance_similar_node_groups': {'key': 'balance-similar-node-groups', 'type': 'str'},
+        'scan_interval': {'key': 'scan-interval', 'type': 'str'},
+        'scale_down_delay_after_add': {'key': 'scale-down-delay-after-add', 'type': 'str'},
+        'scale_down_delay_after_delete': {'key': 'scale-down-delay-after-delete', 'type': 'str'},
+        'scale_down_delay_after_failure': {'key': 'scale-down-delay-after-failure', 'type': 'str'},
+        'scale_down_unneeded_time': {'key': 'scale-down-unneeded-time', 'type': 'str'},
+        'scale_down_unready_time': {'key': 'scale-down-unready-time', 'type': 'str'},
+        'scale_down_utilization_threshold': {'key': 'scale-down-utilization-threshold', 'type': 'str'},
+        'max_graceful_termination_sec': {'key': 'max-graceful-termination-sec', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedClusterPropertiesAutoScalerProfile, self).__init__(**kwargs)
+        self.balance_similar_node_groups = kwargs.get('balance_similar_node_groups', None)
+        self.scan_interval = kwargs.get('scan_interval', None)
+        self.scale_down_delay_after_add = kwargs.get('scale_down_delay_after_add', None)
+        self.scale_down_delay_after_delete = kwargs.get('scale_down_delay_after_delete', None)
+        self.scale_down_delay_after_failure = kwargs.get('scale_down_delay_after_failure', None)
+        self.scale_down_unneeded_time = kwargs.get('scale_down_unneeded_time', None)
+        self.scale_down_unready_time = kwargs.get('scale_down_unready_time', None)
+        self.scale_down_utilization_threshold = kwargs.get('scale_down_utilization_threshold', None)
+        self.max_graceful_termination_sec = kwargs.get('max_graceful_termination_sec', None)
 
 
 class ManagedClusterPropertiesIdentityProfileValue(UserAssignedIdentity):
@@ -1753,6 +1912,30 @@ class ManagedClusterServicePrincipalProfile(Model):
         self.secret = kwargs.get('secret', None)
 
 
+class ManagedClusterSKU(Model):
+    """ManagedClusterSKU.
+
+    :param name: Name of a managed cluster SKU. Possible values include:
+     'Basic'
+    :type name: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterSKUName
+    :param tier: Tier of a managed cluster SKU. Possible values include:
+     'Paid', 'Free'
+    :type tier: str or
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterSKUTier
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedClusterSKU, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+
+
 class ManagedClusterUpgradeProfile(Model):
     """The list of available upgrades for compute pools.
 
@@ -1770,11 +1953,11 @@ class ManagedClusterUpgradeProfile(Model):
     :param control_plane_profile: Required. The list of available upgrade
      versions for the control plane.
     :type control_plane_profile:
-     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterPoolUpgradeProfile
+     ~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterPoolUpgradeProfile
     :param agent_pool_profiles: Required. The list of available upgrade
      versions for agent pools.
     :type agent_pool_profiles:
-     list[~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterPoolUpgradeProfile]
+     list[~azure.mgmt.containerservice.v2020_04_01.models.ManagedClusterPoolUpgradeProfile]
     """
 
     _validation = {
