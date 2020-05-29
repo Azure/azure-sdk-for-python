@@ -8,10 +8,10 @@ import logging
 import sys
 
 try:
-    from urllib.parse import urlparse, unquote
+    from urllib.parse import urlparse, unquote, parse_qsl
 except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import unquote # type: ignore
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import unquote  # type: ignore
 
 try:
     from yarl import URL
@@ -26,11 +26,21 @@ except ImportError:
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from . import sign_string
+from ._common_conversion import (
+    _sign_string,
+)
 
+from azure.table import (
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_SECONDARY_NAME
+)
+
+from ._error import (
+    AzureSigningError,
+    _wrap_exception,
+)
 
 logger = logging.getLogger(__name__)
-
 
 
 # wraps a given exception with the desired exception type
@@ -59,35 +69,36 @@ class AzureSigningError(ClientAuthenticationError):
 # pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, account_name, account_key, is_emulated=False):
         self.account_name = account_name
         self.account_key = account_key
-        super(SharedKeyCredentialPolicy, self).__init__()
+        self.is_emulated = is_emulated
 
     def _get_headers(self, request, headers_to_sign):
-        headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
+        headers = dict((name.lower(), value) for name, value in request.headers.items() if value)
         if 'content-length' in headers and headers['content-length'] == '0':
             del headers['content-length']
         return '\n'.join(headers.get(x, '') for x in headers_to_sign) + '\n'
 
     def _get_verb(self, request):
-        return request.http_request.method + '\n'
+        return request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        uri_path = urlparse(request.http_request.url).path
-        try:
-            if isinstance(request.context.transport, AioHttpTransport) or \
-                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport):
-                uri_path = URL(uri_path)
-                return '/' + self.account_name + str(uri_path)
-        except TypeError:
-            pass
+        #uri_path = request.path.split('?')[0]
+        uri_path = urlparse(request.url).path
+
+        # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
+        # as this is how the emulator works
+        if self.is_emulated and uri_path.find(DEV_ACCOUNT_SECONDARY_NAME) == 1:
+            # only replace the first instance
+            uri_path = uri_path.replace(DEV_ACCOUNT_SECONDARY_NAME, DEV_ACCOUNT_NAME, 1)
+
         return '/' + self.account_name + uri_path
 
     def _get_canonicalized_headers(self, request):
         string_to_sign = ''
         x_ms_headers = []
-        for name, value in request.http_request.headers.items():
+        for name, value in request.headers.items():
             if name.startswith('x-ms-'):
                 x_ms_headers.append((name.lower(), value))
         x_ms_headers.sort()
@@ -96,41 +107,39 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 string_to_sign += ''.join([name, ':', value, '\n'])
         return string_to_sign
 
-    def _get_canonicalized_resource_query(self, request):
-        sorted_queries = [(name, value) for name, value in request.http_request.query.items()]
-        sorted_queries.sort()
-
-        string_to_sign = ''
-        for name, value in sorted_queries:
-            if value is not None:
-                string_to_sign += '\n' + name.lower() + ':' + unquote(value)
-
-        return string_to_sign
-
     def _add_authorization_header(self, request, string_to_sign):
         try:
-            signature = sign_string(self.account_key, string_to_sign)
+            signature = _sign_string(self.account_key, string_to_sign)
             auth_string = 'SharedKey ' + self.account_name + ':' + signature
-            request.http_request.headers['Authorization'] = auth_string
+            request.headers['Authorization'] = auth_string
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request):
+    def on_request(self, request):  # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+        self.sign_request(request.http_request)
+
+    def sign_request(self, request):
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(
                 request,
-                [
-                    'content-encoding', 'content-language', 'content-length',
-                    'content-md5', 'content-type', 'date', 'if-modified-since',
-                    'if-match', 'if-none-match', 'if-unmodified-since', 'byte_range'
-                ]
+                ['content-md5', 'content-type', 'x-ms-date'],
             ) + \
-            self._get_canonicalized_headers(request) + \
             self._get_canonicalized_resource(request) + \
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
-        #logger.debug("String_to_sign=%s", string_to_sign)
+        logger.debug("String_to_sign=%s", string_to_sign)
+
+    def _get_canonicalized_resource_query(self, request):
+        sorted_queries = [(name, value) for name, value in request.query.items()]
+        sorted_queries.sort()
+
+        string_to_sign = ''
+        for name, value in sorted_queries:
+            if value is not None:
+                string_to_sign += '\n' + name.lower() + ':' + value
+
+        return string_to_sign

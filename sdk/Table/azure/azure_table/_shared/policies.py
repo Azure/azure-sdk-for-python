@@ -106,17 +106,6 @@ def urljoin(base_url, stub_url):
     parsed = parsed._replace(path=parsed.path + '/' + stub_url)
     return parsed.geturl()
 
-
-class QueueMessagePolicy(SansIOHTTPPolicy):
-
-    def on_request(self, request):
-        message_id = request.context.options.pop('queue_message_id', None)
-        if message_id:
-            request.http_request.url = urljoin(
-                request.http_request.url,
-                message_id)
-
-
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
@@ -125,7 +114,7 @@ class StorageHeadersPolicy(HeadersPolicy):
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
-
+        request.http_request.headers['Date'] = current_time
         custom_id = request.context.options.pop('client_request_id', None)
         request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
 
@@ -188,6 +177,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
+        print(request.http_request.headers)
         if options.pop("logging_enable", self.enable_http_logger):
             request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):

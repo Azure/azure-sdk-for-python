@@ -5,13 +5,15 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
 import os
 import os.path
 import time
 from datetime import datetime, timedelta
+
+from azure.azure_table import generate_account_sas
+from azure.azure_table._shared.models import ResourceTypes, AccountSasPermissions
+
+from pyparsing import basestring
 
 try:
     import unittest.mock as mock
@@ -19,9 +21,7 @@ except ImportError:
     import mock
 
 import zlib
-import math
 import sys
-import string
 import random
 import re
 import logging
@@ -32,7 +32,8 @@ from devtools_testutils import (
     StorageAccountPreparer,
     FakeResource,
 )
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
+
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -153,7 +154,7 @@ class TableTestCase(AzureMgmtTestCase):
             if endpoint_type == "cosmos":
                 return "https://{}.table.cosmos.azure.com".format(account.name)
             else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
+                raise ValueError("Unknown storage type {}".format(endpoint_type))
         except AttributeError: # Didn't find "primary_endpoints"
             return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
 
