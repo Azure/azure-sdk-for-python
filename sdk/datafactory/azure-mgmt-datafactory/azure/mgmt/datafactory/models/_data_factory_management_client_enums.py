@@ -466,6 +466,7 @@ class SsisPackageLocationType(str, Enum):
     ssisdb = "SSISDB"
     file = "File"
     inline_package = "InlinePackage"
+    package_store = "PackageStore"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
