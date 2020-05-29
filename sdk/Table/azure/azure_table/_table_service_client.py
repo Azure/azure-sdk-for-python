@@ -1,9 +1,9 @@
 from urllib.parse import urlparse
 
-from azure.storage.tables._generated import AzureTable
-from azure.storage.tables._generated.models import TableProperties
-from azure.storage.tables._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from azure.storage.tables._version import VERSION
+from azure.table import AzureTable
+from azure.table import TableProperties
+from azure.table import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.table import VERSION
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -42,7 +42,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
     ):  # type: (...) -> TableServiceClient
-        """Create QueueServiceClient from a Connection String.
+        """Create TableServiceClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -51,8 +51,8 @@ class TableServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :returns: A Queue service client.
-        :rtype: ~azure.storage.queue.QueueClient
+        :returns: A Table service client.
+        :rtype: ~azure.storage.table.TableClient
 
         .. admonition:: Example:
 
@@ -79,6 +79,34 @@ class TableServiceClient(StorageAccountHostsMixin):
         return response
 
     def query_table(self, table_name):
-        response = self._client.table.query_entities(table_name=table_name)
+        # somehow use self._query_string to query things
+        response = self._client.table.query(table_name=table_name)
         return response
 
+    def query_table_entities(self, table_name):
+        response = self._client.table.query_entities(table_name=table_name)
+
+    def query_table_entities_with_partition_and_row_key(self, table_name):
+        response = self._client.table.query_entities_with_partition_and_row_key(table_name=table_name)
+
+    def insert_entity(self):
+        response = self._client.table.insert_entity()
+
+    def delete_entity(self):
+        response = self._client.table.delete_entity()
+
+    def merge_entity(self):
+        response = self._client.table.merge_entity()
+
+    def update_entity(self):
+        response = self._client.table.update_entity()
+
+    def get_access_policy(self):
+        response = self._client.table.get_access_policy()
+
+    def set_access_policy(self):
+        response = self._client.table.set_access_policy()
+
+    def batch(self, *reqs):
+        response = self.batch(*reqs)
+        return response

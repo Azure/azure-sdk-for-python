@@ -5,16 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
 import os
 import os.path
 import time
 from datetime import datetime, timedelta
 
-from azure.storage.tables import generate_account_sas
-from azure.storage.tables._shared.models import ResourceTypes, AccountSasPermissions
+from azure.azure_table import generate_account_sas
+from azure.azure_table._shared.models import ResourceTypes, AccountSasPermissions
+
 from pyparsing import basestring
 
 try:
@@ -23,9 +21,7 @@ except ImportError:
     import mock
 
 import zlib
-import math
 import sys
-import string
 import random
 import re
 import logging
@@ -36,7 +32,8 @@ from devtools_testutils import (
     StorageAccountPreparer,
     FakeResource,
 )
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
+
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:

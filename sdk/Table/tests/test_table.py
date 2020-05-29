@@ -5,41 +5,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import base64
-import hashlib
-import hmac
-from collections import namedtuple
-import unittest
 import pytest
 import sys
 import locale
 import os
-from azure.storage.tables import TableServiceClient
+from azure.azure_table import TableServiceClient
 from time import time
 from wsgiref.handlers import format_date_time
-from dateutil.tz import tzutc
 from datetime import (
     datetime,
     timedelta,
-    date,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.mgmt.storage.models import Endpoints
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
     ContentDecodePolicy,
 )
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
-from azure.storage.tables._shared.authentication import SharedKeyCredentialPolicy
+from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
+from azure.azure_table._shared.authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError)
+    ResourceExistsError)
 
 # from azure.tables import (
 #     TableServiceClient,
@@ -52,14 +42,8 @@ from azure.core.exceptions import (
 #     generate_table_sas
 # )
 
-from azure.storage.tables._generated import (
-    AzureTable,
-)
-
-from azure.storage.tables._generated.models._models_py3 import TableProperties
-
 # ------------------------------------------------------------------------------
-from webencodings import Encoding
+
 
 TEST_TABLE_PREFIX = 'pytablesync'
 

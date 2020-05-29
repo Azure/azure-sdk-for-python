@@ -6,7 +6,6 @@
 
 import logging
 import sys
-from os import name
 
 try:
     from urllib.parse import urlparse, unquote, parse_qsl
@@ -31,7 +30,7 @@ from ._common_conversion import (
     _sign_string,
 )
 
-from azure.storage.tables._shared._constants import (
+from azure.table import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
