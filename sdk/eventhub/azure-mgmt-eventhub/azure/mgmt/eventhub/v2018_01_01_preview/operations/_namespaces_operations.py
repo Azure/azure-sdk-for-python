@@ -512,7 +512,8 @@ class NamespacesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable. This operation is idempotent.
+        """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
+    This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
@@ -521,6 +522,7 @@ class NamespacesOperations(object):
         :param parameters: Parameters for creating a namespace resource.
         :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -535,13 +537,15 @@ class NamespacesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            namespace_name=namespace_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -556,7 +560,15 @@ class NamespacesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'}  # type: ignore
 
     def _delete_initial(
@@ -609,13 +621,15 @@ class NamespacesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Deletes an existing namespace. This operation also removes all associated resources under the namespace.
+        """Deletes an existing namespace. This operation also removes all associated resources under the
+    namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
         :param namespace_name: The Namespace name.
         :type namespace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -630,12 +644,14 @@ class NamespacesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            namespace_name=namespace_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -647,7 +663,15 @@ class NamespacesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'}  # type: ignore
 
     def get(
@@ -721,7 +745,8 @@ class NamespacesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EHNamespace"
-        """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable. This operation is idempotent.
+        """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
+        This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str

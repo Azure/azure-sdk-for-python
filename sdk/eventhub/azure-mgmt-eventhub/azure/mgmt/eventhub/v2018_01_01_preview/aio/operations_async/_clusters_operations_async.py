@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -43,7 +43,7 @@ class ClustersOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def list_available_clusters(
+    async def list_available_cluster_region(
         self,
         **kwargs
     ) -> "models.AvailableClustersList":
@@ -60,7 +60,7 @@ class ClustersOperations:
         api_version = "2018-01-01-preview"
 
         # Construct URL
-        url = self.list_available_clusters.metadata['url']  # type: ignore
+        url = self.list_available_cluster_region.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -90,7 +90,7 @@ class ClustersOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_available_clusters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/availableClusterRegions'}  # type: ignore
+    list_available_cluster_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/availableClusterRegions'}  # type: ignore
 
     def list_by_resource_group(
         self,
@@ -221,12 +221,14 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
+        parameters: "models.Cluster",
         **kwargs
     ) -> "models.Cluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._put_initial.metadata['url']  # type: ignore
@@ -243,10 +245,15 @@ class ClustersOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'Cluster')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -268,10 +275,11 @@ class ClustersOperations:
         return deserialized
     _put_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def put(
+    async def begin_put(
         self,
         resource_group_name: str,
         cluster_name: str,
+        parameters: "models.Cluster",
         **kwargs
     ) -> "models.Cluster":
         """Creates or updates an instance of an Event Hubs Cluster.
@@ -280,7 +288,10 @@ class ClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
+        :param parameters: Parameters for creating a eventhub cluster resource.
+        :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -295,12 +306,15 @@ class ClustersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._put_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._put_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -315,8 +329,16 @@ class ClustersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
     async def _patch_initial(
         self,
@@ -376,7 +398,7 @@ class ClustersOperations:
         return deserialized
     _patch_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def patch(
+    async def begin_patch(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -392,6 +414,7 @@ class ClustersOperations:
         :param parameters: The properties of the Event Hubs Cluster which should be updated.
         :type parameters: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -406,13 +429,15 @@ class ClustersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._patch_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._patch_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -427,8 +452,16 @@ class ClustersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
     async def _delete_initial(
         self,
@@ -472,7 +505,7 @@ class ClustersOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -485,6 +518,7 @@ class ClustersOperations:
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -499,12 +533,14 @@ class ClustersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -516,8 +552,16 @@ class ClustersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
     async def list_namespaces(
         self,
