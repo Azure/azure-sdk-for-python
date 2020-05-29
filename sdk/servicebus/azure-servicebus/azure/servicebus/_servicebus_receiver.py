@@ -79,12 +79,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword bool is_dead_letter_receiver: Should this receiver connect to the dead-letter-queue associated
-     with the specified entity, instead of the entity itself.  Default is `False`.
-    :keyword bool transfer_deadletter: Whether to connect to the transfer dead-letter queue, or the standard
-     dead-letter queue. Default is False, using the standard dead-letter endpoint. The transfer dead letter queue
-     holds messages that have failed to be transferred in ForwardTo or SendVia scenarios.Only valid if
-     is_dead_letter_receiver is `True`, default is `False` regardless.
 
     .. admonition:: Example:
 
@@ -127,9 +121,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 entity_name=entity_name,
                 **kwargs
             )
-        self._message_iter = None
+
         self._populate_attributes(**kwargs)
-        self._connection = kwargs.get("connection")
 
     def __iter__(self):
         return self
@@ -262,12 +255,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :keyword bool is_dead_letter_receiver: Should this receiver connect to the dead-letter-queue associated
-         with the specified entity, instead of the entity itself.  Default is `False`.
-        :keyword bool transfer_deadletter: Whether to connect to the transfer deadl-etter queue, or the standard
-         dead-letter queue. Default is False, using the standard dead-letter endpoint. The transfer dead letter queue
-         holds messages that have failed to be transferred in ForwardTo or SendVia scenarios.Only valid if
-         is_dead_letter_receiver is `True`, default is `False` regardless.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:

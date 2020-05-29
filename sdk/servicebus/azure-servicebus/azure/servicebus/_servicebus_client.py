@@ -11,7 +11,7 @@ from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._common._configuration import Configuration
-from ._common.utils import create_authentication
+from ._common.utils import create_authentication, generate_dead_letter_entity_name
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -251,9 +251,13 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
+        entity_name = generate_dead_letter_entity_name(
+            queue_name=queue_name,
+            transfer_deadletter=kwargs.get('transfer_deadletter', False)
+        )
         return ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
-            queue_name=queue_name,
+            entity_name=entity_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             transport_type=self._config.transport_type,
@@ -388,10 +392,14 @@ class ServiceBusClient(object):
 
 
         """
-        return ServiceBusReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
+        entity_name = generate_dead_letter_entity_name(
             topic_name=topic_name,
             subscription_name=subscription_name,
+            transfer_deadletter=kwargs.get('transfer_deadletter', False)
+        )
+        return ServiceBusReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             transport_type=self._config.transport_type,
