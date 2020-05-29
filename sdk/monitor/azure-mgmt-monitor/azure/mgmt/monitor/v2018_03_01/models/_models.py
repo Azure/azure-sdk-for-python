@@ -686,7 +686,7 @@ class MetricAlertCriteria(msrest.serialization.Model):
     """The rule criteria that defines the conditions of the alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MetricAlertMultipleResourceMultipleMetricCriteria, MetricAlertSingleResourceMultipleMetricCriteria.
+    sub-classes are: MetricAlertMultipleResourceMultipleMetricCriteria, MetricAlertSingleResourceMultipleMetricCriteria, WebtestLocationAvailabilityCriteria.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -711,7 +711,7 @@ class MetricAlertCriteria(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria'}
+        'odata_type': {'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria': 'WebtestLocationAvailabilityCriteria'}
     }
 
     def __init__(
@@ -1282,11 +1282,20 @@ class WebhookReceiver(msrest.serialization.Model):
         self.service_uri = kwargs['service_uri']
 
 
-class WebtestLocationAvailabilityCriteria(msrest.serialization.Model):
+class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
     """Specifies the metric alert rule criteria for a web test resource.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
+     server.  Possible values include:
+     "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
+    :type odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
     :param web_test_id: Required. The Application Insights web test Id.
     :type web_test_id: str
     :param component_id: Required. The Application Insights resource Id.
@@ -1296,12 +1305,15 @@ class WebtestLocationAvailabilityCriteria(msrest.serialization.Model):
     """
 
     _validation = {
+        'odata_type': {'required': True},
         'web_test_id': {'required': True},
         'component_id': {'required': True},
         'failed_location_count': {'required': True},
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
         'web_test_id': {'key': 'webTestId', 'type': 'str'},
         'component_id': {'key': 'componentId', 'type': 'str'},
         'failed_location_count': {'key': 'failedLocationCount', 'type': 'float'},
@@ -1312,6 +1324,7 @@ class WebtestLocationAvailabilityCriteria(msrest.serialization.Model):
         **kwargs
     ):
         super(WebtestLocationAvailabilityCriteria, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'
         self.web_test_id = kwargs['web_test_id']
         self.component_id = kwargs['component_id']
         self.failed_location_count = kwargs['failed_location_count']
