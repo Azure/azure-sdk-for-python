@@ -43,17 +43,17 @@ class TrainModelWithoutLabelsSampleAsync(object):
         ) as form_training_client:
 
             # Default for train_model is `use_training_labels=False`
-            model = await form_training_client.train_model(self.container_sas_url)
+            model = await form_training_client.train_model(self.container_sas_url, use_training_labels=False)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Created on: {}".format(model.created_on))
-            print("Last modified: {}".format(model.last_modified))
+            print("Requested on: {}".format(model.requested_on))
+            print("Completed on: {}".format(model.completed_on))
 
             print("Recognized fields:")
             # Looping through the submodels, which contains the fields they were trained on
-            for submodel in model.models:
+            for submodel in model.submodels:
                 print("...The submodel has form type '{}'".format(submodel.form_type))
                 for name, field in submodel.fields.items():
                     print("...The model found field '{}' to have label '{}'".format(

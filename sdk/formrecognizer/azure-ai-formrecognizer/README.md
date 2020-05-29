@@ -66,7 +66,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core], 
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core],
 or as a credential type from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
@@ -75,12 +75,12 @@ See the full details regarding [authentication][cognitive_authentication] of cog
     The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
-    
+
     Use the key as the credential parameter to authenticate the client:
     ```python
     from azure.ai.formrecognizer import FormRecognizerClient
     from azure.core.credentials import AzureKeyCredential
-    
+
     endpoint = "https://<region>.api.cognitive.microsoft.com/"
     credential = AzureKeyCredential("<api_key>")
     form_recognizer_client = FormRecognizerClient(endpoint, credential)
@@ -123,7 +123,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
- - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `USReceipt` objects.
+ - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedReceipt` objects.
 
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
@@ -131,6 +131,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 - Training custom models to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service's documents][fr-train-without-labels] for a more detailed explanation.
 - Training custom models to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service's documents][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
+- Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 
@@ -172,7 +173,7 @@ model_id = "<your custom model id>"
 with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
-poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, stream=form)
+poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, form=form)
 result = poller.result()
 
 for recognized_form in result:
@@ -264,12 +265,12 @@ model = poller.result()
 # Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
-print("Created on: {}".format(model.created_on))
-print("Last modified: {}".format(model.last_modified))
+print("Requested on: {}".format(model.requested_on))
+print("Completed on: {}".format(model.completed_on))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
-for submodel in model.models:
+for submodel in model.submodels:
     print("The submodel with form type '{}' has recognized the following fields: {}".format(
         submodel.form_type,
         ", ".join([label for label in submodel.fields])
@@ -313,8 +314,8 @@ model_id = "<model id from the Train a Model sample>"
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Status: {}".format(custom_model.status))
-print("Created on: {}".format(custom_model.created_on))
-print("Last modified: {}".format(custom_model.last_modified))
+print("Requested on: {}".format(custom_model.requested_on))
+print("Completed on: {}".format(custom_model.completed_on))
 
 # Finally, we will delete this model by ID
 form_training_client.delete_model(model_id=custom_model.model_id)
@@ -389,6 +390,7 @@ with Form Recognizer and require Python 3.5 or later.
 * Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels] ([async version][sample_train_model_without_labels_async])
 * Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels] ([async version][sample_train_model_with_labels_async])
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
+* Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model] ([async_version][sample_copy_model_async])
 
 ### Additional documentation
 
@@ -459,3 +461,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
 [sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py
 [sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py
+[sample_copy_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_copy_model.py
+[sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_copy_model_async.py

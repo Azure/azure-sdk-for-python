@@ -56,12 +56,14 @@ class GetDetailedDiagnosticsInformationSample(object):
             json_response = json.dumps(resp.raw_response)
             json_responses.append(json_response)
 
-        result = text_analytics_client.analyze_sentiment(
+        result = text_analytics_client.extract_key_phrases(
             documents,
             show_stats=True,
             model_version="latest",
             raw_response_hook=callback
         )
+        for doc in result:
+            _LOGGER.warning("Doc with id {} has these warnings: {}".format(doc.id, doc.warnings))
 
         _LOGGER.debug("json response: {}".format(json_responses[0]))
 

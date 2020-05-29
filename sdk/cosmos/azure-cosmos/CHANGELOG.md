@@ -1,4 +1,6 @@
-## 4.0.0 (2020-05-18)
+# Release History
+
+## 4.0.0 (2020-05-20)
 
 - Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.

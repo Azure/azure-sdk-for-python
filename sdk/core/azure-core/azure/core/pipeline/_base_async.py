@@ -174,6 +174,9 @@ class AsyncPipeline(
         pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         async def prepare_requests(req):
+            if req.multipart_mixed_info:
+                # Recursively update changeset "sub requests"
+                await self._prepare_multipart_mixed_request(req)
             context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:

@@ -49,13 +49,13 @@ class TrainModelWithLabelsSampleAsync(object):
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Created on: {}".format(model.created_on))
-            print("Last modified: {}".format(model.last_modified))
+            print("Requested on: {}".format(model.requested_on))
+            print("Completed on: {}".format(model.completed_on))
 
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on
             # The labels are based on the ones you gave the training document.
-            for submodel in model.models:
+            for submodel in model.submodels:
                 print("...The submodel with form type {} has accuracy '{}'".format(submodel.form_type, submodel.accuracy))
                 for name, field in submodel.fields.items():
                     print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(

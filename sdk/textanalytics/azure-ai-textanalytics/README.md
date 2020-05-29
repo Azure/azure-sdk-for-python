@@ -23,6 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
+> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
 ### Authenticate the client
 #### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
@@ -343,7 +345,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     print("Language detected: {}".format(doc.primary_language.name))
     print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-    print("Confidence score: {}\n".format(doc.primary_language.score))
+    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]

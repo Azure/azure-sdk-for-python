@@ -23,7 +23,6 @@ USAGE:
 
 import os
 import asyncio
-from pathlib import Path
 
 
 def format_bounding_box(bounding_box):
@@ -38,8 +37,7 @@ class GetBoundingBoxesSampleAsync(object):
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
     async def get_bounding_boxes(self):
-        # the sample forms are located in this file's parent's parent's files.
-        path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         from azure.ai.formrecognizer import FormWord, FormLine
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -52,7 +50,7 @@ class GetBoundingBoxesSampleAsync(object):
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, stream=f.read(), include_text_content=True
+                    model_id=self.model_id, form=f.read(), include_text_content=True
                 )
 
             for idx, form in enumerate(forms):

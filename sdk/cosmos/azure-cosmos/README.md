@@ -13,7 +13,7 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 
 ## Getting started
-
+### Prerequisites
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
 * [Python 2.7 or 3.5.3+][python]
@@ -25,13 +25,13 @@ If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI
 az cosmosdb create --resource-group <resource-group-name> --name <cosmos-account-name>
 ```
 
-## Installation
+### Install the package
 
 ```bash
 pip install azure-cosmos
 ```
 
-### Configure a virtual environment (optional)
+#### Configure a virtual environment (optional)
 
 Although not required, you can keep your your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
 
@@ -39,12 +39,9 @@ Although not required, you can keep your your base system and Azure SDK environm
 python3 -m venv azure-cosmosdb-sdk-environment
 source azure-cosmosdb-sdk-environment/bin/activate
 ```
-
-## Key concepts
+### Authenticate the client
 
 Interaction with Cosmos DB starts with an instance of the [CosmosClient][ref_cosmosclient] class. You need an **account**, its **URI**, and one of its **account keys** to instantiate the client object.
-
-### Get credentials
 
 Use the Azure CLI snippet below to populate two environment variables with the database account URI and its primary master key (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
 
@@ -55,8 +52,7 @@ ACCT_NAME=<cosmos-db-account-name>
 export ACCOUNT_URI=$(az cosmosdb show --resource-group $RES_GROUP --name $ACCT_NAME --query documentEndpoint --output tsv)
 export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $ACCT_NAME --query primaryMasterKey --output tsv)
 ```
-
-### Create client
+### Create the client
 
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
@@ -69,7 +65,7 @@ key = os.environ['ACCOUNT_KEY']
 client = CosmosClient(url, credential=key)
 ```
 
-## Usage
+## Key concepts
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
 
@@ -155,8 +151,9 @@ for i in range(1, 10):
 To delete items from a container, use [ContainerProxy.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
 
 ```Python
-for item in container.query_items(query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
-                                  enable_cross_partition_query=True):
+for item in container.query_items(
+        query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
+        enable_cross_partition_query=True):
     container.delete_item(item, partition_key='Pager')
 ```
 
@@ -175,8 +172,8 @@ container = database.get_container_client(container_name)
 # Enumerate the returned items
 import json
 for item in container.query_items(
-                query='SELECT * FROM mycontainer r WHERE r.id="item3"',
-                enable_cross_partition_query=True):
+        query='SELECT * FROM mycontainer r WHERE r.id="item3"',
+        enable_cross_partition_query=True):
     print(json.dumps(item, indent=True))
 ```
 
@@ -215,10 +212,11 @@ Certain properties of an existing container can be modified. This example sets t
 ```Python
 database = client.get_database_client(database_name)
 container = database.get_container_client(container_name)
-database.replace_container(container,
-                           partition_key=PartitionKey(path="/productName"),
-                           default_ttl=10,
-                           )
+database.replace_container(
+    container,
+    partition_key=PartitionKey(path="/productName"),
+    default_ttl=10,
+)
 # Display the new TTL setting for the container
 container_props = container.read()
 print(json.dumps(container_props['defaultTtl']))
@@ -226,39 +224,6 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
-## Optional Configuration
-
-Optional keyword arguments that can be passed in at the client and per-operation level. 
-
-### Retry Policy configuration
-
-Use the following keyword arguments when instantiating a client to configure the retry policy:
-
-* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
-Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
-* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
-* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
-
-### Other client / per-operation configuration
-
-Other optional configuration keyword arguments that can be specified on the client or per-operation.
-
-**Client keyword arguments:**
-
-* __enable_endpoint_discovery__ (bool): Enable endpoint discovery for geo-replicated database accounts. Default is `True`.
-* __preferred_locations__ (list[str]): The preferred locations for geo-replicated database accounts.
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
-* __transport__ (Any): User-provided transport to send the HTTP request.
-
-**Per-operation keyword arguments:**
-
-* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
-* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
-* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
-the client level to enable it for all requests.
-* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
-* __timeout__ (int): An absolute timeout in seconds, for the combined HTTP request and response processing.
 
 ## Troubleshooting
 
@@ -278,6 +243,36 @@ except exceptions.CosmosResourceExistsError:
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
 
+```
+### Logging
+This library uses the standard
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```python
+import sys
+import logging
+from azure.cosmos import CosmosClient
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = CosmosClient(url, credential=key, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+database = client.create_database(database_name, logging_enable=True)
 ```
 
 ## Next steps

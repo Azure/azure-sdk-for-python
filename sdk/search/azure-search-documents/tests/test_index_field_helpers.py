@@ -3,76 +3,76 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents import ComplexField, SearchableField, SimpleField, edm
+from azure.search.documents.indexes.models import ComplexField, SearchableField, SimpleField, SearchFieldDataType
 
 def test_edm_contents():
-    assert edm.String == "Edm.String"
-    assert edm.Int32 == "Edm.Int32"
-    assert edm.Int64 == "Edm.Int64"
-    assert edm.Double == "Edm.Double"
-    assert edm.Boolean == "Edm.Boolean"
-    assert edm.DateTimeOffset == "Edm.DateTimeOffset"
-    assert edm.GeographyPoint == "Edm.GeographyPoint"
-    assert edm.ComplexType == "Edm.ComplexType"
-    assert edm.Collection("foo") == "Collection(foo)"
+    assert SearchFieldDataType.String == "Edm.String"
+    assert SearchFieldDataType.Int32 == "Edm.Int32"
+    assert SearchFieldDataType.Int64 == "Edm.Int64"
+    assert SearchFieldDataType.Double == "Edm.Double"
+    assert SearchFieldDataType.Boolean == "Edm.Boolean"
+    assert SearchFieldDataType.DateTimeOffset == "Edm.DateTimeOffset"
+    assert SearchFieldDataType.GeographyPoint == "Edm.GeographyPoint"
+    assert SearchFieldDataType.ComplexType == "Edm.ComplexType"
+    assert SearchFieldDataType.Collection("foo") == "Collection(foo)"
 
 class TestComplexField(object):
     def test_single(self):
         fld = ComplexField(name="foo", fields=[])
         assert fld.name == "foo"
-        assert fld.type == edm.ComplexType
+        assert fld.type == SearchFieldDataType.ComplexType
 
         assert fld.sortable is None
         assert fld.facetable is None
         assert fld.searchable is None
         assert fld.filterable is None
-        assert fld.analyzer is None
-        assert fld.search_analyzer is None
-        assert fld.index_analyzer is None
-        assert fld.synonym_maps is None
+        assert fld.analyzer_name is None
+        assert fld.search_analyzer_name is None
+        assert fld.index_analyzer_name is None
+        assert fld.synonym_map_names is None
 
     def test_collection(self):
         fld = ComplexField(name="foo", fields=[], collection=True)
         assert fld.name == "foo"
-        assert fld.type == edm.Collection(edm.ComplexType)
+        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.ComplexType)
 
         assert fld.sortable is None
         assert fld.facetable is None
         assert fld.searchable is None
         assert fld.filterable is None
-        assert fld.analyzer is None
-        assert fld.search_analyzer is None
-        assert fld.index_analyzer is None
-        assert fld.synonym_maps is None
+        assert fld.analyzer_name is None
+        assert fld.search_analyzer_name is None
+        assert fld.index_analyzer_name is None
+        assert fld.synonym_map_names is None
 
 class TestSimplexField(object):
     def test_defaults(self):
-        fld = SimpleField(name="foo", type=edm.Double)
+        fld = SimpleField(name="foo", type=SearchFieldDataType.Double)
         assert fld.name == "foo"
-        assert fld.type == edm.Double
-        assert fld.retrievable == True
+        assert fld.type == SearchFieldDataType.Double
+        assert fld.is_hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == False
         assert fld.filterable == False
 
-        assert fld.analyzer is None
-        assert fld.search_analyzer is None
-        assert fld.index_analyzer is None
-        assert fld.synonym_maps is None
+        assert fld.analyzer_name is None
+        assert fld.search_analyzer_name is None
+        assert fld.index_analyzer_name is None
+        assert fld.synonym_map_names is None
 
 class TestSearchableField(object):
     def test_defaults(self):
-        fld = SearchableField(name="foo", type=edm.Collection(edm.String))
+        fld = SearchableField(name="foo", collection=True)
         assert fld.name == "foo"
-        assert fld.type == edm.Collection(edm.String)
-        assert fld.retrievable == True
+        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
+        assert fld.is_hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == True
         assert fld.filterable == False
 
-        assert fld.analyzer is None
-        assert fld.search_analyzer is None
-        assert fld.index_analyzer is None
-        assert fld.synonym_maps is None
+        assert fld.analyzer_name is None
+        assert fld.search_analyzer_name is None
+        assert fld.index_analyzer_name is None
+        assert fld.synonym_map_names is None

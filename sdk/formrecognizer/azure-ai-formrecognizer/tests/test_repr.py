@@ -67,22 +67,22 @@ def field_text(bounding_box, form_word, form_line):
 
 @pytest.fixture
 def form_field_two(field_text):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0, page_number=1)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0, page_number=1)".format(field_text[1], field_text[1])[:1024]
+    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0)
+    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_text[1], field_text[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
 def form_field_one(field_text, form_field_two):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0, page_number=5)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0, page_number=5)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
+    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
+    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
 def page_range():
-    model = _models.PageRange(first_page=1, last_page=100)
-    model_repr = "PageRange(first_page=1, last_page=100)"
+    model = _models.FormPageRange(first_page=1, last_page=100)
+    model_repr = "FormPageRange(first_page=1, last_page=100)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -97,8 +97,8 @@ def form_page(form_table, form_line):
 
 @pytest.fixture
 def us_receipt_type():
-    model = _models.USReceiptType(type="Itemized", confidence=1.0)
-    model_repr = "USReceiptType(type=Itemized, confidence=1.0)"
+    model = _models.ReceiptType(type="Itemized", confidence=1.0)
+    model_repr = "ReceiptType(type=Itemized, confidence=1.0)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -118,8 +118,8 @@ def custom_form_model_field():
 
 @pytest.fixture
 def custom_form_sub_model(custom_form_model_field):
-    model = _models.CustomFormSubModel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
-    model_repr = "CustomFormSubModel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
+    model = _models.CustomFormSubmodel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
+    model_repr = "CustomFormSubmodel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -145,6 +145,15 @@ class TestRepr():
         model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
         model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
             form_field_one[1], page_range[1], form_page[1]
+        )[:1024]
+        assert repr(model) == model_repr
+
+    def test_recognized_receipt(self, form_field_one, page_range, form_page, us_receipt_type):
+        model = _models.RecognizedReceipt(
+            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]],
+            receipt_type=us_receipt_type[0], receipt_locale="en-US")
+        model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
+            form_field_one[1], page_range[1], form_page[1], us_receipt_type[0], "en-US"
         )[:1024]
         assert repr(model) == model_repr
 
@@ -196,15 +205,15 @@ class TestRepr():
         model = _models.CustomFormModel(
             model_id=1,
             status=_models.CustomFormModelStatus.creating,
-            created_on=datetime.datetime(1, 1, 1),
-            last_modified=datetime.datetime(1, 1, 1),
-            models=[custom_form_sub_model[0], custom_form_sub_model[0]],
+            requested_on=datetime.datetime(1, 1, 1),
+            completed_on=datetime.datetime(1, 1, 1),
+            submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
             errors=[form_recognizer_error[0]],
             training_documents=[training_document_info[0], training_document_info[0]]
         )
 
-        model_repr = "CustomFormModel(model_id=1, status=creating, created_on=0001-01-01 00:00:00, " \
-            "last_modified=0001-01-01 00:00:00, models=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
+        model_repr = "CustomFormModel(model_id=1, status=creating, requested_on=0001-01-01 00:00:00, " \
+            "completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
                 custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1]
             )[:1024]
 
@@ -212,9 +221,9 @@ class TestRepr():
 
     def test_custom_form_model_info(self):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.ready, created_on=datetime.datetime(1, 1, 1), last_modified=datetime.datetime(1, 1, 1)
+            model_id=1, status=_models.CustomFormModelStatus.ready, requested_on=datetime.datetime(1, 1, 1), completed_on=datetime.datetime(1, 1, 1)
         )
-        model_repr = "CustomFormModelInfo(model_id=1, status=ready, created_on=0001-01-01 00:00:00, last_modified=0001-01-01 00:00:00)"[:1024]
+        model_repr = "CustomFormModelInfo(model_id=1, status=ready, requested_on=0001-01-01 00:00:00, completed_on=0001-01-01 00:00:00)"[:1024]
         assert repr(model) == model_repr
 
     def test_account_properties(self):
