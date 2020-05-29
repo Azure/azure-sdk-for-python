@@ -381,7 +381,8 @@ class VaultsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.VaultListResult"]
-        """The List operation gets information about the vaults associated with the subscription and within the specified resource group.
+        """The List operation gets information about the vaults associated with the subscription and
+    within the specified resource group.
 
         :param resource_group_name: The name of the Resource Group to which the vault belongs.
         :type resource_group_name: str
@@ -693,6 +694,7 @@ class VaultsOperations(object):
         :param location: The location of the soft-deleted vault.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -707,12 +709,14 @@ class VaultsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._purge_deleted_initial(
-            vault_name=vault_name,
-            location=location,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._purge_deleted_initial(
+                vault_name=vault_name,
+                location=location,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -724,7 +728,15 @@ class VaultsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_purge_deleted.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge'}  # type: ignore
 
     def list(
