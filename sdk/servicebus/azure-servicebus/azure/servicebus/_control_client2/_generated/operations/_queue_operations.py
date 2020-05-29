@@ -96,7 +96,8 @@ class QueueOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ServiceBusManagementError, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('object', pipeline_response)
 
@@ -104,12 +105,13 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{queueName}/'}  # type: ignore
+    get.metadata = {'url': '/{queueName}'}  # type: ignore
 
     def create(
         self,
         queue_name,  # type: str
         request_body,  # type: object
+        api_version="2017_04",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
@@ -119,6 +121,8 @@ class QueueOperations(object):
         :type queue_name: str
         :param request_body: Parameters required to make a new queue.
         :type request_body: object
+        :param api_version: Api Version.
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -139,6 +143,8 @@ class QueueOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if api_version is not None:
+            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -156,7 +162,8 @@ class QueueOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ServiceBusManagementError, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = None
         if response.status_code == 200:
@@ -169,7 +176,7 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/{queueName}/'}  # type: ignore
+    create.metadata = {'url': '/{queueName}'}  # type: ignore
 
     def delete(
         self,
@@ -219,7 +226,8 @@ class QueueOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ServiceBusManagementError, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('object', pipeline_response)
 
@@ -227,4 +235,4 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete.metadata = {'url': '/{queueName}/'}  # type: ignore
+    delete.metadata = {'url': '/{queueName}'}  # type: ignore

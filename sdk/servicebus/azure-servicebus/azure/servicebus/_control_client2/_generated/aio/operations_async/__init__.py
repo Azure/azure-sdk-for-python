@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._queue_operations_async import QueueOperations
-from ._queues_operations_async import QueuesOperations
+from ._service_bus_management_client_operations_async import ServiceBusManagementClientOperationsMixin
 
 __all__ = [
     'QueueOperations',
-    'QueuesOperations',
+    'ServiceBusManagementClientOperationsMixin',
 ]

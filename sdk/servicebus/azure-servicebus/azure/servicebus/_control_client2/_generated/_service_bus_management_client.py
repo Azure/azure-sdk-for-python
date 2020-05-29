@@ -17,17 +17,15 @@ if TYPE_CHECKING:
 
 from ._configuration import ServiceBusManagementClientConfiguration
 from .operations import QueueOperations
-from .operations import QueuesOperations
+from .operations import ServiceBusManagementClientOperationsMixin
 from . import models
 
 
-class ServiceBusManagementClient(object):
+class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
     """Azure Service Bus client for managing Queues, Topics, and Subscriptions.
 
     :ivar queue: QueueOperations operations
     :vartype queue: azure.service._control_client2.operations.QueueOperations
-    :ivar queues: QueuesOperations operations
-    :vartype queues: azure.service._control_client2.operations.QueuesOperations
     :param endpoint: The Service Bus fully qualified domain name.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -48,8 +46,6 @@ class ServiceBusManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.queue = QueueOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.queues = QueuesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

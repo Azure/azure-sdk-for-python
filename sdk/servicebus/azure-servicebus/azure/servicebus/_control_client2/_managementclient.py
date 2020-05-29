@@ -1,6 +1,7 @@
 import inspect
 from typing import TYPE_CHECKING, Dict, Any, Union, List
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
@@ -8,7 +9,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
 from azure.servicebus._control_client2._generated import models
 from azure.servicebus._control_client2._generated._configuration import ServiceBusManagementClientConfiguration
-from azure.servicebus._control_client2._generated.models import CreateEntityBody, CreateEntityBodyContent, \
+from azure.servicebus._control_client2._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueProperties, QueueMetrics
 from azure.servicebus._control_client2._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from .._common.constants import JWT_TOKEN_SCOPE
@@ -89,8 +90,10 @@ class ServiceBusManagementClient:
 
     def get_queue(self, queue_name):
         # type: (str) -> QueueProperties
-        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
+        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        if not content_ele:
+            raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueProperties.deserialize(qc_ele)
         qc.queue_name = queue_name
@@ -100,21 +103,23 @@ class ServiceBusManagementClient:
         # type: (str) -> QueueMetrics
         et = self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        if not content_ele:
+            raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueMetrics.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
 
-    def create_queue(self, queue_name, queue_description=QueueProperties()):
+    def create_queue(self, queue_name, queue_properties=QueueProperties()):
         # type: (str, "QueueProperties") -> QueueProperties
         """Create a queue"""
-        create_entity_body = CreateEntityBody(
-            content=CreateEntityBodyContent(
-                entity=queue_description
+        create_entity_body = CreateQueueBody(
+            content=CreateQueueBodyContent(
+                queue_properties=queue_properties,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.create(queue_name, request_body)
+        et = self._impl.queue.create(queue_name, request_body, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueProperties.deserialize(qc_ele)
@@ -124,13 +129,13 @@ class ServiceBusManagementClient:
     def update_queue(self, queue_name, queue_description=QueueProperties()):
         # type: (str, "QueueProperties") -> QueueProperties
         """Update a queue"""
-        create_entity_body = CreateEntityBody(
-            content=CreateEntityBodyContent(
-                entity=queue_description
+        create_entity_body = CreateQueueBody(
+            content=CreateQueueBodyContent(
+                queue_properties=queue_description
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.create(queue_name, request_body, headers={"If-Match": "*"})
+        et = self._impl.queue.create(queue_name, request_body, api_version=constants.API_VERSION, headers={"If-Match": "*"})
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find(
             "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
@@ -145,7 +150,7 @@ class ServiceBusManagementClient:
 
     def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueProperties]
-        et = self._impl.queues.get(skip=skip, top=max_count, api_version=constants.API_VERSION)
+        et = self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
         entries = et.findall("{http://www.w3.org/2005/Atom}entry")
         queue_properties = []
         for entry in entries:

@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._queue_operations import QueueOperations
-from ._queues_operations import QueuesOperations
+from ._service_bus_management_client_operations import ServiceBusManagementClientOperationsMixin
 
 __all__ = [
     'QueueOperations',
-    'QueuesOperations',
+    'ServiceBusManagementClientOperationsMixin',
 ]

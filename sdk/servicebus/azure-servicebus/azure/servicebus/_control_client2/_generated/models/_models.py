@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -47,15 +48,15 @@ class AuthorizationRule(msrest.serialization.Model):
         self.rights = kwargs.get('rights', None)
 
 
-class CreateEntityBody(msrest.serialization.Model):
-    """The response from a CreateQueue operation.
+class CreateQueueBody(msrest.serialization.Model):
+    """The request body for creating a queue.
 
-    :param content: TODO: Add description.
-    :type content: ~azure.service._control_client2.models.CreateEntityBodyContent
+    :param content: QueueDescription for the new queue.
+    :type content: ~azure.service._control_client2.models.CreateQueueBodyContent
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'CreateEntityBodyContent'},
+        'content': {'key': 'content', 'type': 'CreateQueueBodyContent'},
     }
     _xml_map = {
         'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
@@ -65,22 +66,22 @@ class CreateEntityBody(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(CreateEntityBody, self).__init__(**kwargs)
+        super(CreateQueueBody, self).__init__(**kwargs)
         self.content = kwargs.get('content', None)
 
 
-class CreateEntityBodyContent(msrest.serialization.Model):
-    """TODO: Add description.
+class CreateQueueBodyContent(msrest.serialization.Model):
+    """QueueDescription for the new queue.
 
-    :param type: TODO: Add description.
+    :param type: MIME type of content.
     :type type: str
-    :param entity: Any object.
-    :type entity: object
+    :param queue_properties: Properties of the new queue.
+    :type queue_properties: ~azure.service._control_client2.models.QueueProperties
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'entity': {'key': 'entity', 'type': 'object'},
+        'queue_properties': {'key': 'QueueProperties', 'type': 'QueueProperties'},
     }
     _xml_map = {
         'ns': 'http://www.w3.org/2005/Atom'
@@ -90,9 +91,57 @@ class CreateEntityBodyContent(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(CreateEntityBodyContent, self).__init__(**kwargs)
+        super(CreateQueueBodyContent, self).__init__(**kwargs)
         self.type = kwargs.get('type', "application/xml")
-        self.entity = kwargs.get('entity', None)
+        self.queue_properties = kwargs.get('queue_properties', None)
+
+
+class CreateTopicBody(msrest.serialization.Model):
+    """The request body for creating a topic.
+
+    :param content: TopicDescription for the new topic.
+    :type content: ~azure.service._control_client2.models.CreateTopicBodyContent
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'CreateTopicBodyContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateTopicBody, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+
+
+class CreateTopicBodyContent(msrest.serialization.Model):
+    """TopicDescription for the new topic.
+
+    :param type: MIME type of content.
+    :type type: str
+    :param topic_properties: Topic information to create.
+    :type topic_properties: ~azure.service._control_client2.models.TopicProperties
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'topic_properties': {'key': 'TopicProperties', 'type': 'TopicProperties'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateTopicBodyContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', "application/xml")
+        self.topic_properties = kwargs.get('topic_properties', None)
 
 
 class MessageCountDetails(msrest.serialization.Model):
@@ -164,7 +213,7 @@ class QueueMetrics(msrest.serialization.Model):
         'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
     }
     _xml_map = {
-        'name': 'QueueMetrics', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
@@ -188,9 +237,11 @@ class QueueProperties(msrest.serialization.Model):
     :type queue_name: str
     :param authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
-    :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which the queue is
+    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
+    :param created_at: The exact time the queue was created.
+    :type created_at: ~datetime.datetime
     :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
@@ -226,7 +277,7 @@ class QueueProperties(msrest.serialization.Model):
     :type max_delivery_count: int
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :type max_size_in_megabytes: float
+    :type max_size_in_megabytes: int
     :param requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
@@ -244,6 +295,7 @@ class QueueProperties(msrest.serialization.Model):
         'queue_name': {'key': 'QueueName', 'type': 'str'},
         'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -254,7 +306,7 @@ class QueueProperties(msrest.serialization.Model):
         'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'float', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'status': {'key': 'Status', 'type': 'str'},
@@ -272,6 +324,7 @@ class QueueProperties(msrest.serialization.Model):
         self.queue_name = kwargs.get('queue_name', None)
         self.authorization_rules = kwargs.get('authorization_rules', None)
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.created_at = kwargs.get('created_at', None)
         self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
         self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
@@ -287,3 +340,101 @@ class QueueProperties(msrest.serialization.Model):
         self.requires_session = kwargs.get('requires_session', None)
         self.status = kwargs.get('status', None)
         self.support_ordering = kwargs.get('support_ordering', None)
+
+
+class ServiceBusManagementError(msrest.serialization.Model):
+    """The error response from Service Bus.
+
+    :param code: The service error code.
+    :type code: int
+    :param detail: The service error message.
+    :type detail: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'Code', 'type': 'int'},
+        'detail': {'key': 'Detail', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServiceBusManagementError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.detail = kwargs.get('detail', None)
+
+
+class TopicProperties(msrest.serialization.Model):
+    """Description of a Service Bus topic resource.
+
+    :param topic_name: Name of the topic.
+    :type topic_name: str
+    :param authorization_rules: Authorization rules for resource.
+    :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
+    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
+     automatically deleted. The minimum duration is 5 minutes.
+    :type auto_delete_on_idle: ~datetime.timedelta
+    :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+     the duration after which the message expires, starting from when the message is sent to Service
+     Bus. This is the default value used when TimeToLive is not set on a message itself.
+    :type default_message_time_to_live: ~datetime.timedelta
+    :param duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+     duration of the duplicate detection history. The default value is 10 minutes.
+    :type duplicate_detection_history_time_window: ~datetime.timedelta
+    :param enable_batched_operations: Value that indicates whether server-side batched operations
+     are enabled.
+    :type enable_batched_operations: bool
+    :param enable_partitioning: A value that indicates whether the topic is to be partitioned
+     across multiple message brokers.
+    :type enable_partitioning: bool
+    :param max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
+     memory allocated for the topic.
+    :type max_size_in_megabytes: long
+    :param requires_duplicate_detection: A value indicating if this topic requires duplicate
+     detection.
+    :type requires_duplicate_detection: bool
+    :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+    :type status: str or ~azure.service._control_client2.models.EntityStatus
+    :param support_ordering: A value that indicates whether the topic supports ordering.
+    :type support_ordering: bool
+    :param user_metadata: Metadata associated with the topic.
+    :type user_metadata: str
+    """
+
+    _attribute_map = {
+        'topic_name': {'key': 'TopicName', 'type': 'str'},
+        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'long'},
+        'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'Status', 'type': 'str'},
+        'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'user_metadata': {'key': 'UserMetadata', 'type': 'str'},
+    }
+    _xml_map = {
+        'name': 'TopicDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TopicProperties, self).__init__(**kwargs)
+        self.topic_name = kwargs.get('topic_name', None)
+        self.authorization_rules = kwargs.get('authorization_rules', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.enable_partitioning = kwargs.get('enable_partitioning', None)
+        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
+        self.status = kwargs.get('status', None)
+        self.support_ordering = kwargs.get('support_ordering', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
