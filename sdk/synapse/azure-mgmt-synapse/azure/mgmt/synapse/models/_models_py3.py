@@ -2469,6 +2469,69 @@ class PrivateEndpointConnection(ProxyResource):
         self.provisioning_state = None
 
 
+class PrivateLinkHub(TrackedResource):
+    """A privateLinkHub.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    :ivar provisioning_state: PrivateLinkHub provisioning state. Possible
+     values include: 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.enum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(PrivateLinkHub, self).__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state = None
+
+
+class PrivateLinkHubPatchInfo(Model):
+    """PrivateLinkHub patch details.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(PrivateLinkHubPatchInfo, self).__init__(**kwargs)
+        self.tags = tags
+
+
 class PrivateLinkResource(ProxyResource):
     """A private link resource.
 

@@ -233,3 +233,16 @@ class PrivateEndpointConnectionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
+class PrivateLinkHubPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateLinkHub <azure.mgmt.synapse.models.PrivateLinkHub>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateLinkHub]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateLinkHubPaged, self).__init__(*args, **kwargs)
