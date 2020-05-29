@@ -29,6 +29,12 @@
   "tags": [
     {
       "name": "Queue Operations"
+    },
+    {
+      "name": "Topic Operations"
+    },
+    {
+      "name": "Subscription Operations"
     }
   ],
   "parameters": {
@@ -60,8 +66,8 @@
     }
   },
   "definitions": {
-    "CreateEntityBody": {
-      "description": "The response from a CreateQueue operation.",
+    "CreateQueueBody": {
+      "description": "The request body for creating a queue.",
       "type": "object",
       "xml":{
         "name": "entry",
@@ -69,22 +75,54 @@
       },
       "properties": {
         "content": {
-          "description": "TODO: Add description",
+          "description": "QueueDescription for the new queue.",
           "type": "object",
           "xml": {
             "namespace": "http://www.w3.org/2005/Atom"
           },
           "properties": {
             "type": {
-              "description": "TODO: Add description",
+              "description": "MIME type of content.",
               "type": "string",
               "default": "application/xml",
               "xml": {
                 "attribute": true
               }
             },
-            "entity": {
-              "type":"object"
+            "QueueProperties": {
+              "description": "Properties of the new queue.",
+              "$ref": "#/definitions/QueueProperties"
+            }
+          }
+        }
+      }
+    },
+    "CreateTopicBody": {
+      "description": "The request body for creating a topic.",
+      "type": "object",
+      "xml":{
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "content": {
+          "description": "TopicDescription for the new topic.",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "MIME type of content.",
+              "type": "string",
+              "default": "application/xml",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "TopicProperties": {
+              "description": "Topic information to create.",
+              "$ref": "#/definitions/TopicProperties"
             }
           }
         }
@@ -178,7 +216,6 @@
       "description": "Service Bus queue metrics.",
       "type": "object",
       "xml": {
-        "name": "QueueMetrics",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -310,9 +347,17 @@
           }
         },
         "AutoDeleteOnIdle": {
-          "description": "ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
+          "description": "ISO 8601 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
           "type": "string",
           "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
+          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -391,7 +436,7 @@
         },
         "MaxSizeInMegabytes": {
           "description": "The maximum size of the queue in megabytes, which is the size of memory allocated for the queue.",
-          "type": "number",
+          "type": "integer",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -424,10 +469,138 @@
           }
         }
       }
+    },
+    "ServiceBusManagementError": {
+      "description": "The error response from Service Bus.",
+      "type": "object",
+      "properties": {
+        "Code": {
+          "description": "The service error code.",
+          "type": "integer"
+        },
+        "Detail": {
+          "description": "The service error message.",
+          "type": "string"
+        }
+      }
+    },
+    "TopicProperties": {
+      "description": "Description of a Service Bus topic resource.",
+      "type": "object",
+      "xml": {
+        "name": "TopicDescription",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "TopicName": {
+          "description": "Name of the topic",
+          "type": "string"
+        },
+        "AuthorizationRules": {
+          "description": "Authorization rules for resource.",
+          "type": "array",
+          "xml": {
+            "wrapped": true,
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          },
+          "items": {
+            "$ref": "#/definitions/AuthorizationRule",
+            "xml": {
+              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            }
+          }
+        },
+        "AutoDeleteOnIdle": {
+          "description": "ISO 8601 timeSpan idle interval after which the topic is automatically deleted. The minimum duration is 5 minutes.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "DefaultMessageTimeToLive": {
+          "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "DuplicateDetectionHistoryTimeWindow": {
+          "description": "ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnableBatchedOperations": {
+          "description": "Value that indicates whether server-side batched operations are enabled.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnablePartitioning": {
+          "description": "A value that indicates whether the topic is to be partitioned across multiple message brokers.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MaxSizeInMegabytes": {
+          "description": "The maximum size of the topic in megabytes, which is the size of memory allocated for the topic.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "RequiresDuplicateDetection": {
+          "description": "A value indicating if this topic requires duplicate detection.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Status": {
+          "$ref": "#/definitions/EntityStatus",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "SupportOrdering": {
+          "description": "A value that indicates whether the topic supports ordering.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "UserMetadata": {
+          "description": "Metadata associated with the topic.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "ServiceBusManagementErrorResponse": {
+      "description": "An error occurred. The possible HTTP status, code, and message strings are listed below",
+      "headers": {
+        "x-ms-request-id": {
+          "description": "A server-generated UUID recorded in the analytics logs for troubleshooting and correlation.",
+          "pattern": "^[{(]?[0-9a-f]{8}[-]?([0-9a-f]{4}[-]?){3}[0-9a-f]{12}[)}]?$",
+          "type": "string"
+        },
+        "x-ms-version": {
+          "description": "The version of the REST protocol used to process the request.",
+          "type": "string"
+        }
+      },
+      "schema": {
+        "$ref": "#/definitions/ServiceBusManagementError"
+      }
     }
   },
   "paths": {
-    "/{queueName}/": {
+    "/{queueName}": {
       "parameters": [
         {
           "name": "queueName",
@@ -460,6 +633,9 @@
             "schema":{
               "type": "object"
             }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
           }
         }
       },
@@ -479,20 +655,26 @@
             "required": true,
             "description": "Parameters required to make a new queue.",
             "x-ms-parameter-location": "method"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
           }
         ],
         "responses": {
+          "200": {
+            "description": "Update -- Update Queue operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
           "201": {
             "description": "Created -- Create Queue operation completed successfully.",
             "schema": {
               "type": "object"
             }
           },
-          "200": {
-            "description": "Update -- Update Queue operation completed successfully.",
-            "schema": {
-              "type": "object"
-            }
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
           }
         }
       },
@@ -514,17 +696,32 @@
             "schema":{
               "type": "object"
             }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
           }
         }
       }
     },
-    "/$Resources/queues": {
+    "/$Resources/{entityType}": {
+      "parameters": [
+        {
+          "name": "queueOrTopicName",
+          "in": "path",
+          "description": "The name of the queue or topic relative to the Service Bus namespace.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
-        "operationId": "Queues_Get",
-        "summary": "Get Queues",
-        "description": "Get the details about the Queues of the given ServiceBus namespace.",
+        "operationId": "listEntities",
+        "summary": "Get Queues or topics",
+        "description": "Get the details about the entities of the given Service Bus namespace.",
         "tags": [
-          "Queue Operations"
+          "Queue Operations",
+          "Topic Operations"
         ],
         "parameters": [
           {
@@ -549,6 +746,9 @@
             "schema":{
               "type": "object"
             }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
           }
         }
       }
