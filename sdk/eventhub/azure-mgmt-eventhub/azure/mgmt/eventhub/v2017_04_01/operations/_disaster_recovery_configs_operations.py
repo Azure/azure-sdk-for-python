@@ -595,7 +595,8 @@ class DisasterRecoveryConfigsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """This operation disables the Disaster Recovery and stops replicating changes from primary to secondary namespaces.
+        """This operation disables the Disaster Recovery and stops replicating changes from primary to
+        secondary namespaces.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str

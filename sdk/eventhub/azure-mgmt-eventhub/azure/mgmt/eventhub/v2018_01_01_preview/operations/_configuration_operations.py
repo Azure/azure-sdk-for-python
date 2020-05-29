@@ -52,7 +52,8 @@ class ConfigurationOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ClusterQuotaConfigurationProperties"
-        """Replace all specified Event Hubs Cluster settings with those contained in the request body. Leaves the settings not specified in the request body unmodified.
+        """Replace all specified Event Hubs Cluster settings with those contained in the request body.
+        Leaves the settings not specified in the request body unmodified.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
@@ -123,7 +124,8 @@ class ConfigurationOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ClusterQuotaConfigurationProperties"
-        """Get all Event Hubs Cluster settings - a collection of key/value pairs which represent the quotas and settings imposed on the cluster.
+        """Get all Event Hubs Cluster settings - a collection of key/value pairs which represent the
+        quotas and settings imposed on the cluster.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
