@@ -47,9 +47,10 @@ class PolicyDefinitionsOperations:
         parameters: "models.PolicyDefinition",
         **kwargs
     ) -> "models.PolicyDefinition":
-        """This operation creates or updates a policy definition in the given subscription with the given name.
+        """Creates or updates a policy definition in a subscription.
 
-        Creates or updates a policy definition in a subscription.
+        This operation creates or updates a policy definition in the given subscription with the given
+        name.
 
         :param policy_definition_name: The name of the policy definition to create.
         :type policy_definition_name: str
@@ -109,9 +110,9 @@ class PolicyDefinitionsOperations:
         policy_definition_name: str,
         **kwargs
     ) -> None:
-        """This operation deletes the policy definition in the given subscription with the given name.
+        """Deletes a policy definition in a subscription.
 
-        Deletes a policy definition in a subscription.
+        This operation deletes the policy definition in the given subscription with the given name.
 
         :param policy_definition_name: The name of the policy definition to delete.
         :type policy_definition_name: str
@@ -159,9 +160,9 @@ class PolicyDefinitionsOperations:
         policy_definition_name: str,
         **kwargs
     ) -> "models.PolicyDefinition":
-        """This operation retrieves the policy definition in the given subscription with the given name.
+        """Retrieves a policy definition in a subscription.
 
-        Retrieves a policy definition in a subscription.
+        This operation retrieves the policy definition in the given subscription with the given name.
 
         :param policy_definition_name: The name of the policy definition to get.
         :type policy_definition_name: str
@@ -213,9 +214,9 @@ class PolicyDefinitionsOperations:
         policy_definition_name: str,
         **kwargs
     ) -> "models.PolicyDefinition":
-        """This operation retrieves the built-in policy definition with the given name.
+        """Retrieves a built-in policy definition.
 
-        Retrieves a built-in policy definition.
+        This operation retrieves the built-in policy definition with the given name.
 
         :param policy_definition_name: The name of the built-in policy definition to get.
         :type policy_definition_name: str
@@ -268,9 +269,10 @@ class PolicyDefinitionsOperations:
         parameters: "models.PolicyDefinition",
         **kwargs
     ) -> "models.PolicyDefinition":
-        """This operation creates or updates a policy definition in the given management group with the given name.
+        """Creates or updates a policy definition in a management group.
 
-        Creates or updates a policy definition in a management group.
+        This operation creates or updates a policy definition in the given management group with the
+        given name.
 
         :param policy_definition_name: The name of the policy definition to create.
         :type policy_definition_name: str
@@ -333,9 +335,9 @@ class PolicyDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> None:
-        """This operation deletes the policy definition in the given management group with the given name.
+        """Deletes a policy definition in a management group.
 
-        Deletes a policy definition in a management group.
+        This operation deletes the policy definition in the given management group with the given name.
 
         :param policy_definition_name: The name of the policy definition to delete.
         :type policy_definition_name: str
@@ -386,9 +388,10 @@ class PolicyDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> "models.PolicyDefinition":
-        """This operation retrieves the policy definition in the given management group with the given name.
+        """Retrieve a policy definition in a management group.
 
-        Retrieve a policy definition in a management group.
+        This operation retrieves the policy definition in the given management group with the given
+        name.
 
         :param policy_definition_name: The name of the policy definition to get.
         :type policy_definition_name: str
@@ -441,9 +444,9 @@ class PolicyDefinitionsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.PolicyDefinitionListResult"]:
-        """This operation retrieves a list of all the policy definitions in a given subscription.
+        """Retrieves policy definitions in a subscription.
 
-        Retrieves policy definitions in a subscription.
+        This operation retrieves a list of all the policy definitions in a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyDefinitionListResult or the result of cls(response)
@@ -506,9 +509,9 @@ class PolicyDefinitionsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.PolicyDefinitionListResult"]:
-        """This operation retrieves a list of all the built-in policy definitions.
+        """Retrieve built-in policy definitions.
 
-        Retrieve built-in policy definitions.
+        This operation retrieves a list of all the built-in policy definitions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyDefinitionListResult or the result of cls(response)
@@ -568,9 +571,9 @@ class PolicyDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> AsyncIterable["models.PolicyDefinitionListResult"]:
-        """This operation retrieves a list of all the policy definitions in a given management group.
+        """Retrieve policy definitions in a management group.
 
-        Retrieve policy definitions in a management group.
+        This operation retrieves a list of all the policy definitions in a given management group.
 
         :param management_group_id: The ID of the management group.
         :type management_group_id: str

@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -101,7 +101,7 @@ class DeploymentScriptsOperations:
         return deserialized
     _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
 
-    async def create(
+    async def begin_create(
         self,
         resource_group_name: str,
         script_name: str,
@@ -117,6 +117,7 @@ class DeploymentScriptsOperations:
         :param deployment_script: Deployment script supplied to the operation.
         :type deployment_script: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -131,13 +132,15 @@ class DeploymentScriptsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_initial(
-            resource_group_name=resource_group_name,
-            script_name=script_name,
-            deployment_script=deployment_script,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                script_name=script_name,
+                deployment_script=deployment_script,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -152,8 +155,16 @@ class DeploymentScriptsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentScripts/{scriptName}'}  # type: ignore
 
     async def update(
         self,
@@ -287,7 +298,8 @@ class DeploymentScriptsOperations:
         script_name: str,
         **kwargs
     ) -> None:
-        """Deletes a deployment script. When operation completes, status code 200 returned without content.
+        """Deletes a deployment script. When operation completes, status code 200 returned without
+        content.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

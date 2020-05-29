@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -144,7 +144,7 @@ class ApplicationsOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         application_name: str,
@@ -157,6 +157,7 @@ class ApplicationsOperations:
         :param application_name: The name of the managed application.
         :type application_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -171,12 +172,14 @@ class ApplicationsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            application_name=application_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                application_name=application_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -188,8 +191,16 @@ class ApplicationsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
 
     async def _create_or_update_initial(
         self,
@@ -249,7 +260,7 @@ class ApplicationsOperations:
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
 
-    async def create_or_update(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         application_name: str,
@@ -265,6 +276,7 @@ class ApplicationsOperations:
         :param parameters: Parameters supplied to the create or update a managed application.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -279,13 +291,15 @@ class ApplicationsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            application_name=application_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                application_name=application_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -300,8 +314,16 @@ class ApplicationsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'}  # type: ignore
 
     async def update(
         self,
@@ -310,7 +332,8 @@ class ApplicationsOperations:
         parameters: Optional["models.Application"] = None,
         **kwargs
     ) -> "models.Application":
-        """Updates an existing managed application. The only value that can be updated via PATCH currently is the tags.
+        """Updates an existing managed application. The only value that can be updated via PATCH currently
+        is the tags.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -600,7 +623,7 @@ class ApplicationsOperations:
 
     _delete_by_id_initial.metadata = {'url': '/{applicationId}'}  # type: ignore
 
-    async def delete_by_id(
+    async def begin_delete_by_id(
         self,
         application_id: str,
         **kwargs
@@ -613,6 +636,7 @@ class ApplicationsOperations:
      name}/Microsoft.Solutions/applications/{application-name}.
         :type application_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -627,11 +651,13 @@ class ApplicationsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_by_id_initial(
-            application_id=application_id,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_by_id_initial(
+                application_id=application_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -643,8 +669,16 @@ class ApplicationsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore
 
     async def _create_or_update_by_id_initial(
         self,
@@ -701,7 +735,7 @@ class ApplicationsOperations:
         return deserialized
     _create_or_update_by_id_initial.metadata = {'url': '/{applicationId}'}  # type: ignore
 
-    async def create_or_update_by_id(
+    async def begin_create_or_update_by_id(
         self,
         application_id: str,
         parameters: "models.Application",
@@ -717,6 +751,7 @@ class ApplicationsOperations:
         :param parameters: Parameters supplied to the create or update a managed application.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -731,12 +766,14 @@ class ApplicationsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_by_id_initial(
-            application_id=application_id,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_by_id_initial(
+                application_id=application_id,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -751,8 +788,16 @@ class ApplicationsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_by_id.metadata = {'url': '/{applicationId}'}  # type: ignore
 
     async def update_by_id(
         self,
@@ -760,7 +805,8 @@ class ApplicationsOperations:
         parameters: Optional["models.Application"] = None,
         **kwargs
     ) -> "models.Application":
-        """Updates an existing managed application. The only value that can be updated via PATCH currently is the tags.
+        """Updates an existing managed application. The only value that can be updated via PATCH currently
+        is the tags.
 
         :param application_id: The fully qualified ID of the managed application, including the managed
          application name and the managed application resource type. Use the format,

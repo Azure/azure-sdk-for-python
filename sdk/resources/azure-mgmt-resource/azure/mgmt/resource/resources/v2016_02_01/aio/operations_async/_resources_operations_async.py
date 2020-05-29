@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -89,19 +89,21 @@ class ResourcesOperations:
 
     _move_resources_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'}  # type: ignore
 
-    async def move_resources(
+    async def begin_move_resources(
         self,
         source_resource_group_name: str,
         parameters: "models.ResourcesMoveInfo",
         **kwargs
     ) -> None:
-        """Move resources from one resource group to another. The resources being moved should all be in the same resource group.
+        """Move resources from one resource group to another. The resources being moved should all be in
+    the same resource group.
 
         :param source_resource_group_name: Source resource group name.
         :type source_resource_group_name: str
         :param parameters: move resources' parameters.
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourcesMoveInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -116,12 +118,14 @@ class ResourcesOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._move_resources_initial(
-            source_resource_group_name=source_resource_group_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._move_resources_initial(
+                source_resource_group_name=source_resource_group_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -133,8 +137,16 @@ class ResourcesOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'}  # type: ignore
 
     def list(
         self,
@@ -487,7 +499,7 @@ class ResourcesOperations:
         return deserialized
     _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
 
-    async def update(
+    async def begin_update(
         self,
         resource_group_name: str,
         resource_provider_namespace: str,
@@ -513,6 +525,7 @@ class ResourcesOperations:
         :param parameters: Parameters for updating the resource.
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -527,16 +540,18 @@ class ResourcesOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._update_initial(
-            resource_group_name=resource_group_name,
-            resource_provider_namespace=resource_provider_namespace,
-            parent_resource_path=parent_resource_path,
-            resource_type=resource_type,
-            resource_name=resource_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                resource_provider_namespace=resource_provider_namespace,
+                parent_resource_path=parent_resource_path,
+                resource_type=resource_type,
+                resource_name=resource_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -551,8 +566,16 @@ class ResourcesOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}  # type: ignore
 
     async def get(
         self,

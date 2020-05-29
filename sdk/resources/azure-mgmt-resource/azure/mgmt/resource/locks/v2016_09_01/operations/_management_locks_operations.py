@@ -53,9 +53,12 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ManagementLockObject"
-        """When you apply a lock at a parent scope, all child resources inherit the same lock. To create management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Creates or updates a management lock at the resource group level.
 
-        Creates or updates a management lock at the resource group level.
+        When you apply a lock at a parent scope, all child resources inherit the same lock. To create
+        management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group to lock.
         :type resource_group_name: str
@@ -126,9 +129,11 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """To delete management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Deletes a management lock at the resource group level.
 
-        Deletes a management lock at the resource group level.
+        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group containing the lock.
         :type resource_group_name: str
@@ -425,9 +430,12 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ManagementLockObject"
-        """When you apply a lock at a parent scope, all child resources inherit the same lock. To create management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Creates or updates a management lock at the resource level or any level below the resource.
 
-        Creates or updates a management lock at the resource level or any level below the resource.
+        When you apply a lock at a parent scope, all child resources inherit the same lock. To create
+        management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group containing the resource to lock.
         :type resource_group_name: str
@@ -514,9 +522,11 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """To delete management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Deletes the management lock of a resource or any level below the resource.
 
-        Deletes the management lock of a resource or any level below the resource.
+        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param resource_group_name: The name of the resource group containing the resource with the
          lock to delete.
@@ -657,9 +667,12 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ManagementLockObject"
-        """When you apply a lock at a parent scope, all child resources inherit the same lock. To create management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Creates or updates a management lock at the subscription level.
 
-        Creates or updates a management lock at the subscription level.
+        When you apply a lock at a parent scope, all child resources inherit the same lock. To create
+        management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param lock_name: The name of lock. The lock name can be a maximum of 260 characters. It cannot
          contain <, > %, &, :, \, ?, /, or any control characters.
@@ -726,9 +739,11 @@ class ManagementLocksOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """To delete management locks, you must have access to Microsoft.Authorization/\ * or Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+        """Deletes the management lock at the subscription level.
 
-        Deletes the management lock at the subscription level.
+        To delete management locks, you must have access to Microsoft.Authorization/\ * or
+        Microsoft.Authorization/locks/* actions. Of the built-in roles, only Owner and User Access
+        Administrator are granted those actions.
 
         :param lock_name: The name of lock to delete.
         :type lock_name: str

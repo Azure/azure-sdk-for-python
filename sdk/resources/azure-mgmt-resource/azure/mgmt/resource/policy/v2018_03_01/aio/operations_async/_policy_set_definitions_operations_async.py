@@ -47,9 +47,10 @@ class PolicySetDefinitionsOperations:
         parameters: "models.PolicySetDefinition",
         **kwargs
     ) -> "models.PolicySetDefinition":
-        """This operation creates or updates a policy set definition in the given subscription with the given name.
+        """Creates or updates a policy set definition.
 
-        Creates or updates a policy set definition.
+        This operation creates or updates a policy set definition in the given subscription with the
+        given name.
 
         :param policy_set_definition_name: The name of the policy set definition to create.
         :type policy_set_definition_name: str
@@ -115,9 +116,9 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         **kwargs
     ) -> None:
-        """This operation deletes the policy set definition in the given subscription with the given name.
+        """Deletes a policy set definition.
 
-        Deletes a policy set definition.
+        This operation deletes the policy set definition in the given subscription with the given name.
 
         :param policy_set_definition_name: The name of the policy set definition to delete.
         :type policy_set_definition_name: str
@@ -166,9 +167,10 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         **kwargs
     ) -> "models.PolicySetDefinition":
-        """This operation retrieves the policy set definition in the given subscription with the given name.
+        """Retrieves a policy set definition.
 
-        Retrieves a policy set definition.
+        This operation retrieves the policy set definition in the given subscription with the given
+        name.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
         :type policy_set_definition_name: str
@@ -221,9 +223,9 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         **kwargs
     ) -> "models.PolicySetDefinition":
-        """This operation retrieves the built-in policy set definition with the given name.
+        """Retrieves a built in policy set definition.
 
-        Retrieves a built in policy set definition.
+        This operation retrieves the built-in policy set definition with the given name.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
         :type policy_set_definition_name: str
@@ -274,9 +276,9 @@ class PolicySetDefinitionsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
-        """This operation retrieves a list of all the policy set definitions in the given subscription.
+        """Retrieves the policy set definitions for a subscription.
 
-        Retrieves the policy set definitions for a subscription.
+        This operation retrieves a list of all the policy set definitions in the given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicySetDefinitionListResult or the result of cls(response)
@@ -340,9 +342,9 @@ class PolicySetDefinitionsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
-        """This operation retrieves a list of all the built-in policy set definitions.
+        """Retrieves built-in policy set definitions.
 
-        Retrieves built-in policy set definitions.
+        This operation retrieves a list of all the built-in policy set definitions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicySetDefinitionListResult or the result of cls(response)
@@ -405,9 +407,10 @@ class PolicySetDefinitionsOperations:
         parameters: "models.PolicySetDefinition",
         **kwargs
     ) -> "models.PolicySetDefinition":
-        """This operation creates or updates a policy set definition in the given management group with the given name.
+        """Creates or updates a policy set definition.
 
-        Creates or updates a policy set definition.
+        This operation creates or updates a policy set definition in the given management group with
+        the given name.
 
         :param policy_set_definition_name: The name of the policy set definition to create.
         :type policy_set_definition_name: str
@@ -476,9 +479,10 @@ class PolicySetDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> None:
-        """This operation deletes the policy set definition in the given management group with the given name.
+        """Deletes a policy set definition.
 
-        Deletes a policy set definition.
+        This operation deletes the policy set definition in the given management group with the given
+        name.
 
         :param policy_set_definition_name: The name of the policy set definition to delete.
         :type policy_set_definition_name: str
@@ -530,9 +534,10 @@ class PolicySetDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> "models.PolicySetDefinition":
-        """This operation retrieves the policy set definition in the given management group with the given name.
+        """Retrieves a policy set definition.
 
-        Retrieves a policy set definition.
+        This operation retrieves the policy set definition in the given management group with the given
+        name.
 
         :param policy_set_definition_name: The name of the policy set definition to get.
         :type policy_set_definition_name: str
@@ -587,9 +592,10 @@ class PolicySetDefinitionsOperations:
         management_group_id: str,
         **kwargs
     ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
-        """This operation retrieves a list of all the a policy set definition in the given management group.
+        """Retrieves all policy set definitions in management group.
 
-        Retrieves all policy set definitions in management group.
+        This operation retrieves a list of all the a policy set definition in the given management
+    group.
 
         :param management_group_id: The ID of the management group.
         :type management_group_id: str

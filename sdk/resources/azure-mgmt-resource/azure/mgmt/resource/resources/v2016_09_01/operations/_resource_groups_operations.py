@@ -296,14 +296,16 @@ class ResourceGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """When you delete a resource group, all of its resources are also deleted. Deleting a resource group deletes all of its template deployments and currently stored operations.
+        """Deletes a resource group.
 
-        Deletes a resource group.
+        When you delete a resource group, all of its resources are also deleted. Deleting a resource
+    group deletes all of its template deployments and currently stored operations.
 
         :param resource_group_name: The name of the resource group to delete. The name is case
      insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -318,11 +320,13 @@ class ResourceGroupsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -334,7 +338,15 @@ class ResourceGroupsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'}  # type: ignore
 
     def get(
@@ -398,9 +410,11 @@ class ResourceGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ResourceGroup"
-        """Resource groups can be updated through a simple PATCH operation to a group address. The format of the request is the same as that for creating a resource group. If a field is unspecified, the current value is retained.
+        """Updates a resource group.
 
-        Updates a resource group.
+        Resource groups can be updated through a simple PATCH operation to a group address. The format
+        of the request is the same as that for creating a resource group. If a field is unspecified,
+        the current value is retained.
 
         :param resource_group_name: The name of the resource group to update. The name is case
          insensitive.
