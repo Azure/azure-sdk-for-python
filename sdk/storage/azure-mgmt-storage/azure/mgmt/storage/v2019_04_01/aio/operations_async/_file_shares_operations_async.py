@@ -140,7 +140,9 @@ class FileSharesOperations:
         file_share: "models.FileShare",
         **kwargs
     ) -> "models.FileShare":
-        """Creates a new share under the specified account as described by request body. The share resource includes metadata and properties for that share. It does not include a list of the files contained by the share.
+        """Creates a new share under the specified account as described by request body. The share
+        resource includes metadata and properties for that share. It does not include a list of the
+        files contained by the share.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -220,7 +222,8 @@ class FileSharesOperations:
         file_share: "models.FileShare",
         **kwargs
     ) -> "models.FileShare":
-        """Updates share properties as specified in request body. Properties not mentioned in the request will not be changed. Update fails if the specified share does not already exist.
+        """Updates share properties as specified in request body. Properties not mentioned in the request
+        will not be changed. Update fails if the specified share does not already exist.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

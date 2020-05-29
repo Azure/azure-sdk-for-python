@@ -47,7 +47,8 @@ class BlobServicesOperations:
         parameters: "models.BlobServiceProperties",
         **kwargs
     ) -> "models.BlobServiceProperties":
-        """Sets the properties of a storage account’s Blob service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Sets the properties of a storage account’s Blob service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -117,7 +118,8 @@ class BlobServicesOperations:
         account_name: str,
         **kwargs
     ) -> "models.BlobServiceProperties":
-        """Gets the properties of a storage account’s Blob service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Gets the properties of a storage account’s Blob service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

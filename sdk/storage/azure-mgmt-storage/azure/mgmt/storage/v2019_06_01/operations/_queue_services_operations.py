@@ -112,7 +112,8 @@ class QueueServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.QueueServiceProperties"
-        """Sets the properties of a storage account’s Queue service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Sets the properties of a storage account’s Queue service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -183,7 +184,8 @@ class QueueServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.QueueServiceProperties"
-        """Gets the properties of a storage account’s Queue service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Gets the properties of a storage account’s Queue service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

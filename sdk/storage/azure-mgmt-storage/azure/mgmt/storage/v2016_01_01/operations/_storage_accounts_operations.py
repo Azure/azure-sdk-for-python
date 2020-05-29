@@ -170,7 +170,10 @@ class StorageAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Asynchronously creates a new storage account with the specified parameters. If an account is already created and a subsequent create request is issued with different properties, the account properties will be updated. If an account is already created and a subsequent create or update request is issued with the exact same set of properties, the request will succeed.
+        """Asynchronously creates a new storage account with the specified parameters. If an account is
+    already created and a subsequent create request is issued with different properties, the
+    account properties will be updated. If an account is already created and a subsequent create or
+    update request is issued with the exact same set of properties, the request will succeed.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -181,6 +184,7 @@ class StorageAccountsOperations(object):
         :param parameters: The parameters to provide for the created account.
         :type parameters: ~azure.mgmt.storage.v2016_01_01.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -195,13 +199,15 @@ class StorageAccountsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -216,7 +222,15 @@ class StorageAccountsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'}  # type: ignore
 
     def delete(
@@ -281,7 +295,9 @@ class StorageAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.StorageAccount"
-        """Returns the properties for the specified storage account including but not limited to name, SKU name, location, and account status. The ListKeys operation should be used to retrieve storage keys.
+        """Returns the properties for the specified storage account including but not limited to name, SKU
+        name, location, and account status. The ListKeys operation should be used to retrieve storage
+        keys.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -341,7 +357,14 @@ class StorageAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.StorageAccount"
-        """The update operation can be used to update the SKU, encryption, access tier, or tags for a storage account. It can also be used to map the account to a custom domain. Only one custom domain is supported per storage account; the replacement/change of custom domain is not supported. In order to replace an old custom domain, the old value must be cleared/unregistered before a new value can be set. The update of multiple properties is supported. This call does not change the storage keys for the account. If you want to change the storage account keys, use the regenerate keys operation. The location and name of the storage account cannot be changed after creation.
+        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
+        storage account. It can also be used to map the account to a custom domain. Only one custom
+        domain is supported per storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
+        before a new value can be set. The update of multiple properties is supported. This call does
+        not change the storage keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage account cannot be
+        changed after creation.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -406,7 +429,8 @@ class StorageAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.StorageAccountListResult"]
-        """Lists all the storage accounts available under the subscription. Note that storage keys are not returned; use the ListKeys operation for this.
+        """Lists all the storage accounts available under the subscription. Note that storage keys are not
+    returned; use the ListKeys operation for this.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageAccountListResult or the result of cls(response)
@@ -471,7 +495,8 @@ class StorageAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.StorageAccountListResult"]
-        """Lists all the storage accounts available under the given resource group. Note that storage keys are not returned; use the ListKeys operation for this.
+        """Lists all the storage accounts available under the given resource group. Note that storage keys
+    are not returned; use the ListKeys operation for this.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str

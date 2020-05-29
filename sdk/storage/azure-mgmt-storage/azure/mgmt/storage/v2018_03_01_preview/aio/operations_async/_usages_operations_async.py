@@ -109,7 +109,8 @@ class UsagesOperations:
         location: str,
         **kwargs
     ) -> AsyncIterable["models.UsageListResult"]:
-        """Gets the current usage count and the limit for the resources of the location under the subscription.
+        """Gets the current usage count and the limit for the resources of the location under the
+    subscription.
 
         :param location: The location of the Azure Storage resource.
         :type location: str

@@ -46,7 +46,8 @@ class BlobContainersOperations:
         account_name: str,
         **kwargs
     ) -> "models.ListContainerItems":
-        """Lists all containers and does not support a prefix like data plane. Also SRP today does not return continuation token.
+        """Lists all containers and does not support a prefix like data plane. Also SRP today does not
+        return continuation token.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -107,7 +108,9 @@ class BlobContainersOperations:
         blob_container: "models.BlobContainer",
         **kwargs
     ) -> "models.BlobContainer":
-        """Creates a new container under the specified account as described by request body. The container resource includes metadata and properties for that container. It does not include a list of the blobs contained by the container.
+        """Creates a new container under the specified account as described by request body. The container
+        resource includes metadata and properties for that container. It does not include a list of the
+        blobs contained by the container.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -187,7 +190,8 @@ class BlobContainersOperations:
         blob_container: "models.BlobContainer",
         **kwargs
     ) -> "models.BlobContainer":
-        """Updates container properties as specified in request body. Properties not mentioned in the request will be unchanged. Update fails if the specified container doesn't already exist.
+        """Updates container properties as specified in request body. Properties not mentioned in the
+        request will be unchanged. Update fails if the specified container doesn't already exist.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -390,7 +394,9 @@ class BlobContainersOperations:
         legal_hold: "models.LegalHold",
         **kwargs
     ) -> "models.LegalHold":
-        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold follows an append pattern and does not clear out the existing tags that are not specified in the request.
+        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
+        follows an append pattern and does not clear out the existing tags that are not specified in
+        the request.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -465,7 +471,8 @@ class BlobContainersOperations:
         legal_hold: "models.LegalHold",
         **kwargs
     ) -> "models.LegalHold":
-        """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent operation. ClearLegalHold clears out only the specified tags in the request.
+        """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
+        operation. ClearLegalHold clears out only the specified tags in the request.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -541,7 +548,8 @@ class BlobContainersOperations:
         parameters: Optional["models.ImmutabilityPolicy"] = None,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
-        """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but not required for this operation.
+        """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
+        not required for this operation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -630,7 +638,8 @@ class BlobContainersOperations:
         if_match: Optional[str] = None,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
-        """Gets the existing immutability policy along with the corresponding ETag in response headers and body.
+        """Gets the existing immutability policy along with the corresponding ETag in response headers and
+        body.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -707,7 +716,10 @@ class BlobContainersOperations:
         if_match: str,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
-        """Aborts an unlocked immutability policy. The response of delete has immutabilityPeriodSinceCreationInDays set to 0. ETag in If-Match is required for this operation. Deleting a locked immutability policy is not allowed, only way is to delete the container after deleting all blobs inside the container.
+        """Aborts an unlocked immutability policy. The response of delete has
+        immutabilityPeriodSinceCreationInDays set to 0. ETag in If-Match is required for this
+        operation. Deleting a locked immutability policy is not allowed, only way is to delete the
+        container after deleting all blobs inside the container.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -783,7 +795,8 @@ class BlobContainersOperations:
         if_match: str,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
-        """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
+        """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is
+        ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -858,7 +871,9 @@ class BlobContainersOperations:
         parameters: Optional["models.ImmutabilityPolicy"] = None,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
-        """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only action allowed on a Locked policy will be this action. ETag in If-Match is required for this operation.
+        """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only
+        action allowed on a Locked policy will be this action. ETag in If-Match is required for this
+        operation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -944,7 +959,8 @@ class BlobContainersOperations:
         parameters: Optional["models.LeaseContainerRequest"] = None,
         **kwargs
     ) -> "models.LeaseContainerResponse":
-        """The Lease Container operation establishes and manages a lock on a container for delete operations. The lock duration can be 15 to 60 seconds, or can be infinite.
+        """The Lease Container operation establishes and manages a lock on a container for delete
+        operations. The lock duration can be 15 to 60 seconds, or can be infinite.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

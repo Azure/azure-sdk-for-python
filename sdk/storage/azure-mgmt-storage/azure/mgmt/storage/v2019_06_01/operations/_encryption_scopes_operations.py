@@ -54,7 +54,9 @@ class EncryptionScopesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EncryptionScope"
-        """Synchronously creates or updates an encryption scope under the specified storage account. If an encryption scope is already created and a subsequent request is issued with different properties, the encryption scope properties will be updated per the specified request.
+        """Synchronously creates or updates an encryption scope under the specified storage account. If an
+        encryption scope is already created and a subsequent request is issued with different
+        properties, the encryption scope properties will be updated per the specified request.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -136,7 +138,8 @@ class EncryptionScopesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EncryptionScope"
-        """Update encryption scope properties as specified in the request body. Update fails if the specified encryption scope does not already exist.
+        """Update encryption scope properties as specified in the request body. Update fails if the
+        specified encryption scope does not already exist.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

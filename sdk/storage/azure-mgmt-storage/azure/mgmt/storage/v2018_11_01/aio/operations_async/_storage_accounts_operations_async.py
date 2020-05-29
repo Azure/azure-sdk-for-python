@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -156,14 +156,17 @@ class StorageAccountsOperations:
         return deserialized
     _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'}  # type: ignore
 
-    async def create(
+    async def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
         parameters: "models.StorageAccountCreateParameters",
         **kwargs
     ) -> "models.StorageAccount":
-        """Asynchronously creates a new storage account with the specified parameters. If an account is already created and a subsequent create request is issued with different properties, the account properties will be updated. If an account is already created and a subsequent create or update request is issued with the exact same set of properties, the request will succeed.
+        """Asynchronously creates a new storage account with the specified parameters. If an account is
+    already created and a subsequent create request is issued with different properties, the
+    account properties will be updated. If an account is already created and a subsequent create or
+    update request is issued with the exact same set of properties, the request will succeed.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
      name is case insensitive.
@@ -175,6 +178,7 @@ class StorageAccountsOperations:
         :param parameters: The parameters to provide for the created account.
         :type parameters: ~azure.mgmt.storage.v2018_11_01.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -189,13 +193,15 @@ class StorageAccountsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_initial(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -210,8 +216,16 @@ class StorageAccountsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'}  # type: ignore
 
     async def delete(
         self,
@@ -275,7 +289,9 @@ class StorageAccountsOperations:
         expand: Optional[str] = "geoReplicationStats",
         **kwargs
     ) -> "models.StorageAccount":
-        """Returns the properties for the specified storage account including but not limited to name, SKU name, location, and account status. The ListKeys operation should be used to retrieve storage keys.
+        """Returns the properties for the specified storage account including but not limited to name, SKU
+        name, location, and account status. The ListKeys operation should be used to retrieve storage
+        keys.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -340,7 +356,14 @@ class StorageAccountsOperations:
         parameters: "models.StorageAccountUpdateParameters",
         **kwargs
     ) -> "models.StorageAccount":
-        """The update operation can be used to update the SKU, encryption, access tier, or tags for a storage account. It can also be used to map the account to a custom domain. Only one custom domain is supported per storage account; the replacement/change of custom domain is not supported. In order to replace an old custom domain, the old value must be cleared/unregistered before a new value can be set. The update of multiple properties is supported. This call does not change the storage keys for the account. If you want to change the storage account keys, use the regenerate keys operation. The location and name of the storage account cannot be changed after creation.
+        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
+        storage account. It can also be used to map the account to a custom domain. Only one custom
+        domain is supported per storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
+        before a new value can be set. The update of multiple properties is supported. This call does
+        not change the storage keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage account cannot be
+        changed after creation.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -405,7 +428,8 @@ class StorageAccountsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.StorageAccountListResult"]:
-        """Lists all the storage accounts available under the subscription. Note that storage keys are not returned; use the ListKeys operation for this.
+        """Lists all the storage accounts available under the subscription. Note that storage keys are not
+    returned; use the ListKeys operation for this.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageAccountListResult or the result of cls(response)
@@ -469,7 +493,8 @@ class StorageAccountsOperations:
         resource_group_name: str,
         **kwargs
     ) -> AsyncIterable["models.StorageAccountListResult"]:
-        """Lists all the storage accounts available under the given resource group. Note that storage keys are not returned; use the ListKeys operation for this.
+        """Lists all the storage accounts available under the given resource group. Note that storage keys
+    are not returned; use the ListKeys operation for this.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
      name is case insensitive.
@@ -836,13 +861,15 @@ class StorageAccountsOperations:
 
     _failover_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover'}  # type: ignore
 
-    async def failover(
+    async def begin_failover(
         self,
         resource_group_name: str,
         account_name: str,
         **kwargs
     ) -> None:
-        """Failover request can be triggered for a storage account in case of availability issues. The failover occurs from the storage account's primary cluster to secondary cluster for RA-GRS accounts. The secondary cluster will become primary after failover.
+        """Failover request can be triggered for a storage account in case of availability issues. The
+    failover occurs from the storage account's primary cluster to secondary cluster for RA-GRS
+    accounts. The secondary cluster will become primary after failover.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
      name is case insensitive.
@@ -852,6 +879,7 @@ class StorageAccountsOperations:
      case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -866,12 +894,14 @@ class StorageAccountsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._failover_initial(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._failover_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -883,8 +913,16 @@ class StorageAccountsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover'}  # type: ignore
 
     async def revoke_user_delegation_keys(
         self,
