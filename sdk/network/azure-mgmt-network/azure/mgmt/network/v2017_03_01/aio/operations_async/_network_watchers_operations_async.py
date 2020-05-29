@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -210,7 +210,7 @@ class NetworkWatchersOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -223,6 +223,7 @@ class NetworkWatchersOperations:
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -237,12 +238,14 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -254,8 +257,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}  # type: ignore
 
     def list(
         self,
@@ -509,7 +520,7 @@ class NetworkWatchersOperations:
         return deserialized
     _verify_ip_flow_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'}  # type: ignore
 
-    async def verify_ip_flow(
+    async def begin_verify_ip_flow(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -525,6 +536,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the IP flow to be verified.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.VerificationIPFlowParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -539,13 +551,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._verify_ip_flow_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._verify_ip_flow_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -560,8 +574,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    verify_ip_flow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_verify_ip_flow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'}  # type: ignore
 
     async def _get_next_hop_initial(
         self,
@@ -620,7 +642,7 @@ class NetworkWatchersOperations:
         return deserialized
     _get_next_hop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'}  # type: ignore
 
-    async def get_next_hop(
+    async def begin_get_next_hop(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -636,6 +658,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the source and destination endpoint.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.NextHopParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -650,13 +673,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._get_next_hop_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._get_next_hop_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -671,8 +696,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    get_next_hop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_get_next_hop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'}  # type: ignore
 
     async def _get_vm_security_rules_initial(
         self,
@@ -731,7 +764,7 @@ class NetworkWatchersOperations:
         return deserialized
     _get_vm_security_rules_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'}  # type: ignore
 
-    async def get_vm_security_rules(
+    async def begin_get_vm_security_rules(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -747,6 +780,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the VM to check security groups for.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.SecurityGroupViewParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -761,13 +795,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._get_vm_security_rules_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._get_vm_security_rules_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -782,8 +818,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    get_vm_security_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_get_vm_security_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'}  # type: ignore
 
     async def _get_troubleshooting_initial(
         self,
@@ -842,7 +886,7 @@ class NetworkWatchersOperations:
         return deserialized
     _get_troubleshooting_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'}  # type: ignore
 
-    async def get_troubleshooting(
+    async def begin_get_troubleshooting(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -858,6 +902,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the resource to troubleshoot.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.TroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -872,13 +917,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._get_troubleshooting_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._get_troubleshooting_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -893,8 +940,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    get_troubleshooting.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_get_troubleshooting.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'}  # type: ignore
 
     async def _get_troubleshooting_result_initial(
         self,
@@ -953,7 +1008,7 @@ class NetworkWatchersOperations:
         return deserialized
     _get_troubleshooting_result_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'}  # type: ignore
 
-    async def get_troubleshooting_result(
+    async def begin_get_troubleshooting_result(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -969,6 +1024,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the resource to query the troubleshooting result.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.QueryTroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -983,13 +1039,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._get_troubleshooting_result_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._get_troubleshooting_result_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1004,8 +1062,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    get_troubleshooting_result.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_get_troubleshooting_result.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'}  # type: ignore
 
     async def _set_flow_log_configuration_initial(
         self,
@@ -1064,7 +1130,7 @@ class NetworkWatchersOperations:
         return deserialized
     _set_flow_log_configuration_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'}  # type: ignore
 
-    async def set_flow_log_configuration(
+    async def begin_set_flow_log_configuration(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -1080,6 +1146,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define the configuration of flow log.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.FlowLogInformation
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1094,13 +1161,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._set_flow_log_configuration_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._set_flow_log_configuration_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1115,8 +1184,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    set_flow_log_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_set_flow_log_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'}  # type: ignore
 
     async def _get_flow_log_status_initial(
         self,
@@ -1175,7 +1252,7 @@ class NetworkWatchersOperations:
         return deserialized
     _get_flow_log_status_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'}  # type: ignore
 
-    async def get_flow_log_status(
+    async def begin_get_flow_log_status(
         self,
         resource_group_name: str,
         network_watcher_name: str,
@@ -1191,6 +1268,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that define a resource to query flow log status.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.FlowLogStatusParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1205,13 +1283,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._get_flow_log_status_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._get_flow_log_status_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1226,8 +1306,16 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    get_flow_log_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_get_flow_log_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'}  # type: ignore
 
     async def _check_connectivity_initial(
         self,
@@ -1286,14 +1374,15 @@ class NetworkWatchersOperations:
         return deserialized
     _check_connectivity_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'}  # type: ignore
 
-    async def check_connectivity(
+    async def begin_check_connectivity(
         self,
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "models.ConnectivityParameters",
         **kwargs
     ) -> "models.ConnectivityInformation":
-        """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a given endpoint including another VM or an arbitrary remote server.
+        """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a
+    given endpoint including another VM or an arbitrary remote server.
 
         :param resource_group_name: The name of the network watcher resource group.
         :type resource_group_name: str
@@ -1302,6 +1391,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters that determine how the connectivity check will be performed.
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.ConnectivityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1316,13 +1406,15 @@ class NetworkWatchersOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._check_connectivity_initial(
-            resource_group_name=resource_group_name,
-            network_watcher_name=network_watcher_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._check_connectivity_initial(
+                resource_group_name=resource_group_name,
+                network_watcher_name=network_watcher_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1337,5 +1429,13 @@ class NetworkWatchersOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    check_connectivity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_check_connectivity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'}  # type: ignore

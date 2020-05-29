@@ -179,7 +179,8 @@ class VpnConnectionsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the existing connection.
+        """Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the
+    existing connection.
 
         :param resource_group_name: The resource group name of the VpnGateway.
         :type resource_group_name: str
@@ -190,6 +191,7 @@ class VpnConnectionsOperations(object):
         :param vpn_connection_parameters: Parameters supplied to create or Update a VPN Connection.
         :type vpn_connection_parameters: ~azure.mgmt.network.v2018_07_01.models.VpnConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -204,14 +206,16 @@ class VpnConnectionsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            connection_name=connection_name,
-            vpn_connection_parameters=vpn_connection_parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                connection_name=connection_name,
+                vpn_connection_parameters=vpn_connection_parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -226,7 +230,15 @@ class VpnConnectionsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}'}  # type: ignore
 
     def _delete_initial(
@@ -291,6 +303,7 @@ class VpnConnectionsOperations(object):
         :param connection_name: The name of the connection.
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -305,13 +318,15 @@ class VpnConnectionsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            connection_name=connection_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                connection_name=connection_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -323,7 +338,15 @@ class VpnConnectionsOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}'}  # type: ignore
 
     def list_by_vpn_gateway(

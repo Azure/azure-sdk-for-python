@@ -180,6 +180,7 @@ class P2SVpnGatewaysOperations(object):
      vpn gateway.
         :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.v2019_08_01.models.P2SVpnGateway
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -194,13 +195,15 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            p2_s_vpn_gateway_parameters=p2_s_vpn_gateway_parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                p2_s_vpn_gateway_parameters=p2_s_vpn_gateway_parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -215,7 +218,15 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}  # type: ignore
 
     def _update_tags_initial(
@@ -294,6 +305,7 @@ class P2SVpnGatewaysOperations(object):
      tags.
         :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -308,13 +320,15 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            p2_s_vpn_gateway_parameters=p2_s_vpn_gateway_parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._update_tags_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                p2_s_vpn_gateway_parameters=p2_s_vpn_gateway_parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -329,7 +343,15 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}  # type: ignore
 
     def _delete_initial(
@@ -388,6 +410,7 @@ class P2SVpnGatewaysOperations(object):
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -402,12 +425,14 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -419,7 +444,15 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}  # type: ignore
 
     def list_by_resource_group(
@@ -627,6 +660,7 @@ class P2SVpnGatewaysOperations(object):
      operation.
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.P2SVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -641,13 +675,15 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._generate_vpn_profile_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._generate_vpn_profile_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -662,7 +698,15 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_generate_vpn_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/generatevpnprofile'}  # type: ignore
 
     def _get_p2_s_vpn_connection_health_initial(
@@ -720,13 +764,15 @@ class P2SVpnGatewaysOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Gets the connection health of P2S clients of the virtual wan P2SVpnGateway in the specified resource group.
+        """Gets the connection health of P2S clients of the virtual wan P2SVpnGateway in the specified
+    resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gateway_name: The name of the P2SVpnGateway.
         :type gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -741,12 +787,14 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_p2_s_vpn_connection_health_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_p2_s_vpn_connection_health_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -761,7 +809,15 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_p2_s_vpn_connection_health.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/getP2sVpnConnectionHealth'}  # type: ignore
 
     def _get_p2_s_vpn_connection_health_detailed_initial(
@@ -827,7 +883,8 @@ class P2SVpnGatewaysOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
-        """Gets the sas url to get the connection health detail of P2S clients of the virtual wan P2SVpnGateway in the specified resource group.
+        """Gets the sas url to get the connection health detail of P2S clients of the virtual wan
+    P2SVpnGateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -836,6 +893,7 @@ class P2SVpnGatewaysOperations(object):
         :param request: Request parameters supplied to get p2s vpn connections detailed health.
         :type request: ~azure.mgmt.network.v2019_08_01.models.P2SVpnConnectionHealthRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -850,13 +908,15 @@ class P2SVpnGatewaysOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._get_p2_s_vpn_connection_health_detailed_initial(
-            resource_group_name=resource_group_name,
-            gateway_name=gateway_name,
-            request=request,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._get_p2_s_vpn_connection_health_detailed_initial(
+                resource_group_name=resource_group_name,
+                gateway_name=gateway_name,
+                request=request,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -871,5 +931,13 @@ class P2SVpnGatewaysOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_get_p2_s_vpn_connection_health_detailed.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/getP2sVpnConnectionHealthDetailed'}  # type: ignore

@@ -104,6 +104,7 @@ class PrivateLinkServicesOperations(object):
         :param service_name: The name of the private link service.
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -118,12 +119,14 @@ class PrivateLinkServicesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            service_name=service_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                service_name=service_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -135,7 +138,15 @@ class PrivateLinkServicesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}'}  # type: ignore
 
     def get(
@@ -277,6 +288,7 @@ class PrivateLinkServicesOperations(object):
         :param parameters: Parameters supplied to the create or update private link service operation.
         :type parameters: ~azure.mgmt.network.v2019_11_01.models.PrivateLinkService
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -291,13 +303,15 @@ class PrivateLinkServicesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            service_name=service_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                service_name=service_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -312,7 +326,15 @@ class PrivateLinkServicesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}'}  # type: ignore
 
     def list(
@@ -458,7 +480,8 @@ class PrivateLinkServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.PrivateEndpointConnection"
-        """Get the specific private end point connection by specific private link service in the resource group.
+        """Get the specific private end point connection by specific private link service in the resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -649,6 +672,7 @@ class PrivateLinkServicesOperations(object):
         :param pe_connection_name: The name of the private end point connection.
         :type pe_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
@@ -663,13 +687,15 @@ class PrivateLinkServicesOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = self._delete_private_endpoint_connection_initial(
-            resource_group_name=resource_group_name,
-            service_name=service_name,
-            pe_connection_name=pe_connection_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_private_endpoint_connection_initial(
+                resource_group_name=resource_group_name,
+                service_name=service_name,
+                pe_connection_name=pe_connection_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -681,7 +707,15 @@ class PrivateLinkServicesOperations(object):
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}  # type: ignore
 
     def list_private_endpoint_connections(
@@ -827,7 +861,8 @@ class PrivateLinkServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.PrivateLinkServiceVisibility"
-        """Checks whether the subscription is visible to private link service in the specified resource group.
+        """Checks whether the subscription is visible to private link service in the specified resource
+        group.
 
         :param location: The location of the domain name.
         :type location: str
@@ -891,7 +926,8 @@ class PrivateLinkServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.AutoApprovedPrivateLinkServicesResult"]
-        """Returns all of the private link service ids that can be linked to a Private Endpoint with auto approved in this subscription in this region.
+        """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
+    approved in this subscription in this region.
 
         :param location: The location of the domain name.
         :type location: str
@@ -960,7 +996,8 @@ class PrivateLinkServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.AutoApprovedPrivateLinkServicesResult"]
-        """Returns all of the private link service ids that can be linked to a Private Endpoint with auto approved in this subscription in this region.
+        """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
+    approved in this subscription in this region.
 
         :param location: The location of the domain name.
         :type location: str

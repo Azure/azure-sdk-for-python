@@ -45,7 +45,9 @@ class ExpressRoutePortsLocationsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.ExpressRoutePortsLocationListResult"]:
-        """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each location. Available bandwidths can only be obtained when retrieving a specific peering location.
+        """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each
+    location. Available bandwidths can only be obtained when retrieving a specific peering
+    location.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRoutePortsLocationListResult or the result of cls(response)
@@ -109,7 +111,8 @@ class ExpressRoutePortsLocationsOperations:
         location_name: str,
         **kwargs
     ) -> "models.ExpressRoutePortsLocation":
-        """Retrieves a single ExpressRoutePort peering location, including the list of available bandwidths available at said peering location.
+        """Retrieves a single ExpressRoutePort peering location, including the list of available
+        bandwidths available at said peering location.
 
         :param location_name: Name of the requested ExpressRoutePort peering location.
         :type location_name: str
