@@ -570,6 +570,9 @@ class BatchAccount(Resource):
      associated with the Batch account.
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageProperties
     :ivar encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
     :vartype encryption: ~azure.mgmt.batch.models.EncryptionProperties
     :ivar dedicated_core_quota: The dedicated core quota for the Batch
      account. For accounts with PoolAllocationMode set to UserSubscription,
@@ -601,6 +604,8 @@ class BatchAccount(Resource):
     :ivar active_job_and_job_schedule_quota: The active job and job schedule
      quota for the Batch account.
     :vartype active_job_and_job_schedule_quota: int
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _validation = {
@@ -645,9 +650,10 @@ class BatchAccount(Resource):
         'dedicated_core_quota_per_vm_family_enforced': {'key': 'properties.dedicatedCoreQuotaPerVMFamilyEnforced', 'type': 'bool'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, identity=None, **kwargs) -> None:
         super(BatchAccount, self).__init__(**kwargs)
         self.account_endpoint = None
         self.provisioning_state = None
@@ -663,6 +669,7 @@ class BatchAccount(Resource):
         self.dedicated_core_quota_per_vm_family_enforced = None
         self.pool_quota = None
         self.active_job_and_job_schedule_quota = None
+        self.identity = identity
 
 
 class BatchAccountCreateParameters(Model):
@@ -694,7 +701,12 @@ class BatchAccountCreateParameters(Model):
     :type public_network_access: str or
      ~azure.mgmt.batch.models.PublicNetworkAccessType
     :param encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
     :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _validation = {
@@ -709,9 +721,10 @@ class BatchAccountCreateParameters(Model):
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'PublicNetworkAccessType'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
-    def __init__(self, *, location: str, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None, public_network_access="Enabled", encryption=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None, public_network_access="Enabled", encryption=None, identity=None, **kwargs) -> None:
         super(BatchAccountCreateParameters, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -720,6 +733,47 @@ class BatchAccountCreateParameters(Model):
         self.key_vault_reference = key_vault_reference
         self.public_network_access = public_network_access
         self.encryption = encryption
+        self.identity = identity
+
+
+class BatchAccountIdentity(Model):
+    """The identity of the Batch account, if configured. This is only used when
+    the user specifies 'Azure.KeyVault' as their Batch account encryption
+    configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The principal id of the Batch account. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id associated with the Batch account. This
+     property will only be provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: Required. The type of identity used for the Batch account.
+     Possible values include: 'SystemAssigned', 'None'
+    :type type: str or ~azure.mgmt.batch.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+    }
+
+    def __init__(self, *, type, **kwargs) -> None:
+        super(BatchAccountIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
 
 
 class BatchAccountKeys(Model):
@@ -786,20 +840,27 @@ class BatchAccountUpdateParameters(Model):
     :param auto_storage: The properties related to the auto-storage account.
     :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
     :param encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
     :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
-    def __init__(self, *, tags=None, auto_storage=None, encryption=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, auto_storage=None, encryption=None, identity=None, **kwargs) -> None:
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.auto_storage = auto_storage
         self.encryption = encryption
+        self.identity = identity
 
 
 class BatchLocationQuota(Model):
@@ -1466,7 +1527,9 @@ class DiskEncryptionConfiguration(Model):
 
 
 class EncryptionProperties(Model):
-    """EncryptionProperties.
+    """Configures how customer data is encrypted inside the Batch account. By
+    default, accounts are encrypted using a Microsoft managed key. For
+    additional control, a customer-managed key can be used instead.
 
     :param key_source: Type of the key source. Possible values include:
      'Microsoft.Batch', 'Microsoft.KeyVault'
@@ -1666,10 +1729,16 @@ class InboundNatPool(Model):
 
 
 class KeyVaultProperties(Model):
-    """KeyVaultProperties.
+    """KeyVault configuration when using an encryption KeySource of
+    Microsoft.KeyVault.
 
     :param key_identifier: Full path to the versioned secret. Example
-     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053
+     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053.
+     To be usable the following prerequisites must be met:
+     The Batch Account has a System Assigned identity
+     The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap
+     permissions
+     The KeyVault has soft-delete and purge protection enabled
     :type key_identifier: str
     """
 

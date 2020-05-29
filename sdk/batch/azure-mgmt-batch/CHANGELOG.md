@@ -1,10 +1,26 @@
 # Release History
+## 9.0.0 (2020-05-29)
+### REST API version
+- This version targets REST API version 2020-05-01.
 
-## 8.0.1 (2020-05-26)
+### Features
+- Adds a new property `identity` of type `BatchAccountIdentity` to `BatchAccount`. This can be used to configure how customer data is encrypted inside the Batch account.
+    - This new property is configurable at  the account level on create and update through a new `identity` property on `BatchAccountCreateParameters` and `BatchAccountUpdateParameters`
+
+### Fixes
+- [Breaking] Move tags from being an argument on create and update pool parameters to being a part of `BatchAccountCreateParameters` and `BatchAccountUpdateParameters` to properly reflect the REST API
+
+## 8.0.1 (2020-05-26) [Deprecated]
+### Notices
+- This version targeted an invalid REST API. This version does not honor the associated REST API contract.
+
 ### Bugfixes
-- Fix issues in PrivateEndpointConnection get and update methods due to mistakes in the Swagger specification causing validation to fail.
+- Fix issues in PrivateEndpointConnection get and update methods due to mistakes in the Swagger specification causing validation to fail. It is advised to use version 9+ to make use of the features added in this version.
 
-## 8.0.0 (2020-04-10)
+## 8.0.0 (2020-04-10) [Deprecated]
+### Notices
+- This version targeted an invalid REST API. Currently the PrivateEndpoint get() and update() functions do not function correctly. It is advised to use version 9+ to make use of the features added in this version.
+
 ### REST API version
 - This version targets REST API version 2020-03-01.
 
