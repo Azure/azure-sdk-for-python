@@ -45,7 +45,8 @@ class ServiceDiagnosticSettingsOperations:
         resource_uri: str,
         **kwargs
     ) -> "models.ServiceDiagnosticSettingsResource":
-        """Gets the active diagnostic settings for the specified resource. **WARNING**\ : This method will be deprecated in future releases.
+        """Gets the active diagnostic settings for the specified resource. **WARNING**\ : This method will
+        be deprecated in future releases.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -98,7 +99,8 @@ class ServiceDiagnosticSettingsOperations:
         parameters: "models.ServiceDiagnosticSettingsResource",
         **kwargs
     ) -> "models.ServiceDiagnosticSettingsResource":
-        """Create or update new diagnostic settings for the specified resource. **WARNING**\ : This method will be deprecated in future releases.
+        """Create or update new diagnostic settings for the specified resource. **WARNING**\ : This method
+        will be deprecated in future releases.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -158,7 +160,8 @@ class ServiceDiagnosticSettingsOperations:
         service_diagnostic_settings_resource: "models.ServiceDiagnosticSettingsResourcePatch",
         **kwargs
     ) -> "models.ServiceDiagnosticSettingsResource":
-        """Updates an existing ServiceDiagnosticSettingsResource. To update other fields use the CreateOrUpdate method. **WARNING**\ : This method will be deprecated in future releases.
+        """Updates an existing ServiceDiagnosticSettingsResource. To update other fields use the
+        CreateOrUpdate method. **WARNING**\ : This method will be deprecated in future releases.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str

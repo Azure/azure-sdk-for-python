@@ -427,7 +427,8 @@ class ActionGroupsOperations:
         enable_request: "models.EnableRequest",
         **kwargs
     ) -> None:
-        """Enable a receiver in an action group. This changes the receiver's status from Disabled to Enabled.
+        """Enable a receiver in an action group. This changes the receiver's status from Disabled to
+        Enabled.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

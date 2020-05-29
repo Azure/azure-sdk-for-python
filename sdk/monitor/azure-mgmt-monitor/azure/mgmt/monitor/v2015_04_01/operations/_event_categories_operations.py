@@ -50,7 +50,9 @@ class EventCategoriesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.EventCategoryCollection"]
-        """Get the list of available event categories supported in the Activity Logs Service.:code:`<br>`The current list includes the following: Administrative, Security, ServiceHealth, Alert, Recommendation, Policy.
+        """Get the list of available event categories supported in the Activity Logs
+    Service.:code:`<br>`The current list includes the following: Administrative, Security,
+    ServiceHealth, Alert, Recommendation, Policy.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventCategoryCollection or the result of cls(response)

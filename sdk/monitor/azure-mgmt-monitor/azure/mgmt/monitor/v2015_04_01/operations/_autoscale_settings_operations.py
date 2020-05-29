@@ -306,7 +306,8 @@ class AutoscaleSettingsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.AutoscaleSettingResource"
-        """Updates an existing AutoscaleSettingsResource. To update other fields use the CreateOrUpdate method.
+        """Updates an existing AutoscaleSettingsResource. To update other fields use the CreateOrUpdate
+        method.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

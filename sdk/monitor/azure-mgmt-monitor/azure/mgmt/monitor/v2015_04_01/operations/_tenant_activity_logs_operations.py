@@ -52,7 +52,11 @@ class TenantActivityLogsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.EventDataCollection"]
-        """Gets the Activity Logs for the Tenant.:code:`<br>`Everything that is applicable to the API to get the Activity Logs for the subscription is applicable to this API (the parameters, $filter, etc.).:code:`<br>`One thing to point out here is that this API does *not* retrieve the logs at the individual subscription of the tenant but only surfaces the logs that were generated at the tenant level.
+        """Gets the Activity Logs for the Tenant.:code:`<br>`Everything that is applicable to the API to
+    get the Activity Logs for the subscription is applicable to this API (the parameters, $filter,
+    etc.).:code:`<br>`One thing to point out here is that this API does *not* retrieve the logs at
+    the individual subscription of the tenant but only surfaces the logs that were generated at the
+    tenant level.
 
         :param filter: Reduces the set of data collected. :code:`<br>`The **$filter** is very
      restricted and allows only the following patterns.:code:`<br>`- List events for a resource

@@ -235,7 +235,8 @@ class AlertRulesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.AlertRuleResource"
-        """Updates an existing classic metric AlertRuleResource. To update other fields use the CreateOrUpdate method.
+        """Updates an existing classic metric AlertRuleResource. To update other fields use the
+        CreateOrUpdate method.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

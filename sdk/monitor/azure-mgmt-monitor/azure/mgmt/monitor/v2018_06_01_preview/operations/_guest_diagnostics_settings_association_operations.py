@@ -238,7 +238,8 @@ class GuestDiagnosticsSettingsAssociationOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.GuestDiagnosticSettingsAssociationResource"
-        """Updates an existing guestDiagnosticsSettingsAssociation Resource. To update other fields use the CreateOrUpdate method.
+        """Updates an existing guestDiagnosticsSettingsAssociation Resource. To update other fields use
+        the CreateOrUpdate method.
 
         :param resource_uri: The fully qualified ID of the resource, including the resource name and
          resource type.

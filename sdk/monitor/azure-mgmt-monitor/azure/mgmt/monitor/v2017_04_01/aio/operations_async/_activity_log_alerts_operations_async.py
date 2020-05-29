@@ -229,7 +229,8 @@ class ActivityLogAlertsOperations:
         activity_log_alert_patch: "models.ActivityLogAlertPatchBody",
         **kwargs
     ) -> "models.ActivityLogAlertResource":
-        """Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
+        """Updates an existing ActivityLogAlertResource's tags. To update other fields use the
+        CreateOrUpdate method.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -46,7 +46,8 @@ class PrivateLinkScopeOperationStatusOperations:
         resource_group_name: str,
         **kwargs
     ) -> "models.OperationStatus":
-        """Get the status of an azure asynchronous operation associated with a private link scope operation.
+        """Get the status of an azure asynchronous operation associated with a private link scope
+        operation.
 
         :param async_operation_id: The operation Id.
         :type async_operation_id: str
