@@ -81,6 +81,7 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 2)
         self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -119,6 +120,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.tables[0].column_count, 3)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].page_number, 1)
+        self.assertEqual(layout.tables[1].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

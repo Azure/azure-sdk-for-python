@@ -272,6 +272,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(table.row_count, actual_table.rows)
             self.assertEqual(table.column_count, actual_table.columns)
             for cell, actual_cell in zip(table.cells, actual_table.cells):
+                self.assertEqual(table.page_number, cell.page_number)
                 self.assertEqual(cell.text, actual_cell.text)
                 self.assertEqual(cell.row_index, actual_cell.row_index)
                 self.assertEqual(cell.column_index, actual_cell.column_index)
@@ -334,6 +335,7 @@ class FormRecognizerTest(AzureTestCase):
 
             if page.tables:
                 for table in page.tables:
+                    self.assertEqual(table.page_number, page.page_number)
                     self.assertIsNotNone(table.row_count)
                     self.assertIsNotNone(table.column_count)
                     for cell in table.cells:

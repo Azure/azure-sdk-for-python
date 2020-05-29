@@ -184,8 +184,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.page_results[0].key_value_pairs
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -217,8 +217,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results, bug_skip_text_content=True)
 
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page, actual.page)
-            self.assertEqual(form.page_range.last_page, actual.page)
+            self.assertEqual(form.page_range.first_page_number, actual.page)
+            self.assertEqual(form.page_range.last_page_number, actual.page)
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -250,8 +250,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.document_results[0].fields
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -284,7 +284,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page, actual.page_range[1])
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "form-"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
