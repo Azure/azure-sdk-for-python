@@ -25,35 +25,36 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
-    DataSource, DataContainer, DataSourceCredentials, Index, Indexer, SimpleField, edm
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType
 )
-from azure.search.documents import SearchServiceClient
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
-indexers_client = service_client.get_indexers_client()
+indexers_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
 def create_indexer():
     # create an index
     index_name = "indexer-hotels"
     fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double)
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double)
     ]
-    index = Index(name=index_name, fields=fields)
-    ind_client = service_client.get_indexes_client()
+    index = SearchIndex(name=index_name, fields=fields)
+    ind_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     ind_client.create_index(index)
 
     # [START create_indexer]
     # create a datasource
-    ds_client = service_client.get_datasources_client()
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    ds = DataSource(name="indexer-datasource", type="azureblob", credentials=credentials, container=container)
-    data_source = ds_client.create_datasource(ds)
+    container = SearchIndexerDataContainer(name='searchcontainer')
+    data_source = indexers_client.create_datasource(
+        name="indexer-datasource",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container
+    )
 
     # create an indexer
-    indexer = Indexer(name="sample-indexer", data_source_name="indexer-datasource", target_index_name="hotels")
+    indexer = SearchIndexer(name="sample-indexer", data_source_name="indexer-datasource", target_index_name="hotels")
     result = indexers_client.create_indexer(indexer)
     print("Create new Indexer - sample-indexer")
     # [END create_indexer]
@@ -100,10 +101,10 @@ def delete_indexer():
     # [END delete_indexer]
 
 if __name__ == '__main__':
-    # create_indexer()
-    # list_indexers()
-    # get_indexer()
-    # get_indexer_status()
-    # run_indexer()
-    # reset_indexer()
-    # delete_indexer()
+    create_indexer()
+    list_indexers()
+    get_indexer()
+    get_indexer_status()
+    run_indexer()
+    reset_indexer()
+    delete_indexer()
