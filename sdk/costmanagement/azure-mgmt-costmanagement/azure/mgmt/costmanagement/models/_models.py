@@ -13,6 +13,269 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = None
+
+
+class Alert(Resource):
+    """An individual alert.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param definition: defines the type of alert
+    :type definition:
+     ~azure.mgmt.costmanagement.models.AlertPropertiesDefinition
+    :param description: Alert description
+    :type description: str
+    :param source: Source of alert. Possible values include: 'Preset', 'User'
+    :type source: str or ~azure.mgmt.costmanagement.models.AlertSource
+    :param details: Alert details
+    :type details: ~azure.mgmt.costmanagement.models.AlertPropertiesDetails
+    :param cost_entity_id: related budget
+    :type cost_entity_id: str
+    :param status: alert status. Possible values include: 'None', 'Active',
+     'Overridden', 'Resolved', 'Dismissed'
+    :type status: str or ~azure.mgmt.costmanagement.models.AlertStatus
+    :param creation_time: dateTime in which alert was created
+    :type creation_time: str
+    :param close_time: dateTime in which alert was closed
+    :type close_time: str
+    :param modification_time: dateTime in which alert was last modified
+    :type modification_time: str
+    :param status_modification_user_name:
+    :type status_modification_user_name: str
+    :param status_modification_time: dateTime in which the alert status was
+     last modified
+    :type status_modification_time: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'definition': {'key': 'properties.definition', 'type': 'AlertPropertiesDefinition'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'details': {'key': 'properties.details', 'type': 'AlertPropertiesDetails'},
+        'cost_entity_id': {'key': 'properties.costEntityId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'str'},
+        'close_time': {'key': 'properties.closeTime', 'type': 'str'},
+        'modification_time': {'key': 'properties.modificationTime', 'type': 'str'},
+        'status_modification_user_name': {'key': 'properties.statusModificationUserName', 'type': 'str'},
+        'status_modification_time': {'key': 'properties.statusModificationTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Alert, self).__init__(**kwargs)
+        self.definition = kwargs.get('definition', None)
+        self.description = kwargs.get('description', None)
+        self.source = kwargs.get('source', None)
+        self.details = kwargs.get('details', None)
+        self.cost_entity_id = kwargs.get('cost_entity_id', None)
+        self.status = kwargs.get('status', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.close_time = kwargs.get('close_time', None)
+        self.modification_time = kwargs.get('modification_time', None)
+        self.status_modification_user_name = kwargs.get('status_modification_user_name', None)
+        self.status_modification_time = kwargs.get('status_modification_time', None)
+
+
+class AlertPropertiesDefinition(Model):
+    """defines the type of alert.
+
+    :param type: type of alert. Possible values include: 'Budget', 'Invoice',
+     'Credit', 'Quota', 'General', 'xCloud', 'BudgetForecast'
+    :type type: str or ~azure.mgmt.costmanagement.models.AlertType
+    :param category: Alert category. Possible values include: 'Cost', 'Usage',
+     'Billing', 'System'
+    :type category: str or ~azure.mgmt.costmanagement.models.AlertCategory
+    :param criteria: Criteria that triggered alert. Possible values include:
+     'CostThresholdExceeded', 'UsageThresholdExceeded',
+     'CreditThresholdApproaching', 'CreditThresholdReached',
+     'QuotaThresholdApproaching', 'QuotaThresholdReached', 'MultiCurrency',
+     'ForecastCostThresholdExceeded', 'ForecastUsageThresholdExceeded',
+     'InvoiceDueDateApproaching', 'InvoiceDueDateReached',
+     'CrossCloudNewDataAvailable', 'CrossCloudCollectionError',
+     'GeneralThresholdError'
+    :type criteria: str or ~azure.mgmt.costmanagement.models.AlertCriteria
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'criteria': {'key': 'criteria', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertPropertiesDefinition, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.category = kwargs.get('category', None)
+        self.criteria = kwargs.get('criteria', None)
+
+
+class AlertPropertiesDetails(Model):
+    """Alert details.
+
+    :param time_grain_type: Type of timegrain cadence. Possible values
+     include: 'None', 'Monthly', 'Quarterly', 'Annually', 'BillingMonth',
+     'BillingQuarter', 'BillingAnnual'
+    :type time_grain_type: str or
+     ~azure.mgmt.costmanagement.models.AlertTimeGrainType
+    :param period_start_date: datetime of periodStartDate
+    :type period_start_date: str
+    :param triggered_by: notificationId that triggered this alert
+    :type triggered_by: str
+    :param resource_group_filter: array of resourceGroups to filter by
+    :type resource_group_filter: list[object]
+    :param resource_filter: array of resources to filter by
+    :type resource_filter: list[object]
+    :param meter_filter: array of meters to filter by
+    :type meter_filter: list[object]
+    :param tag_filter: tags to filter by
+    :type tag_filter: object
+    :param threshold: notification threshold percentage as a decimal which
+     activated this alert
+    :type threshold: decimal.Decimal
+    :param operator: operator used to compare currentSpend with amount.
+     Possible values include: 'None', 'EqualTo', 'GreaterThan',
+     'GreaterThanOrEqualTo', 'LessThan', 'LessThanOrEqualTo'
+    :type operator: str or ~azure.mgmt.costmanagement.models.AlertOperator
+    :param amount: budget threshold amount
+    :type amount: decimal.Decimal
+    :param unit: unit of currency being used
+    :type unit: str
+    :param current_spend: current spend
+    :type current_spend: decimal.Decimal
+    :param contact_emails: list of emails to contact
+    :type contact_emails: list[str]
+    :param contact_groups: list of action groups to broadcast to
+    :type contact_groups: list[str]
+    :param contact_roles: list of contact roles
+    :type contact_roles: list[str]
+    :param overriding_alert: overriding alert
+    :type overriding_alert: str
+    """
+
+    _attribute_map = {
+        'time_grain_type': {'key': 'timeGrainType', 'type': 'str'},
+        'period_start_date': {'key': 'periodStartDate', 'type': 'str'},
+        'triggered_by': {'key': 'triggeredBy', 'type': 'str'},
+        'resource_group_filter': {'key': 'resourceGroupFilter', 'type': '[object]'},
+        'resource_filter': {'key': 'resourceFilter', 'type': '[object]'},
+        'meter_filter': {'key': 'meterFilter', 'type': '[object]'},
+        'tag_filter': {'key': 'tagFilter', 'type': 'object'},
+        'threshold': {'key': 'threshold', 'type': 'decimal'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'decimal'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'current_spend': {'key': 'currentSpend', 'type': 'decimal'},
+        'contact_emails': {'key': 'contactEmails', 'type': '[str]'},
+        'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
+        'contact_roles': {'key': 'contactRoles', 'type': '[str]'},
+        'overriding_alert': {'key': 'overridingAlert', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertPropertiesDetails, self).__init__(**kwargs)
+        self.time_grain_type = kwargs.get('time_grain_type', None)
+        self.period_start_date = kwargs.get('period_start_date', None)
+        self.triggered_by = kwargs.get('triggered_by', None)
+        self.resource_group_filter = kwargs.get('resource_group_filter', None)
+        self.resource_filter = kwargs.get('resource_filter', None)
+        self.meter_filter = kwargs.get('meter_filter', None)
+        self.tag_filter = kwargs.get('tag_filter', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.operator = kwargs.get('operator', None)
+        self.amount = kwargs.get('amount', None)
+        self.unit = kwargs.get('unit', None)
+        self.current_spend = kwargs.get('current_spend', None)
+        self.contact_emails = kwargs.get('contact_emails', None)
+        self.contact_groups = kwargs.get('contact_groups', None)
+        self.contact_roles = kwargs.get('contact_roles', None)
+        self.overriding_alert = kwargs.get('overriding_alert', None)
+
+
+class AlertsResult(Model):
+    """Result of alerts.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of alerts.
+    :vartype value: list[~azure.mgmt.costmanagement.models.Alert]
+    :ivar next_link: URL to get the next set of alerts results if there are
+     any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Alert]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertsResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -51,44 +314,6 @@ class CommonExportProperties(Model):
         self.format = kwargs.get('format', None)
         self.delivery_info = kwargs.get('delivery_info', None)
         self.definition = kwargs.get('definition', None)
-
-
-class Resource(Model):
-    """The Resource model definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
 
 
 class Dimension(Resource):
@@ -169,6 +394,65 @@ class Dimension(Resource):
         self.next_link = None
 
 
+class DismissAlertPayload(Model):
+    """The request payload to update an alert.
+
+    :param definition: defines the type of alert
+    :type definition:
+     ~azure.mgmt.costmanagement.models.AlertPropertiesDefinition
+    :param description: Alert description
+    :type description: str
+    :param source: Source of alert. Possible values include: 'Preset', 'User'
+    :type source: str or ~azure.mgmt.costmanagement.models.AlertSource
+    :param details: Alert details
+    :type details: ~azure.mgmt.costmanagement.models.AlertPropertiesDetails
+    :param cost_entity_id: related budget
+    :type cost_entity_id: str
+    :param status: alert status. Possible values include: 'None', 'Active',
+     'Overridden', 'Resolved', 'Dismissed'
+    :type status: str or ~azure.mgmt.costmanagement.models.AlertStatus
+    :param creation_time: dateTime in which alert was created
+    :type creation_time: str
+    :param close_time: dateTime in which alert was closed
+    :type close_time: str
+    :param modification_time: dateTime in which alert was last modified
+    :type modification_time: str
+    :param status_modification_user_name:
+    :type status_modification_user_name: str
+    :param status_modification_time: dateTime in which the alert status was
+     last modified
+    :type status_modification_time: str
+    """
+
+    _attribute_map = {
+        'definition': {'key': 'properties.definition', 'type': 'AlertPropertiesDefinition'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'details': {'key': 'properties.details', 'type': 'AlertPropertiesDetails'},
+        'cost_entity_id': {'key': 'properties.costEntityId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'str'},
+        'close_time': {'key': 'properties.closeTime', 'type': 'str'},
+        'modification_time': {'key': 'properties.modificationTime', 'type': 'str'},
+        'status_modification_user_name': {'key': 'properties.statusModificationUserName', 'type': 'str'},
+        'status_modification_time': {'key': 'properties.statusModificationTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DismissAlertPayload, self).__init__(**kwargs)
+        self.definition = kwargs.get('definition', None)
+        self.description = kwargs.get('description', None)
+        self.source = kwargs.get('source', None)
+        self.details = kwargs.get('details', None)
+        self.cost_entity_id = kwargs.get('cost_entity_id', None)
+        self.status = kwargs.get('status', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.close_time = kwargs.get('close_time', None)
+        self.modification_time = kwargs.get('modification_time', None)
+        self.status_modification_user_name = kwargs.get('status_modification_user_name', None)
+        self.status_modification_time = kwargs.get('status_modification_time', None)
+
+
 class ErrorDetails(Model):
     """The details of the error.
 
@@ -200,6 +484,12 @@ class ErrorDetails(Model):
 class ErrorResponse(Model):
     """Error response indicates that the service is not able to process the
     incoming request. The reason is provided in the error message.
+    Some Error responses:
+    * 429 TooManyRequests - Request is throttled. Retry after waiting for the
+    time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after"
+    header.
+    * 503 ServiceUnavailable - Service is temporarily unavailable. Retry after
+    waiting for the time specified in the "Retry-After" header.
 
     :param error: The details of the error.
     :type error: ~azure.mgmt.costmanagement.models.ErrorDetails
@@ -529,6 +819,81 @@ class ExportSchedule(Model):
         self.recurrence_period = kwargs.get('recurrence_period', None)
 
 
+class ForecastDefinition(Model):
+    """The definition of a forecast.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the forecast. Possible values include:
+     'Usage', 'ActualCost', 'AmortizedCost'
+    :type type: str or ~azure.mgmt.costmanagement.models.ForecastType
+    :param timeframe: Required. The time frame for pulling data for the
+     forecast. If custom, then a specific time period must be provided.
+     Possible values include: 'MonthToDate', 'BillingMonthToDate',
+     'TheLastMonth', 'TheLastBillingMonth', 'WeekToDate', 'Custom'
+    :type timeframe: str or
+     ~azure.mgmt.costmanagement.models.ForecastTimeframeType
+    :param time_period: Has time period for pulling data for the forecast.
+    :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
+    :param dataset: Has definition for data in this forecast.
+    :type dataset: ~azure.mgmt.costmanagement.models.QueryDataset
+    :param include_actual_cost: a boolean determining if actualCost will be
+     included
+    :type include_actual_cost: bool
+    :param include_fresh_partial_cost: a boolean determining if
+     FreshPartialCost will be included
+    :type include_fresh_partial_cost: bool
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'timeframe': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'timeframe': {'key': 'timeframe', 'type': 'str'},
+        'time_period': {'key': 'timePeriod', 'type': 'QueryTimePeriod'},
+        'dataset': {'key': 'dataset', 'type': 'QueryDataset'},
+        'include_actual_cost': {'key': 'includeActualCost', 'type': 'bool'},
+        'include_fresh_partial_cost': {'key': 'includeFreshPartialCost', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ForecastDefinition, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.timeframe = kwargs.get('timeframe', None)
+        self.time_period = kwargs.get('time_period', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.include_actual_cost = kwargs.get('include_actual_cost', None)
+        self.include_fresh_partial_cost = kwargs.get('include_fresh_partial_cost', None)
+
+
+class KpiProperties(Model):
+    """Each KPI must contain a 'type' and 'enabled' key.
+
+    :param type: KPI type (Forecast, Budget). Possible values include:
+     'Forecast', 'Budget'
+    :type type: str or ~azure.mgmt.costmanagement.models.KpiTypeType
+    :param id: ID of resource related to metric (budget).
+    :type id: str
+    :param enabled: show the KPI in the UI?
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KpiProperties, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.id = kwargs.get('id', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
 class Operation(Model):
     """A Cost management REST API operation.
 
@@ -588,6 +953,66 @@ class OperationDisplay(Model):
         self.provider = None
         self.resource = None
         self.operation = None
+
+
+class PivotProperties(Model):
+    """Each pivot must contain a 'type' and 'name'.
+
+    :param type: Data type to show in view. Possible values include:
+     'Dimension', 'TagKey'
+    :type type: str or ~azure.mgmt.costmanagement.models.PivotTypeType
+    :param name: Data field to show in view.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PivotProperties, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+
+
+class ProxyResource(Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param e_tag: eTag of the resource. To handle concurrent update scenario,
+     this field will be used to determine whether the user is updating the
+     latest version or not.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.e_tag = kwargs.get('e_tag', None)
 
 
 class QueryAggregation(Model):
@@ -921,3 +1346,388 @@ class QueryTimePeriod(Model):
         super(QueryTimePeriod, self).__init__(**kwargs)
         self.from_property = kwargs.get('from_property', None)
         self.to = kwargs.get('to', None)
+
+
+class ReportConfigAggregation(Model):
+    """The aggregation expression to be used in the report.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the column to aggregate.
+    :type name: str
+    :ivar function: Required. The name of the aggregation function to use.
+     Default value: "Sum" .
+    :vartype function: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'function': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'function': {'key': 'function', 'type': 'str'},
+    }
+
+    function = "Sum"
+
+    def __init__(self, **kwargs):
+        super(ReportConfigAggregation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
+class ReportConfigComparisonExpression(Model):
+    """The comparison expression to be used in the report.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the column to use in comparison.
+    :type name: str
+    :param operator: Required. The operator to use for comparison. Possible
+     values include: 'In', 'Contains'
+    :type operator: str or ~azure.mgmt.costmanagement.models.OperatorType
+    :param values: Required. Array of values to use for comparison
+    :type values: list[str]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'operator': {'required': True},
+        'values': {'required': True, 'min_items': 1},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigComparisonExpression, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.operator = kwargs.get('operator', None)
+        self.values = kwargs.get('values', None)
+
+
+class ReportConfigDataset(Model):
+    """The definition of data present in the report.
+
+    :param granularity: The granularity of rows in the report. Possible values
+     include: 'Daily', 'Monthly'
+    :type granularity: str or
+     ~azure.mgmt.costmanagement.models.ReportGranularityType
+    :param configuration: Has configuration information for the data in the
+     report. The configuration will be ignored if aggregation and grouping are
+     provided.
+    :type configuration:
+     ~azure.mgmt.costmanagement.models.ReportConfigDatasetConfiguration
+    :param aggregation: Dictionary of aggregation expression to use in the
+     report. The key of each item in the dictionary is the alias for the
+     aggregated column. Report can have up to 2 aggregation clauses.
+    :type aggregation: dict[str,
+     ~azure.mgmt.costmanagement.models.ReportConfigAggregation]
+    :param grouping: Array of group by expression to use in the report. Report
+     can have up to 2 group by clauses.
+    :type grouping:
+     list[~azure.mgmt.costmanagement.models.ReportConfigGrouping]
+    :param sorting: Array of order by expression to use in the report.
+    :type sorting: list[~azure.mgmt.costmanagement.models.ReportConfigSorting]
+    :param filter: Has filter expression to use in the report.
+    :type filter: ~azure.mgmt.costmanagement.models.ReportConfigFilter
+    """
+
+    _validation = {
+        'grouping': {'max_items': 2},
+    }
+
+    _attribute_map = {
+        'granularity': {'key': 'granularity', 'type': 'str'},
+        'configuration': {'key': 'configuration', 'type': 'ReportConfigDatasetConfiguration'},
+        'aggregation': {'key': 'aggregation', 'type': '{ReportConfigAggregation}'},
+        'grouping': {'key': 'grouping', 'type': '[ReportConfigGrouping]'},
+        'sorting': {'key': 'sorting', 'type': '[ReportConfigSorting]'},
+        'filter': {'key': 'filter', 'type': 'ReportConfigFilter'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigDataset, self).__init__(**kwargs)
+        self.granularity = kwargs.get('granularity', None)
+        self.configuration = kwargs.get('configuration', None)
+        self.aggregation = kwargs.get('aggregation', None)
+        self.grouping = kwargs.get('grouping', None)
+        self.sorting = kwargs.get('sorting', None)
+        self.filter = kwargs.get('filter', None)
+
+
+class ReportConfigDatasetConfiguration(Model):
+    """The configuration of dataset in the report.
+
+    :param columns: Array of column names to be included in the report. Any
+     valid report column name is allowed. If not provided, then report includes
+     all columns.
+    :type columns: list[str]
+    """
+
+    _attribute_map = {
+        'columns': {'key': 'columns', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigDatasetConfiguration, self).__init__(**kwargs)
+        self.columns = kwargs.get('columns', None)
+
+
+class ReportConfigFilter(Model):
+    """The filter expression to be used in the report.
+
+    :param and_property: The logical "AND" expression. Must have at least 2
+     items.
+    :type and_property:
+     list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
+    :param or_property: The logical "OR" expression. Must have at least 2
+     items.
+    :type or_property:
+     list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
+    :param not_property: The logical "NOT" expression.
+    :type not_property: ~azure.mgmt.costmanagement.models.ReportConfigFilter
+    :param dimension: Has comparison expression for a dimension
+    :type dimension:
+     ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    :param tag: Has comparison expression for a tag
+    :type tag:
+     ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    """
+
+    _validation = {
+        'and_property': {'min_items': 2},
+        'or_property': {'min_items': 2},
+    }
+
+    _attribute_map = {
+        'and_property': {'key': 'and', 'type': '[ReportConfigFilter]'},
+        'or_property': {'key': 'or', 'type': '[ReportConfigFilter]'},
+        'not_property': {'key': 'not', 'type': 'ReportConfigFilter'},
+        'dimension': {'key': 'dimension', 'type': 'ReportConfigComparisonExpression'},
+        'tag': {'key': 'tag', 'type': 'ReportConfigComparisonExpression'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigFilter, self).__init__(**kwargs)
+        self.and_property = kwargs.get('and_property', None)
+        self.or_property = kwargs.get('or_property', None)
+        self.not_property = kwargs.get('not_property', None)
+        self.dimension = kwargs.get('dimension', None)
+        self.tag = kwargs.get('tag', None)
+
+
+class ReportConfigGrouping(Model):
+    """The group by expression to be used in the report.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Has type of the column to group. Possible values
+     include: 'Tag', 'Dimension'
+    :type type: str or
+     ~azure.mgmt.costmanagement.models.ReportConfigColumnType
+    :param name: Required. The name of the column to group. This version
+     supports subscription lowest possible grain.
+    :type name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigGrouping, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+
+
+class ReportConfigSorting(Model):
+    """The order by expression to be used in the report.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param direction: Direction of sort. Possible values include: 'Ascending',
+     'Descending'
+    :type direction: str or ~azure.mgmt.costmanagement.models.enum
+    :param name: Required. The name of the column to sort.
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'direction': {'key': 'direction', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigSorting, self).__init__(**kwargs)
+        self.direction = kwargs.get('direction', None)
+        self.name = kwargs.get('name', None)
+
+
+class ReportConfigTimePeriod(Model):
+    """The start and end date for pulling data for the report.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param from_property: Required. The start date to pull data from.
+    :type from_property: datetime
+    :param to: Required. The end date to pull data to.
+    :type to: datetime
+    """
+
+    _validation = {
+        'from_property': {'required': True},
+        'to': {'required': True},
+    }
+
+    _attribute_map = {
+        'from_property': {'key': 'from', 'type': 'iso-8601'},
+        'to': {'key': 'to', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReportConfigTimePeriod, self).__init__(**kwargs)
+        self.from_property = kwargs.get('from_property', None)
+        self.to = kwargs.get('to', None)
+
+
+class View(ProxyResource):
+    """States and configurations of Cost Analysis.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param e_tag: eTag of the resource. To handle concurrent update scenario,
+     this field will be used to determine whether the user is updating the
+     latest version or not.
+    :type e_tag: str
+    :param display_name: User input name of the view. Required.
+    :type display_name: str
+    :param scope: Cost Management scope to save the view on. This includes
+     'subscriptions/{subscriptionId}' for subscription scope,
+     'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for
+     resourceGroup scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+     Billing Account scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
+     for Department scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
+     for EnrollmentAccount scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+     for BillingProfile scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+     for InvoiceSection scope,
+     'providers/Microsoft.Management/managementGroups/{managementGroupId}' for
+     Management Group scope,
+     '/providers/Microsoft.CostManagement/externalBillingAccounts/{externalBillingAccountName}'
+     for ExternalBillingAccount scope, and
+     '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}'
+     for ExternalSubscription scope.
+    :type scope: str
+    :ivar created_on: Date the user created this view.
+    :vartype created_on: datetime
+    :ivar modified_on: Date when the user last modified this view.
+    :vartype modified_on: datetime
+    :ivar view_type: Required. The type of the report. Usage represents actual
+     usage, forecast represents forecasted data and UsageAndForecast represents
+     both usage and forecasted data. Actual usage and forecasted data can be
+     differentiated based on dates. Default value: "Usage" .
+    :vartype view_type: str
+    :param timeframe: Required. The time frame for pulling data for the
+     report. If custom, then a specific time period must be provided. Possible
+     values include: 'WeekToDate', 'MonthToDate', 'YearToDate', 'Custom'
+    :type timeframe: str or
+     ~azure.mgmt.costmanagement.models.ReportTimeframeType
+    :param time_period: Has time period for pulling data for the report.
+    :type time_period:
+     ~azure.mgmt.costmanagement.models.ReportConfigTimePeriod
+    :param dataset: Has definition for data in this report config.
+    :type dataset: ~azure.mgmt.costmanagement.models.ReportConfigDataset
+    :param chart: Chart type of the main view in Cost Analysis. Required.
+     Possible values include: 'Area', 'Line', 'StackedColumn', 'GroupedColumn',
+     'Table'
+    :type chart: str or ~azure.mgmt.costmanagement.models.ChartType
+    :param accumulated: Show costs accumulated over time. Possible values
+     include: 'true', 'false'
+    :type accumulated: str or
+     ~azure.mgmt.costmanagement.models.AccumulatedType
+    :param metric: Metric to use when displaying costs. Possible values
+     include: 'ActualCost', 'AmortizedCost', 'AHUB'
+    :type metric: str or ~azure.mgmt.costmanagement.models.MetricType
+    :param kpis: List of KPIs to show in Cost Analysis UI.
+    :type kpis: list[~azure.mgmt.costmanagement.models.KpiProperties]
+    :param pivots: Configuration of 3 sub-views in the Cost Analysis UI.
+    :type pivots: list[~azure.mgmt.costmanagement.models.PivotProperties]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'created_on': {'readonly': True},
+        'modified_on': {'readonly': True},
+        'view_type': {'required': True, 'constant': True},
+        'timeframe': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+        'modified_on': {'key': 'properties.modifiedOn', 'type': 'iso-8601'},
+        'view_type': {'key': 'properties.query.type', 'type': 'str'},
+        'timeframe': {'key': 'properties.query.timeframe', 'type': 'str'},
+        'time_period': {'key': 'properties.query.timePeriod', 'type': 'ReportConfigTimePeriod'},
+        'dataset': {'key': 'properties.query.dataset', 'type': 'ReportConfigDataset'},
+        'chart': {'key': 'properties.chart', 'type': 'str'},
+        'accumulated': {'key': 'properties.accumulated', 'type': 'str'},
+        'metric': {'key': 'properties.metric', 'type': 'str'},
+        'kpis': {'key': 'properties.kpis', 'type': '[KpiProperties]'},
+        'pivots': {'key': 'properties.pivots', 'type': '[PivotProperties]'},
+    }
+
+    view_type = "Usage"
+
+    def __init__(self, **kwargs):
+        super(View, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.scope = kwargs.get('scope', None)
+        self.created_on = None
+        self.modified_on = None
+        self.timeframe = kwargs.get('timeframe', None)
+        self.time_period = kwargs.get('time_period', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.chart = kwargs.get('chart', None)
+        self.accumulated = kwargs.get('accumulated', None)
+        self.metric = kwargs.get('metric', None)
+        self.kpis = kwargs.get('kpis', None)
+        self.pivots = kwargs.get('pivots', None)
