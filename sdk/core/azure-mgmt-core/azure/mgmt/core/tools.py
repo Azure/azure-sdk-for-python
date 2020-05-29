@@ -204,7 +204,9 @@ def is_valid_resource_id(rid, exception_type=None):
     """
     is_valid = False
     try:
-        is_valid = rid and resource_id(**parse_resource_id(rid)).lower() == rid.lower()
+        parsed_id = parse_resource_id(rid)
+        is_valid = rid and resource_id(**parsed_id).lower() == rid.lower() and all(
+            len(v) > 0 for k, v in parsed_id.items() if rid.find('/{}/'.format(k)) >= 0)
     except KeyError:
         pass
     if not is_valid and exception_type:
