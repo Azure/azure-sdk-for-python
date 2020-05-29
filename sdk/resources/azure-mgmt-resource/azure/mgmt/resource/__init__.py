@@ -6,11 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_client import ApplicationClient
-__all__ = ['ApplicationClient']
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass
+from .managedapplications import ApplicationClient
+from .deploymentscripts import DeploymentScriptsClient
+from .features import FeatureClient
+from .links import ManagementLinkClient
+from .locks import ManagementLockClient
+from .policy import PolicyClient
+from .resources import ResourceManagementClient
+from .subscriptions import SubscriptionClient
+__all__ = ['ApplicationClient',
+           'DeploymentScriptsClient',
+           'FeatureClient',
+           'PolicyClient',
+           'ManagementLinkClient',
+           'ManagementLockClient',
+           'ResourceManagementClient',
+           'SubscriptionClient']
