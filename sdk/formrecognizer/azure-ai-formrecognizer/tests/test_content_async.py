@@ -163,6 +163,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 2)
         self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_stream_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -203,6 +204,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.tables[0].column_count, 3)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].page_number, 1)
+        self.assertEqual(layout.tables[1].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_multipage(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
