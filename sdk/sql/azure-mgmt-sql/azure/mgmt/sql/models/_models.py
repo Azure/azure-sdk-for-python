@@ -597,8 +597,10 @@ class Database(TrackedResource):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -802,8 +804,17 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -1233,8 +1244,10 @@ class DatabaseUpdate(Model):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -2671,8 +2684,17 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -2831,8 +2853,17 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -4680,9 +4711,11 @@ class ManagedDatabase(TrackedResource):
      from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
-     specified as the recoverable database resource ID to restore. Possible
-     values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery', 'RestoreLongTermRetentionBackup'
+     specified as the recoverable database resource ID to restore.
+     RestoreLongTermRetentionBackup: Create a database by restoring from a long
+     term retention backup (longTermRetentionBackupResourceId required).
+     Possible values include: 'Default', 'RestoreExternalBackup',
+     'PointInTimeRestore', 'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -4953,9 +4986,11 @@ class ManagedDatabaseUpdate(Model):
      from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
-     specified as the recoverable database resource ID to restore. Possible
-     values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery', 'RestoreLongTermRetentionBackup'
+     specified as the recoverable database resource ID to restore.
+     RestoreLongTermRetentionBackup: Create a database by restoring from a long
+     term retention backup (longTermRetentionBackupResourceId required).
+     Possible values include: 'Default', 'RestoreExternalBackup',
+     'PointInTimeRestore', 'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -5125,6 +5160,9 @@ class ManagedInstance(TrackedResource):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this managed instance.
+    :type maintenance_configuration_id: str
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -5166,6 +5204,7 @@ class ManagedInstance(TrackedResource):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
@@ -5191,6 +5230,7 @@ class ManagedInstance(TrackedResource):
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
 
 
@@ -5766,6 +5806,9 @@ class ManagedInstanceUpdate(Model):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this managed instance.
+    :type maintenance_configuration_id: str
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -5799,6 +5842,7 @@ class ManagedInstanceUpdate(Model):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -5824,6 +5868,7 @@ class ManagedInstanceUpdate(Model):
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.tags = kwargs.get('tags', None)
 
@@ -7778,8 +7823,17 @@ class ServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -9251,6 +9305,9 @@ class SyncGroup(ProxyResource):
     :vartype sync_state: str or ~azure.mgmt.sql.models.SyncGroupState
     :param schema: Sync schema of the sync group.
     :type schema: ~azure.mgmt.sql.models.SyncGroupSchema
+    :param use_private_link_connection: If use private link connection is
+     enabled.
+    :type use_private_link_connection: bool
     """
 
     _validation = {
@@ -9273,6 +9330,7 @@ class SyncGroup(ProxyResource):
         'hub_database_password': {'key': 'properties.hubDatabasePassword', 'type': 'str'},
         'sync_state': {'key': 'properties.syncState', 'type': 'str'},
         'schema': {'key': 'properties.schema', 'type': 'SyncGroupSchema'},
+        'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -9285,6 +9343,7 @@ class SyncGroup(ProxyResource):
         self.hub_database_password = kwargs.get('hub_database_password', None)
         self.sync_state = None
         self.schema = kwargs.get('schema', None)
+        self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
 
 
 class SyncGroupLogProperties(Model):
@@ -9421,6 +9480,12 @@ class SyncMember(ProxyResource):
     :type sync_agent_id: str
     :param sql_server_database_id: SQL Server database id of the sync member.
     :type sql_server_database_id: str
+    :param sync_member_azure_database_resource_id: ARM resource id of the sync
+     member logical database, for sync members in Azure.
+    :type sync_member_azure_database_resource_id: str
+    :param use_private_link_connection: Whether to use private link
+     connection.
+    :type use_private_link_connection: bool
     :param server_name: Server name of the member database in the sync member
     :type server_name: str
     :param database_name: Database name of the member database in the sync
@@ -9457,6 +9522,8 @@ class SyncMember(ProxyResource):
         'database_type': {'key': 'properties.databaseType', 'type': 'str'},
         'sync_agent_id': {'key': 'properties.syncAgentId', 'type': 'str'},
         'sql_server_database_id': {'key': 'properties.sqlServerDatabaseId', 'type': 'str'},
+        'sync_member_azure_database_resource_id': {'key': 'properties.syncMemberAzureDatabaseResourceId', 'type': 'str'},
+        'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
@@ -9470,6 +9537,8 @@ class SyncMember(ProxyResource):
         self.database_type = kwargs.get('database_type', None)
         self.sync_agent_id = kwargs.get('sync_agent_id', None)
         self.sql_server_database_id = kwargs.get('sql_server_database_id', None)
+        self.sync_member_azure_database_resource_id = kwargs.get('sync_member_azure_database_resource_id', None)
+        self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
         self.server_name = kwargs.get('server_name', None)
         self.database_name = kwargs.get('database_name', None)
         self.user_name = kwargs.get('user_name', None)
@@ -9607,6 +9676,23 @@ class TransparentDataEncryptionActivity(ProxyResource):
         self.location = None
         self.status = None
         self.percent_complete = None
+
+
+class UnlinkParameters(Model):
+    """Represents the parameters for Unlink Replication Link request.
+
+    :param forced_termination: Determines whether link will be terminated in a
+     forced or a friendly way.
+    :type forced_termination: bool
+    """
+
+    _attribute_map = {
+        'forced_termination': {'key': 'forcedTermination', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlinkParameters, self).__init__(**kwargs)
+        self.forced_termination = kwargs.get('forced_termination', None)
 
 
 class Usage(Model):
