@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class IoTSecuritySolutionsAnalyticsOperations(object):
-    """IoTSecuritySolutionsAnalyticsOperations operations.
+class IotSecuritySolutionAnalyticsOperations(object):
+    """IotSecuritySolutionAnalyticsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,14 +39,14 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
 
         self.config = config
 
-    def get_all(
+    def list(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get IoT security Analytics metrics in an array.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -61,7 +61,7 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_all.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -101,16 +101,16 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_all.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels'}
 
-    def get_default(
+    def get(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get IoT Security Analytics metrics.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -124,7 +124,7 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_default.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -164,4 +164,4 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_default.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default'}

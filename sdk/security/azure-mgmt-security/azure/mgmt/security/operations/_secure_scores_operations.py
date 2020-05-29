@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class SettingsOperations(object):
-    """SettingsOperations operations.
+class SecureScoresOperations(object):
+    """SecureScoresOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class SettingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2019-01-01".
+    :ivar api_version: API version for the operation. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -35,22 +35,23 @@ class SettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Settings about different configurations in security center.
+        """List secure scores for all your Security Center initiatives within your
+        current scope.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Setting
+        :return: An iterator like instance of SecureScoreItem
         :rtype:
-         ~azure.mgmt.security.models.SettingPaged[~azure.mgmt.security.models.Setting]
+         ~azure.mgmt.security.models.SecureScoreItemPaged[~azure.mgmt.security.models.SecureScoreItem]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -100,25 +101,26 @@ class SettingsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SettingPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.SecureScoreItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores'}
 
     def get(
-            self, setting_name, custom_headers=None, raw=False, **operation_config):
-        """Settings of different configurations in security center.
+            self, secure_score_name, custom_headers=None, raw=False, **operation_config):
+        """Get secure score for a specific initiative within your current scope.
+        For the ASC Default initiative, use 'ascScore'.
 
-        :param setting_name: Name of setting: (MCAS/WDATP). Possible values
-         include: 'MCAS', 'WDATP'
-        :type setting_name: str
+        :param secure_score_name: The initiative name. For the ASC Default
+         initiative, use 'ascScore' as in the sample request below.
+        :type secure_score_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Setting or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Setting or
+        :return: SecureScoreItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.SecureScoreItem or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -126,7 +128,7 @@ class SettingsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'settingName': self._serialize.url("setting_name", setting_name, 'str')
+            'secureScoreName': self._serialize.url("secure_score_name", secure_score_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -155,76 +157,11 @@ class SettingsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Setting', response)
+            deserialized = self._deserialize('SecureScoreItem', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings/{settingName}'}
-
-    def update(
-            self, setting_name, setting, custom_headers=None, raw=False, **operation_config):
-        """updating settings about different configurations in security center.
-
-        :param setting_name: Name of setting: (MCAS/WDATP). Possible values
-         include: 'MCAS', 'WDATP'
-        :type setting_name: str
-        :param setting: Setting object
-        :type setting: ~azure.mgmt.security.models.Setting
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Setting or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Setting or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'settingName': self._serialize.url("setting_name", setting_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(setting, 'Setting')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Setting', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings/{settingName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores/{secureScoreName}'}
