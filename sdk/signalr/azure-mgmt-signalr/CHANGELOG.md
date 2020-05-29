@@ -1,5 +1,20 @@
 # Release History
 
+## 0.4.0 (2020-05-29)
+
+**Features**
+
+  - Model ServiceSpecification has a new parameter log_specifications
+  - Model SignalRResource has a new parameter network_ac_ls
+  - Model SignalRResource has a new parameter upstream
+  - Model SignalRResource has a new parameter private_endpoint_connections
+  - Model SignalRResource has a new parameter kind
+  - Model Operation has a new parameter is_data_action
+  - Model SignalRCreateOrUpdateProperties has a new parameter upstream
+  - Model SignalRCreateOrUpdateProperties has a new parameter network_ac_ls
+  - Added operation group SignalRPrivateEndpointConnectionsOperations
+  - Added operation group SignalRPrivateLinkResourcesOperations
+
 ## 0.3.0 (2019-08-06)
 
 **Features**
