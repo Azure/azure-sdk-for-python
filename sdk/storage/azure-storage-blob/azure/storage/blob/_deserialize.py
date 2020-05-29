@@ -96,13 +96,11 @@ def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict.
     """
     return {
-        'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),
-        # pylint: disable=protected-access
+        'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
         'target_version': generated.default_service_version,  # pylint: disable=protected-access
-        'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),
-        # pylint: disable=protected-access
+        'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
         'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
