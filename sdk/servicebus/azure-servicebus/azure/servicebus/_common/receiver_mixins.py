@@ -12,8 +12,6 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    DEAD_LETTER_QUEUE_SUFFIX,
-    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     ReceiveSettleMode
 )
 from ..exceptions import (
