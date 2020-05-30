@@ -1,8 +1,8 @@
 # Release History
 
-## 0.7.1 (2020-05-27)
+## 0.8.0 (2020-05-31)
 
-**Bugfixes**
+**Breaking changes**
 
 - The type of parameter is_followed is changed from string to bool
 
