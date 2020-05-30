@@ -165,7 +165,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: attribute-defined-outside-init
+            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: disable=attribute-defined-outside-init
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True

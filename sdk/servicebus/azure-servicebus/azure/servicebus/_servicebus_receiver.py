@@ -172,7 +172,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter()  # pylint: attribute-defined-outside-init
+            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
