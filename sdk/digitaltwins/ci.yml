@@ -21,9 +21,6 @@ trigger:
   paths:
     include:
     - sdk/digitaltwins/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
@@ -36,9 +33,6 @@ pr:
   paths:
     include:
     - sdk/digitaltwins/
-    - sdk/core/
-    - tools/
-    - eng/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
