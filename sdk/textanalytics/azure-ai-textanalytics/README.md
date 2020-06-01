@@ -23,6 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
+> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
 ### Authenticate the client
 #### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
@@ -77,7 +79,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `AzureKeyCredential` from azure.core.credentials or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from azure.core.credentials or as a token from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
@@ -343,7 +345,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     print("Language detected: {}".format(doc.primary_language.name))
     print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-    print("Confidence score: {}\n".format(doc.primary_language.score))
+    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
@@ -452,6 +454,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
 [service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
 [detect_language_result]: https://aka.ms/azsdk-python-textanalytics-detectlanguageresult

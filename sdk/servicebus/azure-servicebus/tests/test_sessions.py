@@ -23,7 +23,6 @@ from azure.servicebus.exceptions import (
     NoActiveSession,
     SessionLockExpired,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSettleFailed)
@@ -159,6 +158,45 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                                   session_id=NEXT_AVAILABLE, 
                                                   idle_timeout=5) as session:
                         session.open()
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    def test_session_connection_failure_is_idempotent(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        #Technically this validates for all senders/receivers, not just session, but since it uses session to generate a recoverable failure, putting it in here.
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+    
+            # First let's just try the naive failure cases.
+            receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                receiver._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+    
+            sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                sender._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+
+            # Then let's try a case we can recover from to make sure everything works on reestablishment.
+            receiver = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE)
+            with pytest.raises(NoActiveSession):
+                receiver._open_with_retry()
+
+            session_id = str(uuid.uuid4())
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send(Message("test session sender", session_id=session_id))
+
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5) as receiver:
+                messages = []
+                for message in receiver:
+                    messages.append(message)
+                assert len(messages) == 1
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -616,7 +654,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages[0].complete()
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -635,7 +672,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content, session_id=session_id)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send(message)
 
                 messages = []
@@ -653,7 +690,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) == 1
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -676,7 +712,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content, session_id=session_id)
                     message_b.properties.message_id = message_id_b
-                    tokens = sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
                 messages = []
@@ -695,7 +731,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) == 2
 
 
-    @pytest.mark.skip(reason='Requires schedule functionality')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -712,9 +747,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message_a = Message("Test scheduled message", session_id=session_id)
                 message_b = Message("Test scheduled message", session_id=session_id)
-                tokens = sender.schedule(enqueue_time, message_a, message_b)
+                tokens = sender.schedule([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
-                sender.cancel_scheduled_messages(*tokens)
+                sender.cancel_scheduled_messages(tokens)
 
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = []

@@ -5,12 +5,13 @@
 import time
 import logging
 import functools
-from typing import Any, List, TYPE_CHECKING, Optional, Union
+from typing import Any, List, TYPE_CHECKING, Optional, Dict
 
-from uamqp import ReceiveClient, Source, types
+from uamqp import ReceiveClient, types
 from uamqp.constants import SenderSettleMode
+from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
 from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
@@ -103,17 +104,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
+            queue_name = kwargs.get("queue_name")  # type: Optional[str]
+            topic_name = kwargs.get("topic_name")  # type: Optional[str]
             subscription_name = kwargs.get("subscription_name")
             if queue_name and topic_name:
                 raise ValueError("Queue/Topic name can not be specified simultaneously.")
-            if not (queue_name or topic_name):
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             if topic_name and not subscription_name:
                 raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
-
             entity_name = queue_name or topic_name
+            if not entity_name:
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
 
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -130,7 +130,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self
 
     def __next__(self):
-        self._can_run()
+        self._check_live()
         while True:
             try:
                 return self._do_retryable_operation(self._iter_next)
@@ -147,6 +147,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return message
 
     def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
         self._handler = ReceiveClient(
             self._get_source(),
             auth=auth,
@@ -171,13 +172,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open(connection=self._connection)
-        self._message_iter = self._handler.receive_messages_iter()
-        while not self._handler.client_ready():
-            time.sleep(0.05)
-        self._running = True
+        try:
+            self._handler.open(connection=self._connection)
+            self._message_iter = self._handler.receive_messages_iter()
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+        except:
+            self.close()
+            raise
 
     def _receive(self, max_batch_size=None, timeout=None):
+        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
@@ -190,6 +196,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return [self._build_message(message) for message in batch]
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
+        # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -206,6 +213,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def _renew_locks(self, *lock_tokens):
+        # type: (*str) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -261,8 +269,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):
@@ -301,7 +310,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
+        if max_batch_size and self._config.prefetch < max_batch_size:
+            raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
+                             "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -330,7 +342,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive deferred messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         self._open()
@@ -377,7 +389,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Look at pending messages in the queue.
 
         """
-        self._can_run()
+        self._check_live()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

@@ -81,6 +81,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 2)
         self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -117,3 +118,33 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.tables[0].column_count, 3)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].page_number, 1)
+        self.assertEqual(layout.tables[1].page_number, 1)
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_content_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        result = await client.recognize_content_from_url(self.multipage_url_pdf)
+
+        self.assertEqual(len(result), 3)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_content_multipage_transform_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_layout = prepare_content_result(analyze_result)
+            responses.append(analyze_result)
+            responses.append(extracted_layout)
+
+        result = await client.recognize_content_from_url(self.multipage_url_pdf, cls=callback)
+        raw_response = responses[0]
+        layout = responses[1]
+        page_results = raw_response.analyze_result.page_results
+        read_results = raw_response.analyze_result.read_results
+
+        # Check form pages
+        self.assertFormPagesTransformCorrect(layout, read_results, page_results)

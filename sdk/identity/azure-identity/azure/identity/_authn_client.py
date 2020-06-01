@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from ._constants import AZURE_CLI_CLIENT_ID
-from ._internal import get_default_authority
+from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
 try:
@@ -62,8 +62,8 @@ class AuthnClientBase(ABC):
         else:
             if not tenant:
                 raise ValueError("'tenant' is required")
-            authority = authority or get_default_authority()
-            self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
+            authority = normalize_authority(authority) if authority else get_default_authority()
+            self._auth_url = "/".join((authority, tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
     @property

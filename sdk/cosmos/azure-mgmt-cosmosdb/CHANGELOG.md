@@ -1,5 +1,40 @@
 # Release History
 
+## 0.14.0 (2020-05-05)
+
+**Features**
+
+  - Model DatabaseAccountGetResults has a new parameter private_endpoint_connections
+
+## 0.13.0 (2020-04-18)
+
+**Features**
+
+  - Model DatabaseAccountUpdateParameters has a new parameter public_network_access
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter public_network_access
+  - Model GremlinGraphGetResults has a new parameter options
+  - Model PrivateLinkResource has a new parameter required_zone_names
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter provisioned_throughput_settings
+  - Model PrivateEndpointConnection has a new parameter group_id
+  - Model PrivateEndpointConnection has a new parameter provisioning_state
+  - Model MongoDBDatabaseGetResults has a new parameter options
+  - Model SqlContainerGetResults has a new parameter options
+  - Model TableGetResults has a new parameter options
+  - Model SqlDatabaseGetResults has a new parameter options
+  - Model CassandraKeyspaceGetResults has a new parameter options
+  - Model ThroughputSettingsResource has a new parameter provisioned_throughput_settings
+  - Model DatabaseAccountGetResults has a new parameter public_network_access
+  - Model GremlinDatabaseGetResults has a new parameter options
+  - Model MongoDBCollectionGetResults has a new parameter options
+  - Model CassandraTableGetResults has a new parameter options
+  - Added operation group NotebookWorkspacesOperations
+
+**Breaking changes**
+
+  - Model ThroughputSettingsGetPropertiesResource no longer has parameter autopilot_settings
+  - Model ThroughputSettingsResource no longer has parameter autopilot_settings
+  - Operation PrivateEndpointConnectionsOperations.create_or_update has a new signature
+
 ## 0.12.0 (2020-02-27)
 
 **Features**

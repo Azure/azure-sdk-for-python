@@ -11,7 +11,7 @@
 | azure-mgmt-appconfiguration            | 30.00      |
 | azure-mgmt-applicationinsights         | -          |
 | azure-mgmt-appplatform                 | -          |
-| azure-mgmt-attestation                 | M          |
+| azure-mgmt-attestation                 | 100.00     |
 | azure-mgmt-authorization               | M          |
 | azure-mgmt-automation                  | 98.72      |
 | azure-mgmt-azurestack                  | -          |
@@ -22,7 +22,7 @@
 | azure-mgmt-blueprint                   | - (S)      |
 | azure-mgmt-botservice                  | M          |
 | azure-mgmt-cdn                         | 100.00     |
-| azure-mgmt-cognitiveservices           | -          |
+| azure-mgmt-cognitiveservices           | 87.00      |
 | azure-mgmt-commerce                    | M          |
 | azure-mgmt-compute                     | 48.28      |
 | azure-mgmt-consumption                 | M          |
@@ -32,6 +32,7 @@
 | azure-mgmt-core                        | M          |
 | azure-mgmt-cosmosdb                    | M          |
 | azure-mgmt-costmanagement              | -          |
+| azure-mgmt-customerlockbox             | - (S)      |
 | azure-mgmt-customproviders             | -          |
 | azure-mgmt-databox                     | 100.00     |
 | azure-mgmt-databoxedge                 | 100.00     |
@@ -46,6 +47,7 @@
 | azure-mgmt-devops                      | - (S)      |
 | azure-mgmt-devspaces                   | -          |
 | azure-mgmt-devtestlabs                 | M          |
+| azure-mgmt-digitaltwins                | - (S)      |
 | azure-mgmt-dns                         | M          |
 | azure-mgmt-documentdb                  | M          |
 | azure-mgmt-edgegateway                 | -          |
@@ -58,11 +60,12 @@
 | azure-mgmt-healthcareapis              | 100.00     |
 | azure-mgmt-hybridcompute               | M          |
 | azure-mgmt-hybriddatamanager           | - (S)      |
+| azure-mgmt-hybridkubernetes            | - (S)      |
 | azure-mgmt-imagebuilder                | 90.00      |
 | azure-mgmt-iotcentral                  | M          |
 | azure-mgmt-iothub                      | M          |
 | azure-mgmt-iothubprovisioningservices  | -          |
-| azure-mgmt-keyvault                    | M          |
+| azure-mgmt-keyvault                    | 100.00     |
 | azure-mgmt-kubernetesconfiguration     | -          |
 | azure-mgmt-kusto                       | 100.00     |
 | azure-mgmt-labservices                 | -          |
@@ -88,6 +91,7 @@
 | azure-mgmt-operationsmanagement        | -          |
 | azure-mgmt-peering                     | 47.00      |
 | azure-mgmt-policyinsights              | -          |
+| azure-mgmt-portal                      | - (S)      |
 | azure-mgmt-powerbidedicated            | -          |
 | azure-mgmt-powerbiembedded             | -          |
 | azure-mgmt-privatedns                  | -          |
@@ -123,15 +127,13 @@
 | azure-mgmt-trafficmanager              | M          |
 | azure-mgmt-vmwarecloudsimple           | -          |
 | azure-mgmt-vmwarevirtustream           | - (S)      |
-| azure-mgmt-web                         | M          |
+| azure-mgmt-web                         | 1.00       |
 | azure-mgmt-windowsiot                  | - (S)      |
 | azure-mgmt-workloadmonitor             | - (S)      |
 | azureactivedirectory                   | - (S)      |
 | azuredata                              | - (S)      |
 | customer-insights                      | - (R)      |
-| customerlockbox                        | - (S)      |
 | datacatalog                            | - (R)      |
-| digitaltwins                           | - (S)      |
 | domainservices                         | - (R)      |
 | dynamicstelemetry                      | - (R)      |
 | guestconfiguration                     | - (R)      |
@@ -143,7 +145,6 @@
 | marketplace                            | - (R)      |
 | migrate                                | - (R)      |
 | migrateprojects                        | - (R)      |
-| portal                                 | - (S)      |
 | recoveryservicessiterecovery           | - (R)      |
 | resourcehealth                         | - (R)      |
 | service-map                            | - (R)      |
@@ -154,17 +155,21 @@
 | visualstudio                           | - (R)      |
 | windowsesu                             | - (S)      |
 |                                        |            |
-| **TOTAL RPS**                          | **149**    |
+| **TOTAL RPS**                          | **150**    |
 | **TOTAL PACKAGES**                     | **109**    |
-| **MANUAL**                             | **53**     |
-| **MANUAL %**                           | **48.62**  |
-| **AUTO**                               | **18**     |
-| **AUTO %**                             | **16.51**  |
-| **NONE**                               | **40**     |
-| **NONE %**                             | **36.70**  |
+| **MANUAL**                             | **50**     |
+| **MANUAL %**                           | **45.87**  |
+| **AUTO**                               | **22**     |
+| **AUTO %**                             | **20.18**  |
+| **NONE**                               | **39**     |
+| **NONE %**                             | **35.78**  |
 
 "nn.nn" - coverage (%) of automatic test from swagger
+
 "-" - no test coverage
+
 "M" - manual only test coverage
+
 "- (S)" - no package generated
+
 "- (R)" - no Python readme settings, no package generated

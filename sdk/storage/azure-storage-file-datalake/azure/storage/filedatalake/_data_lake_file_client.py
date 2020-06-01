@@ -305,7 +305,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umaskoverwrite: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.

@@ -30,7 +30,7 @@ from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicy
 
 
-class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
+class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.

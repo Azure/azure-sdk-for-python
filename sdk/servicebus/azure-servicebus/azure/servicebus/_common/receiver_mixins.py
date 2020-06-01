@@ -4,12 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
+from uamqp import Source
 from .message import ReceivedMessage
 from .constants import (
-    NEXT_AVAILABLE, 
-    SESSION_FILTER, 
-    SESSION_LOCKED_UNTIL, 
-    DATETIMEOFFSET_EPOCH, 
+    NEXT_AVAILABLE,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
+    DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
     ReceiveSettleMode
 )
@@ -18,7 +19,6 @@ from ..exceptions import (
     SessionLockExpired
 )
 from .utils import utc_from_timestamp, utc_now
-from uamqp import Source
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -45,17 +45,17 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = message.sequence_number
         return message
 
-    def _can_run(self):
-        return True
+    def _check_live(self):
+        """check whether the receiver is alive"""
 
     def _get_source(self):
         return self._entity_uri
 
     def _on_attach(self, source, target, properties, error):
-        return
+        pass
 
     def _populate_message_properties(self, message):
-        return
+        pass
 
 
 class SessionReceiverMixin(ReceiverMixin):
@@ -78,7 +78,7 @@ class SessionReceiverMixin(ReceiverMixin):
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
 
-    def _can_run(self):
+    def _check_live(self):
         if self._session and self._session.expired:
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 

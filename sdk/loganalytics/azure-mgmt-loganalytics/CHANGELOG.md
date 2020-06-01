@@ -1,5 +1,56 @@
 # Release History
 
+## 0.6.0 (2020-05-28)
+
+**Features**
+
+  - Model SavedSearch has a new parameter function_parameters
+  - Model SavedSearch has a new parameter function_alias
+  - Model WorkspacePatch has a new parameter workspace_capping
+  - Model Workspace has a new parameter workspace_capping
+  - Added operation group AvailableServiceTiersOperations
+  - Added operation group TablesOperations
+  - Added operation group DeletedWorkspacesOperations
+
+**Breaking changes**
+
+  - Operation WorkspacesOperations.delete has a new signature
+  - Removed operation WorkspacesOperations.available_service_tiers
+  - Model WorkspaceSku has a new signature
+
+## 0.5.0 (2020-04-22)
+
+**Breaking changes**
+
+  - Reverted client name back to LogAnalyticsManagementClient as previous change was not intentional
+
+## 0.4.0 (2020-04-20)
+
+**Features**
+
+  - Model LinkedService has a new parameter provisioning_state
+  - Added operation WorkspacesOperations.available_service_tiers
+  - Added operation group ManagementGroupsOperations
+  - Added operation group GatewaysOperations
+  - Added operation group OperationStatusesOperations
+  - Added operation group SchemaOperations
+  - Added operation group WorkspacePurgeOperations
+  - Added operation group UsagesOperations
+  - Added operation group SharedKeysOperations
+  - Added operation group StorageInsightConfigsOperations
+  - Added operation group IntelligencePacksOperations
+
+**Breaking changes**
+
+  - Removed operation WorkspacesOperations.list_usages
+  - Removed operation WorkspacesOperations.get_shared_keys
+  - Removed operation WorkspacesOperations.disable_intelligence_pack
+  - Removed operation WorkspacesOperations.list_intelligence_packs
+  - Removed operation WorkspacesOperations.list_management_groups
+  - Removed operation WorkspacesOperations.enable_intelligence_pack
+  - Removed operation group StorageInsightsOperations
+  - Removed operation group OperationalInsightsManagementClientOperationsMixin
+
 ## 0.3.0 (2020-04-08)
 
 **Features**

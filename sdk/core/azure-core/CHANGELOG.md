@@ -1,15 +1,30 @@
 
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.6.0 (Unreleased)
+
+### Bug fixes
+
+- Fix AttributeException in StreamDownloadGenerator #11462
+
+### Features
+
+- Added support for changesets as part of multipart message support #10485
+- Add AsyncLROPoller in azure.core.polling #10801
+- Add get_continuation_token/from_continuation_token/polling_method methods in pollers (sync and async) #10801
+- HttpResponse objects are now pickable #10801
+
+## 1.5.0 (2020-05-04)
 
 ### Features
 
 - Support "x-ms-retry-after-ms" in response header   #10743
+- `link` and `link_from_headers` now accepts attributes   #10765
 
 ### Bug fixes
 
 - Not retry if the status code is less than 400 #10778
+- "x-ms-request-id" is not considered safe header for logging #10967
 
 ## 1.4.0 (2020-04-06)
 

@@ -1,7 +1,58 @@
 # Release History
 
-## 1.4.0b3 (Unreleased)
+## 1.4.0b4 (Unreleased)
+- `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
+  optional keyword arguments `executor` or `loop`. Prior versions of the method
+  didn't use these correctly, provoking exceptions, and internal changes in this
+  version have made them obsolete.
+- `InteractiveBrowserCredential` raises `CredentialUnavailableError` when it
+  can't start an HTTP server on `localhost`.
+  ([#11665](https://github.com/Azure/azure-sdk-for-python/pull/11665))
+- When constructing `DefaultAzureCredential`, you can now configure a tenant ID
+  for `InteractiveBrowserCredential`. When none is specified, the credential
+  authenticates users in their home tenants. To specify a different tenant, use
+  the keyword argument `interactive_browser_tenant_id`, or set the environment
+  variable `AZURE_TENANT_ID`.
+  ([#11548](https://github.com/Azure/azure-sdk-for-python/issues/11548))
+- The user authentication API added to `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` in 1.4.0b3 is available on
+  `UsernamePasswordCredential` as well.
+  ([#11449](https://github.com/Azure/azure-sdk-for-python/issues/11449))
+- The optional persistent cache for `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
+  macOS as well as Windows.
+  ([#11134](https://github.com/Azure/azure-sdk-for-python/issues/11134))
+  - On Linux, the persistent cache requires libsecret and `pygobject`. If these
+    are unavailable, or libsecret is unusable (e.g. in an SSH session), loading
+    the persistent cache will raise an error. You may optionally configure the
+    credential to fall back to an unencrypted cache by constructing it with
+    keyword argument `allow_unencrypted_cache=True`.
 
+## 1.4.0b3 (2020-05-04)
+- `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`
+with the value of `AZURE_TENANT_ID` 
+([#11127](https://github.com/Azure/azure-sdk-for-python/pull/11127))
+- Values for the constructor keyword argument `authority` and
+`AZURE_AUTHORITY_HOST` may optionally specify an "https" scheme. For example,
+"https://login.microsoftonline.us" and "login.microsoftonline.us" are both valid.
+([#10819](https://github.com/Azure/azure-sdk-for-python/issues/10819))
+- First preview of new API for authenticating users with `DeviceCodeCredential`
+  and `InteractiveBrowserCredential`
+  ([#10612](https://github.com/Azure/azure-sdk-for-python/pull/10612))
+  - new method `authenticate` interactively authenticates a user, returns a
+    serializable `AuthenticationRecord`
+  - new constructor keyword arguments
+    - `authentication_record` enables initializing a credential with an
+      `AuthenticationRecord` from a prior authentication
+    - `disable_automatic_authentication=True` configures the credential to raise
+    `AuthenticationRequiredError` when interactive authentication is necessary
+    to acquire a token rather than immediately begin that authentication
+    - `enable_persistent_cache=True` configures these credentials to use a
+    persistent cache on supported platforms (in this release, Windows only).
+    By default they cache in memory only.
+- Now `DefaultAzureCredential` can authenticate with the identity signed in to 
+Visual Studio Code's Azure extension.
+([#10472](https://github.com/Azure/azure-sdk-for-python/issues/10472))
 
 ## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it

@@ -264,7 +264,7 @@ class RetryPolicy(HTTPPolicy):
         presence of the aforementioned header.
 
         The behavior is:
-        -	If status_code < 400: don’t retry
+        -	If status_code < 400: don't retry
         -	Else if Retry-After present: retry
         -	Else: retry based on the safe status code list ([408, 429, 500, 502, 503, 504])
 

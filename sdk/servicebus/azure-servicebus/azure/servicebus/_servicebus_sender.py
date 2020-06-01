@@ -5,19 +5,19 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List
+from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClient, types
+from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
-    MessageSendFailed,
     OperationTimeoutError,
-    _ServiceBusErrorPolicy
-)
+    _ServiceBusErrorPolicy,
+    )
 from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -65,7 +65,10 @@ class SenderMixin(object):
     def _build_schedule_request(cls, schedule_time_utc, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
-            message.schedule(schedule_time_utc)
+            if not isinstance(message, Message):
+                raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
+                                 " Received instead: {}".format(message.__class__.__name__))
+            message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
             if message.properties.group_id:
@@ -135,9 +138,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError("Queue/Topic name can not be specified simultaneously.")
-            if not (queue_name or topic_name):
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
+            if not entity_name:
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -150,6 +153,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
@@ -169,30 +173,32 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open(connection=self._connection)
-        while not self._handler.client_ready():
-            time.sleep(0.05)
-        self._running = True
-        self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
-                                         or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        try:
+            self._handler.open(connection=self._connection)
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        except:
+            self.close()
+            raise
 
     def _send(self, message, timeout=None, last_exception=None):
+        # type: (Message, Optional[float], Exception) -> None
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            self._handler.send_message(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        self._handler.send_message(message.message)
 
-    def _schedule(self, message, schedule_time_utc):
-        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
-        """Send Message or BatchMessage to be enqueued at a specific time.
+    def schedule(self, messages, schedule_time_utc):
+        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+        """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
-        :param message: The messages to schedule.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param messages: The message or list of messages to schedule.
+        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :rtype: List[int]
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -205,17 +211,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         self._open()
-        if isinstance(message, BatchMessage):
-            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        if isinstance(messages, Message):
+            request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
-            request_body = self._build_schedule_request(schedule_time_utc, message)
+            request_body = self._build_schedule_request(schedule_time_utc, *messages)
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
             mgmt_handlers.schedule_op
         )
 
-    def _cancel_scheduled_messages(self, sequence_numbers):
+    def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -223,6 +229,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
         :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
 
         .. admonition:: Example:
 
@@ -280,22 +288,31 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         return cls(**constructor_args)
 
-    def send(self, message, timeout=None):
-        # type: (Union[Message, BatchMessage], float) -> None
+    def send(self, message):
+        # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
+        If a list of messages was provided, attempts to send them as a single batch, throwing a
+        `ValueError` if they cannot fit in a single batch.
+
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
-        :param float timeout: The maximum wait time to send the event data.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+        :raises:
+                :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
+                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                  service bus frame size limit.
+                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
+                :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
+                 error, authentication error, and any unexpected errors.
+                 It's also the top-level root class of above errors.
 
         .. admonition:: Example:
 
@@ -307,10 +324,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        try:
+            batch = self.create_batch()
+            batch._from_list(message)  # pylint: disable=protected-access
+            message = batch
+        except TypeError:  # Message was not a list or generator.
+            pass
+        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
+            raise ValueError("A BatchMessage or list of Message must have at least one Message")
+
         self._do_retryable_operation(
             self._send,
             message=message,
-            timeout=timeout,
             require_timeout=True,
             require_last_exception=True
         )

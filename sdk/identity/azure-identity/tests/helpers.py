@@ -16,12 +16,29 @@ except ImportError:  # python < 3.3
 
 # build_* lifted from msal tests
 def build_id_token(
-    iss="issuer", sub="subject", aud="my_client_id", exp=None, iat=None, **claims
+    iss="issuer",
+    sub="subject",
+    aud="my_client_id",
+    username="username",
+    tenant_id="tenant id",
+    object_id="object id",
+    exp=None,
+    iat=None,
+    **claims
 ):  # AAD issues "preferred_username", ADFS issues "upn"
     return "header.%s.signature" % base64.b64encode(
         json.dumps(
             dict(
-                {"iss": iss, "sub": sub, "aud": aud, "exp": exp or (time.time() + 100), "iat": iat or time.time()},
+                {
+                    "iss": iss,
+                    "sub": sub,
+                    "aud": aud,
+                    "exp": exp or (time.time() + 100),
+                    "iat": iat or time.time(),
+                    "tid": tenant_id,
+                    "oid": object_id,
+                    "preferred_username": username,
+                },
                 **claims
             )
         ).encode()
@@ -83,7 +100,7 @@ class Request:
             discrepancies.append("{}:\n\t expected: {}\n\t   actual: {}".format(name, expected, actual))
 
         if self.base_url and self.base_url != request.url.split("?")[0]:
-            add_discrepancy('base url', self.base_url, request.url)
+            add_discrepancy("base url", self.base_url, request.url)
 
         if self.url and self.url != request.url:
             add_discrepancy("url", self.url, request.url)
@@ -128,6 +145,10 @@ def mock_response(status_code=200, headers=None, json_payload=None):
         response.text = lambda encoding=None: json.dumps(json_payload)
         response.headers["content-type"] = "application/json"
         response.content_type = "application/json"
+    else:
+        response.text = lambda encoding=None: ""
+        response.headers["content-type"] = "text/plain"
+        response.content_type = "text/plain"
     return response
 
 

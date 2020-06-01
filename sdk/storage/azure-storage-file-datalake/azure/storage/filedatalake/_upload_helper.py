@@ -37,6 +37,8 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         if length == 0:
             return {}
         properties = kwargs.pop('properties', None)
+        umask = kwargs.pop('umask', None)
+        permissions = kwargs.pop('permissions', None)
         path_http_headers = kwargs.pop('path_http_headers', None)
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
 
@@ -44,8 +46,8 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             # if customers didn't specify access conditions, they cannot flush data to existing file
             if not _any_conditions(modified_access_conditions):
                 modified_access_conditions.if_none_match = '*'
-            if properties:
-                raise ValueError("metadata can be set only when overwrite is enabled")
+            if properties or umask or permissions:
+                raise ValueError("metadata, umask and permissions can be set only when overwrite is enabled")
 
         if overwrite:
             response = client.create(
@@ -53,6 +55,8 @@ def upload_datalake_file(  # pylint: disable=unused-argument
                 path_http_headers=path_http_headers,
                 properties=properties,
                 modified_access_conditions=modified_access_conditions,
+                umask=umask,
+                permissions=permissions,
                 cls=return_response_headers,
                 **kwargs)
 

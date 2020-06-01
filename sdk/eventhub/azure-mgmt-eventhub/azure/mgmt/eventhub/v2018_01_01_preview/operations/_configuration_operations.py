@@ -24,7 +24,7 @@ class ConfigurationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -45,7 +45,7 @@ class ConfigurationOperations(object):
         body unmodified.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
@@ -121,7 +121,7 @@ class ConfigurationOperations(object):
         which represent the quotas and settings imposed on the cluster.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str

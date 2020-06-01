@@ -1,7 +1,12 @@
 # Release History
 
-## 12.0.1 (Unreleased)
+## 12.0.2 (Unreleased)
 
+
+## 12.0.1 (2020-04-29)
+**Fixes**
+- Fixed rename_directory and rename_file doc
+- upload_data didn't support setting umask and permissions.
 
 ## 12.0.0 (2020-03-10)
 **New Feature**

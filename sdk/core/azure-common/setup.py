@@ -52,6 +52,7 @@ setup(
     version=version,
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',

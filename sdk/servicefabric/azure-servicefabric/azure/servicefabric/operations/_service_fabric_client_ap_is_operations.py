@@ -2441,7 +2441,7 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         this. For standalone cluster, if the Down seed node is not expected to
         come back up with its state intact, please remove the node from the
         cluster, see
-        https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-windows-server-add-remove-nodes.
+        https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-windows-server-add-remove-nodes.
 
         :param node_name: The name of the node.
         :type node_name: str

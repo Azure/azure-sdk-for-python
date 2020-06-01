@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
+      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "container": {"name": "searchcontainer"}}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Content-Length:
+      - '319'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - A4A43DF80FCD8A1D7FC1AEE02327E6B9
+    method: POST
+    uri: https://search386b1565.search.windows.net/datasources?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search386b1565.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95A74EC6BF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '370'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:32:59 GMT
+      elapsed-time: '32'
+      etag: W/"0x8D7EC95A74EC6BF"
+      expires: '-1'
+      location: https://search386b1565.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: c2e8e3ec-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+    url: https://search386b1565.search.windows.net/datasources?api-version=2019-05-06-Preview
+version: 1

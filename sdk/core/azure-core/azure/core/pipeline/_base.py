@@ -33,6 +33,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+from ._tools import await_result as _await_result
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -40,16 +41,6 @@ HttpTransportType = TypeVar("HttpTransportType")
 
 _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
-
-
-def _await_result(func, *args, **kwargs):
-    """If func returns an awaitable, raise that this runner can't handle it."""
-    result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
-        raise TypeError(
-            "Policy {} returned awaitable object in non-async pipeline.".format(func)
-        )
-    return result
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
@@ -136,7 +127,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __init__(self, transport, policies=None):
         # type: (HttpTransportType, PoliciesType) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
-        self._transport = transport  # type: ignore
+        self._transport = transport
 
         for policy in policies or []:
             if isinstance(policy, SansIOHTTPPolicy):
@@ -163,7 +154,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info   # type: ignore
         if not multipart_mixed_info:
             return
 
@@ -175,6 +166,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         import concurrent.futures
 
         def prepare_requests(req):
+            if req.multipart_mixed_info:
+                # Recursively update changeset "sub requests"
+                Pipeline._prepare_multipart_mixed_request(req)
             context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
@@ -186,6 +180,15 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
                 _ for _ in executor.map(prepare_requests, requests)
             ]
 
+    def _prepare_multipart(self, request):
+        # type: (HTTPRequestType) -> None
+        # This code is fine as long as HTTPRequestType is actually
+        # azure.core.pipeline.transport.HTTPRequest, bu we don't check it in here
+        # since we didn't see (yet) pipeline usage where it's not this actual instance
+        # class used
+        self._prepare_multipart_mixed_request(request)
+        request.prepare_multipart_body()  # type: ignore
+
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
         """Runs the HTTP Request through the chained policies.
@@ -195,8 +198,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        self._prepare_multipart_mixed_request(request)
-        request.prepare_multipart_body()  # type: ignore
+        self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
             request, context

@@ -12,17 +12,18 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
-    from ._models_py3 import AutopilotSettingsResource
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
+    from ._models_py3 import CassandraKeyspaceGetPropertiesOptions
     from ._models_py3 import CassandraKeyspaceGetPropertiesResource
     from ._models_py3 import CassandraKeyspaceGetResults
     from ._models_py3 import CassandraKeyspaceResource
     from ._models_py3 import CassandraPartitionKey
     from ._models_py3 import CassandraSchema
     from ._models_py3 import CassandraTableCreateUpdateParameters
+    from ._models_py3 import CassandraTableGetPropertiesOptions
     from ._models_py3 import CassandraTableGetPropertiesResource
     from ._models_py3 import CassandraTableGetResults
     from ._models_py3 import CassandraTableResource
@@ -47,10 +48,12 @@ try:
     from ._models_py3 import FailoverPolicies
     from ._models_py3 import FailoverPolicy
     from ._models_py3 import GremlinDatabaseCreateUpdateParameters
+    from ._models_py3 import GremlinDatabaseGetPropertiesOptions
     from ._models_py3 import GremlinDatabaseGetPropertiesResource
     from ._models_py3 import GremlinDatabaseGetResults
     from ._models_py3 import GremlinDatabaseResource
     from ._models_py3 import GremlinGraphCreateUpdateParameters
+    from ._models_py3 import GremlinGraphGetPropertiesOptions
     from ._models_py3 import GremlinGraphGetPropertiesResource
     from ._models_py3 import GremlinGraphGetResults
     from ._models_py3 import GremlinGraphResource
@@ -64,18 +67,24 @@ try:
     from ._models_py3 import MetricName
     from ._models_py3 import MetricValue
     from ._models_py3 import MongoDBCollectionCreateUpdateParameters
+    from ._models_py3 import MongoDBCollectionGetPropertiesOptions
     from ._models_py3 import MongoDBCollectionGetPropertiesResource
     from ._models_py3 import MongoDBCollectionGetResults
     from ._models_py3 import MongoDBCollectionResource
     from ._models_py3 import MongoDBDatabaseCreateUpdateParameters
+    from ._models_py3 import MongoDBDatabaseGetPropertiesOptions
     from ._models_py3 import MongoDBDatabaseGetPropertiesResource
     from ._models_py3 import MongoDBDatabaseGetResults
     from ._models_py3 import MongoDBDatabaseResource
     from ._models_py3 import MongoIndex
     from ._models_py3 import MongoIndexKeys
     from ._models_py3 import MongoIndexOptions
+    from ._models_py3 import NotebookWorkspace
+    from ._models_py3 import NotebookWorkspaceConnectionInfoResult
+    from ._models_py3 import NotebookWorkspaceCreateUpdateParameters
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OptionsResource
     from ._models_py3 import PartitionMetric
     from ._models_py3 import PartitionUsage
     from ._models_py3 import PercentileMetric
@@ -84,15 +93,18 @@ try:
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProvisionedThroughputSettingsResource
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
     from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
+    from ._models_py3 import SqlContainerGetPropertiesOptions
     from ._models_py3 import SqlContainerGetPropertiesResource
     from ._models_py3 import SqlContainerGetResults
     from ._models_py3 import SqlContainerResource
     from ._models_py3 import SqlDatabaseCreateUpdateParameters
+    from ._models_py3 import SqlDatabaseGetPropertiesOptions
     from ._models_py3 import SqlDatabaseGetPropertiesResource
     from ._models_py3 import SqlDatabaseGetResults
     from ._models_py3 import SqlDatabaseResource
@@ -109,6 +121,7 @@ try:
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionResource
     from ._models_py3 import TableCreateUpdateParameters
+    from ._models_py3 import TableGetPropertiesOptions
     from ._models_py3 import TableGetPropertiesResource
     from ._models_py3 import TableGetResults
     from ._models_py3 import TableResource
@@ -125,17 +138,18 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
-    from ._models import AutopilotSettingsResource
     from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
+    from ._models import CassandraKeyspaceGetPropertiesOptions
     from ._models import CassandraKeyspaceGetPropertiesResource
     from ._models import CassandraKeyspaceGetResults
     from ._models import CassandraKeyspaceResource
     from ._models import CassandraPartitionKey
     from ._models import CassandraSchema
     from ._models import CassandraTableCreateUpdateParameters
+    from ._models import CassandraTableGetPropertiesOptions
     from ._models import CassandraTableGetPropertiesResource
     from ._models import CassandraTableGetResults
     from ._models import CassandraTableResource
@@ -160,10 +174,12 @@ except (SyntaxError, ImportError):
     from ._models import FailoverPolicies
     from ._models import FailoverPolicy
     from ._models import GremlinDatabaseCreateUpdateParameters
+    from ._models import GremlinDatabaseGetPropertiesOptions
     from ._models import GremlinDatabaseGetPropertiesResource
     from ._models import GremlinDatabaseGetResults
     from ._models import GremlinDatabaseResource
     from ._models import GremlinGraphCreateUpdateParameters
+    from ._models import GremlinGraphGetPropertiesOptions
     from ._models import GremlinGraphGetPropertiesResource
     from ._models import GremlinGraphGetResults
     from ._models import GremlinGraphResource
@@ -177,18 +193,24 @@ except (SyntaxError, ImportError):
     from ._models import MetricName
     from ._models import MetricValue
     from ._models import MongoDBCollectionCreateUpdateParameters
+    from ._models import MongoDBCollectionGetPropertiesOptions
     from ._models import MongoDBCollectionGetPropertiesResource
     from ._models import MongoDBCollectionGetResults
     from ._models import MongoDBCollectionResource
     from ._models import MongoDBDatabaseCreateUpdateParameters
+    from ._models import MongoDBDatabaseGetPropertiesOptions
     from ._models import MongoDBDatabaseGetPropertiesResource
     from ._models import MongoDBDatabaseGetResults
     from ._models import MongoDBDatabaseResource
     from ._models import MongoIndex
     from ._models import MongoIndexKeys
     from ._models import MongoIndexOptions
+    from ._models import NotebookWorkspace
+    from ._models import NotebookWorkspaceConnectionInfoResult
+    from ._models import NotebookWorkspaceCreateUpdateParameters
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OptionsResource
     from ._models import PartitionMetric
     from ._models import PartitionUsage
     from ._models import PercentileMetric
@@ -197,15 +219,18 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProvisionedThroughputSettingsResource
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
     from ._models import SpatialSpec
     from ._models import SqlContainerCreateUpdateParameters
+    from ._models import SqlContainerGetPropertiesOptions
     from ._models import SqlContainerGetPropertiesResource
     from ._models import SqlContainerGetResults
     from ._models import SqlContainerResource
     from ._models import SqlDatabaseCreateUpdateParameters
+    from ._models import SqlDatabaseGetPropertiesOptions
     from ._models import SqlDatabaseGetPropertiesResource
     from ._models import SqlDatabaseGetResults
     from ._models import SqlDatabaseResource
@@ -222,6 +247,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlUserDefinedFunctionGetResults
     from ._models import SqlUserDefinedFunctionResource
     from ._models import TableCreateUpdateParameters
+    from ._models import TableGetPropertiesOptions
     from ._models import TableGetPropertiesResource
     from ._models import TableGetResults
     from ._models import TableResource
@@ -244,6 +270,7 @@ from ._paged_models import MetricDefinitionPaged
 from ._paged_models import MetricPaged
 from ._paged_models import MongoDBCollectionGetResultsPaged
 from ._paged_models import MongoDBDatabaseGetResultsPaged
+from ._paged_models import NotebookWorkspacePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PartitionMetricPaged
 from ._paged_models import PartitionUsagePaged
@@ -262,6 +289,7 @@ from ._cosmos_db_management_client_enums import (
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     ConnectorOffer,
+    PublicNetworkAccess,
     IndexingMode,
     DataType,
     IndexKind,
@@ -279,17 +307,18 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
-    'AutopilotSettingsResource',
     'AutoUpgradePolicyResource',
     'AzureEntityResource',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
+    'CassandraKeyspaceGetPropertiesOptions',
     'CassandraKeyspaceGetPropertiesResource',
     'CassandraKeyspaceGetResults',
     'CassandraKeyspaceResource',
     'CassandraPartitionKey',
     'CassandraSchema',
     'CassandraTableCreateUpdateParameters',
+    'CassandraTableGetPropertiesOptions',
     'CassandraTableGetPropertiesResource',
     'CassandraTableGetResults',
     'CassandraTableResource',
@@ -314,10 +343,12 @@ __all__ = [
     'FailoverPolicies',
     'FailoverPolicy',
     'GremlinDatabaseCreateUpdateParameters',
+    'GremlinDatabaseGetPropertiesOptions',
     'GremlinDatabaseGetPropertiesResource',
     'GremlinDatabaseGetResults',
     'GremlinDatabaseResource',
     'GremlinGraphCreateUpdateParameters',
+    'GremlinGraphGetPropertiesOptions',
     'GremlinGraphGetPropertiesResource',
     'GremlinGraphGetResults',
     'GremlinGraphResource',
@@ -331,18 +362,24 @@ __all__ = [
     'MetricName',
     'MetricValue',
     'MongoDBCollectionCreateUpdateParameters',
+    'MongoDBCollectionGetPropertiesOptions',
     'MongoDBCollectionGetPropertiesResource',
     'MongoDBCollectionGetResults',
     'MongoDBCollectionResource',
     'MongoDBDatabaseCreateUpdateParameters',
+    'MongoDBDatabaseGetPropertiesOptions',
     'MongoDBDatabaseGetPropertiesResource',
     'MongoDBDatabaseGetResults',
     'MongoDBDatabaseResource',
     'MongoIndex',
     'MongoIndexKeys',
     'MongoIndexOptions',
+    'NotebookWorkspace',
+    'NotebookWorkspaceConnectionInfoResult',
+    'NotebookWorkspaceCreateUpdateParameters',
     'Operation',
     'OperationDisplay',
+    'OptionsResource',
     'PartitionMetric',
     'PartitionUsage',
     'PercentileMetric',
@@ -351,15 +388,18 @@ __all__ = [
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkServiceConnectionStateProperty',
+    'ProvisionedThroughputSettingsResource',
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
     'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
+    'SqlContainerGetPropertiesOptions',
     'SqlContainerGetPropertiesResource',
     'SqlContainerGetResults',
     'SqlContainerResource',
     'SqlDatabaseCreateUpdateParameters',
+    'SqlDatabaseGetPropertiesOptions',
     'SqlDatabaseGetPropertiesResource',
     'SqlDatabaseGetResults',
     'SqlDatabaseResource',
@@ -376,6 +416,7 @@ __all__ = [
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionResource',
     'TableCreateUpdateParameters',
+    'TableGetPropertiesOptions',
     'TableGetPropertiesResource',
     'TableGetResults',
     'TableResource',
@@ -409,12 +450,14 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
+    'NotebookWorkspacePaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'ConnectorOffer',
+    'PublicNetworkAccess',
     'IndexingMode',
     'DataType',
     'IndexKind',

@@ -27,6 +27,7 @@ from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
 from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
+from ._notebook_workspaces_operations import NotebookWorkspacesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 
@@ -49,6 +50,7 @@ __all__ = [
     'TableResourcesOperations',
     'CassandraResourcesOperations',
     'GremlinResourcesOperations',
+    'NotebookWorkspacesOperations',
     'PrivateLinkResourcesOperations',
     'PrivateEndpointConnectionsOperations',
 ]

@@ -19,7 +19,7 @@ jobs:
     timeoutInMinutes: 120
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
     steps:
       - task: UsePythonVersion@0

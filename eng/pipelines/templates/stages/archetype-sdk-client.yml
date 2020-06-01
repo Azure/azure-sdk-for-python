@@ -4,7 +4,8 @@ parameters:
   ToxEnvParallel: '--tenvparallel'
   InjectedPackages: ''
   BuildDocs: true
-
+  TargetDocRepoOwner: 'MicrosoftDocs'
+  TargetDocRepoName: 'azure-docs-sdk-python'
   
 stages:
   - stage: Build
@@ -25,3 +26,5 @@ stages:
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
         DocArtifact: documentation
+        TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+        TargetDocRepoName: ${{parameters.TargetDocRepoName}} 

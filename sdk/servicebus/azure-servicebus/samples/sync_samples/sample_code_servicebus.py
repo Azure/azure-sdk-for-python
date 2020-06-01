@@ -32,7 +32,7 @@ def example_create_servicebus_client_sync():
     # [START create_sb_client_sync]
     import os
     from azure.servicebus import ServiceBusClient, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     servicebus_client = ServiceBusClient(
@@ -62,7 +62,7 @@ def example_create_servicebus_sender_sync():
     # [START create_servicebus_sender_sync]
     import os
     from azure.servicebus import ServiceBusSender, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -93,7 +93,7 @@ def example_create_servicebus_sender_sync():
     topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     with servicebus_client:
-        queue_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+        topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
     # [END create_topic_sender_from_sb_client_sync]
 
     return queue_sender
@@ -116,7 +116,7 @@ def example_create_servicebus_receiver_sync():
     # [START create_servicebus_receiver_sync]
     import os
     from azure.servicebus import ServiceBusReceiver, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -295,6 +295,22 @@ def example_session_ops_sync():
                 break
 
 
+def example_schedule_ops_sync():
+    servicebus_sender = example_create_servicebus_sender_sync()
+    # [START scheduling_messages]
+    with servicebus_sender:
+        scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
+        scheduled_messages = [Message("Scheduled message") for _ in range(10)]
+        sequence_nums = servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
+    # [END scheduling_messages]
+
+    # [START cancel_scheduled_messages]
+    with servicebus_sender:
+        servicebus_sender.cancel_scheduled_messages(sequence_nums)
+    # [END cancel_scheduled_messages]
+
+
 example_send_and_receive_sync()
 example_receive_deferred_sync()
+example_schedule_ops_sync()
 # example_session_ops_sync()

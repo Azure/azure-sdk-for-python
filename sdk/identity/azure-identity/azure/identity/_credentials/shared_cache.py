@@ -60,7 +60,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = self._client.obtain_token_by_refresh_token(refresh_token, scopes)
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

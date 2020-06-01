@@ -50,7 +50,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
-class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: ignore
+class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
@@ -61,7 +61,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: igno
     """
 
     def __init__(self):
-        self.next = None
+        self.next = None # type: Union[HTTPPolicy, HttpTransport]
 
     @abc.abstractmethod
     def send(self, request):

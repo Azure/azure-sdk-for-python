@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import datetime
 from os.path import dirname, realpath
 import time
 
@@ -20,6 +21,15 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
 TIME_TO_SLEEP = 3
+
+class SearchResourceGroupPreparer(ResourceGroupPreparer):
+    def create_resource(self, name, **kwargs):
+        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        if self.is_live and self._need_creation:
+            expiry = datetime.datetime.now() + datetime.timedelta(days=1)
+            resource_group_params = dict(tags={'DeleteAfter': expiry.isoformat()}, location=self.location)
+            self.client.resource_groups.create_or_update(name, resource_group_params)
+        return result
 
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
@@ -121,11 +131,11 @@ class SearchServicePreparer(AzureMgmtPreparer):
         # optionally load data into the index
         if self.index_batch and self.schema:
             from azure.core.credentials import AzureKeyCredential
-            from azure.search.documents import SearchIndexClient
-            from azure.search.documents._index._generated.models import IndexBatch
+            from azure.search.documents import SearchClient
+            from azure.search.documents._internal._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchIndexClient(
+            index_client = SearchClient(
                 self.endpoint, self.index_name, AzureKeyCredential(api_key)
             )
             results = index_client.index_documents(batch)

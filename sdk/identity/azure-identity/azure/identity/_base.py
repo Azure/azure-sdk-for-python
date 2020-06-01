@@ -64,7 +64,7 @@ class CertificateCredentialBase(ABC):
 
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
-        fingerprint = cert.fingerprint(hashes.SHA1())
+        fingerprint = cert.fingerprint(hashes.SHA1())   #nosec
 
         self._client = self._get_auth_client(tenant_id, **kwargs)
         self._client_id = client_id

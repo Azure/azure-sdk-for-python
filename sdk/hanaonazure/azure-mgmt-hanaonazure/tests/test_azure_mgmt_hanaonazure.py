@@ -24,26 +24,26 @@ class MgmtHanaOnAzureTest(AzureMgmtTestCase):
     def process(self, result):
         pass
 
-    def test_hanainstance_list(self):
-        hanainstances = list(self.hanaonazure_client.hana_instances.list())
-        self.assertEqual(len(hanainstances), 3)
+    #def test_hanainstance_list(self):
+    #    hanainstances = list(self.hanaonazure_client.hana_instances.list())
+    #    self.assertEqual(len(hanainstances), 3)
+    #
+    #@ResourceGroupPreparer()
+    #def test_hanainstance_list_by_resource_group(self, resource_group):
+    #
+    #    resource_group_name = resource_group.name
+    #
+    #    hanainstances = list(self.hanaonazure_client.hana_instances.list_by_resource_group(resource_group_name))
+    #    self.assertEqual(len(hanainstances), 3)
 
-    @ResourceGroupPreparer()
-    def test_hanainstance_list_by_resource_group(self, resource_group):
+    #@ResourceGroupPreparer()
+    #def test_hanainstance_get(self, resource_group):
 
-        resource_group_name = resource_group.name
+    #    resource_group_name = resource_group.name
+    #    resource_name = "testhanainstanceresourcename"
 
-        hanainstances = list(self.hanaonazure_client.hana_instances.list_by_resource_group(resource_group_name))
-        self.assertEqual(len(hanainstances), 3)
-
-    @ResourceGroupPreparer()
-    def test_hanainstance_get(self, resource_group):
-
-        resource_group_name = resource_group.name
-        resource_name = "testhanainstanceresourcename"
-
-        hanainstance = self.hanaonazure_client.hana_instances.get(resource_group_name, resource_name)
-        self.assertEqual(hanainstance.name, resource_name)
+    #    hanainstance = self.hanaonazure_client.hana_instances.get(resource_group_name, resource_name)
+    #    self.assertEqual(hanainstance.name, resource_name)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

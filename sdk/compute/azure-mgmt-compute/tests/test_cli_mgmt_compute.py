@@ -187,10 +187,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
         INSTANCE_IDS = ["1"]
         LOG_ANALYTIC_NAME = "loganalytic"
 
-
-        SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
-        NIC_ID = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, INTERFACE_NAME, SUBNET)
-        # VAULT_ID, VAULT_URL, KEY_NAME = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT, TENANT_ID)
+        if self.is_live:
+          SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+          NIC_ID = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, INTERFACE_NAME, SUBNET)
+          # VAULT_ID, VAULT_URL, KEY_NAME = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT, TENANT_ID)
+        else:
+          SUBNET = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + NETWORK_NAME + "/subnets/" + SUBNET_NAME
+          NIC_ID = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + INTERFACE_NAME
 
         # Create an empty managed disk.[put]
         BODY = {

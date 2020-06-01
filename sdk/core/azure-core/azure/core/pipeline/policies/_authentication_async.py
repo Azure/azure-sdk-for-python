@@ -35,4 +35,4 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
         with self._lock:
             if self._need_new_token:
                 self._token = await self._credential.get_token(*self._scopes)  # type: ignore
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+        self._update_headers(request.http_request.headers, self._token.token)

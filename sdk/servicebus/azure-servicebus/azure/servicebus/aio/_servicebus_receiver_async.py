@@ -6,13 +6,14 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Any, TYPE_CHECKING, List
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler_async import BaseHandlerAsync
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from ._async_message import ReceivedMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
+class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -125,7 +126,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._connection = kwargs.get("connection")
 
     async def __anext__(self):
-        self._can_run()
+        self._check_live()
         while True:
             try:
                 return await self._do_retryable_operation(self._iter_next)
@@ -163,11 +164,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
-        await self._handler.open_async(connection=self._connection)
-        self._message_iter = self._handler.receive_messages_iter_async()
-        while not await self._handler.client_ready_async():
-            await asyncio.sleep(0.05)
-        self._running = True
+        try:
+            await self._handler.open_async(connection=self._connection)
+            self._message_iter = self._handler.receive_messages_iter_async()
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05)
+            self._running = True
+        except:
+            await self.close()
+            raise
 
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
@@ -251,8 +256,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):
@@ -291,7 +297,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
+        if max_batch_size and self._config.prefetch < max_batch_size:
+            raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
+                             "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -320,7 +329,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive deferred messages from ServiceBus.
 
         """
-        self._can_run()
+        self._check_live()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
@@ -365,7 +374,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
-        self._can_run()
+        self._check_live()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

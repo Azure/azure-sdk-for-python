@@ -64,6 +64,32 @@ class UsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UsagePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
+class ObjectReplicationPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ObjectReplicationPolicy <azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ObjectReplicationPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ObjectReplicationPolicyPaged, self).__init__(*args, **kwargs)
 class EncryptionScopePaged(Paged):
     """
     A paging container for iterating over a list of :class:`EncryptionScope <azure.mgmt.storage.v2019_06_01.models.EncryptionScope>` object

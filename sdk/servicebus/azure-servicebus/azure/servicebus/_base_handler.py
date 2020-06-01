@@ -7,7 +7,7 @@ import logging
 import uuid
 import time
 from datetime import timedelta
-from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any
+from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Type
 
 try:
     from urllib import quote_plus  # type: ignore
@@ -20,7 +20,6 @@ from uamqp.message import MessageProperties
 
 from ._common._configuration import Configuration
 from .exceptions import (
-    InvalidHandlerState,
     ServiceBusError,
     ServiceBusAuthorizationError,
     _create_servicebus_exception
@@ -91,6 +90,31 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     return _AccessToken(token=token, expires_on=abs_expiry)
 
 
+def _convert_connection_string_to_kwargs(conn_str, shared_key_credential_type, **kwargs):
+    # type: (str, Type, Any) -> Dict[str, Any]
+    host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
+    queue_name = kwargs.get("queue_name")
+    topic_name = kwargs.get("topic_name")
+    if not (queue_name or topic_name or entity_in_conn_str):
+        raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
+                         " or use a connection string including the entity information.")
+
+    if queue_name and topic_name:
+        raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
+
+    entity_in_kwargs = queue_name or topic_name
+    if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
+        raise ServiceBusAuthorizationError(
+            "Entity names do not match, the entity name in connection string is {};"
+            " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
+        )
+
+    kwargs["fully_qualified_namespace"] = host
+    kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
+    kwargs["credential"] = shared_key_credential_type(policy, key)
+    return kwargs
+
+
 class ServiceBusSharedKeyCredential(object):
     """The shared access key credential used for authentication.
 
@@ -111,7 +135,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
+class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace,
@@ -119,6 +143,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         credential,
         **kwargs
     ):
+        # type: (str, str, TokenCredential, Any) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
 
@@ -129,7 +154,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None
+        self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties()
 
@@ -141,6 +166,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _handle_exception(self, exception):
+        # type: (BaseException) -> ServiceBusError
         error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
         if error_need_close_handler:
             self._close_handler()
@@ -149,31 +175,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
         return error
 
-    @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
-        queue_name = kwargs.get("queue_name")
-        topic_name = kwargs.get("topic_name")
-        if not (queue_name or topic_name or entity_in_conn_str):
-            raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
-                             " or use a connection string including the entity information.")
-
-        if queue_name and topic_name:
-            raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
-
-        entity_in_kwargs = queue_name or topic_name
-        if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ServiceBusAuthorizationError(
-                "Entity names do not match, the entity name in connection string is {};"
-                " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
-            )
-
-        kwargs["fully_qualified_namespace"] = host
-        kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
-        kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
-        return kwargs
-
     def _backoff(
         self,
         retried_times,
@@ -181,6 +182,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         timeout=None,
         entity_name=None
     ):
+        # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
@@ -201,16 +203,14 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
-        last_exception = None
         max_retries = self._config.retry_total
 
         while retried_times <= max_retries:
             try:
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return operation(**kwargs)
@@ -218,27 +218,25 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
                 retried_times += 1
                 if retried_times > max_retries:
-                    break
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
 
-        _LOGGER.info(
-            "%r operation has exhausted retry. Last exception: %r.",
-            self._container_id,
-            last_exception,
-        )
-        raise last_exception
-
     def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
+        # type: (str, uamqp.Message, Callable, bool, Any) -> uamqp.Message
         self._open()
-        if not self._running:
-            raise InvalidHandlerState("Client connection is closed.")
-
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
         if keep_alive_associated_link:
@@ -269,6 +267,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,

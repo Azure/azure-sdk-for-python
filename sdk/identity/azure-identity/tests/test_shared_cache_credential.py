@@ -17,6 +17,7 @@ from azure.identity._internal import get_default_authority
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
+from six.moves.urllib_parse import urlparse
 
 try:
     from unittest.mock import Mock, patch
@@ -62,6 +63,26 @@ def test_user_agent():
     )
 
     credential.get_token("scope")
+
+
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_authority(authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+
+    class MockCredential(SharedTokenCacheCredential):
+        def _get_auth_client(self, authority=None, **kwargs):
+            actual = urlparse(authority)
+            assert actual.scheme == "https"
+            assert actual.netloc == expected_netloc
+
+    transport = Mock(send=Mock(side_effect=Exception("credential shouldn't send a request")))
+    MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
 
 
 def test_empty_cache():
@@ -484,6 +505,11 @@ def test_authority_environment_variable():
 def get_account_event(
     username, uid, utid, authority=None, client_id="client-id", refresh_token="refresh-token", scopes=None
 ):
+    if authority:
+        endpoint = "https://" + "/".join((authority, utid, "path",))
+    else:
+        endpoint = get_default_authority() + "/{}/{}".format(utid, "path")
+
     return {
         "response": build_aad_response(
             uid=uid,
@@ -493,7 +519,7 @@ def get_account_event(
             foci="1",
         ),
         "client_id": client_id,
-        "token_endpoint": "https://" + "/".join((authority or get_default_authority(), utid, "/path",)),
+        "token_endpoint": endpoint,
         "scope": scopes or ["scope"],
     }
 

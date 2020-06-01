@@ -17,22 +17,6 @@ from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from ._common.utils import AutoLockRenew
-from .exceptions import (
-    ServiceBusError,
-    ServiceBusResourceNotFound,
-    ServiceBusConnectionError,
-    ServiceBusAuthorizationError,
-    InvalidHandlerState,
-    NoActiveSession,
-    MessageAlreadySettled,
-    MessageSettleFailed,
-    MessageSendFailed,
-    MessageLockExpired,
-    SessionLockExpired,
-    AutoLockRenewFailed,
-    AutoLockRenewTimeout
-)
-
 
 TransportType = constants.TransportType
 
@@ -43,19 +27,6 @@ __all__ = [
     'ReceivedMessage',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
-    'ServiceBusError',
-    'ServiceBusResourceNotFound',
-    'ServiceBusConnectionError',
-    'ServiceBusAuthorizationError',
-    'InvalidHandlerState',
-    'NoActiveSession',
-    'MessageAlreadySettled',
-    'MessageSettleFailed',
-    'MessageSendFailed',
-    'MessageLockExpired',
-    'SessionLockExpired',
-    'AutoLockRenewFailed',
-    'AutoLockRenewTimeout',
     'ServiceBusClient',
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',

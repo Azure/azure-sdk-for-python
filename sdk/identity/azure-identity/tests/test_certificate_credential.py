@@ -63,20 +63,21 @@ def test_user_agent():
     credential.get_token("scope")
 
 
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_request_url(cert_path, cert_password):
-    authority = "authority.com"
+def test_request_url(cert_path, cert_password, authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
     tenant_id = "expected_tenant"
     access_token = "***"
-
-    def validate_url(url):
-        parsed = urlparse(url)
-        assert parsed.scheme == "https"
-        assert parsed.netloc == authority
-        assert parsed.path.startswith("/" + tenant_id)
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
     def mock_send(request, **kwargs):
-        validate_url(request.url)
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
     cred = CertificateCredential(

@@ -8,8 +8,8 @@ import datetime
 import uuid
 import requests
 try:
-    from urlparse import urlparse
-    from urllib import unquote_plus
+    from urlparse import urlparse  # type: ignore
+    from urllib import unquote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
     from urllib.parse import unquote_plus
@@ -75,7 +75,7 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
         """
         queue_properties = Queue(
@@ -102,8 +102,8 @@ class ServiceBusMixin(object):
          found. If set to True, a ServiceBusResourceNotFound will be raised.
          Default value is False.
         :type fail_not_exist: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namesapce is not found.
-        :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namesapce is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusResourceNotFound if the queue is not found
          and `fail_not_exist` is set to True.
         """
         try:
@@ -137,7 +137,7 @@ class ServiceBusMixin(object):
         :type duplicate_detection_history_time_window: ~datetime.timedelta
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a topic of the same name already exists.
         """
         topic_properties = Topic(
@@ -160,8 +160,8 @@ class ServiceBusMixin(object):
          found. If set to True, a ServiceBusResourceNotFound will be raised.
          Default value is False.
         :type fail_not_exist: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namesapce is not found.
-        :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namesapce is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusResourceNotFound if the topic is not found
          and `fail_not_exist` is set to True.
         """
         try:
@@ -203,7 +203,7 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
         """
         sub_properties = Subscription(
@@ -232,8 +232,8 @@ class ServiceBusMixin(object):
          topic is not found. If set to True, a ServiceBusResourceNotFound will be raised.
          Default value is False.
         :type fail_not_exist: bool
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namesapce is not found.
-        :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the entity is not found
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the namesapce is not found.
+        :raises: ~azure.servicebus.exceptions.ServiceBusResourceNotFound if the entity is not found
          and `fail_not_exist` is set to True.
         """
         try:
@@ -326,8 +326,8 @@ class BaseClient(object):  # pylint: disable=too-many-instance-attributes
 
         :returns: The properties of the entity as a dictionary.
         :rtype: dict[str, Any]
-        :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the entity does not exist.
-        :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the endpoint cannot be reached.
+        :raises: ~azure.servicebus.exceptions.ServiceBusResourceNotFound if the entity does not exist.
+        :raises: ~azure.servicebus.exceptions.ServiceBusConnectionError if the endpoint cannot be reached.
         :raises: ~azure.common.AzureHTTPError if the credentials are invalid.
         """
         try:

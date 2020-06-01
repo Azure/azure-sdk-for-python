@@ -1,6 +1,13 @@
 
 # Release History
 
+## 1.1.0 (2020-05-04)
+
+### Features
+
+- Info logger now logs ARM throttling information  #10940
+
+
 ## 1.0.0 (2020-04-09)
 
 ### Features

@@ -29,9 +29,10 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def filter_query():
     # [START facet_query]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import SearchIndexClient, SearchQuery
+    from azure.search.documents import SearchClient
+    from azure.search.documents.models import SearchQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
 

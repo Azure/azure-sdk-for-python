@@ -6,11 +6,19 @@ import datetime
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import DeviceCodeCredential
+from azure.identity import AuthenticationRequiredError, DeviceCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
+from msal import TokenCache
 import pytest
 
-from helpers import build_aad_response, get_discovery_response, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    build_id_token,
+    get_discovery_response,
+    mock_response,
+    Request,
+    validating_transport,
+)
 
 try:
     from unittest.mock import Mock
@@ -22,8 +30,74 @@ def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
     credential = DeviceCodeCredential("client_id")
-    with pytest.raises(ClientAuthenticationError):
+    with pytest.raises(ValueError):
         credential.get_token()
+
+
+def test_authenticate():
+    client_id = "client-id"
+    environment = "localhost"
+    issuer = "https://" + environment
+    tenant_id = "some-tenant"
+    authority = issuer + "/" + tenant_id
+
+    access_token = "***"
+    scope = "scope"
+
+    # mock AAD response with id token
+    object_id = "object-id"
+    home_tenant = "home-tenant-id"
+    username = "me@work.com"
+    id_token = build_id_token(aud=client_id, iss=issuer, object_id=object_id, tenant_id=home_tenant, username=username)
+    auth_response = build_aad_response(
+        uid=object_id, utid=home_tenant, access_token=access_token, refresh_token="**", id_token=id_token
+    )
+
+    transport = validating_transport(
+        requests=[Request(url_substring=issuer)] * 4,
+        responses=[get_discovery_response(authority)] * 2  # instance and tenant discovery
+        + [
+            mock_response(  # start device code flow
+                json_payload={
+                    "device_code": "_",
+                    "user_code": "user-code",
+                    "verification_uri": "verification-uri",
+                    "expires_in": 42,
+                }
+            ),
+            mock_response(json_payload=dict(auth_response, scope=scope)),  # poll for completion
+        ],
+    )
+
+    credential = DeviceCodeCredential(
+        client_id,
+        prompt_callback=Mock(),  # prevent credential from printing to stdout
+        transport=transport,
+        authority=environment,
+        tenant_id=tenant_id,
+        _cache=TokenCache(),
+    )
+    record = credential.authenticate(scopes=(scope,))
+    for auth_record in (record, credential.authentication_record):
+        assert auth_record.authority == environment
+        assert auth_record.home_account_id == object_id + "." + home_tenant
+        assert auth_record.tenant_id == home_tenant
+        assert auth_record.username == username
+
+    # credential should have a cached access token for the scope used in authenticate
+    token = credential.get_token(scope)
+    assert token.token == access_token
+
+
+def test_disable_automatic_authentication():
+    """When configured for strict silent auth, the credential should raise when silent auth fails"""
+
+    empty_cache = TokenCache()  # empty cache makes silent auth impossible
+    transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
+    credential = DeviceCodeCredential("client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
+
+    with pytest.raises(AuthenticationRequiredError):
+        credential.get_token("scope")
 
 
 def test_policies_configurable():
@@ -47,7 +121,7 @@ def test_policies_configurable():
     )
 
     credential = DeviceCodeCredential(
-        client_id="client-id", prompt_callback=Mock(), policies=[policy], transport=transport
+        client_id="client-id", prompt_callback=Mock(), policies=[policy], transport=transport, _cache=TokenCache()
     )
 
     credential.get_token("scope")
@@ -72,7 +146,9 @@ def test_user_agent():
         ],
     )
 
-    credential = DeviceCodeCredential(client_id="client-id", prompt_callback=Mock(), transport=transport)
+    credential = DeviceCodeCredential(
+        client_id="client-id", prompt_callback=Mock(), transport=transport, _cache=TokenCache()
+    )
 
     credential.get_token("scope")
 
@@ -110,7 +186,7 @@ def test_device_code_credential():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False
+        client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False, _cache=TokenCache()
     )
 
     now = datetime.datetime.utcnow()
@@ -142,7 +218,12 @@ def test_timeout():
     )
 
     credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.01, instance_discovery=False
+        client_id="_",
+        prompt_callback=Mock(),
+        transport=transport,
+        timeout=0.01,
+        instance_discovery=False,
+        _cache=TokenCache(),
     )
 
     with pytest.raises(ClientAuthenticationError) as ex:

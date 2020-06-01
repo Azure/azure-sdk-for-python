@@ -1,19 +1,39 @@
 # Release History
 
-## 7.0.0b2 (Unreleased)
+## 7.0.0b3 (Unreleased)
+
+
+## 7.0.0b2 (2020-05-04)
 
 **New Features**
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
 * Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+* Added support for scheduling messages and scheduled message cancellation.
+    - Use `ServiceBusSender.schedule(messages, schedule_time_utc)` for scheduling messages.
+    - Use `ServiceBusSender.cancel_scheduled_messages(sequence_numbers)` for scheduled messages cancellation.
+* `ServiceBusSender.send()` can now send a list of messages in one call, if they fit into a single batch.  If they do not fit a `ValueError` is thrown.
+* `BatchMessage.add()` and `ServiceBusSender.send()` would raise `MessageContentTooLarge` if the content is over-sized.
+* `ServiceBusReceiver.receive()` raises `ValueError` if its param `max_batch_size` is greater than param `prefetch` of `ServiceBusClient`.
+* Added exception classes `MessageError`, `MessageContentTooLarge`, `ServiceBusAuthenticationError`.
+   - `MessageError`: when you send a problematic message, such as an already sent message or an over-sized message.
+   - `MessageContentTooLarge`: when you send an over-sized message. A subclass of `ValueError` and `MessageError`.
+   - `ServiceBusAuthenticationError`: on failure to be authenticated by the service.
+* Removed exception class `InvalidHandlerState`.
 
 **BugFixes**
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Updated uAMQP dependency to 1.2.7.
+    * Fixed bug in setting certificate of tlsio on MacOS. #7201
+    * Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `ServiceBusClient`.
 
 **Breaking Changes**
 
 * Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
+* `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
+* Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
+* `ServiceBusSender.schedule()` has swapped the ordering of parameters `schedule_time_utc` and `messages` for better consistency with `send()` syntax.
 
 ## 7.0.0b1 (2020-04-06)
 

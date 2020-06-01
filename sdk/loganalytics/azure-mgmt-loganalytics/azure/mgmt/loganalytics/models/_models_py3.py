@@ -13,6 +13,66 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AvailableServiceTier(Model):
+    """Service Tier details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar service_tier: The name of the Service Tier. Possible values include:
+     'Free', 'Standard', 'Premium', 'PerNode', 'PerGB2018', 'Standalone',
+     'CapacityReservation'
+    :vartype service_tier: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
+    :ivar enabled: True if the Service Tier is enabled for the workspace.
+    :vartype enabled: bool
+    :ivar minimum_retention: The minimum retention for the Service Tier, in
+     days.
+    :vartype minimum_retention: long
+    :ivar maximum_retention: The maximum retention for the Service Tier, in
+     days.
+    :vartype maximum_retention: long
+    :ivar default_retention: The default retention for the Service Tier, in
+     days.
+    :vartype default_retention: long
+    :ivar capacity_reservation_level: The capacity reservation level in GB per
+     day. Returned for the Capacity Reservation Service Tier.
+    :vartype capacity_reservation_level: long
+    :ivar last_sku_update: Time when the sku was last updated for the
+     workspace. Returned for the Capacity Reservation Service Tier.
+    :vartype last_sku_update: str
+    """
+
+    _validation = {
+        'service_tier': {'readonly': True},
+        'enabled': {'readonly': True},
+        'minimum_retention': {'readonly': True},
+        'maximum_retention': {'readonly': True},
+        'default_retention': {'readonly': True},
+        'capacity_reservation_level': {'readonly': True},
+        'last_sku_update': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'service_tier': {'key': 'serviceTier', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'minimum_retention': {'key': 'minimumRetention', 'type': 'long'},
+        'maximum_retention': {'key': 'maximumRetention', 'type': 'long'},
+        'default_retention': {'key': 'defaultRetention', 'type': 'long'},
+        'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'long'},
+        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AvailableServiceTier, self).__init__(**kwargs)
+        self.service_tier = None
+        self.enabled = None
+        self.minimum_retention = None
+        self.maximum_retention = None
+        self.default_retention = None
+        self.capacity_reservation_level = None
+        self.last_sku_update = None
+
+
 class Resource(Model):
     """Resource.
 
@@ -167,9 +227,9 @@ class Cluster(TrackedResource):
     :vartype cluster_id: str
     :ivar provisioning_state: The provisioning state of the cluster. Possible
      values include: 'Creating', 'Succeeded', 'Failed', 'Canceled', 'Deleting',
-     'ProvisioningAccount'
+     'ProvisioningAccount', 'Updating'
     :vartype provisioning_state: str or
-     ~azure.mgmt.loganalytics.models.EntityStatus
+     ~azure.mgmt.loganalytics.models.ClusterEntityStatus
     :param key_vault_properties: The associated key properties.
     :type key_vault_properties:
      ~azure.mgmt.loganalytics.models.KeyVaultProperties
@@ -281,6 +341,33 @@ class ClusterSku(Model):
         super(ClusterSku, self).__init__(**kwargs)
         self.capacity = capacity
         self.name = name
+
+
+class CoreSummary(Model):
+    """The core summary of a search.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: The status of a core summary.
+    :type status: str
+    :param number_of_documents: Required. The number of documents of a core
+     summary.
+    :type number_of_documents: long
+    """
+
+    _validation = {
+        'number_of_documents': {'required': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'number_of_documents': {'key': 'numberOfDocuments', 'type': 'long'},
+    }
+
+    def __init__(self, *, number_of_documents: int, status: str=None, **kwargs) -> None:
+        super(CoreSummary, self).__init__(**kwargs)
+        self.status = status
+        self.number_of_documents = number_of_documents
 
 
 class ProxyResource(Resource):
@@ -549,6 +636,36 @@ class ErrorAdditionalInfo(Model):
         self.info = None
 
 
+class ErrorContract(Model):
+    """Error details.
+
+    Contains details when the response code indicates an error.
+
+    :param error: The details of the error.
+    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorContract, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorContractException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorContract'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorContractException, self).__init__(deserialize, response, 'ErrorContract', *args)
+
+
 class ErrorResponse(Model):
     """The resource management error response.
 
@@ -703,6 +820,11 @@ class LinkedService(ProxyResource):
      be linked to the workspace. This should be used for linking resources
      which require write access
     :type write_access_resource_id: str
+    :param provisioning_state: The provisioning state of the linked service.
+     Possible values include: 'Succeeded', 'Deleting', 'ProvisioningAccount',
+     'Updating'
+    :type provisioning_state: str or
+     ~azure.mgmt.loganalytics.models.LinkedServiceEntityStatus
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -719,13 +841,15 @@ class LinkedService(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
         'write_access_resource_id': {'key': 'properties.writeAccessResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource_id: str=None, write_access_resource_id: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, resource_id: str=None, write_access_resource_id: str=None, provisioning_state=None, tags=None, **kwargs) -> None:
         super(LinkedService, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.write_access_resource_id = write_access_resource_id
+        self.provisioning_state = provisioning_state
         self.tags = tags
 
 
@@ -969,11 +1093,16 @@ class SavedSearch(ProxyResource):
     :type category: str
     :param display_name: Required. Saved search display name.
     :type display_name: str
-    :param query: Required. The query expression for the saved search. Please
-     see
-     https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-search-reference
-     for reference.
+    :param query: Required. The query expression for the saved search.
     :type query: str
+    :param function_alias: The function alias if query serves as a function.
+    :type function_alias: str
+    :param function_parameters: The optional function parameters if query
+     serves as a function. Value should be in the following format:
+     'param-name1:type1 = default_value1, param-name2:type2 = default_value2'.
+     For more examples and proper syntax please refer to
+     https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
+    :type function_parameters: str
     :param version: The version number of the query language. The current
      version is 2 and is the default.
     :type version: long
@@ -998,16 +1127,20 @@ class SavedSearch(ProxyResource):
         'category': {'key': 'properties.category', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
+        'function_alias': {'key': 'properties.functionAlias', 'type': 'str'},
+        'function_parameters': {'key': 'properties.functionParameters', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'long'},
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, *, category: str, display_name: str, query: str, e_tag: str=None, version: int=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, category: str, display_name: str, query: str, e_tag: str=None, function_alias: str=None, function_parameters: str=None, version: int=None, tags=None, **kwargs) -> None:
         super(SavedSearch, self).__init__(**kwargs)
         self.e_tag = e_tag
         self.category = category
         self.display_name = display_name
         self.query = query
+        self.function_alias = function_alias
+        self.function_parameters = function_parameters
         self.version = version
         self.tags = tags
 
@@ -1026,6 +1159,198 @@ class SavedSearchesListResult(Model):
     def __init__(self, *, value=None, **kwargs) -> None:
         super(SavedSearchesListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class SearchGetSchemaResponse(Model):
+    """The get schema operation response.
+
+    :param metadata: The metadata from search results.
+    :type metadata: ~azure.mgmt.loganalytics.models.SearchMetadata
+    :param value: The array of result values.
+    :type value: list[~azure.mgmt.loganalytics.models.SearchSchemaValue]
+    """
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': 'SearchMetadata'},
+        'value': {'key': 'value', 'type': '[SearchSchemaValue]'},
+    }
+
+    def __init__(self, *, metadata=None, value=None, **kwargs) -> None:
+        super(SearchGetSchemaResponse, self).__init__(**kwargs)
+        self.metadata = metadata
+        self.value = value
+
+
+class SearchMetadata(Model):
+    """Metadata for search results.
+
+    :param search_id: The request id of the search.
+    :type search_id: str
+    :param result_type: The search result type.
+    :type result_type: str
+    :param total: The total number of search results.
+    :type total: long
+    :param top: The number of top search results.
+    :type top: long
+    :param id: The id of the search results request.
+    :type id: str
+    :param core_summaries: The core summaries.
+    :type core_summaries: list[~azure.mgmt.loganalytics.models.CoreSummary]
+    :param status: The status of the search results.
+    :type status: str
+    :param start_time: The start time for the search.
+    :type start_time: datetime
+    :param last_updated: The time of last update.
+    :type last_updated: datetime
+    :param e_tag: The ETag of the search results.
+    :type e_tag: str
+    :param sort: How the results are sorted.
+    :type sort: list[~azure.mgmt.loganalytics.models.SearchSort]
+    :param request_time: The request time.
+    :type request_time: long
+    :param aggregated_value_field: The aggregated value field.
+    :type aggregated_value_field: str
+    :param aggregated_grouping_fields: The aggregated grouping fields.
+    :type aggregated_grouping_fields: str
+    :param sum: The sum of all aggregates returned in the result set.
+    :type sum: long
+    :param max: The max of all aggregates returned in the result set.
+    :type max: long
+    :param schema: The schema.
+    :type schema: ~azure.mgmt.loganalytics.models.SearchMetadataSchema
+    """
+
+    _attribute_map = {
+        'search_id': {'key': 'requestId', 'type': 'str'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
+        'total': {'key': 'total', 'type': 'long'},
+        'top': {'key': 'top', 'type': 'long'},
+        'id': {'key': 'id', 'type': 'str'},
+        'core_summaries': {'key': 'coreSummaries', 'type': '[CoreSummary]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'sort': {'key': 'sort', 'type': '[SearchSort]'},
+        'request_time': {'key': 'requestTime', 'type': 'long'},
+        'aggregated_value_field': {'key': 'aggregatedValueField', 'type': 'str'},
+        'aggregated_grouping_fields': {'key': 'aggregatedGroupingFields', 'type': 'str'},
+        'sum': {'key': 'sum', 'type': 'long'},
+        'max': {'key': 'max', 'type': 'long'},
+        'schema': {'key': 'schema', 'type': 'SearchMetadataSchema'},
+    }
+
+    def __init__(self, *, search_id: str=None, result_type: str=None, total: int=None, top: int=None, id: str=None, core_summaries=None, status: str=None, start_time=None, last_updated=None, e_tag: str=None, sort=None, request_time: int=None, aggregated_value_field: str=None, aggregated_grouping_fields: str=None, sum: int=None, max: int=None, schema=None, **kwargs) -> None:
+        super(SearchMetadata, self).__init__(**kwargs)
+        self.search_id = search_id
+        self.result_type = result_type
+        self.total = total
+        self.top = top
+        self.id = id
+        self.core_summaries = core_summaries
+        self.status = status
+        self.start_time = start_time
+        self.last_updated = last_updated
+        self.e_tag = e_tag
+        self.sort = sort
+        self.request_time = request_time
+        self.aggregated_value_field = aggregated_value_field
+        self.aggregated_grouping_fields = aggregated_grouping_fields
+        self.sum = sum
+        self.max = max
+        self.schema = schema
+
+
+class SearchMetadataSchema(Model):
+    """Schema metadata for search.
+
+    :param name: The name of the metadata schema.
+    :type name: str
+    :param version: The version of the metadata schema.
+    :type version: int
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+    }
+
+    def __init__(self, *, name: str=None, version: int=None, **kwargs) -> None:
+        super(SearchMetadataSchema, self).__init__(**kwargs)
+        self.name = name
+        self.version = version
+
+
+class SearchSchemaValue(Model):
+    """Value object for schema results.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The name of the schema.
+    :type name: str
+    :param display_name: The display name of the schema.
+    :type display_name: str
+    :param type: The type.
+    :type type: str
+    :param indexed: Required. The boolean that indicates the field is
+     searchable as free text.
+    :type indexed: bool
+    :param stored: Required. The boolean that indicates whether or not the
+     field is stored.
+    :type stored: bool
+    :param facet: Required. The boolean that indicates whether or not the
+     field is a facet.
+    :type facet: bool
+    :param owner_type: The array of workflows containing the field.
+    :type owner_type: list[str]
+    """
+
+    _validation = {
+        'indexed': {'required': True},
+        'stored': {'required': True},
+        'facet': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'indexed': {'key': 'indexed', 'type': 'bool'},
+        'stored': {'key': 'stored', 'type': 'bool'},
+        'facet': {'key': 'facet', 'type': 'bool'},
+        'owner_type': {'key': 'ownerType', 'type': '[str]'},
+    }
+
+    def __init__(self, *, indexed: bool, stored: bool, facet: bool, name: str=None, display_name: str=None, type: str=None, owner_type=None, **kwargs) -> None:
+        super(SearchSchemaValue, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.type = type
+        self.indexed = indexed
+        self.stored = stored
+        self.facet = facet
+        self.owner_type = owner_type
+
+
+class SearchSort(Model):
+    """The sort parameters for search.
+
+    :param name: The name of the field the search query is sorted on.
+    :type name: str
+    :param order: The sort order of the search. Possible values include:
+     'asc', 'desc'
+    :type order: str or ~azure.mgmt.loganalytics.models.SearchSortEnum
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'order': {'key': 'order', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, order=None, **kwargs) -> None:
+        super(SearchSort, self).__init__(**kwargs)
+        self.name = name
+        self.order = order
 
 
 class SharedKeys(Model):
@@ -1165,6 +1490,45 @@ class StorageInsightStatus(Model):
         self.description = description
 
 
+class Table(ProxyResource):
+    """Workspace data table definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param retention_in_days: The data table data retention in days, between
+     30 and 730. Setting this property to null will default to the workspace
+     retention.
+    :type retention_in_days: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+    }
+
+    def __init__(self, *, retention_in_days: int=None, **kwargs) -> None:
+        super(Table, self).__init__(**kwargs)
+        self.retention_in_days = retention_in_days
+
+
 class Tag(Model):
     """A tag of a saved search.
 
@@ -1251,9 +1615,9 @@ class Workspace(TrackedResource):
     :type location: str
     :param provisioning_state: The provisioning state of the workspace.
      Possible values include: 'Creating', 'Succeeded', 'Failed', 'Canceled',
-     'Deleting', 'ProvisioningAccount'
+     'Deleting', 'ProvisioningAccount', 'Updating'
     :type provisioning_state: str or
-     ~azure.mgmt.loganalytics.models.EntityStatus
+     ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
     :ivar customer_id: This is a read-only property. Represents the ID
      associated with the workspace.
     :vartype customer_id: str
@@ -1263,6 +1627,8 @@ class Workspace(TrackedResource):
      Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
      for all other Skus.
     :type retention_in_days: int
+    :param workspace_capping: The daily volume cap for ingestion.
+    :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
     :param public_network_access_for_ingestion: The network access type for
      accessing Log Analytics ingestion. Possible values include: 'Enabled',
      'Disabled'. Default value: "Enabled" .
@@ -1301,22 +1667,60 @@ class Workspace(TrackedResource):
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, provisioning_state=None, sku=None, retention_in_days: int=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", e_tag: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, provisioning_state=None, sku=None, retention_in_days: int=None, workspace_capping=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", e_tag: str=None, **kwargs) -> None:
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = provisioning_state
         self.customer_id = None
         self.sku = sku
         self.retention_in_days = retention_in_days
+        self.workspace_capping = workspace_capping
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
         self.private_link_scoped_resources = None
         self.e_tag = e_tag
+
+
+class WorkspaceCapping(Model):
+    """The daily volume cap for ingestion.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param daily_quota_gb: The workspace daily quota for ingestion. -1 means
+     unlimited.
+    :type daily_quota_gb: float
+    :ivar quota_next_reset_time: The time when the quota will be rest.
+    :vartype quota_next_reset_time: str
+    :ivar data_ingestion_status: The status of data ingestion for this
+     workspace. Possible values include: 'RespectQuota', 'ForceOn', 'ForceOff',
+     'OverQuota', 'SubscriptionSuspended', 'ApproachingQuota'
+    :vartype data_ingestion_status: str or
+     ~azure.mgmt.loganalytics.models.DataIngestionStatus
+    """
+
+    _validation = {
+        'quota_next_reset_time': {'readonly': True},
+        'data_ingestion_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'daily_quota_gb': {'key': 'dailyQuotaGb', 'type': 'float'},
+        'quota_next_reset_time': {'key': 'quotaNextResetTime', 'type': 'str'},
+        'data_ingestion_status': {'key': 'dataIngestionStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, daily_quota_gb: float=None, **kwargs) -> None:
+        super(WorkspaceCapping, self).__init__(**kwargs)
+        self.daily_quota_gb = daily_quota_gb
+        self.quota_next_reset_time = None
+        self.data_ingestion_status = None
 
 
 class WorkspacePatch(AzureEntityResource):
@@ -1337,9 +1741,9 @@ class WorkspacePatch(AzureEntityResource):
     :vartype etag: str
     :param provisioning_state: The provisioning state of the workspace.
      Possible values include: 'Creating', 'Succeeded', 'Failed', 'Canceled',
-     'Deleting', 'ProvisioningAccount'
+     'Deleting', 'ProvisioningAccount', 'Updating'
     :type provisioning_state: str or
-     ~azure.mgmt.loganalytics.models.EntityStatus
+     ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
     :ivar customer_id: This is a read-only property. Represents the ID
      associated with the workspace.
     :vartype customer_id: str
@@ -1349,6 +1753,8 @@ class WorkspacePatch(AzureEntityResource):
      Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
      for all other Skus.
     :type retention_in_days: int
+    :param workspace_capping: The daily volume cap for ingestion.
+    :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
     :param public_network_access_for_ingestion: The network access type for
      accessing Log Analytics ingestion. Possible values include: 'Enabled',
      'Disabled'. Default value: "Enabled" .
@@ -1386,26 +1792,140 @@ class WorkspacePatch(AzureEntityResource):
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, provisioning_state=None, sku=None, retention_in_days: int=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", tags=None, **kwargs) -> None:
+    def __init__(self, *, provisioning_state=None, sku=None, retention_in_days: int=None, workspace_capping=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", tags=None, **kwargs) -> None:
         super(WorkspacePatch, self).__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.customer_id = None
         self.sku = sku
         self.retention_in_days = retention_in_days
+        self.workspace_capping = workspace_capping
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
         self.private_link_scoped_resources = None
         self.tags = tags
 
 
+class WorkspacePurgeBody(Model):
+    """Describes the body of a purge request for an App Insights Workspace.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param table: Required. Table from which to purge data.
+    :type table: str
+    :param filters: Required. The set of columns and filters (queries) to run
+     over them to purge the resulting data.
+    :type filters:
+     list[~azure.mgmt.loganalytics.models.WorkspacePurgeBodyFilters]
+    """
+
+    _validation = {
+        'table': {'required': True},
+        'filters': {'required': True},
+    }
+
+    _attribute_map = {
+        'table': {'key': 'table', 'type': 'str'},
+        'filters': {'key': 'filters', 'type': '[WorkspacePurgeBodyFilters]'},
+    }
+
+    def __init__(self, *, table: str, filters, **kwargs) -> None:
+        super(WorkspacePurgeBody, self).__init__(**kwargs)
+        self.table = table
+        self.filters = filters
+
+
+class WorkspacePurgeBodyFilters(Model):
+    """User-defined filters to return data which will be purged from the table.
+
+    :param column: The column of the table over which the given query should
+     run
+    :type column: str
+    :param operator: A query operator to evaluate over the provided column and
+     value(s). Supported operators are ==, =~, in, in~, >, >=, <, <=, between,
+     and have the same behavior as they would in a KQL query.
+    :type operator: str
+    :param value: the value for the operator to function over. This can be a
+     number (e.g., > 100), a string (timestamp >= '2017-09-01') or array of
+     values.
+    :type value: object
+    :param key: When filtering over custom dimensions, this key will be used
+     as the name of the custom dimension.
+    :type key: str
+    """
+
+    _attribute_map = {
+        'column': {'key': 'column', 'type': 'str'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(self, *, column: str=None, operator: str=None, value=None, key: str=None, **kwargs) -> None:
+        super(WorkspacePurgeBodyFilters, self).__init__(**kwargs)
+        self.column = column
+        self.operator = operator
+        self.value = value
+        self.key = key
+
+
+class WorkspacePurgeResponse(Model):
+    """Response containing operationId for a specific purge action.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation_id: Required. Id to use when querying for status for a
+     particular purge operation.
+    :type operation_id: str
+    """
+
+    _validation = {
+        'operation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+    }
+
+    def __init__(self, *, operation_id: str, **kwargs) -> None:
+        super(WorkspacePurgeResponse, self).__init__(**kwargs)
+        self.operation_id = operation_id
+
+
+class WorkspacePurgeStatusResponse(Model):
+    """Response containing status for a specific purge operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Status of the operation represented by the
+     requested Id. Possible values include: 'pending', 'completed'
+    :type status: str or ~azure.mgmt.loganalytics.models.PurgeState
+    """
+
+    _validation = {
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, *, status, **kwargs) -> None:
+        super(WorkspacePurgeStatusResponse, self).__init__(**kwargs)
+        self.status = status
+
+
 class WorkspaceSku(Model):
     """The SKU (tier) of a workspace.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1413,16 +1933,33 @@ class WorkspaceSku(Model):
      'Free', 'Standard', 'Premium', 'PerNode', 'PerGB2018', 'Standalone',
      'CapacityReservation'
     :type name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
+    :param capacity_reservation_level: The capacity reservation level for this
+     workspace, when CapacityReservation sku is selected.
+    :type capacity_reservation_level: int
+    :ivar max_capacity_reservation_level: The maximum capacity reservation
+     level available for this workspace, when CapacityReservation sku is
+     selected.
+    :vartype max_capacity_reservation_level: int
+    :ivar last_sku_update: The last time when the sku was updated.
+    :vartype last_sku_update: str
     """
 
     _validation = {
         'name': {'required': True},
+        'max_capacity_reservation_level': {'readonly': True},
+        'last_sku_update': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'int'},
+        'max_capacity_reservation_level': {'key': 'maxCapacityReservationLevel', 'type': 'int'},
+        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
     }
 
-    def __init__(self, *, name, **kwargs) -> None:
+    def __init__(self, *, name, capacity_reservation_level: int=None, **kwargs) -> None:
         super(WorkspaceSku, self).__init__(**kwargs)
         self.name = name
+        self.capacity_reservation_level = capacity_reservation_level
+        self.max_capacity_reservation_level = None
+        self.last_sku_update = None

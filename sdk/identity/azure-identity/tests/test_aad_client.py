@@ -18,49 +18,18 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
-class MockClient(AadClient):
-    def __init__(self, *args, **kwargs):
-        self.session = kwargs.pop("session")
-        super(MockClient, self).__init__(*args, **kwargs)
-
-    def _get_client_session(self, **kwargs):
-        return self.session
-
-
-def test_uses_msal_correctly():
-    session = Mock()
-    transport = Mock()
-    session.get = session.post = transport
-
-    client = MockClient("tenant id", "client id", session=session)
-
-    # MSAL will raise on each call because the mock transport returns nothing useful.
-    # That's okay because we only want to verify the transport was called, i.e. that
-    # the client used the MSAL API correctly, such that MSAL tried to send a request.
-    with pytest.raises(ClientAuthenticationError):
-        client.obtain_token_by_authorization_code("code", "redirect uri", "scope")
-    assert transport.call_count == 1
-
-    transport.reset_mock()
-
-    with pytest.raises(ClientAuthenticationError):
-        client.obtain_token_by_refresh_token("refresh token", "scope")
-    assert transport.call_count == 1
-
-
 def test_error_reporting():
     error_name = "everything's sideways"
     error_description = "something went wrong"
     error_response = {"error": error_name, "error_description": error_description}
 
-    response = Mock(status_code=403, json=lambda: error_response)
-    transport = Mock(return_value=response)
-    session = Mock(get=transport, post=transport)
-    client = MockClient("tenant id", "client id", session=session)
+    response = mock_response(status_code=403, json_payload=error_response)
+    transport = Mock(send=Mock(return_value=response))
+    client = AadClient("tenant id", "client id", transport=transport)
 
     fns = [
-        functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
-        functools.partial(client.obtain_token_by_refresh_token, {"secret": "refresh token"}, "scope"),
+        functools.partial(client.obtain_token_by_authorization_code, ("scope",), "code", "uri"),
+        functools.partial(client.obtain_token_by_refresh_token, ("scope",), "refresh token"),
     ]
 
     # exceptions raised for AAD errors should contain AAD's error description
@@ -69,27 +38,30 @@ def test_error_reporting():
             fn()
         message = str(ex.value)
         assert error_name in message and error_description in message
+        assert transport.send.call_count == 1
+        transport.send.reset_mock()
 
 
 def test_exceptions_do_not_expose_secrets():
     secret = "secret"
     body = {"error": "bad thing", "access_token": secret, "refresh_token": secret}
-    response = Mock(status_code=403, json=lambda: body)
-    transport = Mock(return_value=response)
-    session = Mock(get=transport, post=transport)
-    client = MockClient("tenant id", "client id", session=session)
+    response = mock_response(status_code=403, json_payload=body)
+    transport = Mock(send=Mock(return_value=response))
+    client = AadClient("tenant id", "client id", transport=transport)
 
     fns = [
         functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
-        functools.partial(client.obtain_token_by_refresh_token, {"secret": "refresh token"}, "scope"),
+        functools.partial(client.obtain_token_by_refresh_token, "refresh token", ("scope"),),
     ]
 
     def assert_secrets_not_exposed():
         for fn in fns:
             with pytest.raises(ClientAuthenticationError) as ex:
                 fn()
-        assert secret not in str(ex.value)
-        assert secret not in repr(ex.value)
+            assert secret not in str(ex.value)
+            assert secret not in repr(ex.value)
+            assert transport.send.call_count == 1
+            transport.send.reset_mock()
 
     # AAD errors shouldn't provoke exceptions exposing secrets
     assert_secrets_not_exposed()
@@ -99,24 +71,80 @@ def test_exceptions_do_not_expose_secrets():
     assert_secrets_not_exposed()
 
 
-def test_request_url():
-    authority = "authority.com"
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_request_url(authority):
     tenant_id = "expected_tenant"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
     def send(request, **_):
-        scheme, netloc, path, _, _, _ = urlparse(request.url)
-        assert scheme == "https"
-        assert netloc == authority
-        assert path.startswith("/" + tenant_id)
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
     client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)
 
-    client.obtain_token_by_authorization_code("code", "uri", "scope")
-    client.obtain_token_by_refresh_token("refresh token", "scope")
+    client.obtain_token_by_authorization_code("scope", "code", "uri")
+    client.obtain_token_by_refresh_token("scope", "refresh token")
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
-    client.obtain_token_by_authorization_code("code", "uri", "scope")
-    client.obtain_token_by_refresh_token("refresh token", "scope")
+    client.obtain_token_by_authorization_code("scope", "code", "uri")
+    client.obtain_token_by_refresh_token("scope", "refresh token")
+
+
+@pytest.mark.parametrize("secret", (None, "client secret"))
+def test_authorization_code(secret):
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    auth_code = "code"
+    scope = "scope"
+    redirect_uri = "https://localhost"
+    access_token = "***"
+
+    def send(request, **_):
+        assert request.data["client_id"] == client_id
+        assert request.data["code"] == auth_code
+        assert request.data["grant_type"] == "authorization_code"
+        assert request.data["redirect_uri"] == redirect_uri
+        assert request.data["scope"] == scope
+        assert request.data.get("client_secret") == secret
+
+        return mock_response(json_payload={"access_token": access_token, "expires_in": 42})
+
+    transport = Mock(send=Mock(wraps=send))
+
+    client = AadClient(tenant_id, client_id, transport=transport)
+    token = client.obtain_token_by_authorization_code(
+        scopes=(scope,), code=auth_code, redirect_uri=redirect_uri, client_secret=secret
+    )
+
+    assert token.token == access_token
+    assert transport.send.call_count == 1
+
+
+def test_refresh_token():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    scope = "scope"
+    refresh_token = "refresh-token"
+    access_token = "***"
+
+    def send(request, **_):
+        assert request.data["client_id"] == client_id
+        assert request.data["grant_type"] == "refresh_token"
+        assert request.data["refresh_token"] == refresh_token
+        assert request.data["scope"] == scope
+
+        return mock_response(json_payload={"access_token": access_token, "expires_in": 42})
+
+    transport = Mock(send=Mock(wraps=send))
+
+    client = AadClient(tenant_id, client_id, transport=transport)
+    token = client.obtain_token_by_refresh_token(scopes=(scope,), refresh_token=refresh_token)
+
+    assert token.token == access_token
+    assert transport.send.call_count == 1

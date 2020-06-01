@@ -1,5 +1,11 @@
 # Release History
 
+## 0.3.1 (2020-04-20)
+
+** Fixes **
+
+  - Removed an unreferenced client definition.
+
 ## 0.3.0 (2020-04-08)
 
 **Features**

@@ -34,4 +34,4 @@ def mock_in_unit_test(unit_test, target, replacement):
 
     mp = mock.patch(target, replacement)
     mp.__enter__()
-    unit_test.addCleanup(mp.__exit__)
+    unit_test.addCleanup(mp.__exit__, None, None, None)

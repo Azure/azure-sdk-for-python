@@ -14,7 +14,6 @@ Example to show receiving deferred message from a Service Bus Queue asynchronous
 import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import ReceiveSettleMode
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]

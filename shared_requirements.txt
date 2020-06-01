@@ -95,10 +95,11 @@ cryptography>=2.1.4
 futures
 mock
 typing
-msal<2.0.0,>=1.0.0
-msal-extensions~=0.1.3
+msal<2.0.0,>=1.1.0
+msal-extensions~=0.2.2
 msrest>=0.5.0
 msrestazure<2.0.0,>=0.4.32
+azure-mgmt-core<2.0.0,>=1.0.0
 requests>=2.18.4
 uamqp~=1.2.0
 enum34>=1.0.4
@@ -113,7 +114,7 @@ six>=1.6
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.0.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.0.0
 #override azure-cosmos azure-core<2.0.0,>=1.0.0
-#override azure-eventhub azure-core<2.0.0,>=1.0.0
+#override azure-eventhub azure-core<2.0.0,>=1.5.0
 #override azure-identity azure-core<2.0.0,>=1.0.0
 #override azure-keyvault-certificates msrest>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.0
@@ -139,7 +140,7 @@ opentelemetry-api==0.6b0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
-#override azure-eventhub uamqp<2.0,>=1.2.5
+#override azure-eventhub uamqp<2.0,>=1.2.7
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-servicebus uamqp>=1.2.5,<2.0.0
+#override azure-servicebus uamqp>=1.2.7,<2.0.0
 #override azure-search-documents msrest>=0.6.10
