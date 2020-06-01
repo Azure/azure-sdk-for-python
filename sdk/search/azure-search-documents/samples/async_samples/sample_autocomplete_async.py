@@ -32,14 +32,11 @@ async def autocomplete_query():
     # [START autocomplete_query_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
-    from azure.search.documents.models import AutocompleteQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = AutocompleteQuery(search_text="bo", suggester_name="sg")
-
     async with search_client:
-        results = await search_client.autocomplete(query=query)
+        results = await search_client.autocomplete(search_text="bo", suggester_name="sg")
 
         print("Autocomplete suggestions for 'bo'")
         for result in results:
