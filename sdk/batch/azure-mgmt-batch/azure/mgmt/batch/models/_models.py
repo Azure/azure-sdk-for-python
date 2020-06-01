@@ -738,7 +738,7 @@ class BatchAccountCreateParameters(Model):
 
 class BatchAccountIdentity(Model):
     """The identity of the Batch account, if configured. This is only used when
-    the user specifies 'Azure.KeyVault' as their Batch account encryption
+    the user specifies 'Microsoft.KeyVault' as their Batch account encryption
     configuration.
 
     Variables are only populated by the server, and will be ignored when
