@@ -24,7 +24,7 @@ caused by usage of classes that were not supposed to be used in the
 first place.
 
   - SignalRClient cannot be imported from
-    `azure.mgmt.signalr.mixed_reality_client` anymore (import from
+    `azure.mgmt.signalr.signalr_client` anymore (import from
     `azure.mgmt.signalr` works like before)
   - SignalRClientConfiguration import has been moved from
     `azure.mgmt.signalr.signalr_client` 
