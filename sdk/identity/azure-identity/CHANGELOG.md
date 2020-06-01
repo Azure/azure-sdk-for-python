@@ -1,6 +1,10 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
+  optional keyword arguments `executor` or `loop`. Prior versions of the method
+  didn't use these correctly, provoking exceptions, and internal changes in this
+  version have made them obsolete.
 - `InteractiveBrowserCredential` raises `CredentialUnavailableError` when it
   can't start an HTTP server on `localhost`.
   ([#11665](https://github.com/Azure/azure-sdk-for-python/pull/11665))
