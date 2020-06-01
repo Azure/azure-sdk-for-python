@@ -27,6 +27,7 @@ from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
+    from ._models import RecognizedReceipt, FormPage, RecognizedForm
 
 
 class FormRecognizerClient(object):
@@ -78,7 +79,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[RecognizedReceipt]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -133,7 +134,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
-        # type: (str, Any) -> LROPoller
+        # type: (str, Any) -> LROPoller[RecognizedReceipt]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
@@ -180,7 +181,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_content(self, form, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[FormPage]
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -229,7 +230,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_content_from_url(self, form_url, **kwargs):
-        # type: (str, Any) -> LROPoller
+        # type: (str, Any) -> LROPoller[FormPage]
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
@@ -258,7 +259,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, form, **kwargs):
-        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller
+        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller[RecognizedForm]
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -323,7 +324,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_custom_forms_from_url(self, model_id, form_url, **kwargs):
-        # type: (str, str, Any) -> LROPoller
+        # type: (str, str, Any) -> LROPoller[RecognizedForm]
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.

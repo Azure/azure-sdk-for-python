@@ -88,7 +88,7 @@ class FormTrainingClient(object):
 
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
-        # type: (str, bool, Any) -> LROPoller
+        # type: (str, bool, Any) -> LROPoller[CustomFormModel]
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -308,7 +308,7 @@ class FormTrainingClient(object):
         target,  # type: Dict
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[CustomFormModelInfo]
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
         (with the model that is intended to be copied). The `target` parameter should be supplied from the

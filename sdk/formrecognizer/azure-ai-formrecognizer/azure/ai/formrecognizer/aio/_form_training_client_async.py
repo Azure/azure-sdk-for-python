@@ -97,7 +97,7 @@ class FormTrainingClient(object):
             training_files_url: str,
             use_training_labels: bool,
             **kwargs: Any
-    ) -> AsyncLROPoller:
+    ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -329,7 +329,7 @@ class FormTrainingClient(object):
         model_id: str,
         target: dict,
         **kwargs: Any
-    ) -> AsyncLROPoller:
+    ) -> AsyncLROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
         (with the model that is intended to be copied). The `target` parameter should be supplied from the
