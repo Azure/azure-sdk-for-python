@@ -4,6 +4,7 @@
 # ------------------------------------
 from ._index import (  # pylint: disable=unused-import
     ComplexField,
+    SearchField,
     SearchableField,
     SimpleField,
 )

@@ -26,8 +26,6 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, List, Mapping, Optional
-    import msal_extensions
-    from azure.core.credentials import AccessToken
     from .._internal import AadClientBase
 
     CacheItem = Mapping[str, str]
@@ -182,9 +180,10 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_refresh_tokens(self, account):
-        return self._cache.find(
+        cache_entries = self._cache.find(
             TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
         )
+        return (token["secret"] for token in cache_entries if "secret" in token)
 
     @staticmethod
     def supported():
