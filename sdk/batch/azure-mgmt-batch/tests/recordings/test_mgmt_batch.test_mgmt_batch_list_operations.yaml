@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2020-03-01
+    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2020-05-01
   response:
     body:
       string: '{"value":[{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
@@ -186,12 +186,18 @@ interactions:
         Private endpoint connections on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionResults/read","display":{"provider":"Microsoft
         Batch","resource":"PrivateEndpointConnections","operation":"Get Batch account
         private endpoint connection operation results","description":"Gets the results
-        of a long running Batch account private endpoint connection operation"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/write","display":{"provider":"Microsoft
+        of a long running Batch account private endpoint connection operation"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/validate/action","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Validates
+        a Private endpoint connection proxy","description":"Validates a Private endpoint
+        connection proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/write","display":{"provider":"Microsoft
         Batch","resource":"PrivateEndpointConnectionProxies","operation":"Create or
         Update Private endpoint connection proxy","description":"Create a new Private
         endpoint connection proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/read","display":{"provider":"Microsoft
         Batch","resource":"PrivateEndpointConnectionProxies","operation":"Get Private
         endpoint connection proxy","description":"Gets Private endpoint connection
+        proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/delete","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Delete Private
+        endpoint connection proxy","description":"Delete a Private endpoint connection
         proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxyResults/read","display":{"provider":"Microsoft
         Batch","resource":"PrivateEndpointConnectionProxies","operation":"Get Batch
         account private endpoint connection proxy operation results","description":"Gets
@@ -201,11 +207,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '26529'
+      - '27226'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 19:07:51 GMT
+      - Fri, 29 May 2020 03:19:45 GMT
       expires:
       - '-1'
       pragma:
