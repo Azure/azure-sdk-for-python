@@ -4,8 +4,11 @@
 # ------------------------------------
 import abc
 
+from msal import TokenCache
 import six
-from azure.identity._internal import AadClientCertificate
+
+from . import AadClientCertificate
+from .persistent_cache import load_service_principal_cache
 
 try:
     ABC = abc.ABC
@@ -40,7 +43,16 @@ class CertificateCredentialBase(ABC):
             pem_bytes = f.read()
 
         self._certificate = AadClientCertificate(pem_bytes, password=password)
-        self._client = self._get_auth_client(tenant_id, client_id, **kwargs)
+
+        enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
+        if enable_persistent_cache:
+            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            cache = load_service_principal_cache(allow_unencrypted)
+        else:
+            cache = TokenCache()
+
+        self._client = self._get_auth_client(tenant_id, client_id, cache=cache, **kwargs)
+        self._client_id = client_id
 
     @abc.abstractmethod
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

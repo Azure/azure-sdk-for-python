@@ -5,6 +5,10 @@
 import abc
 from typing import TYPE_CHECKING
 
+from msal import TokenCache
+
+from .persistent_cache import load_service_principal_cache
+
 try:
     ABC = abc.ABC
 except AttributeError:  # Python 2.7
@@ -27,7 +31,15 @@ class ClientSecretCredentialBase(ABC):
                 "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
             )
 
-        self._client = self._get_auth_client(tenant_id, client_id, **kwargs)
+        enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
+        if enable_persistent_cache:
+            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            cache = load_service_principal_cache(allow_unencrypted)
+        else:
+            cache = TokenCache()
+
+        self._client = self._get_auth_client(tenant_id, client_id, cache=cache, **kwargs)
+        self._client_id = client_id
         self._secret = client_secret
 
     @abc.abstractmethod

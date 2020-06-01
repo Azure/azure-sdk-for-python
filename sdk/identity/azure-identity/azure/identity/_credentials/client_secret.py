@@ -25,6 +25,10 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
+          False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def get_token(self, *scopes, **kwargs):
@@ -42,7 +46,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_access_token(scopes)
+        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
         return token
