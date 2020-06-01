@@ -30,23 +30,24 @@ from pathlib import Path
 
 class RecognizeCustomFormsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
-
     async def recognize_custom_forms(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+
         async with FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, form=f.read()
+                    model_id=model_id, form=f.read()
                 )
 
             for idx, form in enumerate(forms):

@@ -28,22 +28,23 @@ import os
 
 class RecognizeCustomForms(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
-
     def recognize_custom_forms(self):
         # [START recognize_custom_forms]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+
         form_recognizer_client = FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
-                model_id=self.model_id, form=f
+                model_id=model_id, form=f
             )
         forms = poller.result()
 
