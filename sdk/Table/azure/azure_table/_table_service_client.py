@@ -1,9 +1,12 @@
 from urllib.parse import urlparse
 
 from azure.azure_table._generated import AzureTable
-from azure.azure_table._generated.models import TableProperties
+from azure.azure_table._generated.models import TableProperties, TableServiceStats
 from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.azure_table._shared.models import LocationMode
+from azure.azure_table._shared.response_handlers import process_storage_error
 from azure.azure_table._version import VERSION
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 
@@ -69,6 +72,17 @@ class TableServiceClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
+
+    def get_service_stats(self, **kwargs):
+        # type: (Optional[Any]) -> Dict[str, Any]
+        timeout = kwargs.pop('timeout', None)
+        try:
+            stats = self._client.service.get_statistics(  # type: ignore
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return TableServiceStats(stats)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
 
     @distributed_trace
     def create_table(
