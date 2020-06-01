@@ -89,9 +89,9 @@
                 "attribute": true
               }
             },
-            "QueueProperties": {
+            "QueueDescription": {
               "description": "Properties of the new queue.",
-              "$ref": "#/definitions/QueueProperties"
+              "$ref": "#/definitions/QueueDescription"
             }
           }
         }
@@ -120,9 +120,9 @@
                 "attribute": true
               }
             },
-            "TopicProperties": {
+            "TopicDescription": {
               "description": "Topic information to create.",
-              "$ref": "#/definitions/TopicProperties"
+              "$ref": "#/definitions/TopicDescription"
             }
           }
         }
@@ -320,11 +320,10 @@
         }
       }
     },
-    "QueueProperties": {
+    "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
       "xml": {
-        "name": "QueueDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -484,11 +483,10 @@
         }
       }
     },
-    "TopicProperties": {
+    "TopicDescription": {
       "description": "Description of a Service Bus topic resource.",
       "type": "object",
       "xml": {
-        "name": "TopicDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
