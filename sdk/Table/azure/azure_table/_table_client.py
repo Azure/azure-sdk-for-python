@@ -1,10 +1,16 @@
 from urllib.parse import urlparse, quote
 
 import six
+from azure.azure_table._deserialize import deserialize_table_creation
 from azure.azure_table._generated import AzureTable
+from azure.azure_table._generated.models import TableProperties, AccessPolicy
 from azure.azure_table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
+from azure.azure_table._shared.request_handlers import add_metadata_headers
+from azure.azure_table._shared.response_handlers import process_storage_error
 from azure.azure_table._version import VERSION
+from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 
 
 class TableClient(StorageAccountHostsMixin):
@@ -88,3 +94,62 @@ class TableClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
+
+    @distributed_trace
+    def create_queue(self, table_name, **kwargs):
+        # type: (Optional[Any]) -> None
+        table_properties = TableProperties(table_name)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        response_preference = kwargs.pop('response_preference', None)
+        query_option = kwargs.pop('query_options', None)
+        try:
+            return self._client.table.create(  # type: ignore
+                table_properties=table_properties,
+                request_id_parameter=request_id_parameter,
+                response_preference=response_preference,
+                query_options=query_option,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def delete_queue(self, table_name, **kwargs):
+        # type: (Optional[Any]) -> None
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        try:
+            self._client.table.delete(
+                table_name=table_name,
+                request_id_parameter=request_id_parameter,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def get_table_properties(self, **kwargs):
+        # type: (Optional[Any]) -> TableProperties
+        timeout = kwargs.pop('timeout', None)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        try:
+            response = self._client.table.get_properties(
+                timeout=timeout,
+                request_id_parameter=request_id_parameter,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        response.name = self.table_name
+        return response  # type: ignore
+
+    @distributed_trace
+    def get_table_access_policy(self, table, **kwargs):
+        # type: (Optional[Any]) -> Dict[str, Any]
+        timeout = kwargs.pop('timeout', None)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        try:
+            _, identifiers = self._client.table.get_access_policy(
+                table=table,
+                timeout=timeout,
+                request_id_parameter=request_id_parameter,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
