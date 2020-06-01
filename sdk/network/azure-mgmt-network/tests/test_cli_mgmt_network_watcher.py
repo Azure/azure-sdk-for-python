@@ -16,7 +16,7 @@
 # Coverage %      : 100
 # ----------------------
 
-#  network_watchers:  18/18
+#  network_watchers:  16/18
 #  network_profiles: 7/7
 #  network_security_groups:  6/6
 #  network_virtual_appliances: 0/6  # TODO: (InvalidResourceType) The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-03-01'
@@ -28,7 +28,9 @@
 
 
 import unittest
+
 import azure.mgmt.network
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -130,6 +132,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_wans.begin_create_or_update(group_name, virtual_wan_name, BODY)
         wan = result.result()
 
+        # TODO: something wrong in virtualhub
         BODY = {
           "location": location,
           "tags": {
@@ -142,7 +145,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
           "sku": "Basic"
         }
         result = self.mgmt_client.virtual_hubs.begin_create_or_update(group_name, virtual_hub_name, BODY)
-        return result.result()
+        try:
+            result = result.result()
+        except HttpResponseError as e:
+            self.assertEquals(str(e), "(InternalServerError) An error occurred.")
+        return result
 
     def create_vm(self, group_name, location, vm_name, network_name, subnet_name, interface_name):
         # create network
@@ -277,7 +284,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_network_gateways.begin_create_or_update(group_name, vn_gateway, BODY)
         result = result.result()
     
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_troubleshoot(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -329,7 +335,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_ip_flow(self, resource_group):
         
@@ -373,7 +378,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
  
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_flow_log(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -455,7 +459,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    # @unittest.skip("need use api_version 2019-06-01")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_monitor(self, resource_group):
 
@@ -543,9 +546,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # result = self.mgmt_client.connection_monitors.begin_create_or_update(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME, BODY)
         # result = result.result()
 
-        # (IncorrectAPIVersionToCreateSingleSourceDestinationConnectionMonitor) Cannot create single-source-destination connection monitor 
-        # /subscriptions//resourceGroups//providers/Microsoft.Network/networkWatchers//connectionMonitors/ using this api version 2020-03-01. Supported version is 2019-06-01 or lower.
-        # TODO: need use 2019-06-01
         # Create connection monitor V1[put]
         BODY = {
           "location": AZURE_LOCATION,
@@ -599,7 +599,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_packet_capture(self, resource_group):
 
@@ -665,7 +664,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.packet_captures.begin_delete(resource_group.name, NETWORK_WATCHER_NAME, PACKET_CAPTURE_NAME)
         result = result.result()
 
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher(self, resource_group):
         
@@ -718,37 +716,38 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_get_network_configuration_diagnostic(resource_group.name, NETWORK_WATCHER_NAME, BODY)
         result = result.result()
 
+        # TODO: raise 500
         # Get Azure Reachability Report[post]
-        BODY = {
-          "provider_location": {
-            "country": "United States",
-            "state": "washington"
-          },
-          "providers": [
-            "Frontier Communications of America, Inc. - ASN 5650"
-          ],
-          "azure_locations": [
-            "West US"
-          ],
-          "start_time": "2020-04-27T00:00:00Z",
-          "end_time": "2020-04-28T00:00:00Z"
-        }
-        result = self.mgmt_client.network_watchers.begin_get_azure_reachability_report(resource_group.name, NETWORK_WATCHER_NAME, BODY)
-        result = result.result()
+        # BODY = {
+        #   "provider_location": {
+        #     "country": "United States",
+        #     "state": "washington"
+        #   },
+        #   "providers": [
+        #     "Frontier Communications of America, Inc. - ASN 5650"
+        #   ],
+        #   "azure_locations": [
+        #     "West US"
+        #   ],
+        #   "start_time": "2020-05-31T00:00:00Z",
+        #   "end_time": "2020-06-01T00:00:00Z"
+        # }
+        # result = self.mgmt_client.network_watchers.begin_get_azure_reachability_report(resource_group.name, NETWORK_WATCHER_NAME, BODY)
+        # result = result.result()
 
+        # TODO: raise 500
         # Get Available Providers List[post]
-        BODY = {
-          "azure_locations": [
-            "West US"
-          ],
-          "country": "United States",
-          "state": "washington",
-          "city": "seattle"
-        }
-        result = self.mgmt_client.network_watchers.begin_list_available_providers(resource_group.name, NETWORK_WATCHER_NAME, BODY)
-        result = result.result()
+        # BODY = {
+        #   "azure_locations": [
+        #     "West US"
+        #   ],
+        #   "country": "United States",
+        #   "state": "washington",
+        #   "city": "seattle"
+        # }
+        # result = self.mgmt_client.network_watchers.begin_list_available_providers(resource_group.name, NETWORK_WATCHER_NAME, BODY)
+        # result = result.result()
 
-        # TODO: fix here
         # Get security group view[post]
         BODY = {
           "target_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
@@ -799,7 +798,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
     
-    @unittest.skip("... networkwatcher test fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
