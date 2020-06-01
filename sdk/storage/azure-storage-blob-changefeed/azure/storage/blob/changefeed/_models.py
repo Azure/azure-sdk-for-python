@@ -343,7 +343,8 @@ class ChangeFeedStreamer(object):
         self.block_count = block_count
         self._point = self._chunk_file_start  # file cursor position relative to the whole chunk file, not the buffered
         self._chunk_size = 4 * 1024 * 1024
-        self._buf = BytesIO()
+        self._buf = b''
+        self._buf_start = self._chunk_file_start  # the start position of the chunk file to buffer
         self._iterator = blob_client.download_blob(offset=self._chunk_file_start).chunks()
 
     def __len__(self):
@@ -377,9 +378,8 @@ class ChangeFeedStreamer(object):
         try:
             # keep downloading file content until the buffer has enough bytes to read
             while self._point + size > self._download_offset:
-                self._buf.seek(0, 2)
                 next_data_chunk = self.next()
-                self._buf.write(next_data_chunk)
+                self._buf += next_data_chunk
         except StopIteration:
             pass
 
@@ -389,8 +389,19 @@ class ChangeFeedStreamer(object):
         self._point = min(self._point + size, self._download_offset)
 
         # seek the cursor's relative position in the buffer
-        self._buf.seek(start_point - self._chunk_file_start)
-        return self._buf.read(size)
+        relative_start = start_point - self._buf_start
+        if relative_start < 0:
+            raise ValueError("Buffer has dumped too much data")
+        relative_end = relative_start + size
+        data = self._buf[relative_start: relative_end]
+
+        # dump the extra data in buffer
+        # buffer start--------------------16bytes----current read position
+        dumped_size = max(relative_end - 16 - relative_start, 0)
+        self._buf_start += dumped_size
+        self._buf = self._buf[dumped_size:]
+
+        return data
 
     def track_event_position(self):
         self.event_position = self.tell()
