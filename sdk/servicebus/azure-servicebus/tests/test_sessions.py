@@ -261,7 +261,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                         message.renew_lock()
                     message.complete()
 
-    @pytest.mark.skip(reason='Requires deadletter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -274,9 +273,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 deferred_messages = []
                 session_id = str(uuid.uuid4())
-                messages = [Message("Deferred message no. {}".format(i)) for i in range(10)]
-                results = sender.send(messages, session_id=session_id)
-                assert all(result[0] for result in results)
+                messages = [Message("Deferred message no. {}".format(i), session_id=session_id) for i in range(10)]
+                sender.send(messages)
 
             count = 0
             with sb_client.get_queue_session_receiver(servicebus_queue.name, 
@@ -300,7 +298,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            with sb_client.get_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -379,8 +377,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 with pytest.raises(MessageAlreadySettled):
                     message.complete()
 
-
-    @pytest.mark.skip(reason='Requires deadletter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -412,17 +408,16 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     messages = receiver.receive()
             assert count == 10
 
-            with sb_client.get_deadletter_receiver(servicebus_queue.name, 
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
                                                       idle_timeout=5) as session:
                 count = 0
                 for message in session:
                     print_message(_logger, message)
                     message.complete()
-                    #assert message.user_properties[b'DeadLetterReason'] == b'something'  # TODO
-                    #assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'  # TODO
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     count += 1
             assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

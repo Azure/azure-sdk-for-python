@@ -31,6 +31,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [receive_deferred_message_queue.py](./sync_samples/receive_deferred_message_queue.py) ([async_version](./async_samples/receive_deferred_message_queue_async.py)) - Examples to defer received messages and receive deferred messages from a service bus queue:
     - Defer received messages
     - Receive deferred messages
+- [receive_deadlettered_messages.py](./sync_samples/receive_deadlettered_messages.py) ([async_version](./async_samples/receive_deadlettered_messages_async.py)) - Examples to receive dead-lettered messages from a service bus queue:
+    - Receive dead-lettered messages
 - [receive_iterator_queue.py](./sync_samples/receive_iterator_queue.py) ([async_version](./async_samples/receive_iterator_queue_async.py)) - Examples to receive messages from a service bus queue by iterating over ServiceBusReceiver:
     - Receive messages by iterating over ServiceBusReceiver
 - [session_send_receive.py](./sync_samples/session_send_receive.py) ([async_version](./async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
