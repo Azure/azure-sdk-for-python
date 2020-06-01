@@ -1,4 +1,9 @@
 class InsertDeleteEntity(object):
+    connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
+    table_name = "NAME"
+    account_url = "https://example.table.core.windows.net/"
+    account_name = "example"
+    access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
 
     def insert_entity(self):
         """Insert entity in a table.
@@ -18,15 +23,14 @@ class InsertDeleteEntity(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-
-        from azure.storage.tables import TableServiceClient
-        from azure.storage.tables._generated.operations._service_operations import HttpResponseError
-        from azure.storage.tables._generated.operations._service_operations import ResourceExistsError
-        table_client = TableServiceClient(account_url=self.account_url,credential=self.credential)
+        from azure.azure_table import TableServiceClient
+        from azure.core.exceptions import HttpResponseError, ResourceExistsError
+        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
             inserted_entity = table_client.insert_entity(table_name=self.table_name)
             print(inserted_entity)
         except HttpResponseError and ResourceExistsError:
+            # show these separately
             raise ResourceExistsError
             print(HttpResponseError.response)
 
@@ -49,13 +53,11 @@ class InsertDeleteEntity(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        from azure.storage.tables import TableServiceClient
-        from azure.storage.tables._generated.operations._service_operations import HttpResponseError
-        from azure.storage.tables._generated.operations._service_operations import ResourceNotFoundError
-        table_client = TableServiceClient(account_url=self.account_url, credential=self.credential)
+        from azure.azure_table import TableServiceClient
+        from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
             deleted_entity = table_client.delete_entity(table_name=self.table_name)
             print(deleted_entity)
         except HttpResponseError and ResourceNotFoundError:
-            raise ResourceNotFoundError
             print(HttpResponseError.response)

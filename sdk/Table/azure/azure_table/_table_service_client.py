@@ -1,9 +1,10 @@
 from urllib.parse import urlparse
 
-from azure.table import AzureTable
-from azure.table import TableProperties
-from azure.table import StorageAccountHostsMixin, parse_connection_str, parse_query
-from azure.table import VERSION
+from azure.azure_table._generated import AzureTable
+from azure.azure_table._generated.models import TableProperties
+from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.azure_table._version import VERSION
+from azure.core.tracing.decorator import distributed_trace
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -61,7 +62,7 @@ class TableServiceClient(StorageAccountHostsMixin):
                 :end-before: [END auth_from_connection_string]
                 :language: python
                 :dedent: 8
-                :caption: Creating the QueueServiceClient with a connection string.
+                :caption: Creating the TableServiceClient with a connection string.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
@@ -69,44 +70,132 @@ class TableServiceClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-    def create_table(self, table_name):
+    @distributed_trace
+    def create_table(
+            self,
+            table_name
+    ):
         table_properties = TableProperties(table_name=table_name)
         response = self._client.table.create(table_properties)
         return response
 
-    def delete_table(self, table_name):
-        response = self._client.table.delete(table=table_name)
+    @distributed_trace
+    def delete_table(
+            self,
+            table_name,
+            request_id_parameter=None
+    ):
+        response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter)
         return response
 
-    def query_table(self, table_name):
+    @distributed_trace
+    def query_table(
+            self,
+            request_id_parameter=None,
+            next_table_name=None,
+            query_options=None
+    ):
         # somehow use self._query_string to query things
-        response = self._client.table.query(table_name=table_name)
+        response = self._client.table.query(next_table_name=next_table_name)
         return response
 
-    def query_table_entities(self, table_name):
+    @distributed_trace
+    def query_table_entities(
+            self,
+            table_name,
+            timeout=None,
+            request_id_parameter=None,
+            next_partition_key=None,
+            next_row_key=None,
+            query_options=None
+    ):
         response = self._client.table.query_entities(table_name=table_name)
 
-    def query_table_entities_with_partition_and_row_key(self, table_name):
+    @distributed_trace
+    def query_table_entities_with_partition_and_row_key(
+            self,
+            table_name,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            query_options=None
+    ):
         response = self._client.table.query_entities_with_partition_and_row_key(table_name=table_name)
 
-    def insert_entity(self):
-        response = self._client.table.insert_entity()
-
-    def delete_entity(self):
-        response = self._client.table.delete_entity()
-
-    def merge_entity(self):
-        response = self._client.table.merge_entity()
-
-    def update_entity(self):
+    @distributed_trace
+    def update_entity(
+            self,
+            table_name,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
         response = self._client.table.update_entity()
 
-    def get_access_policy(self):
+    @distributed_trace
+    def merge_entity(
+            self,
+            table_name,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+        response = self._client.table.merge_entity()
+
+    @distributed_trace
+    def delete_entity(
+            self,
+            table_name,
+            partition_key,
+            row_key,
+            if_match,
+            timeout=None,
+            request_id_parameter=None,
+            query_options=None
+    ):
+        response = self._client.table.delete_entity()
+
+    @distributed_trace
+    def insert_entity(
+            self,
+            table_name,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+        response = self._client.table.insert_entity()
+
+    def get_access_policy(
+            self,
+            table_name,
+            timeout=None,
+            request_id_parameter=None
+    ):
         response = self._client.table.get_access_policy()
 
-    def set_access_policy(self):
+    def set_access_policy(
+            self,
+            table_name,
+            timeout=None,
+            request_id_parameter=None,
+            table_acl=None
+    ):
         response = self._client.table.set_access_policy()
 
-    def batch(self, *reqs):
+    def batch(
+            self,
+            *reqs
+    ):
         response = self.batch(*reqs)
         return response

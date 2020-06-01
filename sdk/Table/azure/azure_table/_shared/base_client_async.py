@@ -29,7 +29,6 @@ from .policies import (
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy,
-    QueueMessagePolicy
 )
 from .policies_async import AsyncStorageResponseHook
 

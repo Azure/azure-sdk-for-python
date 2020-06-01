@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-storage-tables"
-PACKAGE_PPRINT_NAME = "Azure Table Storage"
+PACKAGE_NAME = "azure-table"
+PACKAGE_PPRINT_NAME = "Azure Table"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

@@ -2,21 +2,16 @@ import os
 
 
 class CreateDeleteTable(object):
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
     table_name = "NAME"
-    account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
-    access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-
-    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
-    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
-    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
+    account_url = "https://example.table.core.windows.net/"
+    account_name = "example"
+    access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
 
     # functions correctly
     def create_table(self):
-        from azure.storage.tables import TableServiceClient
-        from azure.storage.tables._generated.operations._service_operations import HttpResponseError
-        from azure.storage.tables._generated.operations._service_operations import ResourceExistsError
+        from azure.azure_table import TableServiceClient
+        from azure.core.exceptions import HttpResponseError, ResourceExistsError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
 
         # add in existing table error handling
@@ -25,13 +20,13 @@ class CreateDeleteTable(object):
             print(table_created.table_name)
             return table_created.table_name
         except HttpResponseError and ResourceExistsError:
+            # don't raise both at the same time
             raise ResourceExistsError
             print(HttpResponseError.response)
 
     def delete_table(self):
-        from azure.storage.tables import TableServiceClient
-        from azure.storage.tables._generated.operations._service_operations import HttpResponseError
-        from azure.storage.tables._generated.operations._service_operations import ResourceNotFoundError
+        from azure.azure_table import TableServiceClient
+        from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
 
         #check table is there to delete

@@ -30,7 +30,7 @@ from ._common_conversion import (
     _sign_string,
 )
 
-from azure.table import (
+from azure.azure_table._shared._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
