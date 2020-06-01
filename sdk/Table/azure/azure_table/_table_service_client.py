@@ -1,4 +1,3 @@
-import functools
 from urllib.parse import urlparse
 
 from azure.azure_table._generated import AzureTable
@@ -146,7 +145,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         # table.delete_queue(table_name)
 
     @distributed_trace
-    def query_table(
+    def list_tables(
             self,
             request_id_parameter=None,
             next_table_name=None,
@@ -154,8 +153,8 @@ class TableServiceClient(StorageAccountHostsMixin):
             **kwargs
     ):
         # somehow use self._query_string to query things
-        response = self._client.table.query(next_table_name=next_table_name)
-        return response
+        response = self._client.table.query()
+        return response.value
 
     @distributed_trace
     def query_table_entities(
