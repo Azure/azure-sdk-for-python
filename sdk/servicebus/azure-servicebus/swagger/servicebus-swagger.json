@@ -89,9 +89,9 @@
                 "attribute": true
               }
             },
-            "QueueProperties": {
+            "QueueDescription": {
               "description": "Properties of the new queue.",
-              "$ref": "#/definitions/QueueProperties"
+              "$ref": "#/definitions/QueueDescription"
             }
           }
         }
@@ -120,9 +120,9 @@
                 "attribute": true
               }
             },
-            "TopicProperties": {
+            "TopicDescription": {
               "description": "Topic information to create.",
-              "$ref": "#/definitions/TopicProperties"
+              "$ref": "#/definitions/TopicDescription"
             }
           }
         }
@@ -212,7 +212,7 @@
         "Unknown"
       ]
     },
-    "QueueMetrics":{
+    "QueueRuntimeInfo":{
       "description": "Service Bus queue metrics.",
       "type": "object",
       "xml": {
@@ -320,11 +320,10 @@
         }
       }
     },
-    "QueueProperties": {
+    "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
       "xml": {
-        "name": "QueueDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -484,11 +483,10 @@
         }
       }
     },
-    "TopicProperties": {
+    "TopicDescription": {
       "description": "Description of a Service Bus topic resource.",
       "type": "object",
       "xml": {
-        "name": "TopicDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -643,8 +641,8 @@
         "tags": [
           "Queue Operations"
         ],
-        "operationId": "Queue_Create",
-        "description": "Create a new queue at the provided queuePath",
+        "operationId": "Queue_Put",
+        "description": "Create or update a queue at the provided queuePath",
         "parameters": [
           {
             "name": "requestBody",
@@ -653,11 +651,19 @@
               "type": "object"
             },
             "required": true,
-            "description": "Parameters required to make a new queue.",
+            "description": "Parameters required to make or edit a queue.",
             "x-ms-parameter-location": "method"
           },
           {
             "$ref": "#/parameters/ApiVersion"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Match condition for an entity to be updated. If specified and a matching entity is not found, an error will be raised. To force an unconditional update, set to the wildcard character (*). If not specified, an insert will be performed when no existing entity is found to update and a replace will be performed if an existing entity is found.",
+            "x-ms-parameter-location": "method"
           }
         ],
         "responses": {
