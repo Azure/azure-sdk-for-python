@@ -121,9 +121,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 entity_name=str(entity_name),
                 **kwargs
             )
-        self._message_iter = None
-        self._create_attribute(**kwargs)
-        self._connection = kwargs.get("connection")
+
+        self._populate_attributes(**kwargs)
 
     async def __anext__(self):
         self._check_live()
@@ -153,8 +152,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._config.prefetch
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            prefetch=self._prefetch
         )
 
     async def _open(self):
@@ -166,7 +165,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter_async()
+            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: disable=attribute-defined-outside-init
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True
@@ -178,7 +177,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms
@@ -298,7 +297,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        if max_batch_size and self._config.prefetch < max_batch_size:
+        if max_batch_size and self._prefetch < max_batch_size:
             raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
                              "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(
