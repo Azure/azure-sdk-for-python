@@ -152,8 +152,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._config.prefetch
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            prefetch=self._pretech
         )
 
     async def _open(self):
@@ -177,7 +177,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms
@@ -297,7 +297,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        if max_batch_size and self._config.prefetch < max_batch_size:
+        if max_batch_size and self._pretech < max_batch_size:
             raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
                              "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(

@@ -40,6 +40,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
+        prefetch = kwargs.get("prefetch", 0)
+        if int(prefetch) < 0 or int(prefetch) > 50000:
+            raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
+        self._prefetch = prefetch + 1
+        self._idle_timeout = kwargs.get("idle_timeout", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
