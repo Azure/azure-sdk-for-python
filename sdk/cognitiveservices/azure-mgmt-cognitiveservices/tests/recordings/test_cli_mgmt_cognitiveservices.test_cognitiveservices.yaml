@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount?api-version=2017-04-18
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount","name":"myAccount","type":"Microsoft.CognitiveServices/accounts","etag":"\"4400f53c-0000-0700-0000-5e960a9c0000\"","location":"West
-        US","sku":{"name":"S0"},"kind":"CognitiveServices","properties":{"endpoint":"https://westus.api.cognitive.microsoft.com/","internalId":"c3683228902b4a068e3cc4426864ee85","dateCreated":"2020-04-14T19:10:20.4031232Z","apiProperties":{},"callRateLimit":{"rules":[{"key":"token","renewalPeriod":1,"count":100,"matchPatterns":[{"path":"sts/v1.0/*","method":"*"}]},{"key":"face","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"face/v1.0/*","method":"*"}]},{"key":"vision.recognizeText","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"vision/recognizeText","method":"POST"},{"path":"vision/textOperations/*","method":"GET"},{"path":"vision/read/*","method":"*"}]},{"key":"vision","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"vision/*","method":"*"}]},{"key":"contentModerator.list","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"contentmoderator/lists/*","method":"*"}]},{"key":"contentModerator.moderate","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/moderate/*","method":"*"}]},{"key":"contentModerator.review","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/review/*","method":"*"}]},{"key":"luis.endpoint","renewalPeriod":1,"count":50,"matchPatterns":[{"path":"luis/v2.0/apps/*","method":"*"}]},{"key":"textAnalytics","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"text/analytics/*","method":"*"}]},{"key":"bingVisualSearch","renewalPeriod":1,"count":30,"matchPatterns":[{"path":"bing/v7.0/images/visualsearch/*","method":"*"}]},{"key":"bingSearch","renewalPeriod":1,"count":250,"matchPatterns":[{"path":"bing/*","method":"*"}]},{"key":"bingCustomSearch","renewalPeriod":1,"count":150,"matchPatterns":[{"path":"bingcustomsearch/*","method":"*"}]},{"key":"speech.synthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/synthesize","method":"*"}]},{"key":"speech.customvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/customvoicesynthesize","method":"*"}]},{"key":"speech.neuralvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/neuralvoicesynthesize","method":"*"}]},{"key":"customvision.prediction","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/prediction/*","method":"*"}]},{"key":"customvision.training","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/training/*","method":"*"}]},{"key":"default","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"*","method":"*"}]}]},"provisioningState":"Succeeded"},"identity":{"principalId":"e8c4e541-e4ed-4d27-9164-fa239dd27890","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","type":"SystemAssigned"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount","name":"myAccount","type":"Microsoft.CognitiveServices/accounts","etag":"\"40000ae6-0000-0700-0000-5ed072ee0000\"","location":"West
+        US","sku":{"name":"S0"},"kind":"CognitiveServices","properties":{"endpoint":"https://westus.api.cognitive.microsoft.com/","internalId":"ee88655b4d5548cb896f7b7ac2d04c28","dateCreated":"2020-05-29T02:26:53.8342065Z","apiProperties":{},"callRateLimit":{"rules":[{"key":"token","renewalPeriod":1,"count":100,"matchPatterns":[{"path":"sts/v1.0/*","method":"*"}]},{"key":"face","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"face/v1.0/*","method":"*"}]},{"key":"vision.recognizeText","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"vision/recognizeText","method":"POST"},{"path":"vision/textOperations/*","method":"GET"},{"path":"vision/read/*","method":"*"}]},{"key":"vision","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"vision/*","method":"*"}]},{"key":"contentModerator.list","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"contentmoderator/lists/*","method":"*"}]},{"key":"contentModerator.moderate","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/moderate/*","method":"*"}]},{"key":"contentModerator.review","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/review/*","method":"*"}]},{"key":"luis.endpoint","renewalPeriod":1,"count":50,"matchPatterns":[{"path":"luis/v2.0/apps/*","method":"*"}]},{"key":"textAnalytics","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"text/analytics/*","method":"*"}]},{"key":"bingVisualSearch","renewalPeriod":1,"count":30,"matchPatterns":[{"path":"bing/v7.0/images/visualsearch/*","method":"*"}]},{"key":"bingSearch","renewalPeriod":1,"count":250,"matchPatterns":[{"path":"bing/*","method":"*"}]},{"key":"bingCustomSearch","renewalPeriod":1,"count":150,"matchPatterns":[{"path":"bingcustomsearch/*","method":"*"}]},{"key":"speech.synthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/synthesize","method":"*"}]},{"key":"speech.customvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/customvoicesynthesize","method":"*"}]},{"key":"speech.neuralvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/neuralvoicesynthesize","method":"*"}]},{"key":"speech.speechtotext","renewalPeriod":10,"count":100,"matchPatterns":[{"path":"speechtotext/*","method":"*"}]},{"key":"customvision.prediction","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/prediction/*","method":"*"}]},{"key":"customvision.training","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/training/*","method":"*"}]},{"key":"default","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"*","method":"*"}]}]},"publicNetworkAccess":"Enabled","provisioningState":"Succeeded"},"identity":{"principalId":"8da3e288-420b-4621-b907-d503aad2b9d0","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2993'
+      - '3143'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:20 GMT
+      - Fri, 29 May 2020 02:26:56 GMT
       etag:
-      - '"4400f53c-0000-0700-0000-5e960a9c0000"'
+      - '"40000ae6-0000-0700-0000-5ed072ee0000"'
       expires:
       - '-1'
       pragma:
@@ -64,8 +64,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:20 GMT
+      - Fri, 29 May 2020 02:26:56 GMT
       expires:
       - '-1'
       pragma:
@@ -113,8 +113,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -130,7 +130,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:21 GMT
+      - Fri, 29 May 2020 02:26:56 GMT
       expires:
       - '-1'
       pragma:
@@ -162,27 +162,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount?api-version=2017-04-18
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount","name":"myAccount","type":"Microsoft.CognitiveServices/accounts","etag":"\"4400f53c-0000-0700-0000-5e960a9c0000\"","location":"West
-        US","sku":{"name":"S0"},"kind":"CognitiveServices","properties":{"endpoint":"https://westus.api.cognitive.microsoft.com/","internalId":"c3683228902b4a068e3cc4426864ee85","dateCreated":"2020-04-14T19:10:20.4031232Z","apiProperties":{},"callRateLimit":{"rules":[{"key":"token","renewalPeriod":1,"count":100,"matchPatterns":[{"path":"sts/v1.0/*","method":"*"}]},{"key":"face","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"face/v1.0/*","method":"*"}]},{"key":"vision.recognizeText","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"vision/recognizeText","method":"POST"},{"path":"vision/textOperations/*","method":"GET"},{"path":"vision/read/*","method":"*"}]},{"key":"vision","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"vision/*","method":"*"}]},{"key":"contentModerator.list","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"contentmoderator/lists/*","method":"*"}]},{"key":"contentModerator.moderate","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/moderate/*","method":"*"}]},{"key":"contentModerator.review","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/review/*","method":"*"}]},{"key":"luis.endpoint","renewalPeriod":1,"count":50,"matchPatterns":[{"path":"luis/v2.0/apps/*","method":"*"}]},{"key":"textAnalytics","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"text/analytics/*","method":"*"}]},{"key":"bingVisualSearch","renewalPeriod":1,"count":30,"matchPatterns":[{"path":"bing/v7.0/images/visualsearch/*","method":"*"}]},{"key":"bingSearch","renewalPeriod":1,"count":250,"matchPatterns":[{"path":"bing/*","method":"*"}]},{"key":"bingCustomSearch","renewalPeriod":1,"count":150,"matchPatterns":[{"path":"bingcustomsearch/*","method":"*"}]},{"key":"speech.synthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/synthesize","method":"*"}]},{"key":"speech.customvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/customvoicesynthesize","method":"*"}]},{"key":"speech.neuralvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/neuralvoicesynthesize","method":"*"}]},{"key":"customvision.prediction","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/prediction/*","method":"*"}]},{"key":"customvision.training","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/training/*","method":"*"}]},{"key":"default","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"*","method":"*"}]}]},"provisioningState":"Succeeded"},"identity":{"principalId":"e8c4e541-e4ed-4d27-9164-fa239dd27890","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","type":"SystemAssigned"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount","name":"myAccount","type":"Microsoft.CognitiveServices/accounts","etag":"\"40000ae6-0000-0700-0000-5ed072ee0000\"","location":"West
+        US","sku":{"name":"S0"},"kind":"CognitiveServices","properties":{"endpoint":"https://westus.api.cognitive.microsoft.com/","internalId":"ee88655b4d5548cb896f7b7ac2d04c28","dateCreated":"2020-05-29T02:26:53.8342065Z","apiProperties":{},"callRateLimit":{"rules":[{"key":"token","renewalPeriod":1,"count":100,"matchPatterns":[{"path":"sts/v1.0/*","method":"*"}]},{"key":"face","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"face/v1.0/*","method":"*"}]},{"key":"vision.recognizeText","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"vision/recognizeText","method":"POST"},{"path":"vision/textOperations/*","method":"GET"},{"path":"vision/read/*","method":"*"}]},{"key":"vision","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"vision/*","method":"*"}]},{"key":"contentModerator.list","renewalPeriod":1,"count":15,"matchPatterns":[{"path":"contentmoderator/lists/*","method":"*"}]},{"key":"contentModerator.moderate","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/moderate/*","method":"*"}]},{"key":"contentModerator.review","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"contentmoderator/review/*","method":"*"}]},{"key":"luis.endpoint","renewalPeriod":1,"count":50,"matchPatterns":[{"path":"luis/v2.0/apps/*","method":"*"}]},{"key":"textAnalytics","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"text/analytics/*","method":"*"}]},{"key":"bingVisualSearch","renewalPeriod":1,"count":30,"matchPatterns":[{"path":"bing/v7.0/images/visualsearch/*","method":"*"}]},{"key":"bingSearch","renewalPeriod":1,"count":250,"matchPatterns":[{"path":"bing/*","method":"*"}]},{"key":"bingCustomSearch","renewalPeriod":1,"count":150,"matchPatterns":[{"path":"bingcustomsearch/*","method":"*"}]},{"key":"speech.synthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/synthesize","method":"*"}]},{"key":"speech.customvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/customvoicesynthesize","method":"*"}]},{"key":"speech.neuralvoicesynthesize","renewalPeriod":1,"count":200,"matchPatterns":[{"path":"speech/neuralvoicesynthesize","method":"*"}]},{"key":"speech.speechtotext","renewalPeriod":10,"count":100,"matchPatterns":[{"path":"speechtotext/*","method":"*"}]},{"key":"customvision.prediction","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/prediction/*","method":"*"}]},{"key":"customvision.training","renewalPeriod":1,"count":10,"matchPatterns":[{"path":"customvision/v3.0/training/*","method":"*"}]},{"key":"default","renewalPeriod":1,"count":20,"matchPatterns":[{"path":"*","method":"*"}]}]},"publicNetworkAccess":"Enabled","provisioningState":"Succeeded"},"identity":{"principalId":"8da3e288-420b-4621-b907-d503aad2b9d0","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2993'
+      - '3143'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:21 GMT
+      - Fri, 29 May 2020 02:26:57 GMT
       etag:
-      - '"4400f53c-0000-0700-0000-5e960a9c0000"'
+      - '"40000ae6-0000-0700-0000-5ed072ee0000"'
       expires:
       - '-1'
       pragma:
@@ -218,15 +218,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount/regenerateKey?api-version=2017-04-18
   response:
     body:
-      string: '{"key1":"bf56bc66d99448d3ac28d820ddbf6e9d","key2":"63bcf8609ebb40b48090f34d27a1118f"}'
+      string: '{"key1":"e789c8946734409fac70b8cb47c798d1","key2":"049826d0605e4f3ab90d3fb0f5c9fce0"}'
     headers:
       cache-control:
       - no-cache
@@ -235,7 +235,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:22 GMT
+      - Fri, 29 May 2020 02:26:57 GMT
       expires:
       - '-1'
       pragma:
@@ -271,15 +271,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cognitiveservices_test_cognitiveservices680f1670/providers/Microsoft.CognitiveServices/accounts/myAccount/listKeys?api-version=2017-04-18
   response:
     body:
-      string: '{"key1":"bf56bc66d99448d3ac28d820ddbf6e9d","key2":"63bcf8609ebb40b48090f34d27a1118f"}'
+      string: '{"key1":"e789c8946734409fac70b8cb47c798d1","key2":"049826d0605e4f3ab90d3fb0f5c9fce0"}'
     headers:
       cache-control:
       - no-cache
@@ -288,7 +288,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:24 GMT
+      - Fri, 29 May 2020 02:26:57 GMT
       expires:
       - '-1'
       pragma:
@@ -326,8 +326,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -343,7 +343,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 19:10:25 GMT
+      - Fri, 29 May 2020 02:26:59 GMT
       expires:
       - '-1'
       pragma:
@@ -379,8 +379,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cognitiveservices/6.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-cognitiveservices/6.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -394,7 +394,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 14 Apr 2020 19:10:27 GMT
+      - Fri, 29 May 2020 02:27:02 GMT
       expires:
       - '-1'
       pragma:
