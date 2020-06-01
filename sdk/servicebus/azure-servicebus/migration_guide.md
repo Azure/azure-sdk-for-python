@@ -64,6 +64,11 @@ semantics with the sender or receiver lifetime.
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
 | `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
 
+### Working with messages
+| In v0.50 | Equivalent in v7 | Note |
+|---|---|---|
+| `message.locked_until < datetime.now()`| `message.locked_until_utc < datetime.utcnow()`| All datetimes are now UTC and named as such|
+
 ## Migration samples
 
 * [Receiving messages](#migrating-code-from-queueclient-and-receiver-to-servicebusreceiver-for-receiving-messages)
