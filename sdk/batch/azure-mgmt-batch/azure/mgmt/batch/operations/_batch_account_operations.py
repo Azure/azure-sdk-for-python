@@ -27,7 +27,7 @@ class BatchAccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2020-03-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class BatchAccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
@@ -162,7 +162,7 @@ class BatchAccountOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of an existing Batch account.
 
         :param resource_group_name: The name of the resource group that
@@ -170,11 +170,9 @@ class BatchAccountOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param tags: The user-specified tags associated with the account.
-        :type tags: dict[str, str]
-        :param auto_storage: The properties related to the auto-storage
-         account.
-        :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+        :param parameters: Additional parameters for account update.
+        :type parameters:
+         ~azure.mgmt.batch.models.BatchAccountUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -185,8 +183,6 @@ class BatchAccountOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
