@@ -3,10 +3,10 @@ from urllib.parse import urlparse, quote
 import six
 from azure.azure_table._deserialize import deserialize_table_creation
 from azure.azure_table._generated import AzureTable
-from azure.azure_table._generated.models import TableProperties, AccessPolicy
+from azure.azure_table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
 from azure.azure_table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from azure.azure_table._shared.request_handlers import add_metadata_headers
+from azure.azure_table._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.azure_table._shared.response_handlers import process_storage_error
 from azure.azure_table._version import VERSION
 from azure.core.exceptions import HttpResponseError
@@ -153,3 +153,29 @@ class TableClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+
+    @distributed_trace
+    def set_table_access_policy(self, table, signed_identifiers, **kwargs):
+        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+        timeout = kwargs.pop('timeout', None)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        if len(signed_identifiers) > 15:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 15 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers  # type: ignore
+        try:
+            self._client.table.set_access_policy(
+                table,
+                timeout=timeout,
+                request_id_parameter=request_id_parameter,
+                table_acl=signed_identifiers or None,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
