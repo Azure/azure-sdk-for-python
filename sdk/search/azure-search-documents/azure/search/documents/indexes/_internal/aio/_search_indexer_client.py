@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexerClient(HeadersMixin):
+class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     """
@@ -145,6 +145,19 @@ class SearchIndexerClient(HeadersMixin):
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexers
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.indexers.list(**kwargs)
+        return result.indexers
+
+    @distributed_trace_async
+    async def get_indexer_names(self, **kwargs):
+        # type: (**Any) -> Sequence[str]
+        """Lists all indexer names available for a search service.
+
+        :return: List of all the SearchIndexer names.
+        :rtype: `list[str]`
+
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexers.list(**kwargs)

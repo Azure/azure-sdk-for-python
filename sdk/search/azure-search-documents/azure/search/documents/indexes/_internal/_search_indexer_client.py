@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexerClient(HeadersMixin):
+class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     """
