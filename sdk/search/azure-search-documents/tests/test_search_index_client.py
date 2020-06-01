@@ -26,9 +26,7 @@ from azure.search.documents import (
     SearchClient,
 )
 from azure.search.documents.models import (
-    AutocompleteQuery,
     SearchQuery,
-    SuggestQuery,
     odata,
 )
 
@@ -178,7 +176,7 @@ class TestSearchClient(object):
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.suggest(
-            SuggestQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
@@ -202,7 +200,7 @@ class TestSearchClient(object):
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(
-            AutocompleteQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
