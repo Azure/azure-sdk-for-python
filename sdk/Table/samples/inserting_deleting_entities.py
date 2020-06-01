@@ -29,10 +29,10 @@ class InsertDeleteEntity(object):
         try:
             inserted_entity = table_client.insert_entity(table_name=self.table_name)
             print(inserted_entity)
-        except HttpResponseError and ResourceExistsError:
-            # show these separately
-            raise ResourceExistsError
+        except HttpResponseError:
             print(HttpResponseError.response)
+        except ResourceExistsError:
+            raise ResourceExistsError
 
     def delete_entity(self):
         """Deletes the specified entity in a table.
@@ -59,5 +59,7 @@ class InsertDeleteEntity(object):
         try:
             deleted_entity = table_client.delete_entity(table_name=self.table_name)
             print(deleted_entity)
-        except HttpResponseError and ResourceNotFoundError:
+        except HttpResponseError:
             print(HttpResponseError.response)
+        except ResourceNotFoundError:
+            raise ResourceNotFoundError

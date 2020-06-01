@@ -19,24 +19,24 @@ class CreateDeleteTable(object):
             table_created = table_client.create_table(table_name=self.table_name)
             print(table_created.table_name)
             return table_created.table_name
-        except HttpResponseError and ResourceExistsError:
-            # don't raise both at the same time
-            raise ResourceExistsError
+        except HttpResponseError:
             print(HttpResponseError.response)
+        except ResourceExistsError:
+            raise ResourceExistsError
 
     def delete_table(self):
         from azure.azure_table import TableServiceClient
         from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
 
-        #check table is there to delete
         try:
             table_deleted = table_client.delete_table(table_name=self.table_name)
             print(table_deleted)
             return table_deleted
-        except HttpResponseError and ResourceNotFoundError:
+        except HttpResponseError:
+            print(HttpResponseError.response)
+        except ResourceNotFoundError:
             raise ResourceNotFoundError
-            print (HttpResponseError.response)
 
 
 if __name__ == '__main__':

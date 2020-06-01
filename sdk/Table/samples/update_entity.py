@@ -1,5 +1,6 @@
 class UpdateEntity(object):
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
+    connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey" \
+                        "=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net "
     table_name = "NAME"
     account_url = "https://example.table.core.windows.net/"
     account_name = "example"
@@ -32,6 +33,6 @@ class UpdateEntity(object):
         try:
             updated_entity = table_client.update_entity(table_name=self.table_name, partition_key=self.partition_key
                                                         , row_key=self.row_key)
+            return updated_entity
         except HttpResponseError as e:
             print(e.response)
-        return updated_entity
