@@ -98,7 +98,7 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_queue(self, table_name, **kwargs):
         # type: (Optional[Any]) -> None
-        table_properties = TableProperties(table_name)
+        table_properties = TableProperties(table_name=table_name)
         request_id_parameter = kwargs.pop('request_id_parameter', None)
         response_preference = kwargs.pop('response_preference', None)
         query_option = kwargs.pop('query_options', None)

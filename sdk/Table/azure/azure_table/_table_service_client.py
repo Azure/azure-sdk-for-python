@@ -1,13 +1,18 @@
+import functools
 from urllib.parse import urlparse
 
 from azure.azure_table._generated import AzureTable
-from azure.azure_table._generated.models import TableProperties, TableServiceStats
-from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.azure_table._generated.models import TableProperties, TableServiceStats, TableServiceProperties
+from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
+    TransportWrapper
 from azure.azure_table._shared.models import LocationMode
 from azure.azure_table._shared.response_handlers import process_storage_error
 from azure.azure_table._version import VERSION
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.azure_table._table_client import TableClient
+from msrest.pipeline import Pipeline
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -68,12 +73,14 @@ class TableServiceClient(StorageAccountHostsMixin):
                 :caption: Creating the TableServiceClient with a connection string.
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
+            conn_str, credential, 'table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
+    @distributed_trace
     def get_service_stats(self, **kwargs):
+        # TableServiceStats
         # type: (Optional[Any]) -> Dict[str, Any]
         timeout = kwargs.pop('timeout', None)
         try:
@@ -83,6 +90,38 @@ class TableServiceClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace
+    def get_service_properties(self, **kwargs):
+        # TableServiceProperties
+        # type: (Optional[Any]) -> Dict[str, Any]
+        timeout = kwargs.pop('timeout', None)
+        try:
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
+            return TableServiceProperties(service_props)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def set_service_properties(  # type: ignore
+            self, analytics_logging=None,  # type: Optional[QueueAnalyticsLogging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
+            cors=None,  # type: Optional[List[CorsRule]]
+            **kwargs
+    ):
+        # type: (...) -> None
+
+        timeout = kwargs.pop('timeout', None)
+        props = TableServiceProperties(
+            logging=analytics_logging,
+            hour_metrics=hour_metrics,
+            minute_metrics=minute_metrics,
+            cors=cors
+        )
+        try:
+            return self._client.service.set_properties(props, timeout=timeout, **kwargs)  # type: ignore
+        except HttpResponseError as error:
+            process_storage_error(error)
 
     @distributed_trace
     def create_table(
@@ -92,6 +131,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         table_properties = TableProperties(table_name=table_name)
         response = self._client.table.create(table_properties)
         return response
+        # table = self.get_table_client(table=table_name)
+        # table.create_queue(table_name)
 
     @distributed_trace
     def delete_table(
@@ -101,13 +142,16 @@ class TableServiceClient(StorageAccountHostsMixin):
     ):
         response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter)
         return response
+        # table = self.get_table_client(table=table_name)
+        # table.delete_queue(table_name)
 
     @distributed_trace
     def query_table(
             self,
             request_id_parameter=None,
             next_table_name=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
         # somehow use self._query_string to query things
         response = self._client.table.query(next_table_name=next_table_name)
@@ -213,3 +257,22 @@ class TableServiceClient(StorageAccountHostsMixin):
     ):
         response = self.batch(*reqs)
         return response
+
+    def get_table_client(self, table, **kwargs):
+        # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
+
+        try:
+            table_name = table.name
+        except AttributeError:
+            table_name = table
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
+        return TableClient(
+            self.url, table_name=table_name, credential=self.credential,
+            key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
+            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
