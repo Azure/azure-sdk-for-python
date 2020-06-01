@@ -9,19 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class OperationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.mixedreality.models.Operation>` object
-    """
+class NameAvailability(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
-    }
+    true = "true"
+    false = "false"
 
-    def __init__(self, *args, **kwargs):
 
-        super(OperationPaged, self).__init__(*args, **kwargs)
+class NameUnavailableReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class SkuTier(str, Enum):
+
+    free = "Free"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
