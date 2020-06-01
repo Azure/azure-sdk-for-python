@@ -6,6 +6,7 @@
 from collections import namedtuple
 import functools
 import os
+import datetime
 from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -28,6 +29,7 @@ FakeResource = namedtuple(
 class ResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
                  use_cache=False,
+                 set_delete_after_tag=False,
                  random_name_length=75,
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
@@ -50,13 +52,18 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
         self.set_cache(use_cache, parameter_name)
+        self.set_delete_after_tag = set_delete_after_tag
 
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
+            parameters = {'location': self.location}
+            if self.set_delete_after_tag:
+                expiry = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+                parameters['tags'] = {'DeleteAfter': expiry.isoformat()}
             try:
                 self.resource = self.client.resource_groups.create_or_update(
-                    name, {'location': self.location}
+                    name, parameters
                 )
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
@@ -91,5 +98,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except CloudError:
                 pass
 
-RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
-CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)
+RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True, set_delete_after_tag=True)
+CachedResourceGroupPreparer = partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True, set_delete_after_tag=True)
