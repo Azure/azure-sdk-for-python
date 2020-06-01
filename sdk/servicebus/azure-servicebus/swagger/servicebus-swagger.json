@@ -212,7 +212,7 @@
         "Unknown"
       ]
     },
-    "QueueMetrics":{
+    "QueueRuntimeInfo":{
       "description": "Service Bus queue metrics.",
       "type": "object",
       "xml": {
