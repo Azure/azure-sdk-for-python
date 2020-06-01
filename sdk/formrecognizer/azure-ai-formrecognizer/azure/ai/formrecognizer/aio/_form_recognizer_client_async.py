@@ -25,10 +25,10 @@ from .._generated.models import AnalyzeOperationResult
 from .._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling
+from .._models import RecognizedReceipt, FormPage, RecognizedForm
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import RecognizedReceipt, FormPage, RecognizedForm
 
 
 class FormRecognizerClient(object):
