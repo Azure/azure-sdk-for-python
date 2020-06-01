@@ -8,6 +8,22 @@
 - Split searchindex.json and searchservice.json models and operations into separate namespaces #11508
 - Renamed `edm` to `SearchFieldDataType`    #11511
 - Now Search Synonym Map creation/update returns a model    #11514
+- Renaming  #11565
+
+  SearchIndexerDataSource -> SearchIndexerDataSourceConnection
+  SearchField.SynonymMaps -> SearchField.SynonymMapNames
+  SearchField.Analyzer -> SearchField.AnalyzerName
+  SearchField.IndexAnalyzer -> SearchField.IndexAnalyzerName
+  SearchField.SearchAnalyzer -> SearchField.SearchAnalyzerName
+  SearchableField.SynonymMaps -> SearchableField.SynonymMapNames
+  SearchableField.Analyzer -> SearchableField.AnalyzerName
+  SearchableField.IndexAnalyzer -> SearchableField.IndexAnalyzerName
+  SearchableField.SearchAnalyzer -> SearchableField.SearchAnalyzerName
+  Similarity -> SimilarityAlgorithm
+  Suggester -> SearchSuggester
+  PathHierarchyTokenizerV2 -> PathHierarchyTokenizer
+- Renamed DataSource methods to DataSourceConnection    #11693
+  
 
 ## 1.0.0b3 (2020-05-04)
 

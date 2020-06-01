@@ -29,7 +29,8 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def autocomplete_query():
     # [START autocomplete_query]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import AutocompleteQuery, SearchClient
+    from azure.search.documents import SearchClient
+    from azure.search.documents.models import AutocompleteQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 

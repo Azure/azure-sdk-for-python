@@ -58,6 +58,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         # type: (*str, **Any) -> dict
 
         # start an HTTP server on localhost to receive the redirect
+        redirect_uri = None
         for port in range(8400, 9000):
             try:
                 server = self._server_class(port, timeout=self._timeout)

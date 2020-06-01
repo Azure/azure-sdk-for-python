@@ -25,7 +25,6 @@ class ProvisioningErrorCode(str, Enum):
 
     bad_source_type = "BadSourceType"
     bad_pir_source = "BadPIRSource"
-    bad_iso_source = "BadISOSource"
     bad_managed_image_source = "BadManagedImageSource"
     bad_shared_image_version_source = "BadSharedImageVersionSource"
     bad_customizer_type = "BadCustomizerType"
@@ -40,9 +39,11 @@ class ProvisioningErrorCode(str, Enum):
 class RunState(str, Enum):
 
     running = "Running"
+    canceling = "Canceling"
     succeeded = "Succeeded"
     partially_succeeded = "PartiallySucceeded"
     failed = "Failed"
+    canceled = "Canceled"
 
 
 class RunSubState(str, Enum):
@@ -57,3 +58,9 @@ class ResourceIdentityType(str, Enum):
 
     user_assigned = "UserAssigned"
     none = "None"
+
+
+class SharedImageStorageAccountType(str, Enum):
+
+    standard_lrs = "Standard_LRS"
+    standard_zrs = "Standard_ZRS"

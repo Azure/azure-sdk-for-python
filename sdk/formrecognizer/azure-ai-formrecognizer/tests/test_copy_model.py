@@ -44,7 +44,7 @@ class TestCopyModel(FormRecognizerTest):
 
         copied_model = client.get_custom_model(copy.model_id)
 
-        self.assertEqual(copy.status, "succeeded")
+        self.assertEqual(copy.status, "ready")
         self.assertIsNotNone(copy.requested_on)
         self.assertIsNotNone(copy.completed_on)
         self.assertEqual(target["modelId"], copy.model_id)

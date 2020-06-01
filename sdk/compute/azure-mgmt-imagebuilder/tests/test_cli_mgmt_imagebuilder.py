@@ -26,6 +26,9 @@ IMAGE_TEMPLATE_NAME = "MyImageTemplate"
 IMAGE_NAME = 'MyImage'
 RUN_OUTPUT_NAME = 'image_it_pir_1'
 
+# make sure to create user identity with this doc before running live test: https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#step-2--permissions-create-user-idenity-and-role-for-aib
+IDENTITY_NAME = 'aibIdentity1588309486'
+
 class MgmtImageBuilderClientTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -37,59 +40,16 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_imagebuilder(self, resource_group):
 
-        # Create an Image Template.[put]
-        BODY = {
-          "location": "westus",
-          "tags": {
-            "imagetemplate_tag1": "IT_T1",
-            "imagetemplate_tag2": "IT_T2"
-          },
-          "properties": {
-            "source": {
-              # "type": "ManagedImage",
-              # "image_id": "/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/zimsrg/providers/Microsoft.Compute/images/zimsvm-image-20191118160236" #  "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + "zimsrg" + "/providers/Microsoft.Compute/images/" + "zimvm-image" + ""
-              "type": "PlatformImage",
-              "publisher": "Canonical",
-              "offer": "UbuntuServer",
-              "sku": "16.04.0-LTS",
-              "version": "latest"
-            },
-            "customize": [
-              {
-                "type": "Shell",
-                "name": "Shell Customizer Example",
-                "script_uri": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh"
-              }
-            ],
-            "distribute": [
-              {
-                "type": "ManagedImage",
-                "location": "eastus",
-                "run_output_name": "image_it_pir_1",
-                "image_id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + "",
-                "artifact_tags": {
-                  "tag_name": "value"
-                }
-              }
-            ],
-            "vm_profile": {
-              "vm_size": "Standard_D2s_v3"
-            }
-          }
-        }
-        result = self.mgmt_client.virtual_machine_image_templates.create_or_update(BODY, resource_group.name, IMAGE_TEMPLATE_NAME)
-        result = result.result()
-
         # Create an Image Template with a user assigned identity configured[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "tags": {
             "imagetemplate_tag1": "IT_T1",
             "imagetemplate_tag2": "IT_T2"
           },
           "identity": {
             "type": "UserAssigned",
-            "user_assigned_identities": {}
+            "user_assigned_identities": { "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{}".format(self.settings.SUBSCRIPTION_ID, resource_group.name, IDENTITY_NAME): {}}
           },
           "properties": {
             "source": {
@@ -119,8 +79,8 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
             }
           }
         }
-        #result = self.mgmt_client.virtual_machine_image_templates.create_or_update(BODY, resource_group.name, IMAGE_TEMPLATE_NAME)
-        #result = result.result()
+        result = self.mgmt_client.virtual_machine_image_templates.create_or_update(BODY, resource_group.name, IMAGE_TEMPLATE_NAME)
+        result = result.result()
 
         # Retrieve an Image Template.[get]
         result = self.mgmt_client.virtual_machine_image_templates.get(resource_group.name, IMAGE_TEMPLATE_NAME)

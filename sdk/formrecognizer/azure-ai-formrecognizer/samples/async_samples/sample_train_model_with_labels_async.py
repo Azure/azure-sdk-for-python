@@ -57,7 +57,7 @@ class TrainModelWithLabelsSampleAsync(object):
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on
             # The labels are based on the ones you gave the training document.
-            for submodel in model.models:
+            for submodel in model.submodels:
                 print("...The submodel with form type {} has accuracy '{}'".format(submodel.form_type, submodel.accuracy))
                 for name, field in submodel.fields.items():
                     print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(

@@ -43,7 +43,7 @@ class TestTraining(FormRecognizerTest):
             self.assertIsNotNone(doc.page_count)
             self.assertEqual(doc.status, "succeeded")
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             for key, field in sub.fields.items():
                 self.assertIsNotNone(field.label)
@@ -66,7 +66,7 @@ class TestTraining(FormRecognizerTest):
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             for key, field in sub.fields.items():
                 self.assertIsNotNone(field.label)
@@ -127,7 +127,7 @@ class TestTraining(FormRecognizerTest):
             self.assertIsNotNone(doc.page_count)
             self.assertEqual(doc.status, "succeeded")
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             self.assertIsNotNone(sub.accuracy)
             for key, field in sub.fields.items():
@@ -151,7 +151,7 @@ class TestTraining(FormRecognizerTest):
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             self.assertIsNotNone(sub.accuracy)
             for key, field in sub.fields.items():

@@ -179,7 +179,8 @@ class ImageTemplate(Resource):
     :type build_timeout_in_minutes: int
     :param vm_profile: Describes how virtual machine is set up to build images
     :type vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
-    :param identity: The identity of the image template, if configured.
+    :param identity: Required. The identity of the image template, if
+     configured.
     :type identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
     """
 
@@ -194,6 +195,7 @@ class ImageTemplate(Resource):
         'provisioning_error': {'readonly': True},
         'last_run_status': {'readonly': True},
         'build_timeout_in_minutes': {'maximum': 960, 'minimum': 0},
+        'identity': {'required': True},
     }
 
     _attribute_map = {
@@ -231,8 +233,8 @@ class ImageTemplateCustomizer(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageTemplateShellCustomizer,
-    ImageTemplateRestartCustomizer, ImageTemplatePowerShellCustomizer,
-    ImageTemplateFileCustomizer
+    ImageTemplateRestartCustomizer, ImageTemplateWindowsUpdateCustomizer,
+    ImageTemplatePowerShellCustomizer, ImageTemplateFileCustomizer
 
     All required parameters must be populated in order to send to Azure.
 
@@ -253,7 +255,7 @@ class ImageTemplateCustomizer(Model):
     }
 
     _subtype_map = {
-        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer', 'File': 'ImageTemplateFileCustomizer'}
+        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'WindowsUpdate': 'ImageTemplateWindowsUpdateCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer', 'File': 'ImageTemplateFileCustomizer'}
     }
 
     def __init__(self, **kwargs):
@@ -349,9 +351,8 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
 class ImageTemplateIdentity(Model):
     """Identity for the image template.
 
-    :param type: The type of identity used for the image template. The type
-     'None' will remove any identities from the image template. Possible values
-     include: 'UserAssigned', 'None'
+    :param type: The type of identity used for the image template. Possible
+     values include: 'UserAssigned'
     :type type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the image template. The user identity dictionary key references will
@@ -400,72 +401,6 @@ class ImageTemplateIdentityUserAssignedIdentitiesValue(Model):
         self.client_id = None
 
 
-class ImageTemplateSource(Model):
-    """Describes a virtual machine image source for building, customizing and
-    distributing.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageTemplateIsoSource, ImageTemplatePlatformImageSource,
-    ImageTemplateManagedImageSource, ImageTemplateSharedImageVersionSource
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'ISO': 'ImageTemplateIsoSource', 'PlatformImage': 'ImageTemplatePlatformImageSource', 'ManagedImage': 'ImageTemplateManagedImageSource', 'SharedImageVersion': 'ImageTemplateSharedImageVersionSource'}
-    }
-
-    def __init__(self, **kwargs):
-        super(ImageTemplateSource, self).__init__(**kwargs)
-        self.type = None
-
-
-class ImageTemplateIsoSource(ImageTemplateSource):
-    """Describes an image source that is an installation ISO. Currently only
-    supports Red Hat Enterprise Linux 7.2-7.5 ISO's.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param source_uri: Required. URI to get the ISO image. This URI has to be
-     accessible to the resource provider at the time of the image template
-     creation.
-    :type source_uri: str
-    :param sha256_checksum: Required. SHA256 Checksum of the ISO image.
-    :type sha256_checksum: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'source_uri': {'required': True},
-        'sha256_checksum': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'source_uri': {'key': 'sourceUri', 'type': 'str'},
-        'sha256_checksum': {'key': 'sha256Checksum', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImageTemplateIsoSource, self).__init__(**kwargs)
-        self.source_uri = kwargs.get('source_uri', None)
-        self.sha256_checksum = kwargs.get('sha256_checksum', None)
-        self.type = 'ISO'
-
-
 class ImageTemplateLastRunStatus(Model):
     """Describes the latest status of running an image template.
 
@@ -474,7 +409,8 @@ class ImageTemplateLastRunStatus(Model):
     :param end_time: End time of the last run (UTC)
     :type end_time: datetime
     :param run_state: State of the last run. Possible values include:
-     'Running', 'Succeeded', 'PartiallySucceeded', 'Failed'
+     'Running', 'Canceling', 'Succeeded', 'PartiallySucceeded', 'Failed',
+     'Canceled'
     :type run_state: str or ~azure.mgmt.imagebuilder.models.RunState
     :param run_sub_state: Sub-state of the last run. Possible values include:
      'Queued', 'Building', 'Customizing', 'Distributing'
@@ -542,6 +478,37 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
         self.type = 'ManagedImage'
 
 
+class ImageTemplateSource(Model):
+    """Describes a virtual machine image source for building, customizing and
+    distributing.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ImageTemplatePlatformImageSource,
+    ImageTemplateManagedImageSource, ImageTemplateSharedImageVersionSource
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'PlatformImage': 'ImageTemplatePlatformImageSource', 'ManagedImage': 'ImageTemplateManagedImageSource', 'SharedImageVersion': 'ImageTemplateSharedImageVersionSource'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ImageTemplateSource, self).__init__(**kwargs)
+        self.type = None
+
+
 class ImageTemplateManagedImageSource(ImageTemplateSource):
     """Describes an image source that is a managed image in customer subscription.
 
@@ -590,6 +557,9 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
     :param version: Image version from the [Azure Gallery
      Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
     :type version: str
+    :param plan_info: Optional configuration of purchase plan for platform
+     image.
+    :type plan_info: ~azure.mgmt.imagebuilder.models.PlatformImagePurchasePlan
     """
 
     _validation = {
@@ -602,6 +572,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
+        'plan_info': {'key': 'planInfo', 'type': 'PlatformImagePurchasePlan'},
     }
 
     def __init__(self, **kwargs):
@@ -610,6 +581,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         self.offer = kwargs.get('offer', None)
         self.sku = kwargs.get('sku', None)
         self.version = kwargs.get('version', None)
+        self.plan_info = kwargs.get('plan_info', None)
         self.type = 'PlatformImage'
 
 
@@ -726,6 +698,14 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :param replication_regions: Required. A list of regions that the image
      will be replicated to
     :type replication_regions: list[str]
+    :param exclude_from_latest: Flag that indicates whether created image
+     version should be excluded from latest. Omit to use the default (false).
+    :type exclude_from_latest: bool
+    :param storage_account_type: Storage account type to be used to store the
+     shared image. Omit to use the default (Standard_LRS). Possible values
+     include: 'Standard_LRS', 'Standard_ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.imagebuilder.models.SharedImageStorageAccountType
     """
 
     _validation = {
@@ -741,12 +721,16 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         'type': {'key': 'type', 'type': 'str'},
         'gallery_image_id': {'key': 'galleryImageId', 'type': 'str'},
         'replication_regions': {'key': 'replicationRegions', 'type': '[str]'},
+        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ImageTemplateSharedImageDistributor, self).__init__(**kwargs)
         self.gallery_image_id = kwargs.get('gallery_image_id', None)
         self.replication_regions = kwargs.get('replication_regions', None)
+        self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
         self.type = 'SharedImage'
 
 
@@ -879,15 +863,75 @@ class ImageTemplateVmProfile(Model):
      capture images. Omit or specify empty string to use the default
      (Standard_D1_v2).
     :type vm_size: str
+    :param os_disk_size_gb: Size of the OS disk in GB. Omit or specify 0 to
+     use Azure's default OS disk size.
+    :type os_disk_size_gb: int
+    :param vnet_config: Optional configuration of the virtual network to use
+     to deploy the build virtual machine in. Omit if no specific virtual
+     network needs to be used.
+    :type vnet_config: ~azure.mgmt.imagebuilder.models.VirtualNetworkConfig
     """
+
+    _validation = {
+        'os_disk_size_gb': {'minimum': 0},
+    }
 
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
+        'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
+        'vnet_config': {'key': 'vnetConfig', 'type': 'VirtualNetworkConfig'},
     }
 
     def __init__(self, **kwargs):
         super(ImageTemplateVmProfile, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
+        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
+        self.vnet_config = kwargs.get('vnet_config', None)
+
+
+class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
+    """Installs Windows Updates. Corresponds to Packer Windows Update Provisioner
+    (https://github.com/rgl/packer-provisioner-windows-update).
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Friendly Name to provide context on what this customization
+     step does
+    :type name: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param search_criteria: Criteria to search updates. Omit or specify empty
+     string to use the default (search all). Refer to above link for examples
+     and detailed description of this field.
+    :type search_criteria: str
+    :param filters: Array of filters to select updates to apply. Omit or
+     specify empty array to use the default (no filter). Refer to above link
+     for examples and detailed description of this field.
+    :type filters: list[str]
+    :param update_limit: Maximum number of updates to apply at a time. Omit or
+     specify 0 to use the default (1000)
+    :type update_limit: int
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'update_limit': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'search_criteria': {'key': 'searchCriteria', 'type': 'str'},
+        'filters': {'key': 'filters', 'type': '[str]'},
+        'update_limit': {'key': 'updateLimit', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImageTemplateWindowsUpdateCustomizer, self).__init__(**kwargs)
+        self.search_criteria = kwargs.get('search_criteria', None)
+        self.filters = kwargs.get('filters', None)
+        self.update_limit = kwargs.get('update_limit', None)
+        self.type = 'WindowsUpdate'
 
 
 class InnerError(Model):
@@ -922,6 +966,9 @@ class Operation(Model):
     :type origin: str
     :param properties: Properties of the operation.
     :type properties: object
+    :param is_data_action: The flag that indicates whether the operation
+     applies to data plane.
+    :type is_data_action: bool
     """
 
     _attribute_map = {
@@ -929,6 +976,7 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -937,6 +985,7 @@ class Operation(Model):
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
         self.properties = kwargs.get('properties', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
 
 
 class OperationDisplay(Model):
@@ -968,11 +1017,43 @@ class OperationDisplay(Model):
         self.description = kwargs.get('description', None)
 
 
+class PlatformImagePurchasePlan(Model):
+    """Purchase plan configuration for platform image.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param plan_name: Required. Name of the purchase plan.
+    :type plan_name: str
+    :param plan_product: Required. Product of the purchase plan.
+    :type plan_product: str
+    :param plan_publisher: Required. Publisher of the purchase plan.
+    :type plan_publisher: str
+    """
+
+    _validation = {
+        'plan_name': {'required': True},
+        'plan_product': {'required': True},
+        'plan_publisher': {'required': True},
+    }
+
+    _attribute_map = {
+        'plan_name': {'key': 'planName', 'type': 'str'},
+        'plan_product': {'key': 'planProduct', 'type': 'str'},
+        'plan_publisher': {'key': 'planPublisher', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PlatformImagePurchasePlan, self).__init__(**kwargs)
+        self.plan_name = kwargs.get('plan_name', None)
+        self.plan_product = kwargs.get('plan_product', None)
+        self.plan_publisher = kwargs.get('plan_publisher', None)
+
+
 class ProvisioningError(Model):
     """Describes the error happened when create or update an image template.
 
     :param provisioning_error_code: Error code of the provisioning failure.
-     Possible values include: 'BadSourceType', 'BadPIRSource', 'BadISOSource',
+     Possible values include: 'BadSourceType', 'BadPIRSource',
      'BadManagedImageSource', 'BadSharedImageVersionSource',
      'BadCustomizerType', 'UnsupportedCustomizerType', 'NoCustomizerScript',
      'BadDistributeType', 'BadSharedImageDistribute', 'ServerError', 'Other'
@@ -1073,3 +1154,19 @@ class RunOutput(SubResource):
         self.artifact_id = kwargs.get('artifact_id', None)
         self.artifact_uri = kwargs.get('artifact_uri', None)
         self.provisioning_state = None
+
+
+class VirtualNetworkConfig(Model):
+    """Virtual Network configuration.
+
+    :param subnet_id: Resource id of a pre-existing subnet.
+    :type subnet_id: str
+    """
+
+    _attribute_map = {
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VirtualNetworkConfig, self).__init__(**kwargs)
+        self.subnet_id = kwargs.get('subnet_id', None)

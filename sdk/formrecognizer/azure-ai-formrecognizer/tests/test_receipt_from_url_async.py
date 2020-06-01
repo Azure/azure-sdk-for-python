@@ -122,8 +122,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
 
         # check page range
-        self.assertEqual(receipt.page_range.first_page, document_results[0].page_range[0])
-        self.assertEqual(receipt.page_range.last_page, document_results[0].page_range[1])
+        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
+        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
 
         # check receipt type
         self.assertEqual(receipt.receipt_type.confidence, actual["ReceiptType"].confidence)
@@ -184,8 +184,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
 
         # check page range
-        self.assertEqual(receipt.page_range.first_page, document_results[0].page_range[0])
-        self.assertEqual(receipt.page_range.last_page, document_results[0].page_range[1])
+        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
+        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
 
         # check receipt type
         self.assertEqual(receipt.receipt_type.confidence, actual["ReceiptType"].confidence)
@@ -214,10 +214,10 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["receipt_type", "receipt_items", "page_range", "pages", "fields", "form_type", "receipt_locale"]:
                 field = getattr(receipt, field)
-                self.assertTextContentHasValues(field.value_data.text_content, receipt.page_range.first_page)
+                self.assertTextContentHasValues(field.value_data.text_content, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page)
+            self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -239,12 +239,12 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.total.value, 14.5)
         self.assertEqual(receipt.transaction_date.value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.transaction_time.value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page, 1)
-        self.assertEqual(receipt.page_range.last_page, 1)
+        self.assertEqual(receipt.page_range.first_page_number, 1)
+        self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
         self.assertIsNotNone(receipt.receipt_type.confidence)
         self.assertEqual(receipt.receipt_type.type, 'Itemized')
-        self.assertReceiptItemsHasValues(receipt.receipt_items, receipt.page_range.first_page, False)
+        self.assertReceiptItemsHasValues(receipt.receipt_items, receipt.page_range.first_page_number, False)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -262,8 +262,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.total.value, 1203.39)
         self.assertEqual(receipt.transaction_date.value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.transaction_time.value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page, 1)
-        self.assertEqual(receipt.page_range.last_page, 1)
+        self.assertEqual(receipt.page_range.first_page_number, 1)
+        self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
         self.assertIsNotNone(receipt.receipt_type.confidence)
         self.assertEqual(receipt.receipt_type.type, 'Itemized')
@@ -282,8 +282,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.merchant_phone_number.value, '+15555555555')
         self.assertEqual(receipt.subtotal.value, 300.0)
         self.assertEqual(receipt.total.value, 100.0)
-        self.assertEqual(receipt.page_range.first_page, 1)
-        self.assertEqual(receipt.page_range.last_page, 1)
+        self.assertEqual(receipt.page_range.first_page_number, 1)
+        self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
         self.assertIsNotNone(receipt.receipt_type.confidence)
         self.assertEqual(receipt.receipt_type.type, 'Itemized')
@@ -293,8 +293,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.merchant_phone_number.value, '+15555555555')
         self.assertEqual(receipt.subtotal.value, 3000.0)
         self.assertEqual(receipt.total.value, 1000.0)
-        self.assertEqual(receipt.page_range.first_page, 3)
-        self.assertEqual(receipt.page_range.last_page, 3)
+        self.assertEqual(receipt.page_range.first_page_number, 3)
+        self.assertEqual(receipt.page_range.last_page_number, 3)
         self.assertFormPagesHasValues(receipt.pages)
         self.assertIsNotNone(receipt.receipt_type.confidence)
         self.assertEqual(receipt.receipt_type.type, 'Itemized')
@@ -351,8 +351,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.fields.get("TransactionTime"), read_results)
 
             # check page range
-            self.assertEqual(receipt.page_range.first_page, actual.page_range[0])
-            self.assertEqual(receipt.page_range.last_page, actual.page_range[1])
+            self.assertEqual(receipt.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(receipt.page_range.last_page_number, actual.page_range[1])
 
             # check receipt type
             self.assertEqual(receipt.receipt_type.confidence, actual.fields["ReceiptType"].confidence)

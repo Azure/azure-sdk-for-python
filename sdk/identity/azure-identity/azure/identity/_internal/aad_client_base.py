@@ -4,20 +4,19 @@
 # ------------------------------------
 import abc
 import copy
-import functools
 import time
+
+from msal import TokenCache
+
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
+from . import get_default_authority, normalize_authority
 
 try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
-
-from msal import TokenCache
-from msal.oauth2cli.oauth2 import Client
-
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
-from . import get_default_authority, normalize_authority
 
 try:
     ABC = abc.ABC
@@ -26,28 +25,27 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Iterable, Optional
+    from typing import Any, Optional, Sequence, Union
+    from azure.core.pipeline import AsyncPipeline, Pipeline
+    from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
+    from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
+
+    PipelineType = Union[AsyncPipeline, Pipeline]
+    PolicyType = Union[AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy]
+    TransportType = Union[AsyncHttpTransport, HttpTransport]
 
 
 class AadClientBase(ABC):
-    """Sans I/O methods for AAD clients wrapping MSAL's OAuth client"""
-
-    def __init__(self, tenant_id, client_id, cache=None, **kwargs):
-        # type: (str, str, Optional[TokenCache], **Any) -> None
-        authority = kwargs.pop("authority", None)
+    def __init__(self, tenant_id, client_id, authority=None, cache=None, **kwargs):
+        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
         authority = normalize_authority(authority) if authority else get_default_authority()
-
-        token_endpoint = "/".join((authority, tenant_id, "oauth2/v2.0/token"))
-        config = {"token_endpoint": token_endpoint}
-
+        self._token_endpoint = "/".join((authority, tenant_id, "oauth2/v2.0/token"))
         self._cache = cache or TokenCache()
-
-        self._client = Client(server_configuration=config, client_id=client_id)
-        self._client.session.close()
-        self._client.session = self._get_client_session(**kwargs)
+        self._client_id = client_id
+        self._pipeline = self._build_pipeline(**kwargs)
 
     def get_cached_access_token(self, scopes):
-        # type: (Iterable[str]) -> Optional[AccessToken]
+        # type: (Sequence[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
             expires_on = int(token["expires_on"])
@@ -56,35 +54,30 @@ class AadClientBase(ABC):
         return None
 
     def get_cached_refresh_tokens(self, scopes):
+        # type: (Sequence[str]) -> Sequence[dict]
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
-    def obtain_token_by_authorization_code(self, code, redirect_uri, scopes, **kwargs):
-        # type: (str, str, Iterable[str], **Any) -> AccessToken
-        fn = functools.partial(
-            self._client.obtain_token_by_authorization_code, code=code, redirect_uri=redirect_uri, **kwargs
-        )
-        return self._obtain_token(scopes, fn, **kwargs)
+    @abc.abstractmethod
+    def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
+        pass
 
-    def obtain_token_by_refresh_token(self, refresh_token, scopes, **kwargs):
-        # type: (str, Iterable[str], **Any) -> AccessToken
-        fn = functools.partial(
-            self._client.obtain_token_by_refresh_token,
-            token_item=refresh_token,
-            scope=scopes,
-            rt_getter=lambda token: token["secret"],
-            **kwargs
-        )
-        return self._obtain_token(scopes, fn, **kwargs)
+    @abc.abstractmethod
+    def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
+        pass
 
     def _process_response(self, response, scopes, now):
-        # type: (dict, Iterable[str], int) -> AccessToken
+        # type: (dict, Sequence[str], int) -> AccessToken
         _raise_for_error(response)
 
         # TokenCache.add mutates the response. In particular, it removes tokens.
         response_copy = copy.deepcopy(response)
 
-        self._cache.add(event={"response": response, "scope": scopes}, now=now)
+        self._cache.add(event={"response": response, "scope": scopes, "client_id": self._client_id}, now=now)
         if "expires_on" in response_copy:
             expires_on = int(response_copy["expires_on"])
         elif "expires_in" in response_copy:
@@ -96,17 +89,41 @@ class AadClientBase(ABC):
             )
         return AccessToken(response_copy["access_token"], expires_on)
 
-    @abc.abstractmethod
-    def _get_client_session(self, **kwargs):
-        pass
+    def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
+        # type: (str, str, Sequence[str], Optional[str]) -> HttpRequest
 
-    @abc.abstractmethod
-    def _obtain_token(self, scopes, fn, **kwargs):
-        # type: (Iterable[str], Callable, **Any) -> AccessToken
-        pass
+        data = {
+            "client_id": self._client_id,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+            "scope": " ".join(scopes),
+        }
+        if client_secret:
+            data["client_secret"] = client_secret
+
+        request = HttpRequest(
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
+        )
+        return request
+
+    def _get_refresh_token_request(self, scopes, refresh_token):
+        # type: (str, Sequence[str]) -> HttpRequest
+
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "scope": " ".join(scopes),
+            "client_id": self._client_id,
+        }
+        request = HttpRequest(
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
+        )
+        return request
 
 
 def _scrub_secrets(response):
+    # type: (dict) -> None
     for secret in ("access_token", "refresh_token"):
         if secret in response:
             response[secret] = "***"
