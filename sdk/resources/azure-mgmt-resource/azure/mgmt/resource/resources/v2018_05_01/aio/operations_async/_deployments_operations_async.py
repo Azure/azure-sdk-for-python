@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -82,18 +82,25 @@ class DeploymentsOperations:
 
     _delete_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete_at_subscription_scope(
+    async def begin_delete_at_subscription_scope(
         self,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. This is an asynchronous operation that
+    returns a status of 202 until the template deployment is successfully deleted. The Location
+    response header contains the URI that is used to obtain the status of the process. While the
+    process is running, a call to the URI in the Location header returns a status of 202. When the
+    process finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param deployment_name: The name of the deployment to delete.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -108,11 +115,13 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -124,8 +133,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence_at_subscription_scope(
         self,
@@ -231,21 +248,22 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update_at_subscription_scope(
+    async def begin_create_or_update_at_subscription_scope(
         self,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources at subscription scope.
 
-        Deploys resources at subscription scope.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2018_05_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -260,12 +278,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -280,8 +300,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get_at_subscription_scope(
         self,
@@ -340,9 +368,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resources partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resources partially
+        deployed.
 
         :param deployment_name: The name of the deployment to cancel.
         :type deployment_name: str
@@ -391,7 +422,8 @@ class DeploymentsOperations:
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+        Resource Manager..
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -618,15 +650,22 @@ class DeploymentsOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. Deleting a template deployment does not affect the state of the resource group. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. Deleting a template deployment does
+    not affect the state of the resource group. This is an asynchronous operation that returns a
+    status of 202 until the template deployment is successfully deleted. The Location response
+    header contains the URI that is used to obtain the status of the process. While the process is
+    running, a call to the URI in the Location header returns a status of 202. When the process
+    finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param resource_group_name: The name of the resource group with the deployment to delete. The
      name is case insensitive.
@@ -634,6 +673,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment to delete.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -648,12 +688,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -665,8 +707,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence(
         self,
@@ -779,16 +829,16 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources to a resource group.
 
-        Deploys resources to a resource group.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param resource_group_name: The name of the resource group to deploy the resources to. The name
      is case insensitive. The resource group must already exist.
@@ -798,6 +848,7 @@ class DeploymentsOperations:
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2018_05_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -812,13 +863,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -833,8 +886,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get(
         self,
@@ -898,9 +959,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resource group partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resource group
+        partially deployed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -953,7 +1017,8 @@ class DeploymentsOperations:
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+        Resource Manager..
 
         :param resource_group_name: The name of the resource group the template will be deployed to.
          The name is case insensitive.

@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
@@ -83,21 +83,28 @@ class DeploymentsOperations:
 
     _delete_at_scope_initial.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete_at_scope(
+    async def begin_delete_at_scope(
         self,
         scope: str,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. This is an asynchronous operation that
+    returns a status of 202 until the template deployment is successfully deleted. The Location
+    response header contains the URI that is used to obtain the status of the process. While the
+    process is running, a call to the URI in the Location header returns a status of 202. When the
+    process finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -112,12 +119,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_at_scope_initial(
-            scope=scope,
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_at_scope_initial(
+                scope=scope,
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -129,8 +138,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence_at_scope(
         self,
@@ -240,16 +257,16 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_at_scope_initial.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update_at_scope(
+    async def begin_create_or_update_at_scope(
         self,
         scope: str,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources at a given scope.
 
-        Deploys resources at a given scope.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param scope: The resource scope.
         :type scope: str
@@ -258,6 +275,7 @@ class DeploymentsOperations:
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -272,13 +290,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_at_scope_initial(
-            scope=scope,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_at_scope_initial(
+                scope=scope,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -293,8 +313,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get_at_scope(
         self,
@@ -357,9 +385,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resources partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resources partially
+        deployed.
 
         :param scope: The resource scope.
         :type scope: str
@@ -460,14 +491,15 @@ class DeploymentsOperations:
         return deserialized
     _validate_at_scope_initial.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
-    async def validate_at_scope(
+    async def begin_validate_at_scope(
         self,
         scope: str,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+    Resource Manager..
 
         :param scope: The resource scope.
         :type scope: str
@@ -476,6 +508,7 @@ class DeploymentsOperations:
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -490,13 +523,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._validate_at_scope_initial(
-            scope=scope,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._validate_at_scope_initial(
+                scope=scope,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -511,8 +546,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    validate_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_validate_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
     async def export_template_at_scope(
         self,
@@ -684,18 +727,25 @@ class DeploymentsOperations:
 
     _delete_at_tenant_scope_initial.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete_at_tenant_scope(
+    async def begin_delete_at_tenant_scope(
         self,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. This is an asynchronous operation that
+    returns a status of 202 until the template deployment is successfully deleted. The Location
+    response header contains the URI that is used to obtain the status of the process. While the
+    process is running, a call to the URI in the Location header returns a status of 202. When the
+    process finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -710,11 +760,13 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_at_tenant_scope_initial(
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_at_tenant_scope_initial(
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -726,8 +778,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence_at_tenant_scope(
         self,
@@ -831,21 +891,22 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_at_tenant_scope_initial.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update_at_tenant_scope(
+    async def begin_create_or_update_at_tenant_scope(
         self,
         deployment_name: str,
         parameters: "models.ScopedDeployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources at tenant scope.
 
-        Deploys resources at tenant scope.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -860,12 +921,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_at_tenant_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_at_tenant_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -880,8 +943,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get_at_tenant_scope(
         self,
@@ -939,9 +1010,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resources partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resources partially
+        deployed.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -1037,19 +1111,21 @@ class DeploymentsOperations:
         return deserialized
     _validate_at_tenant_scope_initial.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
-    async def validate_at_tenant_scope(
+    async def begin_validate_at_tenant_scope(
         self,
         deployment_name: str,
         parameters: "models.ScopedDeployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+    Resource Manager..
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1064,12 +1140,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._validate_at_tenant_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._validate_at_tenant_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1084,8 +1162,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    validate_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_validate_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
     async def export_template_at_tenant_scope(
         self,
@@ -1248,21 +1334,28 @@ class DeploymentsOperations:
 
     _delete_at_management_group_scope_initial.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete_at_management_group_scope(
+    async def begin_delete_at_management_group_scope(
         self,
         group_id: str,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. This is an asynchronous operation that
+    returns a status of 202 until the template deployment is successfully deleted. The Location
+    response header contains the URI that is used to obtain the status of the process. While the
+    process is running, a call to the URI in the Location header returns a status of 202. When the
+    process finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param group_id: The management group ID.
         :type group_id: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1277,12 +1370,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_at_management_group_scope_initial(
-            group_id=group_id,
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_at_management_group_scope_initial(
+                group_id=group_id,
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1294,8 +1389,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence_at_management_group_scope(
         self,
@@ -1405,16 +1508,16 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_at_management_group_scope_initial.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update_at_management_group_scope(
+    async def begin_create_or_update_at_management_group_scope(
         self,
         group_id: str,
         deployment_name: str,
         parameters: "models.ScopedDeployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources at management group scope.
 
-        Deploys resources at management group scope.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param group_id: The management group ID.
         :type group_id: str
@@ -1423,6 +1526,7 @@ class DeploymentsOperations:
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1437,13 +1541,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_at_management_group_scope_initial(
-            group_id=group_id,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_at_management_group_scope_initial(
+                group_id=group_id,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1458,8 +1564,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get_at_management_group_scope(
         self,
@@ -1522,9 +1636,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resources partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resources partially
+        deployed.
 
         :param group_id: The management group ID.
         :type group_id: str
@@ -1625,14 +1742,15 @@ class DeploymentsOperations:
         return deserialized
     _validate_at_management_group_scope_initial.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
-    async def validate_at_management_group_scope(
+    async def begin_validate_at_management_group_scope(
         self,
         group_id: str,
         deployment_name: str,
         parameters: "models.ScopedDeployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+    Resource Manager..
 
         :param group_id: The management group ID.
         :type group_id: str
@@ -1641,6 +1759,7 @@ class DeploymentsOperations:
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1655,13 +1774,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._validate_at_management_group_scope_initial(
-            group_id=group_id,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._validate_at_management_group_scope_initial(
+                group_id=group_id,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1676,8 +1797,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    validate_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_validate_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
     async def export_template_at_management_group_scope(
         self,
@@ -1850,18 +1979,25 @@ class DeploymentsOperations:
 
     _delete_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete_at_subscription_scope(
+    async def begin_delete_at_subscription_scope(
         self,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. This is an asynchronous operation that
+    returns a status of 202 until the template deployment is successfully deleted. The Location
+    response header contains the URI that is used to obtain the status of the process. While the
+    process is running, a call to the URI in the Location header returns a status of 202. When the
+    process finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -1876,11 +2012,13 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -1892,8 +2030,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence_at_subscription_scope(
         self,
@@ -1999,21 +2145,22 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update_at_subscription_scope(
+    async def begin_create_or_update_at_subscription_scope(
         self,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources at subscription scope.
 
-        Deploys resources at subscription scope.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2028,12 +2175,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2048,8 +2197,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get_at_subscription_scope(
         self,
@@ -2108,9 +2265,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resources partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resources partially
+        deployed.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -2208,19 +2368,21 @@ class DeploymentsOperations:
         return deserialized
     _validate_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
-    async def validate_at_subscription_scope(
+    async def begin_validate_at_subscription_scope(
         self,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+    Resource Manager..
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2235,12 +2397,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._validate_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._validate_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2255,8 +2419,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    validate_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_validate_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
     async def _what_if_at_subscription_scope_initial(
         self,
@@ -2315,19 +2487,21 @@ class DeploymentsOperations:
         return deserialized
     _what_if_at_subscription_scope_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
 
-    async def what_if_at_subscription_scope(
+    async def begin_what_if_at_subscription_scope(
         self,
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
     ) -> "models.WhatIfOperationResult":
-        """Returns changes that will be made by the deployment if executed at the scope of the subscription.
+        """Returns changes that will be made by the deployment if executed at the scope of the
+    subscription.
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param parameters: Parameters to What If.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2342,12 +2516,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._what_if_at_subscription_scope_initial(
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._what_if_at_subscription_scope_initial(
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2362,8 +2538,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    what_if_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_what_if_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
 
     async def export_template_at_subscription_scope(
         self,
@@ -2532,15 +2716,22 @@ class DeploymentsOperations:
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def delete(
+    async def begin_delete(
         self,
         resource_group_name: str,
         deployment_name: str,
         **kwargs
     ) -> None:
-        """A template deployment that is currently running cannot be deleted. Deleting a template deployment removes the associated deployment operations. Deleting a template deployment does not affect the state of the resource group. This is an asynchronous operation that returns a status of 202 until the template deployment is successfully deleted. The Location response header contains the URI that is used to obtain the status of the process. While the process is running, a call to the URI in the Location header returns a status of 202. When the process finishes, the URI in the Location header returns a status of 204 on success. If the asynchronous request failed, the URI in the Location header returns an error-level status code.
+        """Deletes a deployment from the deployment history.
 
-        Deletes a deployment from the deployment history.
+        A template deployment that is currently running cannot be deleted. Deleting a template
+    deployment removes the associated deployment operations. Deleting a template deployment does
+    not affect the state of the resource group. This is an asynchronous operation that returns a
+    status of 202 until the template deployment is successfully deleted. The Location response
+    header contains the URI that is used to obtain the status of the process. While the process is
+    running, a call to the URI in the Location header returns a status of 202. When the process
+    finishes, the URI in the Location header returns a status of 204 on success. If the
+    asynchronous request failed, the URI in the Location header returns an error-level status code.
 
         :param resource_group_name: The name of the resource group with the deployment to delete. The
      name is case insensitive.
@@ -2548,6 +2739,7 @@ class DeploymentsOperations:
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2562,12 +2754,14 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._delete_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2579,8 +2773,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def check_existence(
         self,
@@ -2693,16 +2895,16 @@ class DeploymentsOperations:
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
-    async def create_or_update(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentExtended":
-        """You can provide the template and parameters directly in the request or link to JSON files.
+        """Deploys resources to a resource group.
 
-        Deploys resources to a resource group.
+        You can provide the template and parameters directly in the request or link to JSON files.
 
         :param resource_group_name: The name of the resource group to deploy the resources to. The name
      is case insensitive. The resource group must already exist.
@@ -2712,6 +2914,7 @@ class DeploymentsOperations:
         :param parameters: Additional parameters supplied to the operation.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2726,13 +2929,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2747,8 +2952,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}  # type: ignore
 
     async def get(
         self,
@@ -2812,9 +3025,12 @@ class DeploymentsOperations:
         deployment_name: str,
         **kwargs
     ) -> None:
-        """You can cancel a deployment only if the provisioningState is Accepted or Running. After the deployment is canceled, the provisioningState is set to Canceled. Canceling a template deployment stops the currently running template deployment and leaves the resource group partially deployed.
+        """Cancels a currently running template deployment.
 
-        Cancels a currently running template deployment.
+        You can cancel a deployment only if the provisioningState is Accepted or Running. After the
+        deployment is canceled, the provisioningState is set to Canceled. Canceling a template
+        deployment stops the currently running template deployment and leaves the resource group
+        partially deployed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -2917,14 +3133,15 @@ class DeploymentsOperations:
         return deserialized
     _validate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
-    async def validate(
+    async def begin_validate(
         self,
         resource_group_name: str,
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
     ) -> "models.DeploymentValidateResult":
-        """Validates whether the specified template is syntactically correct and will be accepted by Azure Resource Manager..
+        """Validates whether the specified template is syntactically correct and will be accepted by Azure
+    Resource Manager..
 
         :param resource_group_name: The name of the resource group the template will be deployed to.
      The name is case insensitive.
@@ -2934,6 +3151,7 @@ class DeploymentsOperations:
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -2948,13 +3166,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._validate_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._validate_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -2969,8 +3189,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}  # type: ignore
 
     async def _what_if_initial(
         self,
@@ -3031,14 +3259,15 @@ class DeploymentsOperations:
         return deserialized
     _what_if_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
 
-    async def what_if(
+    async def begin_what_if(
         self,
         resource_group_name: str,
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
     ) -> "models.WhatIfOperationResult":
-        """Returns changes that will be made by the deployment if executed at the scope of the resource group.
+        """Returns changes that will be made by the deployment if executed at the scope of the resource
+    group.
 
         :param resource_group_name: The name of the resource group the template will be deployed to.
      The name is case insensitive.
@@ -3048,6 +3277,7 @@ class DeploymentsOperations:
         :param parameters: Parameters to validate.
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
@@ -3062,13 +3292,15 @@ class DeploymentsOperations:
             'polling_interval',
             self._config.polling_interval
         )
-        raw_result = await self._what_if_initial(
-            resource_group_name=resource_group_name,
-            deployment_name=deployment_name,
-            parameters=parameters,
-            cls=lambda x,y,z: x,
-            **kwargs
-        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._what_if_initial(
+                resource_group_name=resource_group_name,
+                deployment_name=deployment_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
@@ -3083,8 +3315,16 @@ class DeploymentsOperations:
         if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
-    what_if.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_what_if.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}  # type: ignore
 
     async def export_template(
         self,

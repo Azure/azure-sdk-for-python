@@ -46,9 +46,10 @@ class SubscriptionsOperations:
         subscription_id: str,
         **kwargs
     ) -> AsyncIterable["models.LocationListResult"]:
-        """This operation provides all the locations that are available for resource providers; however, each resource provider may support a subset of this list.
+        """Gets all available geo-locations.
 
-        Gets all available geo-locations.
+        This operation provides all the locations that are available for resource providers; however,
+    each resource provider may support a subset of this list.
 
         :param subscription_id: The ID of the target subscription.
         :type subscription_id: str

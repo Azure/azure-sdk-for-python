@@ -115,7 +115,8 @@ class FeaturesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.FeatureOperationsListResult"]
-        """Gets all the preview features in a provider namespace that are available through AFEC for the subscription.
+        """Gets all the preview features in a provider namespace that are available through AFEC for the
+    subscription.
 
         :param resource_provider_namespace: The namespace of the resource provider for getting
      features.

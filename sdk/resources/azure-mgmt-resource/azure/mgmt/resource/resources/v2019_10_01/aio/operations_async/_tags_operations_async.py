@@ -47,9 +47,11 @@ class TagsOperations:
         tag_value: str,
         **kwargs
     ) -> None:
-        """This operation allows deleting a value from the list of predefined values for an existing predefined tag name. The value being deleted must not be in use as a tag value for the given tag name for any resource.
+        """Deletes a predefined tag value for a predefined tag name.
 
-        Deletes a predefined tag value for a predefined tag name.
+        This operation allows deleting a value from the list of predefined values for an existing
+        predefined tag name. The value being deleted must not be in use as a tag value for the given
+        tag name for any resource.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -101,9 +103,10 @@ class TagsOperations:
         tag_value: str,
         **kwargs
     ) -> "models.TagValue":
-        """This operation allows adding a value to the list of predefined values for an existing predefined tag name. A tag value can have a maximum of 256 characters.
+        """Creates a predefined value for a predefined tag name.
 
-        Creates a predefined value for a predefined tag name.
+        This operation allows adding a value to the list of predefined values for an existing
+        predefined tag name. A tag value can have a maximum of 256 characters.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -163,9 +166,12 @@ class TagsOperations:
         tag_name: str,
         **kwargs
     ) -> "models.TagDetails":
-        """This operation allows adding a name to the list of predefined tag names for the given subscription. A tag name can have a maximum of 512 characters and is case-insensitive. Tag names cannot have the following prefixes which are reserved for Azure use: 'microsoft', 'azure', 'windows'.
+        """Creates a predefined tag name.
 
-        Creates a predefined tag name.
+        This operation allows adding a name to the list of predefined tag names for the given
+        subscription. A tag name can have a maximum of 512 characters and is case-insensitive. Tag
+        names cannot have the following prefixes which are reserved for Azure use: 'microsoft',
+        'azure', 'windows'.
 
         :param tag_name: The name of the tag to create.
         :type tag_name: str
@@ -222,9 +228,11 @@ class TagsOperations:
         tag_name: str,
         **kwargs
     ) -> None:
-        """This operation allows deleting a name from the list of predefined tag names for the given subscription. The name being deleted must not be in use as a tag name for any resource. All predefined values for the given name must have already been deleted.
+        """Deletes a predefined tag name.
 
-        Deletes a predefined tag name.
+        This operation allows deleting a name from the list of predefined tag names for the given
+        subscription. The name being deleted must not be in use as a tag name for any resource. All
+        predefined values for the given name must have already been deleted.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -271,9 +279,12 @@ class TagsOperations:
         self,
         **kwargs
     ) -> AsyncIterable["models.TagsListResult"]:
-        """This operation performs a union of predefined tags, resource tags, resource group tags and subscription tags, and returns a summary of usage for each tag name and value under the given subscription. In case of a large number of tags, this operation may return a previously cached result.
+        """Gets a summary of tag usage under the subscription.
 
-        Gets a summary of tag usage under the subscription.
+        This operation performs a union of predefined tags, resource tags, resource group tags and
+    subscription tags, and returns a summary of usage for each tag name and value under the given
+    subscription. In case of a large number of tags, this operation may return a previously cached
+    result.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TagsListResult or the result of cls(response)
@@ -338,9 +349,10 @@ class TagsOperations:
         parameters: "models.TagsResource",
         **kwargs
     ) -> "models.TagsResource":
-        """This operation allows adding or replacing the entire set of tags on the specified resource or subscription. The specified entity can have a maximum of 50 tags.
+        """Creates or updates the entire set of tags on a resource or subscription.
 
-        Creates or updates the entire set of tags on a resource or subscription.
+        This operation allows adding or replacing the entire set of tags on the specified resource or
+        subscription. The specified entity can have a maximum of 50 tags.
 
         :param scope: The resource scope.
         :type scope: str
@@ -400,9 +412,14 @@ class TagsOperations:
         parameters: "models.TagsPatchResource",
         **kwargs
     ) -> "models.TagsResource":
-        """This operation allows replacing, merging or selectively deleting tags on the specified resource or subscription. The specified entity can have a maximum of 50 tags at the end of the operation. The 'replace' option replaces the entire set of existing tags with a new set. The 'merge' option allows adding tags with new names and updating the values of tags with existing names. The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
+        """Selectively updates the set of tags on a resource or subscription.
 
-        Selectively updates the set of tags on a resource or subscription.
+        This operation allows replacing, merging or selectively deleting tags on the specified resource
+        or subscription. The specified entity can have a maximum of 50 tags at the end of the
+        operation. The 'replace' option replaces the entire set of existing tags with a new set. The
+        'merge' option allows adding tags with new names and updating the values of tags with existing
+        names. The 'delete' option allows selectively deleting tags based on given names or name/value
+        pairs.
 
         :param scope: The resource scope.
         :type scope: str

@@ -159,9 +159,11 @@ class TagsOperations:
         tag_name: str,
         **kwargs
     ) -> "models.TagDetails":
-        """The tag name can have a maximum of 512 characters and is case insensitive. Tag names created by Azure have prefixes of microsoft, azure, or windows. You cannot create tags with one of these prefixes.
+        """Creates a tag in the subscription.
 
-        Creates a tag in the subscription.
+        The tag name can have a maximum of 512 characters and is case insensitive. Tag names created by
+        Azure have prefixes of microsoft, azure, or windows. You cannot create tags with one of these
+        prefixes.
 
         :param tag_name: The name of the tag to create.
         :type tag_name: str
@@ -218,9 +220,9 @@ class TagsOperations:
         tag_name: str,
         **kwargs
     ) -> None:
-        """You must remove all values from a resource tag before you can delete it.
+        """Deletes a tag from the subscription.
 
-        Deletes a tag from the subscription.
+        You must remove all values from a resource tag before you can delete it.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
