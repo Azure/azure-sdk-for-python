@@ -192,10 +192,9 @@ class StorageShareTest(AsyncStorageTestCase):
         for share in share_list:
             # find the deleted share and restore it
             if share.deleted and share.name == share_client.share_name:
-                restored_share_client = self.fsc.get_share_client(share_client.share_name)
-                # TODO: uncomment the next line if live mode can be enabled for this test
-                # time.sleep(60)
-                await restored_share_client.undelete_share(share.name, share.version)
+                if self.is_live:
+                    time.sleep(60)
+                restored_share_client = await self.fsc.undelete_share(share.name, share.version)
 
                 # to make sure the deleted share is restored
                 props = await restored_share_client.get_share_properties()
@@ -216,8 +215,8 @@ class StorageShareTest(AsyncStorageTestCase):
             await share_client.get_share_properties()
 
         # create a share with the same name as the deleted one
-        # TODO: uncomment the next line if live mode can be enabled for this test
-        # time.sleep(30)
+        if self.is_live:
+            time.sleep(30)
         await share_client.create_share()
 
         share_list = []
@@ -228,9 +227,8 @@ class StorageShareTest(AsyncStorageTestCase):
         for share in share_list:
             # find the deleted share and restore it
             if share.deleted and share.name == share_client.share_name:
-                restored_share_client = self.fsc.get_share_client(share_client.share_name)
                 with self.assertRaises(HttpResponseError):
-                    await restored_share_client.undelete_share(share.name, share.version)
+                    await self.fsc.undelete_share(share.name, share.version)
                 break
 
     @GlobalStorageAccountPreparer()

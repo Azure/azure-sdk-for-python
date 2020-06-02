@@ -295,6 +295,34 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         await share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
+    @distributed_trace_async
+    async def undelete_share(self, deleted_share_name, deleted_share_version, **kwargs):
+        # type: (str, str, **Any) -> ShareClient
+        """Restores soft-deleted share.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str deleted_share_name:
+            Specifies the name of the deleted share to restore.
+        :param str deleted_share_version:
+            Specifies the version of the deleted share to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.fileshare.aio.ShareClient
+        """
+        share = self.get_share_client(deleted_share_name)
+        try:
+            await share._client.share.restore(deleted_share_name=deleted_share_name,  # pylint: disable = protected-access
+                                              deleted_share_version=deleted_share_version,
+                                              timeout=kwargs.pop('timeout', None), **kwargs)
+            return share
+        except StorageErrorException as error:
+            process_storage_error(error)
+
     def get_share_client(self, share, snapshot=None):
         # type: (Union[ShareProperties, str],Optional[Union[Dict[str, Any], str]]) -> ShareClient
         """Get a client to interact with the specified share.
