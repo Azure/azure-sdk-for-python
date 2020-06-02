@@ -5,8 +5,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, AsyncBearerTokenCredentialPolicy
-from azure.core.pipeline.transport import RequestsTransport
-from azure.servicebus import ServiceBusSharedKeyCredential
+from azure.core.pipeline.transport import AsyncioRequestsTransport
+from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 from .._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
@@ -58,7 +58,7 @@ class ServiceBusManagementClient:
                 HttpLoggingPolicy(**kwargs),
             ]
         if not transport:
-            transport = RequestsTransport(**kwargs)
+            transport = AsyncioRequestsTransport(**kwargs)
         return AsyncPipeline(transport, policies)
 
     @classmethod
@@ -77,10 +77,10 @@ class ServiceBusManagementClient:
     async def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
         et = await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
-        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        content_ele = et.find(constants.CONTENT_TAG)
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
         qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
@@ -88,10 +88,10 @@ class ServiceBusManagementClient:
     async def get_queue_metrics(self, queue_name):
         # type: (str) -> QueueRuntimeInfo
         et = await self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
-        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        content_ele = et.find(constants.CONTENT_TAG)
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
         qc = QueueRuntimeInfo.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
@@ -116,8 +116,8 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         et = await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
-        qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+        content_ele = et.find(constants.CONTENT_TAG)
+        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
         qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
@@ -140,9 +140,9 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         et = await self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
-        content_ele = et.find("{http://www.w3.org/2005/Atom}content")
+        content_ele = et.find(constants.CONTENT_TAG)
         qc_ele = content_ele.find(
-            "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+            constants.QUEUE_DESCRIPTION_TAG)
         qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_description.queue_name
         return qc
@@ -155,12 +155,12 @@ class ServiceBusManagementClient:
     async def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
         et = await self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
-        entries = et.findall("{http://www.w3.org/2005/Atom}entry")
+        entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
-            entity_name = entry.find("{http://www.w3.org/2005/Atom}title").text
+            entity_name = entry.find(constants.TITLE_TAG).text
             print(entity_name)
-            qc_ele = entry.find("{http://www.w3.org/2005/Atom}content").find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
+            qc_ele = entry.find(constants.CONTENT_TAG).find(constants.QUEUE_DESCRIPTION_TAG)
             queue_description = QueueDescription.deserialize(qc_ele)
             queue_description.queue_name = entity_name
             queue_descriptions.append(queue_description)
