@@ -4,6 +4,8 @@
 -------------------
 ## 1.0.0b5 (Unreleased)
 
+- Pinned opentelemetry-api to version 0.8b0
+- Fixed a bug where `DefaultSpan` sometimes throws an AttributeError.
 
 ## 1.0.0b4 (2020-05-04)
 
