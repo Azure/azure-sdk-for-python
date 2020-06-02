@@ -27,14 +27,15 @@ import os
 
 class RecognizeLinkedEntitiesSample(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     def recognize_linked_entities(self):
         # [START batch_recognize_linked_entities]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+
+        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         documents = [
             "Microsoft moved its headquarters to Bellevue, Washington in January 1979.",
             "Steve Ballmer stepped down as CEO of Microsoft and was succeeded by Satya Nadella.",

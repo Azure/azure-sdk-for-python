@@ -26,14 +26,15 @@ import asyncio
 
 class RecognizeEntitiesSampleAsync(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     async def recognize_entities_async(self):
         # [START batch_recognize_entities_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+
+        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
             "I had a wonderful trip to Seattle last week.",

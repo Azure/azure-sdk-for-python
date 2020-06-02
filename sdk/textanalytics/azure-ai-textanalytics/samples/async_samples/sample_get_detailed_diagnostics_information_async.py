@@ -30,15 +30,15 @@ _LOGGER = logging.getLogger(__name__)
 
 class GetDetailedDiagnosticsInformationSampleAsync(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     async def get_detailed_diagnostics_information_async(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+
         # This client will log detailed information about its HTTP sessions, at DEBUG level
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key), logging_enable=True)
+        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 
         documents = [
             "I had the best day of my life.",
