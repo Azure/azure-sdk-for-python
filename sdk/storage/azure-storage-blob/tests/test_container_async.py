@@ -804,9 +804,9 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.get_container_client("restoredctn" + str(restored_version))
+                restored_ctn_client = await bsc.undelete_container(container.name, container.version,
+                                                                   new_name="restoredctn" + str(restored_version))
                 restored_version += 1
-                await restored_ctn_client.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = await restored_ctn_client.get_container_properties()
@@ -837,9 +837,9 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.get_container_client(existing_container_client.container_name)
                 with self.assertRaises(HttpResponseError):
-                    await restored_ctn_client.undelete_container(container.name, container.version)
+                    await bsc.undelete_container(container.name, container.version,
+                                                 new_name=existing_container_client.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

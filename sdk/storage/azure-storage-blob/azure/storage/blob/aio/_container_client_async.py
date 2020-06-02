@@ -229,32 +229,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
-        # type: (str, str, **Any) -> None
-        """Restores soft-deleted container.
-
-        Operation will only be successful if used within the specified number of days
-        set in the delete retention policy.
-
-        .. versionadded:: 12.4.0
-            This operation was introduced in API version '2019-12-12'.
-
-        :param str deleted_container_name:
-            Specifies the name of the deleted container to restore.
-        :param str deleted_container_version:
-            Specifies the version of the deleted container to restore.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        try:
-            await self._client.container.restore(deleted_container_name=deleted_container_name,
-                                                 deleted_container_version=deleted_container_version,
-                                                 timeout=kwargs.pop('timeout', None), **kwargs)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    @distributed_trace_async
     async def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]

@@ -751,9 +751,9 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.get_container_client("restored" + str(restored_version))
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
+                                                             new_name="restored" + str(restored_version))
                 restored_version += 1
-                restored_ctn_client.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = restored_ctn_client.get_container_properties()
@@ -781,9 +781,9 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.get_container_client(existing_container_client.container_name)
                 with self.assertRaises(HttpResponseError):
-                    restored_ctn_client.undelete_container(container.name, container.version)
+                    bsc.undelete_container(container.name, container.version,
+                                           new_name=existing_container_client.container_name)
 
     @pytest.mark.live_test_only  # sas token is dynamically generated
     @pytest.mark.playback_test_only  # we need container soft delete enabled account
@@ -811,9 +811,9 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.get_container_client("restored" + str(restored_version))
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
+                                                             new_name="restored" + str(restored_version))
                 restored_version += 1
-                restored_ctn_client.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = restored_ctn_client.get_container_properties()
@@ -1411,5 +1411,5 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         downloaded = container.download_blob(blob_name)
-        
+
         assert downloaded.readall() == data

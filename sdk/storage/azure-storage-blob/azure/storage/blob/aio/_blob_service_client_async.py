@@ -487,6 +487,36 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             timeout=timeout,
             **kwargs)
 
+    @distributed_trace_async
+    async def undelete_container(self, deleted_container_name, deleted_container_version, new_name=None, **kwargs):
+        # type: (str, str, str, **Any) -> ContainerClient
+        """Restores soft-deleted container.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str deleted_container_name:
+            Specifies the name of the deleted container to restore.
+        :param str deleted_container_version:
+            Specifies the version of the deleted container to restore.
+        :param str new_name:
+            The new name for the deleted container to be restored to.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.aio.ContainerClient
+        """
+        container = self.get_container_client(new_name or deleted_container_name)
+        try:
+            await container._client.container.restore(deleted_container_name=deleted_container_name, # pylint: disable = protected-access
+                                                      deleted_container_version=deleted_container_version,
+                                                      timeout=kwargs.pop('timeout', None), **kwargs)
+            return container
+        except StorageErrorException as error:
+            process_storage_error(error)
+
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
         """Get a client to interact with the specified container.
