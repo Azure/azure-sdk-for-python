@@ -3,7 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import time
 
+from azure.core.credentials import AccessToken
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
@@ -25,7 +27,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional
+    from typing import Any, Iterable, List, Mapping, Optional, Sequence
     from .._internal import AadClientBase
     from azure.identity import AuthenticationRecord
 
@@ -191,6 +193,23 @@ class SharedTokenCacheBase(ABC):
             message = MULTIPLE_ACCOUNTS.format(cached_accounts)
 
         raise CredentialUnavailableError(message=message)
+
+    def _get_cached_access_token(self, scopes, account):
+        # type: (Sequence[str], CacheItem) -> Optional[AccessToken]
+        if "home_account_id" not in account:
+            return None
+
+        cache_entries = self._cache.find(
+            TokenCache.CredentialType.ACCESS_TOKEN,
+            target=list(scopes),
+            query={"home_account_id": account["home_account_id"]},
+        )
+
+        for token in cache_entries:
+            expires_on = int(token["expires_on"])
+            if expires_on - 300 > int(time.time()):
+                return AccessToken(token["secret"], expires_on)
+        return None
 
     def _get_refresh_tokens(self, account):
         if "home_account_id" not in account:
