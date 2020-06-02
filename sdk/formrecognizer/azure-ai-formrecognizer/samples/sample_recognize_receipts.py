@@ -25,15 +25,16 @@ import os
 
 class RecognizeReceiptsSample(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-
     def recognize_receipts(self):
         # [START recognize_receipts]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
         form_recognizer_client = FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         with open("sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
             poller = form_recognizer_client.begin_recognize_receipts(receipt=f)

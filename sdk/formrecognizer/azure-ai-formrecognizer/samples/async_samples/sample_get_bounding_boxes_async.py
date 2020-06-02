@@ -32,25 +32,25 @@ def format_bounding_box(bounding_box):
 
 class GetBoundingBoxesSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
-
     async def get_bounding_boxes(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         from azure.ai.formrecognizer import FormWord, FormLine
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+
         form_recognizer_client = FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         async with form_recognizer_client:
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, form=f.read(), include_text_content=True
+                    model_id=model_id, form=f.read(), include_text_content=True
                 )
 
             for idx, form in enumerate(forms):

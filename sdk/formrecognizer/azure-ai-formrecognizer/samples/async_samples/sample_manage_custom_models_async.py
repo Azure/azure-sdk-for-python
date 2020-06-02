@@ -27,17 +27,17 @@ import asyncio
 
 class ManageCustomModelsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-
     async def manage_custom_models(self):
         # [START get_account_properties_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer.aio import FormTrainingClient
 
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
         async with FormTrainingClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_training_client:
             # First, we see how many custom models we have, and what our limit is
             account_properties = await form_training_client.get_account_properties()
