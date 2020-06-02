@@ -227,21 +227,40 @@ with open("<path to your receipt>", "rb") as fd:
 poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
-r = result[0]
-print("Receipt contained the following values with confidences: ")
-print("Receipt Type: {} has confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
-print("Merchant Name: {} has confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
-print("Transaction Date: {} has confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
+receipt = result[0]
+print("Receipt Type: {} has confidence: {}".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
+merchant_name = receipt.fields.get("MerchantName")
+if merchant_name:
+    print("Merchant Name: {} has confidence: {}".format(merchant_name.value, merchant_name.confidence))
+transaction_date = receipt.fields.get("TransactionDate")
+if transaction_date:
+    print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
 print("Receipt items:")
-for item in r.receipt_items:
-    print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
-    print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-    print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
-print("Subtotal: {} has confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
-print("Tax: {} has confidence: {}".format(r.tax.value, r.tax.confidence))
-print("Tip: {} has confidence: {}".format(r.tip.value, r.tip.confidence))
-print("Total: {} has confidence: {}".format(r.total.value, r.total.confidence))
+for item in receipt.fields.get("Items").value:
+    item_name = item.value.get("Name")
+    if item_name:
+        print("...Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
+    item_quantity = item.value.get("Quantity")
+    if item_quantity:
+        print("...Item Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
+    item_price = item.value.get("Price")
+    if item_price:
+        print("...Individual Item Price: {} has confidence: {}".format(item_price.value, item_price.confidence))
+    item_total_price = item.value.get("TotalPrice")
+    if item_total_price:
+        print("...Total Item Price: {} has confidence: {}".format(item_total_price.value, item_total_price.confidence))
+subtotal = receipt.fields.get("Subtotal")
+if subtotal:
+    print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))
+tax = receipt.fields.get("Tax")
+if tax:
+    print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+tip = receipt.fields.get("Tip")
+if tip:
+    print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+total = receipt.fields.get("Total")
+if total:
+    print("Total: {} has confidence: {}".format(total.value, total.confidence))
 ```
 
 ### Train a model
