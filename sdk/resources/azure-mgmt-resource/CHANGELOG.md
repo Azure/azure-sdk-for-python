@@ -1,5 +1,17 @@
 # Release History
 
+# 10.0.0 (2020-06-02)
+
+**Features**
+
+  - Model AzurePowerShellScript has a new parameter storage_account_settings
+  - Model DeploymentOperationProperties has a new parameter provisioning_operation
+  - Model AzureCliScript has a new parameter storage_account_settings
+
+**Breaking changes**
+
+  - Model AliasPathType no longer has parameter pattern
+
 ## 9.0.0 (2020-03-31)
 
 **Features**
