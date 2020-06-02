@@ -135,7 +135,10 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.create_or_update(resource_group.name, NAMESPACE_NAME, BODY)
+            self.mgmt_client.namespaces.begin_create_or_update(resource_group.name, NAMESPACE_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # GetNamespaceMessagingPlan[get]
@@ -363,135 +366,12 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
 
         # NameSpaceDelete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.delete(resource_group.name, NAMESPACE_NAME)
+            self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
    
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_disaster_recovery_configs(self, resource_group):
-        RESOURCE_GROUP = resource_group.name
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        NAMESPACE_NAME = self.get_resource_name("namespace2test")
-        NAMESPACE_NAME_2 = self.get_resource_name("namespacetest")
-        AUTHORIZATION_RULE_NAME = self.get_resource_name("authorizationrule")
-        DISASTER_RECOVERY_CONFIG_NAME = self.get_resource_name("disasterdecoveryconfigtest")
-
-
-        # NamespaceCreate[put]
-        BODY = {
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "location": "South Central US",
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        primary_namespace = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.create_or_update(resource_group.name, NAMESPACE_NAME, BODY)
-        )
-
-        # NameSpaceAuthorizationRuleCreate[put]
-        BODY = {
-          "rights": [
-            "Listen",
-            "Send"
-          ]
-        }
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
-        )
-
-        # Second namespace [put]
-        BODY = {
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "location": "eastus",
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        second_namespace = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.create_or_update(resource_group.name, NAMESPACE_NAME_2, BODY)
-        )
-
-        # DRCCheckNameAvailability[post]
-        BODY = {
-          "name": "sdk-DisasterRecovery-9474"
-        }
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group.name, NAMESPACE_NAME, BODY)
-        )
-
-        # EHAliasCreate[put]
-        BODY = {
-          # "partner_namespace": NAMESPACE_NAME_2
-          "partner_namespace": second_namespace.id
-        }
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.create_or_update(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME, BODY)
-        )
-
-        # EHAliasGet[get]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.get(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME)
-        )
-        while result.provisioning_state != "Succeeded":
-            result = self.event_loop.run_until_complete(
-                self.mgmt_client.disaster_recovery_configs.get(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME)
-            )
-            time.sleep(30)
-        
-        # GetNamespaceMessagingPlan[get]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.get_messaging_plan(resource_group.name, NAMESPACE_NAME)
-        )
-
-        # ListAuthorizationRules[get]
-        result = self.to_list(
-            self.mgmt_client.disaster_recovery_configs.list_authorization_rules(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME)
-        )
-
-        # NameSpaceAuthorizationRuleGet[get]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.get_authorization_rule(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME, AUTHORIZATION_RULE_NAME)
-        )
-
-        # EHAliasList[get]
-        result = self.to_list(
-            self.mgmt_client.disaster_recovery_configs.list(resource_group.name, NAMESPACE_NAME)
-        )
-
-        # NameSpaceAuthorizationRuleListKey[post]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.list_keys(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME, AUTHORIZATION_RULE_NAME)
-        )
-
-        # EHAliasBreakPairing[post]
-        result = self.event_loop.run_until_complete(
-           self.mgmt_client.disaster_recovery_configs.break_pairing(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME)
-        )
-
-        # EHAliasFailOver[post]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.disaster_recovery_configs.fail_over(resource_group.name, NAMESPACE_NAME_2, DISASTER_RECOVERY_CONFIG_NAME)
-        )
-
-        # EHAliasDelete[delete]
-        while True:
-            try:
-                result = self.event_loop.run_until_complete(
-                    self.mgmt_client.disaster_recovery_configs.delete(resource_group.name, NAMESPACE_NAME_2, DISASTER_RECOVERY_CONFIG_NAME)
-                )
-            except azure.core.exceptions.HttpResponseError:
-                time.sleep(30)
-            else:
-                break
-
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
