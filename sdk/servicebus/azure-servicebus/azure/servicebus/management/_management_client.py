@@ -7,11 +7,12 @@ from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPo
     RequestIdPolicy, BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
+from .._common.constants import JWT_TOKEN_SCOPE
+from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
-from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
-from .._common.constants import JWT_TOKEN_SCOPE
+
 
 from .._common.utils import parse_conn_str
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
@@ -101,7 +102,7 @@ class ServiceBusManagementClient:
         """Create a queue"""
         if isinstance(queue, str):
             queue_name = queue
-            queue_description = QueueDescription()
+            queue_description = QueueDescription()  # Use an emtpy queue description.
         else:
             queue_name = queue.queue_name
             queue_description = copy(queue)
@@ -126,13 +127,8 @@ class ServiceBusManagementClient:
         # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
 
-        to_update = QueueDescription()
-        to_update.default_message_time_to_live = queue_description.default_message_time_to_live
-        to_update.lock_duration = queue_description.lock_duration
-        to_update.dead_lettering_on_message_expiration = queue_description.dead_lettering_on_message_expiration
-        to_update.duplicate_detection_history_time_window = queue_description.duplicate_detection_history_time_window
-        to_update.max_delivery_count = queue_description.max_delivery_count
-
+        to_update = copy(queue_description)
+        to_update.queue_name = None
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_update

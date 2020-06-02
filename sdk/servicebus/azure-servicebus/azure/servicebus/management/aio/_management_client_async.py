@@ -5,26 +5,26 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, AsyncBearerTokenCredentialPolicy
-from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.pipeline.transport import AioHttpTransport
+from ..._common.utils import parse_conn_str
+from ..._common.constants import JWT_TOKEN_SCOPE
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 from .._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
-from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
-from ..._common.constants import JWT_TOKEN_SCOPE
-
-from ..._common.utils import parse_conn_str
 from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from .. import _constants as constants
+from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
+
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ServiceBusManagementClient:
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
+        # type: (str, Union[AsyncTokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
         """
 
         :param fully_qualified_namespace:
@@ -58,7 +58,7 @@ class ServiceBusManagementClient:
                 HttpLoggingPolicy(**kwargs),
             ]
         if not transport:
-            transport = AsyncioRequestsTransport(**kwargs)
+            transport = AioHttpTransport(**kwargs)
         return AsyncPipeline(transport, policies)
 
     @classmethod
@@ -126,13 +126,8 @@ class ServiceBusManagementClient:
         # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
 
-        to_update = QueueDescription()
-        to_update.default_message_time_to_live = queue_description.default_message_time_to_live
-        to_update.lock_duration = queue_description.lock_duration
-        to_update.dead_lettering_on_message_expiration = queue_description.dead_lettering_on_message_expiration
-        to_update.duplicate_detection_history_time_window = queue_description.duplicate_detection_history_time_window
-        to_update.max_delivery_count = queue_description.max_delivery_count
-
+        to_update = copy(queue_description)
+        to_update.queue_name = None
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_update
