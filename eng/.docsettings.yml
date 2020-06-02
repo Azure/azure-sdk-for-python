@@ -88,6 +88,8 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
+  - ['sdk/attestation/azure-attestation/README.md', '#4554']
+  
 
   # nspckg and common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
