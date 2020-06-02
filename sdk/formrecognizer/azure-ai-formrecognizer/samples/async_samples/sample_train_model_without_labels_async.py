@@ -29,20 +29,20 @@ import asyncio
 
 class TrainModelWithoutLabelsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    container_sas_url = os.environ["CONTAINER_SAS_URL"]
-
     async def train_model_without_labels(self):
         # [START training_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        container_sas_url = os.environ["CONTAINER_SAS_URL"]
+
         async with FormTrainingClient(
-            self.endpoint, AzureKeyCredential(self.key)
+            endpoint, AzureKeyCredential(key)
         ) as form_training_client:
 
-            poller = await form_training_client.begin_training(self.container_sas_url, use_training_labels=False)
+            poller = await form_training_client.begin_training(container_sas_url, use_training_labels=False)
             model = await poller.result()
 
             # Custom model information

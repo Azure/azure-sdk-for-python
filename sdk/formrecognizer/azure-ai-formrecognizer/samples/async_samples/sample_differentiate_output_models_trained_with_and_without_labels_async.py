@@ -35,30 +35,30 @@ def format_bounding_box(bounding_box):
 
 class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
-    model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
-
     async def recognize_custom_forms(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
+        model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
+
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         async with FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 form = f.read()
             with_labels_poller = await form_recognizer_client.begin_recognize_custom_forms(
-                model_id=self.model_trained_with_labels_id, form=form
+                model_id=model_trained_with_labels_id, form=form
             )
             forms_with_labeled_model = await with_labels_poller.result()
 
             without_labels_poller = await form_recognizer_client.begin_recognize_custom_forms(
-                model_id=self.model_trained_without_labels_id, form=form
+                model_id=model_trained_without_labels_id, form=form
             )
             forms_with_unlabeled_model = await without_labels_poller.result()
             # With a form recognized by a model trained with labels, this 'name' key will be its

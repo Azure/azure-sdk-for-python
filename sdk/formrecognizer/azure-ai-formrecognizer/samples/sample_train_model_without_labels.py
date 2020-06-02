@@ -28,18 +28,17 @@ import os
 
 class TrainModelWithoutLabelsSample(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    container_sas_url = os.environ["CONTAINER_SAS_URL"]
-
     def train_model_without_labels(self):
         # [START training]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
-        form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-        poller = form_training_client.begin_training(self.container_sas_url, use_training_labels=False)
+        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
+        poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # Custom model information
