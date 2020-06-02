@@ -112,7 +112,8 @@ class FileServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.FileServiceProperties"
-        """Sets the properties of file services in storage accounts, including CORS (Cross-Origin Resource Sharing) rules.
+        """Sets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
+        Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -183,7 +184,8 @@ class FileServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.FileServiceProperties"
-        """Gets the properties of file services in storage accounts, including CORS (Cross-Origin Resource Sharing) rules.
+        """Gets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
+        Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.

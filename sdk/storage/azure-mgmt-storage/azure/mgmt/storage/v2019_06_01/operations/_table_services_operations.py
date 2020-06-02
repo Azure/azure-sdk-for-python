@@ -112,7 +112,8 @@ class TableServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableServiceProperties"
-        """Sets the properties of a storage account’s Table service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Sets the properties of a storage account’s Table service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
@@ -183,7 +184,8 @@ class TableServicesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableServiceProperties"
-        """Gets the properties of a storage account’s Table service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Gets the properties of a storage account’s Table service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
