@@ -40,10 +40,11 @@ The above creates a resource with the "Standard" pricing tier. See [choosing a p
 In order to interact with the Cognitive Search service you'll need to create an instance of the Search Client class.
 To make this possible you will need an [api-key of the Cognitive Search service](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
 
-The SDK provides two clients.
+The SDK provides three clients.
 
 1. SearchClient for all document operations.
-2. SearchServiceClient for all CRUD operations on service resources.
+2. SearchIndexClient for all CRUD operations on index resources.
+3. SearchIndexerClient for all CRUD operations on indexer resources.
 
 #### Create a SearchClient
 
@@ -64,18 +65,33 @@ client = SearchClient(endpoint="<service endpoint>",
                       credential=credential)
 ```
 
-#### Create a SearchServiceClient
+#### Create a SearchIndexClient
 
 Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
 and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient
+from azure.search.documents.indexes import SearchIndexClient
 
 credential = AzureKeyCredential("<api key>")
 
-client = SearchServiceClient(endpoint="<service endpoint>"
+client = SearchIndexClient(endpoint="<service endpoint>"
+                             credential=credential)
+```
+
+#### Create a SearchIndexerClient
+
+Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
+and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.indexes import SearchIndexerClient
+
+credential = AzureKeyCredential("<api key>")
+
+client = SearchIndexerClient(endpoint="<service endpoint>"
                              credential=credential)
 ```
 
@@ -154,12 +170,10 @@ Get search suggestions for related terms, e.g. find search suggestions for
 the term "coffee":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient, SuggestQuery
+from azure.search.documents import SearchClient
 client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
-query = SuggestQuery(search_text="coffee", suggester_name="sg")
-
-results = client.suggest(query=query)
+results = client.suggest(search_text="coffee", suggester_name="sg")
 
 print("Search suggestions for 'coffee'")
 for result in results:
@@ -172,25 +186,22 @@ for result in results:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient, CorsOptions, Index, ScoringProfile
-client = SearchServiceClient("<service endpoint>", AzureKeyCredential("<api key>")).get_indexes_client()
+from azure.search.documents.indexes import SearchIndexClient, CorsOptions, SearchIndex, ScoringProfile
+client = SearchIndexClient("<service endpoint>", AzureKeyCredential("<api key>"))
 name = "hotels"
 fields = [
-    {
-        "name": "hotelId",
-        "type": "Edm.String",
-        "key": True,
-        "searchable": False
-    },
-    {
-        "name": "baseRate",
-        "type": "Edm.Double"
-    }
-]
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String),
+        ComplexField(name="address", fields=[
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
+        ])
+    ]
 cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 scoring_profiles = []
 
-index = Index(
+index = SearchIndex(
     name=name,
     fields=fields,
     scoring_profiles=scoring_profiles,
