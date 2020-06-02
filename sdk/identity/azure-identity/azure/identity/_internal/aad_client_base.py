@@ -12,6 +12,7 @@ from uuid import uuid4
 import six
 from msal import TokenCache
 
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -30,7 +31,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional, Sequence, Union
-    from azure.core.pipeline import AsyncPipeline, Pipeline
+    from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
     from .._internal import AadClientCertificate
@@ -83,24 +84,37 @@ class AadClientBase(ABC):
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         pass
 
-    def _process_response(self, response, scopes, now):
-        # type: (dict, Sequence[str], int) -> AccessToken
-        _raise_for_error(response)
+    def _process_response(self, response, request_time):
+        # type: (PipelineResponse, int) -> AccessToken
+
+        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         # TokenCache.add mutates the response. In particular, it removes tokens.
         response_copy = copy.deepcopy(response)
 
-        self._cache.add(event={"response": response, "scope": scopes, "client_id": self._client_id}, now=now)
-        if "expires_on" in response_copy:
-            expires_on = int(response_copy["expires_on"])
-        elif "expires_in" in response_copy:
-            expires_on = now + int(response_copy["expires_in"])
+        _raise_for_error(content)
+
+        if "expires_on" in content:
+            expires_on = int(content["expires_on"])
+        elif "expires_in" in content:
+            expires_on = request_time + int(content["expires_in"])
         else:
-            _scrub_secrets(response_copy)
+            _scrub_secrets(content)
             raise ClientAuthenticationError(
-                message="Unexpected response from Azure Active Directory: {}".format(response_copy)
+                message="Unexpected response from Azure Active Directory: {}".format(content)
             )
-        return AccessToken(response_copy["access_token"], expires_on)
+
+        token = AccessToken(content["access_token"], expires_on)
+        self._cache.add(
+            event={
+                "response": content,
+                "scope": response.http_request.body["scope"].split(),
+                "client_id": self._client_id,
+            },
+            now=request_time,
+        )
+
+        return token
 
     def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
         # type: (Sequence[str], str, str, Optional[str]) -> HttpRequest
