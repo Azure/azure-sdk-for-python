@@ -4,13 +4,16 @@
 # --------------------------------------------------------------------------------------------
 
 from copy import copy
-from typing import TYPE_CHECKING, Dict, Any, Union, List
+from typing import TYPE_CHECKING, Dict, Any, Union, List, Type, cast
+from xml.etree.ElementTree import Element, ElementTree
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AioHttpTransport
+from msrest.serialization import Model
+
 from ..._common.utils import parse_conn_str
 from ..._common.constants import JWT_TOKEN_SCOPE
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
@@ -20,6 +23,7 @@ from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
 from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
     as ServiceBusManagementClientImpl
 from .. import _constants as constants
+from .._management_client import _convert_xml_to_object
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 
 
@@ -81,29 +85,22 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
+    async def _get_queue_object(self, queue_name, clazz):
+        # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
+        et = await self._impl.queue.get(
+            queue_name,
+            enrich=False,
+            api_version=constants.API_VERSION
+        )
+        return _convert_xml_to_object(queue_name, et, clazz)
+
     async def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
-        et = await self._impl.queue.get(
-            queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"}
-        )
-        content_ele = et.find(constants.CONTENT_TAG)
-        if not content_ele:
-            raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-        qc = QueueDescription.deserialize(qc_ele)
-        qc.queue_name = queue_name
-        return qc
+        return await self._get_queue_object(queue_name, QueueDescription)
 
     async def get_queue_metrics(self, queue_name):
         # type: (str) -> QueueRuntimeInfo
-        et = await self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
-        content_ele = et.find(constants.CONTENT_TAG)
-        if not content_ele:
-            raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-        qc = QueueRuntimeInfo.deserialize(qc_ele)
-        qc.queue_name = queue_name
-        return qc
+        return await self._get_queue_object(queue_name, QueueRuntimeInfo)
 
     async def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
@@ -125,11 +122,7 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         et = await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-        content_ele = et.find(constants.CONTENT_TAG)
-        qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-        qc = QueueDescription.deserialize(qc_ele)
-        qc.queue_name = queue_name
-        return qc
+        return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     async def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
@@ -146,12 +139,7 @@ class ServiceBusManagementClient:
         et = await self._impl.queue.put(
             queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
         )
-        content_ele = et.find(constants.CONTENT_TAG)
-        qc_ele = content_ele.find(
-            constants.QUEUE_DESCRIPTION_TAG)
-        qc = QueueDescription.deserialize(qc_ele)
-        qc.queue_name = queue_description.queue_name
-        return qc
+        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     async def delete_queue(self, queue_name):
         # type: (str) -> None
@@ -160,16 +148,16 @@ class ServiceBusManagementClient:
 
     async def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
-        et = await self._impl.list_entities(
-            entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+        et = cast(
+            ElementTree,
+            await self._impl.list_entities(
+                entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+            )
         )
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
             entity_name = entry.find(constants.TITLE_TAG).text
-            print(entity_name)
-            qc_ele = entry.find(constants.CONTENT_TAG).find(constants.QUEUE_DESCRIPTION_TAG)
-            queue_description = QueueDescription.deserialize(qc_ele)
-            queue_description.queue_name = entity_name
+            queue_description = _convert_xml_to_object(entity_name, entry, QueueDescription)
             queue_descriptions.append(queue_description)
         return queue_descriptions
