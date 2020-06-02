@@ -13,10 +13,10 @@ try:
     from ._models_py3 import CreateTopicBody
     from ._models_py3 import CreateTopicBodyContent
     from ._models_py3 import MessageCountDetails
-    from ._models_py3 import QueueMetrics
-    from ._models_py3 import QueueProperties
+    from ._models_py3 import QueueDescription
+    from ._models_py3 import QueueRuntimeInfo
     from ._models_py3 import ServiceBusManagementError
-    from ._models_py3 import TopicProperties
+    from ._models_py3 import TopicDescription
 except (SyntaxError, ImportError):
     from ._models import AuthorizationRule  # type: ignore
     from ._models import CreateQueueBody  # type: ignore
@@ -24,10 +24,10 @@ except (SyntaxError, ImportError):
     from ._models import CreateTopicBody  # type: ignore
     from ._models import CreateTopicBodyContent  # type: ignore
     from ._models import MessageCountDetails  # type: ignore
-    from ._models import QueueMetrics  # type: ignore
-    from ._models import QueueProperties  # type: ignore
+    from ._models import QueueDescription  # type: ignore
+    from ._models import QueueRuntimeInfo  # type: ignore
     from ._models import ServiceBusManagementError  # type: ignore
-    from ._models import TopicProperties  # type: ignore
+    from ._models import TopicDescription  # type: ignore
 
 from ._service_bus_management_client_enums import (
     AccessRights,
@@ -42,10 +42,10 @@ __all__ = [
     'CreateTopicBody',
     'CreateTopicBodyContent',
     'MessageCountDetails',
-    'QueueMetrics',
-    'QueueProperties',
+    'QueueDescription',
+    'QueueRuntimeInfo',
     'ServiceBusManagementError',
-    'TopicProperties',
+    'TopicDescription',
     'AccessRights',
     'EntityAvailabilityStatus',
     'EntityStatus',

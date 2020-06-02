@@ -180,6 +180,9 @@
     "AccessRights": {
       "description": "Access rights of the entity",
       "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
       "enum": [
         "Manage",
         "Send",
@@ -189,6 +192,9 @@
     "EntityAvailabilityStatus": {
       "description": "Availibility status of the entity",
       "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
       "enum": [
         "Available",
         "Limited",
@@ -200,6 +206,9 @@
     "EntityStatus": {
       "description": "Status of a Service Bus resource",
       "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
       "enum": [
         "Active",
         "Creating",

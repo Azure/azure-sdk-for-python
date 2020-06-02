@@ -25,7 +25,7 @@ class ServiceBusManagementClientOperationsMixin(object):
 
     def list_entities(
         self,
-        queue_or_topic_name,  # type: str
+        entity_type,  # type: str
         skip=0,  # type: Optional[int]
         top=100,  # type: Optional[int]
         api_version="2017_04",  # type: Optional[str]
@@ -36,9 +36,9 @@ class ServiceBusManagementClientOperationsMixin(object):
 
         Get Queues or topics.
 
-        :param queue_or_topic_name: The name of the queue or topic relative to the Service Bus
-         namespace.
-        :type queue_or_topic_name: str
+        :param entity_type: List all queues or all topics of the service bus. Value can be "queues" or
+         "topics".
+        :type entity_type: str
         :param skip:
         :type skip: int
         :param top:
@@ -58,7 +58,7 @@ class ServiceBusManagementClientOperationsMixin(object):
         url = self.list_entities.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueOrTopicName': self._serialize.url("queue_or_topic_name", queue_or_topic_name, 'str', min_length=1),
+            'entityType': self._serialize.url("entity_type", entity_type, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

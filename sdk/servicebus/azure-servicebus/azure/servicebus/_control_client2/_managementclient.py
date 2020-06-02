@@ -1,4 +1,4 @@
-import inspect
+from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -7,10 +7,9 @@ from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPo
     RequestIdPolicy, BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
-from azure.servicebus._control_client2._generated import models
-from azure.servicebus._control_client2._generated._configuration import ServiceBusManagementClientConfiguration
-from azure.servicebus._control_client2._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueProperties, QueueMetrics
+from ._generated._configuration import ServiceBusManagementClientConfiguration
+from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
+    QueueDescription, QueueRuntimeInfo
 from azure.servicebus._control_client2._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from .._common.constants import JWT_TOKEN_SCOPE
 
@@ -20,19 +19,6 @@ from . import constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-# workaround for issue https://github.com/Azure/azure-sdk-for-python/issues/11568
-clsmembers = inspect.getmembers(models, inspect.isclass)
-for _, clazz in clsmembers:
-    if hasattr(clazz, "_xml_map"):
-        ns = clazz._xml_map['ns']
-        if hasattr(clazz, "_attribute_map"):
-            for mpkey, mpvalue in clazz._attribute_map.items():
-                if 'xml' not in mpvalue:
-                    mpvalue['xml'] = {'ns': ns}
-                    if mpkey == "message_count_details":
-                        mpvalue['xml']['name'] = "CountDetails"
-# end of workaround
 
 
 class ServiceBusManagementClient:
@@ -89,58 +75,76 @@ class ServiceBusManagementClient:
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
     def get_queue(self, queue_name):
-        # type: (str) -> QueueProperties
+        # type: (str) -> QueueDescription
         et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueProperties.deserialize(qc_ele)
+        qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
 
     def get_queue_metrics(self, queue_name):
-        # type: (str) -> QueueMetrics
+        # type: (str) -> QueueRuntimeInfo
         et = self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueMetrics.deserialize(qc_ele)
+        qc = QueueRuntimeInfo.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
 
-    def create_queue(self, queue_name, queue_properties=QueueProperties()):
-        # type: (str, "QueueProperties") -> QueueProperties
+    def create_queue(self, queue):
+        # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
+        if isinstance(queue, str):
+            queue_name = queue
+            queue_description = QueueDescription()
+        else:
+            queue_name = queue.queue_name
+            queue_description = copy(queue)
+            queue_description.queue_name = None
+            queue_description.created_at = None
+            if not queue_description.authorization_rules:
+                queue_description.authorization_rules = None
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_properties=queue_properties,
+                queue_description=queue_description,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.create(queue_name, request_body, api_version=constants.API_VERSION)
+        et = self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueProperties.deserialize(qc_ele)
+        qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
 
-    def update_queue(self, queue_name, queue_description=QueueProperties()):
-        # type: (str, "QueueProperties") -> QueueProperties
+    def update_queue(self, queue_description):
+        # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
+
+        to_update = QueueDescription()
+        to_update.default_message_time_to_live = queue_description.default_message_time_to_live
+        to_update.lock_duration = queue_description.lock_duration
+        to_update.dead_lettering_on_message_expiration = queue_description.dead_lettering_on_message_expiration
+        to_update.duplicate_detection_history_time_window = queue_description.duplicate_detection_history_time_window
+        to_update.max_delivery_count = queue_description.max_delivery_count
+
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_properties=queue_description
+                queue_description=to_update
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.create(queue_name, request_body, api_version=constants.API_VERSION, headers={"If-Match": "*"})
+        et = self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find(
             "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-        qc = QueueProperties.deserialize(qc_ele)
-        qc.queue_name = queue_name
+        qc = QueueDescription.deserialize(qc_ele)
+        qc.queue_name = queue_description.queue_name
         return qc
 
     def delete_queue(self, queue_name):
@@ -149,14 +153,15 @@ class ServiceBusManagementClient:
         self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
     def list_queues(self, skip=0, max_count=100):
-        # type: (int, int) -> List[QueueProperties]
+        # type: (int, int) -> List[QueueDescription]
         et = self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
         entries = et.findall("{http://www.w3.org/2005/Atom}entry")
-        queue_properties = []
+        queue_descriptions = []
         for entry in entries:
-            entity_name = et.find("{http://www.w3.org/2005/Atom}title").text
+            entity_name = entry.find("{http://www.w3.org/2005/Atom}title").text
+            print(entity_name)
             qc_ele = entry.find("{http://www.w3.org/2005/Atom}content").find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
-            queue_property = QueueProperties.deserialize(qc_ele)
-            queue_property.queue_name = entity_name
-            queue_properties.append(queue_property)
-        return queue_properties
+            queue_description = QueueDescription.deserialize(qc_ele)
+            queue_description.queue_name = entity_name
+            queue_descriptions.append(queue_description)
+        return queue_descriptions

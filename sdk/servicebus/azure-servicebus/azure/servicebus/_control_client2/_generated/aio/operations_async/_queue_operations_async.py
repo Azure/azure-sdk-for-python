@@ -102,21 +102,27 @@ class QueueOperations:
         return deserialized
     get.metadata = {'url': '/{queueName}'}  # type: ignore
 
-    async def create(
+    async def put(
         self,
         queue_name: str,
         request_body: object,
         api_version: Optional[str] = "2017_04",
+        if_match: Optional[str] = None,
         **kwargs
     ) -> object:
-        """Create a new queue at the provided queuePath.
+        """Create or update a queue at the provided queuePath.
 
         :param queue_name: The name of the queue relative to the Service Bus namespace.
         :type queue_name: str
-        :param request_body: Parameters required to make a new queue.
+        :param request_body: Parameters required to make or edit a queue.
         :type request_body: object
         :param api_version: Api Version.
         :type api_version: str
+        :param if_match: Match condition for an entity to be updated. If specified and a matching
+         entity is not found, an error will be raised. To force an unconditional update, set to the
+         wildcard character (*). If not specified, an insert will be performed when no existing entity
+         is found to update and a replace will be performed if an existing entity is found.
+        :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -128,7 +134,7 @@ class QueueOperations:
         content_type = kwargs.pop("content_type", "application/xml")
 
         # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        url = self.put.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
@@ -142,6 +148,8 @@ class QueueOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/xml'
 
@@ -170,7 +178,7 @@ class QueueOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/{queueName}'}  # type: ignore
+    put.metadata = {'url': '/{queueName}'}  # type: ignore
 
     async def delete(
         self,
