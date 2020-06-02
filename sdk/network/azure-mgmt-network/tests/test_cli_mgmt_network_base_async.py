@@ -51,13 +51,19 @@ class MgmtNetworkTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_networks.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, BODY)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Create subnet[put]
         BODY = {
           "address_prefix": "10.0.0.0/24"
         }
-        subnet = self.event_loop.run_until_complete(
+        result = self.event_loop.run_until_complete(
             self.mgmt_client.subnets.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME, BODY)
+        )
+        subnet = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # Check IP address availability[get]
@@ -111,10 +117,16 @@ class MgmtNetworkTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.subnets.begin_delete(resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Delete virtual network[delete]
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_networks.begin_delete(resource_group.name, VIRTUAL_NETWORK_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
 
