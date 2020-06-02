@@ -323,6 +323,8 @@ class ContainerProperties(DictMixin):
         self.lease = LeaseProperties(**kwargs)
         self.public_access = kwargs.get('x-ms-blob-public-access')
         self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
+        self.deleted = None
+        self.version = None
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
@@ -342,6 +344,8 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.deleted = generated.deleted
+        props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
         props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
