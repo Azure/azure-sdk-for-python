@@ -124,8 +124,6 @@ class ServiceBusManagementClient:
             to_create = QueueDescription()  # Use an emtpy queue description.
         else:
             queue_name = queue.queue_name  # type: ignore
-            if not queue_name:
-                raise ValueError("queue_name of queue must have a value")
             to_create = copy(queue)
             to_create.queue_name = None
         create_entity_body = CreateQueueBody(
