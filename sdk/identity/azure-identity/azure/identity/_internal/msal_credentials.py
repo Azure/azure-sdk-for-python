@@ -252,13 +252,7 @@ class InteractiveCredential(PublicClientCredential):
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
         _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
-        return self.authentication_record  # type: ignore
-
-    @property
-    def authentication_record(self):
-        # type: () -> Optional[AuthenticationRecord]
-        """:class:`~azure.identity.AuthenticationRecord` for the most recent authentication"""
-        return self._auth_record
+        return self._auth_record  # type: ignore
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes, **kwargs):

@@ -83,11 +83,10 @@ def test_authenticate():
             )
             record = credential.authenticate(scopes=(scope,))
 
-    for auth_record in (record, credential.authentication_record):
-        assert auth_record.authority == environment
-        assert auth_record.home_account_id == object_id + "." + home_tenant
-        assert auth_record.tenant_id == home_tenant
-        assert auth_record.username == username
+    assert record.authority == environment
+    assert record.home_account_id == object_id + "." + home_tenant
+    assert record.tenant_id == home_tenant
+    assert record.username == username
 
     # credential should have a cached access token for the scope used in authenticate
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
