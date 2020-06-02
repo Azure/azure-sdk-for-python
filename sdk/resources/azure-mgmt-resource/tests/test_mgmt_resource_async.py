@@ -101,15 +101,21 @@ class MgmtResourceAioTest(AzureMgmtAsyncTestCase):
         BODY = {
           'resources': ['*']
         }
-        template = self.event_loop.run_until_complete(
-            self.resource_client.resource_groups.export_template(
+        result = self.event_loop.run_until_complete(
+            self.resource_client.resource_groups.begin_export_template(
                 group_name,
                 BODY
             )
         )
+        template = self.event_loop.run_until_complete(
+            result.result()
+        )
         # self.assertTrue(hasattr(template, 'template'))
 
         # Delete
-        result_delete = self.event_loop.run_until_complete(
-            self.resource_client.resource_groups.delete(group_name)
+        result = self.event_loop.run_until_complete(
+            self.resource_client.resource_groups.begin_delete(group_name)
+        )
+        self.event_loop.run_until_complete(
+            result.result()
         )
