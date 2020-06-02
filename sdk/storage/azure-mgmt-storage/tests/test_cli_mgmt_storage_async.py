@@ -5,31 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
-
-# TEST SCENARIO COVERAGE
-# ----------------------
-# Methods Total   : 52
-# Methods Covered : 52
-# Examples Total  : 55
-# Examples Tested : 55
-# Coverage %      : 100
-# ----------------------
-
-# current methods coverage:
-#   blob_containers: 13/13
-#   blob_services:  3/3
-#   encryption_scopes:  4/4
-#   file_services: 3/3
-#   file_shares:  5/5
-#   management_policies:  3/3
-#   operations:  1/1
-#   private_endpoint_connections:  3/3
-#   private_link_resources:  1/1
-#   skus:  1/1
-#   storage_accounts:  11/14
-#   usages:  1/1
-
 import datetime as dt
 import unittest
 
@@ -103,7 +78,6 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
                 "privateLinkServiceConnections": [
                   {
                     "name": "myconnection",
-                    # "private_link_service_id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + group_name + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + ""
                     "private_link_service_id": resource_id,
                     "group_ids": ["blob"]
                   }
@@ -148,14 +122,6 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
           },
           "kind": "StorageV2",  # Storage v2 support policy
           "location": "westeurope",
-          # TODO: The value 'True' is not allowed for property isHnsEnabled
-          # "is_hns_enabled": True,
-          # TODO:Unsupport
-          # "routing_preference": {
-          #   "routing_choice": "MicrosoftRouting",
-          #   "publish_microsoft_endpoints": True,
-          #   "publish_internet_endpoints": True
-          # },
           "encryption": {
             "services": {
               "file": {
@@ -174,8 +140,11 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
             "key2": "value2"
           }
         }
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.storage_accounts.begin_create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        )
         storageaccount = self.event_loop.run_until_complete(
-            self.mgmt_client.storage_accounts.create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+            result.result()
         )
 
         self.create_endpoint(
@@ -322,12 +291,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
           "delete_retention_policy": {
             "enabled": True,
             "days": "300"
-          },
-          # "is_versioning_enabled": True,
-          # TODO: unsupport
-          # "change_feed": {
-          #   "enabled": True
-          # }
+          }
         }
         result = self.event_loop.run_until_complete(
             self.mgmt_client.blob_services.set_service_properties(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
@@ -619,12 +583,6 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         )
 
         # # StorageAccountPatchEncryptionScope[patch]
-        # BODY = {
-        #   "source": "Microsoft.KeyVault",
-        #   "key_vault_properties": {
-        #     "key_uri": "https://testvault.vault.core.windows.net/keys/key1/863425f1358359c"
-        #   }
-        # }
         BODY = {
           "source": "Microsoft.Storage",
           "state": "Enabled"
@@ -638,50 +596,6 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
             self.mgmt_client.storage_accounts.revoke_user_delegation_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
         )
 
-        # # TODO: FeatureUnavailableInLocation
-        # # # BlobRangesRestore[post]
-        # time_to_restore = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=10)).isoformat()
-        # BODY = {
-        #   "time_to_restore": time_to_restore,
-        #   "blob_ranges": [
-        #     {
-        #       "start_range": "container/blobpath1",
-        #       "end_range": "container/blobpath2"
-        #     },
-        #     {
-        #       "start_range": "container2/blobpath3",
-        #       "end_range": ""
-        #     }
-        #   ]
-        # }
-        # result = self.mgmt_client.storage_accounts.restore_blob_ranges(resource_group.name, STORAGE_ACCOUNT_NAME, BODY["time_to_restore"], BODY["blob_ranges"])
-        # result = result.result()
-
-        # # TODO: Wrong parameters
-        # StorageAccountListServiceSAS[post]
-        # signed_expiry = (dt.datetime.now(tz=UTC()) - dt.timedelta(days=2)).isoformat()
-        # BODY = {
-        #   "canonicalized_resource": "/blob/sto1299/music",
-        #   "signed_resource": "c",
-        #   "signed_permission": "l",
-        #   "signed_expiry": signed_expiry
-        # }
-        # result = self.mgmt_client.storage_accounts.list_service_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-
-        # TODO: Wrong parameters
-        # # StorageAccountListAccountSAS[post]
-        # signed_start = dt.datetime.now(tz=UTC()).isoformat()
-        # BODY = {
-        #   "signed_services": "b",
-        #   "signed_resource_types": "s",
-        #   "signed_permission": "r",
-        #   "signed_protocol": "https,http",
-        #   "signed_start": signed_start,
-        #   "signed_expiry": signed_expiry,
-        #   "key_to_sign": "key1"
-        # }
-        # result = self.mgmt_client.storage_accounts.list_account_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-
         # StorageAccountRegenerateKey[post]
         BODY = {
           "key_name": "key2"
@@ -690,50 +604,17 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
             self.mgmt_client.storage_accounts.regenerate_key(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         )
 
-        """ TODO: Key name kerb2 is not valid.
-        # StorageAccountRegenerateKerbKey[post]
-        # BODY = {
-        #   "key_name": "kerb2"
-        # }
-        KEY_NAME = "kerb2"
-        result = self.mgmt_client.storage_accounts.regenerate_key(resource_group.name, STORAGE_ACCOUNT_NAME, KEY_NAME)
-        """
-
         # StorageAccountListKeys[post]
         # Why this `list` operation doesn't return AsyncIterable like other list operation.
         result = self.event_loop.run_until_complete(
             self.mgmt_client.storage_accounts.list_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
         )
 
-        # """ TODO: FeatureUnavailableInLocation
-        # # StorageAccountEnableAD[patch]
-        # BODY = {
-        #   "azure_files_identity_based_authentication": {
-        #     "directory_service_options": "AD",
-        #     "active_directory_properties": {
-        #       "domain_name": "adtest.com",
-        #       "net_bios_domain_name": "adtest.com",
-        #       "forest_name": "adtest.com",
-        #       "domain_guid": "aebfc118-9fa9-4732-a21f-d98e41a77ae1",
-        #       "domain_sid": "S-1-5-21-2400535526-2334094090-2402026252",
-        #       "azure_storage_sid": "S-1-5-21-2400535526-2334094090-2402026252-0012"
-        #     }
-        #   }
-        # }
-        # result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-        # """
-
         # StorageAccountUpdate[patch]
         BODY = {
           "network_acls": {
             "default_action": "Allow"
           },
-          # TODO: Message: Routing Preferences is not supported for the account.
-          # "routing_preference": {
-          #   "routing_choice": "MicrosoftRouting",
-          #   "publish_microsoft_endpoints": True,
-          #   "publish_internet_endpoints": True
-          # },
           "encryption": {
             "services": {
               "file": {
@@ -751,11 +632,6 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         )
-
-        # StorageAccountFailover
-        # [ZIM] tis testcase fails
-        # result = self.mgmt_client.storage_accounts.begin_failover(resource_group.name, STORAGE_ACCOUNT_NAME)
-        #result = result.result()
 
         # LockImmutabilityPolicy[post]
         result = self.event_loop.run_until_complete(
