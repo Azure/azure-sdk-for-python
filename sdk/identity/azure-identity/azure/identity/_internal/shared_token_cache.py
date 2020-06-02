@@ -193,8 +193,11 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_refresh_tokens(self, account):
+        if "home_account_id" not in account:
+            return None
+
         cache_entries = self._cache.find(
-            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
+            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
         )
         return (token["secret"] for token in cache_entries if "secret" in token)
 
