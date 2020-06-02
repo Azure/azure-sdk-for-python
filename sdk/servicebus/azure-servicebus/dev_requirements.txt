@@ -2,3 +2,4 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../azure-mgmt-servicebus
+aiohttp
