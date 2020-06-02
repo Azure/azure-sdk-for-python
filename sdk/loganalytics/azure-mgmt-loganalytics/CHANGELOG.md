@@ -1,5 +1,23 @@
 # Release History
 
+## 0.6.0 (2020-06-02)
+
+**Features**
+
+  - Model Workspace has a new parameter workspace_capping
+  - Model SavedSearch has a new parameter function_alias
+  - Model SavedSearch has a new parameter function_parameters
+  - Model WorkspacePatch has a new parameter workspace_capping
+  - Added operation group TablesOperations
+  - Added operation group AvailableServiceTiersOperations
+  - Added operation group DeletedWorkspacesOperations
+
+**Breaking changes**
+
+  - Operation WorkspacesOperations.delete has a new signature
+  - Removed operation WorkspacesOperations.available_service_tiers
+  - Model WorkspaceSku has a new signature
+
 ## 0.5.0 (2020-04-22)
 
 **Breaking changes**
