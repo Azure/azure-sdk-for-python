@@ -111,7 +111,10 @@ class MgmtKeyVaultTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.vaults.create_or_update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, parameters=BODY)
+            self.mgmt_client.vaults.begin_create_or_update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, parameters=BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # /Vaults/put/Create or update a vault with network acls[put]
@@ -307,7 +310,10 @@ class MgmtKeyVaultTest(AzureMgmtAsyncTestCase):
 
         # /Vaults/post/Purge a deleted vault[post]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.vaults.purge_deleted(location=LOCATION, vault_name=VAULT_NAME)
+            self.mgmt_client.vaults.begin_purge_deleted(location=LOCATION, vault_name=VAULT_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
 #------------------------------------------------------------------------------
