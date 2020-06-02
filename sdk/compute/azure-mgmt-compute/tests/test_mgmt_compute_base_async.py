@@ -144,6 +144,9 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Create virtual machine extension (TODO: need swagger file)
         BODY = {
@@ -155,6 +158,9 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         }
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machine_extensions.begin_create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # Get Virtual Machine Instance View.[get]
@@ -220,20 +226,32 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_run_command(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # VirtualMachine restart (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_restart(resource_group.name, VIRTUAL_MACHINE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # VirtualMachine power off (TODO:need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # VirtualMachine start (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_start(resource_group.name, VIRTUAL_MACHINE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # Update virtual machine extension (TODO: need swagger file)
@@ -247,26 +265,41 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machine_extensions.begin_update(resource_group.name, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
         
         # This operation need VM running.
         # Delete virtual machine extension (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machine_extensions.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME,VIRTUAL_MACHINE_EXTENSION_NAME)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # VirtualMachine power off again.
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # Reapply the state of a virtual machine.[post]
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_reapply(resource_group.name, VIRTUAL_MACHINE_NAME)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Redeploy the virtual machine. (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # Update a VM by detaching data disk[patch]
@@ -285,13 +318,22 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Deallocate virtual machine (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_deallocate(resource_group.name, VIRTUAL_MACHINE_NAME)
         )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # Delete virtual machine (TODO: need swagger file)
         result = self.event_loop.run_until_complete(
             self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
