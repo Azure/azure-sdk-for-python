@@ -30,13 +30,10 @@ def autocomplete_query():
     # [START autocomplete_query]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
-    from azure.search.documents.models import AutocompleteQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = AutocompleteQuery(search_text="bo", suggester_name="sg")
-
-    results = search_client.autocomplete(query=query)
+    results = search_client.autocomplete(search_text="bo", suggester_name="sg")
 
     print("Autocomplete suggestions for 'bo'")
     for result in results:

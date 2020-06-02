@@ -11,19 +11,20 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class SignalRPrivateLinkResourcesOperations(object):
+    """SignalRPrivateLinkResourcesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-05-01".
     """
 
     models = models
@@ -33,34 +34,40 @@ class UsagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-10-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """List usage quotas for Azure SignalR service by location.
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+        """Get the private link resources that need to be created for a SignalR
+        resource.
 
-        :param location: the location like "eastus"
-        :type location: str
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param resource_name: The name of the SignalR resource.
+        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SignalRUsage
+        :return: An iterator like instance of PrivateLinkResource
         :rtype:
-         ~azure.mgmt.signalr.models.SignalRUsagePaged[~azure.mgmt.signalr.models.SignalRUsage]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.signalr.models.PrivateLinkResourcePaged[~azure.mgmt.signalr.models.PrivateLinkResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.signalr.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -84,22 +91,23 @@ class UsagesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.SignalRUsagePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SignalRUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.PrivateLinkResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/locations/{location}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateLinkResources'}

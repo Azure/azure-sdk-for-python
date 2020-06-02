@@ -23,6 +23,7 @@
   Suggester -> SearchSuggester
   PathHierarchyTokenizerV2 -> PathHierarchyTokenizer
 - Renamed DataSource methods to DataSourceConnection    #11693
+- Autocomplete & suggest methods now takes arguments search_text & suggester_name rather than query objects   #11747
   
 
 ## 1.0.0b3 (2020-05-04)

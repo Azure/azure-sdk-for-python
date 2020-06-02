@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2020-05-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-05-01".
     """
 
     models = models
@@ -41,7 +40,8 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists available operations for the Microsoft.Batch provider.
+        """Lists all of the available REST API operations of the
+        Microsoft.SignalRService provider.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -50,8 +50,9 @@ class Operations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.batch.models.OperationPaged[~azure.mgmt.batch.models.Operation]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.signalr.models.OperationPaged[~azure.mgmt.signalr.models.Operation]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.signalr.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -86,9 +87,7 @@ class Operations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -99,4 +98,4 @@ class Operations(object):
         deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Batch/operations'}
+    list.metadata = {'url': '/providers/Microsoft.SignalRService/operations'}

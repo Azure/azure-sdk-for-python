@@ -218,7 +218,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         await message.renew_lock()
                     await message.complete()
 
-    @pytest.mark.skip(reason='requires dead letter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -252,7 +251,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            async with sb_client.get_deadletter_receiver(idle_timeout=5) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -260,7 +259,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
             assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -326,8 +324,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             with pytest.raises(MessageSettleFailed):
                 await message.complete()
 
-
-    @pytest.mark.skip(reason='requires deadletter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -355,12 +351,12 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     messages = await receiver.receive()
             assert count == 10
 
-            async with sb_client.get_deadletter_receiver(idle_timeout=5) as session:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as session:
                 count = 0
                 async for message in session:
                     print_message(_logger, message)
-                    #assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'  # TODO
-                    #assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'  # TODO
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
                     count += 1
             assert count == 10

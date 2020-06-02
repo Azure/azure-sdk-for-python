@@ -95,7 +95,7 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     return await poller
 
 
-class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
+class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
     """Async poller for long running operations.
 
     :param client: A pipeline service client

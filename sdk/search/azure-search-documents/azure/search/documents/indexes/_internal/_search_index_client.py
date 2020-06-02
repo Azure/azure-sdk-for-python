@@ -266,7 +266,7 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def get_synonym_maps(self, **kwargs):
-        # type: (**Any) -> List[Dict[Any, Any]]
+        # type: (**Any) -> List[SynonymMap]
         """List the Synonym Maps in an Azure Search service.
 
         :return: List of synonym maps
@@ -286,6 +286,20 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.list(**kwargs)
         return [unpack_synonyms(x) for x in result.synonym_maps]
+
+    @distributed_trace
+    def get_synonym_map_names(self, **kwargs):
+        # type: (**Any) -> List[str]
+        """List the Synonym Map names in an Azure Search service.
+
+        :return: List of synonym maps
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.synonym_maps.list(**kwargs)
+        return [x.name for x in result.synonym_maps]
 
     @distributed_trace
     def get_synonym_map(self, name, **kwargs):
