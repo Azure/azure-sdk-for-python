@@ -42,3 +42,5 @@ stages:
     Artifacts:
     - name: azure_mgmt_attestation
       safeName: azuremgmtattestation
+    - name: azure_attestation
+      safeName: azureattestation
