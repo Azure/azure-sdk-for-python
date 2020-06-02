@@ -909,15 +909,14 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     sender.send(message)
 
-            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0, idle_timeout=1) as receiver:
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0, idle_timeout=5) as receiver:
                 message = receiver.next()
                 assert message.sequence_number == 1
                 message.abandon()
-                while True: # we can't be sure there won't be a service delay, so we may not get the message back _immediately_, even if in most cases it shows right back up.
-                    second_message = receiver.next()
-                    if not second_message:
-                        raise "Did not successfully re-receive abandoned message, sequence_number 1 was not observed."
-                    if second_message.sequence_number == 1:
+                for next_message in receiver: # we can't be sure there won't be a service delay, so we may not get the message back _immediately_, even if in most cases it shows right back up.
+                    if not next_message:
+                        raise Exception("Did not successfully re-receive abandoned message, sequence_number 1 was not observed.")
+                    if next_message.sequence_number == 1:
                         return
 
     @pytest.mark.liveTest
@@ -957,7 +956,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = Message("This should be an invalid non session message")
                 with pytest.raises(MessageSendFailed):
