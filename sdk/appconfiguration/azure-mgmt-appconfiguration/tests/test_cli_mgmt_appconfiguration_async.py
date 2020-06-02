@@ -140,7 +140,10 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+            self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # ConfigurationStores_ListKeys[post]
@@ -173,8 +176,8 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
     def test_appconfiguration(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
-        VNET_NAME = "vnetname"
-        SUB_NET = "subnetname"
+        VNET_NAME = "vnetnamexxy"
+        SUB_NET = "subnetnamexxy"
         ENDPOINT_NAME = "endpointxyz"
         CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
         PRIVATE_ENDPOINT_CONNECTION_NAME = self.get_resource_name("privateendpoint")
@@ -189,8 +192,11 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
             "my_tag": "myTagValue"
           }
         }
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
         conf_store = self.event_loop.run_until_complete(
-            self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+            result.result()
         )
 
         if self.is_live:
@@ -235,12 +241,15 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.private_endpoint_connections.create_or_update(
+            self.mgmt_client.private_endpoint_connections.begin_create_or_update(
                 resource_group.name,
                 CONFIGURATION_STORE_NAME,
                 PRIVATE_ENDPOINT_CONNECTION_NAME,
                 BODY
             )
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
         # result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
         #     resource_group.name,
@@ -298,7 +307,10 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.configuration_stores.update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+            self.mgmt_client.configuration_stores.begin_update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # ConfigurationStores_Update_WithIdentity[patch]
@@ -337,12 +349,18 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
 
         # PrivateEndpointConnections_Delete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.private_endpoint_connections.delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+            self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
         # ConfigurationStores_Delete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.configuration_stores.delete(resource_group.name, CONFIGURATION_STORE_NAME)
+            self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
         )
 
 #------------------------------------------------------------------------------

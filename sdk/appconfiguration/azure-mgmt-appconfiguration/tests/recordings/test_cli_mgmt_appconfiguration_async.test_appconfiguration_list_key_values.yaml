@@ -15,19 +15,19 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-05-25T06:18:53.4628672+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-06-02T02:31:00.970748+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{}}'
     headers:
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/ea4811de-0c58-8ecc-fd07-c060b23c5c23?api-version=2019-11-01-preview
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914?api-version=2019-11-01-preview
       cache-control: no-cache
-      content-length: '530'
+      content-length: '529'
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:18:54 GMT
+      date: Tue, 02 Jun 2020 02:31:02 GMT
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1199'
+      x-ms-ratelimit-remaining-subscription-writes: '1196'
     status:
       code: 201
       message: Created
@@ -38,16 +38,16 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/ea4811de-0c58-8ecc-fd07-c060b23c5c23?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/ea4811de-0c58-8ecc-fd07-c060b23c5c23","name":"ea4811de-0c58-8ecc-fd07-c060b23c5c23","status":"Succeeded","error":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914","name":"bd30628d-fccb-dedb-aee6-711fde187914","status":"Succeeded","error":null}'
     headers:
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/ea4811de-0c58-8ecc-fd07-c060b23c5c23?api-version=2019-11-01-preview
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914?api-version=2019-11-01-preview
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:19:05 GMT
+      date: Tue, 02 Jun 2020 02:31:12 GMT
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
@@ -58,7 +58,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/ea4811de-0c58-8ecc-fd07-c060b23c5c23?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914?api-version=2019-11-01-preview
 - request:
     body: null
     headers:
@@ -68,13 +68,13 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-05-25T06:18:54+00:00","endpoint":"https://configuration7d301eb9.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-06-02T02:31:02+00:00","endpoint":"https://configuration7d301eb9.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:19:05 GMT
-      etag: W/"5800d491-0000-0700-0000-5ecb634e0000"
+      date: Tue, 02 Jun 2020 02:31:12 GMT
+      etag: W/"0f00c844-0000-0700-0000-5ed5b9e50000"
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
@@ -97,14 +97,14 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"value":[{"id":"ZTRi-l1-s0:LqT6+GeQNwUpClqy/Tzu","name":"Primary","value":"qlsOrboY0tu4YFHqS2rrDK5iuKx6+bxRMVXX3lrTkWs=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=ZTRi-l1-s0:LqT6+GeQNwUpClqy/Tzu;Secret=qlsOrboY0tu4YFHqS2rrDK5iuKx6+bxRMVXX3lrTkWs=","lastModified":"2020-05-25T06:18:53+00:00","readOnly":false},{"id":"l0pp-l1-s0:104BPcRD3iFWB4TkKX81","name":"Secondary","value":"P5DP5FAhMHBroJfWKIOLxfb6fvdmiP++cAFIhu8+Yds=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=l0pp-l1-s0:104BPcRD3iFWB4TkKX81;Secret=P5DP5FAhMHBroJfWKIOLxfb6fvdmiP++cAFIhu8+Yds=","lastModified":"2020-05-25T06:18:53+00:00","readOnly":false},{"id":"qk/z-l1-s0:WfPe6L++5uNww8izpwN1","name":"Primary
-        Read Only","value":"XRiiv3sEE5BHmkcg1X+qGaJw2anYLiYgWekOGnPIuR8=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=qk/z-l1-s0:WfPe6L++5uNww8izpwN1;Secret=XRiiv3sEE5BHmkcg1X+qGaJw2anYLiYgWekOGnPIuR8=","lastModified":"2020-05-25T06:18:53+00:00","readOnly":true},{"id":"YX+k-l1-s0:QR5BBy9y74jrQ8/PxjOb","name":"Secondary
-        Read Only","value":"YmxQTVlkqg8hOlh90EFJTLYSxLWNM8wdQB52XABMJao=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=YX+k-l1-s0:QR5BBy9y74jrQ8/PxjOb;Secret=YmxQTVlkqg8hOlh90EFJTLYSxLWNM8wdQB52XABMJao=","lastModified":"2020-05-25T06:18:53+00:00","readOnly":true}],"nextLink":null}'
+      string: '{"value":[{"id":"7u0h-l1-s0:QxVXlvvbknjc29cmrxev","name":"Primary","value":"Z9tBkqwNU2iDHWwd3uNOTmmDcUDNiDIdayi5bbaN3bY=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=7u0h-l1-s0:QxVXlvvbknjc29cmrxev;Secret=Z9tBkqwNU2iDHWwd3uNOTmmDcUDNiDIdayi5bbaN3bY=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":false},{"id":"/ZrY-l1-s0:vNPEe9DJXREWRf/CpuAn","name":"Secondary","value":"l7pOuBqo3dAA0jEVN+wKHGjWg0I+ydhiDijtEGJ46i4=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=/ZrY-l1-s0:vNPEe9DJXREWRf/CpuAn;Secret=l7pOuBqo3dAA0jEVN+wKHGjWg0I+ydhiDijtEGJ46i4=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":false},{"id":"ArJh-l1-s0:ANcViP0BM/Cm93gJF76t","name":"Primary
+        Read Only","value":"LHTzMXSe9KO4huPGTSCbiR2dFSL47jmorl9AkdeUXeU=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=ArJh-l1-s0:ANcViP0BM/Cm93gJF76t;Secret=LHTzMXSe9KO4huPGTSCbiR2dFSL47jmorl9AkdeUXeU=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":true},{"id":"zQU+-l1-s0:tFj//waf3jlaCnrolnl9","name":"Secondary
+        Read Only","value":"N7nb7x2ErKGR31+pahrXwibSSyppDrd3uia+NY0jd20=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=zQU+-l1-s0:tFj//waf3jlaCnrolnl9;Secret=N7nb7x2ErKGR31+pahrXwibSSyppDrd3uia+NY0jd20=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":true}],"nextLink":null}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:19:05 GMT
+      date: Tue, 02 Jun 2020 02:31:13 GMT
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
@@ -118,7 +118,7 @@ interactions:
       message: OK
     url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
 - request:
-    body: '{"id": "ZTRi-l1-s0:LqT6+GeQNwUpClqy/Tzu"}'
+    body: '{"id": "7u0h-l1-s0:QxVXlvvbknjc29cmrxev"}'
     headers:
       Accept:
       - application/json
@@ -132,12 +132,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/RegenerateKey?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"id":"d4Ym-l1-s0:X4dYQ8tGE28u6tOT9/HO","name":"Primary","value":"CHYEdTcAE87EKMDxZO5bPrC+mBewYMJ+zArYW9DLXWM=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=d4Ym-l1-s0:X4dYQ8tGE28u6tOT9/HO;Secret=CHYEdTcAE87EKMDxZO5bPrC+mBewYMJ+zArYW9DLXWM=","lastModified":"2020-05-25T06:19:06+00:00","readOnly":false}'
+      string: '{"id":"W2Kp-l1-s0:kEijy4oUJE42VqVaEzSa","name":"Primary","value":"hwbjfLdOSZQ2CmTyKaHQcRriAXdH6xZCeSonopqph64=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=W2Kp-l1-s0:kEijy4oUJE42VqVaEzSa;Secret=hwbjfLdOSZQ2CmTyKaHQcRriAXdH6xZCeSonopqph64=","lastModified":"2020-06-02T02:31:13+00:00","readOnly":false}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:19:05 GMT
+      date: Tue, 02 Jun 2020 02:31:13 GMT
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
@@ -172,13 +172,13 @@ interactions:
       x-ms-content-sha256:
       - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
       x-ms-date:
-      - May, 25 2020 06:19:06 GMT
+      - Jun, 02 2020 02:31:12 GMT
     method: PUT
     uri: https://configuration7d301eb9.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"nPevZZ1WTygjivUDZMs7FLMUKDp","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-05-25T06:19:08+00:00"}'
+      string: '{"etag":"wnBGgqlqouSLUDTn6Lu4gr4iqZS","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-06-02T02:31:15+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -195,17 +195,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 25 May 2020 06:19:07 GMT
+      - Tue, 02 Jun 2020 02:31:15 GMT
       etag:
-      - '"nPevZZ1WTygjivUDZMs7FLMUKDp"'
+      - '"wnBGgqlqouSLUDTn6Lu4gr4iqZS"'
       last-modified:
-      - Mon, 25 May 2020 06:19:08 GMT
+      - Tue, 02 Jun 2020 02:31:15 GMT
       server:
       - openresty/1.15.8.3
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=ODoxIzE3MDE0OTQ=;sn=1701494
+      - zAJw6V16=ODoxIzE3MzcyNTU=;sn=1737255
       transfer-encoding:
       - chunked
     status:
@@ -228,12 +228,12 @@ interactions:
   response:
     body:
       string: '{"key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","value":"test
-        value","contentType":"test content type","eTag":"nPevZZ1WTygjivUDZMs7FLMUKDp","lastModified":"2020-05-25T06:19:08+00:00","locked":false,"tags":{"tag1":"tag1","tag2":"tag2"}}'
+        value","contentType":"test content type","eTag":"wnBGgqlqouSLUDTn6Lu4gr4iqZS","lastModified":"2020-06-02T02:31:15+00:00","locked":false,"tags":{"tag1":"tag1","tag2":"tag2"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 25 May 2020 06:19:07 GMT
+      date: Tue, 02 Jun 2020 02:31:15 GMT
       expires: '-1'
       pragma: no-cache
       server: openresty/1.15.8.1
