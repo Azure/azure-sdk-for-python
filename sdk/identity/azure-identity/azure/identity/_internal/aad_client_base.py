@@ -89,8 +89,13 @@ class AadClientBase(ABC):
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
-        # TokenCache.add mutates the response. In particular, it removes tokens.
-        response_copy = copy.deepcopy(response)
+        if content.get("error") == "invalid_grant" and response.http_request.body.get("grant_type") == "refresh_token":
+            # The request contained an invalid refresh token. Following MSAL, we evict that token from the cache.
+            cache_entries = self._cache.find(
+                TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": response.http_request.body["refresh_token"]}
+            )
+            if len(cache_entries) == 1:
+                self._cache.remove_rt(cache_entries[0])
 
         _raise_for_error(content)
 
