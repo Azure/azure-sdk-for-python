@@ -1,5 +1,4 @@
 import time
-from threading import Lock
 import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .._base_handler import ServiceBusSharedKeyCredential

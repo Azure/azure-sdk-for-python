@@ -2,20 +2,20 @@ from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
-    RequestIdPolicy, BearerTokenCredentialPolicy
+    RequestIdPolicy, AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
-from ._generated._configuration import ServiceBusManagementClientConfiguration
-from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
+from .._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
+from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
-from azure.servicebus._control_client2._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
-from .._common.constants import JWT_TOKEN_SCOPE
+from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
+from ..._common.constants import JWT_TOKEN_SCOPE
 
-from .._common.utils import parse_conn_str
-from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
-from . import constants
+from ..._common.utils import parse_conn_str
+from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient as ServiceBusManagementClientImpl
+from .. import constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -40,9 +40,9 @@ class ServiceBusManagementClient:
     def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
-        credential_policy = ServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
+        credential_policy = AsyncServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
             if isinstance(self._credential, ServiceBusSharedKeyCredential) \
-            else BearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
+            else AsyncBearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
         if policies is None:  # [] is a valid policy list
             policies = [
                 RequestIdPolicy(**kwargs),
@@ -59,7 +59,7 @@ class ServiceBusManagementClient:
             ]
         if not transport:
             transport = RequestsTransport(**kwargs)
-        return Pipeline(transport, policies)
+        return AsyncPipeline(transport, policies)
 
     @classmethod
     def from_connection_string(cls, connection_string):
@@ -74,9 +74,9 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
-    def get_queue(self, queue_name):
+    async def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
-        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
+        et = await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
@@ -85,9 +85,9 @@ class ServiceBusManagementClient:
         qc.queue_name = queue_name
         return qc
 
-    def get_queue_metrics(self, queue_name):
+    async def get_queue_metrics(self, queue_name):
         # type: (str) -> QueueRuntimeInfo
-        et = self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
+        et = await self._impl.queue.get(queue_name, enrich=True, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
@@ -96,7 +96,7 @@ class ServiceBusManagementClient:
         qc.queue_name = queue_name
         return qc
 
-    def create_queue(self, queue):
+    async def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
         if isinstance(queue, str):
@@ -115,14 +115,14 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+        et = await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
         qc = QueueDescription.deserialize(qc_ele)
         qc.queue_name = queue_name
         return qc
 
-    def update_queue(self, queue_description):
+    async def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
 
@@ -139,7 +139,7 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
+        et = await self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
         content_ele = et.find("{http://www.w3.org/2005/Atom}content")
         qc_ele = content_ele.find(
             "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription")
@@ -147,14 +147,14 @@ class ServiceBusManagementClient:
         qc.queue_name = queue_description.queue_name
         return qc
 
-    def delete_queue(self, queue_name):
+    async def delete_queue(self, queue_name):
         # type: (str) -> None
         """Create a queue"""
-        self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+        await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
-    def list_queues(self, skip=0, max_count=100):
+    async def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
-        et = self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
+        et = await self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
         entries = et.findall("{http://www.w3.org/2005/Atom}entry")
         queue_descriptions = []
         for entry in entries:
