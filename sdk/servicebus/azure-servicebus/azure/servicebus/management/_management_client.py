@@ -27,7 +27,7 @@ from ._generated._service_bus_management_client import ServiceBusManagementClien
 from . import _constants as constants
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
 
 
 def _convert_xml_to_object(queue_name, et, clazz):
@@ -96,10 +96,12 @@ class ServiceBusManagementClient:
 
     def _get_queue_object(self, queue_name, clazz):
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
-        et = self._impl.queue.get(
-            queue_name,
-            enrich=False,
-            api_version=constants.API_VERSION
+
+        if not queue_name:
+            raise ValueError("queue_name must be a non-empty str")
+        et = cast(
+            ElementTree,
+            self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         )
         return _convert_xml_to_object(queue_name, et, clazz)
 
@@ -114,28 +116,35 @@ class ServiceBusManagementClient:
     def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
+
+        if not queue or not queue.queue_name:  # type: ignore
+            raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty queue_name")
         if isinstance(queue, str):
             queue_name = queue
-            queue_description = QueueDescription()  # Use an emtpy queue description.
+            to_create = QueueDescription()  # Use an emtpy queue description.
         else:
-            queue_name = queue.queue_name
-            queue_description = copy(queue)
-            queue_description.queue_name = None
-            queue_description.created_at = None
-            if not queue_description.authorization_rules:
-                queue_description.authorization_rules = None
+            queue_name = queue.queue_name  # type: ignore
+            if not queue_name:
+                raise ValueError("queue_name of queue must have a value")
+            to_create = copy(queue)
+            to_create.queue_name = None
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=queue_description,
+                queue_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+        et = cast(
+            ElementTree,
+            self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+        )
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
+        if not queue_description.queue_name:
+            raise ValueError("queue_description must have a non-empty queue_name")
 
         to_update = copy(queue_description)
         to_update.queue_name = None
@@ -145,17 +154,23 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.put(
-            queue_description.queue_name,
+        et = cast(
+            ElementTree,
+            self._impl.queue.put(
+            queue_description.queue_name,  # type: ignore
             request_body,
             api_version=constants.API_VERSION,
             if_match="*"
+            )
         )
         return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     def delete_queue(self, queue_name):
         # type: (str) -> None
         """Create a queue"""
+
+        if not queue_name:
+            raise ValueError("queue_name must not be None or empty")
         self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
     def list_queues(self, skip=0, max_count=100):
@@ -167,7 +182,10 @@ class ServiceBusManagementClient:
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
-            entity_name = entry.find(constants.TITLE_TAG).text
-            queue_description = _convert_xml_to_object(entity_name, entry, QueueDescription)
+            entity_name = entry.find(constants.TITLE_TAG).text  # type: ignore
+            queue_description = _convert_xml_to_object(
+                entity_name,  # type: ignore
+                cast(Element, entry),
+                QueueDescription)
             queue_descriptions.append(queue_description)
         return queue_descriptions

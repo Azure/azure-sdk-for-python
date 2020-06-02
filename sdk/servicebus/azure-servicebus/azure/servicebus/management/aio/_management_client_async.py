@@ -5,9 +5,8 @@
 
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, Type, cast
-from xml.etree.ElementTree import Element, ElementTree
+from xml.etree.ElementTree import ElementTree, Element
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, AsyncBearerTokenCredentialPolicy
@@ -28,7 +27,7 @@ from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
 class ServiceBusManagementClient:
@@ -87,10 +86,11 @@ class ServiceBusManagementClient:
 
     async def _get_queue_object(self, queue_name, clazz):
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
-        et = await self._impl.queue.get(
-            queue_name,
-            enrich=False,
-            api_version=constants.API_VERSION
+        if not queue_name:
+            raise ValueError("queue_name must be a non-empty str")
+        et = cast(
+            ElementTree,
+            await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         )
         return _convert_xml_to_object(queue_name, et, clazz)
 
@@ -105,29 +105,33 @@ class ServiceBusManagementClient:
     async def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
+        if not queue or not queue.queue_name:  # type: ignore
+            raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty queue_name")
         if isinstance(queue, str):
             queue_name = queue
             queue_description = QueueDescription()
         else:
-            queue_name = queue.queue_name
+            queue_name = queue.queue_name  # type: ignore
             queue_description = copy(queue)
             queue_description.queue_name = None
-            queue_description.created_at = None
-            if not queue_description.authorization_rules:
-                queue_description.authorization_rules = None
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=queue_description,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+        et = cast(
+            ElementTree,
+            await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+        )
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     async def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
         """Update a queue"""
 
+        if not queue_description.queue_name:
+            raise ValueError("queue_description must have a non-empty queue_name")
         to_update = copy(queue_description)
         to_update.queue_name = None
         create_entity_body = CreateQueueBody(
@@ -136,14 +140,20 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = await self._impl.queue.put(
-            queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+        et = cast(
+            ElementTree,
+            await self._impl.queue.put(
+                queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+            )
         )
         return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     async def delete_queue(self, queue_name):
         # type: (str) -> None
         """Create a queue"""
+
+        if not queue_name:
+            raise ValueError("queue_name must not be None or empty")
         await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
     async def list_queues(self, skip=0, max_count=100):
@@ -157,7 +167,11 @@ class ServiceBusManagementClient:
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
-            entity_name = entry.find(constants.TITLE_TAG).text
-            queue_description = _convert_xml_to_object(entity_name, entry, QueueDescription)
+            entity_name = entry.find(constants.TITLE_TAG).text  # type: ignore
+            queue_description = _convert_xml_to_object(
+                entity_name,   # type: ignore
+                cast(Element, entry),
+                QueueDescription
+            )
             queue_descriptions.append(queue_description)
         return queue_descriptions
