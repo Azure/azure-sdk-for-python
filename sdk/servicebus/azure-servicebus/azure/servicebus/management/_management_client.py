@@ -82,7 +82,11 @@ class ServiceBusManagementClient:
 
     def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
-        et = self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
+        et = self._impl.queue.get(
+            queue_name,
+            enrich=False,
+            api_version=constants.API_VERSION, headers={"If-Match": "*"}
+        )
         content_ele = et.find(constants.CONTENT_TAG)
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
@@ -140,7 +144,12 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
+        et = self._impl.queue.put(
+            queue_description.queue_name,
+            request_body,
+            api_version=constants.API_VERSION,
+            if_match="*"
+        )
         content_ele = et.find(constants.CONTENT_TAG)
         qc_ele = content_ele.find(
             constants.QUEUE_DESCRIPTION_TAG)

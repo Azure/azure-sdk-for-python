@@ -17,7 +17,8 @@ from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 from .._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
-from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient as ServiceBusManagementClientImpl
+from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
+    as ServiceBusManagementClientImpl
 from .. import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 
@@ -45,7 +46,8 @@ class ServiceBusManagementClient:
     def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
-        credential_policy = AsyncServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
+        credential_policy = \
+            AsyncServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
             if isinstance(self._credential, ServiceBusSharedKeyCredential) \
             else AsyncBearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
         if policies is None:  # [] is a valid policy list
@@ -81,7 +83,9 @@ class ServiceBusManagementClient:
 
     async def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
-        et = await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"})
+        et = await self._impl.queue.get(
+            queue_name, enrich=False, api_version=constants.API_VERSION, headers={"If-Match": "*"}
+        )
         content_ele = et.find(constants.CONTENT_TAG)
         if not content_ele:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
@@ -139,7 +143,9 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = await self._impl.queue.put(queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*")
+        et = await self._impl.queue.put(
+            queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+        )
         content_ele = et.find(constants.CONTENT_TAG)
         qc_ele = content_ele.find(
             constants.QUEUE_DESCRIPTION_TAG)
@@ -154,7 +160,9 @@ class ServiceBusManagementClient:
 
     async def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
-        et = await self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
+        et = await self._impl.list_entities(
+            entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+        )
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
