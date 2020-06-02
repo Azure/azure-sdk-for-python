@@ -28,7 +28,6 @@ class CreateDeleteTable(object):
         from azure.azure_table import TableServiceClient
         from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-
         try:
             table_deleted = table_client.delete_table(table_name=self.table_name)
             print(table_deleted)

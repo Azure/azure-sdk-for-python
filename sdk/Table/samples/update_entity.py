@@ -7,6 +7,7 @@ class UpdateEntity(object):
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
     partition_key = "1"
     row_key = "1"
+    entity = {"entity": None}
 
     def update_entity(self):
         """Update entity in a table.
@@ -32,7 +33,7 @@ class UpdateEntity(object):
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
             updated_entity = table_client.update_entity(table_name=self.table_name, partition_key=self.partition_key
-                                                        , row_key=self.row_key)
+                                                        , row_key=self.row_key, table_entity_properties=self.entity)
             return updated_entity
         except HttpResponseError as e:
             print(e.response)
