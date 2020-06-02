@@ -126,7 +126,8 @@ class EventHubsOperations:
         parameters: "models.AuthorizationRule",
         **kwargs
     ) -> "models.AuthorizationRule":
-        """Creates or updates an AuthorizationRule for the specified Event Hub. Creation/update of the AuthorizationRule will take a few seconds to take effect.
+        """Creates or updates an AuthorizationRule for the specified Event Hub. Creation/update of the
+        AuthorizationRule will take a few seconds to take effect.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str

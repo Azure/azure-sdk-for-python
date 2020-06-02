@@ -258,7 +258,8 @@ class ConsumerGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ConsumerGroupListResult"]
-        """Gets all the consumer groups in a Namespace. An empty feed is returned if no consumer group exists in the Namespace.
+        """Gets all the consumer groups in a Namespace. An empty feed is returned if no consumer group
+    exists in the Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
         :type resource_group_name: str
