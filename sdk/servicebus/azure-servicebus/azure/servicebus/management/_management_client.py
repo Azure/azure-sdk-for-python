@@ -15,7 +15,7 @@ from .._common.constants import JWT_TOKEN_SCOPE
 
 from .._common.utils import parse_conn_str
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
-from . import constants
+from . import _constants as constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
