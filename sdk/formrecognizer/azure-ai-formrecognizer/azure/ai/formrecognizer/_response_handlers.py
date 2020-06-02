@@ -7,20 +7,19 @@
 # pylint: disable=protected-access
 
 from ._models import (
-    USReceipt,
     ReceiptType,
     FormField,
-    USReceiptItem,
     FormPage,
     FormLine,
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm
+    RecognizedForm,
+    RecognizedReceipt
 )
 
 
-def prepare_us_receipt(response):
+def prepare_receipt(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
@@ -28,43 +27,15 @@ def prepare_us_receipt(response):
 
     for page in document_result:
         if page.fields is None:
-            receipt = USReceipt(
+            receipt = RecognizedReceipt(
                 page_range=FormPageRange(first_page_number=page.page_range[0], last_page_number=page.page_range[1]),
                 pages=form_page[page.page_range[0]-1:page.page_range[1]],
                 form_type=page.doc_type,
             )
             receipts.append(receipt)
             continue
-        receipt = USReceipt(
-            merchant_address=FormField._from_generated(
-                "MerchantAddress", page.fields.get("MerchantAddress"), read_result
-            ),
-            merchant_name=FormField._from_generated(
-                "MerchantName", page.fields.get("MerchantName"), read_result
-            ),
-            merchant_phone_number=FormField._from_generated(
-                "MerchantPhoneNumber",
-                page.fields.get("MerchantPhoneNumber"),
-                read_result,
-            ),
+        receipt = RecognizedReceipt(
             receipt_type=ReceiptType._from_generated(page.fields.get("ReceiptType")),
-            receipt_items=USReceiptItem._from_generated(
-                page.fields.get("Items"), read_result
-            ),
-            subtotal=FormField._from_generated(
-                "Subtotal", page.fields.get("Subtotal"), read_result
-            ),
-            tax=FormField._from_generated("Tax", page.fields.get("Tax"), read_result),
-            tip=FormField._from_generated("Tip", page.fields.get("Tip"), read_result),
-            total=FormField._from_generated(
-                "Total", page.fields.get("Total"), read_result
-            ),
-            transaction_date=FormField._from_generated(
-                "TransactionDate", page.fields.get("TransactionDate"), read_result
-            ),
-            transaction_time=FormField._from_generated(
-                "TransactionTime", page.fields.get("TransactionTime"), read_result
-            ),
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),
@@ -73,7 +44,7 @@ def prepare_us_receipt(response):
             fields={
                 key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
-            },
+            }
         )
 
         receipts.append(receipt)

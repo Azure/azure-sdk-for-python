@@ -197,79 +197,17 @@ class RecognizedReceipt(RecognizedForm):
         words, tables and page metadata.
     :ivar ~azure.ai.formrecognizer.ReceiptType receipt_type:
         The reciept type and confidence.
-    :ivar str receipt_locale: Defaults to "en-US".
     """
     def __init__(self, **kwargs):
         super(RecognizedReceipt, self).__init__(**kwargs)
         self.receipt_type = kwargs.get("receipt_type", None)
-        self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
     def __repr__(self):
         return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={}, " \
-            "receipt_type={}, receipt_locale={})".format(
+            "receipt_type={})".format(
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages),
-            repr(self.receipt_type), self.receipt_locale
+            repr(self.receipt_type)
         )[:1024]
-
-class USReceipt(RecognizedReceipt):  # pylint: disable=too-many-instance-attributes
-    """Extracted fields found on the US sales receipt. Provides
-    attributes for accessing common fields present in US sales receipts.
-
-    :ivar ~azure.ai.formrecognizer.FormField merchant_address:
-        The address of the merchant.
-    :ivar ~azure.ai.formrecognizer.FormField merchant_name:
-        The name of the merchant.
-    :ivar ~azure.ai.formrecognizer.FormField merchant_phone_number:
-        The phone number associated with the merchant.
-    :ivar list[~azure.ai.formrecognizer.USReceiptItem] receipt_items:
-        The purchased items found on the receipt.
-    :ivar ~azure.ai.formrecognizer.FormField subtotal:
-        The subtotal found on the receipt
-    :ivar ~azure.ai.formrecognizer.FormField tax:
-        The tax value found on the receipt.
-    :ivar ~azure.ai.formrecognizer.FormField tip:
-        The tip value found on the receipt.
-    :ivar ~azure.ai.formrecognizer.FormField total:
-        The total amount found on the receipt.
-    :ivar ~azure.ai.formrecognizer.FormField transaction_date:
-        The transaction date of the sale.
-    :ivar ~azure.ai.formrecognizer.FormField transaction_time:
-        The transaction time of the sale.
-    :ivar fields:
-        A dictionary of the fields found on the receipt.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page number of the input receipt.
-    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        Contains page metadata such as page width, length, text angle, unit.
-        If `include_text_content=True` is passed, contains a list
-        of extracted text lines for each page in the input document.
-    :ivar str form_type: The type of form.
-    """
-
-    def __init__(self, **kwargs):
-        super(USReceipt, self).__init__(**kwargs)
-        self.merchant_address = kwargs.get("merchant_address", None)
-        self.merchant_name = kwargs.get("merchant_name", None)
-        self.merchant_phone_number = kwargs.get("merchant_phone_number", None)
-        self.receipt_items = kwargs.get("receipt_items", None)
-        self.subtotal = kwargs.get("subtotal", None)
-        self.tax = kwargs.get("tax", None)
-        self.tip = kwargs.get("tip", None)
-        self.total = kwargs.get("total", None)
-        self.transaction_date = kwargs.get("transaction_date", None)
-        self.transaction_time = kwargs.get("transaction_time", None)
-
-    def __repr__(self):
-        return "USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, " \
-                "receipt_type={}, receipt_items={}, subtotal={}, tax={}, tip={}, total={}, "\
-                "transaction_date={}, transaction_time={}, fields={}, page_range={}, pages={}, " \
-                "form_type={}, receipt_locale={})".format(
-                    repr(self.merchant_address), repr(self.merchant_name), repr(self.merchant_phone_number),
-                    repr(self.receipt_type), repr(self.receipt_items), repr(self.subtotal), repr(self.tax),
-                    repr(self.tip), repr(self.total), repr(self.transaction_date), repr(self.transaction_time),
-                    repr(self.fields), repr(self.page_range), repr(self.pages), self.form_type, self.receipt_locale
-                )[:1024]
 
 
 class FormField(object):
@@ -535,45 +473,6 @@ class ReceiptType(object):
 
     def __repr__(self):
         return "ReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
-
-
-class USReceiptItem(object):
-    """A receipt item on a US sales receipt.
-    Contains the item name, quantity, price, and total price.
-
-    :ivar ~azure.ai.formrecognizer.FormField name:
-        The name of the item.
-    :ivar ~azure.ai.formrecognizer.FormField quantity:
-        The quantity associated with this item.
-    :ivar ~azure.ai.formrecognizer.FormField price:
-        The price of a single unit of this item.
-    :ivar ~azure.ai.formrecognizer.FormField total_price:
-        The total price of this item, taking the quantity into account.
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.quantity = kwargs.get("quantity", None)
-        self.price = kwargs.get("price", None)
-        self.total_price = kwargs.get("total_price", None)
-
-    @classmethod
-    def _from_generated(cls, items, read_result):
-        try:
-            receipt_item = items.value_array
-            return [cls(
-                name=FormField._from_generated("Name", item.value_object.get("Name"), read_result),
-                quantity=FormField._from_generated("Quantity", item.value_object.get("Quantity"), read_result),
-                price=FormField._from_generated("Price", item.value_object.get("Price"), read_result),
-                total_price=FormField._from_generated("TotalPrice", item.value_object.get("TotalPrice"), read_result),
-            ) for item in receipt_item]
-        except AttributeError:
-            return []
-
-    def __repr__(self):
-        return "USReceiptItem(name={}, quantity={}, price={}, total_price={})".format(
-            repr(self.name), repr(self.quantity), repr(self.price), repr(self.total_price)
-        )[:1024]
 
 
 class FormTable(object):
