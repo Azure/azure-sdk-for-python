@@ -42,7 +42,6 @@ class TrainModelWithoutLabelsSampleAsync(object):
             endpoint, AzureKeyCredential(key)
         ) as form_training_client:
 
-            # Default for train_model is `use_training_labels=False`
             model = await form_training_client.train_model(container_sas_url, use_training_labels=False)
 
             # Custom model information
