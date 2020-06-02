@@ -29,7 +29,6 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
                 ManagedServiceIdentityClient
             )
 
-    @unittest.skip("takes forever")
     @ResourceGroupPreparer()
     def test_deployment_scripts(self, resource_group, location):
         SUBSCRIPTION = self.settings.SUBSCRIPTION_ID
