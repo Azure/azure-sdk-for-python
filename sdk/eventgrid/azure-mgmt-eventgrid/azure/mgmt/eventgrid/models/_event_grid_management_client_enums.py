@@ -58,20 +58,6 @@ class IpActionType(str, Enum):
     allow = "Allow"
 
 
-class Sku(str, Enum):
-
-    basic = "Basic"
-    premium = "Premium"
-
-
-class IdentityType(str, Enum):
-
-    none = "None"
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-
-
 class DomainTopicProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -80,24 +66,6 @@ class DomainTopicProvisioningState(str, Enum):
     succeeded = "Succeeded"
     canceled = "Canceled"
     failed = "Failed"
-
-
-class EventChannelProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-
-
-class PartnerTopicReadinessState(str, Enum):
-
-    not_activated_by_user_yet = "NotActivatedByUserYet"
-    activated_by_user = "ActivatedByUser"
-    deactivated_by_user = "DeactivatedByUser"
-    deleted_by_user = "DeletedByUser"
 
 
 class EventSubscriptionProvisioningState(str, Enum):
@@ -111,68 +79,11 @@ class EventSubscriptionProvisioningState(str, Enum):
     awaiting_manual_action = "AwaitingManualAction"
 
 
-class EventSubscriptionIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-
-
 class EventDeliverySchema(str, Enum):
 
     event_grid_schema = "EventGridSchema"
     custom_input_schema = "CustomInputSchema"
     cloud_event_schema_v1_0 = "CloudEventSchemaV1_0"
-
-
-class PartnerNamespaceProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-
-
-class PartnerRegistrationProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-
-
-class PartnerRegistrationVisibilityState(str, Enum):
-
-    hidden = "Hidden"
-    public_preview = "PublicPreview"
-    generally_available = "GenerallyAvailable"
-
-
-class PartnerTopicProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-
-
-class PartnerTopicActivationState(str, Enum):
-
-    never_activated = "NeverActivated"
-    activated = "Activated"
-    deactivated = "Deactivated"
-
-
-class PartnerTopicTypeAuthorizationState(str, Enum):
-
-    not_applicable = "NotApplicable"
-    not_authorized = "NotAuthorized"
-    authorized = "Authorized"
 
 
 class TopicProvisioningState(str, Enum):
