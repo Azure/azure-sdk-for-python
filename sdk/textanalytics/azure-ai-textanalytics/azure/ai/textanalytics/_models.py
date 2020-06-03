@@ -65,13 +65,13 @@ class DetectedLanguage(DictMixin):
 
     :ivar name: Long name of a detected language (e.g. English,
         French).
-    :type name: str
+    :vartype name: str
     :ivar iso6391_name: A two letter representation of the detected
         language according to the ISO 639-1 standard (e.g. en, fr).
-    :type iso6391_name: str
+    :vartype iso6391_name: str
     :ivar confidence_score: A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true.
-    :type confidence_score: float
+    :vartype confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -97,16 +97,16 @@ class RecognizeEntitiesResult(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar entities: Recognized entities in the document.
-    :type entities:
+    :vartype entities:
         list[~azure.ai.textanalytics.CategorizedEntity]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
      if there are warnings, but they may not be fully accurate.
-    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeEntitiesResult.
@@ -131,15 +131,15 @@ class DetectLanguageResult(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar primary_language: The primary language detected in the document.
-    :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
+    :vartype primary_language: ~azure.ai.textanalytics.DetectedLanguage
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
      if there are warnings, but they may not be fully accurate.
-    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a DetectLanguageResult.
@@ -163,14 +163,14 @@ class CategorizedEntity(DictMixin):
     entity found in text.
 
     :ivar text: Entity text as appears in the request.
-    :type text: str
+    :vartype text: str
     :ivar category: Entity category, such as Person/Location/Org/SSN etc
-    :type category: str
+    :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
-    :type subcategory: str
+    :vartype subcategory: str
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type confidence_score: float
+    :vartype confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -204,11 +204,11 @@ class TextAnalyticsError(DictMixin):
      'serviceUnavailable', 'invalidParameterValue', 'invalidRequestBodyFormat',
      'emptyRequest', 'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
      'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
-    :type code: str
+    :vartype code: str
     :ivar message: Error message.
-    :type message: str
+    :vartype message: str
     :ivar target: Error target.
-    :type target: str
+    :vartype target: str
     """
 
     def __init__(self, **kwargs):
@@ -240,9 +240,9 @@ class TextAnalyticsWarning(DictMixin):
 
     :ivar code: Warning code. Possible values include: 'LongWordsInDocument',
      'DocumentTruncated'.
-    :type code: str
+    :vartype code: str
     :ivar message: Warning message.
-    :type message: str
+    :vartype message: str
     """
 
     def __init__(self, **kwargs):
@@ -268,17 +268,17 @@ class ExtractKeyPhrasesResult(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar key_phrases: A list of representative words or phrases.
         The number of key phrases returned is proportional to the number of words
         in the input document.
-    :type key_phrases: list[str]
+    :vartype key_phrases: list[str]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
      if there are warnings, but they may not be fully accurate.
-    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ExtractKeyPhrasesResult.
@@ -303,16 +303,16 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar entities: Recognized well-known entities in the document.
-    :type entities:
+    :vartype entities:
         list[~azure.ai.textanalytics.LinkedEntity]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
      if there are warnings, but they may not be fully accurate.
-    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeLinkedEntitiesResult.
@@ -338,24 +338,24 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar sentiment: Predicted sentiment for document (Negative,
         Neutral, Positive, or Mixed). Possible values include: 'positive',
         'neutral', 'negative', 'mixed'
-    :type sentiment: str
+    :vartype sentiment: str
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
      if there are warnings, but they may not be fully accurate.
-    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
-    :type confidence_scores:
+    :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar sentences: Sentence level sentiment analysis.
-    :type sentences:
+    :vartype sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeSentimentResult.
@@ -383,10 +383,10 @@ class TextDocumentStatistics(DictMixin):
 
     :ivar character_count: Number of text elements recognized in
         the document.
-    :type character_count: int
+    :vartype character_count: int
     :ivar transaction_count: Number of transactions for the
         document.
-    :type transaction_count: int
+    :vartype transaction_count: int
     """
 
     def __init__(self, **kwargs):
@@ -414,9 +414,9 @@ class DocumentError(DictMixin):
     :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
+    :vartype id: str
     :ivar error: The document error.
-    :type error: ~azure.ai.textanalytics.TextAnalyticsError
+    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always True for an instance of a DocumentError.
     """
@@ -459,14 +459,14 @@ class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
     :ivar id: Required. Unique, non-empty document identifier.
-    :type id: str
+    :vartype id: str
     :ivar text: Required. The input text to process.
-    :type text: str
+    :vartype text: str
     :ivar country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
      in the string "none" to not use a country_hint.
-    :type country_hint: str
+    :vartype country_hint: str
     """
 
     def __init__(self, **kwargs):
@@ -487,20 +487,20 @@ class LinkedEntity(DictMixin):
     entity found in the document.
 
     :ivar name: Entity Linking formal name.
-    :type name: str
+    :vartype name: str
     :ivar matches: List of instances this entity appears in the text.
-    :type matches:
+    :vartype matches:
         list[~azure.ai.textanalytics.LinkedEntityMatch]
     :ivar language: Language used in the data source.
-    :type language: str
+    :vartype language: str
     :ivar data_source_entity_id: Unique identifier of the recognized entity from the data
         source.
-    :type data_source_entity_id: str
+    :vartype data_source_entity_id: str
     :ivar url: URL to the entity's page from the data source.
-    :type url: str
+    :vartype url: str
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
-    :type data_source: str
+    :vartype data_source: str
     """
 
     def __init__(self, **kwargs):
@@ -536,9 +536,9 @@ class LinkedEntityMatch(DictMixin):
     :ivar confidence_score: If a well-known item is recognized, a
         decimal number denoting the confidence level between 0 and 1 will be
         returned.
-    :type confidence_score: float
+    :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
-    :type text: str
+    :vartype text: str
     """
 
     def __init__(self, **kwargs):
@@ -562,13 +562,13 @@ class TextDocumentInput(MultiLanguageInput):
     """The input document to be analyzed by the service.
 
     :ivar id: Required. A unique, non-empty document identifier.
-    :type id: str
+    :vartype id: str
     :ivar text: Required. The input text to process.
-    :type text: str
+    :vartype text: str
     :ivar language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
      not set, uses "en" for English as default.
-    :type language: str
+    :vartype language: str
     """
 
     def __init__(self, **kwargs):
@@ -588,15 +588,15 @@ class TextDocumentBatchStatistics(DictMixin):
     in the response and needs to be retrieved by a response hook.
 
     :ivar document_count: Number of documents submitted in the request.
-    :type document_count: int
+    :vartype document_count: int
     :ivar valid_document_count: Number of valid documents. This
         excludes empty, over-size limit or non-supported languages documents.
-    :type valid_document_count: int
+    :vartype valid_document_count: int
     :ivar erroneous_document_count: Number of invalid documents.
         This includes empty, over-size limit or non-supported languages documents.
-    :type erroneous_document_count: int
+    :vartype erroneous_document_count: int
     :ivar transaction_count: Number of transactions for the request.
-    :type transaction_count: long
+    :vartype transaction_count: long
     """
 
     def __init__(self, **kwargs):
@@ -627,13 +627,13 @@ class SentenceSentiment(DictMixin):
     confidence scores for each individual sentence in the document.
 
     :ivar text: The sentence text.
-    :type text: str
+    :vartype text: str
     :ivar sentiment: The predicted Sentiment for the sentence.
         Possible values include: 'positive', 'neutral', 'negative'
-    :type sentiment: str
+    :vartype sentiment: str
     :ivar confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
-    :type confidence_scores:
+    :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     """
 
@@ -663,11 +663,11 @@ class SentimentConfidenceScores(DictMixin):
     Higher values indicate higher confidence.
 
     :ivar positive: Positive score.
-    :type positive: float
+    :vartype positive: float
     :ivar neutral: Neutral score.
-    :type neutral: float
+    :vartype neutral: float
     :ivar negative: Negative score.
-    :type negative: float
+    :vartype negative: float
     """
 
     def __init__(self, **kwargs):
