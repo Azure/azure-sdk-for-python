@@ -1,5 +1,61 @@
 # Release History
 
+## 0.4.0 (2020-06-04)
+
+**Features**
+
+  - Model IoTSecurityAggregatedAlert has a new parameter top_devices_list
+  - Model JitNetworkAccessRequest has a new parameter justification
+  - Model SensitivityLabel has a new parameter rank
+  - Model SensitivityLabel has a new parameter description
+  - Model JitNetworkAccessPolicyInitiateRequest has a new parameter justification
+  - Model AppWhitelistingGroup has a new parameter protection_mode
+  - Model InformationType has a new parameter description
+  - Model InformationProtectionPolicy has a new parameter version
+  - Model IoTSecuritySolutionModel has a new parameter unmasked_ip_logging_status
+  - Model VmRecommendation has a new parameter enforcement_support
+  - Added operation IotSecuritySolutionOperations.list_by_resource_group
+  - Added operation IotSecuritySolutionOperations.list_by_subscription
+  - Added operation IotSecuritySolutionOperations.create_or_update
+  - Added operation AdaptiveApplicationControlsOperations.delete
+  - Added operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Added operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Added operation group AssessmentsOperations
+  - Added operation group SubAssessmentsOperations
+  - Added operation group SecureScoreControlDefinitionsOperations
+  - Added operation group IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+  - Added operation group SecureScoresOperations
+  - Added operation group SecureScoreControlsOperations
+  - Added operation group AlertsSuppressionRulesOperations
+  - Added operation group AutomationsOperations
+  - Added operation group IotSecuritySolutionAnalyticsOperations
+  - Added operation group IotSecuritySolutionsAnalyticsRecommendationOperations
+  - Added operation group AssessmentsMetadataOperations
+  - Added operation group AdaptiveNetworkHardeningsOperations
+  - Added operation group DeviceSecurityGroupsOperations
+
+**Breaking changes**
+
+  - Operation SettingsOperations.update has a new signature
+  - Operation AlertsOperations.list has a new signature
+  - Operation AlertsOperations.list_by_resource_group has a new signature
+  - Operation AlertsOperations.list_resource_group_level_alerts_by_region has a new signature
+  - Operation AlertsOperations.list_subscription_level_alerts_by_region has a new signature
+  - Operation JitNetworkAccessPoliciesOperations.initiate has a new signature
+  - Operation InformationProtectionPoliciesOperations.create_or_update has a new signature
+  - Removed operation IotSecuritySolutionOperations.create
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state
+  - Removed operation AlertsOperations.update_subscription_level_alert_state
+  - Removed operation group IoTSecuritySolutionsResourceGroupOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsOperations
+  - Removed operation group IoTSecuritySolutionsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsRecommendationsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsRecommendationOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+
 ## 0.3.0 (2019-08-01)
 
 **Features**
