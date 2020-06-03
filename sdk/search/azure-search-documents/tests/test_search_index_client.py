@@ -25,10 +25,7 @@ from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
 )
-from azure.search.documents.models import (
-    SearchQuery,
-    odata,
-)
+from azure.search.documents.models import odata
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 

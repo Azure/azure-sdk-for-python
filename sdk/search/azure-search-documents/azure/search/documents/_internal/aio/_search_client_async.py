@@ -104,12 +104,12 @@ class SearchClient(HeadersMixin):
         return cast(dict, result)
 
     @distributed_trace_async
-    async def search(self, query, **kwargs):
-        # type: (Union[str, SearchQuery], **Any) -> AsyncSearchItemPaged[dict]
+    async def search(self, search_text, **kwargs):
+        # type: (str, **Any) -> AsyncSearchItemPaged[dict]
         """Search the Azure search index for documents.
 
-        :param query: An query for searching the index
-        :type documents: str or SearchQuery
+        :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
+        match all documents.
         :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -139,14 +139,8 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search result facets.
         """
-        if isinstance(query, six.string_types):
-            query = SearchQuery(search_text=query)
-        elif not isinstance(query, SearchQuery):
-            raise TypeError(
-                "Expected a string or SearchQuery for 'query', but got {}".format(
-                    repr(query)
-                )
-            )
+        query = SearchQuery(search_text=search_text, **kwargs)
+
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return AsyncSearchItemPaged(
             self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator

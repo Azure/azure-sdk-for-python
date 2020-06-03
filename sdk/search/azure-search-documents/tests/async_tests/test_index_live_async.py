@@ -24,7 +24,6 @@ BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.models import SearchQuery
 from azure.search.documents.aio import SearchClient
 
 TIME_TO_SLEEP = 3
@@ -103,14 +102,14 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi")
-        query.filter("category eq 'Budget'")
-        query.select("hotelName", "category", "description")
-        query.order_by("hotelName desc")
-
         async with client:
             results = []
-            async for x in await client.search(query=query):
+            async for x in await client.search(
+                    search_text="WiFi",
+                    filter="category eq 'Budget'",
+                    select=",".join("hotelName", "category", "description"),
+                    order_by="hotelName desc"
+            ):
                 results.append(x)
             assert [x["hotelName"] for x in results] == sorted(
                 [x["hotelName"] for x in results], reverse=True
@@ -132,12 +131,10 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="hotel")
-        results = await client.search(query=query)
+        results = await client.search(search_text="hotel")
         assert await results.get_count() is None
 
-        query = SearchQuery(search_text="hotel", include_total_result_count=True)
-        results = await client.search(query=query)
+        results = await client.search(search_text="hotel", include_total_result_count=True)
         assert await results.get_count() == 7
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -147,12 +144,10 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="hotel")
-        results = await client.search(query=query)
+        results = await client.search(search_text="hotel")
         assert await results.get_coverage() is None
 
-        query = SearchQuery(search_text="hotel", minimum_coverage=50.0)
-        results = await client.search(query=query)
+        results = await client.search(search_text="hotel", minimum_coverage=50.0)
         cov = await results.get_coverage()
         assert isinstance(cov, float)
         assert cov >= 50.0
@@ -166,11 +161,11 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi")
-        query.select("hotelName", "category", "description")
-
         async with client:
-            results = await client.search(query=query)
+            results = await client.search(
+                search_text="WiFi",
+                select=",".join("hotelName", "category", "description")
+            )
             assert await results.get_facets() is None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -182,11 +177,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi", facets=["category"])
-        query.select("hotelName", "category", "description")
-
         async with client:
-            results = await client.search(query=query)
+            results = await client.search(
+                search_text="WiFi",
+                facets=["category"],
+                select=",".join("hotelName", "category", "description")
+            )
             assert await results.get_facets() == {
                 "category": [
                     {"value": "Budget", "count": 4},

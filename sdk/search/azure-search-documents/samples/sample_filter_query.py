@@ -30,16 +30,15 @@ def filter_query():
     # [START filter_query]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
-    from azure.search.documents.models import SearchQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SearchQuery(search_text="WiFi")
-    query.filter("Address/StateProvince eq 'FL' and Address/Country eq 'USA'")
-    query.select("HotelName", "Rating")
-    query.order_by("Rating desc")
-
-    results = search_client.search(query=query)
+    results = search_client.search(
+        search_text="WiFi",
+        filter="Address/StateProvince eq 'FL' and Address/Country eq 'USA'",
+        select=",".join("HotelName", "Rating"),
+        order_by="Rating desc"
+    )
 
     print("Florida hotels containing 'WiFi', sorted by Rating:")
     for result in results:
