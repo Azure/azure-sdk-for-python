@@ -16,16 +16,6 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Text Analytics resource][TA_or_CS_resource] to use this package.
 
-### Install the package
-Install the Azure Text Analytics client library for Python with [pip][pip]:
-
-```bash
-pip install azure-ai-textanalytics
-```
-
-> Note: This version of the client library supports the v3.0 version of the Text Analytics service
-
-### Authenticate the client
 #### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
@@ -68,7 +58,17 @@ Note that if you create a [custom subdomain][cognitive_custom_subdomain]
 name for your resource the endpoint may look different than in the above code snippet.
 For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 
-#### Looking up the endpoint
+### Install the package
+Install the Azure Text Analytics client library for Python with [pip][pip]:
+
+```bash
+pip install azure-ai-textanalytics
+```
+
+> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
+### Authenticate the client
+#### Get the endpoint
 You can find the endpoint for your text analytics resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
@@ -78,55 +78,54 @@ or [Azure CLI][azure_cli_endpoint_lookup]:
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "endpoint"
 ```
 
-#### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from azure.core.credentials or as a token from Azure Active Directory.
-See the full details regarding [authentication][cognitive_authentication] of
-cognitive services.
+#### Get the API Key
+You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Text Analytics resource in the [Azure Portal][azure_portal_get_endpoint].
+Alternatively, you can use [Azure CLI][azure_cli_endpoint_lookup] snippet below to get the API key of your resource.
 
-1. To use an [API key][cognitive_authentication_api_key],
-   pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
-   The API key can be found in the Azure Portal or by running the following Azure CLI command:
+```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
-    ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
+#### Create a TextAnalyticsClient with an API Key Credential
+Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. Use the key as the credential parameter
+to authenticate the client:
 
-    Use the key as the credential parameter to authenticate the client:
-    ```python
-    from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import TextAnalyticsClient
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-    credential = AzureKeyCredential("<api_key>")
-    text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
-    ```
+credential = AzureKeyCredential("<api_key>")
+text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+```
 
-2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
-   provide an instance of the desired credential type obtained from the
-   [azure-identity][azure_identity_credentials] library.
-   Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
-   name for your resource in order to use this type of authentication.
+#### Create a TextAnalyticsClient with an Azure Active Directory Credential
+To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
+provide an instance of the desired credential type obtained from the
+[azure-identity][azure_identity_credentials] library.
+Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
+name for your resource in order to use this type of authentication.
 
-   Authentication with AAD requires some initial setup:
-   * [Install azure-identity][install_azure_identity]
-   * [Register a new AAD application][register_aad_app]
-   * [Grant access][grant_role_access] to Text Analytics by assigning the `"Cognitive Services User"` role to your service principal.
+Authentication with AAD requires some initial setup:
+* [Install azure-identity][install_azure_identity]
+* [Register a new AAD application][register_aad_app]
+* [Grant access][grant_role_access] to Text Analytics by assigning the `"Cognitive Services User"` role to your service principal.
 
-   After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-   As an example, [DefaultAzureCredential][default_azure_credential]
-   can be used to authenticate the client:
+After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+As an example, [DefaultAzureCredential][default_azure_credential]
+can be used to authenticate the client:
 
-   Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 
-   Use the returned token credential to authenticate the client:
-    ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.ai.textanalytics import TextAnalyticsClient
-    token_credential = DefaultAzureCredential()
+Use the returned token credential to authenticate the client:
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+token_credential = DefaultAzureCredential()
 
-    text_analytics_client = TextAnalyticsClient(
-        endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
-        credential=token_credential
-    )
-    ```
+text_analytics_client = TextAnalyticsClient(
+    endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
+    credential=token_credential
+)
+```
 
 ## Key concepts
 
