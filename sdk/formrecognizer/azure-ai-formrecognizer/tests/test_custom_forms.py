@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
@@ -70,7 +71,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with self.assertRaises(HttpResponseError):
@@ -85,7 +86,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as stream:
@@ -110,7 +111,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as stream:
@@ -136,7 +137,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(
+        poller = client.begin_training(
             container_sas_url,
             use_training_labels=True
         )
@@ -161,7 +162,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(
+        poller = client.begin_training(
             container_sas_url,
             use_training_labels=True
         )
@@ -191,7 +192,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -228,7 +229,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -266,7 +267,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -303,7 +304,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_multipage_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=True)
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -336,3 +337,28 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "form-"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_custom_form_continuation_token(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        model = poller.result()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        initial_poller = fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            myfile
+        )
+        cont_token = initial_poller.continuation_token()
+        poller = fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            myfile,
+            continuation_token=cont_token
+        )
+        result = poller.result()
+        self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

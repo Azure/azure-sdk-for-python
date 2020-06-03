@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from io import BytesIO
 from datetime import date, time
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
@@ -405,3 +406,18 @@ class TestReceiptFromStream(FormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(returned_model, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_receipt_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+
+        with open(self.receipt_jpg, "rb") as fd:
+            receipt = fd.read()
+
+        initial_poller = client.begin_recognize_receipts(receipt)
+        cont_token = initial_poller.continuation_token()
+        poller = client.begin_recognize_receipts(receipt, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
