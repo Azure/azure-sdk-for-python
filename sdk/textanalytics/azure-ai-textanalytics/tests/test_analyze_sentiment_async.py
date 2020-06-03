@@ -220,7 +220,8 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
