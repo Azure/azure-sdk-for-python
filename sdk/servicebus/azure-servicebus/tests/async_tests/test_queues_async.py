@@ -675,7 +675,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 finally:
                     await messages[0].complete()
                     await messages[1].complete()
-                    time.sleep(30)
+                    sleep_until_expired(messages[2])
                     with pytest.raises(MessageLockExpired):
                         await messages[2].complete()
 

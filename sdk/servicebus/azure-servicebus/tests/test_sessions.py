@@ -25,7 +25,8 @@ from azure.servicebus.exceptions import (
     MessageLockExpired,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
-    MessageSettleFailed)
+    MessageSettleFailed,
+    MessageSendFailed)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -903,12 +904,15 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     sender.send(message)
 
-            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0) as receiver:
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0, idle_timeout=5) as receiver:
                 message = receiver.next()
                 assert message.sequence_number == 1
                 message.abandon()
-                second_message = receiver.next()
-                assert second_message.sequence_number == 1
+                for next_message in receiver: # we can't be sure there won't be a service delay, so we may not get the message back _immediately_, even if in most cases it shows right back up.
+                    if not next_message:
+                        raise Exception("Did not successfully re-receive abandoned message, sequence_number 1 was not observed.")
+                    if next_message.sequence_number == 1:
+                        return
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -937,3 +941,17 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.complete()
             assert count == 1
 
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    def test_session_non_session_send_to_session_queue_should_fail(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("This should be an invalid non session message")
+                with pytest.raises(MessageSendFailed):
+                    sender.send(message)
