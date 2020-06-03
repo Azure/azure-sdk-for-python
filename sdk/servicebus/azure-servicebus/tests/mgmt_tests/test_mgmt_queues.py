@@ -18,7 +18,8 @@ from servicebus_preparer import (
 class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_by_conn_string(self, servicebus_namespace_connection_string):
+    def test_mgmt_queue_list(self, servicebus_namespace_connection_string, servicebus_namespace,
+                                    servicebus_namespace_key_name, servicebus_namespace_primary_key):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         queues = sb_mgmt_client.list_queues()
         assert len(queues) == 0
@@ -29,9 +30,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         queues = sb_mgmt_client.list_queues()
         assert len(queues) == 0
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queue_by_credential(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key):
         fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
         sb_mgmt_client = ServiceBusManagementClient(
             fully_qualified_namespace,
@@ -48,7 +46,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_with_special_chars(self, servicebus_namespace_connection_string):
+    def test_mgmt_queue_list_with_special_chars(self, servicebus_namespace_connection_string):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
@@ -63,7 +61,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_with_parameters(self, servicebus_namespace_connection_string):
+    def test_mgmt_queue_list_with_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
 
         queues = sb_mgmt_client.list_queues(skip=5, max_count=10)
@@ -108,7 +106,8 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_with_negative_conn_str(self, servicebus_namespace):
+    def test_mgmt_queue_list_with_negative_credential(self, servicebus_namespace, servicebus_namespace_key_name,
+                                                             servicebus_namespace_primary_key):
         invalid_conn_str = 'Endpoint=sb://invalid.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(invalid_conn_str)
         with pytest.raises(ServiceRequestError):
@@ -119,10 +118,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             sb_mgmt_client.list_queues()
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_with_negative_credential(self, servicebus_namespace, servicebus_namespace_key_name,
-                                                servicebus_namespace_primary_key):
         fully_qualified_namespace = 'invalid.servicebus.windows.net'
         sb_mgmt_client = ServiceBusManagementClient(
             fully_qualified_namespace,
@@ -141,7 +136,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_list_queues_with_negative_parameters(self, servicebus_namespace_connection_string):
+    def test_mgmt_queue_list_with_negative_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
 
         queues = sb_mgmt_client.list_queues()
