@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.6.0 (2020-06-03)
 
 ### Bug fixes
 
@@ -13,7 +13,7 @@
 - Added support for changesets as part of multipart message support #10485
 - Add AsyncLROPoller in azure.core.polling #10801
 - Add get_continuation_token/from_continuation_token/polling_method methods in pollers (sync and async) #10801
-- HttpResponse objects are now pickable #10801
+- HttpResponse and PipelineContext objects are now pickable #10801
 
 ## 1.5.0 (2020-05-04)
 
