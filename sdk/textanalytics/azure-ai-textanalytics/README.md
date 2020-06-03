@@ -20,7 +20,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 
 > Note: This version of the client library supports the v3.0 version of the Text Analytics service
