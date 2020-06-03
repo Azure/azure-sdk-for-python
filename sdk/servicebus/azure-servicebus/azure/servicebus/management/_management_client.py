@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPo
 from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
 from msrest.serialization import Model
+from msrest.exceptions import ValidationError
 
 from .._common.constants import JWT_TOKEN_SCOPE
 from .._common.utils import parse_conn_str
@@ -44,13 +45,13 @@ def _handle_response_error():
         raise new_response_error
 
 
-def _convert_xml_to_object(queue_name, et, clazz):
+def _convert_xml_to_object(queue_name, et, class_):
     # type: (str, Union[Element, ElementTree], Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
     content_ele = cast(ElementTree, et).find(constants.CONTENT_TAG)
     if not content_ele:
         raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
     qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-    obj = clazz.deserialize(qc_ele)
+    obj = class_.deserialize(qc_ele)
     obj.queue_name = queue_name
     return obj
 
@@ -116,7 +117,7 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
-    def _get_queue_object(self, queue_name, clazz):
+    def _get_queue_object(self, queue_name, class_):
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
 
         if not queue_name:
@@ -127,10 +128,10 @@ class ServiceBusManagementClient:
                 ElementTree,
                 self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
             )
-        return _convert_xml_to_object(queue_name, et, clazz)
+        return _convert_xml_to_object(queue_name, et, class_)
 
-    def _list_queues(self, skip, max_count, clazz):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
+    def _list_queues(self, skip, max_count, class_):
+        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo])
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -145,7 +146,7 @@ class ServiceBusManagementClient:
             queue_description = _convert_xml_to_object(
                 entity_name,   # type: ignore
                 cast(Element, entry),
-                clazz
+                class_
             )
             queues.append(queue_description)
         return queues
@@ -169,23 +170,21 @@ class ServiceBusManagementClient:
     def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue
-
+        
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values decided by the
          ServiceBus. Use a `QueueDesceiption` if you want to set queue properties other than the queue name.
         :type queue: Union[str, QueueDescription].
         :returns: `QueueDescription` returned from ServiceBus.
         """
-
-        try:  # queue is a QueueDescription
-            queue_name = queue.queue_name
+        queue_name = None
+        try:
+            queue_name = queue.queue_name # type: ignore
             to_create = copy(queue)
-            to_create.queue_name = None
-        except AttributeError:  # str expected. But if not str, it might work and might not work.
+            to_create.queue_name = None            
+        except AttributeError:
             queue_name = queue
-            to_create = QueueDescription()
-        if queue_name is None:
-            raise ValueError("queue should be a non-empty str or a QueueDescription with non-empty queue_name")
+            to_create = QueueDescription()  # Use an empty queue description.
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -193,12 +192,18 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        try:
+            with _handle_response_error():
+                et = cast(
+                    ElementTree,
+                    self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+                )
+        except ValidationError as e:
+            # post-hoc try to give a somewhat-justifiable failure reason.
+            if isinstance(queue, str) or (isinstance(queue, QueueDescription) and isinstance(queue.queue_name, str)):
+                raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
+            raise TypeError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
 
-        with _handle_response_error():
-            et = cast(
-                ElementTree,
-                self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-            )
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     def update_queue(self, queue_description):
