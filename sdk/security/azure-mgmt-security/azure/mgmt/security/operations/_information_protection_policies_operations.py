@@ -103,7 +103,7 @@ class InformationProtectionPoliciesOperations(object):
     get.metadata = {'url': '/{scope}/providers/Microsoft.Security/informationProtectionPolicies/{informationProtectionPolicyName}'}
 
     def create_or_update(
-            self, scope, information_protection_policy_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, information_protection_policy_name, labels=None, information_types=None, custom_headers=None, raw=False, **operation_config):
         """Details of the information protection policy.
 
         :param scope: Scope of the query, can be subscription
@@ -113,6 +113,11 @@ class InformationProtectionPoliciesOperations(object):
         :param information_protection_policy_name: Name of the information
          protection policy. Possible values include: 'effective', 'custom'
         :type information_protection_policy_name: str
+        :param labels: Dictionary of sensitivity labels.
+        :type labels: dict[str, ~azure.mgmt.security.models.SensitivityLabel]
+        :param information_types: The sensitivity information types.
+        :type information_types: dict[str,
+         ~azure.mgmt.security.models.InformationType]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -123,6 +128,8 @@ class InformationProtectionPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        information_protection_policy = models.InformationProtectionPolicy(labels=labels, information_types=information_types)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -138,6 +145,7 @@ class InformationProtectionPoliciesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -145,8 +153,11 @@ class InformationProtectionPoliciesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(information_protection_policy, 'InformationProtectionPolicy')
+
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
