@@ -1,10 +1,14 @@
+import functools
 from urllib.parse import urlparse
 
 from azure.azure_table._generated import AzureTable
-from azure.azure_table._generated.models import TableProperties, TableServiceStats, TableServiceProperties
+from azure.azure_table._generated.models import TableProperties, TableServiceStats, TableServiceProperties, \
+    AccessPolicy, SignedIdentifier
+from azure.azure_table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from azure.azure_table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
     TransportWrapper
 from azure.azure_table._shared.models import LocationMode
+from azure.azure_table._shared.request_handlers import serialize_iso
 from azure.azure_table._shared.response_handlers import process_storage_error
 from azure.azure_table._version import VERSION
 from azure.core.exceptions import HttpResponseError
@@ -78,25 +82,67 @@ class TableServiceClient(StorageAccountHostsMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
+    def get_table_access_policy(
+            self,
+            table,
+            **kwargs
+    ):
+        timeout = kwargs.pop('timeout', None)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        try:
+            _, identifiers = self._client.table.get_access_policy(
+                table=table,
+                timeout=timeout,
+                request_id_parameter=request_id_parameter,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+
+    @distributed_trace
+    def set_table_access_policy(self, table, signed_identifiers, **kwargs):
+        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+        timeout = kwargs.pop('timeout', None)
+        request_id_parameter = kwargs.pop('request_id_parameter', None)
+        if len(signed_identifiers) > 15:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 15 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers  # type: ignore
+        try:
+            self._client.table.set_access_policy(
+                table=table,
+                timeout=timeout,
+                request_id_parameter=request_id_parameter,
+                table_acl=signed_identifiers or None,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def get_service_stats(self, **kwargs):
-        # TableServiceStats
         # type: (Optional[Any]) -> Dict[str, Any]
         timeout = kwargs.pop('timeout', None)
         try:
             stats = self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
-            return TableServiceStats(stats)
+            return service_stats_deserialize(stats)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # TableServiceProperties
         # type: (Optional[Any]) -> Dict[str, Any]
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
-            return TableServiceProperties(service_props)
+            return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -152,9 +198,28 @@ class TableServiceClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        # somehow use self._query_string to query things
-        response = self._client.table.query()
-        return response.value
+        command = functools.partial(
+            self._client.table.query, **kwargs)
+        return ItemPaged(
+            command, results_per_page=query_options,
+            page_iterator_class=TablePropertiesPaged
+        )
+
+    @distributed_trace
+    def query_tables(
+            self,
+            request_id_parameter=None,
+            next_table_name=None,
+            query_options=None,
+            **kwargs
+    ):
+        print(query_options)
+        command = functools.partial(self._client.table.query, marker=next_table_name, **kwargs)
+        return ItemPaged(
+            command, results_per_page=query_options,
+            page_iterator_class=TablePropertiesPaged
+            )
+
 
     @distributed_trace
     def query_table_entities(
@@ -239,7 +304,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             timeout=None,
             request_id_parameter=None
     ):
-        response = self._client.table.get_access_policy()
+        response = self._client.table.get_access_policy(table=table_name)
 
     def set_access_policy(
             self,
@@ -266,8 +331,8 @@ class TableServiceClient(StorageAccountHostsMixin):
             table_name = table
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
         )
 
         return TableClient(

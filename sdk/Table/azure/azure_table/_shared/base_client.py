@@ -233,14 +233,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
-            # StorageRequestHook(**kwargs),
+            StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
-            # StorageHosts(hosts=self._hosts, **kwargs),
+            StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
-            # StorageResponseHook(**kwargs),
+            StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]

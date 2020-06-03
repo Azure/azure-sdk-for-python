@@ -7,11 +7,15 @@
 # --------------------------------------------------------------------------
 
 import unittest
+from xml.dom.minidom import Entity
+
 import pytest
 
 import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
+
+from azure.azure_table import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 

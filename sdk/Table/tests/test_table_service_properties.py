@@ -8,6 +8,7 @@
 import unittest
 import time
 import pytest
+from azure.azure_table._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 
 from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -21,6 +22,8 @@ from azure.core.exceptions import HttpResponseError
 #     CorsRule,
 #     RetentionPolicy,
 # )
+
+from azure.azure_table import TableServiceClient
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
 
@@ -104,7 +107,7 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

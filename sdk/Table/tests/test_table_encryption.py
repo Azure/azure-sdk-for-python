@@ -9,6 +9,8 @@
 import unittest
 import pytest
 from datetime import datetime
+
+from azure.ai.textanalytics._generated.models import Entity
 from dateutil.tz import tzutc
 from os import urandom
 from json import loads

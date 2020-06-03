@@ -7,6 +7,7 @@ import unittest
 import pytest
 
 # from azure.tables import TableServiceClient
+from azure.azure_table import TableServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase, GlobalStorageAccountPreparer
 
@@ -15,8 +16,9 @@ SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageS
                                 '></StorageServiceStats> '
 
 SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
+                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                         '></StorageServiceStats> '
+
 
 # --Test Class -----------------------------------------------------------------
 class TableServiceStatsTest(TableTestCase):

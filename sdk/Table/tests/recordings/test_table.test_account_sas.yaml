@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "myTable"}'
+    body: '{"TableName": "pytablesync99dc0b08"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -9,33 +9,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '24'
+      - '36'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 03 Jun 2020 15:31:11 GMT
+      - Tue, 02 Jun 2020 13:37:25 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 03 Jun 2020 15:31:11 GMT
+      - Tue, 02 Jun 2020 13:37:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"myTable"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync99dc0b08"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 03 Jun 2020 15:31:10 GMT
+      - Tue, 02 Jun 2020 13:37:23 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('myTable')
+      - https://storagename.table.core.windows.net/Tables('pytablesync99dc0b08')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "pytablesyncded1139b"}'
+    body: '{"TableName": "pytablesyncb9bd17bb"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 03 Jun 2020 15:31:12 GMT
+      - Tue, 02 Jun 2020 15:11:47 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 03 Jun 2020 15:31:12 GMT
+      - Tue, 02 Jun 2020 15:11:47 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncded1139b"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncb9bd17bb"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 03 Jun 2020 15:31:12 GMT
+      - Tue, 02 Jun 2020 15:11:46 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('pytablesyncded1139b')
+      - https://storagename.table.core.windows.net/Tables('pytablesyncb9bd17bb')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -59,32 +59,37 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 03 Jun 2020 15:31:13 GMT
+      - Tue, 02 Jun 2020 15:11:48 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 03 Jun 2020 15:31:13 GMT
+      - Tue, 02 Jun 2020 15:11:48 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytablesyncded1139b')
+    uri: https://storagename.table.core.windows.net/Tables('%7B%27additional_properties%27%3A%20%7B%7D%2C%20%27table_name%27%3A%20%27pytablesyncb9bd17bb%27%2C%20%27odata_type%27%3A%20None%2C%20%27odata_id%27%3A%20None%2C%20%27odata_edit_link%27%3A%20None%2C%20%27odata_metadata%27%3A%20%27https%3A%2F%2Fstoragename.table.core.windows.net%2F%24metadata%23Tables%2F%40Element%27%7D')
   response:
     body:
-      string: ''
+      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message
+        xml:lang="en-US">Bad Request - Error in query syntax.
+
+        RequestId:fe907909-6002-0067-43f0-386dc6000000
+
+        Time:2020-06-02T15:11:47.1195958Z</message></error>'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
+      content-type:
+      - application/xml;charset=utf-8
       date:
-      - Wed, 03 Jun 2020 15:31:12 GMT
+      - Tue, 02 Jun 2020 15:11:46 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-ms-version:
       - '2019-07-07'
     status:
-      code: 204
-      message: No Content
+      code: 400
+      message: Bad Request
 version: 1
