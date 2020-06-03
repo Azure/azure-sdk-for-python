@@ -114,7 +114,6 @@ def process_storage_error(storage_error):
                               StorageErrorCode.cannot_verify_copy_source,
                               StorageErrorCode.blob_not_found,
                               StorageErrorCode.queue_not_found,
-                              StorageErrorCode.table_not_found,
                               StorageErrorCode.container_not_found,
                               StorageErrorCode.parent_not_found,
                               StorageErrorCode.share_not_found]:
@@ -125,11 +124,9 @@ def process_storage_error(storage_error):
                               StorageErrorCode.resource_type_mismatch,
                               StorageErrorCode.blob_already_exists,
                               StorageErrorCode.queue_already_exists,
-                              StorageErrorCode.table_already_exists,
                               StorageErrorCode.container_already_exists,
                               StorageErrorCode.container_being_deleted,
                               StorageErrorCode.queue_being_deleted,
-                              StorageErrorCode.table_being_deleted,
                               StorageErrorCode.share_already_exists,
                               StorageErrorCode.share_being_deleted]:
                 raise_error = ResourceExistsError

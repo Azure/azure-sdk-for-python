@@ -29,7 +29,8 @@ class InsertDeleteEntity(object):
         try:
             entity = {"entity": None}
             inserted_entity = table_client.insert_entity(table_name=self.table_name, table_entity_properties=entity)
-            print(inserted_entity)
+            # inserted_entity type is dict[str,object]
+            print(inserted_entity.items())  # print out key-value pair of entity
         except HttpResponseError:
             print(HttpResponseError.response)
         except ResourceExistsError:
@@ -58,11 +59,11 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
-            partition_key = 1
-            row_key = 0
+            partition_key = "1"
+            row_key = "0"
             deleted_entity = table_client.delete_entity(table_name=self.table_name, partition_key=partition_key,
                                                         row_key=row_key)
-            print(deleted_entity)
+            # deleted_entity type is None
         except HttpResponseError:
             print(HttpResponseError.response)
         except ResourceNotFoundError:

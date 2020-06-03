@@ -182,7 +182,7 @@ class TablePropertiesPaged(PageIterator):
     def _get_next_cb(self, continuation_token):
         try:
             return self._command(
-                cls=return_context_and_deserialized,
+                 cls=return_context_and_deserialized,
                  use_location=self.location_mode)
         except HttpResponseError as error:
             process_storage_error(error)

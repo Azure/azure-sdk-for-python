@@ -14,11 +14,11 @@ class CreateDeleteTable(object):
         from azure.core.exceptions import HttpResponseError, ResourceExistsError
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
 
-        # add in existing table error handling
         try:
             table_created = table_client.create_table(table_name=self.table_name)
+            # table_created type is TableResponse
+            # Table Response: table_name,odata_type,odata_id,odata_edit_link,odata_metadata
             print(table_created.table_name)
-            return table_created.table_name
         except HttpResponseError:
             print(HttpResponseError.response)
         except ResourceExistsError:
@@ -30,8 +30,7 @@ class CreateDeleteTable(object):
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
             table_deleted = table_client.delete_table(table_name=self.table_name)
-            print(table_deleted)
-            return table_deleted
+            # table_deleted type is None
         except HttpResponseError:
             print(HttpResponseError.response)
         except ResourceNotFoundError:

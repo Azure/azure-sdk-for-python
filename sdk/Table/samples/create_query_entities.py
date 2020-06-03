@@ -8,10 +8,12 @@ class CreateODataQuery(object):
     account_url = "https://example.table.core.windows.net/"
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
+
+    # Assuming there is a created table
     partition_key = "1"
     row_key = "1"
-    # has some type of query options
-    query_options = QueryOptions()
+    # Creating query filter for that table
+    query_options = QueryOptions(select="name")
 
     def create_query_entities(self):
 
@@ -20,9 +22,13 @@ class CreateODataQuery(object):
 
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         try:
-            queried_table = table_client.query_table_entities(table_name=self.table_name,
-                                                              partition_key=self.partition_key, row_key=self.row_key,
-                                                              query_options=self.query_options)
-            print(queried_table.table_name)
+            queried_entities = table_client.query_table_entities(table_name=self.table_name,
+                                                                 query_options=self.query_options)
+
+            # queried_entities type is ItemPaged
+            for entity_chosen in list(queried_entities):
+                # create a list of the entities and iterate through them to print each one out
+                # calls to the service to get more entities are made without user knowledge
+                print(entity_chosen)
         except HttpResponseError as e:
             print(e.message)

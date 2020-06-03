@@ -34,6 +34,6 @@ class UpdateEntity(object):
         try:
             updated_entity = table_client.update_entity(table_name=self.table_name, partition_key=self.partition_key
                                                         , row_key=self.row_key, table_entity_properties=self.entity)
-            return updated_entity
+            # updated_entity type is None
         except HttpResponseError as e:
             print(e.response)

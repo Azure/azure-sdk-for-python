@@ -8,16 +8,24 @@ class QueryTable(object):
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
     # query tables by some filter type
-    query_options = QueryOptions("name")
+    query_options = QueryOptions(select="name")
 
     def list_tables(self):
         from azure.azure_table import TableServiceClient
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         tables = list(table_client.list_tables())
-        print(tables)
+        # table_client.list_tables() returns an itemPaged
+        # tables is a list of tables
+
+        for table in tables:
+            print(table.table_name)
 
     def query_tables(self):
         from azure.azure_table import TableServiceClient
         table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         queried_tables = list(table_client.query_tables(query_options=self.query_options))
-        print(queried_tables)
+        # table_client.query_tables() returns an itemPaged
+        # queried_tables is a list of filtered tables
+
+        for table in queried_tables:
+            print(table.table_name)

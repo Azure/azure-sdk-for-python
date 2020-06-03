@@ -43,12 +43,14 @@ class TableServiceStatsTest(TableTestCase):
 
     @staticmethod
     def override_response_body_with_live_status(response):
-        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
+        response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
 
-    @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    # @pytest.mark.skip("pending")
+    # @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
@@ -59,7 +61,8 @@ class TableServiceStatsTest(TableTestCase):
         self._assert_stats_default(stats)
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
