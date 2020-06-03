@@ -51,6 +51,20 @@ class ResourceIdentityType(str, Enum):
     none = "None"
 
 
+class ProvisioningOperation(str, Enum):
+
+    not_specified = "NotSpecified"  #: The provisioning operation is not specified.
+    create = "Create"  #: The provisioning operation is create.
+    delete = "Delete"  #: The provisioning operation is delete.
+    waiting = "Waiting"  #: The provisioning operation is waiting.
+    azure_async_operation_waiting = "AzureAsyncOperationWaiting"  #: The provisioning operation is waiting Azure async operation.
+    resource_cache_waiting = "ResourceCacheWaiting"  #: The provisioning operation is waiting for resource cache.
+    action = "Action"  #: The provisioning operation is action.
+    read = "Read"  #: The provisioning operation is read.
+    evaluate_deployment_output = "EvaluateDeploymentOutput"  #: The provisioning operation is evaluate output.
+    deployment_cleanup = "DeploymentCleanup"  #: The provisioning operation is cleanup. This operation is part of the 'complete' mode deployment.
+
+
 class PropertyChangeType(str, Enum):
 
     create = "Create"  #: The property does not exist in the current state but is present in the desired state. The property will be created when the deployment is executed.
