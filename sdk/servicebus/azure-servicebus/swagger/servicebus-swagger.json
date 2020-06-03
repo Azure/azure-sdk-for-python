@@ -38,6 +38,15 @@
     }
   ],
   "parameters": {
+    "ApiVersion": {
+      "name": "api-version",
+      "in": "query",
+      "type": "string",
+      "default": "2017-04",
+      "description": "Specifies the version of the REST protocol used for processing the request. This is required when using shared key authorization.",
+      "minLength": 1,
+      "x-ms-parameter-location": "client"
+    },
     "Endpoint": {
       "in": "path",
       "name": "endpoint",
@@ -54,15 +63,6 @@
       "type": "boolean",
       "default": false,
       "x-ms-parameter-location": "method"
-    },
-    "ApiVersion": {
-      "name": "api-version",
-      "in": "query",
-      "type": "string",
-      "default": "2017-04",
-      "description": "Specifies the version of the REST protocol used for processing the request. This is required when using shared key authorization.",
-      "minLength": 1,
-      "x-ms-parameter-location": "client"
     }
   },
   "definitions": {
