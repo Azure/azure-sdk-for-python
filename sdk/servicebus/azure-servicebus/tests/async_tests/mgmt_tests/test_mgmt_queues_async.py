@@ -4,8 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 import pytest
+import random
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError
 from azure.servicebus.management.aio import ServiceBusManagementClient
 from azure.servicebus.aio import ServiceBusSharedKeyCredential
 
@@ -170,3 +171,68 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         await sb_mgmt_client.delete_queue("test_queue")
         queues = await sb_mgmt_client.list_queues()
         assert len(queues) == 0
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_delete_basic(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await sb_mgmt_client.create_queue("test_queue")
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 1
+
+        await sb_mgmt_client.create_queue('txt/.-_123')
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 2
+
+        await sb_mgmt_client.delete_queue("test_queue")
+
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 1 and queues[0].queue_name == 'txt/.-_123'
+
+        await sb_mgmt_client.delete_queue('txt/.-_123')
+
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 0
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        for i in range(10):
+            await sb_mgmt_client.create_queue("queue{}".format(i))
+
+        random_delete_idx = random.randint(0, 9)
+        to_delete_queue_name = "queue{}".format(random_delete_idx)
+        await sb_mgmt_client.delete_queue(to_delete_queue_name)
+        queue_names = [queue.queue_name for queue in (await sb_mgmt_client.list_queues())]
+        assert len(queue_names) == 9 and to_delete_queue_name not in queue_names
+
+        for name in queue_names:
+            await sb_mgmt_client.delete_queue(name)
+
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 0
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_delete_negtive(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await sb_mgmt_client.create_queue("test_queue")
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 1
+
+        await sb_mgmt_client.delete_queue("test_queue")
+        queues = await sb_mgmt_client.list_queues()
+        assert len(queues) == 0
+
+        with pytest.raises(ResourceNotFoundError):
+            await sb_mgmt_client.delete_queue("test_queue")
+
+        with pytest.raises(ResourceNotFoundError):
+            await sb_mgmt_client.delete_queue("non_existing_queue")
+
+        with pytest.raises(ValueError):
+            await sb_mgmt_client.delete_queue("")
+
+        with pytest.raises(ValueError):
+            await sb_mgmt_client.delete_queue(queue_name=None)
