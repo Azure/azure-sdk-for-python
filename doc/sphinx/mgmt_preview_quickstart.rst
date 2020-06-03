@@ -80,10 +80,6 @@ To authenticate to Azure and create
 a management client, simply do the following:
 
 ::
-
-    import azure.mgmt.resource
-    import azure.mgmt.network
-    import azure.mgmt.compute
     from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
@@ -103,7 +99,7 @@ calls. Let's create a resource group and demonstrate management client's usage
 
 ::
 
-    location = "mylocation"
+    location = "westus2"
     group_name = "my_resource_group_name"
     group = resource_client.resource_groups.create_or_update(
         group_name,
