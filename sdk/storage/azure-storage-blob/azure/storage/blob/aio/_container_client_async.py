@@ -872,38 +872,18 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
-        :param blobs: The blob names with which to interact. This can be a single blob, or multiple values can
+        :param blobs:
+            The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
-        :param str delete_snapshots:
+        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+        :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :param lease:
-            Required if a blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An async iterator of responses, one for each blob in order
@@ -918,31 +898,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Deleting multiple blobs.
         """
-        raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
-        timeout = kwargs.pop('timeout', None)
-        options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
-            delete_snapshots=delete_snapshots,
-            lease=lease,
-            timeout=timeout,
-            **kwargs
-        )
-        options.update({'raise_on_any_failure': raise_on_any_failure})
-        query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
-        # To pass kwargs to "_batch_send", we need to remove anything that was
-        # in the Autorest signature for Autorest, otherwise transport will be upset
-        for possible_param in ['timeout', 'delete_snapshots', 'lease_access_conditions', 'modified_access_conditions']:
-            options.pop(possible_param, None)
-
-        reqs = []
-        for blob in blobs:
-            blob_name = _get_blob_name(blob)
-            req = HttpRequest(
-                "DELETE",
-                "/{}/{}".format(self.container_name, blob_name),
-                headers=header_parameters
-            )
-            req.format_parameters(query_parameters)
-            reqs.append(req)
+        reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
         return await self._batch_send(*reqs, **options)
 
@@ -966,15 +922,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
-        :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
+        :param blobs:
+            The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
+        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+        :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
+            Indicates the priority with which to rehydrate an archived blob
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -982,37 +937,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        if standard_blob_tier is None:
-            raise ValueError("A StandardBlobTier must be specified")
+        reqs, options = self._generate_set_tiers_options(standard_blob_tier, *blobs, **kwargs)
 
-        query_parameters, header_parameters = self._generate_set_tier_options(
-            tier=standard_blob_tier,
-            lease_access_conditions=access_conditions,
-            **kwargs
-        )
-        # To pass kwargs to "_batch_send", we need to remove anything that was
-        # in the Autorest signature for Autorest, otherwise transport will be upset
-        for possible_param in ['timeout', 'lease']:
-            kwargs.pop(possible_param, None)
-
-        reqs = []
-        for blob in blobs:
-            blob_name = _get_blob_name(blob)
-            req = HttpRequest(
-                "PUT",
-                "/{}/{}".format(self.container_name, blob_name),
-                headers=header_parameters
-            )
-            req.format_parameters(query_parameters)
-            reqs.append(req)
-
-        return await self._batch_send(*reqs, **kwargs)
+        return await self._batch_send(*reqs, **options)
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
         self,
-        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
+        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'] = None,
         *blobs: Union[str, BlobProperties],
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
@@ -1030,10 +962,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -1041,32 +969,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        if premium_page_blob_tier is None:
-            raise ValueError("A PremiumPageBlobTier must be specified")
+        reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
-        query_parameters, header_parameters = self._generate_set_tier_options(
-            tier=premium_page_blob_tier,
-            lease_access_conditions=access_conditions,
-            **kwargs
-        )
-        # To pass kwargs to "_batch_send", we need to remove anything that was
-        # in the Autorest signature for Autorest, otherwise transport will be upset
-        for possible_param in ['timeout', 'lease']:
-            kwargs.pop(possible_param, None)
-
-        reqs = []
-        for blob in blobs:
-            blob_name = _get_blob_name(blob)
-            req = HttpRequest(
-                "PUT",
-                "/{}/{}".format(self.container_name, blob_name),
-                headers=header_parameters
-            )
-            req.format_parameters(query_parameters)
-            reqs.append(req)
-
-        return await self._batch_send(*reqs, **kwargs)
+        return await self._batch_send(*reqs, **options)
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]

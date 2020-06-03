@@ -477,17 +477,61 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar bool request_server_encrypted:
         Whether this blob is encrypted.
+
+    :keyword str name:
+        The name of the blob.
+    :keyword str container:
+        The container in which the blob resides.
+    :keyword str snapshot:
+        Datetime value that uniquely identifies the blob snapshot.
+    :keyword str delete_snapshots:
+        Required if a blob has associated snapshots. Values include:
+         - "only": Deletes only the blobs snapshots.
+         - "include": Deletes the blob along with all snapshots.
+    :keyword lease_id:
+        Required if a blob has an active lease. Value can be a BlobLeaseClient object
+        or the lease ID as a string.
+    :paramtype lease_id: ~azure.storage.blob.BlobLeaseClient or str
+    :keyword ~datetime.datetime if_modified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this header to perform the operation only
+        if the resource has been modified since the specified time.
+    :keyword ~datetime.datetime if_unmodified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this header to perform the operation only if
+        the resource has not been modified since the specified date/time.
+    :keyword str etag:
+        An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+        and act according to the condition specified by the `match_condition` parameter.
+    :keyword ~azure.core.MatchConditions match_condition:
+        The match condition to use upon the etag.
+    :keyword standard_blob_tier:
+        Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
+        'Archive'. The hot tier is optimized for storing data that is accessed
+        frequently. The cool storage tier is optimized for storing data that
+        is infrequently accessed and stored for at least a month. The archive
+        tier is optimized for storing data that is rarely accessed and stored
+        for at least six months with flexible latency requirements.
+    :paramtype standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+    :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
+        Indicates the priority with which to rehydrate an archived blob
+    :keyword int timeout:
+        The timeout parameter is expressed in seconds.
     """
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.container = None
-        self.snapshot = kwargs.get('x-ms-snapshot')
+        self.snapshot = kwargs.get('snapshot') or kwargs.get('x-ms-snapshot')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
         self.encrypted_metadata = kwargs.get('encrypted_metadata')
         self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
+        self.etag = kwargs.get('etag') or kwargs.get('ETag')
         self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
@@ -496,7 +540,7 @@ class BlobProperties(DictMixin):
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
-        self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.blob_tier = kwargs.get('blob-tier') or kwargs.get('x-ms-access-tier')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
         self.deleted = False
@@ -507,6 +551,17 @@ class BlobProperties(DictMixin):
         self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
+
+        # these are for delete_blobs settings
+        self.delete_snapshots = kwargs.pop('delete_snapshots', None)
+        self.lease_id = kwargs.pop('lease_id', None)
+        self.if_modified_since = kwargs.pop('if_modified_since', None)
+        self.if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        self.match_condition = kwargs.pop('match_condition', None)
+        self.timeout = kwargs.pop('timeout', None)
+
+        # these are for set_standard_blob_tier_blobs settings
+        self.rehydrate_priority = kwargs.pop('rehydrate_priority', None)
 
     @classmethod
     def _from_generated(cls, generated):
