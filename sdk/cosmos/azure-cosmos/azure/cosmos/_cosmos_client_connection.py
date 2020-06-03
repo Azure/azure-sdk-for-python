@@ -2487,7 +2487,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
                 if id_[-1] == " ":
                     raise ValueError("Id ends with a space.")
-            except AttributeError as error:
+            except AttributeError:
                 raise_with_traceback(TypeError, message="Id type must be a string.")
 
     # Adds the partition key to options
