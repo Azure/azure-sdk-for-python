@@ -116,8 +116,6 @@ class ServiceBusManagementClient:
         """Create a queue"""
 
         queue_name = None
-        # Yes, this isn't as pythonic as try/catching on failure, but there are lots of annoying subtleties such as if someone passes, for instance, a UUID
-        # object instead of a string, or a Queue-like object elsewhere that doesn't implement the full Description contract, so I'm erring on the side of over-precision here.
         try:
             queue_name = queue.queue_name # type: ignore
             to_create = copy(queue)
@@ -138,6 +136,7 @@ class ServiceBusManagementClient:
                 self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
             )
         except ValidationError as e:
+            # post-hoc try to give a somewhat-justifiable failure reason.
             if isinstance(queue, str) or (isinstance(queue, QueueDescription) and isinstance(queue.queue_name, str)):
                 raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
             raise TypeError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
