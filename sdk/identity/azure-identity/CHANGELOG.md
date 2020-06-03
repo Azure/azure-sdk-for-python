@@ -1,6 +1,12 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `ManagedIdentityCredential` can configure a user-assigned identity using any
+  identifier supported by the current hosting environment. To configure an
+  identity, provide its identifier in the keyword argument `client_id`. If the
+  identifier is **not** the identity's client ID, also provide its parameter
+  name in the hosting environment, in the `client_id_type` keyword argument.
+  ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
 - `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
   optional keyword arguments `executor` or `loop`. Prior versions of the method
   didn't use these correctly, provoking exceptions, and internal changes in this
