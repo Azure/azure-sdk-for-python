@@ -210,7 +210,7 @@ for cell in table.cells:
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model.
+Recognize data from USA sales receipts using a prebuilt model. [Here][service_recognize_receipt] are the fields the service returns for a recognized receipt.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -434,6 +434,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
+[service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
