@@ -140,10 +140,10 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
-a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
-calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
-to illustrate using long-running operations [below](#examples "Examples").
+Methods that train models, recognize values from forms, or copy models are modeled as long-running operations. 
+The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait 
+for the operation to complete by calling `result()` on the operation returned from the `begin_<method-name>` method. 
+Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 
 ## Examples
@@ -210,7 +210,7 @@ for cell in table.cells:
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model.
+Recognize data from USA sales receipts using a prebuilt model. [Here][service_recognize_receipt] are the fields the service returns for a recognized receipt.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -227,21 +227,16 @@ with open("<path to your receipt>", "rb") as fd:
 poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
-r = result[0]
-print("Receipt contained the following values with confidences: ")
-print("Receipt Type: {} has confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
-print("Merchant Name: {} has confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
-print("Transaction Date: {} has confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
-print("Receipt items:")
-for item in r.receipt_items:
-    print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
-    print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-    print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
-print("Subtotal: {} has confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
-print("Tax: {} has confidence: {}".format(r.tax.value, r.tax.confidence))
-print("Tip: {} has confidence: {}".format(r.tip.value, r.tip.confidence))
-print("Total: {} has confidence: {}".format(r.total.value, r.total.confidence))
+for receipt in result:
+    for name, field in receipt.fields.items():
+        if name == "Items":
+            print("Receipt Items:")
+            for idx, items in enumerate(field.value):
+                print("...Item #{}".format(idx))
+                for item_name, item in items.value.items():
+                    print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
+        else:
+            print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
 ### Train a model
@@ -259,7 +254,7 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = form_training_client.begin_train_model(container_sas_url)
+poller = form_training_client.begin_training(container_sas_url)
 model = poller.result()
 
 # Custom model information
@@ -439,6 +434,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
+[service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

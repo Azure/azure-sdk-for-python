@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
+from unittest import mock
+
 from azure.core.credentials import AccessToken
-from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity import CredentialUnavailableError
+from azure.identity.aio import VSCodeCredential
+from azure.identity._internal.user_agent import USER_AGENT
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+import pytest
+
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
-from unittest import mock
-from azure.identity.aio._credentials.vscode_credential import VSCodeCredential
 
 
 @pytest.mark.asyncio

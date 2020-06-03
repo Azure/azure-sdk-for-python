@@ -7,6 +7,9 @@
   identifier is **not** the identity's client ID, also provide its parameter
   name in the hosting environment, in the `client_id_type` keyword argument.
   ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
+- `AzureCliCredential` and `VSCodeCredential`, which enable authenticating as
+  the identity signed in to the Azure CLI and Visual Studio Code, respectively,
+  can be imported from `azure.identity` and `azure.identity.aio`.
 - `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
   optional keyword arguments `executor` or `loop`. Prior versions of the method
   didn't use these correctly, provoking exceptions, and internal changes in this

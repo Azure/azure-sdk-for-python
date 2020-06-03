@@ -3,18 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import pytest
+
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError
+from azure.identity import CredentialUnavailableError, VSCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._credentials.vscode_credential import get_credentials
+import pytest
+
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
-from azure.identity._credentials.vscode_credential import VSCodeCredential, get_credentials
 
 
 def test_no_scopes():

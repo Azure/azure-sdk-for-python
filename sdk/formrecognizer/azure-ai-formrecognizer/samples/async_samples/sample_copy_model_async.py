@@ -59,10 +59,11 @@ class CopyModelSampleAsync(object):
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         async with source_client:
-            copy = await source_client.copy_model(
+            poller = await source_client.begin_copy_model(
                 model_id=source_model_id,
                 target=target
             )
+            copy = await poller.result()
 
         async with target_client:
             copied_over_model = await target_client.get_custom_model(copy.model_id)
