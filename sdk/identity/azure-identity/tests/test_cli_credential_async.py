@@ -8,7 +8,7 @@ import sys
 from unittest import mock
 
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio._credentials.azure_cli import AzureCliCredential
+from azure.identity.aio import AzureCliCredential
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
