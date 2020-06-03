@@ -19,8 +19,8 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
-                      See https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
-                      for more detailed descriptions on how to get it.
+        See https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
+        for more detailed descriptions on how to get it.
 """
 
 import os
@@ -38,8 +38,7 @@ class TrainModelWithoutLabelsSample(object):
         container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
         form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
-
-        poller = form_training_client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # Custom model information
@@ -63,6 +62,7 @@ class TrainModelWithoutLabelsSample(object):
             print("Document status: {}".format(doc.status))
             print("Document page count: {}".format(doc.page_count))
             print("Document errors: {}".format(doc.errors))
+
 
 if __name__ == '__main__':
     sample = TrainModelWithoutLabelsSample()

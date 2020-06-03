@@ -4,10 +4,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import FormRecognizerClientConfiguration
 from .operations_async import FormRecognizerClientOperationsMixin
