@@ -17,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
-    prepare_us_receipt,
+    prepare_receipt,
     prepare_content_result,
     prepare_form_result
 )
@@ -84,7 +84,7 @@ class FormRecognizerClient(object):
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_us_receipt(analyze_result)
+        return prepare_receipt(analyze_result)
 
     @distributed_trace_async
     async def recognize_receipts(
