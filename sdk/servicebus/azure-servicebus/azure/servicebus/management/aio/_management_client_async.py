@@ -95,7 +95,7 @@ class ServiceBusManagementClient:
         return _convert_xml_to_object(queue_name, et, clazz)
 
     async def _list_queues(self, skip, max_count, clazz):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo])
+        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -126,18 +126,19 @@ class ServiceBusManagementClient:
     async def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
-        if not queue or not queue.queue_name:  # type: ignore
-            raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty queue_name")
-        if isinstance(queue, str):
+        try:  # queue is a QueueDescription
+            queue_name = queue.queue_name
+            to_create = copy(queue)
+            to_create.queue_name = None
+        except AttributeError:  # str expected. But if not str, it might work and might not work.
             queue_name = queue
-            queue_description = QueueDescription()
-        else:
-            queue_name = queue.queue_name  # type: ignore
-            queue_description = copy(queue)
-            queue_description.queue_name = None
+            to_create = QueueDescription()
+        if queue_name is None:
+            raise ValueError("queue should be a non-empty str or a QueueDescription with non-empty queue_name")
+
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=queue_description,
+                queue_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
