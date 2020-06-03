@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+from contextlib import contextmanager
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Type
 from xml.etree.ElementTree import ElementTree, Element
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
@@ -26,6 +26,19 @@ from . import _constants as constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
+
+
+@contextmanager
+def _handle_response_error():
+    try:
+        yield
+    except HttpResponseError as response_error:
+        new_response_error = HttpResponseError(
+            message=response_error.model.detail,
+            response=response_error.response,
+            model=response_error.model
+        )
+        raise new_response_error
 
 
 def _convert_xml_to_object(queue_name, et, clazz):
@@ -96,10 +109,12 @@ class ServiceBusManagementClient:
 
         if not queue_name:
             raise ValueError("queue_name must be a non-empty str")
-        et = cast(
-            ElementTree,
-            self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
-        )
+
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
+            )
         return _convert_xml_to_object(queue_name, et, clazz)
 
     def get_queue(self, queue_name):
@@ -129,10 +144,12 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = cast(
-            ElementTree,
-            self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-        )
+
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+            )
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     def update_queue(self, queue_description):
@@ -149,15 +166,16 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = cast(
-            ElementTree,
-            self._impl.queue.put(
-            queue_description.queue_name,  # type: ignore
-            request_body,
-            api_version=constants.API_VERSION,
-            if_match="*"
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                self._impl.queue.put(
+                queue_description.queue_name,  # type: ignore
+                request_body,
+                api_version=constants.API_VERSION,
+                if_match="*"
+                )
             )
-        )
         return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     def delete_queue(self, queue_name):
@@ -166,14 +184,17 @@ class ServiceBusManagementClient:
 
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
-        self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+        with _handle_response_error():
+            self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
     def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
-        et = cast(
-            ElementTree,
-            self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
-        )
+
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                self._impl.list_entities(entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION)
+            )
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:

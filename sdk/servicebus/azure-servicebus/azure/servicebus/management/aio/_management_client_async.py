@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, Type, cast
 from xml.etree.ElementTree import ElementTree, Element
@@ -22,7 +21,7 @@ from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
 from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
     as ServiceBusManagementClientImpl
 from .. import _constants as constants
-from .._management_client import _convert_xml_to_object
+from .._management_client import _convert_xml_to_object, _handle_response_error
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 
 
@@ -88,10 +87,11 @@ class ServiceBusManagementClient:
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
         if not queue_name:
             raise ValueError("queue_name must be a non-empty str")
-        et = cast(
-            ElementTree,
-            await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
-        )
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
+            )
         return _convert_xml_to_object(queue_name, et, clazz)
 
     async def get_queue(self, queue_name):
@@ -120,10 +120,11 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = cast(
-            ElementTree,
-            await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-        )
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                await self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+            )
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     async def update_queue(self, queue_description):
@@ -140,12 +141,13 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = cast(
-            ElementTree,
-            await self._impl.queue.put(
-                queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                await self._impl.queue.put(
+                    queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+                )
             )
-        )
         return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     async def delete_queue(self, queue_name):
@@ -154,16 +156,18 @@ class ServiceBusManagementClient:
 
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
-        await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+        with _handle_response_error():
+            await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
 
     async def list_queues(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueDescription]
-        et = cast(
-            ElementTree,
-            await self._impl.list_entities(
-                entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+        with _handle_response_error():
+            et = cast(
+                ElementTree,
+                await self._impl.list_entities(
+                    entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+                )
             )
-        )
         entries = et.findall(constants.ENTRY_TAG)
         queue_descriptions = []
         for entry in entries:
