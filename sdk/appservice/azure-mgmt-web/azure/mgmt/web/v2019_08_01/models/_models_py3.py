@@ -282,8 +282,8 @@ class ApiKVReference(Model):
     :type secret_name: str
     :param secret_version:
     :type secret_version: str
-    :param identity_type: Possible values include: 'None', 'SystemAssigned',
-     'UserAssigned'
+    :param identity_type: Possible values include: 'SystemAssigned',
+     'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type identity_type: str or
      ~azure.mgmt.web.v2019_08_01.models.ManagedServiceIdentityType
     :param details:
@@ -1897,8 +1897,10 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: If Linux app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param reserved: This needs to set to <code>true</code> when creating a
+     Linux App Service Plan, along with <code>kind</code> set to
+     <code>Linux</code>. It should be <code>false</code> otherwise. Default
+     value: False .
     :type reserved: bool
     :param is_xenon: Obsolete: If Hyper-V container app service plan
      <code>true</code>, <code>false</code> otherwise. Default value: False .
@@ -3695,6 +3697,94 @@ class CsmOperationDisplay(Model):
         self.resource = resource
         self.operation = operation
         self.description = description
+
+
+class CsmPublishingCredentialsPoliciesCollection(ProxyOnlyResource):
+    """Publishing Credentials Policies collection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param ftp: Required. Whether FTP is allowed.
+    :type ftp:
+     ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
+    :param scm: Required. Whether Scm Basic Auth is allowed.
+    :type scm:
+     ~azure.mgmt.web.v2019_08_01.models.CsmPublishingCredentialsPoliciesEntity
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'ftp': {'required': True},
+        'scm': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'ftp': {'key': 'properties.ftp', 'type': 'CsmPublishingCredentialsPoliciesEntity'},
+        'scm': {'key': 'properties.scm', 'type': 'CsmPublishingCredentialsPoliciesEntity'},
+    }
+
+    def __init__(self, *, ftp, scm, kind: str=None, **kwargs) -> None:
+        super(CsmPublishingCredentialsPoliciesCollection, self).__init__(kind=kind, **kwargs)
+        self.ftp = ftp
+        self.scm = scm
+
+
+class CsmPublishingCredentialsPoliciesEntity(ProxyOnlyResource):
+    """Publishing Credentials Policies parameters.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param allow: Required. <code>true</code> to allow access to a publishing
+     method; otherwise, <code>false</code>.
+    :type allow: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'allow': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'allow': {'key': 'properties.allow', 'type': 'bool'},
+    }
+
+    def __init__(self, *, allow: bool, kind: str=None, **kwargs) -> None:
+        super(CsmPublishingCredentialsPoliciesEntity, self).__init__(kind=kind, **kwargs)
+        self.allow = allow
 
 
 class CsmPublishingProfileOptions(Model):
@@ -6313,8 +6403,8 @@ class KeyVaultReferenceResource(ProxyOnlyResource):
     :type secret_name: str
     :param secret_version:
     :type secret_version: str
-    :param identity_type: Possible values include: 'None', 'SystemAssigned',
-     'UserAssigned'
+    :param identity_type: Possible values include: 'SystemAssigned',
+     'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type identity_type: str or
      ~azure.mgmt.web.v2019_08_01.models.ManagedServiceIdentityType
     :param details:
@@ -6413,7 +6503,7 @@ class ManagedServiceIdentity(Model):
     sending a request.
 
     :param type: Type of managed service identity. Possible values include:
-     'None', 'SystemAssigned', 'UserAssigned'
+     'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
      ~azure.mgmt.web.v2019_08_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
