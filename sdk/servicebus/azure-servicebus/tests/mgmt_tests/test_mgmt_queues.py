@@ -18,7 +18,7 @@ from servicebus_preparer import (
 class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_queue_list(self, servicebus_namespace_connection_string, servicebus_namespace,
+    def test_mgmt_queue_list_basic(self, servicebus_namespace_connection_string, servicebus_namespace,
                                     servicebus_namespace_key_name, servicebus_namespace_primary_key):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         queues = sb_mgmt_client.list_queues()
