@@ -96,13 +96,6 @@ def form_page(form_table, form_line):
     return model, model_repr
 
 @pytest.fixture
-def us_receipt_type():
-    model = _models.ReceiptType(type="Itemized", confidence=1.0)
-    model_repr = "ReceiptType(type=Itemized, confidence=1.0)"
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def custom_form_model_field():
     model = _models.CustomFormModelField(label="label", name="name", accuracy=0.99)
     model_repr = "CustomFormModelField(label=label, name=name, accuracy=0.99)"
@@ -134,19 +127,18 @@ def training_document_info(form_recognizer_error):
 class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
-    def test_recognized_form(self, form_field_one, page_range, form_page, us_receipt_type):
+    def test_recognized_form(self, form_field_one, page_range, form_page):
         model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
         model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
             form_field_one[1], page_range[1], form_page[1]
         )[:1024]
         assert repr(model) == model_repr
 
-    def test_recognized_receipt(self, form_field_one, page_range, form_page, us_receipt_type):
+    def test_recognized_receipt(self, form_field_one, page_range, form_page):
         model = _models.RecognizedReceipt(
-            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]],
-            receipt_type=us_receipt_type[0])
+            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
         model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
-            form_field_one[1], page_range[1], form_page[1], us_receipt_type[0]
+            form_field_one[1], page_range[1], form_page[1]
         )[:1024]
         assert repr(model) == model_repr
 
