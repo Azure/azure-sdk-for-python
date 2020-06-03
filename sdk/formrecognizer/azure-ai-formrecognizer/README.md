@@ -228,7 +228,9 @@ poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
 receipt = result[0]
-print("Receipt Type: {} has confidence: {}".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
+receipt_type = receipt.fields.get("ReceiptType")
+if receipt_type:
+    print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
 merchant_name = receipt.fields.get("MerchantName")
 if merchant_name:
     print("Merchant Name: {} has confidence: {}".format(merchant_name.value, merchant_name.confidence))
