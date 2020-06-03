@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPo
 from azure.core.pipeline.transport import RequestsTransport
 from azure.servicebus import ServiceBusSharedKeyCredential
 from msrest.serialization import Model
+from msrest.exceptions import ValidationError
 
 from .._common.constants import JWT_TOKEN_SCOPE
 from .._common.utils import parse_conn_str
@@ -28,13 +29,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
 
 
-def _convert_xml_to_object(queue_name, et, clazz):
+def _convert_xml_to_object(queue_name, et, class_):
     # type: (str, Union[Element, ElementTree], Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
     content_ele = cast(ElementTree, et).find(constants.CONTENT_TAG)
     if not content_ele:
         raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
     qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-    obj = clazz.deserialize(qc_ele)
+    obj = class_.deserialize(qc_ele)
     obj.queue_name = queue_name
     return obj
 
@@ -91,7 +92,7 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
 
-    def _get_queue_object(self, queue_name, clazz):
+    def _get_queue_object(self, queue_name, class_):
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
 
         if not queue_name:
@@ -100,7 +101,7 @@ class ServiceBusManagementClient:
             ElementTree,
             self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
         )
-        return _convert_xml_to_object(queue_name, et, clazz)
+        return _convert_xml_to_object(queue_name, et, class_)
 
     def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
@@ -114,25 +115,33 @@ class ServiceBusManagementClient:
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
 
-        if not queue or not queue.queue_name:  # type: ignore
-            raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty queue_name")
-        if isinstance(queue, str):
-            queue_name = queue
-            to_create = QueueDescription()  # Use an emtpy queue description.
-        else:
-            queue_name = queue.queue_name  # type: ignore
+        queue_name = None
+        # Yes, this isn't as pythonic as try/catching on failure, but there are lots of annoying subtleties such as if someone passes, for instance, a UUID
+        # object instead of a string, or a Queue-like object elsewhere that doesn't implement the full Description contract, so I'm erring on the side of over-precision here.
+        try:
+            queue_name = queue.queue_name # type: ignore
             to_create = copy(queue)
-            to_create.queue_name = None
+            to_create.queue_name = None            
+        except AttributeError:
+            queue_name = queue
+            to_create = QueueDescription()  # Use an empty queue description.
+
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_create,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        et = cast(
-            ElementTree,
-            self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
-        )
+        try:
+            et = cast(
+                ElementTree,
+                self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+            )
+        except ValidationError as e:
+            if isinstance(queue, str) or (isinstance(queue, QueueDescription) and isinstance(queue.queue_name, str)):
+                raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
+            raise TypeError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
+
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
     def update_queue(self, queue_description):
