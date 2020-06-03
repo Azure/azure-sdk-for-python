@@ -1,3 +1,8 @@
+## 4.0.1 (Unreleased)
+
+- Fix for bug where options headers were not added to upsert_item function (Issue #11791 - thank you @aalapatirvbd).
+
+
 ## 4.0.0 (2020-05-20)
 
 - Stable release.
