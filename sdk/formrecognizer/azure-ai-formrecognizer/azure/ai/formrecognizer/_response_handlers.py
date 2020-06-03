@@ -7,7 +7,6 @@
 # pylint: disable=protected-access
 
 from ._models import (
-    ReceiptType,
     FormField,
     FormPage,
     FormLine,
@@ -35,7 +34,6 @@ def prepare_receipt(response):
             receipts.append(receipt)
             continue
         receipt = RecognizedReceipt(
-            receipt_type=ReceiptType._from_generated(page.fields.get("ReceiptType")),
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),

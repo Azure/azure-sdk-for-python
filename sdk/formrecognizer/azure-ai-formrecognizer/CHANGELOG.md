@@ -24,6 +24,7 @@
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 - Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see [sample_recognize_receipts.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py) or [sample_recognize_receipts_from_url.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts_from_url.py) for details.
 - Removed `USReceiptItem`. To see how to access the individual items on a receipt, see [sample_recognize_receipts.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py) or [sample_recognize_receipts_from_url.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts_from_url.py) for details.
+- Removed `ReceiptType` and the `receipt_type` property from `RecogniedReceipt`. See sample_recognize_receipts.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py) or [sample_recognize_receipts_from_url.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts_from_url.py) for details.
 
 **New features**
 

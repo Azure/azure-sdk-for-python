@@ -195,18 +195,11 @@ class RecognizedReceipt(RecognizedForm):
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
-    :ivar ~azure.ai.formrecognizer.ReceiptType receipt_type:
-        The reciept type and confidence.
     """
-    def __init__(self, **kwargs):
-        super(RecognizedReceipt, self).__init__(**kwargs)
-        self.receipt_type = kwargs.get("receipt_type", None)
 
     def __repr__(self):
-        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={}, " \
-            "receipt_type={})".format(
-            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages),
-            repr(self.receipt_type)
+        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={})".format(
+            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
         )[:1024]
 
 
@@ -449,30 +442,6 @@ class FormWord(FormContent):
         return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})".format(
             self.text, self.bounding_box, self.confidence, self.page_number
         )[:1024]
-
-
-class ReceiptType(object):
-    """The type of the analyzed US receipt and the confidence
-    value of that type.
-
-    :ivar str type: The type of the receipt. For example, "Itemized",
-        "CreditCard", "Gas", "Parking", "Gas", "Other".
-    :ivar float confidence:
-        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
-    """
-
-    def __init__(self, **kwargs):
-        self.type = kwargs.get("type", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, item):
-        return cls(
-            type=item.value_string,
-            confidence=adjust_confidence(item.confidence)) if item else None
-
-    def __repr__(self):
-        return "ReceiptType(type={}, confidence={})".format(self.type, self.confidence)[:1024]
 
 
 class FormTable(object):
