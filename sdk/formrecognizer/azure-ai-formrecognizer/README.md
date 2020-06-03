@@ -227,42 +227,16 @@ with open("<path to your receipt>", "rb") as fd:
 poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
-receipt = result[0]
-receipt_type = receipt.fields.get("ReceiptType")
-if receipt_type:
-    print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
-merchant_name = receipt.fields.get("MerchantName")
-if merchant_name:
-    print("Merchant Name: {} has confidence: {}".format(merchant_name.value, merchant_name.confidence))
-transaction_date = receipt.fields.get("TransactionDate")
-if transaction_date:
-    print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
-print("Receipt items:")
-for item in receipt.fields.get("Items").value:
-    item_name = item.value.get("Name")
-    if item_name:
-        print("...Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
-    item_quantity = item.value.get("Quantity")
-    if item_quantity:
-        print("...Item Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
-    item_price = item.value.get("Price")
-    if item_price:
-        print("...Individual Item Price: {} has confidence: {}".format(item_price.value, item_price.confidence))
-    item_total_price = item.value.get("TotalPrice")
-    if item_total_price:
-        print("...Total Item Price: {} has confidence: {}".format(item_total_price.value, item_total_price.confidence))
-subtotal = receipt.fields.get("Subtotal")
-if subtotal:
-    print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))
-tax = receipt.fields.get("Tax")
-if tax:
-    print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
-tip = receipt.fields.get("Tip")
-if tip:
-    print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
-total = receipt.fields.get("Total")
-if total:
-    print("Total: {} has confidence: {}".format(total.value, total.confidence))
+for receipt in result:
+    for name, field in receipt.fields.items():
+        if name == "Items":
+            print("Receipt Items:")
+            for idx, items in enumerate(field.value):
+                print("...Item #{}".format(idx))
+                for item_name, item in items.value.items():
+                    print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
+        else:
+            print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
 ### Train a model
