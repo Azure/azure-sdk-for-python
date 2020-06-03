@@ -17,7 +17,7 @@ from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
-    prepare_us_receipt,
+    prepare_receipt,
     prepare_content_result,
     prepare_form_result
 )
@@ -74,7 +74,7 @@ class FormRecognizerClient(object):
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_us_receipt(analyze_result)
+        return prepare_receipt(analyze_result)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
