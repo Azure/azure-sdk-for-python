@@ -16,13 +16,11 @@ from azure.servicebus import ServiceBusSharedKeyCredential
 from msrest.serialization import Model
 
 from .._common.constants import JWT_TOKEN_SCOPE
+from .._common.utils import parse_conn_str
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
-
-
-from .._common.utils import parse_conn_str
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from . import _constants as constants
 
@@ -46,7 +44,6 @@ class ServiceBusManagementClient:
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, Union[TokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
         """
-
         :param fully_qualified_namespace:
         :param kwargs:
         """
