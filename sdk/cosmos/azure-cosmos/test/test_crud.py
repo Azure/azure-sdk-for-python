@@ -939,6 +939,11 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document['id'],
                          document_definition['id'])
 
+        # test error for non-string id
+        with pytest.raises(TypeError):
+            document_definition['id'] = 7
+            created_collection.upsert_item(body=document_definition)
+
         # read documents after creation and verify updated count
         documents = list(created_collection.read_all_items())
         self.assertEqual(
