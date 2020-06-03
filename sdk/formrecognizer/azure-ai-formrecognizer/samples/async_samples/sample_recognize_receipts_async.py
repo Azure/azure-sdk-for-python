@@ -46,19 +46,42 @@ class RecognizeReceiptsSampleAsync(object):
 
             for idx, receipt in enumerate(receipts):
                 print("--------Recognizing receipt #{}--------".format(idx))
-                print("Receipt Type: {} has confidence: {}".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
-                print("Merchant Name: {} has confidence: {}".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
-                print("Transaction Date: {} has confidence: {}".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+                receipt_type = receipt.fields.get("ReceiptType")
+                if receipt_type:
+                    print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
+                merchant_name = receipt.fields.get("MerchantName")
+                if merchant_name:
+                    print("Merchant Name: {} has confidence: {}".format(merchant_name.value, merchant_name.confidence))
+                transaction_date = receipt.fields.get("TransactionDate")
+                if transaction_date:
+                    print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
                 print("Receipt items:")
-                for item in receipt.receipt_items:
-                    print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
-                    print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
-                    print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-                    print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
-                print("Subtotal: {} has confidence: {}".format(receipt.subtotal.value, receipt.subtotal.confidence))
-                print("Tax: {} has confidence: {}".format(receipt.tax.value, receipt.tax.confidence))
-                print("Tip: {} has confidence: {}".format(receipt.tip.value, receipt.tip.confidence))
-                print("Total: {} has confidence: {}".format(receipt.total.value, receipt.total.confidence))
+                for idx, item in enumerate(receipt.fields.get("Items").value):
+                    print("...Item #{}".format(idx))
+                    item_name = item.value.get("Name")
+                    if item_name:
+                        print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
+                    item_quantity = item.value.get("Quantity")
+                    if item_quantity:
+                        print("......Item Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
+                    item_price = item.value.get("Price")
+                    if item_price:
+                        print("......Individual Item Price: {} has confidence: {}".format(item_price.value, item_price.confidence))
+                    item_total_price = item.value.get("TotalPrice")
+                    if item_total_price:
+                        print("......Total Item Price: {} has confidence: {}".format(item_total_price.value, item_total_price.confidence))
+                subtotal = receipt.fields.get("Subtotal")
+                if subtotal:
+                    print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))
+                tax = receipt.fields.get("Tax")
+                if tax:
+                    print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+                tip = receipt.fields.get("Tip")
+                if tip:
+                    print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+                total = receipt.fields.get("Total")
+                if total:
+                    print("Total: {} has confidence: {}".format(total.value, total.confidence))
                 print("--------------------------------------")
         # [END recognize_receipts_async]
 

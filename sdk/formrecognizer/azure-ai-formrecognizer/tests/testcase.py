@@ -263,10 +263,10 @@ class FormRecognizerTest(AzureTestCase):
         actual = actual_items.value_array
 
         for r, a in zip(items, actual):
-            self.assertFormFieldTransformCorrect(r.name, a.value_object.get("Name"), read_results)
-            self.assertFormFieldTransformCorrect(r.quantity, a.value_object.get("Quantity"), read_results)
-            self.assertFormFieldTransformCorrect(r.total_price, a.value_object.get("TotalPrice"), read_results)
-            self.assertFormFieldTransformCorrect(r.price, a.value_object.get("Price"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("Name"), a.value_object.get("Name"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("Quantity"), a.value_object.get("Quantity"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("TotalPrice"), a.value_object.get("TotalPrice"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("Price"), a.value_object.get("Price"), read_results)
 
     def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
         for table, actual_table in zip(layout, actual_layout):
@@ -288,24 +288,24 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertReceiptItemsHasValues(self, items, page_number, include_text_content):
         for item in items:
-            self.assertBoundingBoxHasPoints(item.name.value_data.bounding_box)
-            self.assertIsNotNone(item.name.confidence)
-            self.assertIsNotNone(item.name.value_data.text)
-            self.assertBoundingBoxHasPoints(item.quantity.value_data.bounding_box)
-            self.assertIsNotNone(item.quantity.confidence)
-            self.assertIsNotNone(item.quantity.value_data.text)
-            self.assertBoundingBoxHasPoints(item.total_price.value_data.bounding_box)
-            self.assertIsNotNone(item.total_price.confidence)
-            self.assertIsNotNone(item.total_price.value_data.text)
+            self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
+            self.assertIsNotNone(item.value.get("Name").confidence)
+            self.assertIsNotNone(item.value.get("Name").value_data.text)
+            self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
+            self.assertIsNotNone(item.value.get("Quantity").confidence)
+            self.assertIsNotNone(item.value.get("Quantity").value_data.text)
+            self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
+            self.assertIsNotNone(item.value.get("TotalPrice").confidence)
+            self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
 
             if include_text_content:
-                self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
+                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
+                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
+                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
             else:
-                self.assertIsNone(item.name.value_data.text_content)
-                self.assertIsNone(item.name.value_data.text_content)
-                self.assertIsNone(item.name.value_data.text_content)
+                self.assertIsNone(item.value.get("Name").value_data.text_content)
+                self.assertIsNone(item.value.get("Name").value_data.text_content)
+                self.assertIsNone(item.value.get("Name").value_data.text_content)
 
     def assertBoundingBoxHasPoints(self, box):
         if box is None:
