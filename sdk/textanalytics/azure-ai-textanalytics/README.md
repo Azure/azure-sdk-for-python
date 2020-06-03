@@ -129,7 +129,7 @@ text_analytics_client = TextAnalyticsClient(
 
 ## Key concepts
 
-### Client
+### TextAnalyticsClient
 The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#Examples "examples").
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
 
