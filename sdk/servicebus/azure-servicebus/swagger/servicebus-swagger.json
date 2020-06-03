@@ -38,6 +38,15 @@
     }
   ],
   "parameters": {
+    "ApiVersion": {
+      "name": "api-version",
+      "in": "query",
+      "type": "string",
+      "default": "2017-04",
+      "description": "Specifies the version of the REST protocol used for processing the request. This is required when using shared key authorization.",
+      "minLength": 1,
+      "x-ms-parameter-location": "client"
+    },
     "Endpoint": {
       "in": "path",
       "name": "endpoint",
@@ -54,18 +63,71 @@
       "type": "boolean",
       "default": false,
       "x-ms-parameter-location": "method"
-    },
-    "ApiVersion": {
-      "name": "api-version",
-      "in": "query",
-      "type": "string",
-      "default": "2017-04",
-      "description": "Specifies the version of the REST protocol used for processing the request. This is required when using shared key authorization.",
-      "minLength": 1,
-      "x-ms-parameter-location": "client"
     }
   },
   "definitions": {
+    "AccessRights": {
+      "description": "Access rights of the entity",
+      "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Manage",
+        "Send",
+        "Listen"
+      ]
+    },
+    "AuthorizationRule": {
+      "description": "Authorization rule of an entity",
+      "type": "object",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "ClaimType":{
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedTime":{
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "KeyName":{
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "ModifiedTime":{
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Rights": {
+          "description": "Access rights of the entity",
+          "type": "array",
+          "xml": {
+            "wrapped": true,
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          },
+          "items": {
+            "type": "string",
+            "xml": {
+              "name": "AccessRights",
+              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            }
+          }
+        }
+      }
+    },
     "CreateQueueBody": {
       "description": "The request body for creating a queue.",
       "type": "object",
@@ -128,6 +190,38 @@
         }
       }
     },
+    "EntityAvailabilityStatus": {
+      "description": "Availibility status of the entity",
+      "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Available",
+        "Limited",
+        "Renaming",
+        "Restoring",
+        "Unknown"
+      ]
+    },
+    "EntityStatus": {
+      "description": "Status of a Service Bus resource",
+      "type": "string",
+      "xml":{
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Active",
+        "Creating",
+        "Deleting",
+        "Disabled",
+        "ReceiveDisabled",
+        "Renaming",
+        "Restoring",
+        "SendDisabled",
+        "Unknown"
+      ]
+    },
     "MessageCountDetails": {
       "description": "Details about the message counts in queue.",
       "type": "object",
@@ -175,158 +269,6 @@
       },
       "xml": {
         "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
-      }
-    },
-    "AccessRights": {
-      "description": "Access rights of the entity",
-      "type": "string",
-      "xml":{
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "enum": [
-        "Manage",
-        "Send",
-        "Listen"
-      ]
-    },
-    "EntityAvailabilityStatus": {
-      "description": "Availibility status of the entity",
-      "type": "string",
-      "xml":{
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "enum": [
-        "Available",
-        "Limited",
-        "Renaming",
-        "Restoring",
-        "Unknown"
-      ]
-    },
-    "EntityStatus": {
-      "description": "Status of a Service Bus resource",
-      "type": "string",
-      "xml":{
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "enum": [
-        "Active",
-        "Creating",
-        "Deleting",
-        "Disabled",
-        "ReceiveDisabled",
-        "Renaming",
-        "Restoring",
-        "SendDisabled",
-        "Unknown"
-      ]
-    },
-    "QueueRuntimeInfo":{
-      "description": "Service Bus queue metrics.",
-      "type": "object",
-      "xml": {
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "properties": {
-        "QueueName": {
-          "description": "Name of the queue",
-          "type": "string"
-        },
-        "AccessedAt": {
-          "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "CreatedAt": {
-          "description": "The exact time the queue was created.",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "UpdatedAt": {
-          "description": "The exact time a message was updated in the queue.",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "SizeInBytes": {
-          "description": "The size of the queue, in bytes.",
-          "type": "integer",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "MessageCount": {
-          "description": "The number of messages in the queue.",
-          "type": "integer",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "MessageCountDetails": {
-          "$ref": "#/definitions/MessageCountDetails",
-          "xml": {
-            "name": "CountDetails",
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        }
-      }
-    },
-    "AuthorizationRule": {
-      "description": "Authorization rule of an entity",
-      "type": "object",
-      "xml": {
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "properties": {
-        "ClaimType":{
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "CreatedTime":{
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "KeyName":{
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "ModifiedTime":{
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "Rights": {
-          "description": "Access rights of the entity",
-          "type": "array",
-          "xml": {
-            "wrapped": true,
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          },
-          "items": {
-            "type": "string",
-            "xml": {
-              "name": "AccessRights",
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            }
-          }
-        }
       }
     },
     "QueueDescription": {
@@ -473,6 +415,64 @@
           "description": "A value that indicates whether the queue supports ordering.",
           "type": "boolean",
           "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        }
+      }
+    },
+    "QueueRuntimeInfo":{
+      "description": "Service Bus queue metrics.",
+      "type": "object",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "QueueName": {
+          "description": "Name of the queue",
+          "type": "string"
+        },
+        "AccessedAt": {
+          "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "UpdatedAt": {
+          "description": "The exact time a message was updated in the queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "SizeInBytes": {
+          "description": "The size of the queue, in bytes.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessageCount": {
+          "description": "The number of messages in the queue.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessageCountDetails": {
+          "$ref": "#/definitions/MessageCountDetails",
+          "xml": {
+            "name": "CountDetails",
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         }
