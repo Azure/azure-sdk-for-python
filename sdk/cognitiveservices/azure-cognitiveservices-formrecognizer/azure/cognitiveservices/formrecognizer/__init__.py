@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .form_recognizer_client import FormRecognizerClient
-from .version import VERSION
+from ._configuration import FormRecognizerClientConfiguration
+from ._form_recognizer_client import FormRecognizerClient
+__all__ = ['FormRecognizerClient', 'FormRecognizerClientConfiguration']
 
-__all__ = ['FormRecognizerClient']
+from .version import VERSION
 
 __version__ = VERSION
 
