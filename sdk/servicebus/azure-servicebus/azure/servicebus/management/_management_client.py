@@ -33,11 +33,14 @@ def _handle_response_error():
     try:
         yield
     except HttpResponseError as response_error:
-        new_response_error = HttpResponseError(
-            message=response_error.model.detail,
-            response=response_error.response,
-            model=response_error.model
-        )
+        try:
+            new_response_error = HttpResponseError(
+                message=response_error.model.detail,
+                response=response_error.response,
+                model=response_error.model
+            )
+        except AttributeError:
+            new_response_error = response_error
         raise new_response_error
 
 
@@ -118,7 +121,7 @@ class ServiceBusManagementClient:
         return _convert_xml_to_object(queue_name, et, clazz)
 
     def _list_queues(self, skip, max_count, clazz):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo])
+        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -150,15 +153,16 @@ class ServiceBusManagementClient:
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue"""
 
-        if not queue or not queue.queue_name:  # type: ignore
-            raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty queue_name")
-        if isinstance(queue, str):
-            queue_name = queue
-            to_create = QueueDescription()  # Use an emtpy queue description.
-        else:
-            queue_name = queue.queue_name  # type: ignore
+        try:  # queue is a QueueDescription
+            queue_name = queue.queue_name
             to_create = copy(queue)
             to_create.queue_name = None
+        except AttributeError:  # str expected. But if not str, it might work and might not work.
+            queue_name = queue
+            to_create = QueueDescription()
+        if queue_name is None:
+            raise ValueError("queue should be a non-empty str or a QueueDescription with non-empty queue_name")
+
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_create,
