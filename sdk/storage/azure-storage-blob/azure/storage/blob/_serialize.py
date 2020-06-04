@@ -152,6 +152,5 @@ def serialize_blob_tags(tags=None):
     # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
     tag_list = list()
     if tags:
-        for tag_key, tag_value in tags.items():
-            tag_list.append(BlobTag(key=tag_key, value=tag_value))
+        tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)

@@ -274,7 +274,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         await self._create_block_blob(tags=tags, container_name=container_name3)
 
         where = "\"tag1\"='firsttag'"
-        blob_list = self.bsc.filter_blobs(where=where, results_per_page=2).by_page()
+        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
         first_page = await blob_list.__anext__()
         items_on_page1 = list()
         async for item in first_page:

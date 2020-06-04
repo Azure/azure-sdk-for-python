@@ -567,9 +567,7 @@ class BlobProperties(DictMixin):
         """Deserialize a list of BlobTag objects into a dict.
         """
         if generated_tags:
-            tag_dict = dict()
-            for blob_tag in generated_tags.blob_tag_set:
-                tag_dict[blob_tag.key] = blob_tag.value
+            tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
             return tag_dict
         return None
 

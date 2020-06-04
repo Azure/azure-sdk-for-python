@@ -163,7 +163,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -644,7 +648,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -715,7 +723,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -898,7 +910,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1273,7 +1289,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1381,6 +1401,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :param tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :type tags: dict(str, str)
         :keyword str version_id:
             The version id parameter is an opaque DateTime
@@ -1412,12 +1436,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             This operation was introduced in API version '2019-12-12'.
 
         :keyword str version_id:
-            If true, calculates an MD5 hash of the tags content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to add tags to.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.

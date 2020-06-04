@@ -427,29 +427,30 @@ class BlobServiceClient(StorageAccountHostsMixin):
             )
 
     @distributed_trace
-    def filter_blobs(self, where=None, **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
+    def find_blobs_by_tags(self, filter_expression, **kwargs):
+        # type: (str, **Any) -> ItemPaged[FilteredBlob]
         """The Filter Blobs operation enables callers to list blobs across all
         containers whose tags match a given search expression.  Filter blobs
         searches across all containers within a storage account but can be
         scoped within the expression to a single container.
 
-        :param str where:
-            Filters the results to return only to return only blobs
-            whose tags match the specified expression.
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "yourtagname='firsttag' and yourtagname2='secondtag'"
+            To specify a container, eg. "@container=’containerName’ and Name = ‘C’"
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.FilteredBlob]
         """
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.service.filter_blobs,
-            where=where,
+            where=filter_expression,
             timeout=timeout,
             **kwargs)
         return ItemPaged(

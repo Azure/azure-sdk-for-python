@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:16:57 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-version:
       - '2019-10-10'
     method: PUT
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:410bcdae-101e-0008-694a-293152000000\nTime:2020-05-13T17:16:58.2194029Z</Message></Error>"
+        specified container already exists.\nRequestId:2d996372-701e-0041-4c38-3a1544000000\nTime:2020-06-04T06:20:53.5832041Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Wed, 13 May 2020 17:16:57 GMT
+      - Thu, 04 Jun 2020 06:20:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -52,30 +52,31 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-version:
       - '2019-10-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container1d79a0d11?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:2d996391-701e-0041-6538-3a1544000000\nTime:2020-06-04T06:20:53.6672649Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Wed, 13 May 2020 17:16:58 GMT
-      etag:
-      - '"0x8D7F761717D891A"'
-      last-modified:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2019-10-10'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: null
     headers:
@@ -90,30 +91,31 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-version:
       - '2019-10-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container2d79a0d11?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:2d9963aa-701e-0041-7a38-3a1544000000\nTime:2020-06-04T06:20:53.7533272Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Wed, 13 May 2020 17:16:58 GMT
-      etag:
-      - '"0x8D7F761719FBD49"'
-      last-modified:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2019-10-10'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: null
     headers:
@@ -128,30 +130,31 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-version:
       - '2019-10-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container3d79a0d11?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:2d9963cb-701e-0041-1a38-3a1544000000\nTime:2020-06-04T06:20:53.8383887Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Wed, 13 May 2020 17:16:58 GMT
-      etag:
-      - '"0x8D7F76171BD83DA"'
-      last-modified:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2019-10-10'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
@@ -170,7 +173,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
@@ -186,11 +189,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       etag:
-      - '"0x8D7F76171DF1BA8"'
+      - '"0x8D8084F6F84B69C"'
       last-modified:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -199,8 +202,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2019-10-10'
-      x-ms-version-id:
-      - '2020-05-13T17:16:59.0569940Z'
     status:
       code: 201
       message: Created
@@ -222,7 +223,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
@@ -238,11 +239,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Wed, 13 May 2020 17:16:58 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       etag:
-      - '"0x8D7F76171FBD0A1"'
+      - '"0x8D8084F6F924DAC"'
       last-modified:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -251,8 +252,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2019-10-10'
-      x-ms-version-id:
-      - '2020-05-13T17:16:59.2431265Z'
     status:
       code: 201
       message: Created
@@ -274,7 +273,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
@@ -290,11 +289,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       etag:
-      - '"0x8D7F761721C56C9"'
+      - '"0x8D8084F6F9F968D"'
       last-modified:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -303,8 +302,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2019-10-10'
-      x-ms-version-id:
-      - '2020-05-13T17:16:59.4572773Z'
     status:
       code: 201
       message: Created
@@ -326,7 +323,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
@@ -342,11 +339,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:53 GMT
       etag:
-      - '"0x8D7F761723CB5DF"'
+      - '"0x8D8084F6FAD7BCA"'
       last-modified:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -355,8 +352,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2019-10-10'
-      x-ms-version-id:
-      - '2020-05-13T17:16:59.6684255Z'
     status:
       code: 201
       message: Created
@@ -372,20 +367,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       x-ms-version:
       - '2019-10-10'
     method: GET
-    uri: https://storagename.blob.core.windows.net/?where=%22tag1%22%3D%27firsttag%27&maxresults=2&comp=blobs
+    uri: https://storagename.blob.core.windows.net/?where=tag1%3D%27firsttag%27&maxresults=2&comp=blobs
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Where>&quot;tag1&quot;=&apos;firsttag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blob2fd60f8e</Name><ContainerName>container12fd60f8e</ContainerName><TagValue>firsttag</TagValue></Blob><Blob><Name>blobd79a0d11</Name><ContainerName>container1563d06cf66d4a66aa2287700480c19ed79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob></Blobs><NextMarker>2!292!MDAwMDY2IWNvbnRhaW5lcjFjZjg0NWE0NzM0ZDQ4YjFhNDM4NGZmN2IyZjM1YjViZDc5YTBkMTEBMDFENjI4RjA2MzRBQjUxQSEwMDAwMTIhYmxvYmQ3OWEwZDExITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiEwYmNjODQwNi0wYzJiLTQ0MWItYWRjZS1hNDE3ZTA5YzBlY2YhMDAwMDA0IXRhZzEh</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Where>tag1=&apos;firsttag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blobd79a0d11</Name><ContainerName>container1d79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob><Blob><Name>blobd79a0d11</Name><ContainerName>container2d79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob></Blobs><NextMarker>2!252!MDAwMDM1IWNvbnRhaW5lcjJkNzlhMGQxMQEwMUQ2M0EzNUE0MUU1OTVDITAwMDAxMiFibG9iZDc5YTBkMTEhMDAwMDE2IQgAAAAIAAAAZmlyc3R0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWU5YjRkMGViLWI0YjEtNGYzNS05OWY0LTQ1OTNhY2NlNTc0MSEwMDAwMDQhdGFnMSE-</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 13 May 2020 17:16:59 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -407,20 +402,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 13 May 2020 17:17:03 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       x-ms-version:
       - '2019-10-10'
     method: GET
-    uri: https://storagename.blob.core.windows.net/?where=%22tag1%22%3D%27firsttag%27&marker=2%21292%21MDAwMDY2IWNvbnRhaW5lcjFjZjg0NWE0NzM0ZDQ4YjFhNDM4NGZmN2IyZjM1YjViZDc5YTBkMTEBMDFENjI4RjA2MzRBQjUxQSEwMDAwMTIhYmxvYmQ3OWEwZDExITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiEwYmNjODQwNi0wYzJiLTQ0MWItYWRjZS1hNDE3ZTA5YzBlY2YhMDAwMDA0IXRhZzEh&maxresults=2&comp=blobs
+    uri: https://storagename.blob.core.windows.net/?where=tag1%3D%27firsttag%27&marker=2%21252%21MDAwMDM1IWNvbnRhaW5lcjJkNzlhMGQxMQEwMUQ2M0EzNUE0MUU1OTVDITAwMDAxMiFibG9iZDc5YTBkMTEhMDAwMDE2IQgAAAAIAAAAZmlyc3R0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWU5YjRkMGViLWI0YjEtNGYzNS05OWY0LTQ1OTNhY2NlNTc0MSEwMDAwMDQhdGFnMSE-&maxresults=2&comp=blobs
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Marker>2!292!MDAwMDY2IWNvbnRhaW5lcjFjZjg0NWE0NzM0ZDQ4YjFhNDM4NGZmN2IyZjM1YjViZDc5YTBkMTEBMDFENjI4RjA2MzRBQjUxQSEwMDAwMTIhYmxvYmQ3OWEwZDExITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiEwYmNjODQwNi0wYzJiLTQ0MWItYWRjZS1hNDE3ZTA5YzBlY2YhMDAwMDA0IXRhZzEh</Marker><Where>&quot;tag1&quot;=&apos;firsttag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blobd79a0d11</Name><ContainerName>container1cf845a4734d48b1a4384ff7b2f35b5bd79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob><Blob><Name>blobd79a0d11</Name><ContainerName>container1d79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob></Blobs><NextMarker>2!292!MDAwMDY2IWNvbnRhaW5lcjIyMTZhNWQ4YWM2OTQ4NzA4NDE2ZGY0MTQyMGY1NWM2ZDc5YTBkMTEBMDFENjI4RjBGN0E5QUFDNyEwMDAwMTIhYmxvYmQ3OWEwZDExITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiFjNTBiNjE3Ny1jMzU2LTRlNGYtODI0NS02YmQ4MDBmMDNhZjkhMDAwMDA0IXRhZzEh</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Marker>2!252!MDAwMDM1IWNvbnRhaW5lcjJkNzlhMGQxMQEwMUQ2M0EzNUE0MUU1OTVDITAwMDAxMiFibG9iZDc5YTBkMTEhMDAwMDE2IQgAAAAIAAAAZmlyc3R0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWU5YjRkMGViLWI0YjEtNGYzNS05OWY0LTQ1OTNhY2NlNTc0MSEwMDAwMDQhdGFnMSE-</Marker><Where>tag1=&apos;firsttag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blobd79a0d11</Name><ContainerName>container3d79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob><Blob><Name>blobd79a0d11</Name><ContainerName>containerd79a0d11</ContainerName><TagValue>firsttag</TagValue></Blob></Blobs><NextMarker>2!252!MDAwMDM0IWNvbnRhaW5lcmQ3OWEwZDExATAxRDYzQTM1QTQwNDNDRjEhMDAwMDEyIWJsb2JkNzlhMGQxMSEwMDAwMTYhCAAAAAgAAABmaXJzdHRhZyEwMDAwMDEhMCEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiEwMDAwMzYhNjA4NzU3YjMtNjVlMS00OGE0LWE3ZDktYWY4MWZmM2U4ZTZjITAwMDAwNCF0YWcxIQ--</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 13 May 2020 17:17:02 GMT
+      - Thu, 04 Jun 2020 06:20:54 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

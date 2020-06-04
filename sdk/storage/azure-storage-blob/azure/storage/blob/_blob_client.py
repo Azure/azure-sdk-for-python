@@ -401,7 +401,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1154,7 +1158,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1268,7 +1276,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1514,7 +1526,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -2070,7 +2086,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
         :keyword tags:
-            Name-value pairs associated with the blob as tag.
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -2168,16 +2188,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _set_blob_tags_options(self, tags=None, **kwargs):
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        headers = kwargs.pop('headers', {})
-
         tags = serialize_blob_tags(tags)
 
         options = {
             'tags': tags,
-            'version_id': kwargs.pop('version_id', None),
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers,
-            'headers': headers}
+            'cls': return_response_headers}
         options.update(kwargs)
         return options
 
@@ -2193,6 +2208,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :type tags: dict(str, str)
         :keyword str version_id:
             The version id parameter is an opaque DateTime
@@ -2228,18 +2247,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @distributed_trace
     def get_blob_tags(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
-        """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
+        """The Get Tags operation enables users to get tags on a blob or specific blob version, or snapshot.
 
         .. versionadded:: 12.4.0
             This operation was introduced in API version '2019-12-12'.
 
         :keyword str version_id:
-            If true, calculates an MD5 hash of the tags content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to add tags to.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
