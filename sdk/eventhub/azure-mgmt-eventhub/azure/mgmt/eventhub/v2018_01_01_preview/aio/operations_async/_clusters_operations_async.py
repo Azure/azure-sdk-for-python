@@ -217,7 +217,7 @@ class ClustersOperations:
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def _put_initial(
+    async def _create_or_update_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -231,7 +231,7 @@ class ClustersOperations:
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._put_initial.metadata['url']  # type: ignore
+        url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -273,9 +273,9 @@ class ClustersOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _put_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def begin_put(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -308,7 +308,7 @@ class ClustersOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._put_initial(
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 parameters=parameters,
@@ -338,9 +338,9 @@ class ClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def _patch_initial(
+    async def _update_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -354,7 +354,7 @@ class ClustersOperations:
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._patch_initial.metadata['url']  # type: ignore
+        url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -396,9 +396,9 @@ class ClustersOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _patch_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    async def begin_patch(
+    async def begin_update(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -431,7 +431,7 @@ class ClustersOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._patch_initial(
+            raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 parameters=parameters,
@@ -461,7 +461,7 @@ class ClustersOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
     async def _delete_initial(
         self,

@@ -224,7 +224,7 @@ class ClustersOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    def _put_initial(
+    def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
@@ -239,7 +239,7 @@ class ClustersOperations(object):
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._put_initial.metadata['url']  # type: ignore
+        url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -281,9 +281,9 @@ class ClustersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _put_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    def begin_put(
+    def begin_create_or_update(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
@@ -317,7 +317,7 @@ class ClustersOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._put_initial(
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 parameters=parameters,
@@ -347,9 +347,9 @@ class ClustersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    def _patch_initial(
+    def _update_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
@@ -364,7 +364,7 @@ class ClustersOperations(object):
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self._patch_initial.metadata['url']  # type: ignore
+        url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -406,9 +406,9 @@ class ClustersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _patch_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
-    def begin_patch(
+    def begin_update(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
@@ -442,7 +442,7 @@ class ClustersOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._patch_initial(
+            raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 parameters=parameters,
@@ -472,7 +472,7 @@ class ClustersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}  # type: ignore
 
     def _delete_initial(
         self,
