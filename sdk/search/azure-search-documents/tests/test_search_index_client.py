@@ -137,15 +137,12 @@ class TestSearchClient(object):
         assert mock_get.call_args[1]["key"] == "some_key"
         assert mock_get.call_args[1]["selected_fields"] == "foo"
 
-    @pytest.mark.parametrize(
-        "query", ["search text", SearchQuery(search_text="search text")], ids=repr
-    )
     @mock.patch(
         "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
-    def test_search_query_argument(self, mock_search_post, query):
+    def test_search_query_argument(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
-        result = client.search(query)
+        result = client.search(search_text="search text")
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
@@ -158,14 +155,6 @@ class TestSearchClient(object):
         assert (
             mock_search_post.call_args[1]["search_request"].search_text == "search text"
         )
-
-    def test_search_bad_argument(self):
-        client = SearchClient("endpoint", "index name", CREDENTIAL)
-        with pytest.raises(TypeError) as e:
-            client.search(10)
-            assert str(e) == "Expected a SuggestQuery for 'query', but got {}".format(
-                repr(10)
-            )
 
     @mock.patch(
         "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.suggest_post"

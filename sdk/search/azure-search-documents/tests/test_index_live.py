@@ -61,10 +61,10 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        results = list(client.search(query="hotel"))
+        results = list(client.search(search_text="hotel"))
         assert len(results) == 7
 
-        results = list(client.search(query="motel"))
+        results = list(client.search(search_text="motel"))
         assert len(results) == 2
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -74,10 +74,11 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
+        select = ("hotelName", "category", "description")
         results = list(client.search(
             search_text="WiFi",
             filter="category eq 'Budget'",
-            select=",".join("hotelName", "category", "description"),
+            select=",".join(select),
             order_by="hotelName desc"
         ))
         assert [x["hotelName"] for x in results] == sorted(
@@ -104,6 +105,7 @@ class SearchClientTest(AzureMgmtTestCase):
         assert results.get_count() is None
 
         results = client.search(search_text="hotel", include_total_result_count=True)
+        temp = list(results)
         assert results.get_count() == 7
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -128,7 +130,8 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        results = client.search(search_text="WiFi", select=",".join("hotelName", "category", "description"))
+        select = ("hotelName", "category", "description")
+        results = client.search(search_text="WiFi", select=",".join(select))
         assert results.get_facets() is None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -138,9 +141,10 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
+        select = ("hotelName", "category", "description")
         results = client.search(search_text="WiFi",
                                 facets=["category"],
-                                select=",".join("hotelName", "category", "description")
+                                select=",".join(select)
                                 )
         assert results.get_facets() == {
             "category": [

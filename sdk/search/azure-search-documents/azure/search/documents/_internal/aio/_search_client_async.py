@@ -5,12 +5,10 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
 
-import six
-
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._generated.aio import SearchIndexClient
-from .._generated.models import IndexBatch, IndexingResult, SearchRequest
+from .._generated.models import IndexBatch, IndexingResult
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ..._headers_mixin import HeadersMixin
@@ -139,7 +137,41 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search result facets.
         """
-        query = SearchQuery(search_text=search_text, **kwargs)
+        include_total_result_count = kwargs.pop("include_total_result_count", None)
+        facets = kwargs.pop("facets", None)
+        filter = kwargs.pop("filter", None)
+        highlight_fields = kwargs.pop("highlight_fields", None)
+        highlight_post_tag = kwargs.pop("highlight_post_tag", None)
+        highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
+        minimum_coverage = kwargs.pop("minimum_coverage", None)
+        order_by = kwargs.pop("order_by", None)
+        query_type = kwargs.pop("query_type", None)
+        scoring_parameters = kwargs.pop("scoring_parameters", None)
+        scoring_profile = kwargs.pop("scoring_profile", None)
+        search_fields = kwargs.pop("search_fields", None)
+        search_mode = kwargs.pop("search_mode", None)
+        select = kwargs.pop("select", None)
+        skip = kwargs.pop("skip", None)
+        top = kwargs.pop("top", None)
+        query = SearchQuery(
+            search_text=search_text,
+            include_total_result_count=include_total_result_count,
+            facets=facets,
+            filter=filter,
+            highlight_fields=highlight_fields,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            query_type=query_type,
+            scoring_parameters=scoring_parameters,
+            scoring_profile=scoring_profile,
+            search_fields=search_fields,
+            search_mode=search_mode,
+            select=select,
+            skip=skip,
+            top=top
+        )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return AsyncSearchItemPaged(
@@ -148,7 +180,7 @@ class SearchClient(HeadersMixin):
 
     @distributed_trace_async
     async def suggest(self, search_text, suggester_name, **kwargs):
-        # type: (Union[str, SuggestQuery], **Any) -> List[dict]
+        # type: (str, str, **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -166,7 +198,28 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        query = SuggestQuery(search_text=search_text, suggester_name=suggester_name, **kwargs)
+        filter = kwargs.pop("filter", None)
+        use_fuzzy_matching = kwargs.pop("use_fuzzy_matching", None)
+        highlight_post_tag = kwargs.pop("highlight_post_tag", None)
+        highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
+        minimum_coverage = kwargs.pop("minimum_coverage", None)
+        order_by = kwargs.pop("order_by", None)
+        search_fields = kwargs.pop("search_fields", None)
+        select = kwargs.pop("select", None)
+        top = kwargs.pop("top", None)
+        query = SuggestQuery(
+            search_text=search_text,
+            suggester_name=suggester_name,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            search_fields=search_fields,
+            select=select,
+            top=top
+        )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.suggest_post(
@@ -194,7 +247,26 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get a auto-completions.
         """
-        query = AutocompleteQuery(search_text=search_text, suggester_name=suggester_name, **kwargs)
+        autocomplete_mode = kwargs.pop("autocomplete_mode", None)
+        filter = kwargs.pop("filter", None)
+        use_fuzzy_matching = kwargs.pop("use_fuzzy_matching", None)
+        highlight_post_tag = kwargs.pop("highlight_post_tag", None)
+        highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
+        minimum_coverage = kwargs.pop("minimum_coverage", None)
+        search_fields = kwargs.pop("search_fields", None)
+        top = kwargs.pop("top", None)
+        query = AutocompleteQuery(
+            search_text=search_text,
+            suggester_name=suggester_name,
+            autocomplete_mode=autocomplete_mode,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            search_fields=search_fields,
+            top=top
+        )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.autocomplete_post(

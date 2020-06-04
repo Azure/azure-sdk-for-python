@@ -83,7 +83,7 @@ client = SearchServiceClient(endpoint="<service endpoint>"
 
 You can use the `SearchClient` you created in the first section above to make a basic search request:
 ```python
-results = client.search(query="spa")
+results = client.search(search_text="spa")
 
 print("Hotels containing 'spa' in the name (or other fields):")
 for result in results:
@@ -126,7 +126,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
-results = client.search(query="spa")
+results = client.search(search_text="spa")
 
 print("Hotels containing 'spa' in the name (or other fields):")
 for result in results:
@@ -257,7 +257,7 @@ client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```python
-result =  client.search(query="spa", logging_enable=True)
+result =  client.search(search_text="spa", logging_enable=True)
 ```
 
 ## Next steps

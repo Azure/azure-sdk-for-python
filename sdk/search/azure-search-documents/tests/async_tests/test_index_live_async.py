@@ -86,12 +86,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         )
         async with client:
             results = []
-            async for x in await client.search(query="hotel"):
+            async for x in await client.search(search_text="hotel"):
                 results.append(x)
             assert len(results) == 7
 
             results = []
-            async for x in await client.search(query="motel"):
+            async for x in await client.search(search_text="motel"):
                 results.append(x)
             assert len(results) == 2
 
@@ -104,10 +104,11 @@ class SearchClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = []
+            select = ("hotelName", "category", "description")
             async for x in await client.search(
                     search_text="WiFi",
                     filter="category eq 'Budget'",
-                    select=",".join("hotelName", "category", "description"),
+                    select=",".join(select),
                     order_by="hotelName desc"
             ):
                 results.append(x)
@@ -162,9 +163,10 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         )
 
         async with client:
+            select = ("hotelName", "category", "description")
             results = await client.search(
                 search_text="WiFi",
-                select=",".join("hotelName", "category", "description")
+                select=",".join(select)
             )
             assert await results.get_facets() is None
 
@@ -178,10 +180,11 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         )
 
         async with client:
+            select = ("hotelName", "category", "description")
             results = await client.search(
                 search_text="WiFi",
                 facets=["category"],
-                select=",".join("hotelName", "category", "description")
+                select=",".join(select)
             )
             assert await results.get_facets() == {
                 "category": [
