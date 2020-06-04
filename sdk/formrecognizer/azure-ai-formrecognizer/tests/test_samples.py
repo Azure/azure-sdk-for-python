@@ -72,7 +72,7 @@ def test_sample_train_model_without_labels():
 if __name__=='__main__':
     test_sample_authentication()
     # test_sample_copy_model()
-    test_sample_differentiate_output_models_trained_with_and_without_labels()
+    # test_sample_differentiate_output_models_trained_with_and_without_labels()
     test_sample_get_bounding_boxes()
     test_sample_manage_custom_models()
     test_sample_recognize_content()

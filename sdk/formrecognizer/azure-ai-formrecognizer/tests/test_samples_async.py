@@ -75,7 +75,7 @@ if __name__=='__main__':
     # async tests
     test_sample_authentication_async()
     # test_sample_copy_model_async()
-    test_sample_differentiate_output_models_trained_with_and_without_labels_async()
+    # test_sample_differentiate_output_models_trained_with_and_without_labels_async()
     test_sample_get_bounding_boxes_async()
     test_sample_manage_custom_models_async()
     test_sample_recognize_content_async()
