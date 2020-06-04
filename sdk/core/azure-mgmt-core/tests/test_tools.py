@@ -244,7 +244,6 @@ class TestTools(unittest.TestCase):
             '/subscriptions//resourceGroups/'
         ]
         for invalid_id in invalid_ids:
-            print(invalid_id)
             self.assertFalse(is_valid_resource_id(invalid_id))
 
         tests = [
