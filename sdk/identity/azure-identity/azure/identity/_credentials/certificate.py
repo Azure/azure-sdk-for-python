@@ -4,8 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from .._authn_client import AuthnClient
-from .._base import CertificateCredentialBase
+from .._internal import AadClient, CertificateCredentialBase
 
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
@@ -42,11 +41,10 @@ class CertificateCredential(CertificateCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_token(scopes)
+        token = self._client.get_cached_access_token(scopes)
         if not token:
-            data = self._get_request_data(*scopes)
-            token = self._client.request_token(scopes, form_data=data)
+            token = self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
         return token
 
-    def _get_auth_client(self, tenant_id, **kwargs):
-        return AuthnClient(tenant=tenant_id, **kwargs)
+    def _get_auth_client(self, tenant_id, client_id, **kwargs):
+        return AadClient(tenant_id, client_id, **kwargs)
