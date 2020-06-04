@@ -151,6 +151,7 @@ try:
     from ._models_py3 import GenericProtectionPolicy
     from ._models_py3 import GenericRecoveryPoint
     from ._models_py3 import GetProtectedItemQueryObject
+    from ._models_py3 import HealthDetails
     from ._models_py3 import IaasVMBackupRequest
     from ._models_py3 import IaaSVMContainer
     from ._models_py3 import IaasVMILRRegistrationRequest
@@ -390,6 +391,7 @@ except (SyntaxError, ImportError):
     from ._models import GenericProtectionPolicy
     from ._models import GenericRecoveryPoint
     from ._models import GetProtectedItemQueryObject
+    from ._models import HealthDetails
     from ._models import IaasVMBackupRequest
     from ._models import IaaSVMContainer
     from ._models import IaasVMILRRegistrationRequest
@@ -697,6 +699,7 @@ __all__ = [
     'GenericProtectionPolicy',
     'GenericRecoveryPoint',
     'GetProtectedItemQueryObject',
+    'HealthDetails',
     'IaasVMBackupRequest',
     'IaaSVMContainer',
     'IaasVMILRRegistrationRequest',
