@@ -742,11 +742,15 @@ class AzureFileshareProtectedItem(ProtectedItem):
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
-    :param health_status: backups running status for this backup item.
-     Possible values include: 'Passed', 'ActionRequired', 'ActionSuggested',
-     'Invalid'
+    :param health_status: Health status of protected item. Possible values
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
+    :param health_details: Health details on this backup item.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param last_backup_status: Last backup operation status. Possible values:
      Healthy, Unhealthy.
     :type last_backup_status: str
@@ -781,17 +785,19 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, health_status=None, last_backup_status: str=None, last_backup_time=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, extended_info=None, **kwargs) -> None:
         super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
         self.health_status = health_status
+        self.health_details = health_details
         self.last_backup_status = last_backup_status
         self.last_backup_time = last_backup_time
         self.extended_info = extended_info
@@ -1429,7 +1435,9 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1567,7 +1575,9 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1784,7 +1794,9 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1882,7 +1894,45 @@ class AzureIaaSVMErrorInfo(Model):
         self.recommendations = None
 
 
-class AzureIaaSVMHealthDetails(Model):
+class HealthDetails(Model):
+    """Health Details for backup items.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Health Code
+    :vartype code: int
+    :ivar title: Health Title
+    :vartype title: str
+    :ivar message: Health Message
+    :vartype message: str
+    :ivar recommendations: Health Recommended Actions
+    :vartype recommendations: list[str]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'title': {'readonly': True},
+        'message': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'int'},
+        'title': {'key': 'title', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(HealthDetails, self).__init__(**kwargs)
+        self.code = None
+        self.title = None
+        self.message = None
+        self.recommendations = None
+
+
+class AzureIaaSVMHealthDetails(HealthDetails):
     """Azure IaaS VM workload-specific Health Details.
 
     Variables are only populated by the server, and will be ignored when
@@ -1914,10 +1964,6 @@ class AzureIaaSVMHealthDetails(Model):
 
     def __init__(self, **kwargs) -> None:
         super(AzureIaaSVMHealthDetails, self).__init__(**kwargs)
-        self.code = None
-        self.title = None
-        self.message = None
-        self.recommendations = None
 
 
 class Job(Model):
@@ -3460,6 +3506,15 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
+    :param health_status: Health status of protected item. Possible values
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
+    :param health_details: Health details on this backup item.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -3495,6 +3550,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
+        'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
@@ -3502,7 +3559,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'protected_item_type': {'AzureVmWorkloadSAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectedItem', 'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, health_status=None, health_details=None, extended_info=None, **kwargs) -> None:
         super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.server_name = server_name
@@ -3515,6 +3572,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         self.last_backup_error_detail = last_backup_error_detail
         self.protected_item_data_source_id = protected_item_data_source_id
         self.protected_item_health_status = protected_item_health_status
+        self.health_status = health_status
+        self.health_details = health_details
         self.extended_info = extended_info
         self.protected_item_type = 'AzureVmWorkloadProtectedItem'
 
@@ -3681,6 +3740,15 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
+    :param health_status: Health status of protected item. Possible values
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
+    :param health_details: Health details on this backup item.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -3716,11 +3784,13 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
+        'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, health_status=None, health_details=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, health_status=health_status, health_details=health_details, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPAseDatabase'
 
 
@@ -4059,6 +4129,15 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
+    :param health_status: Health status of protected item. Possible values
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
+    :param health_details: Health details on this backup item.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -4094,11 +4173,13 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
+        'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, health_status=None, health_details=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, health_status=health_status, health_details=health_details, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPHanaDatabase'
 
 
@@ -4507,6 +4588,15 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
+    :param health_status: Health status of protected item. Possible values
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
+     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
+     'PersistentUnhealthy', 'Invalid'
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
+    :param health_details: Health details on this backup item.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -4542,11 +4632,13 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
+        'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, health_status=None, health_details=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, health_status=health_status, health_details=health_details, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSQLDatabase'
 
 
