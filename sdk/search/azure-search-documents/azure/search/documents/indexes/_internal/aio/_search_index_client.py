@@ -408,6 +408,7 @@ class SearchIndexClient(HeadersMixin):
         error_map, access_condition = get_access_conditions(
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
+        kwargs.update(access_condition)
         patched_synonym_map = pack_synonym_map(synonym_map)
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,

@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SearchIndexerSkillset
