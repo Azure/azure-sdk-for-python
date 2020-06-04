@@ -30,6 +30,7 @@ def format_bounding_box(bounding_box):
 class RecognizeContentSample(object):
 
     def recognize_content(self):
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -38,7 +39,7 @@ class RecognizeContentSample(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-        with open("sample_forms/forms/Invoice_1.pdf", "rb") as f:
+        with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_content(form=f)
         contents = poller.result()
 

@@ -46,8 +46,8 @@ def test_sample_authentication_async():
 # def test_sample_differentiate_output_models_trained_with_and_without_labels_async():
 #     _test_file('sample_differentiate_output_models_trained_with_and_without_labels_async.py')
 
-# def test_sample_get_bounding_boxes_async():
-#     _test_file('sample_get_bounding_boxes_async.py')
+def test_sample_get_bounding_boxes_async():
+    _test_file('sample_get_bounding_boxes_async.py')
 
 def test_sample_manage_custom_models_async():
     _test_file('sample_manage_custom_models_async.py')
@@ -74,7 +74,7 @@ def test_sample_train_model_without_labels_async():
 if __name__=='__main__':
     # async tests
     test_sample_authentication_async()
-    test_sample_copy_model_async()
+    # test_sample_copy_model_async()
     test_sample_differentiate_output_models_trained_with_and_without_labels_async()
     test_sample_get_bounding_boxes_async()
     test_sample_manage_custom_models_async()

@@ -32,6 +32,7 @@ def run(cmd):
 def _test_file(file_name, root_dir='./samples'):
     code, _, err = run([sys.executable, root_dir + '/' + file_name])
     assert code == 0
+    print(_)
     assert err is None
 
 def test_sample_authentication():
@@ -43,8 +44,8 @@ def test_sample_authentication():
 # def test_sample_differentiate_output_models_trained_with_and_without_labels():
 #     _test_file('sample_differentiate_output_models_trained_with_and_without_labels.py')
 
-# def test_sample_get_bounding_boxes():
-#     _test_file('sample_get_bounding_boxes.py')
+def test_sample_get_bounding_boxes():
+    _test_file('sample_get_bounding_boxes.py')
 
 def test_sample_manage_custom_models():
     _test_file('sample_manage_custom_models.py')
@@ -70,7 +71,7 @@ def test_sample_train_model_without_labels():
 
 if __name__=='__main__':
     test_sample_authentication()
-    test_sample_copy_model()
+    # test_sample_copy_model()
     test_sample_differentiate_output_models_trained_with_and_without_labels()
     test_sample_get_bounding_boxes()
     test_sample_manage_custom_models()
