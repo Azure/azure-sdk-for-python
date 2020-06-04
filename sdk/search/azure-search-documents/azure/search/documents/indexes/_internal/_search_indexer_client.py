@@ -54,7 +54,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchIndexerClient` session.
+        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session.
 
         """
         return self._client.close()
@@ -65,9 +65,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created SearchIndexer
-        :rtype: ~azure.search.documents.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
 
         .. admonition:: Example:
 
@@ -88,9 +88,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Creates a new indexer or updates a indexer if it already exists.
 
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created IndexSearchIndexerer
-        :rtype: ~azure.search.documents.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -176,7 +176,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         the name of the indexer to delete unconditionally.
 
         :param indexer: The indexer to delete.
-        :type indexer: str or ~azure.search.documents.SearchIndexer
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -258,7 +258,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         :type name: str
 
         :return: SearchIndexerStatus
-        :rtype: SearchIndexerStatus
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
 
         .. admonition:: Example:
 
@@ -278,9 +278,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Creates a new data source connection.
 
         :param data_source_connection: The definition of the data source connection to create.
-        :type data_source_connection: ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
@@ -301,11 +301,11 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
         """Creates a new data source connection or updates a data source connection if it already exists.
         :param data_source_connection: The definition of the data source connection to create or update.
-        :type data_source_connection: ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -330,7 +330,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         :param name: The name of the data source connection to retrieve.
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
@@ -351,7 +351,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Lists all data source connections available for a search service.
 
         :return: List of all the data source connections.
-        :rtype: `list[~search.models.SearchIndexerDataSourceConnection]`
+        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
 
         .. admonition:: Example:
 
@@ -387,7 +387,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         to delete unconditionally
 
         :param data_source_connection: The data source connection to delete.
-        :type data_source_connection: str or ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -484,7 +484,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         the name of the skillset to delete unconditionally
 
         :param name: The SearchIndexerSkillset to delete
-        :type name: str or ~search.models.SearchIndexerSkillset
+        :type name: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 

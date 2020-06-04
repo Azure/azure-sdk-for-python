@@ -59,7 +59,7 @@ class SearchIndexClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchIndexClient` session.
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
 
         """
         return await self._client.close()
@@ -80,7 +80,7 @@ class SearchIndexClient(HeadersMixin):
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
-        :rtype: list[:class:`~azure.search.documents.models.SearchIndex`]
+        :rtype: list[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -89,14 +89,14 @@ class SearchIndexClient(HeadersMixin):
         return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
 
     @distributed_trace_async
-    async def get_index(self, index_name, **kwargs):
+    async def get_index(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndex
         """
 
-        :param index_name: The name of the index to retrieve.
-        :type index_name: str
+        :param name: The name of the index to retrieve.
+        :type name: str
         :return: SearchIndex object
-        :rtype: :class:`~azure.search.documents.models.SearchIndex`
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -109,7 +109,7 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.get(index_name, **kwargs)
+        result = await self._client.indexes.get(name, **kwargs)
         return unpack_search_index(result)
 
     @distributed_trace_async
@@ -121,7 +121,7 @@ class SearchIndexClient(HeadersMixin):
         :param index_name: The name of the index to retrieve.
         :type index_name: str
         :return: Statistics for the given index, including a document count and storage usage.
-        :rtype: :class:`~azure.search.documents.GetIndexStatisticsResult
+        :rtype: dict
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -136,7 +136,7 @@ class SearchIndexClient(HeadersMixin):
         provided instead of the name to use the access conditions
 
         :param index: The index to retrieve.
-        :type index: str or :class:`~azure.search.documents.models.SearchIndex`
+        :type index: str or :class:`~azure.search.documents.indexes.models.SearchIndex`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -169,7 +169,7 @@ class SearchIndexClient(HeadersMixin):
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: :class:`~azure.search.documents.models.SearchIndex`
+        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :return: The index created
         :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -196,7 +196,7 @@ class SearchIndexClient(HeadersMixin):
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The index object.
-        :type index: :class:`~azure.search.documents.models.SearchIndex`
+        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -206,7 +206,7 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.models.SearchIndex`
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
