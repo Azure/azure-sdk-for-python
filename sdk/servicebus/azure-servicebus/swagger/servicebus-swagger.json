@@ -290,10 +290,7 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           },
           "items": {
-            "$ref": "#/definitions/AuthorizationRule",
-            "xml": {
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            }
+            "$ref": "#/definitions/AuthorizationRule"
           }
         },
         "AutoDeleteOnIdle": {
@@ -336,10 +333,7 @@
           }
         },
         "EntityAvailabilityStatus": {
-          "$ref": "#/definitions/EntityAvailabilityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityAvailabilityStatus"
         },
         "EnableBatchedOperations": {
           "description": "Value that indicates whether server-side batched operations are enabled.",
@@ -406,10 +400,7 @@
           }
         },
         "Status": {
-          "$ref": "#/definitions/EntityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityStatus"
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the queue supports ordering.",
@@ -511,10 +502,7 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           },
           "items": {
-            "$ref": "#/definitions/AuthorizationRule",
-            "xml": {
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            }
+            "$ref": "#/definitions/AuthorizationRule"
           }
         },
         "AutoDeleteOnIdle": {
@@ -568,10 +556,7 @@
           }
         },
         "Status": {
-          "$ref": "#/definitions/EntityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityStatus"
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the topic supports ordering.",
