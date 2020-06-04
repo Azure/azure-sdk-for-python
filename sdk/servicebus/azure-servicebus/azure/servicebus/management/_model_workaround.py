@@ -63,7 +63,7 @@ def adjust_attribute_map(class_):
     # pylint:disable=protected-access
     class_._attribute_map = adjust_dict_key_sequence(
         class_._attribute_map,
-        QUEUE_UPDATE_SERIALIZE_ATTRIBUTES
+        QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES
     )
 
 
