@@ -96,7 +96,7 @@ class SharedTokenCacheBase(ABC):
             self._username = self._auth_record.username
             self._environment_aliases = frozenset((self._authority,))
         else:
-            authenticating_tenant = "common"
+            authenticating_tenant = "organizations"
             authority = kwargs.pop("authority", None)
             self._authority = normalize_authority(authority) if authority else get_default_authority()
             environment = urlparse(self._authority).netloc
