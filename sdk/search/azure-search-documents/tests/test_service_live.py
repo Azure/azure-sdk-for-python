@@ -242,7 +242,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+        analyze_request = AnalyzeTextRequest(text="One's <two/>", analyzer="standard.lucene")
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
