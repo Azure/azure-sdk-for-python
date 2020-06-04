@@ -5,8 +5,8 @@
 from datetime import datetime
 import json
 
-from azure.identity import CredentialUnavailableError
-from azure.identity._credentials.azure_cli import AzureCliCredential, CLI_NOT_FOUND
+from azure.identity import AzureCliCredential, CredentialUnavailableError
+from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
 from azure.core.exceptions import ClientAuthenticationError
 
 import subprocess

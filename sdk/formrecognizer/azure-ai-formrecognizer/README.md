@@ -140,10 +140,10 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
-a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
-calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
-to illustrate using long-running operations [below](#examples "Examples").
+Methods that train models, recognize values from forms, or copy models are modeled as long-running operations. 
+The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait 
+for the operation to complete by calling `result()` on the operation returned from the `begin_<method-name>` method. 
+Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 
 ## Examples
@@ -254,7 +254,7 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = form_training_client.begin_train_model(container_sas_url)
+poller = form_training_client.begin_training(container_sas_url)
 model = poller.result()
 
 # Custom model information

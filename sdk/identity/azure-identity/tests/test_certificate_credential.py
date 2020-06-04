@@ -135,7 +135,7 @@ def validate_jwt(request, client_id, pem_bytes):
     deserialized_header = json.loads(header.decode("utf-8"))
     assert deserialized_header["alg"] == "RS256"
     assert deserialized_header["typ"] == "JWT"
-    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())
+    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1()) #nosec
 
     assert claims["aud"] == request.url
     assert claims["iss"] == claims["sub"] == client_id

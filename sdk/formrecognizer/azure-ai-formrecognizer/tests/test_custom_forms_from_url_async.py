@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
@@ -23,32 +24,35 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with self.assertRaises(ValueError):
-            await client.recognize_custom_forms_from_url(model_id=None, form_url="https://badurl.jpg")
+            await client.begin_recognize_custom_forms_from_url(model_id=None, form_url="https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with self.assertRaises(ValueError):
-            await client.recognize_custom_forms_from_url(model_id="", form_url="https://badurl.jpg")
+            await client.begin_recognize_custom_forms_from_url(model_id="", form_url="https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
+            poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_url_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
+            poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(HttpResponseError):
-            result = await client.recognize_custom_forms_from_url(model_id="xx", form_url="https://badurl.jpg")
+            poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url="https://badurl.jpg")
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_pass_stream_into_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -56,32 +60,37 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         with open(self.unsupported_content_py, "rb") as fd:
             with self.assertRaises(HttpResponseError):
-                result = await client.recognize_custom_forms_from_url(
+                poller = await client.begin_recognize_custom_forms_from_url(
                     model_id="xxx",
                     form_url=fd,
                 )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_bad_url(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=True)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await training_poller.result()
 
         with self.assertRaises(HttpResponseError):
-            form = await fr_client.recognize_custom_forms_from_url(
+            poller = await fr_client.begin_recognize_custom_forms_from_url(
                 model.model_id,
                 form_url="https://badurl.jpg"
             )
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=False)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await training_poller.result()
 
-        form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        poller = await fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        form = await poller.result()
 
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
@@ -97,12 +106,14 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=False)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await training_poller.result()
 
-        forms = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
         )
+        forms = await poller.result()
 
         for form in forms:
             self.assertEqual(form.form_type, "form-0")
@@ -119,9 +130,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=True)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await training_poller.result()
 
-        form = await fr_client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        poller = await fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
+        form = await poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)
@@ -136,15 +149,17 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_multipage_labeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(
+        training_poller = await client.begin_training(
             container_sas_url,
             use_training_labels=True
         )
+        model = await training_poller.result()
 
-        forms = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url
         )
+        forms = await poller.result()
 
         for form in forms:
             self.assertEqual(form.form_type, "form-"+model.model_id)
@@ -160,7 +175,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=False)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await training_poller.result()
 
         responses = []
 
@@ -170,12 +186,13 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
             include_text_content=True,
             cls=callback
         )
+        form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -193,7 +210,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=False)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await training_poller.result()
 
         responses = []
 
@@ -203,12 +221,14 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
             include_text_content=True,
             cls=callback
         )
+
+        form = await poller.result()
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results
@@ -226,7 +246,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=True)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await training_poller.result()
 
         responses = []
 
@@ -236,12 +257,13 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
             include_text_content=True,
             cls=callback
         )
+        form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -259,7 +281,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        model = await client.train_model(container_sas_url, use_training_labels=True)
+        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await training_poller.result()
 
         responses = []
 
@@ -269,12 +292,13 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        form = await fr_client.recognize_custom_forms_from_url(
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
             include_text_content=True,
             cls=callback
         )
+        form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -288,3 +312,26 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "form-"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    @pytest.mark.live_test_only
+    async def test_custom_form_continuation_token(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+
+        initial_poller = await fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            self.form_url_jpg
+        )
+        cont_token = initial_poller.continuation_token()
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            self.form_url_jpg,
+            continuation_token=cont_token
+        )
+        result = await poller.result()
+        self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

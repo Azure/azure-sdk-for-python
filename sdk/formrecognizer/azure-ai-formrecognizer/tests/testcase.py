@@ -43,11 +43,12 @@ class AccessTokenReplacer(RecordingProcessor):
         import json
         try:
             body = json.loads(response['body']['string'])
-            body['accessToken'] = self._replacement
+            if 'accessToken' in body:
+                body['accessToken'] = self._replacement
+            response['body']['string'] = json.dumps(body)
+            return response
         except (KeyError, ValueError):
             return response
-        response['body']['string'] = json.dumps(body)
-        return response
 
 
 class FakeTokenCredential(object):

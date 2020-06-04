@@ -80,15 +80,15 @@ class FormTrainingClient(object):
         authentication_policy = get_authentication_policy(credential)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
-            credential=self._credential,
+            credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             **kwargs
         )
 
     @distributed_trace
-    def begin_train_model(self, training_files_url, use_training_labels, **kwargs):
-        # type: (str, bool, Any) -> LROPoller
+    def begin_training(self, training_files_url, use_training_labels, **kwargs):
+        # type: (str, bool, Any) -> LROPoller[CustomFormModel]
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -105,6 +105,7 @@ class FormTrainingClient(object):
             Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
@@ -122,8 +123,23 @@ class FormTrainingClient(object):
                 :caption: Training a model with your custom forms.
         """
 
+        def callback(raw_response):
+            model = self._client._deserialize(Model, raw_response)
+            return CustomFormModel._from_generated(model)
+
         cls = kwargs.pop("cls", None)
+        continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        deserialization_callback = cls if cls else callback
+
+        if continuation_token:
+            return LROPoller.from_continuation_token(
+                polling_method=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                continuation_token=continuation_token,
+                client=self._client._client,
+                deserialization_callback=deserialization_callback
+            )
+
         response = self._client.train_custom_model_async(  # type: ignore
             train_request=TrainRequest(
                 source=training_files_url,
@@ -138,11 +154,6 @@ class FormTrainingClient(object):
             **kwargs
         )  # type: PipelineResponseType
 
-        def callback(raw_response):
-            model = self._client._deserialize(Model, raw_response)
-            return CustomFormModel._from_generated(model)
-
-        deserialization_callback = cls if cls else callback
         return LROPoller(
             self._client._client,
             response,
@@ -297,7 +308,7 @@ class FormTrainingClient(object):
         target,  # type: Dict
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[CustomFormModelInfo]
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
         (with the model that is intended to be copied). The `target` parameter should be supplied from the
@@ -309,6 +320,7 @@ class FormTrainingClient(object):
             :func:`~get_copy_authorization()`.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModelInfo`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModelInfo]
@@ -328,6 +340,7 @@ class FormTrainingClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
@@ -347,6 +360,7 @@ class FormTrainingClient(object):
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             error_map=error_map,
+            continuation_token=continuation_token,
             **kwargs
         )
 

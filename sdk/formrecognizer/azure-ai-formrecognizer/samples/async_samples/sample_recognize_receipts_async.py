@@ -22,7 +22,6 @@ USAGE:
 
 import os
 import asyncio
-from pathlib import Path
 
 
 class RecognizeReceiptsSampleAsync(object):
@@ -41,7 +40,9 @@ class RecognizeReceiptsSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                receipts = await form_recognizer_client.recognize_receipts(receipt=f.read())
+                poller = await form_recognizer_client.begin_recognize_receipts(receipt=f)
+
+            receipts = await poller.result()
 
             for idx, receipt in enumerate(receipts):
                 print("--------Recognizing receipt #{}--------".format(idx))
