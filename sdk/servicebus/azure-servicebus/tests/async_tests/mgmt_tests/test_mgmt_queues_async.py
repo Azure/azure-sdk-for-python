@@ -179,7 +179,6 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
-        pytest.skip("pending swagger fix for message_count_details")
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         queues = await sb_mgmt_client.list_queues()
         queues_infos = await sb_mgmt_client.list_queues_runtime_info()
