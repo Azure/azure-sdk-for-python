@@ -1,4 +1,5 @@
 import os
+import sys
 from setuptools import setup, find_packages
 
 # This is a "fake" package, meaning it's not supposed to be released but used
@@ -21,9 +22,8 @@ DEPENDENCIES = [
     'pyopenssl',
     'azure-mgmt-resource',
     'azure-mgmt-storage',
-    'azure-mgmt-keyvault',
-    'aiohttp'
-]
+    'azure-mgmt-keyvault'
+] + [] if sys.version_info.major < 3 else [ 'aiohttp' ]
 
 setup(
     name = "azure-sdk-tools",
