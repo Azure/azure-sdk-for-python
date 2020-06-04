@@ -41,16 +41,19 @@ def deserialize_ors_policies(response):
 
     parsed_result = {}
 
+    # all the ors headers have the same prefix, so we note down its length here to avoid recalculating it repeatedly
+    header_prefix_length = len('x-ms-or-')
+
     for key, val in or_policy_status_headers.items():
-        policy_and_rule_ids = key[len('x-ms-or-'):].split('_')
+        policy_and_rule_ids = key[header_prefix_length:].split('_')
         policy_id = policy_and_rule_ids[0]
         rule_id = policy_and_rule_ids[1]
 
-        # we are seeing this policy for the first time, so a new rule_id -> result dict is needed
-        if parsed_result.get(policy_id) is None:
+        try:
+            parsed_result[policy_id][rule_id] = val
+        except KeyError:
+            # we are seeing this policy for the first time, so a new rule_id -> result dict is needed
             parsed_result[policy_id] = {rule_id: val}
-        else:
-            parsed_result.get(policy_id)[rule_id] = val
 
     return parsed_result
 
