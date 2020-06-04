@@ -239,9 +239,12 @@ class TestTools(unittest.TestCase):
         invalid_ids = [
             '/subscriptions/fakesub/resourceGroups/myRg/type1/name1',
             '/subscriptions/fakesub/resourceGroups/myRg/providers/Microsoft.Provider/foo',
-            '/subscriptions/fakesub/resourceGroups/myRg/providers/namespace/type/name/type1'
+            '/subscriptions/fakesub/resourceGroups/myRg/providers/namespace/type/name/type1',
+            '/subscriptions/fakesub/resourceGroups/',
+            '/subscriptions//resourceGroups/'
         ]
         for invalid_id in invalid_ids:
+            print(invalid_id)
             self.assertFalse(is_valid_resource_id(invalid_id))
 
         tests = [
