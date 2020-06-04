@@ -224,3 +224,40 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     async def test_async_mgmt_queue_list_runtime_info_with_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(sb_mgmt_client))
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_get_runtime_info_basic(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        await sb_mgmt_client.create_queue("test_queue")
+        queue_runtime_info = await sb_mgmt_client.get_queue_runtime_info("test_queue")
+
+        assert queue_runtime_info
+        assert queue_runtime_info.queue_name == "test_queue"
+        assert queue_runtime_info.size_in_bytes == 0
+        assert queue_runtime_info.created_at is not None
+        assert queue_runtime_info.accessed_at is not None
+        assert queue_runtime_info.updated_at is not None
+        assert queue_runtime_info.message_count == 0
+
+        assert queue_runtime_info.message_count_details
+        assert queue_runtime_info.message_count_details.active_message_count == 0
+        assert queue_runtime_info.message_count_details.dead_letter_message_count == 0
+        assert queue_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
+        assert queue_runtime_info.message_count_details.transfer_message_count == 0
+        assert queue_runtime_info.message_count_details.scheduled_message_count == 0
+        await sb_mgmt_client.delete_queue("test_queue")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_get_runtime_info_negative(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        with pytest.raises(ValueError):
+            await sb_mgmt_client.get_queue_runtime_info(None)
+
+        with pytest.raises(ValueError):
+            await sb_mgmt_client.get_queue_runtime_info("")
+
+        with pytest.raises(ResourceNotFoundError):
+            await sb_mgmt_client.get_queue_runtime_info("non_existing_queue")
