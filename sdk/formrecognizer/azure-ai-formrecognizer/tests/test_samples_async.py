@@ -16,18 +16,21 @@ USAGE:
 
 
 import subprocess
+import functools
 import sys
 import os
 import pytest
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer.aio import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 
 def _setenv(key, val):
-    os.environ[key] = os.getenv(val) or os.environ[key]
+    os.environ[key] = os.getenv(val) or os.getenv(key)
 
 def run(cmd):
     os.environ['PYTHONUNBUFFERED'] = "1"
-    _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
-    _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
+    # _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
+    # _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
@@ -64,7 +67,13 @@ class TestSamplesAsync(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
-    def test_sample_get_bounding_boxes_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_sample_get_bounding_boxes_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
+        ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
+        container_sas_url = os.environ['CONTAINER_SAS_URL']
+        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+        os.environ['CUSTOM_TRAINED_MODEL_ID'] = model.model_id
         _test_file('sample_get_bounding_boxes_async.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
@@ -79,7 +88,13 @@ class TestSamplesAsync(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
-    def test_sample_recognize_custom_forms_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_sample_recognize_custom_forms_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
+        ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
+        container_sas_url = os.environ['CONTAINER_SAS_URL']
+        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+        os.environ['CUSTOM_TRAINED_MODEL_ID'] = model.model_id
         _test_file('sample_recognize_custom_forms_async.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
