@@ -25,15 +25,18 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import SynonymMap
 
 client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 def create_synonym_map():
     # [START create_synonym_map]
-    result = client.create_synonym_map("test-syn-map", [
+    solr_format_synonyms = "\n".join([
         "USA, United States, United States of America",
         "Washington, Wash. => WA",
     ])
+    synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+    result = client.create_synonym_map(synonym_map)
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map]
 
