@@ -32,7 +32,7 @@ from .._internal import (
     SearchFieldDataType,
 )
 from .._internal._generated.models import (
-    AnalyzeRequest,
+    AnalyzeRequest as AnalyzeTextRequest,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
@@ -124,7 +124,7 @@ from .._internal._models import (
 
 
 __all__ = (
-    "AnalyzeRequest",
+    "AnalyzeTextRequest",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",

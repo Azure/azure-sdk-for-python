@@ -24,7 +24,7 @@ from ...._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
+    from .._generated.models import AnalyzeRequest as AnalyzeTextRequest, AnalyzeResult, SearchIndex
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -239,13 +239,13 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace_async
     async def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
+        # type: (str, AnalyzeTextRequest, **Any) -> AnalyzeResult
         """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test.
-        :type analyze_request: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
+        :type analyze_request: :class:`~azure.search.documents.indexes.models.AnalyzeTextRequest
         :return: AnalyzeResult
         :rtype: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
         :raises: ~azure.core.exceptions.HttpResponseError

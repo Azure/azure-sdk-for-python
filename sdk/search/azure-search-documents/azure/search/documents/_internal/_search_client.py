@@ -169,7 +169,7 @@ class SearchClient(HeadersMixin):
         """
         include_total_result_count = kwargs.pop("include_total_result_count", None)
         facets = kwargs.pop("facets", None)
-        filter = kwargs.pop("filter", None)
+        filter_arg = kwargs.pop("filter", None)
         highlight_fields = kwargs.pop("highlight_fields", None)
         highlight_post_tag = kwargs.pop("highlight_post_tag", None)
         highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
@@ -187,7 +187,7 @@ class SearchClient(HeadersMixin):
             search_text=search_text,
             include_total_result_count=include_total_result_count,
             facets=facets,
-            filter=filter,
+            filter=filter_arg,
             highlight_fields=highlight_fields,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
@@ -228,7 +228,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter = kwargs.pop("filter", None)
+        filter_arg = kwargs.pop("filter", None)
         use_fuzzy_matching = kwargs.pop("use_fuzzy_matching", None)
         highlight_post_tag = kwargs.pop("highlight_post_tag", None)
         highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
@@ -240,7 +240,7 @@ class SearchClient(HeadersMixin):
         query = SuggestQuery(
             search_text=search_text,
             suggester_name=suggester_name,
-            filter=filter,
+            filter=filter_arg,
             use_fuzzy_matching=use_fuzzy_matching,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
@@ -278,7 +278,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a auto-completions.
         """
         autocomplete_mode = kwargs.pop("autocomplete_mode", None)
-        filter = kwargs.pop("filter", None)
+        filter_arg = kwargs.pop("filter", None)
         use_fuzzy_matching = kwargs.pop("use_fuzzy_matching", None)
         highlight_post_tag = kwargs.pop("highlight_post_tag", None)
         highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
@@ -289,7 +289,7 @@ class SearchClient(HeadersMixin):
             search_text=search_text,
             suggester_name=suggester_name,
             autocomplete_mode=autocomplete_mode,
-            filter=filter,
+            filter=filter_arg,
             use_fuzzy_matching=use_fuzzy_matching,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,

@@ -235,7 +235,7 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
+        # type: (str, AnalyzeTextRequest, **Any) -> AnalyzeResult
         """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
