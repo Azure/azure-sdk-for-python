@@ -1,5 +1,4 @@
 import os
-import sys
 from setuptools import setup, find_packages
 
 # This is a "fake" package, meaning it's not supposed to be released but used
