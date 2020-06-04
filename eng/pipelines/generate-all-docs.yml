@@ -1,45 +1,33 @@
 trigger: none
-
 resources:
   repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
+  - repository: azure-sdk-tools
+    type: github
+    name: Azure/azure-sdk-tools
+    endpoint: azure
 variables:
-  PythonVersion: '3.6'
-
+  PythonVersion: "3.6"
 jobs:
-  - job: 'Generate_Individual_Package_Documentation'
-
-    variables:
-      skipComponentGovernanceDetection: true
-    
-    timeoutInMinutes: 120
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
-
-      - script: |
-          pip install -r eng/ci_tools.txt
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Generate Docs'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: >-
-            "$(BuildTargetingString)"
-            --toxenv=sphinx
-
-      - task: PublishPipelineArtifact@0
-        inputs:
-          artifactName: 'documentation' 
-          targetPath: '$(Build.SourcesDirectory)/_docs'
+- job: Generate_Individual_Package_Documentation
+  variables:
+    skipComponentGovernanceDetection: true
+  timeoutInMinutes: 120
+  pool:
+    vmImage: ubuntu-18.04
+  steps:
+  - task: UsePythonVersion@0
+    displayName: Use Python $(PythonVersion)
+    inputs:
+      versionSpec: $(PythonVersion)
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: Prep Environment
+  - task: PythonScript@0
+    displayName: Generate Docs
+    inputs:
+      scriptPath: scripts/devops_tasks/setup_execute_tests.py
+      arguments: '"$(BuildTargetingString)" --toxenv=sphinx'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: documentation
+      targetPath: $(Build.SourcesDirectory)/_docs

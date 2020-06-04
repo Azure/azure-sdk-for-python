@@ -1,25 +1,23 @@
 trigger: none
-
 resources:
   repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
+  - repository: azure-sdk-tools
+    type: github
+    name: Azure/azure-sdk-tools
+    endpoint: azure
 jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-    parameters:
-      BuildTargetingString: $(BuildTargetingString)
-      ServiceDirectory: formrecognizer
-      EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
-        AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
-        AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
-        TEST_MODE: 'RunLiveNoRecord'
-        AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'true'
+- template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+  parameters:
+    BuildTargetingString: $(BuildTargetingString)
+    ServiceDirectory: formrecognizer
+    EnvVars:
+      AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
+      AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+      AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+      AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+      AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
+      AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
+      AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
+      TEST_MODE: RunLiveNoRecord
+      AZURE_SKIP_LIVE_RECORDING: True
+      AZURE_TEST_RUN_LIVE: "true"

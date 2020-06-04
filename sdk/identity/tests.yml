@@ -1,21 +1,19 @@
 trigger: none
-
 resources:
   repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
+  - repository: azure-sdk-tools
+    type: github
+    name: Azure/azure-sdk-tools
+    endpoint: azure
 jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      ServiceDirectory: identity
-      EnvVars:
-        AZURE_CLIENT_ID: $(python-identity-client-id)
-        AZURE_CLIENT_SECRET: $(python-identity-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
-        PEM_CONTENT: $(python-identity-certificate)
-        PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
+- template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+  parameters:
+    AllocateResourceGroup: "false"
+    ServiceDirectory: identity
+    EnvVars:
+      AZURE_CLIENT_ID: $(python-identity-client-id)
+      AZURE_CLIENT_SECRET: $(python-identity-client-secret)
+      AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+      CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
+      PEM_CONTENT: $(python-identity-certificate)
+      PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
