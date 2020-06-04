@@ -182,12 +182,14 @@ class SearchClient(HeadersMixin):
         )
 
     @distributed_trace
-    def suggest(self, query, **kwargs):
-        # type: (SuggestQuery, **Any) -> List[dict]
+    def suggest(self, search_text, suggester_name, **kwargs):
+        # type: (str, str, **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
-        :param query: An query for search suggestions
-        :type documents: SuggestQuery
+        :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
+        character, and no more than 100 characters.
+        :param str suggester_name: Required. The name of the suggester as specified in the suggesters
+        collection that's part of the index definition.
         :rtype:  List[dict]
 
         .. admonition:: Example:
@@ -199,10 +201,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        if not isinstance(query, SuggestQuery):
-            raise TypeError(
-                "Expected a SuggestQuery for 'query', but got {}".format(repr(query))
-            )
+        query = SuggestQuery(search_text=search_text, suggester_name=suggester_name, **kwargs)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(
@@ -212,12 +211,13 @@ class SearchClient(HeadersMixin):
         return results
 
     @distributed_trace
-    def autocomplete(self, query, **kwargs):
-        # type: (AutocompleteQuery, **Any) -> List[dict]
+    def autocomplete(self, search_text, suggester_name, **kwargs):
+        # type: (str, str, **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
 
-        :param query: An query for auto-completions
-        :type documents: AutocompleteQuery
+        :param str search_text: The search text on which to base autocomplete results.
+        :param str suggester_name: The name of the suggester as specified in the suggesters
+        collection that's part of the index definition.
         :rtype:  List[dict]
 
         .. admonition:: Example:
@@ -229,12 +229,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get a auto-completions.
         """
-        if not isinstance(query, AutocompleteQuery):
-            raise TypeError(
-                "Expected a AutocompleteQuery for 'query', but got {}".format(
-                    repr(query)
-                )
-            )
+        query = AutocompleteQuery(search_text=search_text, suggester_name=suggester_name, **kwargs)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.autocomplete_post(

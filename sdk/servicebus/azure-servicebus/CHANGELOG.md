@@ -2,6 +2,14 @@
 
 ## 7.0.0b3 (Unreleased)
 
+**New Features**
+
+* Added methods `get_queue_deadletter_receiver` and `get_subscription_deadletter_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for the dead-letter sub-queue of the target entity.
+
+**BugFixes**
+
+* Updated uAMQP dependency to 1.2.8.
+    * Fixed bug where reason and description were not being set when dead-lettering messages.
 
 ## 7.0.0b2 (2020-05-04)
 
@@ -23,7 +31,7 @@
 
 **BugFixes**
 
-* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Fixed bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 * Updated uAMQP dependency to 1.2.7.
     * Fixed bug in setting certificate of tlsio on MacOS. #7201
     * Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `ServiceBusClient`.

@@ -23,7 +23,9 @@ from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
-    TOKEN_TYPE_SASTOKEN
+    TOKEN_TYPE_SASTOKEN,
+    DEAD_LETTER_QUEUE_SUFFIX,
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 )
 
 _log = logging.getLogger(__name__)
@@ -139,6 +141,21 @@ def create_authentication(client):
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
     )
+
+
+def generate_dead_letter_entity_name(
+        queue_name=None,
+        topic_name=None,
+        subscription_name=None,
+        transfer_deadletter=False
+):
+    entity_name = queue_name if queue_name else (topic_name + "/Subscriptions/" + subscription_name)
+    entity_name = "{}{}".format(
+        entity_name,
+        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX
+    )
+
+    return entity_name
 
 
 class AutoLockRenew(object):

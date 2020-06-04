@@ -292,6 +292,20 @@ class SearchIndexClient(HeadersMixin):
         return [unpack_synonyms(x) for x in result.synonym_maps]
 
     @distributed_trace_async
+    async def get_synonym_map_names(self, **kwargs):
+        # type: (**Any) -> List[str]
+        """List the Synonym Map names in an Azure Search service.
+
+        :return: List of synonym map names
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.synonym_maps.list(**kwargs)
+        return [x.name for x in result.synonym_maps]
+
+    @distributed_trace_async
     async def get_synonym_map(self, name, **kwargs):
         # type: (str, **Any) -> SynonymMap
         """Retrieve a named Synonym Map in an Azure Search service

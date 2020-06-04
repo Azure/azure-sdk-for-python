@@ -30,13 +30,10 @@ def suggest_query():
     # [START suggest_query]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
-    from azure.search.documents.models import SuggestQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SuggestQuery(search_text="coffee", suggester_name="sg")
-
-    results = search_client.suggest(query=query)
+    results = search_client.suggest(search_text="coffee", suggester_name="sg")
 
     print("Search suggestions for 'coffee'")
     for result in results:

@@ -22,6 +22,10 @@ from ._blob_services_operations import BlobServicesOperations
 from ._blob_containers_operations import BlobContainersOperations
 from ._file_services_operations import FileServicesOperations
 from ._file_shares_operations import FileSharesOperations
+from ._queue_services_operations import QueueServicesOperations
+from ._queue_operations import QueueOperations
+from ._table_services_operations import TableServicesOperations
+from ._table_operations import TableOperations
 
 __all__ = [
     'Operations',
@@ -37,4 +41,8 @@ __all__ = [
     'BlobContainersOperations',
     'FileServicesOperations',
     'FileSharesOperations',
+    'QueueServicesOperations',
+    'QueueOperations',
+    'TableServicesOperations',
+    'TableOperations',
 ]
