@@ -14,6 +14,7 @@ DEPENDENCIES = [
     # Tests
     'pytest-cov',
     'pytest>=3.5.1',
+    'asyncio',
     # 'azure-devtools>=0.4.1' override by packaging needs
     'readme_renderer',
     # 'azure-storage-file<2.0',
