@@ -50,7 +50,7 @@ class TestSimplexField(object):
         fld = SimpleField(name="foo", type=SearchFieldDataType.Double)
         assert fld.name == "foo"
         assert fld.type == SearchFieldDataType.Double
-        assert fld.is_hidden == False
+        assert fld.hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == False
@@ -66,7 +66,7 @@ class TestSearchableField(object):
         fld = SearchableField(name="foo", collection=True)
         assert fld.name == "foo"
         assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
-        assert fld.is_hidden == False
+        assert fld.hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == True
