@@ -44,6 +44,7 @@ class TableServiceStatsTest(TableTestCase):
     @staticmethod
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
+        #  response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
 

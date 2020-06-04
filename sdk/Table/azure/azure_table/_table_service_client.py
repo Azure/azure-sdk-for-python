@@ -128,10 +128,9 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_service_stats(self, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
-        timeout = kwargs.pop('timeout', None)
         try:
-            stats = self._client.service.get_statistics(  # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            # failing on get_statistics
+            stats = self._client.service.get_statistics(**kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -148,7 +147,7 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties(  # type: ignore
-            self, analytics_logging=None,  # type: Optional[QueueAnalyticsLogging]
+            self, analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
@@ -177,7 +176,6 @@ class TableServiceClient(StorageAccountHostsMixin):
         response = self._client.table.create(table_properties)
         return response
         # table = self.get_table_client(table=table_name)
-        # table.create_queue(table_name)
 
     @distributed_trace
     def delete_table(
@@ -214,7 +212,8 @@ class TableServiceClient(StorageAccountHostsMixin):
             **kwargs
     ):
         print(query_options)
-        command = functools.partial(self._client.table.query, marker=next_table_name, **kwargs)
+        # returning something slightly off - check test_table assert
+        command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged

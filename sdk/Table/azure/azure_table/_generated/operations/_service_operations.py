@@ -245,6 +245,7 @@ class ServiceOperations(object):
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         deserialized = self._deserialize('TableServiceStats', pipeline_response)
 
+
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
