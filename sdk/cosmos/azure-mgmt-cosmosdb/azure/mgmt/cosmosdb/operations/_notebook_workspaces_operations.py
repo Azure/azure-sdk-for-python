@@ -26,7 +26,7 @@ class NotebookWorkspacesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2019-08-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-08-01".
     :ivar notebook_workspace_name: The name of the notebook workspace resource. Constant value: "default".
     """
 
@@ -46,7 +46,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Gets the notebook workspace resources of an existing Cosmos DB account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -66,7 +67,7 @@ class NotebookWorkspacesOperations(object):
                 # Construct URL
                 url = self.list_by_database_account.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
@@ -74,7 +75,7 @@ class NotebookWorkspacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -117,7 +118,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Gets the notebook workspace for a Cosmos DB account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -135,7 +137,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -144,7 +146,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -182,7 +184,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -191,7 +193,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -229,7 +231,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates the notebook workspace for a Cosmos DB account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -279,7 +282,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -288,7 +291,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -314,7 +317,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the notebook workspace for a Cosmos DB account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -356,7 +360,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the connection info for the notebook workspace.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -376,7 +381,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.list_connection_info.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -385,7 +390,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -421,7 +426,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.regenerate_auth_token.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -430,7 +435,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -456,7 +461,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Regenerates the auth token for the notebook workspace.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -500,7 +506,7 @@ class NotebookWorkspacesOperations(object):
         # Construct URL
         url = self.start.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("self.notebook_workspace_name", self.notebook_workspace_name, 'str')
@@ -509,7 +515,7 @@ class NotebookWorkspacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -535,7 +541,8 @@ class NotebookWorkspacesOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Starts the notebook workspace.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str

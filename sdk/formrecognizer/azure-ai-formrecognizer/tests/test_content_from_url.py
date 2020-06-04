@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
@@ -81,6 +82,7 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 2)
         self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -119,6 +121,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.tables[0].column_count, 3)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].page_number, 1)
+        self.assertEqual(layout.tables[1].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -149,3 +153,16 @@ class TestContentFromUrl(FormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_content_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account,
+                                      AzureKeyCredential(form_recognizer_account_key))
+        initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
+        cont_token = initial_poller.continuation_token()
+
+        poller = client.begin_recognize_content_from_url(self.form_url_jpg, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

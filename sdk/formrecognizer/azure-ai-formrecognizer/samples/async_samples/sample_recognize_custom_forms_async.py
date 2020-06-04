@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze a form from a document with a custom
     trained model. The form must be of the same type as the forms the custom model
     was trained on. To learn how to train your own models, look at
-    sample_train_unlabeled_model_async.py and sample_train_labeled_model_async.py
+    sample_train_model_without_labels_async.py and sample_train_model_with_labels_async.py
 USAGE:
     python sample_recognize_custom_forms_async.py
 
@@ -25,30 +25,30 @@ USAGE:
 
 import os
 import asyncio
-from pathlib import Path
 
 
 class RecognizeCustomFormsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
-
     async def recognize_custom_forms(self):
-        # the sample forms are located in this file's parent's parent's files.
-        path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+
         async with FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
-                forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, stream=f.read()
+                poller = await form_recognizer_client.begin_recognize_custom_forms(
+                    model_id=model_id, form=f
                 )
+            forms = await poller.result()
 
             for idx, form in enumerate(forms):
                 print("--------Recognizing Form #{}--------".format(idx))

@@ -32,7 +32,7 @@ async def filter_query():
     # [START filter_query_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
-    from azure.search.documents import SearchQuery
+    from azure.search.documents.models import SearchQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 

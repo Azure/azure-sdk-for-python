@@ -33,26 +33,27 @@ def format_bounding_box(bounding_box):
 
 class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
-    model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
-
     def recognize_custom_forms(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
+        model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
+
         form_recognizer_client = FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             stream = f.read()
         forms_with_labeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
-            model_id=self.model_trained_with_labels_id, stream=stream
+            model_id=model_trained_with_labels_id, form=stream
         )
         forms_with_unlabeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
-            model_id=self.model_trained_without_labels_id, stream=stream
+            model_id=model_trained_without_labels_id, form=stream
         )
 
         # Calling result after kicking off each call allows for server-side paralellization

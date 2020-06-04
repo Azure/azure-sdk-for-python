@@ -3,18 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import pytest
+
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError
+from azure.identity import CredentialUnavailableError, VSCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._credentials.vscode_credential import get_credentials
+import pytest
+
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
-from azure.identity._credentials.vscode_credential import VSCodeCredential, get_credentials
 
 
 def test_no_scopes():
@@ -57,16 +59,17 @@ def test_credential_unavailable_error():
 
 def test_redeem_token():
     expected_token = AccessToken("token", 42)
+    expected_value = "value"
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=expected_value):
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
-        mock_client.obtain_token_by_refresh_token.assert_called_with("VALUE", ("scope",))
+        mock_client.obtain_token_by_refresh_token.assert_called_with(("scope",), expected_value)
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 

@@ -13,20 +13,20 @@ except ImportError:
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 
-from azure.search.documents._index._generated.models import (
+from azure.search.documents._internal._generated.models import (
     IndexAction,
     IndexBatch,
     SearchDocumentsResult,
     SearchResult,
 )
-from azure.search.documents._index._search_client import SearchPageIterator
+from azure.search.documents._internal._search_client import SearchPageIterator
 
 from azure.search.documents import (
-    AutocompleteQuery,
     IndexDocumentsBatch,
     SearchClient,
+)
+from azure.search.documents.models import (
     SearchQuery,
-    SuggestQuery,
     odata,
 )
 
@@ -106,7 +106,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.count"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count(self, mock_count):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -118,7 +118,7 @@ class TestSearchClient(object):
 
 
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.get"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document(self, mock_get):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -144,7 +144,7 @@ class TestSearchClient(object):
         "query", ["search text", SearchQuery(search_text="search text")], ids=repr
     )
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument(self, mock_search_post, query):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -171,12 +171,12 @@ class TestSearchClient(object):
             )
 
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.suggest_post"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.suggest(
-            SuggestQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
@@ -195,12 +195,12 @@ class TestSearchClient(object):
             )
 
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(
-            AutocompleteQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
@@ -246,7 +246,7 @@ class TestSearchClient(object):
             assert mock_index_documents.call_args[1]["extra"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.index"
+        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.index"
     )
     def test_index_documents(self, mock_index):
         client = SearchClient("endpoint", "index name", CREDENTIAL)

@@ -255,3 +255,30 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
     # this credential uses a mock shared cache, so it works on all platforms
     with patch.object(SharedTokenCacheCredential, "supported"):
         return DefaultAzureCredential(_cache=cache, transport=transport, **options)
+
+
+def test_interactive_browser_tenant_id():
+    """the credential should allow configuring a tenant ID for InteractiveBrowserCredential by kwarg or environment"""
+
+    tenant_id = "tenant-id"
+
+    def validate_tenant_id(credential):
+        assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
+        _, kwargs = credential.call_args
+        assert kwargs == {'tenant_id': tenant_id}
+
+    with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+        DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id)
+    validate_tenant_id(mock_credential)
+
+    # tenant id can also be specified in $AZURE_TENANT_ID
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant_id}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+            DefaultAzureCredential(exclude_interactive_browser_credential=False)
+    validate_tenant_id(mock_credential)
+
+    # keyword argument should override environment variable
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant_id}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+            DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id)
+    validate_tenant_id(mock_credential)

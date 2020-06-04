@@ -20,12 +20,8 @@ BATCH = json.load(open(join(CWD, "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
-    AutocompleteQuery,
-    SearchClient,
-    SearchQuery,
-    SuggestQuery,
-)
+from azure.search.documents import SearchClient
+from azure.search.documents.models import SearchQuery
 
 TIME_TO_SLEEP = 3
 
@@ -167,8 +163,7 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        query = AutocompleteQuery(search_text="mot", suggester_name="sg")
-        results = client.autocomplete(query=query)
+        results = client.autocomplete(search_text="mot", suggester_name="sg")
         assert results == [{"text": "motel", "query_plus_text": "motel"}]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -177,8 +172,7 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        query = SuggestQuery(search_text="mot", suggester_name="sg")
-        results = client.suggest(query=query)
+        results = client.suggest(search_text="mot", suggester_name="sg")
         assert results == [
             {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
             {"hotelId": "9", "text": "Secret Point Motel"},

@@ -24,7 +24,7 @@ class DataSetMappingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The api version to use. Constant value: "2018-11-01-preview".
+    :ivar api_version: The api version to use. Constant value: "2019-11-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class DataSetMappingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -121,8 +121,8 @@ class DataSetMappingsOperations(object):
         :param share_subscription_name: The name of the share subscription
          which will hold the data set sink.
         :type share_subscription_name: str
-        :param data_set_mapping_name: The Id of the source data set being
-         mapped.
+        :param data_set_mapping_name: The name of the data set mapping to be
+         created.
         :type data_set_mapping_name: str
         :param data_set_mapping: Destination data set configuration details.
         :type data_set_mapping: ~azure.mgmt.datashare.models.DataSetMapping

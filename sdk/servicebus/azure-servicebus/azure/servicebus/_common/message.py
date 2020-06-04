@@ -32,6 +32,8 @@ from .constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION,
     MESSAGE_COMPLETE,
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
@@ -539,8 +541,8 @@ class ReceivedMessage(PeekMessage):
         except AttributeError:
             pass
 
-    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
-        # type: (str, Dict[str, Any]) -> Callable
+    def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
+        # type: (str, Optional[str], Optional[str]) -> Callable
         # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
@@ -559,7 +561,10 @@ class ReceivedMessage(PeekMessage):
                 self._receiver._settle_message,
                 SETTLEMENT_DEADLETTER,
                 [self.lock_token],
-                dead_letter_details=dead_letter_details
+                dead_letter_details={
+                    MGMT_REQUEST_DEAD_LETTER_REASON: dead_letter_reason or "",
+                    MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: dead_letter_description or ""
+                }
             )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(
@@ -569,20 +574,22 @@ class ReceivedMessage(PeekMessage):
             )
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):  # pylint: disable=unused-argument
-        # type: (str, Dict[str, Any]) -> Callable
-        # dead_letter_detail is not used because of uamqp receiver link doesn't accept it while it
-        # should be accepted. Will revisit this later.
-        # uamqp management link accepts dead_letter_details. Refer to method _settle_via_mgmt_link
-        # TODO: to make dead_letter_details useful
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
+        # type: (str, Optional[str], Optional[str]) -> Callable
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(self.message.accept)
         if settle_operation == MESSAGE_ABANDON:
             return functools.partial(self.message.modify, True, False)
         if settle_operation == MESSAGE_DEAD_LETTER:
-            # note: message.reject() can not set reason and description properly due to the issue
-            # https://github.com/Azure/azure-uamqp-python/issues/155
-            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
+            return functools.partial(
+                self.message.reject,
+                condition=DEADLETTERNAME,
+                description=dead_letter_description,
+                info={
+                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                    RECEIVER_LINK_DEAD_LETTER_DESCRIPTION: dead_letter_description
+                }
+            )
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
@@ -590,13 +597,16 @@ class ReceivedMessage(PeekMessage):
     def _settle_message(
             self,
             settle_operation,
-            dead_letter_details=None
+            dead_letter_reason=None,
+            dead_letter_description=None,
     ):
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Optional[str], Optional[str]) -> None
         try:
             if not self._is_deferred_message:
                 try:
-                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
+                    self._settle_via_receiver_link(settle_operation,
+                                                   dead_letter_reason=dead_letter_reason,
+                                                   dead_letter_description=dead_letter_description)()
                     return
                 except RuntimeError as exception:
                     _LOGGER.info(
@@ -605,7 +615,9 @@ class ReceivedMessage(PeekMessage):
                         settle_operation,
                         exception
                     )
-            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+            self._settle_via_mgmt_link(settle_operation,
+                                       dead_letter_reason=dead_letter_reason,
+                                       dead_letter_description=dead_letter_description)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
@@ -644,12 +656,7 @@ class ReceivedMessage(PeekMessage):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-
-        details = {
-            MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
-            MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
-
-        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
+        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
         self._settled = True
 
     def abandon(self):

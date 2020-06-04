@@ -1,5 +1,66 @@
 # Release History
 
+## 11.0.0 (2020-05-30)
+
+**Features**
+
+  - Model BlobContainer has a new parameter remaining_retention_days
+  - Model BlobContainer has a new parameter version
+  - Model BlobContainer has a new parameter deleted
+  - Model BlobContainer has a new parameter deleted_time
+  - Model ListContainerItem has a new parameter remaining_retention_days
+  - Model ListContainerItem has a new parameter version
+  - Model ListContainerItem has a new parameter deleted
+  - Model ListContainerItem has a new parameter deleted_time
+  - Model Encryption has a new parameter require_infrastructure_encryption
+  - Added operation group QueueServicesOperations
+  - Added operation group TableServicesOperations
+  - Added operation group TableOperations
+  - Added operation group QueueOperations
+
+**Breaking changes**
+
+  - Operation BlobContainersOperations.list has a new signature
+
+## 10.0.0 (2020-05-07)
+
+**Features**
+
+  - Model ManagementPolicyFilter has a new parameter blob_index_match
+  - Model FileShareItem has a new parameter access_tier_status
+  - Model FileShareItem has a new parameter share_usage_bytes
+  - Model FileShareItem has a new parameter deleted
+  - Model FileShareItem has a new parameter deleted_time
+  - Model FileShareItem has a new parameter access_tier
+  - Model FileShareItem has a new parameter version
+  - Model FileShareItem has a new parameter root_squash
+  - Model FileShareItem has a new parameter enabled_protocols
+  - Model FileShareItem has a new parameter access_tier_change_time
+  - Model FileShareItem has a new parameter remaining_retention_days
+  - Model RestorePolicyProperties has a new parameter last_enabled_time
+  - Model FileShare has a new parameter access_tier_status
+  - Model FileShare has a new parameter share_usage_bytes
+  - Model FileShare has a new parameter deleted
+  - Model FileShare has a new parameter deleted_time
+  - Model FileShare has a new parameter access_tier
+  - Model FileShare has a new parameter version
+  - Model FileShare has a new parameter root_squash
+  - Model FileShare has a new parameter enabled_protocols
+  - Model FileShare has a new parameter access_tier_change_time
+  - Model FileShare has a new parameter remaining_retention_days
+  - Added operation FileSharesOperations.restore
+  - Added operation PrivateEndpointConnectionsOperations.list
+  - Added operation group ObjectReplicationPoliciesOperations
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.update has a new signature
+  - Operation FileSharesOperations.create has a new signature
+  - Operation FileSharesOperations.get has a new signature
+  - Operation FileSharesOperations.list has a new signature
+  - Operation FileSharesOperations.update has a new signature
+  - Operation FileSharesOperations.create has a new signature
+
 ## 9.0.0 (2020-03-27)
 
 **Features**

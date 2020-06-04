@@ -80,6 +80,16 @@ class WorkspaceSkuNameEnum(str, Enum):
     capacity_reservation = "CapacityReservation"
 
 
+class DataIngestionStatus(str, Enum):
+
+    respect_quota = "RespectQuota"
+    force_on = "ForceOn"
+    force_off = "ForceOff"
+    over_quota = "OverQuota"
+    subscription_suspended = "SubscriptionSuspended"
+    approaching_quota = "ApproachingQuota"
+
+
 class WorkspaceEntityStatus(str, Enum):
 
     creating = "Creating"

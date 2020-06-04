@@ -14,9 +14,6 @@ from ._models import (
     TrainingStatus,
     CustomFormModelStatus,
     FormContentType,
-    USReceipt,
-    USReceiptType,
-    USReceiptItem,
     FormTable,
     FormTableCell,
     TrainingDocumentInfo,
@@ -24,7 +21,7 @@ from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     Point,
-    PageRange,
+    FormPageRange,
     RecognizedForm,
     FormField,
     FieldText,
@@ -32,7 +29,7 @@ from ._models import (
     FormLine,
     FormWord,
     CustomFormModel,
-    CustomFormSubModel,
+    CustomFormSubmodel,
     CustomFormModelField
 )
 
@@ -45,9 +42,6 @@ __all__ = [
     'CustomFormModelStatus',
     'FormContentType',
     'FormContent',
-    'USReceipt',
-    'USReceiptType',
-    'USReceiptItem',
     'FormTable',
     'FormTableCell',
     'TrainingDocumentInfo',
@@ -55,7 +49,7 @@ __all__ = [
     'CustomFormModelInfo',
     'AccountProperties',
     'Point',
-    'PageRange',
+    'FormPageRange',
     'RecognizedForm',
     'FormField',
     'FieldText',
@@ -63,7 +57,7 @@ __all__ = [
     'FormLine',
     'FormWord',
     'CustomFormModel',
-    'CustomFormSubModel',
+    'CustomFormSubmodel',
     'CustomFormModelField'
 ]
 

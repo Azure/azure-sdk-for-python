@@ -36,13 +36,16 @@ class AzureAccountsOperations(object):
         self.config = config
 
     def assign_to_app(
-            self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, arm_token=None, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
         """apps - Assign a LUIS Azure account to an application.
 
         Assigns an Azure account to the application.
 
         :param app_id: The application ID.
         :type app_id: str
+        :param arm_token: The custom arm token header to use; containing the
+         user's ARM token used to validate azure accounts information.
+        :type arm_token: str
         :param azure_account_info_object: The Azure account information
          object.
         :type azure_account_info_object:
@@ -76,6 +79,8 @@ class AzureAccountsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        if arm_token is not None:
+            header_parameters['ArmToken'] = self._serialize.header("arm_token", arm_token, 'str')
 
         # Construct body
         if azure_account_info_object is not None:
@@ -102,7 +107,7 @@ class AzureAccountsOperations(object):
     assign_to_app.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
     def get_assigned(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, arm_token=None, custom_headers=None, raw=False, **operation_config):
         """apps - Get LUIS Azure accounts assigned to the application.
 
         Gets the LUIS Azure accounts assigned to the application for the user
@@ -110,6 +115,9 @@ class AzureAccountsOperations(object):
 
         :param app_id: The application ID.
         :type app_id: str
+        :param arm_token: The custom arm token header to use; containing the
+         user's ARM token used to validate azure accounts information.
+        :type arm_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -138,6 +146,8 @@ class AzureAccountsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        if arm_token is not None:
+            header_parameters['ArmToken'] = self._serialize.header("arm_token", arm_token, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -158,13 +168,16 @@ class AzureAccountsOperations(object):
     get_assigned.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
     def remove_from_app(
-            self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, arm_token=None, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
         """apps - Removes an assigned LUIS Azure account from an application.
 
         Removes assigned Azure account from the application.
 
         :param app_id: The application ID.
         :type app_id: str
+        :param arm_token: The custom arm token header to use; containing the
+         user's ARM token used to validate azure accounts information.
+        :type arm_token: str
         :param azure_account_info_object: The Azure account information
          object.
         :type azure_account_info_object:
@@ -198,6 +211,8 @@ class AzureAccountsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        if arm_token is not None:
+            header_parameters['ArmToken'] = self._serialize.header("arm_token", arm_token, 'str')
 
         # Construct body
         if azure_account_info_object is not None:
@@ -224,11 +239,14 @@ class AzureAccountsOperations(object):
     remove_from_app.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
     def list_user_luis_accounts(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, arm_token=None, custom_headers=None, raw=False, **operation_config):
         """user - Get LUIS Azure accounts.
 
         Gets the LUIS Azure accounts for the user using his ARM token.
 
+        :param arm_token: The custom arm token header to use; containing the
+         user's ARM token used to validate azure accounts information.
+        :type arm_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -256,6 +274,8 @@ class AzureAccountsOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
+        if arm_token is not None:
+            header_parameters['ArmToken'] = self._serialize.header("arm_token", arm_token, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)

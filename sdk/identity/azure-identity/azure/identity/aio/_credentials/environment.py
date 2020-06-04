@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
-from .client_credential import CertificateCredential, ClientSecretCredential
+from .certificate import CertificateCredential
+from .client_secret import ClientSecretCredential
 from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:

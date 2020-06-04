@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from io import BytesIO
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
@@ -165,6 +166,7 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 2)
         self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_stream_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -205,6 +207,8 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertEqual(layout.tables[0].column_count, 3)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].page_number, 1)
+        self.assertEqual(layout.tables[1].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_content_multipage(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -240,3 +244,18 @@ class TestContentFromStream(FormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_content_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account,
+                                      AzureKeyCredential(form_recognizer_account_key))
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        initial_poller = client.begin_recognize_content(myfile)
+        cont_token = initial_poller.continuation_token()
+
+        poller = client.begin_recognize_content(myfile, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

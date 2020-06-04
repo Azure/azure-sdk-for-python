@@ -26,6 +26,7 @@ class SourceControlConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2019-11-01-preview".
     """
 
     models = models
@@ -35,11 +36,12 @@ class SourceControlConfigurationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-11-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, custom_headers=None, raw=False, **operation_config):
         """Gets details of the Source Control Configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -59,8 +61,6 @@ class SourceControlConfigurationsOperations(object):
         :param source_control_configuration_name: Name of the Source Control
          Configuration.
         :type source_control_configuration_name: str
-        :param api_version: The API version to be used with the HTTP request.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -87,7 +87,7 @@ class SourceControlConfigurationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -118,7 +118,7 @@ class SourceControlConfigurationsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{clusterRp}/{clusterResourceName}/{clusterName}/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/{sourceControlConfigurationName}'}
 
     def create_or_update(
-            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, api_version, source_control_configuration, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, source_control_configuration, custom_headers=None, raw=False, **operation_config):
         """Create a new Kubernetes Source Control Configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -138,8 +138,6 @@ class SourceControlConfigurationsOperations(object):
         :param source_control_configuration_name: Name of the Source Control
          Configuration.
         :type source_control_configuration_name: str
-        :param api_version: The API version to be used with the HTTP request.
-        :type api_version: str
         :param source_control_configuration: Properties necessary to Create
          KubernetesConfiguration.
         :type source_control_configuration:
@@ -170,7 +168,7 @@ class SourceControlConfigurationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -208,7 +206,7 @@ class SourceControlConfigurationsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -223,7 +221,7 @@ class SourceControlConfigurationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -246,7 +244,7 @@ class SourceControlConfigurationsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, source_control_configuration_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """This will delete the YAML file used to set up the Source control
         configuration, thus stopping future sync from the source repo.
 
@@ -267,8 +265,6 @@ class SourceControlConfigurationsOperations(object):
         :param source_control_configuration_name: Name of the Source Control
          Configuration.
         :type source_control_configuration_name: str
-        :param api_version: The API version to be used with the HTTP request.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -287,7 +283,6 @@ class SourceControlConfigurationsOperations(object):
             cluster_resource_name=cluster_resource_name,
             cluster_name=cluster_name,
             source_control_configuration_name=source_control_configuration_name,
-            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -308,7 +303,7 @@ class SourceControlConfigurationsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{clusterRp}/{clusterResourceName}/{clusterName}/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/{sourceControlConfigurationName}'}
 
     def list(
-            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_rp, cluster_resource_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """List all Source Control Configurations.
 
         :param resource_group_name: The name of the resource group.
@@ -325,8 +320,6 @@ class SourceControlConfigurationsOperations(object):
         :type cluster_resource_name: str
         :param cluster_name: The name of the kubernetes cluster.
         :type cluster_name: str
-        :param api_version: The API version to be used with the HTTP request.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -353,7 +346,7 @@ class SourceControlConfigurationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
