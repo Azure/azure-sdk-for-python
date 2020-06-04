@@ -23,7 +23,7 @@ DEPENDENCIES = [
     'azure-mgmt-resource',
     'azure-mgmt-storage',
     'azure-mgmt-keyvault'
-] + [] if sys.version_info.major < 3 else [ 'aiohttp' ]
+]
 
 setup(
     name = "azure-sdk-tools",
@@ -41,6 +41,6 @@ setup(
         ],
     },
     extras_require={
-        ":python_version>='3.5'": ['pytest-asyncio>=0.9.0']
+        ":python_version>='3.5'": ['pytest-asyncio>=0.9.0', 'aiohttp']
     }
 )
