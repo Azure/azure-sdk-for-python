@@ -22,7 +22,12 @@
 #   private_endpoint_connections: 4/4
 #   private_link_resources: 2/2
 
-import asyncio
+try:
+  import asyncio
+except:
+  raise unittest.SkipTest("Skipping test - no asyncio")
+
+
 import time
 import unittest
 
