@@ -73,7 +73,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                                                        storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-premium')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
-        create_params.properties.tier = Tier.premium
+        create_params.properties.tier = Tier.standard
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
