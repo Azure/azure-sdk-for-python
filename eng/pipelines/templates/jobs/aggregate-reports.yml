@@ -11,10 +11,14 @@ resources:
 trigger: none
 pr: none
 
+
 jobs:
 - job: 'ValidateDependencies'
   variables:
+    Skip.MyPy: true
+    Skip.Pylint: true
   - template: ../variables/globals.yml
+
 
   pool:
     vmImage: 'windows-2019'
