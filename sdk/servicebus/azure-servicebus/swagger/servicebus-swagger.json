@@ -271,7 +271,7 @@
       },
       "xml": {
         "name": "CountDetails",
-        "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus/connect"
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       }
     },
     "QueueDescription": {

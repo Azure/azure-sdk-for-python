@@ -38,7 +38,7 @@ class AuthorizationRule(msrest.serialization.Model):
         'rights': {'key': 'Rights', 'type': '[str]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'AuthorizationRule', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
@@ -189,7 +189,7 @@ class MessageCountDetails(msrest.serialization.Model):
         'transfer_message_count': {'key': 'TransferMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
     }
     _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'
+        'name': 'CountDetails', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
@@ -273,7 +273,7 @@ class QueueDescription(msrest.serialization.Model):
 
     _attribute_map = {
         'queue_name': {'key': 'QueueName', 'type': 'str'},
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -293,7 +293,7 @@ class QueueDescription(msrest.serialization.Model):
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
@@ -340,6 +340,210 @@ class QueueDescription(msrest.serialization.Model):
         self.requires_session = requires_session
         self.status = status
         self.support_ordering = support_ordering
+
+
+class QueueDescriptionEntry(msrest.serialization.Model):
+    """Represents an entry in the feed when querying queues.
+
+    :param base: Base URL for the query.
+    :type base: str
+    :param id: The URL of the GET request.
+    :type id: str
+    :param title: The name of the queue.
+    :type title: ~azure.service._control_client2.models.ResponseTitle
+    :param published: The timestamp for when this queue was published.
+    :type published: ~datetime.datetime
+    :param updated: The timestamp for when this queue was last updated.
+    :type updated: ~datetime.datetime
+    :param author: The author that created this resource.
+    :type author: ~azure.service._control_client2.models.ResponseAuthor
+    :param link: The URL for the HTTP request.
+    :type link: ~azure.service._control_client2.models.ResponseLink
+    :param content: The QueueDescription.
+    :type content: ~azure.service._control_client2.models.QueueDescriptionEntryContent
+    """
+
+    _attribute_map = {
+        'base': {'key': 'base', 'type': 'str', 'xml': {'name': 'base', 'attr': True, 'prefix': 'xml'}},
+        'id': {'key': 'id', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'ResponseTitle'},
+        'published': {'key': 'published', 'type': 'iso-8601'},
+        'updated': {'key': 'updated', 'type': 'iso-8601'},
+        'author': {'key': 'author', 'type': 'ResponseAuthor'},
+        'link': {'key': 'link', 'type': 'ResponseLink'},
+        'content': {'key': 'content', 'type': 'QueueDescriptionEntryContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        *,
+        base: Optional[str] = None,
+        id: Optional[str] = None,
+        title: Optional["ResponseTitle"] = None,
+        published: Optional[datetime.datetime] = None,
+        updated: Optional[datetime.datetime] = None,
+        author: Optional["ResponseAuthor"] = None,
+        link: Optional["ResponseLink"] = None,
+        content: Optional["QueueDescriptionEntryContent"] = None,
+        **kwargs
+    ):
+        super(QueueDescriptionEntry, self).__init__(**kwargs)
+        self.base = base
+        self.id = id
+        self.title = title
+        self.published = published
+        self.updated = updated
+        self.author = author
+        self.link = link
+        self.content = content
+
+
+class QueueDescriptionEntryContent(msrest.serialization.Model):
+    """The QueueDescription.
+
+    :param type: Type of content in queue response.
+    :type type: str
+    :param queue_description: Description of a Service Bus queue resource.
+    :type queue_description: ~azure.service._control_client2.models.QueueDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'queue_description': {'key': 'QueueDescription', 'type': 'QueueDescription'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        queue_description: Optional["QueueDescription"] = None,
+        **kwargs
+    ):
+        super(QueueDescriptionEntryContent, self).__init__(**kwargs)
+        self.type = type
+        self.queue_description = queue_description
+
+
+class QueueDescriptionFeed(msrest.serialization.Model):
+    """Response from listing Service Bus queues.
+
+    :param id: URL of the list queues query.
+    :type id: str
+    :param title: The entity type for the feed.
+    :type title: str
+    :param updated: Datetime of the query.
+    :type updated: ~datetime.datetime
+    :param entry: Queue entries.
+    :type entry: list[~azure.service._control_client2.models.QueueDescriptionEntry]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'updated': {'key': 'updated', 'type': 'iso-8601'},
+        'entry': {'key': 'entry', 'type': '[QueueDescriptionEntry]'},
+    }
+    _xml_map = {
+        'name': 'feed', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        title: Optional[str] = None,
+        updated: Optional[datetime.datetime] = None,
+        entry: Optional[List["QueueDescriptionEntry"]] = None,
+        **kwargs
+    ):
+        super(QueueDescriptionFeed, self).__init__(**kwargs)
+        self.id = id
+        self.title = title
+        self.updated = updated
+        self.entry = entry
+
+
+class QueueDescriptionResponse(msrest.serialization.Model):
+    """The response from a Queue_Get operation.
+
+    :param id: The URL of the GET request.
+    :type id: str
+    :param title: The name of the queue.
+    :type title: str
+    :param published: The timestamp for when this queue was published.
+    :type published: str
+    :param updated: The timestamp for when this queue was last updated.
+    :type updated: str
+    :param author: The author that created this resource.
+    :type author: ~azure.service._control_client2.models.ResponseAuthor
+    :param link: The URL for the HTTP request.
+    :type link: ~azure.service._control_client2.models.ResponseLink
+    :param content: Contents of a Queue_Get response.
+    :type content: ~azure.service._control_client2.models.QueueDescriptionResponseContent
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'published': {'key': 'published', 'type': 'str'},
+        'updated': {'key': 'updated', 'type': 'str'},
+        'author': {'key': 'author', 'type': 'ResponseAuthor'},
+        'link': {'key': 'link', 'type': 'ResponseLink'},
+        'content': {'key': 'content', 'type': 'QueueDescriptionResponseContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        title: Optional[str] = None,
+        published: Optional[str] = None,
+        updated: Optional[str] = None,
+        author: Optional["ResponseAuthor"] = None,
+        link: Optional["ResponseLink"] = None,
+        content: Optional["QueueDescriptionResponseContent"] = None,
+        **kwargs
+    ):
+        super(QueueDescriptionResponse, self).__init__(**kwargs)
+        self.id = id
+        self.title = title
+        self.published = published
+        self.updated = updated
+        self.author = author
+        self.link = link
+        self.content = content
+
+
+class QueueDescriptionResponseContent(msrest.serialization.Model):
+    """Contents of a Queue_Get response.
+
+    :param type: Type of content in queue response.
+    :type type: str
+    :param queue_description: Description of a Service Bus queue resource.
+    :type queue_description: ~azure.service._control_client2.models.QueueDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'queue_description': {'key': 'QueueDescription', 'type': 'QueueDescription'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        queue_description: Optional["QueueDescription"] = None,
+        **kwargs
+    ):
+        super(QueueDescriptionResponseContent, self).__init__(**kwargs)
+        self.type = type
+        self.queue_description = queue_description
 
 
 class QueueRuntimeInfo(msrest.serialization.Model):
@@ -395,6 +599,79 @@ class QueueRuntimeInfo(msrest.serialization.Model):
         self.size_in_bytes = size_in_bytes
         self.message_count = message_count
         self.message_count_details = message_count_details
+
+
+class ResponseAuthor(msrest.serialization.Model):
+    """The author that created this resource.
+
+    :param name: The Service Bus namespace.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResponseAuthor, self).__init__(**kwargs)
+        self.name = name
+
+
+class ResponseLink(msrest.serialization.Model):
+    """The URL for the HTTP request.
+
+    :param href: The URL of the GET request.
+    :type href: str
+    :param rel: What the link href is relative to.
+    :type rel: str
+    """
+
+    _attribute_map = {
+        'href': {'key': 'href', 'type': 'str', 'xml': {'attr': True}},
+        'rel': {'key': 'rel', 'type': 'str', 'xml': {'attr': True}},
+    }
+
+    def __init__(
+        self,
+        *,
+        href: Optional[str] = None,
+        rel: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResponseLink, self).__init__(**kwargs)
+        self.href = href
+        self.rel = rel
+
+
+class ResponseTitle(msrest.serialization.Model):
+    """The title of the response.
+
+    :param type: Type of value.
+    :type type: str
+    :param title: Contents of the title.
+    :type title: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'title': {'key': 'title', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResponseTitle, self).__init__(**kwargs)
+        self.type = type
+        self.title = title
 
 
 class ServiceBusManagementError(msrest.serialization.Model):
@@ -463,7 +740,7 @@ class TopicDescription(msrest.serialization.Model):
 
     _attribute_map = {
         'topic_name': {'key': 'TopicName', 'type': 'str'},
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -476,7 +753,7 @@ class TopicDescription(msrest.serialization.Model):
         'user_metadata': {'key': 'UserMetadata', 'type': 'str'},
     }
     _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'TopicDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
