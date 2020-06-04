@@ -17,7 +17,7 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeRequest,
+    AnalyzeTextRequest,
     AnalyzeResult,
     CorsOptions,
     EntityRecognitionSkill,

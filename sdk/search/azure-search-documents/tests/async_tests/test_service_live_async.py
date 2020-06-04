@@ -20,7 +20,7 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeRequest,
+    AnalyzeTextRequest,
     AnalyzeResult,
     CorsOptions,
     EntityRecognitionSkill,
