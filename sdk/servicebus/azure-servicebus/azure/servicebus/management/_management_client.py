@@ -21,7 +21,7 @@ from .._base_handler import ServiceBusSharedKeyCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription, QueueRuntimeInfo
+    QueueDescription, QueueRuntimeInfo, MessageCountDetails
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from ._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from . import _constants as constants
@@ -55,6 +55,10 @@ def _convert_xml_to_object(queue_name, et, class_):
     qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
     obj = class_.deserialize(qc_ele)
     obj.queue_name = queue_name
+
+    if class_ == QueueRuntimeInfo:  # TODO: This is a workaround. Should be removed after solution is found.
+        count_ele = qc_ele.find(constants.COUNT_DETAILS_TAG)
+        cast(QueueRuntimeInfo, obj).message_count_details = MessageCountDetails.deserialize(count_ele)
     return obj
 
 
