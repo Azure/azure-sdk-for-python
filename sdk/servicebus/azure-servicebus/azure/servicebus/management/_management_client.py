@@ -7,23 +7,25 @@ from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Type
 from xml.etree.ElementTree import ElementTree, Element
 
+from msrest.serialization import Model
+from msrest.exceptions import ValidationError
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
-from azure.servicebus import ServiceBusSharedKeyCredential
-from msrest.serialization import Model
-from msrest.exceptions import ValidationError
 
 from .._common.constants import JWT_TOKEN_SCOPE
 from .._common.utils import parse_conn_str
+from .._base_handler import ServiceBusSharedKeyCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
+from ._model_workaround import QUEUE_UPDATE_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from . import _constants as constants
+
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
@@ -60,13 +62,8 @@ class ServiceBusManagementClient:
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace
 
     :param str fully_qualified_namespace:
-    :param credential:
+    :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: Union[TokenCredential, ServiceBusSharedKeyCredential]
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword List[HTTPPolicy] policies: If omitted, the standard pipeline is used.
-
-    For keyword arguments, refer to TODO: add a link here
     """
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
@@ -107,15 +104,12 @@ class ServiceBusManagementClient:
         # type: (str, Any) -> ServiceBusManagementClient
         """Create a client from connection string
 
-        :param str connection_string:
-        :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-        :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-        :keyword List[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+        :param str connection_string: The connection string of the Service Bus Namespace
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(connection_string)
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//")+2:]
-        return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
+        return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
     def _get_queue_object(self, queue_name, class_):
         # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
@@ -131,7 +125,7 @@ class ServiceBusManagementClient:
         return _convert_xml_to_object(queue_name, et, class_)
 
     def _list_queues(self, skip, max_count, class_):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo])
+        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -170,25 +164,24 @@ class ServiceBusManagementClient:
     def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
         """Create a queue
-        
+
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values decided by the
          ServiceBus. Use a `QueueDesceiption` if you want to set queue properties other than the queue name.
         :type queue: Union[str, QueueDescription].
-        :returns: `QueueDescription` returned from ServiceBus.
+        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
         """
-        queue_name = None
         try:
-            queue_name = queue.queue_name # type: ignore
-            to_create = copy(queue)
-            to_create.queue_name = None            
+            queue_name = queue.queue_name  # type: ignore
+            to_create = copy(queue)  # type: ignore
+            to_create.queue_name = None  # type: ignore
         except AttributeError:
-            queue_name = queue
+            queue_name = queue  # type: ignore
             to_create = QueueDescription()  # Use an empty queue description.
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=to_create,
+                queue_description=to_create,  # type: ignore
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -196,7 +189,7 @@ class ServiceBusManagementClient:
             with _handle_response_error():
                 et = cast(
                     ElementTree,
-                    self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
+                    self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)  # type: ignore
                 )
         except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
@@ -204,26 +197,32 @@ class ServiceBusManagementClient:
                 raise_with_traceback(ValueError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
             raise_with_traceback(TypeError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
-        return _convert_xml_to_object(queue_name, et, QueueDescription)
+        return _convert_xml_to_object(queue_name, et, QueueDescription)  # type: ignore
 
     def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
-        """
+        """Update a queue
 
         :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
-        :type queue_description: QueueDescription
+        :type queue_description: ~azure.servicebus.management.QueueDescription
+        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
         """
 
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
 
-        to_update = copy(queue_description)
-        to_update.queue_name = None
+        to_update = QueueDescription()
+
+        for attr in QUEUE_UPDATE_SERIALIZE_ATTRIBUTES:
+            setattr(to_update, attr, getattr(queue_description, attr, None))
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
+
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=to_update
+                queue_description=to_update,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -264,7 +263,7 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return self._list_queues(skip, max_count, QueueDescription)
+        return self._list_queues(skip, max_count, class_=QueueDescription)
 
     def list_queues_runtime_info(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueRuntimeInfo]
@@ -274,4 +273,4 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return self._list_queues(skip, max_count, QueueRuntimeInfo)
+        return self._list_queues(skip, max_count, class_=QueueRuntimeInfo)
