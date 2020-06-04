@@ -32,7 +32,6 @@ except ImportError:
     from urllib.parse import urlparse
 
 from typing import Any, Callable, Union, List, Optional, Tuple, TypeVar, Generic
-from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
@@ -140,8 +139,7 @@ class LROPoller(Generic[PollingReturnType]):
     :param client: A pipeline service client
     :type client: ~azure.core.PipelineClient
     :param initial_response: The initial call response
-    :type initial_response:
-     ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
     :param deserialization_callback: A callback that takes a Response and return a deserialized object.
                                      If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
@@ -150,7 +148,7 @@ class LROPoller(Generic[PollingReturnType]):
     """
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, HttpResponse, Callable, PollingMethod[PollingReturnType]) -> None
+        # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
