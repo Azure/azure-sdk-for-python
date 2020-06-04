@@ -149,6 +149,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      'Disabled'. Default value: "Enabled" .
     :type public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "LogAnalytics" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
     """
 
     _validation = {
@@ -198,6 +204,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -223,6 +230,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.private_link_scoped_resources = None
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
+        self.ingestion_mode = kwargs.get('ingestion_mode', "LogAnalytics")
 
 
 class CloudError(Model):

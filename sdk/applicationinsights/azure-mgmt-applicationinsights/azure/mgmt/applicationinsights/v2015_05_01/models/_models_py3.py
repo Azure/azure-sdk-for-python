@@ -236,6 +236,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.PrivateLinkScopedResource]
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "ApplicationInsights" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2015_05_01.models.IngestionMode
     """
 
     _validation = {
@@ -280,9 +286,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
         'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, retention_in_days: int=90, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, retention_in_days: int=90, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, ingestion_mode="ApplicationInsights", **kwargs) -> None:
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -302,6 +309,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.disable_ip_masking = disable_ip_masking
         self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
         self.private_link_scoped_resources = None
+        self.ingestion_mode = ingestion_mode
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):
