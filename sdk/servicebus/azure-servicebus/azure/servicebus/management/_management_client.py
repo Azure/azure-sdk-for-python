@@ -7,7 +7,7 @@ from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Type
 from xml.etree.ElementTree import ElementTree, Element
 
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
@@ -198,11 +198,11 @@ class ServiceBusManagementClient:
                     ElementTree,
                     self._impl.queue.put(queue_name, request_body, api_version=constants.API_VERSION)
                 )
-        except ValidationError as e:
+        except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
-            if isinstance(queue, str) or (isinstance(queue, QueueDescription) and isinstance(queue.queue_name, str)):
-                raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
-            raise TypeError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
+            if isinstance(queue, str) or isinstance(queue, QueueDescription):
+                raise_with_traceback(ValueError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
+            raise_with_traceback(TypeError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
         return _convert_xml_to_object(queue_name, et, QueueDescription)
 
@@ -215,8 +215,9 @@ class ServiceBusManagementClient:
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
         :type queue_description: QueueDescription
         """
-        if not queue_description.queue_name:
-            raise ValueError("queue_description must have a non-empty queue_name")
+
+        if not isinstance(queue_description, QueueDescription):
+            raise TypeError("queue_description must be of type QueueDescription")
 
         to_update = copy(queue_description)
         to_update.queue_name = None
@@ -227,15 +228,20 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            et = cast(
-                ElementTree,
-                self._impl.queue.put(
-                queue_description.queue_name,  # type: ignore
-                request_body,
-                api_version=constants.API_VERSION,
-                if_match="*"
+            try:
+                et = cast(
+                    ElementTree,
+                    self._impl.queue.put(
+                    queue_description.queue_name,  # type: ignore
+                    request_body,
+                    api_version=constants.API_VERSION,
+                    if_match="*"
+                    )
                 )
-            )
+            except ValidationError:
+                # post-hoc try to give a somewhat-justifiable failure reason.
+                raise_with_traceback(ValueError, message="queue_description must be a QueueDescription with valid fields, including non-empty string queue name")
+
         return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
 
     def delete_queue(self, queue_name):
