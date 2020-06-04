@@ -2,10 +2,10 @@
 
 ## 1.4.0b4 (Unreleased)
 - `ManagedIdentityCredential` can configure a user-assigned identity using any
-  identifier supported by the current hosting environment. To configure an
-  identity, provide its identifier in the keyword argument `client_id`. If the
-  identifier is **not** the identity's client ID, also provide its parameter
-  name in the hosting environment, in the `client_id_type` keyword argument.
+  identifier supported by the current hosting environment. To specify an
+  identity by its client ID, continue using the `client_id` argument. To
+  specify an identity by any other ID, use the `identity_config` argument,
+  for example: `ManagedIdentityCredential(identity_config={"object_id": ".."})`
   ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
 - `AzureCliCredential` and `VSCodeCredential`, which enable authenticating as
   the identity signed in to the Azure CLI and Visual Studio Code, respectively,

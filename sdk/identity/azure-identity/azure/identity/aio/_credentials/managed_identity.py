@@ -24,15 +24,14 @@ if TYPE_CHECKING:
 class ManagedIdentityCredential(AsyncCredentialBase):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
-    This credential defaults to using a system-assigned identity. Use the `client_id` keyword argument to specify a
-    user-assigned identity.
+    This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
+    the keyword arguments.
 
-    :keyword str client_id: optional identifier of a user-assigned identity. Typically this should be the identity's
-        client ID. To configure an identity using another identifier, specify the appropriate parameter name for your
-        hosting environment in `client_id_type`.
-    :keyword str client_id_type: the managed identity parameter name for the value of `client_id`. Useful only when
-        that value is the identity's object or Azure Resource ID. Valid values vary by hosting environment. Consult
-        your hosting environment's documentation to determine what parameter names it expects.
+    :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
+      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+      learn what values it expects.
+    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -134,7 +133,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             resource = scopes[0]
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
-            params = {"api-version": "2018-02-01", "resource": resource, **self._user_assigned_identity}
+            params = {"api-version": "2018-02-01", "resource": resource, **self._identity_config}
 
             try:
                 token = await self._client.request_token(scopes, method="GET", params=params)
@@ -144,7 +143,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
                 if ex.status_code == 400:
                     self._endpoint_available = False
                     message = "ManagedIdentityCredential authentication unavailable. "
-                    if self._user_assigned_identity:
+                    if self._identity_config:
                         message += "The requested identity has not been assigned to this resource."
                     else:
                         message += "No identity has been assigned to this resource."
@@ -199,9 +198,9 @@ class MsiCredential(_AsyncManagedIdentityBase):
         return token
 
     async def _request_app_service_token(self, scopes, resource, secret):
-        params = {"api-version": "2017-09-01", "resource": resource, **self._user_assigned_identity}
+        params = {"api-version": "2017-09-01", "resource": resource, **self._identity_config}
         return await self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
 
     async def _request_legacy_token(self, scopes, resource):
-        form_data = {"resource": resource, **self._user_assigned_identity}
+        form_data = {"resource": resource, **self._identity_config}
         return await self._client.request_token(scopes, method="POST", form_data=form_data)

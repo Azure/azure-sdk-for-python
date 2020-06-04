@@ -164,13 +164,14 @@ async def test_retries():
         assert mock_send.call_count == 2 + total_retries
 
 
-@pytest.mark.parametrize("client_id_type", ("client_id", "object_id", "mi_res_id"))
-async def test_client_id_type(client_id_type):
+async def test_identity_config():
+    param_name, param_value = "foo", "bar"
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
     scope = "scope"
     client_id = "some-guid"
+
     transport = async_validating_transport(
         requests=[
             Request(base_url=Endpoints.IMDS),
@@ -178,7 +179,7 @@ async def test_client_id_type(client_id_type):
                 base_url=Endpoints.IMDS,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_params={"api-version": "2018-02-01", client_id_type: client_id, "resource": scope},
+                required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
             ),
         ],
         responses=[
@@ -197,7 +198,7 @@ async def test_client_id_type(client_id_type):
         ],
     )
 
-    credential = ImdsCredential(client_id=client_id, client_id_type=client_id_type, transport=transport)
+    credential = ImdsCredential(client_id=client_id, identity_config={param_name: param_value}, transport=transport)
     token = await credential.get_token(scope)
 
     assert token == expected_token
