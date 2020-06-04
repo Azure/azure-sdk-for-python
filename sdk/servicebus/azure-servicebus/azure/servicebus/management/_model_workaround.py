@@ -8,19 +8,25 @@ from msrest.serialization import Model
 from ._generated.models import QueueDescription
 
 
-QUEUE_UPDATE_SERIALIZE_ATTRIBUTES = (
-    "lock_duration",
-    "max_size_in_megabytes",
-    "requires_duplicate_detection",
+QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES = (
+    'lock_duration',
+    'max_size_in_megabytes',
+    'requires_duplicate_detection',
     'requires_session',
     'default_message_time_to_live',
     'dead_lettering_on_message_expiration',
     'duplicate_detection_history_time_window',
     'max_delivery_count',
     'enable_batched_operations',
+    'is_anonymous_accessible',
+    'authorization_rules',
     'status',
+    'created_at',
+    'support_ordering',
     'auto_delete_on_idle',
-    'enable_partitioning'
+    'enable_partitioning',
+    'entity_availability_status',
+    'enable_express',
 )
 
 

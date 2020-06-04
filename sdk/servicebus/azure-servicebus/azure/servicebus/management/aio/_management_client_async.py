@@ -8,6 +8,7 @@ from xml.etree.ElementTree import ElementTree, Element
 
 from msrest.exceptions import ValidationError
 from msrest.serialization import Model
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, AsyncBearerTokenCredentialPolicy
@@ -23,7 +24,7 @@ from .._generated.aio._service_bus_management_client_async import ServiceBusMana
     as ServiceBusManagementClientImpl
 from .. import _constants as constants
 from .._management_client import _convert_xml_to_object, _handle_response_error
-from .._model_workaround import QUEUE_UPDATE_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
+from .._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 
 
@@ -142,7 +143,7 @@ class ServiceBusManagementClient:
          of the created queue. Other properties of the created queue will have default values decided by the
          ServiceBus. Use a `QueueDesceiption` if you want to set queue properties other than the queue name.
         :type queue: Union[str, QueueDescription].
-        :returns: `QueueDescription` returned from ServiceBus.
+        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
         """
         try:
             queue_name = queue.queue_name  # type: ignore
@@ -163,20 +164,25 @@ class ServiceBusManagementClient:
                 et = cast(
                     ElementTree,
                     await self._impl.queue.put(
-                        queue_name, request_body, api_version=constants.API_VERSION  # type: ignore
-                    )
+                        queue_name,  # type: ignore
+                        request_body, api_version=constants.API_VERSION)
                 )
-        except ValidationError as e:
+        except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
-            if isinstance(queue, str) or (isinstance(queue, QueueDescription) and isinstance(queue.queue_name, str)):
-                raise ValueError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
-            raise TypeError("queue must be a non-empty str or a QueueDescription with non-empty str queue_name", e)
+            if isinstance(queue, (str, QueueDescription)):
+                raise_with_traceback(
+                    ValueError,
+                    message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
+            raise_with_traceback(
+                TypeError,
+                message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
         return _convert_xml_to_object(queue_name, et, QueueDescription)  # type: ignore
 
     async def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
         """Update a queue
+
         :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
@@ -184,30 +190,41 @@ class ServiceBusManagementClient:
         :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
         """
 
-        if not queue_description.queue_name:
-            raise ValueError("queue_description must have a non-empty queue_name")
+        if not isinstance(queue_description, QueueDescription):
+            raise TypeError("queue_description must be of type QueueDescription")
 
         to_update = QueueDescription()
 
-        for attr in QUEUE_UPDATE_SERIALIZE_ATTRIBUTES:
+        for attr in QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES:
             setattr(to_update, attr, getattr(queue_description, attr, None))
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
-                queue_description=to_update
+                queue_description=to_update,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            et = cast(
-                ElementTree,
-                await self._impl.queue.put(
-                    queue_description.queue_name, request_body, api_version=constants.API_VERSION, if_match="*"
+            try:
+                et = cast(
+                    ElementTree,
+                    await self._impl.queue.put(
+                    queue_description.queue_name,  # type: ignore
+                    request_body,
+                    api_version=constants.API_VERSION,
+                    if_match="*"
+                    )
                 )
-            )
-        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
+            except ValidationError:
+                # post-hoc try to give a somewhat-justifiable failure reason.
+                raise_with_traceback(
+                    ValueError,
+                    message="queue_description must be a QueueDescription with valid fields, "
+                            "including non-empty string queue name")
+
+        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)  # type: ignore
 
     async def delete_queue(self, queue_name):
         # type: (str) -> None

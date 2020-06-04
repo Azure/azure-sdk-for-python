@@ -23,7 +23,7 @@ from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription, QueueRuntimeInfo
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
-from ._model_workaround import QUEUE_UPDATE_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
+from ._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from . import _constants as constants
 
 
@@ -193,9 +193,13 @@ class ServiceBusManagementClient:
                 )
         except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
-            if isinstance(queue, str) or isinstance(queue, QueueDescription):
-                raise_with_traceback(ValueError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
-            raise_with_traceback(TypeError, message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
+            if isinstance(queue, (str, QueueDescription)):
+                raise_with_traceback(
+                    ValueError,
+                    message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
+            raise_with_traceback(
+                TypeError,
+                message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
         return _convert_xml_to_object(queue_name, et, QueueDescription)  # type: ignore
 
@@ -215,7 +219,7 @@ class ServiceBusManagementClient:
 
         to_update = QueueDescription()
 
-        for attr in QUEUE_UPDATE_SERIALIZE_ATTRIBUTES:
+        for attr in QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES:
             setattr(to_update, attr, getattr(queue_description, attr, None))
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -239,9 +243,12 @@ class ServiceBusManagementClient:
                 )
             except ValidationError:
                 # post-hoc try to give a somewhat-justifiable failure reason.
-                raise_with_traceback(ValueError, message="queue_description must be a QueueDescription with valid fields, including non-empty string queue name")
+                raise_with_traceback(
+                    ValueError,
+                    message="queue_description must be a QueueDescription with valid fields, "
+                            "including non-empty string queue name")
 
-        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)
+        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)  # type: ignore
 
     def delete_queue(self, queue_name):
         # type: (str) -> None
