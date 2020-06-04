@@ -465,13 +465,13 @@ class SearchIndex(msrest.serialization.Model):
         'scoring_profiles': {'key': 'scoringProfiles', 'type': '[ScoringProfile]'},
         'default_scoring_profile': {'key': 'defaultScoringProfile', 'type': 'str'},
         'cors_options': {'key': 'corsOptions', 'type': 'CorsOptions'},
-        'suggesters': {'key': 'suggesters', 'type': '[Suggester]'},
+        'suggesters': {'key': 'suggesters', 'type': '[SearchSuggester]'},
         'analyzers': {'key': 'analyzers', 'type': '[LexicalAnalyzer]'},
         'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
         'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
         'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
-        'similarity': {'key': 'similarity', 'type': 'Similarity'},
+        'similarity': {'key': 'similarity', 'type': 'SimilarityAlgorithm'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 
