@@ -9,10 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._list_operations import ListOperations
+from ._get_operations import GetOperations
 from ._operations import Operations
 from ._resource_graph_client_operations import ResourceGraphClientOperationsMixin
 
 __all__ = [
+    'ListOperations',
+    'GetOperations',
     'Operations',
     'ResourceGraphClientOperationsMixin',
 ]
