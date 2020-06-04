@@ -271,7 +271,7 @@
       },
       "xml": {
         "name": "CountDetails",
-        "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
+        "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus/connect"
       }
     },
     "QueueDescription": {
@@ -603,11 +603,7 @@
           }
         },
         "MessageCountDetails": {
-          "$ref": "#/definitions/MessageCountDetails",
-          "xml": {
-            "name": "CountDetails",
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/MessageCountDetails"
         }
       }
     },
