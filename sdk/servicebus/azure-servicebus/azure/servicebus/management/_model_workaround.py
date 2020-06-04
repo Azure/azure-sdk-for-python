@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Dict, Iterable, Any, Type, Optional
+from collections import OrderedDict
 from datetime import timedelta
 from msrest.serialization import Model
 from ._generated.models import QueueDescription
@@ -47,7 +48,7 @@ def avoid_timedelta_overflow(td):
 def adjust_dict_key_sequence(dct, keys):
     # type: (Dict[str, Any], Iterable[str]) -> Dict[str, Any]
 
-    result = dict()
+    result = OrderedDict()
     for key in keys:
         result[key] = dct.pop(key)
     result.update(dct)
