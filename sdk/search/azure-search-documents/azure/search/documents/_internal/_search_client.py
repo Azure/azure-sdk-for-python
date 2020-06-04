@@ -327,7 +327,7 @@ class SearchClient(HeadersMixin):
                 :caption: Upload new documents to an index
         """
         batch = IndexDocumentsBatch()
-        batch.add_upload_documents(documents)
+        batch.add_upload_actions(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
@@ -360,7 +360,7 @@ class SearchClient(HeadersMixin):
                 :caption: Delete existing documents to an index
         """
         batch = IndexDocumentsBatch()
-        batch.add_delete_documents(documents)
+        batch.add_delete_actions(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
@@ -389,7 +389,7 @@ class SearchClient(HeadersMixin):
                 :caption: Merge fields into existing documents to an index
         """
         batch = IndexDocumentsBatch()
-        batch.add_merge_documents(documents)
+        batch.add_merge_actions(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
@@ -409,7 +409,7 @@ class SearchClient(HeadersMixin):
         :rtype:  List[IndexingResult]
         """
         batch = IndexDocumentsBatch()
-        batch.add_merge_or_upload_documents(documents)
+        batch.add_merge_or_upload_actions(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
