@@ -36,31 +36,39 @@ def _test_file(file_name, root_dir='./samples/async_samples'):
     assert err is None
 
 # Async sample tests
-
+@pytest.mark.live_test_only
 def test_sample_authentication_async():
     _test_file('sample_authentication_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_get_bounding_boxes_async():
     _test_file('sample_get_bounding_boxes_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_manage_custom_models_async():
     _test_file('sample_manage_custom_models_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_content_async():
     _test_file('sample_recognize_content_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_custom_forms_async():
     _test_file('sample_recognize_custom_forms_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_receipts_from_url_async():
     _test_file('sample_recognize_receipts_from_url_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_receipts_async():
     _test_file('sample_recognize_receipts_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_train_model_with_labels_async():
     _test_file('sample_train_model_with_labels_async.py')
 
+@pytest.mark.live_test_only
 def test_sample_train_model_without_labels_async():
     _test_file('sample_train_model_without_labels_async.py')
 

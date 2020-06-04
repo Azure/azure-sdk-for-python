@@ -18,6 +18,7 @@ USAGE:
 import subprocess
 import sys
 import os
+import pytest
 
 def run(cmd):
     os.environ['PYTHONUNBUFFERED'] = "1"
@@ -30,35 +31,44 @@ def run(cmd):
     return proc.returncode, stdout, stderr
 
 def _test_file(file_name, root_dir='./samples'):
-    code, _, err = run([sys.executable, root_dir + '/' + file_name])
+    code, out, err = run([sys.executable, root_dir + '/' + file_name])
     assert code == 0
-    print(_)
+    print(out)
     assert err is None
 
+@pytest.mark.live_test_only
 def test_sample_authentication():
     _test_file('sample_authentication.py')
 
+@pytest.mark.live_test_only
 def test_sample_get_bounding_boxes():
     _test_file('sample_get_bounding_boxes.py')
 
+@pytest.mark.live_test_only
 def test_sample_manage_custom_models():
     _test_file('sample_manage_custom_models.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_content():
     _test_file('sample_recognize_content.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_custom_forms():
     _test_file('sample_recognize_custom_forms.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_receipts_from_url():
     _test_file('sample_recognize_receipts_from_url.py')
 
+@pytest.mark.live_test_only
 def test_sample_recognize_receipts():
     _test_file('sample_recognize_receipts.py')
 
+@pytest.mark.live_test_only
 def test_sample_train_model_with_labels():
     _test_file('sample_train_model_with_labels.py')
 
+@pytest.mark.live_test_only
 def test_sample_train_model_without_labels():
     _test_file('sample_train_model_without_labels.py')
 
