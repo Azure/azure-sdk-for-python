@@ -22,14 +22,13 @@
 #   private_endpoint_connections: 4/4
 #   private_link_resources: 2/2
 
+import time
+import unittest
+
 try:
   import asyncio
 except:
   raise unittest.SkipTest("Skipping test - no asyncio")
-
-
-import time
-import unittest
 
 import azure.mgmt.appconfiguration
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
