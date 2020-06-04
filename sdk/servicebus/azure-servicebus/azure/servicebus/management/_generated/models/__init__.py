@@ -14,7 +14,15 @@ try:
     from ._models_py3 import CreateTopicBodyContent
     from ._models_py3 import MessageCountDetails
     from ._models_py3 import QueueDescription
+    from ._models_py3 import QueueDescriptionEntry
+    from ._models_py3 import QueueDescriptionEntryContent
+    from ._models_py3 import QueueDescriptionFeed
+    from ._models_py3 import QueueDescriptionResponse
+    from ._models_py3 import QueueDescriptionResponseContent
     from ._models_py3 import QueueRuntimeInfo
+    from ._models_py3 import ResponseAuthor
+    from ._models_py3 import ResponseLink
+    from ._models_py3 import ResponseTitle
     from ._models_py3 import ServiceBusManagementError
     from ._models_py3 import TopicDescription
 except (SyntaxError, ImportError):
@@ -25,7 +33,15 @@ except (SyntaxError, ImportError):
     from ._models import CreateTopicBodyContent  # type: ignore
     from ._models import MessageCountDetails  # type: ignore
     from ._models import QueueDescription  # type: ignore
+    from ._models import QueueDescriptionEntry  # type: ignore
+    from ._models import QueueDescriptionEntryContent  # type: ignore
+    from ._models import QueueDescriptionFeed  # type: ignore
+    from ._models import QueueDescriptionResponse  # type: ignore
+    from ._models import QueueDescriptionResponseContent  # type: ignore
     from ._models import QueueRuntimeInfo  # type: ignore
+    from ._models import ResponseAuthor  # type: ignore
+    from ._models import ResponseLink  # type: ignore
+    from ._models import ResponseTitle  # type: ignore
     from ._models import ServiceBusManagementError  # type: ignore
     from ._models import TopicDescription  # type: ignore
 
@@ -43,7 +59,15 @@ __all__ = [
     'CreateTopicBodyContent',
     'MessageCountDetails',
     'QueueDescription',
+    'QueueDescriptionEntry',
+    'QueueDescriptionEntryContent',
+    'QueueDescriptionFeed',
+    'QueueDescriptionResponse',
+    'QueueDescriptionResponseContent',
     'QueueRuntimeInfo',
+    'ResponseAuthor',
+    'ResponseLink',
+    'ResponseTitle',
     'ServiceBusManagementError',
     'TopicDescription',
     'AccessRights',

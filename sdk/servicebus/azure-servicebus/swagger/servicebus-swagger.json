@@ -69,7 +69,8 @@
     "AccessRights": {
       "description": "Access rights of the entity",
       "type": "string",
-      "xml":{
+      "xml": {
+        "name": "AccessRights",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "enum": [
@@ -82,29 +83,30 @@
       "description": "Authorization rule of an entity",
       "type": "object",
       "xml": {
+        "name": "AuthorizationRule",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
-        "ClaimType":{
+        "ClaimType": {
           "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "CreatedTime":{
+        "CreatedTime": {
           "type": "string",
           "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "KeyName":{
+        "KeyName": {
           "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "ModifiedTime":{
+        "ModifiedTime": {
           "type": "string",
           "format": "date-time",
           "xml": {
@@ -131,7 +133,7 @@
     "CreateQueueBody": {
       "description": "The request body for creating a queue.",
       "type": "object",
-      "xml":{
+      "xml": {
         "name": "entry",
         "namespace": "http://www.w3.org/2005/Atom"
       },
@@ -162,7 +164,7 @@
     "CreateTopicBody": {
       "description": "The request body for creating a topic.",
       "type": "object",
-      "xml":{
+      "xml": {
         "name": "entry",
         "namespace": "http://www.w3.org/2005/Atom"
       },
@@ -193,7 +195,7 @@
     "EntityAvailabilityStatus": {
       "description": "Availibility status of the entity",
       "type": "string",
-      "xml":{
+      "xml": {
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "enum": [
@@ -207,7 +209,7 @@
     "EntityStatus": {
       "description": "Status of a Service Bus resource",
       "type": "string",
-      "xml":{
+      "xml": {
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "enum": [
@@ -268,13 +270,15 @@
         }
       },
       "xml": {
-        "namespace": "http://schemas.microsoft.com/netservices/2011/06/servicebus"
+        "name": "CountDetails",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       }
     },
     "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
       "xml": {
+        "name": "QueueDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -286,14 +290,12 @@
           "description": "Authorization rules for resource.",
           "type": "array",
           "xml": {
+            "name": "AuthorizationRules",
             "wrapped": true,
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           },
           "items": {
-            "$ref": "#/definitions/AuthorizationRule",
-            "xml": {
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            }
+            "$ref": "#/definitions/AuthorizationRule"
           }
         },
         "AutoDeleteOnIdle": {
@@ -336,10 +338,7 @@
           }
         },
         "EntityAvailabilityStatus": {
-          "$ref": "#/definitions/EntityAvailabilityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityAvailabilityStatus"
         },
         "EnableBatchedOperations": {
           "description": "Value that indicates whether server-side batched operations are enabled.",
@@ -406,10 +405,7 @@
           }
         },
         "Status": {
-          "$ref": "#/definitions/EntityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityStatus"
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the queue supports ordering.",
@@ -420,7 +416,144 @@
         }
       }
     },
-    "QueueRuntimeInfo":{
+    "QueueDescriptionEntry": {
+      "description": "Represents an entry in the feed when querying queues",
+      "type": "object",
+      "properties": {
+        "base": {
+          "description": "Base URL for the query.",
+          "type": "string",
+          "xml": {
+            "name": "base",
+            "attribute": true,
+            "prefix": "xml"
+          }
+        },
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string"
+        },
+        "title": {
+          "description": "The name of the queue",
+          "$ref": "#/definitions/ResponseTitle"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string",
+          "format": "date-time"
+        },
+        "author": {
+          "$ref": "#/definitions/ResponseAuthor"
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "The QueueDescription",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "QueueDescription": {
+              "$ref": "#/definitions/QueueDescription"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "QueueDescriptionFeed": {
+      "description": "Response from listing Service Bus queues.",
+      "type": "object",
+      "xml": {
+        "name": "feed",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "id": {
+          "description": "URL of the list queues query.",
+          "type": "string"
+        },
+        "title": {
+          "description": "The entity type for the feed.",
+          "type": "string"
+        },
+        "updated": {
+          "description": "Datetime of the query.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "entry": {
+          "description": "Queue entries.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QueueDescriptionEntry"
+          }
+        }
+      }
+    },
+    "QueueDescriptionResponse": {
+      "description": "The response from a Queue_Get operation",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string"
+        },
+        "title": {
+          "description": "The name of the queue",
+          "type": "string"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string"
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/ResponseAuthor"
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "Contents of a Queue_Get response",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "QueueDescription": {
+              "$ref": "#/definitions/QueueDescription"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "QueueRuntimeInfo": {
       "description": "Service Bus queue metrics.",
       "type": "object",
       "xml": {
@@ -470,11 +603,54 @@
           }
         },
         "MessageCountDetails": {
-          "$ref": "#/definitions/MessageCountDetails",
+          "$ref": "#/definitions/MessageCountDetails"
+        }
+      }
+    },
+    "ResponseAuthor": {
+      "description": "The author that created this resource",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The Service Bus namespace",
+          "type": "string"
+        }
+      }
+    },
+    "ResponseLink": {
+      "description": "The URL for the HTTP request",
+      "type": "object",
+      "properties": {
+        "href": {
+          "description": "The URL of the GET request",
+          "type": "string",
           "xml": {
-            "name": "CountDetails",
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            "attribute": true
           }
+        },
+        "rel": {
+          "description": "What the link href is relative to",
+          "type": "string",
+          "xml": {
+            "attribute": true
+          }
+        }
+      }
+    },
+    "ResponseTitle": {
+      "description": "The title of the response",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of value",
+          "type": "string",
+          "xml": {
+            "attribute": true
+          }
+        },
+        "title": {
+          "description": "Contents of the title.",
+          "type": "string"
         }
       }
     },
@@ -496,6 +672,7 @@
       "description": "Description of a Service Bus topic resource.",
       "type": "object",
       "xml": {
+        "name": "TopicDescription",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
@@ -511,10 +688,7 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           },
           "items": {
-            "$ref": "#/definitions/AuthorizationRule",
-            "xml": {
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            }
+            "$ref": "#/definitions/AuthorizationRule"
           }
         },
         "AutoDeleteOnIdle": {
@@ -568,10 +742,7 @@
           }
         },
         "Status": {
-          "$ref": "#/definitions/EntityStatus",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/EntityStatus"
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the topic supports ordering.",
@@ -637,7 +808,7 @@
         "responses": {
           "200": {
             "description": "OK",
-            "schema":{
+            "schema": {
               "type": "object"
             }
           },
@@ -708,7 +879,7 @@
         "responses": {
           "200": {
             "description": "OK",
-            "schema":{
+            "schema": {
               "type": "object"
             }
           },
@@ -758,7 +929,7 @@
         "responses": {
           "200": {
             "description": "OK",
-            "schema":{
+            "schema": {
               "type": "object"
             }
           },
