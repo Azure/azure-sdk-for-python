@@ -37,14 +37,14 @@ def _test_file(file_name, root_dir='./samples'):
 def test_sample_authentication():
     _test_file('sample_authentication.py')
 
-def test_sample_copy_model():
-    _test_file('sample_copy_model.py')
+# def test_sample_copy_model():
+#     _test_file('sample_copy_model.py')
 
-def test_sample_differentiate_output_models_trained_with_and_without_labels():
-    _test_file('sample_differentiate_output_models_trained_with_and_without_labels.py')
+# def test_sample_differentiate_output_models_trained_with_and_without_labels():
+#     _test_file('sample_differentiate_output_models_trained_with_and_without_labels.py')
 
-def test_sample_get_bounding_boxes():
-    _test_file('sample_get_bounding_boxes.py')
+# def test_sample_get_bounding_boxes():
+#     _test_file('sample_get_bounding_boxes.py')
 
 def test_sample_manage_custom_models():
     _test_file('sample_manage_custom_models.py')
@@ -68,42 +68,6 @@ def test_sample_train_model_without_labels():
     _test_file('sample_train_model_without_labels.py')
 
 
-# Async sample tests
-
-def test_sample_authentication_async():
-    _test_file('sample_authentication_async.py', './samples/async_samples')
-
-def test_sample_copy_model_async():
-    _test_file('sample_copy_model_async.py', '/samples/async_samples')
-
-def test_sample_differentiate_output_models_trained_with_and_without_labels_async():
-    _test_file('sample_differentiate_output_models_trained_with_and_without_labels_async.py', './samples/async_samples')
-
-def test_sample_get_bounding_boxes_async():
-    _test_file('sample_get_bounding_boxes_async.py', './samples/async_samples')
-
-def test_sample_manage_custom_models_async():
-    _test_file('sample_manage_custom_models_async.py', './samples/async_samples')
-
-def test_sample_recognize_content_async():
-    _test_file('sample_recognize_content_async.py', './samples/async_samples')
-
-def test_sample_recognize_custom_forms_async():
-    _test_file('sample_recognize_custom_forms_async.py', './samples/async_samples')
-
-def test_sample_recognize_receipts_from_url_async():
-    _test_file('sample_recognize_receipts_from_url_async.py', './samples/async_samples')
-
-def test_sample_recognize_receipts_async():
-    _test_file('sample_recognize_receipts_async.py', './samples/async_samples')
-
-def test_sample_train_model_with_labels_async():
-    _test_file('sample_train_model_with_labels_async.py', './samples/async_samples')
-
-def test_sample_train_model_without_labels_async():
-    _test_file('sample_train_model_without_labels_async.py', './samples/async_samples')
-
-
 if __name__=='__main__':
     test_sample_authentication()
     test_sample_copy_model()
@@ -116,15 +80,3 @@ if __name__=='__main__':
     test_sample_recognize_receipts()
     test_sample_train_model_with_labels()
     test_sample_train_model_without_labels()
-    # async tests
-    test_sample_authentication_async()
-    test_sample_copy_model_async()
-    test_sample_differentiate_output_models_trained_with_and_without_labels_async()
-    test_sample_get_bounding_boxes_async()
-    test_sample_manage_custom_models_async()
-    test_sample_recognize_content_async()
-    test_sample_recognize_custom_forms_async()
-    test_sample_recognize_receipts_from_url_async()
-    test_sample_recognize_receipts_async()
-    test_sample_train_model_with_labels_async()
-    test_sample_train_model_without_labels_async()
