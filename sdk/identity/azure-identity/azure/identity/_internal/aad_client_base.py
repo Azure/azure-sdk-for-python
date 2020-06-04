@@ -72,6 +72,10 @@ class AadClientBase(ABC):
         pass
 
     @abc.abstractmethod
+    def obtain_token_by_client_secret(self, scopes, secret, **kwargs):
+        pass
+
+    @abc.abstractmethod
     def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
         pass
 
@@ -126,6 +130,19 @@ class AadClientBase(ABC):
             "scope": " ".join(scopes),
         }
 
+        request = HttpRequest(
+            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
+        )
+        return request
+
+    def _get_client_secret_request(self, scopes, secret):
+        # type: (Sequence[str], str) -> HttpRequest
+        data = {
+            "client_id": self._client_id,
+            "client_secret": secret,
+            "grant_type": "client_credentials",
+            "scope": " ".join(scopes),
+        }
         request = HttpRequest(
             "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
         )
