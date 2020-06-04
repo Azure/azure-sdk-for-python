@@ -19,67 +19,75 @@ import subprocess
 import sys
 import os
 import pytest
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
+
+
+def _setenv(key, val):
+    os.environ[key] = os.getenv(val) or os.environ[key]
 
 def run(cmd):
     os.environ['PYTHONUNBUFFERED'] = "1"
+    _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
+    _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
     )
     stdout, stderr = proc.communicate()
- 
+
     return proc.returncode, stdout, stderr
 
-def _test_file(file_name, root_dir='./samples'):
-    code, out, err = run([sys.executable, root_dir + '/' + file_name])
+def _test_file(file_name, account, key, root_dir='./samples'):
+    os.environ['AZURE_FORM_RECOGNIZER_ENDPOINT'] = account
+    os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
+    code, _, err = run([sys.executable, root_dir + '/' + file_name])
+    print(_)
     assert code == 0
-    print(out)
     assert err is None
 
-@pytest.mark.live_test_only
-def test_sample_authentication():
-    _test_file('sample_authentication.py')
+class TestSamples(FormRecognizerTest):
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_authentication(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_authentication.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_get_bounding_boxes():
-    _test_file('sample_get_bounding_boxes.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_get_bounding_boxes(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_get_bounding_boxes.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_manage_custom_models():
-    _test_file('sample_manage_custom_models.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_manage_custom_models(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_manage_custom_models.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_recognize_content():
-    _test_file('sample_recognize_content.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_recognize_content.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_recognize_custom_forms():
-    _test_file('sample_recognize_custom_forms.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_custom_forms(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_recognize_custom_forms.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_recognize_receipts_from_url():
-    _test_file('sample_recognize_receipts_from_url.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_receipts_from_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_recognize_receipts_from_url.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_recognize_receipts():
-    _test_file('sample_recognize_receipts.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_receipts(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_recognize_receipts.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_train_model_with_labels():
-    _test_file('sample_train_model_with_labels.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_train_model_with_labels(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_train_model_with_labels.py', form_recognizer_account, form_recognizer_account_key)
 
-@pytest.mark.live_test_only
-def test_sample_train_model_without_labels():
-    _test_file('sample_train_model_without_labels.py')
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_train_model_without_labels(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_train_model_without_labels.py', form_recognizer_account, form_recognizer_account_key)
 
-
-if __name__=='__main__':
-    test_sample_authentication()
-    test_sample_get_bounding_boxes()
-    test_sample_manage_custom_models()
-    test_sample_recognize_content()
-    test_sample_recognize_custom_forms()
-    test_sample_recognize_receipts_from_url()
-    test_sample_recognize_receipts()
-    test_sample_train_model_with_labels()
-    test_sample_train_model_without_labels()
