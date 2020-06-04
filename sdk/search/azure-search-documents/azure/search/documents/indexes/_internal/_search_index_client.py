@@ -85,6 +85,20 @@ class SearchIndexClient(HeadersMixin):
         return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
 
     @distributed_trace
+    def list_index_names(self, **kwargs):
+        # type: (**Any) -> ItemPaged[str]
+        """List the index names in an Azure Search service.
+
+        :return: List of index names
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        return self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+
+    @distributed_trace
     def get_index(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndex
         """
