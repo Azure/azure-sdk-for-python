@@ -33,7 +33,7 @@
 #   log_profiles: 5/5
 #   metric_alerts: 6/6
 #   metric_alerts_status: 2/2
-#   metric_baseline: 2/2
+#   metric_baseline: 0/2  TODO: bad request
 #   metric_definitions: 1/1
 #   metric_namespaces: 1/1
 #   metrics: 1/1
@@ -43,7 +43,7 @@
 #   tenant_activity_logs: 1/1
 #   vm_insights: 1/1
 
-
+import time
 import unittest
 
 import azure.mgmt.monitor
@@ -165,7 +165,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "Manage"
           ]
         }
-        result = self.eventhub_client.namespaces.create_or_update_authorization_rule(group_name, name_space, authorization_rule, "rights")
+        result = self.eventhub_client.namespaces.create_or_update_authorization_rule(group_name, name_space, authorization_rule, BODY["rights"])
 
         # EventHubCreate[put]
         BODY = {
@@ -195,7 +195,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "Manage"
           ]
         }
-        result = self.eventhub_client.event_hubs.create_or_update_authorization_rule(group_name, name_space, eventhub, authorization_rule, "rights")
+        result = self.eventhub_client.event_hubs.create_or_update_authorization_rule(group_name, name_space, eventhub, authorization_rule, BODY["rights"])
 
     # use track 1 version
     def create_workspace(
@@ -438,7 +438,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
 
         return vmss
 
-    @unittest.skip("serializer fails for some reason")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_monitor_diagnostic_settings(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -517,7 +516,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Deletes the diagnostic setting[delete]
         result = self.mgmt_client.diagnostic_settings.delete(RESOURCE_URI, INSIGHT_NAME)
 
-    @unittest.skip("get operation returns NotFoun")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_log_profiles(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -550,6 +548,9 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
           # "service_bus_rule_id": ""
         }
         result = self.mgmt_client.log_profiles.create_or_update(LOGPROFILE_NAME, BODY)
+
+        if self.is_live:
+            time.sleep(30)
 
         # Get log profile[get]
         result = self.mgmt_client.log_profiles.get(LOGPROFILE_NAME)
@@ -680,7 +681,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an alert rulte[delete]
         result = self.mgmt_client.alert_rules.delete(resource_group.name, ALERTRULE_NAME)
 
-    @unittest.skip("get operation returns NotFound")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_metric_alerts(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -690,7 +690,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         NETWORK_NAME = "networkxx"
         SUBNET_NAME = "subnetx"
         INTERFACE_NAME = "interfacexx"
-        INSIGHT_NAME = "Percentage CPU"
+        INSIGHT_NAME = "PercentageCPU"
 
         if self.is_live:
             vm = self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VM_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
@@ -748,6 +748,9 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.metric_alerts.create_or_update(resource_group.name, METRIC_ALERT_NAME, BODY)
 
+        if self.is_live:
+            time.sleep(30)
+
         # Get a web test alert rule[get]
         result = self.mgmt_client.metric_alerts.get(resource_group.name, METRIC_ALERT_NAME)
 
@@ -786,10 +789,11 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Get metric baseline[get]
         # result = self.mgmt_client.baseline.get(RESOURCE_URI)
 
+        # TODO: Operation returned an invalid status 'Bad Request'
         # Get Metric for data[get]
-        result = self.mgmt_client.metric_baseline.get(RESOURCE_URI, INSIGHT_NAME)
+        # result = self.mgmt_client.metric_baseline.get(RESOURCE_URI, INSIGHT_NAME)
 
-        # TODO: fix later
+        # TODO: outdated
         # Calculate baseline[post]
         # BODY = {
         #   "sensitivities": [
@@ -982,7 +986,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         NETWORK_NAME = "networkxx"
         SUBNET_NAME = "subnetx"
         INTERFACE_NAME = "interfacexx"
-        INSIGHT_NAME = "Percentage CPU"
 
         if self.is_live:
             vmss = self.create_vmss(RESOURCE_GROUP, AZURE_LOCATION, VMSS_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
