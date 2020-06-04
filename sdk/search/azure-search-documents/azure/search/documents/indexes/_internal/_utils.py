@@ -217,7 +217,17 @@ def unpack_search_index(search_index):
     )
 
 
-def unpack_synonyms(synonym_map):
+def pack_synonym_map(synonym_map):
+    # type: (SynonymMap) -> _SynonymMap
+    return _SynonymMap(
+        name=synonym_map.name,
+        synonyms="\n".join(synonym_map.synonyms),
+        encryption_key=pack_search_resource_encryption_key(synonym_map.encryption_key),
+        e_tag=synonym_map.e_tag
+    )
+
+
+def unpack_synonym_map(synonym_map):
     # type: (_SynonymMap) -> SynonymMap
     return SynonymMap(
         name=synonym_map.name,

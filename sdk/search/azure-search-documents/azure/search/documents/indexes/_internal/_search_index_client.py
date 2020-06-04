@@ -10,12 +10,11 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import SynonymMap as _SynonymMap
 from ._utils import (
     unpack_search_index,
     pack_search_index,
-    unpack_synonyms,
-    pack_search_resource_encryption_key,
+    unpack_synonym_map,
+    pack_synonym_map,
     get_access_conditions,
     normalize_endpoint,
 )
@@ -187,13 +186,11 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_index(
-        self, index_name, index, allow_index_downtime=None, **kwargs
+        self, index, allow_index_downtime=None, **kwargs
     ):
-        # type: (str, SearchIndex, bool, **Any) -> SearchIndex
+        # type: (SearchIndex, bool, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
-        :param index_name: The name of the index.
-        :type index_name: str
         :param index: The index object.
         :type index: ~azure.search.documents.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
@@ -228,7 +225,7 @@ class SearchIndexClient(HeadersMixin):
         kwargs.update(access_condition)
         patched_index = pack_search_index(index)
         result = self._client.indexes.create_or_update(
-            index_name=index_name,
+            index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             error_map=error_map,
@@ -285,7 +282,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.list(**kwargs)
-        return [unpack_synonyms(x) for x in result.synonym_maps]
+        return [unpack_synonym_map(x) for x in result.synonym_maps]
 
     @distributed_trace
     def get_synonym_map_names(self, **kwargs):
@@ -324,7 +321,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.get(name, **kwargs)
-        return unpack_synonyms(result)
+        return unpack_synonym_map(result)
 
     @distributed_trace
     def delete_synonym_map(self, synonym_map, **kwargs):
@@ -364,14 +361,12 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace
-    def create_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> SynonymMap
+    def create_synonym_map(self, synonym_map, **kwargs):
+        # type: (SynonymMap, **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service
 
-        :param name: The name of the Synonym Map to create
-        :type name: str
-        :param synonyms: The list of synonyms in SOLR format
-        :type synonyms: List[str]
+        :param synonym_map: The Synonym Map object
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :return: The created Synonym Map
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
@@ -386,21 +381,18 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = _SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = self._client.synonym_maps.create(synonym_map, **kwargs)
-        return unpack_synonyms(result)
+        patched_synonym_map = pack_synonym_map(synonym_map)
+        result = self._client.synonym_maps.create(patched_synonym_map, **kwargs)
+        return unpack_synonym_map(result)
 
     @distributed_trace
-    def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
-        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> SynonymMap
+    def create_or_update_synonym_map(self, synonym_map, **kwargs):
+        # type: (SynonymMap, **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
-        :param synonym_map: The name of the Synonym Map to create or update
-        :type synonym_map: str or ~azure.search.documents.SynonymMap
-        :param synonyms: A list of synonyms in SOLR format
-        :type synonyms: List[str]
+        :param synonym_map: The Synonym Map object
+        :type synonym_map: ~azure.search.documents.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
@@ -412,22 +404,14 @@ class SearchIndexClient(HeadersMixin):
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        try:
-            name = synonym_map.name
-            if synonyms:
-                synonym_map.synonyms = "\n".join(synonyms)
-            synonym_map.encryption_key = pack_search_resource_encryption_key(synonym_map.encryption_key)
-        except AttributeError:
-            name = synonym_map
-            solr_format_synonyms = "\n".join(synonyms)
-            synonym_map = _SynonymMap(name=name, synonyms=solr_format_synonyms)
+        patched_synonym_map = pack_synonym_map(synonym_map)
         result = self._client.synonym_maps.create_or_update(
-            synonym_map_name=name,
-            synonym_map=synonym_map,
+            synonym_map_name=synonym_map.name,
+            synonym_map=patched_synonym_map,
             error_map=error_map,
             **kwargs
         )
-        return unpack_synonyms(result)
+        return unpack_synonym_map(result)
 
     @distributed_trace
     def get_service_statistics(self, **kwargs):
