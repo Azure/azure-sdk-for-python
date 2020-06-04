@@ -25,7 +25,7 @@ pip install azure-ai-formrecognizer
 
 > Note: This version of the client library supports the v2.0-preview version of the Form Recognizer service
 
-### Create a Form Recognizer resource
+#### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource.
 
@@ -210,7 +210,7 @@ for cell in table.cells:
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model.
+Recognize data from USA sales receipts using a prebuilt model. [Here][service_recognize_receipt] are the fields the service returns for a recognized receipt.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -227,21 +227,16 @@ with open("<path to your receipt>", "rb") as fd:
 poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
-r = result[0]
-print("Receipt contained the following values with confidences: ")
-print("Receipt Type: {} has confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
-print("Merchant Name: {} has confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
-print("Transaction Date: {} has confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
-print("Receipt items:")
-for item in r.receipt_items:
-    print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
-    print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-    print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
-print("Subtotal: {} has confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
-print("Tax: {} has confidence: {}".format(r.tax.value, r.tax.confidence))
-print("Tip: {} has confidence: {}".format(r.tip.value, r.tip.confidence))
-print("Total: {} has confidence: {}".format(r.total.value, r.total.confidence))
+for receipt in result:
+    for name, field in receipt.fields.items():
+        if name == "Items":
+            print("Receipt Items:")
+            for idx, items in enumerate(field.value):
+                print("...Item #{}".format(idx))
+                for item_name, item in items.value.items():
+                    print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
+        else:
+            print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
 ### Train a model
@@ -439,6 +434,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: ../../identity/azure-identity#credentials
 [default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
+[service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

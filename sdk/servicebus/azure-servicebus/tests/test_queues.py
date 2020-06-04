@@ -766,7 +766,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages[0].complete()
                     messages[1].complete()
                     assert (messages[2].locked_until_utc - utc_now()) <= timedelta(seconds=60)
-                    time.sleep((messages[2].locked_until_utc - utc_now()).total_seconds())
+                    sleep_until_expired(messages[2])
                     with pytest.raises(MessageLockExpired):
                         messages[2].complete()
     

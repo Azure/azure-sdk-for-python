@@ -274,6 +274,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(result)
         await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_multipage_table_span_pdf(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account,

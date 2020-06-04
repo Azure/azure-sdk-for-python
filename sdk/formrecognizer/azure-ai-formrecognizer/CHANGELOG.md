@@ -13,7 +13,6 @@
     - `recognize_content_from_url` is renamed to `begin_recognize_content_from_url`
     - `recognize_custom_forms` is renamed to `begin_recognize_custom_forms`
     - `recognize_custom_forms_from_url` is renamed to `begin_recognize_custom_forms_from_url`
-- All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 - Sync method `begin_train_model` renamed to `begin_training`
 - `training_files` parameter of `begin_training` is renamed to `training_files_url`
 - `use_labels` parameter of `begin_training` is renamed to `use_training_labels`
@@ -24,8 +23,6 @@
 - `PageRange` is renamed to `FormPageRange`
 - `first_page` and `last_page` renamed to `first_page_number` and `last_page_number`, respectively on `FormPageRange`
 - `FormField` does not have a page_number
-- `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
-- `USReceiptType` is renamed to `ReceiptType`
 - `use_training_labels` is now a required positional param in the `begin_training` APIs
 - `stream` and `url` parameters found on methods for `FormRecognizerClient` have been renamed to `form` and `form_url`, respectively
 - For `begin_recognize_receipt` methods, parameters have been renamed to `receipt` and `receipt_url`
@@ -33,6 +30,10 @@
 `CustomFormModel`  and `CustomFormModelInfo` models
 - `models` property of `CustomFormModel` is renamed to `submodels`
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
+- `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
+- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 
 **New features**
 
@@ -40,6 +41,7 @@
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
 - `page_number` attribute has been added to `FormTable`
+- All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 
 **Dependency updates**
 

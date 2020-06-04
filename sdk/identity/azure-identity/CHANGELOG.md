@@ -1,6 +1,9 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `AzureCliCredential` and `VSCodeCredential`, which enable authenticating as
+  the identity signed in to the Azure CLI and Visual Studio Code, respectively,
+  can be imported from `azure.identity` and `azure.identity.aio`.
 - `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
   optional keyword arguments `executor` or `loop`. Prior versions of the method
   didn't use these correctly, provoking exceptions, and internal changes in this

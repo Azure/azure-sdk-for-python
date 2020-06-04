@@ -10,6 +10,7 @@ from typing import (
     Any,
     IO,
     Union,
+    List,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -17,7 +18,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
-    prepare_us_receipt,
+    prepare_receipt,
     prepare_content_result,
     prepare_form_result
 )
@@ -80,14 +81,14 @@ class FormRecognizerClient(object):
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_us_receipt(analyze_result)
+        return prepare_receipt(analyze_result)
 
     @distributed_trace_async
     async def begin_recognize_receipts(
             self,
             receipt: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> AsyncLROPoller[RecognizedReceipt]:
+    ) -> AsyncLROPoller[List[RecognizedReceipt]]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -148,7 +149,7 @@ class FormRecognizerClient(object):
             self,
             receipt_url: str,
             **kwargs: Any
-    ) -> AsyncLROPoller[RecognizedReceipt]:
+    ) -> AsyncLROPoller[List[RecognizedReceipt]]:
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
@@ -197,7 +198,11 @@ class FormRecognizerClient(object):
         return prepare_content_result(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_content(self, form: Union[bytes, IO[bytes]], **kwargs: Any) -> AsyncLROPoller[FormPage]:
+    async def begin_recognize_content(
+            self,
+            form: Union[bytes, IO[bytes]],
+            **kwargs: Any
+    ) -> AsyncLROPoller[List[FormPage]]:
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -248,7 +253,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> AsyncLROPoller[FormPage]:
+    async def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> AsyncLROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
@@ -283,7 +288,7 @@ class FormRecognizerClient(object):
             model_id: str,
             form: Union[bytes, IO[bytes]],
             **kwargs: Any
-    ) -> AsyncLROPoller[RecognizedForm]:
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -357,7 +362,7 @@ class FormRecognizerClient(object):
             model_id: str,
             form_url: str,
             **kwargs: Any
-    ) -> AsyncLROPoller[RecognizedForm]:
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.

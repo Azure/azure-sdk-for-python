@@ -126,6 +126,30 @@ def test_authorization_code(secret):
     assert transport.send.call_count == 1
 
 
+def test_client_secret():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    scope = "scope"
+    secret = "refresh-token"
+    access_token = "***"
+
+    def send(request, **_):
+        assert request.data["client_id"] == client_id
+        assert request.data["client_secret"] == secret
+        assert request.data["grant_type"] == "client_credentials"
+        assert request.data["scope"] == scope
+
+        return mock_response(json_payload={"access_token": access_token, "expires_in": 42})
+
+    transport = Mock(send=Mock(wraps=send))
+
+    client = AadClient(tenant_id, client_id, transport=transport)
+    token = client.obtain_token_by_client_secret(scopes=(scope,), secret=secret)
+
+    assert token.token == access_token
+    assert transport.send.call_count == 1
+
+
 def test_refresh_token():
     tenant_id = "tenant-id"
     client_id = "client-id"

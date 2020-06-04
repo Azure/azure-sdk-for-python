@@ -587,7 +587,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
         self._setup(storage_account, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
         blob_name = self._create_block_blob()
 
         # Act
