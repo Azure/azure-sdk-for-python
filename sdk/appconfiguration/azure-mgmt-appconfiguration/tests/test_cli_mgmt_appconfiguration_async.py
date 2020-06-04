@@ -27,7 +27,6 @@ import time
 import unittest
 
 import azure.mgmt.appconfiguration
-from azure.identity.aio import DefaultAzureCredential
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
