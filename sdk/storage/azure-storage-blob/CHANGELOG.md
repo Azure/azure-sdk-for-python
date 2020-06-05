@@ -2,6 +2,9 @@
 
 ## 12.3.2 (Unreleased)
 
+**New features**
+
+- Added support for object replication properties for download response and get properties.
 
 ## 12.3.1 (2020-04-29)
 
