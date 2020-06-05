@@ -59,7 +59,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self.client = self.create_mgmt_client(ResourceManagementClient)
             parameters = {'location': self.location}
             if self.delete_after_tag_timedelta:
-                expiry = datetime.datetime.utcnow() + delete_after_tag_timedelta
+                expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
                 parameters['tags'] = {'DeleteAfter': expiry.isoformat()}
             try:
                 self.resource = self.client.resource_groups.create_or_update(
