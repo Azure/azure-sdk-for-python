@@ -477,6 +477,8 @@ class QueueDescriptionFeed(msrest.serialization.Model):
     :type title: str
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
+    :param link: Links to paginated response.
+    :type link: list[~azure.service._control_client2.models.ResponseLink]
     :param entry: Queue entries.
     :type entry: list[~azure.service._control_client2.models.QueueDescriptionEntry]
     """
@@ -485,6 +487,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'title': {'key': 'title', 'type': 'str'},
         'updated': {'key': 'updated', 'type': 'iso-8601'},
+        'link': {'key': 'link', 'type': '[ResponseLink]'},
         'entry': {'key': 'entry', 'type': '[QueueDescriptionEntry]'},
     }
     _xml_map = {
@@ -497,6 +500,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
         id: Optional[str] = None,
         title: Optional[str] = None,
         updated: Optional[datetime.datetime] = None,
+        link: Optional[List["ResponseLink"]] = None,
         entry: Optional[List["QueueDescriptionEntry"]] = None,
         **kwargs
     ):
@@ -504,6 +508,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
         self.id = id
         self.title = title
         self.updated = updated
+        self.link = link
         self.entry = entry
 
 
@@ -620,6 +625,9 @@ class ResponseLink(msrest.serialization.Model):
     _attribute_map = {
         'href': {'key': 'href', 'type': 'str', 'xml': {'attr': True}},
         'rel': {'key': 'rel', 'type': 'str', 'xml': {'attr': True}},
+    }
+    _xml_map = {
+        'name': 'link', 'ns': 'http://www.w3.org/2005/Atom'
     }
 
     def __init__(
