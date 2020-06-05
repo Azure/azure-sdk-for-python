@@ -27,18 +27,6 @@ from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 def _setenv(key, val):
     os.environ[key] = os.getenv(val) or os.getenv(key)
 
-def run(cmd):
-    os.environ['PYTHONUNBUFFERED'] = "1"
-    # _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
-    # _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
-    proc = subprocess.Popen(cmd,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT,
-    )
-    stdout, stderr = proc.communicate()
-
-    return proc.returncode, stdout, stderr
-
 def run(cmd, my_env):
     os.environ['PYTHONUNBUFFERED'] = "1"
     proc = subprocess.Popen(cmd,
@@ -111,10 +99,12 @@ class TestSamplesAsync(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_train_model_with_labels_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
         _test_file('sample_train_model_with_labels_async.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_train_model_without_labels_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
         _test_file('sample_train_model_without_labels_async.py', form_recognizer_account, form_recognizer_account_key)
 

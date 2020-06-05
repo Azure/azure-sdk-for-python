@@ -20,6 +20,7 @@ import functools
 import sys
 import os
 import pytest
+import pprint
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
@@ -29,7 +30,6 @@ def _setenv(key, val):
 
 def run(cmd, my_env):
     os.environ['PYTHONUNBUFFERED'] = "1"
-    # _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
@@ -42,7 +42,11 @@ def run(cmd, my_env):
 def _test_file(file_name, account, key, root_dir='./samples'):
     os.environ['AZURE_FORM_RECOGNIZER_ENDPOINT'] = account
     os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
-    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=dict(os.environ))
+    my_env = dict(os.environ)
+    if sys.version_info < (3, 5):
+        my_env = {key: str(val) for key, val in my_env}
+    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
+    print(out)
     assert code == 0
     assert err is None
 
@@ -51,6 +55,7 @@ class TestSamples(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_authentication(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('AZURE_FORM_RECOGNIZER_AAD_ENDPOINT', 'AZURE_FORM_RECOGNIZER_AAD_ENDPOINT')
         _test_file('sample_authentication.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
@@ -98,10 +103,12 @@ class TestSamples(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_train_model_with_labels(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
         _test_file('sample_train_model_with_labels.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_train_model_without_labels(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
         _test_file('sample_train_model_without_labels.py', form_recognizer_account, form_recognizer_account_key)
 
