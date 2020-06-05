@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2020-06-09)
 
 **Breaking Changes**
 
@@ -24,7 +24,9 @@
   PathHierarchyTokenizerV2 -> PathHierarchyTokenizer
 - Renamed DataSource methods to DataSourceConnection    #11693
 - Autocomplete & suggest methods now takes arguments search_text & suggester_name rather than query objects   #11747
-- Create_or_updates methods does not support partial updates
+- Create_or_updates methods does not support partial updates    #11800
+- Renamed AnalyzeRequest to AnalyzeTextOptions  #11800
+- Renamed Batch methods #11800
   
 
 ## 1.0.0b3 (2020-05-04)
