@@ -13,6 +13,5 @@ output-folder: ../src
 source-code-folder-path: ./src/generated
 input-file: https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json
 python: true
-use-extension: 
-  "@microsoft.azure/autorest.python": latest
+use: "@autorest/python@5.1.0-preview.1"
 ```
