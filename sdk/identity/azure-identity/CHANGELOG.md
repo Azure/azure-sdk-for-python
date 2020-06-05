@@ -1,6 +1,9 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `AzureCliCredential` raises `CredentialUnavailableError` when no user is
+  logged in to the Azure CLI.
+  ([#11819](https://github.com/Azure/azure-sdk-for-python/issues/11819))
 - `AzureCliCredential` and `VSCodeCredential`, which enable authenticating as
   the identity signed in to the Azure CLI and Visual Studio Code, respectively,
   can be imported from `azure.identity` and `azure.identity.aio`.

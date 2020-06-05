@@ -9,7 +9,7 @@ from unittest import mock
 
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureCliCredential
-from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
+from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
@@ -17,6 +17,8 @@ from helpers_async import get_completed_future
 from test_cli_credential import TEST_ERROR_OUTPUTS
 
 SUBPROCESS_EXEC = AzureCliCredential.__module__ + ".asyncio.create_subprocess_exec"
+
+pytestmark = pytest.mark.asyncio
 
 
 def mock_exec(stdout, stderr="", return_code=0):
@@ -27,7 +29,6 @@ def mock_exec(stdout, stderr="", return_code=0):
     return mock.Mock(return_value=get_completed_future(process))
 
 
-@pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
@@ -35,7 +36,6 @@ async def test_no_scopes():
         await AzureCliCredential().get_token()
 
 
-@pytest.mark.asyncio
 async def test_multiple_scopes():
     """The credential should raise ValueError when get_token is called with more than one scope"""
 
@@ -43,14 +43,12 @@ async def test_multiple_scopes():
         await AzureCliCredential().get_token("one scope", "and another")
 
 
-@pytest.mark.asyncio
 async def test_close():
     """The credential must define close, although it's a no-op because the credential has no transport"""
 
     await AzureCliCredential().close()
 
 
-@pytest.mark.asyncio
 async def test_context_manager():
     """The credential must be a context manager, although it does nothing as one because it has no transport"""
 
@@ -59,7 +57,6 @@ async def test_context_manager():
 
 
 @pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
-@pytest.mark.asyncio
 async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
@@ -74,7 +71,6 @@ async def test_windows_fallback():
     assert sync_get_token.call_count == 1
 
 
-@pytest.mark.asyncio
 async def test_get_token():
     """The credential should parse the CLI's output to an AccessToken"""
 
@@ -100,7 +96,6 @@ async def test_get_token():
     assert token.expires_on == valid_seconds
 
 
-@pytest.mark.asyncio
 async def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
@@ -111,7 +106,6 @@ async def test_cli_not_installed_linux():
             await credential.get_token("scope")
 
 
-@pytest.mark.asyncio
 async def test_cli_not_installed_windows():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
@@ -122,7 +116,6 @@ async def test_cli_not_installed_windows():
             await credential.get_token("scope")
 
 
-@pytest.mark.asyncio
 async def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
@@ -132,19 +125,27 @@ async def test_cannot_execute_shell():
             await credential.get_token("scope")
 
 
-@pytest.mark.asyncio
 async def test_not_logged_in():
-    """When the CLI isn't logged in, the credential should raise an error containing the CLI's output"""
+    """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
     output = "ERROR: Please run 'az login' to setup account."
     with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
+        with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
+
+
+async def test_unexpected_error():
+    """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
+
+    output = "something went wrong"
+    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=42)):
         with pytest.raises(ClientAuthenticationError, match=output):
             credential = AzureCliCredential()
             await credential.get_token("scope")
 
 
 @pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
-@pytest.mark.asyncio
 async def test_parsing_error_does_not_expose_token(output):
     """Errors during CLI output parsing shouldn't expose access tokens in that output"""
 
@@ -158,7 +159,6 @@ async def test_parsing_error_does_not_expose_token(output):
 
 
 @pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
-@pytest.mark.asyncio
 async def test_subprocess_error_does_not_expose_token(output):
     """Errors from the subprocess shouldn't expose access tokens in CLI output"""
 
