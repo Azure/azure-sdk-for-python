@@ -5,18 +5,19 @@
 #--------------------------------------------------------------------------
 import pytest
 import random
+import datetime
+import uuid
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.management.aio import ServiceBusManagementClient
+from azure.servicebus.management import QueueDescription
 from azure.servicebus.aio import ServiceBusSharedKeyCredential
+from azure.servicebus._common.utils import utc_now
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
-from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
-
 
 class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -236,3 +237,171 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
 
         with pytest.raises(ValueError):
             await sb_mgmt_client.delete_queue(queue_name=None)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        queue_name = str(uuid.uuid4())
+        created_at = utc_now()
+        await mgmt_service.create_queue(queue_name)
+
+        queue = await mgmt_service.get_queue(queue_name)
+        assert queue.queue_name == queue_name
+        assert queue.entity_availability_status == 'Available'
+        assert queue.status == 'Active'
+        assert created_at < queue.created_at < utc_now() + datetime.timedelta(minutes=10) # TODO: Should be created_at_utc for consistency with dataplane.
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_create_with_invalid_name(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        with pytest.raises(TypeError):
+            await mgmt_service.create_queue(Exception())
+
+        with pytest.raises(ValueError):
+            await mgmt_service.create_queue(QueueDescription(queue_name=Exception()))
+
+        with pytest.raises(ValueError):
+            await mgmt_service.create_queue('')
+
+        with pytest.raises(ValueError):
+            await mgmt_service.create_queue(QueueDescription(queue_name=''))
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        queue_name = str(uuid.uuid4())
+        await mgmt_service.create_queue(QueueDescription(queue_name=queue_name,
+                                                    auto_delete_on_idle=datetime.timedelta(minutes=10),
+                                                    dead_lettering_on_message_expiration=True, 
+                                                    default_message_time_to_live=datetime.timedelta(minutes=11),
+                                                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+                                                    enable_batched_operations=True,
+                                                    enable_express=True,
+                                                    enable_partitioning=True,
+                                                    is_anonymous_accessible=True,
+                                                    lock_duration=datetime.timedelta(seconds=13),
+                                                    max_delivery_count=14,
+                                                    max_size_in_megabytes=3072,
+                                                    #requires_duplicate_detection=True, 
+                                                    requires_session=True,
+                                                    support_ordering=True
+                                                    ))
+
+        queue = await mgmt_service.get_queue(queue_name)
+        assert queue.queue_name == queue_name
+        assert queue.auto_delete_on_idle == datetime.timedelta(minutes=10)
+        assert queue.dead_lettering_on_message_expiration == True
+        assert queue.default_message_time_to_live == datetime.timedelta(minutes=11)
+        assert queue.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+        assert queue.enable_batched_operations == True
+        assert queue.enable_express == True
+        assert queue.enable_partitioning == True
+        assert queue.is_anonymous_accessible == True
+        assert queue.lock_duration == datetime.timedelta(seconds=13)
+        assert queue.max_delivery_count == 14
+        assert queue.max_size_in_megabytes == 3072
+        #assert queue.requires_duplicate_detection == True
+        assert queue.requires_session == True
+        assert queue.support_ordering == True
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        queue_name = str(uuid.uuid4())
+        await mgmt_service.create_queue(queue_name)
+        with pytest.raises(ResourceExistsError):
+            await mgmt_service.create_queue(queue_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_update_success(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        queue_name = str(uuid.uuid4())
+        queue_description = await mgmt_service.create_queue(queue_name)
+        
+        # Try updating one setting.
+        queue_description.lock_duration = datetime.timedelta(minutes=25)
+        queue_description = await mgmt_service.update_queue(queue_description)
+        assert queue_description.lock_duration == datetime.timedelta(minutes=25)
+
+        # Now try updating all settings.
+        queue_description.auto_delete_on_idle = datetime.timedelta(minutes=10)
+        queue_description.dead_lettering_on_message_expiration = True
+        queue_description.default_message_time_to_live = datetime.timedelta(minutes=11)
+        queue_description.duplicate_detection_history_time_window = datetime.timedelta(minutes=12)
+        queue_description.enable_batched_operations = True
+        queue_description.enable_express = True
+        queue_description.enable_partitioning = True
+        queue_description.is_anonymous_accessible = True
+        queue_description.lock_duration = datetime.timedelta(seconds=13)
+        queue_description.max_delivery_count = 14
+        queue_description.max_size_in_megabytes = 3072
+        #queue_description.requires_duplicate_detection = True
+        queue_description.requires_session = True
+        queue_description.support_ordering = True        
+        
+        queue_description = await mgmt_service.update_queue(queue_description)
+
+        assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+        assert queue_description.dead_lettering_on_message_expiration == True
+        assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+        assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+        assert queue_description.enable_batched_operations == True
+        assert queue_description.enable_express == True
+        assert queue_description.enable_partitioning == True
+        assert queue_description.is_anonymous_accessible == True
+        assert queue_description.lock_duration == datetime.timedelta(seconds=13)
+        assert queue_description.max_delivery_count == 14
+        assert queue_description.max_size_in_megabytes == 3072
+        #assert queue_description.requires_duplicate_detection == True
+        assert queue_description.requires_session == True
+        assert queue_description.support_ordering == True   
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        queue_name = str(uuid.uuid4())
+        queue_description = await mgmt_service.create_queue(queue_name)
+        
+        # handle a null update properly.
+        with pytest.raises(TypeError):
+            await mgmt_service.update_queue(None)
+
+        # handle an invalid type update properly.
+        with pytest.raises(TypeError):
+            await mgmt_service.update_queue(Exception("test"))
+
+        # change a setting we can't change; should fail.
+        queue_description.requires_session = True
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.update_queue(queue_description)
+        queue_description.requires_session = False
+
+        #change the name to a queue that doesn't exist; should fail.
+        queue_description.queue_name = str(uuid.uuid4())
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.update_queue(queue_description)
+        queue_description.queue_name = queue_name
+    
+        #change the name to a queue with an invalid name exist; should fail.
+        queue_description.queue_name = ''
+        with pytest.raises(ValueError):
+            await mgmt_service.update_queue(queue_description)
+        queue_description.queue_name = queue_name
+
+        #change to a setting with an invalid value; should still fail.
+        queue_description.lock_duration = datetime.timedelta(days=25)
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.update_queue(queue_description)
+        queue_description.lock_duration = datetime.timedelta(minutes=5)  
