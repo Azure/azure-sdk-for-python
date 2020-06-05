@@ -1,5 +1,7 @@
 # Azure ServiceBus for Python
+
 > see https://aka.ms/autorest
+
 ### Setup
 ```ps
 cd C:\work
@@ -17,7 +19,7 @@ autorest --use=@autorest/python@5.0.0-preview.6
 ``` yaml
 input-file: servicebus-swagger.json
 output-folder: ../azure/servicebus/management/_generated
-namespace: azure.service._control_client2
+namespace: azure.servicebus.management._generated
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: false

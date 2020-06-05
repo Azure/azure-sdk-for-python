@@ -68,7 +68,7 @@ class CreateQueueBody(msrest.serialization.Model):
     """The request body for creating a queue.
 
     :param content: QueueDescription for the new queue.
-    :type content: ~azure.service._control_client2.models.CreateQueueBodyContent
+    :type content: ~azure.servicebus.management._generated.models.CreateQueueBodyContent
     """
 
     _attribute_map = {
@@ -92,7 +92,7 @@ class CreateQueueBodyContent(msrest.serialization.Model):
     :param type: MIME type of content.
     :type type: str
     :param queue_description: Properties of the new queue.
-    :type queue_description: ~azure.service._control_client2.models.QueueDescription
+    :type queue_description: ~azure.servicebus.management._generated.models.QueueDescription
     """
 
     _attribute_map = {
@@ -116,7 +116,7 @@ class CreateTopicBody(msrest.serialization.Model):
     """The request body for creating a topic.
 
     :param content: TopicDescription for the new topic.
-    :type content: ~azure.service._control_client2.models.CreateTopicBodyContent
+    :type content: ~azure.servicebus.management._generated.models.CreateTopicBodyContent
     """
 
     _attribute_map = {
@@ -140,7 +140,7 @@ class CreateTopicBodyContent(msrest.serialization.Model):
     :param type: MIME type of content.
     :type type: str
     :param topic_description: Topic information to create.
-    :type topic_description: ~azure.service._control_client2.models.TopicDescription
+    :type topic_description: ~azure.servicebus.management._generated.models.TopicDescription
     """
 
     _attribute_map = {
@@ -203,7 +203,8 @@ class QueueDescription(msrest.serialization.Model):
     """Description of a Service Bus queue resource.
 
     :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
+    :type authorization_rules:
+     list[~azure.servicebus.management._generated.models.AuthorizationRule]
     :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
@@ -222,7 +223,7 @@ class QueueDescription(msrest.serialization.Model):
     :param entity_availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.service._control_client2.models.EntityAvailabilityStatus
+     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
     :param enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
@@ -253,7 +254,7 @@ class QueueDescription(msrest.serialization.Model):
     :type requires_session: bool
     :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.service._control_client2.models.EntityStatus
+    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
     :param support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
     :param accessed_at: Last time a message was sent, or the last time there was a receive request
@@ -266,7 +267,7 @@ class QueueDescription(msrest.serialization.Model):
     :param message_count: The number of messages in the queue.
     :type message_count: int
     :param message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.service._control_client2.models.MessageCountDetails
+    :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
     """
 
     _attribute_map = {
@@ -336,17 +337,17 @@ class QueueDescriptionEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the queue.
-    :type title: ~azure.service._control_client2.models.ResponseTitle
+    :type title: ~azure.servicebus.management._generated.models.ResponseTitle
     :param published: The timestamp for when this queue was published.
     :type published: ~datetime.datetime
     :param updated: The timestamp for when this queue was last updated.
     :type updated: ~datetime.datetime
     :param author: The author that created this resource.
-    :type author: ~azure.service._control_client2.models.ResponseAuthor
+    :type author: ~azure.servicebus.management._generated.models.ResponseAuthor
     :param link: The URL for the HTTP request.
-    :type link: ~azure.service._control_client2.models.ResponseLink
+    :type link: ~azure.servicebus.management._generated.models.ResponseLink
     :param content: The QueueDescription.
-    :type content: ~azure.service._control_client2.models.QueueDescriptionEntryContent
+    :type content: ~azure.servicebus.management._generated.models.QueueDescriptionEntryContent
     """
 
     _attribute_map = {
@@ -384,7 +385,7 @@ class QueueDescriptionEntryContent(msrest.serialization.Model):
     :param type: Type of content in queue response.
     :type type: str
     :param queue_description: Description of a Service Bus queue resource.
-    :type queue_description: ~azure.service._control_client2.models.QueueDescription
+    :type queue_description: ~azure.servicebus.management._generated.models.QueueDescription
     """
 
     _attribute_map = {
@@ -411,9 +412,9 @@ class QueueDescriptionFeed(msrest.serialization.Model):
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
     :param link: Links to paginated response.
-    :type link: list[~azure.service._control_client2.models.ResponseLink]
+    :type link: list[~azure.servicebus.management._generated.models.ResponseLink]
     :param entry: Queue entries.
-    :type entry: list[~azure.service._control_client2.models.QueueDescriptionEntry]
+    :type entry: list[~azure.servicebus.management._generated.models.QueueDescriptionEntry]
     """
 
     _attribute_map = {
@@ -451,11 +452,11 @@ class QueueDescriptionResponse(msrest.serialization.Model):
     :param updated: The timestamp for when this queue was last updated.
     :type updated: str
     :param author: The author that created this resource.
-    :type author: ~azure.service._control_client2.models.ResponseAuthor
+    :type author: ~azure.servicebus.management._generated.models.ResponseAuthor
     :param link: The URL for the HTTP request.
-    :type link: ~azure.service._control_client2.models.ResponseLink
+    :type link: ~azure.servicebus.management._generated.models.ResponseLink
     :param content: Contents of a Queue_Get response.
-    :type content: ~azure.service._control_client2.models.QueueDescriptionResponseContent
+    :type content: ~azure.servicebus.management._generated.models.QueueDescriptionResponseContent
     """
 
     _attribute_map = {
@@ -491,7 +492,7 @@ class QueueDescriptionResponseContent(msrest.serialization.Model):
     :param type: Type of content in queue response.
     :type type: str
     :param queue_description: Description of a Service Bus queue resource.
-    :type queue_description: ~azure.service._control_client2.models.QueueDescription
+    :type queue_description: ~azure.servicebus.management._generated.models.QueueDescription
     """
 
     _attribute_map = {
@@ -605,7 +606,8 @@ class TopicDescription(msrest.serialization.Model):
     :param topic_name: Name of the topic.
     :type topic_name: str
     :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
+    :type authorization_rules:
+     list[~azure.servicebus.management._generated.models.AuthorizationRule]
     :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
@@ -630,7 +632,7 @@ class TopicDescription(msrest.serialization.Model):
     :type requires_duplicate_detection: bool
     :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.service._control_client2.models.EntityStatus
+    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
     :param support_ordering: A value that indicates whether the topic supports ordering.
     :type support_ordering: bool
     :param user_metadata: Metadata associated with the topic.

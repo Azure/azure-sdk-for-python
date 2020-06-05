@@ -21,7 +21,7 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
     """Azure Service Bus client for managing Queues, Topics, and Subscriptions.
 
     :ivar queue: QueueOperations operations
-    :vartype queue: azure.service._control_client2.aio.operations_async.QueueOperations
+    :vartype queue: azure.servicebus.management._generated.aio.operations_async.QueueOperations
     :param endpoint: The Service Bus fully qualified domain name.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
