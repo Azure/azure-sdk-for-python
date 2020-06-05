@@ -44,7 +44,7 @@ az cognitiveservices account create \
     --yes
 ```
 
-Interaction with this service begins with an instance of a [client](#TextAnalyticsClient "TextAnalyticsClient").
+Interaction with this service begins with an instance of a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
 
@@ -130,7 +130,7 @@ text_analytics_client = TextAnalyticsClient(
 ## Key concepts
 
 ### TextAnalyticsClient
-The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#Examples "examples").
+The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#examples "Examples").
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
 
 ### Input
