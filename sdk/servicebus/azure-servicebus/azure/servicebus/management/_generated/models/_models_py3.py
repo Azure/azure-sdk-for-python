@@ -39,7 +39,7 @@ class AuthorizationRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str', 'xml': {'prefix': 'i', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'type': {'key': 'Type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'i', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
         'claim_type': {'key': 'ClaimType', 'type': 'str', 'xml': {'attr': True, 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'claim_value': {'key': 'ClaimValue', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'rights': {'key': 'Rights', 'type': '[str]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},

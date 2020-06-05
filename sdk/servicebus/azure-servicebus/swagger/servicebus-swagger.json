@@ -90,6 +90,7 @@
         "Type": {
           "type": "string",
           "xml": {
+            "attribute": true,
             "prefix": "i",
             "namespace": "http://www.w3.org/2001/XMLSchema-instance"
           }
