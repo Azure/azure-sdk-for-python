@@ -135,7 +135,7 @@ class ServiceBusManagementClient:
             et = cast(
                 ElementTree,
                 self._impl.list_entities(
-                    entity_type=constants.ENTITY_TYPE_QUEUES, start_index=start_index, top=max_count,
+                    entity_type=constants.ENTITY_TYPE_QUEUES, skip=start_index, top=max_count,
                     api_version=constants.API_VERSION, **kwargs
                 )
             )
