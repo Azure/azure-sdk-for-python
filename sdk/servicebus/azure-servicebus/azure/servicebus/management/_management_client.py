@@ -210,6 +210,7 @@ class ServiceBusManagementClient:
         result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
                 _convert_xml_to_object(queue_name, et)
         )
+        result.queue_name = queue_name
         return result
 
     def update_queue(self, queue_description):
@@ -259,6 +260,7 @@ class ServiceBusManagementClient:
         result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
             _convert_xml_to_object(queue_description.queue_name, et)
         )
+        result.queue_name = queue_description.queue_name
         return result
 
     def delete_queue(self, queue_name):

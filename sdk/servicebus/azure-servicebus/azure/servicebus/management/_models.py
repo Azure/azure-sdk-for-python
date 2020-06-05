@@ -123,7 +123,6 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self,
         **kwargs
     ):
-        super(QueueDescription, self).__init__(**kwargs)
         self.queue_name = kwargs.get('queue_name', None)
         self._internal_qd = None
 
@@ -144,6 +143,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self.requires_session = kwargs.get('requires_session', None)
         self.status = kwargs.get('status', None)
         self.support_ordering = kwargs.get('support_ordering', None)
+        self.created_at = kwargs.get('created_at', None)
 
     @classmethod
     def _from_internal_entity(cls, internal_qd):
@@ -168,6 +168,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         qd.requires_session = internal_qd.requires_session
         qd.status = internal_qd.status
         qd.support_ordering = internal_qd.support_ordering
+        qd.created_at = internal_qd.created_at
 
         return qd
 
@@ -193,6 +194,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self._internal_qd.requires_session = self.requires_session
         self._internal_qd.status = self.status
         self._internal_qd.support_ordering = self.support_ordering
+        self._internal_qd.created_at = self.created_at
 
         return self._internal_qd
 
@@ -221,7 +223,6 @@ class QueueRuntimeInfo(object):
         self,
         **kwargs
     ):
-        super(QueueRuntimeInfo, self).__init__(**kwargs)
         self.queue_name = kwargs.get('queue_name', None)
         self._internal_qr = None
 
