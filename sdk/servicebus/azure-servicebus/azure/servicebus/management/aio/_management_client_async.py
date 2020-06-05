@@ -3,11 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from copy import copy
-from typing import TYPE_CHECKING, Dict, Any, Union, List, Type, cast
+from typing import TYPE_CHECKING, Dict, Any, Union, List, cast
 from xml.etree.ElementTree import ElementTree, Element
 
 from msrest.exceptions import ValidationError
-from msrest.serialization import Model
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
@@ -19,13 +18,14 @@ from ..._common.constants import JWT_TOKEN_SCOPE
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 from .._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from .._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription, QueueRuntimeInfo
+    QueueDescription as InternalQueueDescription
 from .._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
     as ServiceBusManagementClientImpl
 from .. import _constants as constants
 from .._management_client import _convert_xml_to_object, _handle_response_error
 from .._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
+from .._models import QueueRuntimeInfo, QueueDescription
 
 
 if TYPE_CHECKING:
@@ -87,8 +87,8 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    async def _get_queue_object(self, queue_name, clazz):
-        # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
+    async def _get_queue_object(self, queue_name):
+        # type: (str) -> InternalQueueDescription
         if not queue_name:
             raise ValueError("queue_name must be a non-empty str")
         with _handle_response_error():
@@ -96,10 +96,10 @@ class ServiceBusManagementClient:
                 ElementTree,
                 await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
             )
-        return _convert_xml_to_object(queue_name, et, clazz)
+        return _convert_xml_to_object(queue_name, et)
 
-    async def _list_queues(self, skip, max_count, clazz):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
+    async def _list_queues(self, skip, max_count):
+        # type: (int, int) -> List[InternalQueueDescription]
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -114,7 +114,6 @@ class ServiceBusManagementClient:
             queue_description = _convert_xml_to_object(
                 entity_name,   # type: ignore
                 cast(Element, entry),
-                clazz
             )
             queues.append(queue_description)
         return queues
@@ -125,7 +124,11 @@ class ServiceBusManagementClient:
 
         :param str queue_name: The name of the queue
         """
-        return await self._get_queue_object(queue_name, QueueDescription)
+        queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+            await self._get_queue_object(queue_name)
+        )
+        queue_description.queue_name = queue_name
+        return queue_description
 
     async def get_queue_runtime_info(self, queue_name):
         # type: (str) -> QueueRuntimeInfo
@@ -133,7 +136,11 @@ class ServiceBusManagementClient:
 
         :param str queue_name: The name of the queue
         """
-        return await self._get_queue_object(queue_name, QueueRuntimeInfo)
+        runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
+            await self._get_queue_object(queue_name)
+        )
+        runtime_info.queue_name = queue_name
+        return runtime_info
 
     async def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
@@ -147,11 +154,10 @@ class ServiceBusManagementClient:
         """
         try:
             queue_name = queue.queue_name  # type: ignore
-            to_create = copy(queue)  # type: ignore
-            to_create.queue_name = None  # type: ignore
+            to_create = queue._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
         except AttributeError:
             queue_name = queue  # type: ignore
-            to_create = QueueDescription()  # Use an empty queue description.
+            to_create = InternalQueueDescription()  # Use an empty queue description.
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -177,7 +183,10 @@ class ServiceBusManagementClient:
                 TypeError,
                 message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
-        return _convert_xml_to_object(queue_name, et, QueueDescription)  # type: ignore
+        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+            _convert_xml_to_object(queue_name, et)
+        )
+        return result
 
     async def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
@@ -193,7 +202,7 @@ class ServiceBusManagementClient:
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
 
-        to_update = QueueDescription()
+        to_update = copy(queue_description._to_internal_entity())  # pylint:disable=protected-access
 
         for attr in QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES:
             setattr(to_update, attr, getattr(queue_description, attr, None))
@@ -224,7 +233,10 @@ class ServiceBusManagementClient:
                     message="queue_description must be a QueueDescription with valid fields, "
                             "including non-empty string queue name")
 
-        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)  # type: ignore
+        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+            _convert_xml_to_object(queue_description.queue_name, et)
+        )
+        return result
 
     async def delete_queue(self, queue_name):
         # type: (str) -> None
@@ -246,7 +258,13 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return await self._list_queues(skip, max_count, QueueDescription)
+        result = []  # type: List[QueueDescription]
+        internal_queues = await self._list_queues(skip, max_count)
+        for queue_name, internal_queue in internal_queues:
+            qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
+            qd.queue_name = queue_name
+            result.append(qd)
+        return result
 
     async def list_queues_runtime_info(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueRuntimeInfo]
@@ -256,4 +274,10 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return await self._list_queues(skip, max_count, QueueRuntimeInfo)
+        result = []  # type: List[QueueRuntimeInfo]
+        internal_queues = await self._list_queues(skip, max_count)
+        for queue_name, internal_queue in internal_queues:
+            runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
+            runtime_info.queue_name = queue_name
+            result.append(runtime_info)
+        return result

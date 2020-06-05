@@ -5,12 +5,12 @@
 
 from ._management_client import ServiceBusManagementClient
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
-from ._generated.models import QueueDescription, AuthorizationRule, MessageCountDetails, QueueRuntimeInfo, \
+from ._generated.models import AuthorizationRule, MessageCountDetails, \
     AccessRights, EntityAvailabilityStatus, EntityStatus
+from ._models import QueueRuntimeInfo, QueueDescription
 
 __all__ = [
     "ServiceBusManagementClient",
-    "ServiceBusSharedKeyCredentialPolicy",
     'AuthorizationRule',
     'MessageCountDetails',
     'QueueDescription',

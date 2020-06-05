@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from contextlib import contextmanager
 from copy import copy
-from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Type
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Tuple
 from xml.etree.ElementTree import ElementTree, Element
 
-from msrest.serialization import Model
 from msrest.exceptions import ValidationError
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, raise_with_traceback
 from azure.core.pipeline import Pipeline
@@ -21,10 +20,11 @@ from .._base_handler import ServiceBusSharedKeyCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription, QueueRuntimeInfo
+    QueueDescription as InternalQueueDescription
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from ._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from . import _constants as constants
+from ._models import QueueRuntimeInfo, QueueDescription
 
 
 if TYPE_CHECKING:
@@ -47,14 +47,13 @@ def _handle_response_error():
         raise new_response_error
 
 
-def _convert_xml_to_object(queue_name, et, class_):
-    # type: (str, Union[Element, ElementTree], Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
+def _convert_xml_to_object(queue_name, et):
+    # type: (str, Union[Element, ElementTree]) -> InternalQueueDescription
     content_ele = cast(ElementTree, et).find(constants.CONTENT_TAG)
     if not content_ele:
         raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
     qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-    obj = class_.deserialize(qc_ele)
-    obj.queue_name = queue_name
+    obj = InternalQueueDescription.deserialize(qc_ele)
 
     return obj
 
@@ -112,8 +111,8 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    def _get_queue_object(self, queue_name, class_):
-        # type: (str, Type[Model]) -> Union[QueueDescription, QueueRuntimeInfo]
+    def _get_queue_object(self, queue_name):
+        # type: (str) -> InternalQueueDescription
 
         if not queue_name:
             raise ValueError("queue_name must be a non-empty str")
@@ -123,10 +122,10 @@ class ServiceBusManagementClient:
                 ElementTree,
                 self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
             )
-        return _convert_xml_to_object(queue_name, et, class_)
+        return _convert_xml_to_object(queue_name, et)
 
-    def _list_queues(self, skip, max_count, class_):
-        # type: (int, int, Type[Model]) -> Union[List[QueueDescription], List[QueueRuntimeInfo]]
+    def _list_queues(self, skip, max_count):
+        # type: (int, int) -> List[Tuple[str, InternalQueueDescription]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -138,13 +137,12 @@ class ServiceBusManagementClient:
         queues = []
         for entry in entries:
             entity_name = entry.find(constants.TITLE_TAG).text  # type: ignore
-            queue_description = _convert_xml_to_object(
+            internal_object = _convert_xml_to_object(
                 entity_name,   # type: ignore
-                cast(Element, entry),
-                class_
+                cast(Element, entry)
             )
-            queues.append(queue_description)
-        return queues
+            queues.append((entity_name, internal_object))
+        return queues   # type: ignore
 
     def get_queue(self, queue_name):
         # type: (str) -> QueueDescription
@@ -152,7 +150,11 @@ class ServiceBusManagementClient:
 
         :param str queue_name: The name of the queue
         """
-        return self._get_queue_object(queue_name, QueueDescription)
+        queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+            self._get_queue_object(queue_name)
+        )
+        queue_description.queue_name = queue_name
+        return queue_description
 
     def get_queue_runtime_info(self, queue_name):
         # type: (str) -> QueueRuntimeInfo
@@ -160,7 +162,11 @@ class ServiceBusManagementClient:
 
         :param str queue_name: The name of the queue
         """
-        return self._get_queue_object(queue_name, QueueRuntimeInfo)
+        runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
+            self._get_queue_object(queue_name)
+        )
+        runtime_info.queue_name = queue_name
+        return runtime_info
 
     def create_queue(self, queue):
         # type: (Union[str, QueueDescription]) -> QueueDescription
@@ -174,11 +180,10 @@ class ServiceBusManagementClient:
         """
         try:
             queue_name = queue.queue_name  # type: ignore
-            to_create = copy(queue)  # type: ignore
-            to_create.queue_name = None  # type: ignore
+            to_create = queue._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
         except AttributeError:
             queue_name = queue  # type: ignore
-            to_create = QueueDescription()  # Use an empty queue description.
+            to_create = InternalQueueDescription()  # Use an empty queue description.
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -202,7 +207,10 @@ class ServiceBusManagementClient:
                 TypeError,
                 message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
-        return _convert_xml_to_object(queue_name, et, QueueDescription)  # type: ignore
+        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+                _convert_xml_to_object(queue_name, et)
+        )
+        return result
 
     def update_queue(self, queue_description):
         # type: (QueueDescription) -> QueueDescription
@@ -218,7 +226,7 @@ class ServiceBusManagementClient:
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
 
-        to_update = QueueDescription()
+        to_update = copy(queue_description._to_internal_entity())  # pylint:disable=protected-access
 
         for attr in QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES:
             setattr(to_update, attr, getattr(queue_description, attr, None))
@@ -248,8 +256,10 @@ class ServiceBusManagementClient:
                     ValueError,
                     message="queue_description must be a QueueDescription with valid fields, "
                             "including non-empty string queue name")
-
-        return _convert_xml_to_object(queue_description.queue_name, et, QueueDescription)  # type: ignore
+        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
+            _convert_xml_to_object(queue_description.queue_name, et)
+        )
+        return result
 
     def delete_queue(self, queue_name):
         # type: (str) -> None
@@ -271,7 +281,13 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return self._list_queues(skip, max_count, class_=QueueDescription)
+        result = []  # type: List[QueueDescription]
+        internal_queues = self._list_queues(skip, max_count)
+        for queue_name, internal_queue in internal_queues:
+            qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
+            qd.queue_name = queue_name
+            result.append(qd)
+        return result
 
     def list_queues_runtime_info(self, skip=0, max_count=100):
         # type: (int, int) -> List[QueueRuntimeInfo]
@@ -281,4 +297,10 @@ class ServiceBusManagementClient:
         :param int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
-        return self._list_queues(skip, max_count, class_=QueueRuntimeInfo)
+        result = []  # type: List[QueueRuntimeInfo]
+        internal_queues = self._list_queues(skip, max_count)
+        for queue_name, internal_queue in internal_queues:
+            runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
+            runtime_info.queue_name = queue_name
+            result.append(runtime_info)
+        return result
