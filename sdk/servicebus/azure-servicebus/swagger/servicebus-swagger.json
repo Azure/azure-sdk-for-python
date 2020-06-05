@@ -87,28 +87,22 @@
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
+        "Type": {
+          "type": "string",
+          "xml": {
+            "prefix": "i",
+            "namespace": "http://www.w3.org/2001/XMLSchema-instance"
+          }
+        },
         "ClaimType": {
           "type": "string",
           "xml": {
+            "attribute": true,
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "CreatedTime": {
+        "ClaimValue": {
           "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "KeyName": {
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "ModifiedTime": {
-          "type": "string",
-          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -126,6 +120,38 @@
               "name": "AccessRights",
               "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
             }
+          }
+        },
+        "CreatedTime": {
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "ModifiedTime": {
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "KeyName": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "PrimaryKey": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "SecondaryKey": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         }
       }
