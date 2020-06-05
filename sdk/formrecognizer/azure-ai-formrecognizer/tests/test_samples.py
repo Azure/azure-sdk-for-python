@@ -51,7 +51,6 @@ def _test_file(file_name, account, key, root_dir='./samples'):
     assert err is None
 
 class TestSamples(FormRecognizerTest):
-    @pytest.mark.skip
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_authentication(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

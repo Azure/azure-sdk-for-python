@@ -60,7 +60,7 @@ class AuthenticationSampleAsync(object):
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         from azure.identity.aio import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
@@ -89,7 +89,7 @@ class AuthenticationSampleAsync(object):
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.identity.aio import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_training_client = FormTrainingClient(endpoint, credential)
