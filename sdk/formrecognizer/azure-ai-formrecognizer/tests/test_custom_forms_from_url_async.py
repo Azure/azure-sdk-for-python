@@ -335,3 +335,75 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         result = await poller.result()
         self.assertIsNotNone(result)
         await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer(multipage2=True, blob_sas_url=True)
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            form = prepare_form_result(analyze_result, model.model_id)
+            responses.append(analyze_result)
+            responses.append(form)
+
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            blob_sas_url,
+            include_text_content=True,
+            cls=callback
+        )
+        form = await poller.result()
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        page_results = actual.analyze_result.page_results
+        document_results = actual.analyze_result.document_results
+
+        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
+        for form, actual in zip(recognized_form, document_results):
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
+            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer(multipage2=True, blob_sas_url=True)
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, container_sas_url, blob_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await poller.result()
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            form = prepare_form_result(analyze_result, model.model_id)
+            responses.append(analyze_result)
+            responses.append(form)
+
+        poller = await fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            blob_sas_url,
+            include_text_content=True,
+            cls=callback
+        )
+        form = await poller.result()
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        page_results = actual.analyze_result.page_results
+        document_results = actual.analyze_result.document_results
+
+        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
+        for form, actual in zip(recognized_form, document_results):
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
+            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
