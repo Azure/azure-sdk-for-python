@@ -11,8 +11,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -28,7 +28,50 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 02:25:33 GMT
+      - Fri, 05 Jun 2020 02:25:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1?api-version=2019-10-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '148'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 02:25:55 GMT
       expires:
       - '-1'
       pragma:
@@ -51,61 +94,18 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1?api-version=2019-10-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '148'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 02:25:36 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1","tagName":"imagetemplate_tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1/tagValues/IT_T1","tagValue":"IT_T1","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2","tagName":"imagetemplate_tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2/tagValues/IT_T2","tagValue":"IT_T2","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage","tagName":"ms-resource-usage","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage/tagValues/azure-cloud-shell","tagValue":"azure-cloud-shell","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby","tagName":"createdby","count":{"type":"Total","value":9},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/azureimagebuilder","tagValue":"azureimagebuilder","count":{"type":"Total","value":6}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/AzureVMImageBuilder","tagValue":"AzureVMImageBuilder","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue","tagName":"magicvalue","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue/tagValues/0d819542a3774a2a8709401a7cd09eb8","tagValue":"0d819542a3774a2a8709401a7cd09eb8","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/Red","tagValue":"Red","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2","tagName":"tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2/tagValues/White","tagValue":"White","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator","tagName":"Creator","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator/tagValues/Automatically
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1","tagName":"imagetemplate_tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1/tagValues/IT_T1","tagValue":"IT_T1","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2","tagName":"imagetemplate_tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2/tagValues/IT_T2","tagValue":"IT_T2","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage","tagName":"ms-resource-usage","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage/tagValues/azure-cloud-shell","tagValue":"azure-cloud-shell","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby","tagName":"createdby","count":{"type":"Total","value":9},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/azureimagebuilder","tagValue":"azureimagebuilder","count":{"type":"Total","value":6}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/AzureVMImageBuilder","tagValue":"AzureVMImageBuilder","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue","tagName":"magicvalue","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue/tagValues/0d819542a3774a2a8709401a7cd09eb8","tagValue":"0d819542a3774a2a8709401a7cd09eb8","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/Red","tagValue":"Red","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2","tagName":"tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2/tagValues/White","tagValue":"White","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator","tagName":"Creator","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator/tagValues/Automatically
         added by NRMS Azure Policy","tagValue":"Automatically added by NRMS Azure
-        Policy","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info","tagName":"NRMS-Info","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info/tagValues/http://aka.ms/nrms","tagValue":"http://aka.ms/nrms","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version","tagName":"NRMS-Version","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version/tagValues/2019-03-20","tagValue":"2019-03-20","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1","tagName":"key1","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName","tagName":"imageTemplateName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyImageTemplate","tagValue":"MyImageTemplate","count":{"type":"Total","value":2}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyNewImageTemplate","tagValue":"MyNewImageTemplate","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName","tagName":"imageTemplateResourceGroupName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","tagValue":"cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","tagValue":"awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","tagValue":"pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment","tagName":"environment","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment/tagValues/Terraform
+        Policy","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info","tagName":"NRMS-Info","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info/tagValues/http://aka.ms/nrms","tagValue":"http://aka.ms/nrms","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version","tagName":"NRMS-Version","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version/tagValues/2019-03-20","tagValue":"2019-03-20","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1","tagName":"key1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagkey","tagName":"tagkey","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagkey/tagValues/lianwtesttags2","tagValue":"lianwtesttags2","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName","tagName":"imageTemplateName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyImageTemplate","tagValue":"MyImageTemplate","count":{"type":"Total","value":2}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyNewImageTemplate","tagValue":"MyNewImageTemplate","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName","tagName":"imageTemplateResourceGroupName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","tagValue":"cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","tagValue":"awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","tagValue":"pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment","tagName":"environment","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment/tagValues/Terraform
         Devops Test","tagValue":"Terraform Devops Test","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
         Is Cleanup Service","tagName":"What Is Cleanup Service","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
         Is Cleanup Service/tagValues/https://aka.ms/WhatIsCleanupService","tagValue":"https://aka.ms/WhatIsCleanupService","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/myTag","tagName":"myTag","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/myTag/tagValues/test","tagValue":"test","count":{"type":"Total","value":1}}]}]}'
@@ -113,11 +113,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '6672'
+      - '6979'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 02:25:36 GMT
+      - Fri, 05 Jun 2020 02:25:55 GMT
       expires:
       - '-1'
       pragma:
@@ -143,8 +143,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -158,7 +158,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 15 May 2020 02:25:38 GMT
+      - Fri, 05 Jun 2020 02:25:55 GMT
       expires:
       - '-1'
       pragma:
@@ -168,7 +168,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
@@ -184,8 +184,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -199,7 +199,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 15 May 2020 02:25:41 GMT
+      - Fri, 05 Jun 2020 02:25:56 GMT
       expires:
       - '-1'
       pragma:
@@ -209,7 +209,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 200
       message: OK

@@ -24,18 +24,18 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
         self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
 
 
-        features = list(self.features_client.features.list('Microsoft.Compute'))
+        features = list(self.features_client.features.list('Microsoft.TerraformOSS'))
         self.assertGreater(len(features), 0)
         self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
 
         one_feature = features[0]
         feature = self.features_client.features.get(
-            'Microsoft.Compute',
+            'Microsoft.TerraformOSS',
             one_feature.name.split('/')[1]
         )
 
         self.features_client.features.register(
-            'Microsoft.Compute',
+            'Microsoft.TerraformOSS',
             feature.name.split('/')[1]
         )
 
