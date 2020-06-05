@@ -410,11 +410,11 @@ Authenticate the client with a Cognitive Services/Text Analytics API key or a to
 * [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
 In a batch of documents:
-* Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
+* Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
-* Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
+* Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 
 ### Additional documentation
 For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation][TA_product_documentation] on docs.microsoft.com.
