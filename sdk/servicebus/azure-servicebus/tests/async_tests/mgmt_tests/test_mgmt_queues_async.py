@@ -19,7 +19,7 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer
 )
 
-from utilities import (
+from async_tests.mgmt_tests.utilities import (
     AsyncMgmtQueueListTestHelper,
     AsyncMgmtQueueListRuntimeInfoTestHelper,
     run_test_async_mgmt_list_with_parameters,
@@ -269,9 +269,9 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         queue_description = await mgmt_service.create_queue(queue_name)
         
         # Try updating one setting.
-        queue_description.lock_duration = datetime.timedelta(minutes=25)
+        queue_description.lock_duration = datetime.timedelta(minutes=2)
         queue_description = await mgmt_service.update_queue(queue_description)
-        assert queue_description.lock_duration == datetime.timedelta(minutes=25)
+        assert queue_description.lock_duration == datetime.timedelta(minutes=2)
 
         # Now try updating all settings.
         queue_description.auto_delete_on_idle = datetime.timedelta(minutes=10)
@@ -280,13 +280,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         queue_description.duplicate_detection_history_time_window = datetime.timedelta(minutes=12)
         queue_description.enable_batched_operations = True
         queue_description.enable_express = True
-        queue_description.enable_partitioning = True
+        #queue_description.enable_partitioning = True # Cannot be changed after creation
         queue_description.is_anonymous_accessible = True
         queue_description.lock_duration = datetime.timedelta(seconds=13)
         queue_description.max_delivery_count = 14
         queue_description.max_size_in_megabytes = 3072
-        #queue_description.requires_duplicate_detection = True
-        queue_description.requires_session = True
+        #queue_description.requires_duplicate_detection = True # Read only
+        #queue_description.requires_session = True # Cannot be changed after creation
         queue_description.support_ordering = True        
         
         queue_description = await mgmt_service.update_queue(queue_description)
@@ -297,13 +297,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
         assert queue_description.enable_batched_operations == True
         assert queue_description.enable_express == True
-        assert queue_description.enable_partitioning == True
+        #assert queue_description.enable_partitioning == True
         assert queue_description.is_anonymous_accessible == True
         assert queue_description.lock_duration == datetime.timedelta(seconds=13)
         assert queue_description.max_delivery_count == 14
         assert queue_description.max_size_in_megabytes == 3072
         #assert queue_description.requires_duplicate_detection == True
-        assert queue_description.requires_session == True
+        #assert queue_description.requires_session == True
         assert queue_description.support_ordering == True   
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
