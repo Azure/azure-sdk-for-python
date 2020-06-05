@@ -19,7 +19,7 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer
 )
 
-from async_tests.mgmt_tests.utilities import (
+from mgmt_test_utilities_async import (
     AsyncMgmtQueueListTestHelper,
     AsyncMgmtQueueListRuntimeInfoTestHelper,
     run_test_async_mgmt_list_with_parameters,

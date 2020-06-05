@@ -22,7 +22,7 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer
 )
 
-from mgmt_tests.utilities import (
+from mgmt_test_utilities import (
     MgmtQueueListTestHelper,
     MgmtQueueListRuntimeInfoTestHelper,
     run_test_mgmt_list_with_parameters,
