@@ -96,7 +96,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
-        """Detects Language for a batch of documents.
+        """Detect language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
         one. Scores close to one indicate 100% certainty that the identified
@@ -160,7 +160,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
-        """Entity Recognition for a batch of documents.
+        """Recognize entities for a batch of documents.
 
         Identifies and categorizes entities in your text as people, places,
         organizations, date/time, quantities, percentages, currencies, and more.
@@ -289,7 +289,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
-        """Extract Key Phrases from a batch of documents.
+        """Extract key phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
         text. For example, for the input text "The food was delicious and there
