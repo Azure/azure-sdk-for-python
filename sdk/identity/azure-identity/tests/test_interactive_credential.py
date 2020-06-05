@@ -217,7 +217,7 @@ def test_enable_persistent_cache():
 
     # credential should default to an in memory cache
     raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
-    with patch(persistent_cache + ".load_persistent_cache", raise_when_called):
+    with patch(persistent_cache + "._load_persistent_cache", raise_when_called):
         with patch(InteractiveCredential.__module__ + ".msal.TokenCache", lambda: in_memory_cache):
             credential = TestCredential()
             assert credential._cache is in_memory_cache

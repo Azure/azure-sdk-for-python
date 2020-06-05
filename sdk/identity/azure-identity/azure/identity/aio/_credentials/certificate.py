@@ -51,7 +51,7 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_access_token(scopes)
+        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
         return token

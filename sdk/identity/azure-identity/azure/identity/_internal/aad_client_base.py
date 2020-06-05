@@ -49,9 +49,9 @@ class AadClientBase(ABC):
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
 
-    def get_cached_access_token(self, scopes):
-        # type: (Sequence[str]) -> Optional[AccessToken]
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
+    def get_cached_access_token(self, scopes, query=None):
+        # type: (Sequence[str], Optional[dict]) -> Optional[AccessToken]
+        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on - 300 > int(time.time()):

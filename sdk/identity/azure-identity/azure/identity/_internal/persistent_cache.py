@@ -13,8 +13,18 @@ if TYPE_CHECKING:
     import msal
 
 
-def load_persistent_cache(allow_unencrypted):
+def load_service_principal_cache(allow_unencrypted):
     # type: (Optional[bool]) -> msal.TokenCache
+    return _load_persistent_cache(allow_unencrypted, "MSALConfidentialCache", "msal.confidential.cache")
+
+
+def load_user_cache(allow_unencrypted):
+    # type: (Optional[bool]) -> msal.TokenCache
+    return _load_persistent_cache(allow_unencrypted, "MSALCache", "msal.cache")
+
+
+def _load_persistent_cache(allow_unencrypted, account_name, cache_name):
+    # type: (Optional[bool], str, str) -> msal.TokenCache
     """Load the persistent cache using msal_extensions.
 
     On Windows the cache is a file protected by the Data Protection API. On Linux and macOS the cache is stored by
@@ -26,19 +36,21 @@ def load_persistent_cache(allow_unencrypted):
     """
 
     if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-        cache_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
+        cache_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", cache_name)
         persistence = msal_extensions.FilePersistenceWithDataProtection(cache_location)
     elif sys.platform.startswith("darwin"):
         # the cache uses this file's modified timestamp to decide whether to reload
-        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", "msal.cache"))
-        persistence = msal_extensions.KeychainPersistence(file_path, "Microsoft.Developer.IdentityService", "MSALCache")
+        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
+        persistence = msal_extensions.KeychainPersistence(
+            file_path, "Microsoft.Developer.IdentityService", account_name
+        )
     elif sys.platform.startswith("linux"):
         # The cache uses this file's modified timestamp to decide whether to reload. Note this path is the same
         # as that of the plaintext fallback: a new encrypted cache will stomp an unencrypted cache.
-        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", "msal.cache"))
+        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
         try:
             persistence = msal_extensions.LibsecretPersistence(
-                file_path, "msal.cache", {"MsalClientID": "Microsoft.Developer.IdentityService"}, label="MSALCache"
+                file_path, cache_name, {"MsalClientID": "Microsoft.Developer.IdentityService"}, label=account_name
             )
         except ImportError:
             if not allow_unencrypted:

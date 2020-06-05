@@ -1,6 +1,15 @@
 # Release History
 
 ## 1.4.0b4 (Unreleased)
+- `CertificateCredential` and `ClientSecretCredential` can optionally store
+  access tokens they acquire in a persistent cache. To enable this, construct
+  the credential with `enable_persistent_cache=True`. On Linux, the persistent
+  cache requires libsecret and `pygobject`. If these are unavailable or
+  unusable (e.g. in an SSH session), loading the persistent cache will raise an
+  error. You may optionally configure the credential to fall back to an
+  unencrypted cache by constructing it with keyword argument 
+  `allow_unencrypted_cache=True`.
+  ([#11347](https://github.com/Azure/azure-sdk-for-python/issues/11347))
 - `AzureCliCredential` raises `CredentialUnavailableError` when no user is
   logged in to the Azure CLI.
   ([#11819](https://github.com/Azure/azure-sdk-for-python/issues/11819))

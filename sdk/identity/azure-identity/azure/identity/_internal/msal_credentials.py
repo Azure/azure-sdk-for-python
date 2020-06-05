@@ -18,7 +18,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
-from .persistent_cache import load_persistent_cache
+from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
@@ -98,7 +98,7 @@ class MsalCredential(ABC):
         if not self._cache:
             if kwargs.pop("enable_persistent_cache", False):
                 allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
-                self._cache = load_persistent_cache(allow_unencrypted)
+                self._cache = load_user_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
 
