@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/2de47da5-01b0-44d7-984b-600e0547be53?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestt6zusq3zae.servicebus.windows.net/2de47da5-01b0-44d7-984b-600e0547be53?api-version=2017-04</id><title
+        type="text">2de47da5-01b0-44d7-984b-600e0547be53</title><published>2020-06-05T19:52:09Z</published><updated>2020-06-05T19:52:09Z</updated><author><name>servicebustestt6zusq3zae</name></author><link
+        rel="self" href="https://servicebustestt6zusq3zae.servicebus.windows.net/2de47da5-01b0-44d7-984b-600e0547be53?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T19:52:09.067Z</CreatedAt><UpdatedAt>2020-06-05T19:52:09.183Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 19:52:08 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/2de47da5-01b0-44d7-984b-600e0547be53?api-version=2017-04
+  response:
+    body:
+      string: <Error><Code>409</Code><Detail>SubCode=40900. Conflict. You're requesting
+        an operation that isn't allowed in the resource's current state. To know more
+        visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:f6ce3fb5-2456-4aee-b1fa-f815755f823e_G8,
+        SystemTracker:servicebustestt6zusq3zae.servicebus.windows.net:2de47da5-01b0-44d7-984b-600e0547be53,
+        Timestamp:2020-06-05T19:52:09</Detail></Error>
+    headers:
+      content-type:
+      - application/xml; charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 19:52:09 GMT
+      etag:
+      - '637269835291830000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 409
+      message: Conflict
+version: 1

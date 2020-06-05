@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription><ns1:LockDuration>PT13S</ns1:LockDuration><ns1:MaxSizeInMegabytes>3072</ns1:MaxSizeInMegabytes><ns1:RequiresSession>true</ns1:RequiresSession><ns1:DefaultMessageTimeToLive>PT11M</ns1:DefaultMessageTimeToLive><ns1:DeadLetteringOnMessageExpiration>true</ns1:DeadLetteringOnMessageExpiration><ns1:DuplicateDetectionHistoryTimeWindow>PT12M</ns1:DuplicateDetectionHistoryTimeWindow><ns1:MaxDeliveryCount>14</ns1:MaxDeliveryCount><ns1:EnableBatchedOperations>true</ns1:EnableBatchedOperations><ns1:IsAnonymousAccessible>true</ns1:IsAnonymousAccessible><ns1:SupportOrdering>true</ns1:SupportOrdering><ns1:AutoDeleteOnIdle>PT10M</ns1:AutoDeleteOnIdle><ns1:EnablePartitioning>true</ns1:EnablePartitioning><ns1:EnableExpress>true</ns1:EnableExpress></ns1:QueueDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1016'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04</id><title
+        type="text">e8d0e74e-0470-4d6f-9510-0d358ad0f03d</title><published>2020-06-05T19:52:10Z</published><updated>2020-06-05T19:52:10Z</updated><author><name>servicebustestt6zusq3zae</name></author><link
+        rel="self" href="https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T19:52:10.5Z</CreatedAt><UpdatedAt>2020-06-05T19:52:10.68Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 19:52:10 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: GET
+    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&amp;api-version=2017-04</id><title
+        type="text">e8d0e74e-0470-4d6f-9510-0d358ad0f03d</title><published>2020-06-05T19:52:10Z</published><updated>2020-06-05T19:52:10Z</updated><author><name>servicebustestt6zusq3zae</name></author><link
+        rel="self" href="https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&amp;api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T19:52:10.5Z</CreatedAt><UpdatedAt>2020-06-05T19:52:10.68Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 19:52:11 GMT
+      etag:
+      - '637269835306800000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
