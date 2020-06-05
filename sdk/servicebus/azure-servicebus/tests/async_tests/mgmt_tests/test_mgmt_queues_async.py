@@ -16,7 +16,8 @@ from azure.servicebus._common.utils import utc_now
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
-    CachedServiceBusNamespacePreparer
+    CachedServiceBusNamespacePreparer,
+    ServiceBusNamespacePreparer
 )
 
 from mgmt_test_utilities_async import (
@@ -28,7 +29,7 @@ from mgmt_test_utilities_async import (
 
 class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_basic(self, servicebus_namespace_connection_string,
                                                         servicebus_namespace, servicebus_namespace_key_name,
                                                         servicebus_namespace_primary_key):
@@ -57,7 +58,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert len(queues) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_with_special_chars(self, servicebus_namespace_connection_string):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
@@ -72,13 +73,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert len(queues) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_with_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListTestHelper(sb_mgmt_client))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_with_negative_credential(self, servicebus_namespace, servicebus_namespace_key_name,
                                                         servicebus_namespace_primary_key):
         invalid_conn_str = 'Endpoint=sb://invalid.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'
@@ -108,13 +109,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
             await sb_mgmt_client.list_queues()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_with_negative_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_negative_parameters(AsyncMgmtQueueListTestHelper(sb_mgmt_client))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_basic(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await sb_mgmt_client.create_queue("test_queue")
@@ -136,7 +137,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert len(queues) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         for i in range(10):
@@ -155,7 +156,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert len(queues) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_negtive(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await sb_mgmt_client.create_queue("test_queue")
@@ -245,7 +246,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert queue.is_anonymous_accessible == True
         assert queue.lock_duration == datetime.timedelta(seconds=13)
         assert queue.max_delivery_count == 14
-        assert queue.max_size_in_megabytes // 3072 == 0
+        assert queue.max_size_in_megabytes % 3072 == 0
         #assert queue.requires_duplicate_detection == True
         assert queue.requires_session == True
         assert queue.support_ordering == True
@@ -347,7 +348,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         queue_description.lock_duration = datetime.timedelta(minutes=5)  
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         queues = await sb_mgmt_client.list_queues()
@@ -384,13 +385,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert len(queues_infos) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_runtime_info_with_negative_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_negative_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(sb_mgmt_client))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_runtime_info_with_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(sb_mgmt_client))

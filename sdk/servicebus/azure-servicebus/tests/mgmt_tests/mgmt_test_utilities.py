@@ -12,7 +12,7 @@ class MgmtListTestHelperInterface(object):
     def __init__(self, mgmt_client):
         self.sb_mgmt_client = mgmt_client
 
-    def list_resource_method(self, skip=0, max_count=100):
+    def list_resource_method(self, start_index=0, max_count=100):
         pass
 
     def create_resource_method(self, name):
@@ -26,8 +26,8 @@ class MgmtListTestHelperInterface(object):
 
 
 class MgmtQueueListTestHelper(MgmtListTestHelperInterface):
-    def list_resource_method(self, skip=0, max_count=100):
-        return self.sb_mgmt_client.list_queues(skip=skip, max_count=max_count)
+    def list_resource_method(self, start_index=0, max_count=100):
+        return self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count)
 
     def create_resource_method(self, name):
         self.sb_mgmt_client.create_queue(name)
@@ -40,8 +40,8 @@ class MgmtQueueListTestHelper(MgmtListTestHelperInterface):
 
 
 class MgmtQueueListRuntimeInfoTestHelper(MgmtListTestHelperInterface):
-    def list_resource_method(self, skip=0, max_count=100):
-        return self.sb_mgmt_client.list_queues_runtime_info(skip=skip, max_count=max_count)
+    def list_resource_method(self, start_index=0, max_count=100):
+        return self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count)
 
     def create_resource_method(self, name):
         self.sb_mgmt_client.create_queue(name)
@@ -67,7 +67,7 @@ def run_test_mgmt_list_with_parameters(test_helper):
 
     sorted_resources_names = sorted(resources_names)
 
-    result = test_helper.list_resource_method(skip=5, max_count=10)
+    result = test_helper.list_resource_method(start_index=5, max_count=10)
     expected_result = sorted_resources_names[5:15]
     assert len(result) == 10
     for item in result:
@@ -77,7 +77,7 @@ def run_test_mgmt_list_with_parameters(test_helper):
     result = test_helper.list_resource_method(max_count=0)
     assert len(result) == 0
 
-    queues = test_helper.list_resource_method(skip=0, max_count=0)
+    queues = test_helper.list_resource_method(start_index=0, max_count=0)
     assert len(queues) == 0
 
     cnt = 20
@@ -97,26 +97,26 @@ def run_test_mgmt_list_with_negative_parameters(test_helper):
     assert len(result) == 0
 
     with pytest.raises(HttpResponseError):
-        test_helper.list_resource_method(skip=-1)
+        test_helper.list_resource_method(start_index=-1)
 
     with pytest.raises(HttpResponseError):
         test_helper.list_resource_method(max_count=-1)
 
     with pytest.raises(HttpResponseError):
-        test_helper.list_resource_method(skip=-1, max_count=-1)
+        test_helper.list_resource_method(start_index=-1, max_count=-1)
 
     test_helper.create_resource_method("test_resource")
     result = test_helper.list_resource_method()
     assert len(result) == 1 and test_helper.get_resource_name(result[0]) == "test_resource"
 
     with pytest.raises(HttpResponseError):
-        test_helper.list_resource_method(skip=-1)
+        test_helper.list_resource_method(start_index=-1)
 
     with pytest.raises(HttpResponseError):
         test_helper.list_resource_method(max_count=-1)
 
     with pytest.raises(HttpResponseError):
-        test_helper.list_resource_method(skip=-1, max_count=-1)
+        test_helper.list_resource_method(start_index=-1, max_count=-1)
 
     test_helper.delete_resource_by_name_method("test_resource")
     result = test_helper.list_resource_method()
