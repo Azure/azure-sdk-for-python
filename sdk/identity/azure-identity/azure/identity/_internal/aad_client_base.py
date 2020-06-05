@@ -4,7 +4,6 @@
 # ------------------------------------
 import abc
 import base64
-import copy
 import json
 import time
 from uuid import uuid4
@@ -89,13 +88,26 @@ class AadClientBase(ABC):
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
-        if content.get("error") == "invalid_grant" and response.http_request.body.get("grant_type") == "refresh_token":
-            # The request contained an invalid refresh token. Following MSAL, we evict that token from the cache.
-            cache_entries = self._cache.find(
-                TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": response.http_request.body["refresh_token"]}
-            )
-            if len(cache_entries) == 1:
-                self._cache.remove_rt(cache_entries[0])
+        if response.http_request.body.get("grant_type") == "refresh_token":
+            if content.get("error") == "invalid_grant":
+                # the request's refresh token is invalid -> evict it from the cache
+                cache_entries = self._cache.find(
+                    TokenCache.CredentialType.REFRESH_TOKEN,
+                    query={"secret": response.http_request.body["refresh_token"]},
+                )
+                for invalid_token in cache_entries:
+                    self._cache.remove_rt(invalid_token)
+            if "refresh_token" in content:
+                # AAD returned a new refresh token -> update the cache entry
+                cache_entries = self._cache.find(
+                    TokenCache.CredentialType.REFRESH_TOKEN,
+                    query={"secret": response.http_request.body["refresh_token"]},
+                )
+                # If the old token is in multiple cache entries, the cache is in a state we don't
+                # expect or know how to reason about, so we update nothing.
+                if len(cache_entries) == 1:
+                    self._cache.update_rt(cache_entries[0], content["refresh_token"])
+                    del content["refresh_token"]  # prevent caching a redundant entry
 
         _raise_for_error(content)
 
@@ -110,6 +122,8 @@ class AadClientBase(ABC):
             )
 
         token = AccessToken(content["access_token"], expires_on)
+
+        # caching is the final step because 'add' mutates 'content'
         self._cache.add(
             event={
                 "response": content,
