@@ -30,7 +30,8 @@ from ._models import (
     FormWord,
     CustomFormModel,
     CustomFormSubmodel,
-    CustomFormModelField
+    CustomFormModelField,
+    RecognizedReceipt
 )
 
 
@@ -58,7 +59,8 @@ __all__ = [
     'FormWord',
     'CustomFormModel',
     'CustomFormSubmodel',
-    'CustomFormModelField'
+    'CustomFormModelField',
+    'RecognizedReceipt'
 ]
 
 __VERSION__ = VERSION
