@@ -87,7 +87,10 @@ class AnalyzeTextOptions(msrest.serialization.Model):
 
 
 class CustomAnalyzer(LexicalAnalyzer):
-    """Allows you to take control over the process of converting text into indexable/searchable tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters. The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens emitted by the tokenizer.
+    """Allows you to take control over the process of converting text into indexable/searchable tokens.
+    It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters.
+    The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens
+    emitted by the tokenizer.
 
     All required parameters must be populated in order to send to Azure.
 
