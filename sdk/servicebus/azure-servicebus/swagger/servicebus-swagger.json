@@ -556,6 +556,13 @@
           "type": "string",
           "format": "date-time"
         },
+        "link": {
+          "description": "Links to paginated response.",
+          "type":"array",
+          "items": {
+            "$ref": "#/definitions/ResponseLink"
+          }
+        },
         "entry": {
           "description": "Queue entries.",
           "type": "array",
@@ -641,6 +648,10 @@
             "attribute": true
           }
         }
+      },
+      "xml": {
+        "name": "link",
+        "namespace": "http://www.w3.org/2005/Atom"
       }
     },
     "ResponseTitle": {
