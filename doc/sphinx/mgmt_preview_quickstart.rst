@@ -68,7 +68,7 @@ Linux-based OS
     export AZURE_TENANT_ID="__TENANT_ID__"
     export AZURE_SUBSCRIPTION_ID="__SUBSCRIPTION_ID__"
 
-Authentication and Creating Resource Management Client
+Authentication and Creating Management Client
 ------------------------------------------------------
 
 Now that the environment is setup, all you need to do is to create an
@@ -80,11 +80,15 @@ To authenticate to Azure and create
 a management client, simply do the following:
 
 ::
+
+    import azure.mgmt.resource
+    import azure.mgmt.network
     from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
     credential = DefaultAzureCredential()
     resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
+    network_client = azure.mgmt.network.NetworkManagementClient(credential=credential, subscription_id=subscription_id)
 
 More information and different authentication approaches using Azure Identity can be found in
 `this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
@@ -92,8 +96,7 @@ More information and different authentication approaches using Azure Identity ca
 Managing Resources
 ------------------
 
-Now that we are authenticated, we can use our management client to make API
-calls. Let's create a resource group and demonstrate management client's usage
+Now that we are authenticated, we can use the Resource client (azure.mgmt.resource.ResourceManagementClient) we have created to perform operations on Resource Group. In this example, we will show to manage Resource Groups.
 
 **Create a resource group**
 
@@ -131,6 +134,74 @@ calls. Let's create a resource group and demonstrate management client's usage
 
     delete_async_op = resource_client.resource_groups.begin_delete(group_name)
     delete_async_op.wait()
+
+Managing Network
+------------------
+We can use the Network client (azure.mgmt.resource.NetworkManagementClient) we have created to perform operations on Network related resources. In this example, we will show how to manage Public IP Addresses.
+
+**Create a Network Public IP Address**
+
+::
+
+    GROUP_NAME = "testgroup"
+    PUBLIC_IP_ADDRESS = "public_ip_address_name"
+
+    # Create Resource Group
+    resource_client.resource_groups.create_or_update(
+        GROUP_NAME,
+        {"location": "eastus"}
+    )
+
+    # Create Public IP Address
+    public_ip_address = network_client.public_ip_addresses.begin_create_or_update(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS,
+        {
+          "location": "eastus"
+        }
+    ).result()
+    print("Create Public IP Address:\n{}".format(public_ip_address))
+
+**Update a Network Public IP Address**
+
+::
+
+   public_ip_address = network_client.public_ip_addresses.get(
+     GROUP_NAME,
+     PUBLIC_IP_ADDRESS
+   )
+   print("Get Public IP Address:\n{}".format(public_ip_address))
+
+**List all Network Public IP Address**
+
+::
+
+    # Update Public IP Address
+    public_ip_address = network_client.public_ip_addresses.update_tags(
+      GROUP_NAME,
+      PUBLIC_IP_ADDRESS,
+      {
+        "tags": {
+          "tag1": "value1",
+          "tag2": "value2"
+        }
+      }
+    )
+    print("Updated Public IP Address \n{}".format(public_ip_address))
+
+**Delete a Network Public IP Address**
+
+::
+
+    # Delete Public IP Address
+    public_ip_address = network_client.public_ip_addresses.begin_delete(
+      GROUP_NAME,
+      PUBLIC_IP_ADDRESS
+    ).result()
+    print("Delete Public IP Address.\n")
+
+
+
 
 Need help?
 ----------
