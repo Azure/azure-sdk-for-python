@@ -9,6 +9,7 @@ import logging
 import pytest
 import uuid
 import datetime
+import functools
 
 from azure.servicebus.management import ServiceBusManagementClient, QueueDescription
 from azure.servicebus._common.utils import utc_now
@@ -21,7 +22,14 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer
 )
 
+from utilities import (
+    MgmtQueueListTestHelper,
+    MgmtQueueListRuntimeInfoTestHelper,
+    run_test_mgmt_list_with_parameters,
+    run_test_mgmt_list_with_negative_parameters
+)
 _logger = get_logger(logging.DEBUG)
+
 
 class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -71,46 +79,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_list_with_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
-        queues = sb_mgmt_client.list_queues(skip=5, max_count=10)
-        assert len(queues) == 0
-
-        for i in range(20):
-            sb_mgmt_client.create_queue("queue{}".format(i))
-
-        queues = sb_mgmt_client.list_queues()
-        assert len(queues) == 20
-
-        all_queues = sorted(["queue{}".format(i) for i in range(20)])
-
-        queues = sb_mgmt_client.list_queues(skip=5, max_count=10)
-        correct_set = all_queues[5:15]
-        assert len(queues) == 10
-        for queue in queues:
-            correct_set.remove(queue.queue_name)
-        assert len(correct_set) == 0
-
-        correct_set = all_queues[15:20]
-        queues = sb_mgmt_client.list_queues(skip=15, max_count=100)
-        assert len(queues) == 5
-        for queue in queues:
-            correct_set.remove(queue.queue_name)
-        assert len(correct_set) == 0
-
-        queues = sb_mgmt_client.list_queues(max_count=0)
-        assert len(queues) == 0
-
-        queues = sb_mgmt_client.list_queues(skip=0, max_count=0)
-        assert len(queues) == 0
-
-        cnt = 20
-        for i in range(20):
-            sb_mgmt_client.delete_queue(all_queues[i])
-            cnt -= 1
-            assert len(sb_mgmt_client.list_queues()) == cnt
-
-        queues = sb_mgmt_client.list_queues()
-        assert len(queues) == 0
+        run_test_mgmt_list_with_parameters(MgmtQueueListTestHelper(sb_mgmt_client))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -146,35 +115,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_list_with_negative_parameters(self, servicebus_namespace_connection_string):
         sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
-        queues = sb_mgmt_client.list_queues()
-        assert len(queues) == 0
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(skip=-1)
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(max_count=-1)
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(skip=-1, max_count=-1)
-
-        sb_mgmt_client.create_queue("test_queue")
-        queues = sb_mgmt_client.list_queues()
-        assert len(queues) == 1 and queues[0].queue_name == "test_queue"
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(skip=-1)
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(max_count=-1)
-
-        with pytest.raises(HttpResponseError):
-            sb_mgmt_client.list_queues(skip=-1, max_count=-1)
-
-        sb_mgmt_client.delete_queue("test_queue")
-        queues = sb_mgmt_client.list_queues()
-        assert len(queues) == 0
+        run_test_mgmt_list_with_negative_parameters(MgmtQueueListTestHelper(sb_mgmt_client))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -417,3 +358,90 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             mgmt_service.update_queue(queue_description)
         queue_description.lock_duration = datetime.timedelta(minutes=5)  
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        queues = sb_mgmt_client.list_queues()
+        queues_infos = sb_mgmt_client.list_queues_runtime_info()
+
+        assert len(queues) == len(queues_infos) == 0
+
+        sb_mgmt_client.create_queue("test_queue")
+
+        queues = sb_mgmt_client.list_queues()
+        queues_infos = sb_mgmt_client.list_queues_runtime_info()
+
+        assert len(queues) == 1 and len(queues_infos) == 1
+
+        assert queues[0].queue_name == queues_infos[0].queue_name == "test_queue"
+        assert queues_infos[0].created_at and queues_infos[0].created_at == queues[0].created_at
+
+        info = queues_infos[0]
+
+        assert info.size_in_bytes == 0
+        assert info.accessed_at is not None
+        assert info.updated_at is not None
+        assert info.message_count == 0
+
+        assert info.message_count_details
+        assert info.message_count_details.active_message_count == 0
+        assert info.message_count_details.dead_letter_message_count == 0
+        assert info.message_count_details.transfer_dead_letter_message_count == 0
+        assert info.message_count_details.transfer_message_count == 0
+        assert info.message_count_details.scheduled_message_count == 0
+
+        sb_mgmt_client.delete_queue("test_queue")
+        queues_infos = sb_mgmt_client.list_queues_runtime_info()
+        assert len(queues_infos) == 0
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_list_runtime_info_with_negative_parameters(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        run_test_mgmt_list_with_negative_parameters(MgmtQueueListRuntimeInfoTestHelper(sb_mgmt_client))
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_list_runtime_info_with_parameters(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        run_test_mgmt_list_with_parameters(MgmtQueueListRuntimeInfoTestHelper(sb_mgmt_client))
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_get_runtime_info_basic(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        sb_mgmt_client.create_queue("test_queue")
+        queue_runtime_info = sb_mgmt_client.get_queue_runtime_info("test_queue")
+
+        assert queue_runtime_info
+        assert queue_runtime_info.queue_name == "test_queue"
+        assert queue_runtime_info.size_in_bytes == 0
+        assert queue_runtime_info.created_at is not None
+        assert queue_runtime_info.accessed_at is not None
+        assert queue_runtime_info.updated_at is not None
+        assert queue_runtime_info.message_count == 0
+
+        assert queue_runtime_info.message_count_details
+        assert queue_runtime_info.message_count_details.active_message_count == 0
+        assert queue_runtime_info.message_count_details.dead_letter_message_count == 0
+        assert queue_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
+        assert queue_runtime_info.message_count_details.transfer_message_count == 0
+        assert queue_runtime_info.message_count_details.scheduled_message_count == 0
+        sb_mgmt_client.delete_queue("test_queue")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_get_runtime_info_negative(self, servicebus_namespace_connection_string):
+        sb_mgmt_client = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        with pytest.raises(ValueError):
+            sb_mgmt_client.get_queue_runtime_info(None)
+
+        with pytest.raises(ValueError):
+            sb_mgmt_client.get_queue_runtime_info("")
+
+        with pytest.raises(ResourceNotFoundError):
+            sb_mgmt_client.get_queue_runtime_info("non_existing_queue")
+
