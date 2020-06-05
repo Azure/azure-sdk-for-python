@@ -74,7 +74,7 @@ pip install -r requiriments.txt
 pip install -r requiriments_async.txt
 ```
 
-If a python version below 3.5 is being used, it is still possible to run the samples. When it gets to the async tests a message `'Async not suported'` will be displayed.
+If a python version below 3.5 is being used, it is still possible to run the samples. When it gets to the async tests a message `'Async not supported'` will be displayed.
 
 ## Key concepts
 

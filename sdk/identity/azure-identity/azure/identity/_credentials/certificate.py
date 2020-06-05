@@ -4,8 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from .._authn_client import AuthnClient
-from .._base import CertificateCredentialBase
+from .._internal import AadClient, CertificateCredentialBase
 
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
@@ -25,6 +24,10 @@ class CertificateCredential(CertificateCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
+          False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -42,11 +45,10 @@ class CertificateCredential(CertificateCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_token(scopes)
+        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
-            data = self._get_request_data(*scopes)
-            token = self._client.request_token(scopes, form_data=data)
+            token = self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
         return token
 
-    def _get_auth_client(self, tenant_id, **kwargs):
-        return AuthnClient(tenant=tenant_id, **kwargs)
+    def _get_auth_client(self, tenant_id, client_id, **kwargs):
+        return AadClient(tenant_id, client_id, **kwargs)

@@ -14,7 +14,7 @@ In practical terms, we want to control the version of Autorest used, the output 
 
 ## Writing the readme
 
-Writing the readme is the responsability of the Python SDK team. There is currently two types of templates for Python readmes:
+Writing the readme is the responsibility of the Python SDK team. There is currently two types of templates for Python readmes:
 - Readme that handles only one API version, and generates packages that handle one API version only
 - Readme that handles several API versions, and generates packages with multiples API and profile supports
 

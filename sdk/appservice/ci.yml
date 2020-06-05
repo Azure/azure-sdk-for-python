@@ -20,7 +20,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/web/
+    - sdk/appservice/
 
 pr:
   branches:
@@ -32,7 +32,7 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/web/
+    - sdk/appservice/
 
 
 stages:

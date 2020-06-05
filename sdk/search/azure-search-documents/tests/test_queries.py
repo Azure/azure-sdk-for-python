@@ -16,8 +16,7 @@ from azure.search.documents._internal._generated.models import (
     SuggestRequest,
 )
 
-from azure.search.documents.models import SearchQuery
-from azure.search.documents._internal._queries import AutocompleteQuery, SuggestQuery
+from azure.search.documents._internal._queries import AutocompleteQuery, SuggestQuery, SearchQuery
 
 
 class TestAutocompleteQuery(object):
@@ -63,7 +62,7 @@ class TestSearchQuery(object):
         assert query.request.order_by is None
         assert query.request.select is None
 
-    @mock.patch("azure.search.documents.models.SearchQuery._request_type")
+    @mock.patch("azure.search.documents._internal._queries.SearchQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SearchQuery(foo=10, bar=20)
