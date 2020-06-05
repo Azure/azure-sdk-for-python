@@ -217,7 +217,17 @@ def unpack_search_index(search_index):
     )
 
 
-def unpack_synonyms(synonym_map):
+def pack_synonym_map(synonym_map):
+    # type: (SynonymMap) -> _SynonymMap
+    return _SynonymMap(
+        name=synonym_map.name,
+        synonyms="\n".join(synonym_map.synonyms),
+        encryption_key=pack_search_resource_encryption_key(synonym_map.encryption_key),
+        e_tag=synonym_map.e_tag
+    )
+
+
+def unpack_synonym_map(synonym_map):
     # type: (_SynonymMap) -> SynonymMap
     return SynonymMap(
         name=synonym_map.name,
@@ -347,7 +357,7 @@ def pack_search_field(search_field):
         name = search_field.get("name")
         field_type = search_field.get("type")
         key = search_field.get("key")
-        is_hidden = search_field.get("is_hidden")
+        hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")
         filterable = search_field.get("filterable")
         sortable = search_field.get("sortable")
@@ -362,7 +372,7 @@ def pack_search_field(search_field):
             name=name,
             type=field_type,
             key=key,
-            retrievable=not is_hidden,
+            retrievable=not hidden,
             searchable=searchable,
             filterable=filterable,
             sortable=sortable,
@@ -379,7 +389,7 @@ def pack_search_field(search_field):
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        retrievable=not search_field.is_hidden,
+        retrievable=not search_field.hidden,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,
@@ -402,7 +412,7 @@ def unpack_search_field(search_field):
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        is_hidden=search_field.retrievable,
+        hidden=not search_field.retrievable,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,

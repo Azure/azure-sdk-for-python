@@ -10,13 +10,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import SynonymMap
 from ....aio import SearchClient
 from .._utils import (
     pack_search_index,
     unpack_search_index,
-    unpack_synonyms,
-    pack_search_resource_encryption_key,
+    unpack_synonym_map,
+    pack_synonym_map,
     get_access_conditions,
     normalize_endpoint,
 )
@@ -60,7 +59,7 @@ class SearchIndexClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchIndexClient` session.
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
 
         """
         return await self._client.close()
@@ -81,7 +80,7 @@ class SearchIndexClient(HeadersMixin):
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
-        :rtype: list[~azure.search.documents.SearchIndex]
+        :rtype: list[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -90,14 +89,14 @@ class SearchIndexClient(HeadersMixin):
         return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
 
     @distributed_trace_async
-    async def get_index(self, index_name, **kwargs):
+    async def get_index(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndex
         """
 
-        :param index_name: The name of the index to retrieve.
-        :type index_name: str
+        :param name: The name of the index to retrieve.
+        :type name: str
         :return: SearchIndex object
-        :rtype: ~azure.search.documents.SearchIndex
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -110,7 +109,7 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.get(index_name, **kwargs)
+        result = await self._client.indexes.get(name, **kwargs)
         return unpack_search_index(result)
 
     @distributed_trace_async
@@ -122,7 +121,7 @@ class SearchIndexClient(HeadersMixin):
         :param index_name: The name of the index to retrieve.
         :type index_name: str
         :return: Statistics for the given index, including a document count and storage usage.
-        :rtype: ~azure.search.documents.GetIndexStatisticsResult
+        :rtype: dict
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -137,7 +136,7 @@ class SearchIndexClient(HeadersMixin):
         provided instead of the name to use the access conditions
 
         :param index: The index to retrieve.
-        :type index: str or ~search.models.SearchIndex
+        :type index: str or :class:`~azure.search.documents.indexes.models.SearchIndex`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -170,9 +169,9 @@ class SearchIndexClient(HeadersMixin):
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: ~azure.search.documents.SearchIndex
+        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :return: The index created
-        :rtype: ~azure.search.documents.SearchIndex
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -191,15 +190,13 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_or_update_index(
-        self, index_name, index, allow_index_downtime=None, **kwargs
+        self, index, allow_index_downtime=None, **kwargs
     ):
-        # type: (str, SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
+        # type: (SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
-        :param index_name: The name of the index.
-        :type index_name: str
         :param index: The index object.
-        :type index: ~azure.search.documents.SearchIndex
+        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -209,7 +206,7 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.SearchIndex`
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
@@ -232,7 +229,7 @@ class SearchIndexClient(HeadersMixin):
         kwargs.update(access_condition)
         patched_index = pack_search_index(index)
         result = await self._client.indexes.create_or_update(
-            index_name=index_name,
+            index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             error_map=error_map,
@@ -248,9 +245,9 @@ class SearchIndexClient(HeadersMixin):
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test.
-        :type analyze_request: ~azure.search.documents.AnalyzeRequest
+        :type analyze_request: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
         :return: AnalyzeResult
-        :rtype: ~azure.search.documents.AnalyzeResult
+        :rtype: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -289,7 +286,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.list(**kwargs)
-        return [unpack_synonyms(x) for x in result.synonym_maps]
+        return [unpack_synonym_map(x) for x in result.synonym_maps]
 
     @distributed_trace_async
     async def get_synonym_map_names(self, **kwargs):
@@ -313,7 +310,7 @@ class SearchIndexClient(HeadersMixin):
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -328,7 +325,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return unpack_synonyms(result)
+        return unpack_synonym_map(result)
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -338,7 +335,7 @@ class SearchIndexClient(HeadersMixin):
         the name of the synonym map to delete unconditionally.
 
         :param name: The Synonym Map to delete
-        :type name: str or ~search.models.SynonymMap
+        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -369,16 +366,14 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace_async
-    async def create_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> SynonymMap
+    async def create_synonym_map(self, synonym_map, **kwargs):
+        # type: (SynonymMap, **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service
 
-        :param name: The name of the Synonym Map to create
-        :type name: str
-        :param synonyms: A list of synonyms in SOLR format
-        :type synonyms: List[str]
+        :param synonym_map: The Synonym Map object
+        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap
         :return: The created Synonym Map
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
 
         .. admonition:: Example:
 
@@ -391,25 +386,22 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = await self._client.synonym_maps.create(synonym_map, **kwargs)
-        return unpack_synonyms(result)
+        patched_synonym_map = pack_synonym_map(synonym_map)
+        result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
+        return unpack_synonym_map(result)
 
     @distributed_trace_async
-    async def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
-        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> SynonymMap
+    async def create_or_update_synonym_map(self, synonym_map, **kwargs):
+        # type: (SynonymMap, **Any) -> SynonymMap
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
-        :param synonym_map: The name of the Synonym Map to create or update
-        :type synonym_map: str or ~azure.search.documents.SynonymMap
-        :param synonyms: A list of synonyms in SOLR format
-        :type synonyms: List[str]
+        :param synonym_map: The Synonym Map object
+        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -417,22 +409,14 @@ class SearchIndexClient(HeadersMixin):
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        try:
-            name = synonym_map.name
-            if synonyms:
-                synonym_map.synonyms = "\n".join(synonyms)
-            synonym_map.encryption_key = pack_search_resource_encryption_key(synonym_map.encryption_key)
-        except AttributeError:
-            name = synonym_map
-            solr_format_synonyms = "\n".join(synonyms)
-            synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        patched_synonym_map = pack_synonym_map(synonym_map)
         result = await self._client.synonym_maps.create_or_update(
-            synonym_map_name=name,
-            synonym_map=synonym_map,
+            synonym_map_name=synonym_map.name,
+            synonym_map=patched_synonym_map,
             error_map=error_map,
             **kwargs
         )
-        return unpack_synonyms(result)
+        return unpack_synonym_map(result)
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):
