@@ -39,14 +39,163 @@ class IotSecuritySolutionOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Details of a specific iot security solution.
+    def list_by_subscription(
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Use this method to get the list of IoT Security solutions by
+        subscription.
+
+        :param filter: Filter the IoT Security solution with OData syntax.
+         Supports filtering by iotHubs.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of IoTSecuritySolutionModel
+        :rtype:
+         ~azure.mgmt.security.models.IoTSecuritySolutionModelPaged[~azure.mgmt.security.models.IoTSecuritySolutionModel]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_subscription.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.IoTSecuritySolutionModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotSecuritySolutions'}
+
+    def list_by_resource_group(
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Use this method to get the list IoT Security solutions organized by
+        resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param filter: Filter the IoT Security solution with OData syntax.
+         Supports filtering by iotHubs.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of IoTSecuritySolutionModel
+        :rtype:
+         ~azure.mgmt.security.models.IoTSecuritySolutionModelPaged[~azure.mgmt.security.models.IoTSecuritySolutionModel]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.IoTSecuritySolutionModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions'}
+
+    def get(
+            self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
+        """User this method to get details of a specific IoT Security solution
+        based on solution name.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -101,14 +250,14 @@ class IotSecuritySolutionOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}'}
 
-    def create(
+    def create_or_update(
             self, resource_group_name, solution_name, iot_security_solution_data, custom_headers=None, raw=False, **operation_config):
-        """Create new solution manager.
+        """Use this method to create or update yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param iot_security_solution_data: The security solution data
         :type iot_security_solution_data:
@@ -124,7 +273,7 @@ class IotSecuritySolutionOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -170,17 +319,18 @@ class IotSecuritySolutionOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}'}
 
     def update(
             self, resource_group_name, solution_name, update_iot_security_solution_data, custom_headers=None, raw=False, **operation_config):
-        """update existing Security Solution tags or user defined resources. To
-        update other fields use the CreateOrUpdate method.
+        """Use this method to update existing IoT Security solution tags or user
+        defined resources. To update other fields use the CreateOrUpdate
+        method.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param update_iot_security_solution_data: The security solution data
         :type update_iot_security_solution_data:
@@ -244,12 +394,12 @@ class IotSecuritySolutionOperations(object):
 
     def delete(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Create new solution manager.
+        """Use this method to delete yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
