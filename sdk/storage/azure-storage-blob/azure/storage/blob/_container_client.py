@@ -65,7 +65,7 @@ def _get_blob_name(blob):
     :rtype: str
     """
     try:
-        return blob.name
+        return blob.get('name')
     except AttributeError:
         return blob
 
@@ -1031,7 +1031,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return query_parameters, header_parameters
 
     def _generate_delete_blobs_options(self,
-                                       *blobs,  # type: Union[str, BlobProperties]
+                                       *blobs,  # type: List[Union[str, BlobProperties, dict]]
                                        **kwargs
                                        ):
         timeout = kwargs.pop('timeout', None)
@@ -1047,20 +1047,21 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_name = _get_blob_name(blob)
             container_name = self.container_name
 
-            if isinstance(blob, BlobProperties):
-                container_name = blob.container if blob.container else container_name
+            try:
+                container_name = blob.get('container') if blob.get('container') else container_name
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
-                    snapshot=blob.snapshot,
-                    delete_snapshots=delete_snapshots or blob.delete_snapshots,
-                    lease=blob.lease_id,
-                    if_modified_since=blob.if_modified_since,
-                    if_unmodified_since=blob.if_unmodified_since,
-                    etag=blob.etag,
-                    match_condition=blob.match_condition or MatchConditions.IfNotModified if blob.etag else None,
-                    timeout=blob.timeout,
+                    snapshot=blob.get('snapshot'),
+                    delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
+                    lease=blob.get('lease_id'),
+                    if_modified_since=blob.get('if_modified_since'),
+                    if_unmodified_since=blob.get('if_unmodified_since'),
+                    etag=blob.get('etag'),
+                    match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
+                    else None,
+                    timeout=blob.get('timeout'),
                 )
                 query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
-            else:
+            except AttributeError:
                 query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options()
 
             req = HttpRequest(
@@ -1091,7 +1092,19 @@ class ContainerClient(StorageAccountHostsMixin):
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                snapshot you want to delete: 'snapshot'
+                whether to delete snapthots when deleting blob: 'delete_snapshots'
+                if the blob modified or not: 'if_modified_since', 'if_unmodified_since'
+                match the etag or not: 'etag', 'match_condition'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1124,6 +1137,9 @@ class ContainerClient(StorageAccountHostsMixin):
 
         Once Autorest is able to provide request preparation this code should be removed.
         """
+        if not tier:
+            raise ValueError("A blob tier must be specified")
+
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -1148,8 +1164,8 @@ class ContainerClient(StorageAccountHostsMixin):
         return query_parameters, header_parameters
 
     def _generate_set_tiers_options(self,
-                                    blob_tier=None,  # type: Optional[Union[str, StandardBlobTier, PremiumPageBlobTier]]
-                                    *blobs,  # type: Union[str, BlobProperties]
+                                    blob_tier,  # type: Optional[Union[str, StandardBlobTier, PremiumPageBlobTier]]
+                                    *blobs,  # type: List[Union[str, BlobProperties, dict]]
                                     **kwargs
                                     ):
         timeout = kwargs.pop('timeout', None)
@@ -1165,15 +1181,16 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_name = _get_blob_name(blob)
             container_name = self.container_name
 
-            if isinstance(blob, BlobProperties):
-                container_name = blob.container if blob.container else container_name
+            try:
+                container_name = blob.get('container') if blob.get('container') else container_name
+                tier = blob_tier or blob.get('blob_tier')
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
-                    tier=blob_tier or blob.blob_tier,
-                    rehydrate_priority=rehydrate_priority or blob.rehydrate_priority,
-                    lease_access_conditions= blob.lease_id,
-                    timeout=timeout or blob.timeout
+                    tier=tier,
+                    rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
+                    lease_access_conditions=blob.get('lease_id'),
+                    timeout=timeout or blob.get('timeout')
                 )
-            else:
+            except AttributeError:
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(blob_tier)
 
             req = HttpRequest(
@@ -1189,8 +1206,8 @@ class ContainerClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_standard_blob_tier_blobs(
         self,
-        standard_blob_tier=None,  # type: Optional[Union[str, StandardBlobTier]]
-        *blobs,  # type: Union[str, BlobProperties]
+        standard_blob_tier,  # type: Optional[Union[str, StandardBlobTier]]
+        *blobs,  # type: List[Union[str, BlobProperties, dict]]
         **kwargs
     ):
         # type: (...) -> Iterator[HttpResponse]
@@ -1200,17 +1217,32 @@ class ContainerClient(StorageAccountHostsMixin):
         This operation does not update the blob's ETag.
 
         :param standard_blob_tier:
-            Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
+            Indicates the tier to be set on all blobs. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
             frequently. The cool storage tier is optimized for storing data that
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
+
+            ..note::
+                If you want to set different tier on different blobs please set this positional parameter to None.
+                Then the blob tier on every BlobProperties will be taken.
+
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                standard blob tier: 'blob_tier'
+                rehydrate priority: 'rehydrate_priority'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword int timeout:
@@ -1228,22 +1260,36 @@ class ContainerClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
         self,
-        premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-        *blobs,  # type: Union[str, BlobProperties]
+        premium_page_blob_tier,  # type: Optional[Union[str, PremiumPageBlobTier]]
+        *blobs,  # type: List[Union[str, BlobProperties, dict]]
         **kwargs
     ):
         # type: (...) -> Iterator[HttpResponse]
-        """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
+        """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+
+            ..note::
+                If you want to set different tier on different blobs please set this positional parameter to None.
+                Then the blob tier on every BlobProperties will be taken.
+
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                premium blob tier: 'blob_tier'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to

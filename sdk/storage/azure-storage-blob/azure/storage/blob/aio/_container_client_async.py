@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, AsyncIterator,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, IO, AsyncIterator,
     TYPE_CHECKING
 )
 
@@ -15,7 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -39,14 +39,11 @@ from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
-    from .._models import ContainerSasPermissions, PublicAccess
+    from .._models import PublicAccess
     from ._download_async import StorageStreamDownloader
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
-        ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
 
@@ -855,11 +852,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def delete_blobs(  # pylint: disable=arguments-differ
-            self, *blobs: Union[str, BlobProperties],
-            delete_snapshots: Optional[str] = None,
-            lease: Optional[Union[str, BlobLeaseClient]] = None,
+            self, *blobs: List[Union[str, BlobProperties, dict]],
             **kwargs
-        ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -875,7 +870,19 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                snapshot you want to delete: 'snapshot'
+                whether to delete snapthots when deleting blob: 'delete_snapshots'
+                if the blob modified or not: 'if_modified_since', 'if_unmodified_since'
+                match the etag or not: 'etag', 'match_condition'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -906,7 +913,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     async def set_standard_blob_tier_blobs(
         self,
         standard_blob_tier: Union[str, 'StandardBlobTier'],
-        *blobs: Union[str, BlobProperties],
+        *blobs: List[Union[str, BlobProperties, dict]],
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
         """This operation sets the tier on block blobs.
@@ -915,17 +922,32 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         This operation does not update the blob's ETag.
 
         :param standard_blob_tier:
-            Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
+            Indicates the tier to be set on all blobs. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
             frequently. The cool storage tier is optimized for storing data that
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
+
+            ..note::
+                If you want to set different tier on different blobs please set this positional parameter to None.
+                Then the blob tier on every BlobProperties will be taken.
+
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: list[str] or list[~azure.storage.blob.BlobProperties]
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                standard blob tier: 'blob_tier'
+                rehydrate priority: 'rehydrate_priority'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword int timeout:
@@ -944,20 +966,34 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
         self,
-        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'] = None,
-        *blobs: Union[str, BlobProperties],
+        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
+        *blobs: List[Union[str, BlobProperties, dict]],
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
-            A page blob tier value to set the blob to. The tier correlates to the size of the
+            A page blob tier value to set on all blobs to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+
+            ..note::
+                If you want to set different tier on different blobs please set this positional parameter to None.
+                Then the blob tier on every BlobProperties will be taken.
+
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
+
+            ..note::
+                When then blob type is dict, here's a list of keys you can set:
+                blob name: 'name'
+                container name: 'container'
+                premium blob tier: 'blob_tier'
+                lease id or lease client: 'lease_id'
+                timeout for subrequest: 'timeout'
+
+        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
