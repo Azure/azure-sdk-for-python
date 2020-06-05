@@ -1,0 +1,1425 @@
+{
+ "$id": "1",
+ "modelTypes": [
+  {
+   "$id": "2",
+   "$type": "CompositeType",
+   "properties": [
+    {
+     "$id": "3",
+     "isReadOnly": false,
+     "realPath": [
+      "id"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "4",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "5",
+      "fixed": false,
+      "raw": "An unique identifier for the event."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "6",
+      "fixed": false,
+      "raw": "id"
+     },
+     "serializedName": "id",
+     "modelType": {
+      "$id": "7",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "8",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "9",
+     "isReadOnly": false,
+     "realPath": [
+      "topic"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "10",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "11",
+      "fixed": false,
+      "raw": "The resource path of the event source."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "12",
+      "fixed": false,
+      "raw": "topic"
+     },
+     "serializedName": "topic",
+     "modelType": {
+      "$id": "13",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "14",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "15",
+     "isReadOnly": false,
+     "realPath": [
+      "subject"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "16",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "17",
+      "fixed": false,
+      "raw": "A resource path relative to the topic path."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "18",
+      "fixed": false,
+      "raw": "subject"
+     },
+     "serializedName": "subject",
+     "modelType": {
+      "$id": "19",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "20",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "21",
+     "isReadOnly": false,
+     "realPath": [
+      "data"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "22",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "23",
+      "fixed": false,
+      "raw": "Event data specific to the event type."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "24",
+      "fixed": false,
+      "raw": "data"
+     },
+     "serializedName": "data",
+     "modelType": {
+      "$id": "25",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "object",
+      "name": {
+       "$id": "26",
+       "fixed": false,
+       "raw": "Object"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "27",
+     "isReadOnly": false,
+     "realPath": [
+      "eventType"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "28",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "29",
+      "fixed": false,
+      "raw": "The type of the event that occurred."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "30",
+      "fixed": false,
+      "raw": "eventType"
+     },
+     "serializedName": "eventType",
+     "modelType": {
+      "$id": "31",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "32",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "33",
+     "isReadOnly": false,
+     "realPath": [
+      "eventTime"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "34",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "35",
+      "fixed": false,
+      "raw": "The time (in UTC) the event was generated."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "36",
+      "fixed": false,
+      "raw": "eventTime"
+     },
+     "serializedName": "eventTime",
+     "modelType": {
+      "$id": "37",
+      "$type": "PrimaryType",
+      "format": "date-time",
+      "knownPrimaryType": "dateTime",
+      "name": {
+       "$id": "38",
+       "fixed": false,
+       "raw": "DateTime"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "39",
+     "isReadOnly": true,
+     "realPath": [
+      "metadataVersion"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "40",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "41",
+      "fixed": false,
+      "raw": "The schema version of the event metadata."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "42",
+      "fixed": false,
+      "raw": "metadataVersion"
+     },
+     "serializedName": "metadataVersion",
+     "modelType": {
+      "$id": "43",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "44",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "45",
+     "isReadOnly": false,
+     "realPath": [
+      "dataVersion"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "46",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "47",
+      "fixed": false,
+      "raw": "The schema version of the data object."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "48",
+      "fixed": false,
+      "raw": "dataVersion"
+     },
+     "serializedName": "dataVersion",
+     "modelType": {
+      "$id": "49",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "50",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    }
+   ],
+   "serializedName": "EventGridEvent",
+   "documentation": "Properties of an event published to an Event Grid topic using the EventGrid Schema.",
+   "containsConstantProperties": false,
+   "name": {
+    "$id": "51",
+    "fixed": false,
+    "raw": "EventGridEvent"
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "EventGridEvent",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/schemas/EventGridEvent"
+     ]
+    }
+   },
+   "deprecated": false
+  },
+  {
+   "$id": "52",
+   "$type": "CompositeType",
+   "properties": [
+    {
+     "$id": "53",
+     "isReadOnly": false,
+     "realPath": [
+      "id"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "54",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "55",
+      "fixed": false,
+      "raw": "An identifier for the event. The combination of id and source must be unique for each distinct event."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "56",
+      "fixed": false,
+      "raw": "id"
+     },
+     "serializedName": "id",
+     "modelType": {
+      "$id": "57",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "58",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "59",
+     "isReadOnly": false,
+     "realPath": [
+      "source"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "60",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "61",
+      "fixed": false,
+      "raw": "Identifies the context in which an event happened. The combination of id and source must be unique for each distinct event."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "62",
+      "fixed": false,
+      "raw": "source"
+     },
+     "serializedName": "source",
+     "modelType": {
+      "$id": "63",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "64",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "65",
+     "isReadOnly": false,
+     "realPath": [
+      "data"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "66",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "67",
+      "fixed": false,
+      "raw": "Event data specific to the event type."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "68",
+      "fixed": false,
+      "raw": "data"
+     },
+     "serializedName": "data",
+     "modelType": {
+      "$id": "69",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "object",
+      "name": {
+       "$id": "70",
+       "fixed": false,
+       "raw": "Object"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "71",
+     "isReadOnly": false,
+     "realPath": [
+      "type"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "72",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "73",
+      "fixed": false,
+      "raw": "Type of event related to the originating occurrence."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "74",
+      "fixed": false,
+      "raw": "type"
+     },
+     "serializedName": "type",
+     "modelType": {
+      "$id": "75",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "76",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "77",
+     "isReadOnly": false,
+     "realPath": [
+      "time"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "78",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "79",
+      "fixed": false,
+      "raw": "The time (in UTC) the event was generated, in RFC3339 format."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "80",
+      "fixed": false,
+      "raw": "time"
+     },
+     "serializedName": "time",
+     "modelType": {
+      "$id": "81",
+      "$type": "PrimaryType",
+      "format": "date-time",
+      "knownPrimaryType": "dateTime",
+      "name": {
+       "$id": "82",
+       "fixed": false,
+       "raw": "DateTime"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "83",
+     "isReadOnly": false,
+     "realPath": [
+      "specversion"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "84",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "85",
+      "fixed": false,
+      "raw": "The version of the CloudEvents specification which the event uses."
+     },
+     "isRequired": true,
+     "isConstant": false,
+     "name": {
+      "$id": "86",
+      "fixed": false,
+      "raw": "specversion"
+     },
+     "serializedName": "specversion",
+     "modelType": {
+      "$id": "87",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "88",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "89",
+     "isReadOnly": false,
+     "realPath": [
+      "dataschema"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "90",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "91",
+      "fixed": false,
+      "raw": "Identifies the schema that data adheres to."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "92",
+      "fixed": false,
+      "raw": "dataschema"
+     },
+     "serializedName": "dataschema",
+     "modelType": {
+      "$id": "93",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "94",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "95",
+     "isReadOnly": false,
+     "realPath": [
+      "datacontenttype"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "96",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "97",
+      "fixed": false,
+      "raw": "Content type of data value."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "98",
+      "fixed": false,
+      "raw": "datacontenttype"
+     },
+     "serializedName": "datacontenttype",
+     "modelType": {
+      "$id": "99",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "100",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "101",
+     "isReadOnly": false,
+     "realPath": [
+      "subject"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "102",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "103",
+      "fixed": false,
+      "raw": "This describes the subject of the event in the context of the event producer (identified by source)."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "104",
+      "fixed": false,
+      "raw": "subject"
+     },
+     "serializedName": "subject",
+     "modelType": {
+      "$id": "105",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "106",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    }
+   ],
+   "serializedName": "CloudEventEvent",
+   "documentation": "Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.",
+   "containsConstantProperties": false,
+   "name": {
+    "$id": "107",
+    "fixed": false,
+    "raw": "CloudEventEvent"
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "CloudEventEvent",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/schemas/CloudEventEvent"
+     ]
+    }
+   },
+   "deprecated": false
+  },
+  {
+   "$id": "108",
+   "$type": "CompositeType",
+   "properties": [
+    {
+     "$id": "109",
+     "isReadOnly": true,
+     "realPath": [
+      "validationCode"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "110",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "111",
+      "fixed": false,
+      "raw": "The validation code sent by Azure Event Grid to validate an event subscription. To complete the validation handshake, the subscriber must either respond with this validation code as part of the validation response, or perform a GET request on the validationUrl (available starting version 2018-05-01-preview)."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "112",
+      "fixed": false,
+      "raw": "validationCode"
+     },
+     "serializedName": "validationCode",
+     "modelType": {
+      "$id": "113",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "114",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    },
+    {
+     "$id": "115",
+     "isReadOnly": true,
+     "realPath": [
+      "validationUrl"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "116",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "117",
+      "fixed": false,
+      "raw": "The validation URL sent by Azure Event Grid (available starting version 2018-05-01-preview). To complete the validation handshake, the subscriber must either respond with the validationCode as part of the validation response, or perform a GET request on the validationUrl (available starting version 2018-05-01-preview)."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "118",
+      "fixed": false,
+      "raw": "validationUrl"
+     },
+     "serializedName": "validationUrl",
+     "modelType": {
+      "$id": "119",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "120",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    }
+   ],
+   "serializedName": "SubscriptionValidationEventData",
+   "documentation": "Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionValidationEvent.",
+   "containsConstantProperties": false,
+   "name": {
+    "$id": "121",
+    "fixed": false,
+    "raw": "SubscriptionValidationEventData"
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "SubscriptionValidationEventData",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/schemas/SubscriptionValidationEventData"
+     ]
+    }
+   },
+   "deprecated": false
+  },
+  {
+   "$id": "122",
+   "$type": "CompositeType",
+   "properties": [
+    {
+     "$id": "123",
+     "isReadOnly": false,
+     "realPath": [
+      "validationResponse"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "124",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "125",
+      "fixed": false,
+      "raw": "The validation response sent by the subscriber to Azure Event Grid to complete the validation of an event subscription."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "126",
+      "fixed": false,
+      "raw": "validationResponse"
+     },
+     "serializedName": "validationResponse",
+     "modelType": {
+      "$id": "127",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "128",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    }
+   ],
+   "serializedName": "SubscriptionValidationResponse",
+   "documentation": "To complete an event subscription validation handshake, a subscriber can use either the validationCode or the validationUrl received in a SubscriptionValidationEvent. When the validationCode is used, the SubscriptionValidationResponse can be used to build the response.",
+   "containsConstantProperties": false,
+   "name": {
+    "$id": "129",
+    "fixed": false,
+    "raw": "SubscriptionValidationResponse"
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "SubscriptionValidationResponse",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/schemas/SubscriptionValidationResponse"
+     ]
+    }
+   },
+   "deprecated": false
+  },
+  {
+   "$id": "130",
+   "$type": "CompositeType",
+   "properties": [
+    {
+     "$id": "131",
+     "isReadOnly": true,
+     "realPath": [
+      "eventSubscriptionId"
+     ],
+     "collectionFormat": "none",
+     "defaultValue": {
+      "$id": "132",
+      "fixed": false
+     },
+     "deprecated": false,
+     "documentation": {
+      "$id": "133",
+      "fixed": false,
+      "raw": "The Azure resource ID of the deleted event subscription."
+     },
+     "isRequired": false,
+     "isConstant": false,
+     "name": {
+      "$id": "134",
+      "fixed": false,
+      "raw": "eventSubscriptionId"
+     },
+     "serializedName": "eventSubscriptionId",
+     "modelType": {
+      "$id": "135",
+      "$type": "PrimaryType",
+      "knownPrimaryType": "string",
+      "name": {
+       "$id": "136",
+       "fixed": false,
+       "raw": "String"
+      },
+      "deprecated": false
+     }
+    }
+   ],
+   "serializedName": "SubscriptionDeletedEventData",
+   "documentation": "Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionDeletedEvent.",
+   "containsConstantProperties": false,
+   "name": {
+    "$id": "137",
+    "fixed": false,
+    "raw": "SubscriptionDeletedEventData"
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "SubscriptionDeletedEventData",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/schemas/SubscriptionDeletedEventData"
+     ]
+    }
+   },
+   "deprecated": false
+  }
+ ],
+ "hostParametersFront": [
+  {
+   "$id": "138",
+   "location": "path",
+   "collectionFormat": "none",
+   "defaultValue": {
+    "$id": "139",
+    "fixed": false,
+    "raw": ""
+   },
+   "deprecated": false,
+   "documentation": {
+    "$id": "140",
+    "fixed": false,
+    "raw": "The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net"
+   },
+   "extensions": {
+    "x-name": "topicHostname",
+    "x-required": true,
+    "x-type": "string",
+    "x-in": "path",
+    "x-ms-skip-url-encoding": true,
+    "hostParameter": true
+   },
+   "isRequired": true,
+   "isConstant": false,
+   "name": {
+    "$id": "141",
+    "fixed": false,
+    "raw": "topicHostname"
+   },
+   "serializedName": "topicHostname",
+   "modelType": {
+    "$id": "142",
+    "$type": "PrimaryType",
+    "knownPrimaryType": "string",
+    "name": {
+     "$id": "143",
+     "fixed": false,
+     "raw": "String"
+    },
+    "deprecated": false
+   }
+  }
+ ],
+ "name": "GeneratedClient",
+ "namespace": "",
+ "modelsName": "Models",
+ "apiVersion": "2018-01-01",
+ "baseUrl": "https://{topicHostname}",
+ "documentation": "EventGrid Python Client",
+ "extensions": {
+  "x-ms-parameterized-host": true
+ },
+ "properties": [
+  {
+   "$id": "144",
+   "isReadOnly": false,
+   "realPath": [
+    "api-version"
+   ],
+   "collectionFormat": "none",
+   "defaultValue": {
+    "$id": "145",
+    "fixed": false
+   },
+   "deprecated": false,
+   "documentation": {
+    "$id": "146",
+    "fixed": false,
+    "raw": "Version of the API to be used with the client request."
+   },
+   "extensions": {
+    "x-ms-metadata": {
+     "apiVersions": [
+      "2018-01-01"
+     ],
+     "filename": [
+      "mem:///105?oai3.shaken.json"
+     ],
+     "name": "ApiVersionParameter",
+     "originalLocations": [
+      "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/parameters/ApiVersionParameter"
+     ]
+    }
+   },
+   "isRequired": true,
+   "isConstant": false,
+   "name": {
+    "$id": "147",
+    "fixed": false,
+    "raw": "api-version"
+   },
+   "serializedName": "api-version",
+   "modelType": {
+    "$id": "148",
+    "$type": "PrimaryType",
+    "knownPrimaryType": "string",
+    "name": {
+     "$id": "149",
+     "fixed": false,
+     "raw": "String"
+    },
+    "deprecated": false
+   }
+  }
+ ],
+ "operations": [
+  {
+   "$id": "150",
+   "methods": [
+    {
+     "$id": "151",
+     "parameters": [
+      {
+       "$id": "152",
+       "location": "body",
+       "collectionFormat": "none",
+       "defaultValue": {
+        "$id": "153",
+        "fixed": false
+       },
+       "deprecated": false,
+       "documentation": {
+        "$id": "154",
+        "fixed": false,
+        "raw": "An array of events to be published to Event Grid."
+       },
+       "extensions": {
+        "x-ms-metadata": {
+         "apiVersions": [
+          "2018-01-01"
+         ],
+         "filename": [
+          "mem:///105?oai3.shaken.json"
+         ],
+         "name": "paths·1ou78lj·api-events·post·requestbody",
+         "originalLocations": [
+          "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/requestBodies/paths·1ou78lj·api-events·post·requestbody"
+         ]
+        },
+        "x-ms-requestBody-name": "events"
+       },
+       "isRequired": true,
+       "isConstant": false,
+       "name": {
+        "$id": "155",
+        "fixed": false,
+        "raw": "events"
+       },
+       "serializedName": "events",
+       "modelType": {
+        "$id": "156",
+        "$type": "SequenceType",
+        "elementType": {
+         "$ref": "2"
+        },
+        "name": {
+         "$id": "157",
+         "fixed": false
+        },
+        "deprecated": false
+       }
+      },
+      {
+       "$id": "158",
+       "location": "query",
+       "collectionFormat": "none",
+       "defaultValue": {
+        "$id": "159",
+        "fixed": false,
+        "raw": "2018-01-01"
+       },
+       "deprecated": false,
+       "documentation": {
+        "$id": "160",
+        "fixed": false,
+        "raw": "The API version to use for the request."
+       },
+       "isRequired": true,
+       "isConstant": true,
+       "name": {
+        "$id": "161",
+        "fixed": false,
+        "raw": "api-version"
+       },
+       "serializedName": "api-version",
+       "modelType": {
+        "$id": "162",
+        "$type": "PrimaryType",
+        "knownPrimaryType": "string",
+        "name": {
+         "$id": "163",
+         "fixed": false,
+         "raw": "String"
+        },
+        "deprecated": false
+       }
+      }
+     ],
+     "name": {
+      "$id": "164",
+      "fixed": false,
+      "raw": "PublishEvents"
+     },
+     "group": {
+      "$id": "165",
+      "fixed": false,
+      "raw": ""
+     },
+     "serializedName": "PublishEvents",
+     "url": "/api/events",
+     "isAbsoluteUrl": false,
+     "httpMethod": "post",
+     "responses": {
+      "OK": {
+       "$id": "166",
+       "extensions": {
+        "$id": "167",
+        "x-ms-metadata": {
+         "apiVersions": [
+          "2018-01-01"
+         ],
+         "filename": [
+          "mem:///105?oai3.shaken.json"
+         ],
+         "name": "paths·341l0q·api-events·post·responses·200",
+         "originalLocations": [
+          "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/responses/paths·341l0q·api-events·post·responses·200"
+         ]
+        }
+       },
+       "isNullable": true
+      }
+     },
+     "defaultResponse": {
+      "$id": "168",
+      "isNullable": true
+     },
+     "returnType": {
+      "$id": "169",
+      "isNullable": true
+     },
+     "description": "Publishes a batch of events to an Azure Event Grid topic.",
+     "requestContentType": "application/json; charset=utf-8",
+     "responseContentTypes": [
+      "application/json"
+     ],
+     "extensions": {
+      "servers": [
+       {
+        "url": "https://{topicHostname}",
+        "x-ms-parameterized-host": {
+         "positionInOperation": "first"
+        },
+        "variables": {
+         "topicHostname": {
+          "x-name": "topicHostname",
+          "description": "The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net",
+          "x-required": true,
+          "x-type": "string",
+          "x-in": "path",
+          "x-ms-skip-url-encoding": true,
+          "default": ""
+         }
+        }
+       }
+      ],
+      "x-ms-requestBody-index": "0",
+      "x-ms-examples": {
+       "PublishEventsToEventGridTopic": {
+        "parameters": {
+         "topicHostname": "mytopic.westcentralus-1.eventgrid.azure.net",
+         "api-version": "2018-01-01",
+         "events": [
+          {
+           "id": "b3ccc7e3-c1cb-49bf-b7c8-0d4e60980616",
+           "subject": "TestSubject",
+           "data": {
+            "Property1": "Value1",
+            "Property2": "Value2"
+           },
+           "eventType": "Microsoft.Contoso.TestEvent",
+           "eventTime": "2017-12-04T22:06:09.147165Z",
+           "dataVersion": "1.0"
+          }
+         ]
+        },
+        "responses": {
+         "200": {}
+        }
+       }
+      }
+     },
+     "deprecated": false,
+     "hidden": false
+    },
+    {
+     "$id": "170",
+     "parameters": [
+      {
+       "$id": "171",
+       "location": "body",
+       "collectionFormat": "none",
+       "defaultValue": {
+        "$id": "172",
+        "fixed": false
+       },
+       "deprecated": false,
+       "documentation": {
+        "$id": "173",
+        "fixed": false,
+        "raw": "An array of cloud events to be published to Event Grid."
+       },
+       "extensions": {
+        "x-ms-metadata": {
+         "apiVersions": [
+          "2018-01-01"
+         ],
+         "filename": [
+          "mem:///105?oai3.shaken.json"
+         ],
+         "name": "paths·1mr7dvi·api-events-overload-cloudevent·post·requestbody",
+         "originalLocations": [
+          "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/requestBodies/paths·1mr7dvi·api-events-overload-cloudevent·post·requestbody"
+         ]
+        },
+        "x-ms-requestBody-name": "events"
+       },
+       "isRequired": true,
+       "isConstant": false,
+       "name": {
+        "$id": "174",
+        "fixed": false,
+        "raw": "events"
+       },
+       "serializedName": "events",
+       "modelType": {
+        "$id": "175",
+        "$type": "SequenceType",
+        "elementType": {
+         "$ref": "52"
+        },
+        "name": {
+         "$id": "176",
+         "fixed": false
+        },
+        "deprecated": false
+       }
+      },
+      {
+       "$id": "177",
+       "location": "query",
+       "collectionFormat": "none",
+       "defaultValue": {
+        "$id": "178",
+        "fixed": false,
+        "raw": "2018-01-01"
+       },
+       "deprecated": false,
+       "documentation": {
+        "$id": "179",
+        "fixed": false,
+        "raw": "The API version to use for the request."
+       },
+       "isRequired": true,
+       "isConstant": true,
+       "name": {
+        "$id": "180",
+        "fixed": false,
+        "raw": "api-version"
+       },
+       "serializedName": "api-version",
+       "modelType": {
+        "$id": "181",
+        "$type": "PrimaryType",
+        "knownPrimaryType": "string",
+        "name": {
+         "$id": "182",
+         "fixed": false,
+         "raw": "String"
+        },
+        "deprecated": false
+       }
+      }
+     ],
+     "name": {
+      "$id": "183",
+      "fixed": false,
+      "raw": "PublishCloudEventEvents"
+     },
+     "group": {
+      "$id": "184",
+      "fixed": false,
+      "raw": ""
+     },
+     "serializedName": "PublishCloudEventEvents",
+     "url": "/api/events",
+     "isAbsoluteUrl": false,
+     "httpMethod": "post",
+     "responses": {
+      "OK": {
+       "$id": "185",
+       "extensions": {
+        "$id": "186",
+        "x-ms-metadata": {
+         "apiVersions": [
+          "2018-01-01"
+         ],
+         "filename": [
+          "mem:///105?oai3.shaken.json"
+         ],
+         "name": "paths·1o704oh·api-events-overload-cloudevent·post·responses·200",
+         "originalLocations": [
+          "https://raw.githubusercontent.com/t-swpill/azure-rest-api-specs/add-cloud-event-publish-to-event-grid/specification/eventgrid/data-plane/Microsoft.EventGrid/stable/2018-01-01/EventGrid.json#/components/responses/paths·1o704oh·api-events-overload-cloudevent·post·responses·200"
+         ]
+        }
+       },
+       "isNullable": true
+      }
+     },
+     "defaultResponse": {
+      "$id": "187",
+      "isNullable": true
+     },
+     "returnType": {
+      "$id": "188",
+      "isNullable": true
+     },
+     "description": "Publishes a batch of cloud events to an Azure Event Grid topic.",
+     "requestContentType": "application/cloudevents-batch+json; charset=utf-8",
+     "responseContentTypes": [
+      "application/json"
+     ],
+     "extensions": {
+      "servers": [
+       {
+        "url": "https://{topicHostname}",
+        "x-ms-parameterized-host": {
+         "positionInOperation": "first"
+        },
+        "variables": {
+         "topicHostname": {
+          "x-name": "topicHostname",
+          "description": "The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net",
+          "x-required": true,
+          "x-type": "string",
+          "x-in": "path",
+          "x-ms-skip-url-encoding": true,
+          "default": ""
+         }
+        }
+       }
+      ],
+      "x-ms-requestBody-index": "0",
+      "x-ms-examples": {
+       "PublishEventsToEventGridTopicAsCloudEvents": {
+        "parameters": {
+         "topicHostname": "mytopic.westcentralus-1.eventgrid.azure.net",
+         "api-version": "2018-01-01",
+         "events": [
+          {
+           "id": "b3ccc7e3-c1cb-49bf-b7c8-0d4e60980616",
+           "source": "/microsoft/autorest/examples/eventgrid/cloud-events/publish",
+           "specversion": "1.0",
+           "data": {
+            "Property1": "Value1",
+            "Property2": "Value2"
+           },
+           "type": "Microsoft.Contoso.TestEvent",
+           "time": "2017-12-04T22:06:09.147165Z"
+          }
+         ]
+        },
+        "responses": {
+         "200": {}
+        }
+       }
+      }
+     },
+     "deprecated": false,
+     "hidden": false
+    }
+   ],
+   "name": {
+    "$id": "189",
+    "fixed": false,
+    "raw": ""
+   },
+   "typeName": {
+    "$id": "190",
+    "fixed": false
+   },
+   "nameForProperty": "GeneratedClient"
+  }
+ ]
+}
