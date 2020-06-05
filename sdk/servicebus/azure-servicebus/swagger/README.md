@@ -24,5 +24,5 @@ enable-xml: false
 vanilla: true
 clear-output-folder: true
 python: true
-package-version: "2019-02-02"
+package-version: "2017-04"
 ```
