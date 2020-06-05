@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from copy import copy
-from typing import TYPE_CHECKING, Dict, Any, Union, List, cast
+from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Tuple
 from xml.etree.ElementTree import ElementTree, Element
 
 from msrest.exceptions import ValidationError
@@ -87,24 +87,25 @@ class ServiceBusManagementClient:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    async def _get_queue_object(self, queue_name):
-        # type: (str) -> InternalQueueDescription
+    async def _get_queue_object(self, queue_name, **kwargs):
+        # type: (str, Any) -> InternalQueueDescription
         if not queue_name:
             raise ValueError("queue_name must be a non-empty str")
         with _handle_response_error():
             et = cast(
                 ElementTree,
-                await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION)
+                await self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return _convert_xml_to_object(queue_name, et)
 
-    async def _list_queues(self, skip, max_count):
-        # type: (int, int) -> List[InternalQueueDescription]
+    async def _list_queues(self, skip, max_count, **kwargs):
+        # type: (int, int, Any) -> List[Tuple[str, InternalQueueDescription]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
                 await self._impl.list_entities(
-                    entity_type="queues", skip=skip, top=max_count, api_version=constants.API_VERSION
+                    entity_type=constants.ENTITY_TYPE_QUEUES, skip=skip, top=max_count,
+                    api_version=constants.API_VERSION, **kwargs
                 )
             )
         entries = et.findall(constants.ENTRY_TAG)
@@ -115,35 +116,32 @@ class ServiceBusManagementClient:
                 entity_name,   # type: ignore
                 cast(Element, entry),
             )
-            queues.append(queue_description)
-        return queues
+            queues.append((entity_name, queue_description))
+        return queues  # type: ignore
 
-    async def get_queue(self, queue_name):
-        # type: (str) -> QueueDescription
+    async def get_queue(self, queue_name: str, **kwargs) -> QueueDescription:
         """Get a QueueDescription
 
         :param str queue_name: The name of the queue
         """
         queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
-            await self._get_queue_object(queue_name)
+            await self._get_queue_object(queue_name, **kwargs)
         )
         queue_description.queue_name = queue_name
         return queue_description
 
-    async def get_queue_runtime_info(self, queue_name):
-        # type: (str) -> QueueRuntimeInfo
+    async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeInfo:
         """Get the runtime information of a queue
 
         :param str queue_name: The name of the queue
         """
         runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
-            await self._get_queue_object(queue_name)
+            await self._get_queue_object(queue_name, **kwargs)
         )
         runtime_info.queue_name = queue_name
         return runtime_info
 
-    async def create_queue(self, queue):
-        # type: (Union[str, QueueDescription]) -> QueueDescription
+    async def create_queue(self, queue: Union[str, QueueDescription], **kwargs) -> QueueDescription:
         """Create a queue
 
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
@@ -171,7 +169,7 @@ class ServiceBusManagementClient:
                     ElementTree,
                     await self._impl.queue.put(
                         queue_name,  # type: ignore
-                        request_body, api_version=constants.API_VERSION)
+                        request_body, api_version=constants.API_VERSION, **kwargs)
                 )
         except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
@@ -189,8 +187,7 @@ class ServiceBusManagementClient:
         result.queue_name = queue_name
         return result
 
-    async def update_queue(self, queue_description):
-        # type: (QueueDescription) -> QueueDescription
+    async def update_queue(self, queue_description: QueueDescription, **kwargs) -> QueueDescription:
         """Update a queue
 
         :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
@@ -221,10 +218,11 @@ class ServiceBusManagementClient:
                 et = cast(
                     ElementTree,
                     await self._impl.queue.put(
-                    queue_description.queue_name,  # type: ignore
-                    request_body,
-                    api_version=constants.API_VERSION,
-                    if_match="*"
+                        queue_description.queue_name,  # type: ignore
+                        request_body,
+                        api_version=constants.API_VERSION,
+                        if_match="*",
+                        **kwargs
                     )
                 )
             except ValidationError:
@@ -240,8 +238,7 @@ class ServiceBusManagementClient:
         result.queue_name = queue_description.queue_name
         return result
 
-    async def delete_queue(self, queue_name):
-        # type: (str) -> None
+    async def delete_queue(self, queue_name: str, **kwargs) -> None:
         """Delete a queue
 
         :param str queue_name: The name of the queue
@@ -250,10 +247,9 @@ class ServiceBusManagementClient:
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION)
+            await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    async def list_queues(self, skip=0, max_count=100):
-        # type: (int, int) -> List[QueueDescription]
+    async def list_queues(self, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueDescription]:
         """List the queues of a ServiceBus namespace
 
         :param int skip: skip this number of queues
@@ -261,15 +257,14 @@ class ServiceBusManagementClient:
          the ServiceBus namespace
         """
         result = []  # type: List[QueueDescription]
-        internal_queues = await self._list_queues(skip, max_count)
+        internal_queues = await self._list_queues(skip, max_count, **kwargs)
         for queue_name, internal_queue in internal_queues:
             qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             qd.queue_name = queue_name
             result.append(qd)
         return result
 
-    async def list_queues_runtime_info(self, skip=0, max_count=100):
-        # type: (int, int) -> List[QueueRuntimeInfo]
+    async def list_queues_runtime_info(self, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueRuntimeInfo]:
         """List the queues runtime info of a ServiceBus namespace
 
         :param int skip: skip this number of queues
@@ -277,7 +272,7 @@ class ServiceBusManagementClient:
          the ServiceBus namespace
         """
         result = []  # type: List[QueueRuntimeInfo]
-        internal_queues = await self._list_queues(skip, max_count)
+        internal_queues = await self._list_queues(skip, max_count, **kwargs)
         for queue_name, internal_queue in internal_queues:
             runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             runtime_info.queue_name = queue_name

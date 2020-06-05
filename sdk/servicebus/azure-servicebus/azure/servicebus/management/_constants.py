@@ -9,3 +9,5 @@ CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
 QUEUE_DESCRIPTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription"
 COUNT_DETAILS_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}CountDetails"
 TITLE_TAG = "{http://www.w3.org/2005/Atom}title"
+
+ENTITY_TYPE_QUEUES = "queues"

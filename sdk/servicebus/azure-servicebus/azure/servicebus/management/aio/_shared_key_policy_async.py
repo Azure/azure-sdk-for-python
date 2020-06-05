@@ -10,8 +10,7 @@ from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 
 
 class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(self, endpoint, credential, name):
-        # type: (str, ServiceBusSharedKeyCredential, str) -> None
+    def __init__(self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str) -> None:
         super(AsyncServiceBusSharedKeyCredentialPolicy, self).__init__()
         self._credential = credential
         self._endpoint = endpoint
