@@ -6561,13 +6561,13 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same load balancer.
+     balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references
      to inbound Nat pools of the load balancers. A scale set can reference
      inbound nat pools of one public and one internal load balancer. Multiple
-     scale sets cannot use the same load balancer
+     scale sets cannot use the same basic sku load balancer.
     :type load_balancer_inbound_nat_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     """
