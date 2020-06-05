@@ -6,67 +6,13 @@
 from ._generated.models import QueueDescription as InternalQueueDescription
 
 
-class AuthorizationRule:
-    """Authorization rule of an entity.
-
-    :param claim_type:
-    :type claim_type: str
-    :param created_time:
-    :type created_time: ~datetime.datetime
-    :param key_name:
-    :type key_name: str
-    :param modified_time:
-    :type modified_time: ~datetime.datetime
-    :param rights: Access rights of the entity.
-    :type rights: list[str]
-    """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AuthorizationRule, self).__init__(**kwargs)
-        self.claim_type = kwargs.get('claim_type', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.key_name = kwargs.get('key_name', None)
-        self.modified_time = kwargs.get('modified_time', None)
-        self.rights = kwargs.get('rights', None)
-
-
-class MessageCountDetails(object):
-    """Details about the message counts in queue.
-
-    :param active_message_count: Number of active messages in the queue, topic, or subscription.
-    :type active_message_count: int
-    :param dead_letter_message_count: Number of messages that are dead lettered.
-    :type dead_letter_message_count: int
-    :param scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: int
-    :param transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :type transfer_dead_letter_message_count: int
-    :param transfer_message_count: Number of messages transferred to another queue, topic, or
-     subscription.
-    :type transfer_message_count: int
-    """
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MessageCountDetails, self).__init__(**kwargs)
-        self.active_message_count = kwargs.get('active_message_count', None)
-        self.dead_letter_message_count = kwargs.get('dead_letter_message_count', None)
-        self.scheduled_message_count = kwargs.get('scheduled_message_count', None)
-        self.transfer_dead_letter_message_count = kwargs.get('transfer_dead_letter_message_count', None)
-        self.transfer_message_count = kwargs.get('transfer_message_count', None)
-
-
 class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus queue resource.
 
     :param queue_name: Name of the queue.
     :type queue_name: str
     :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
+    :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
     :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
@@ -83,7 +29,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     :param entity_availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.service._control_client2.models.EntityAvailabilityStatus
+     ~azure.servicebus.management.EntityAvailabilityStatus
     :param enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
@@ -114,7 +60,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     :type requires_session: bool
     :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.service._control_client2.models.EntityStatus
+    :type status: str or ~azure.servicebus.management.EntityStatus
     :param support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
     """
@@ -216,7 +162,7 @@ class QueueRuntimeInfo(object):
     :param message_count: The number of messages in the queue.
     :type message_count: int
     :param message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.service._control_client2.models.MessageCountDetails
+    :type message_count_details: ~azure.servicebus.management.MessageCountDetails
     """
 
     def __init__(
