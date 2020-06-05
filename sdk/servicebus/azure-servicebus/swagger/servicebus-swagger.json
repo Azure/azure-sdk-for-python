@@ -87,7 +87,7 @@
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
-        "Type": {
+        "type": {
           "type": "string",
           "xml": {
             "attribute": true,
@@ -98,7 +98,6 @@
         "ClaimType": {
           "type": "string",
           "xml": {
-            "attribute": true,
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
