@@ -24,6 +24,7 @@ from ... import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
+    from ._models import AnalyzeTextOptions
     from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
@@ -249,13 +250,13 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeTextRequest, **Any) -> AnalyzeResult
+        # type: (str, AnalyzeTextOptions, **Any) -> AnalyzeResult
         """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test.
-        :type analyze_request: ~azure.search.documents.AnalyzeRequest
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :return: AnalyzeResult
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -271,7 +272,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.analyze(
-            index_name=index_name, request=analyze_request, **kwargs
+            index_name=index_name, request=analyze_request.to_analyze_request(), **kwargs
         )
         return result
 

@@ -4,7 +4,139 @@
 # license information.
 # --------------------------------------------------------------------------
 import msrest.serialization
-from ._generated.models import LexicalAnalyzer, LexicalTokenizer
+from ._generated.models import (
+    LexicalAnalyzer,
+    LexicalTokenizer,
+    AnalyzeRequest,
+    CustomAnalyzer as _CustomAnalyzer,
+)
+
+
+class AnalyzeTextOptions(msrest.serialization.Model):
+    """Specifies some text and analysis components used to break that text into tokens.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param text: Required. The text to break into tokens.
+    :type text: str
+    :param analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
+     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
+     mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
+     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
+     Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
+     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
+     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
+     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
+     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
+     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
+     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
+     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
+     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-
+     PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
+     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
+     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
+     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
+     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
+     "simple", "stop", "whitespace".
+    :type analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :param tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
+     is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
+     are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
+     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
+     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
+    :type tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :param token_filters: An optional list of token filters to use when breaking the given text.
+     This parameter can only be set when using the tokenizer parameter.
+    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :param char_filters: An optional list of character filters to use when breaking the given text.
+     This parameter can only be set when using the tokenizer parameter.
+    :type char_filters: list[str]
+    """
+
+    _validation = {
+        'text': {'required': True},
+    }
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'analyzer_name': {'key': 'analyzerName', 'type': 'str'},
+        'tokenizer_name': {'key': 'tokenizerName', 'type': 'str'},
+        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
+        'char_filters': {'key': 'charFilters', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnalyzeTextOptions, self).__init__(**kwargs)
+        self.text = kwargs['text']
+        self.analyzer_name = kwargs.get('analyzer_name', None)
+        self.tokenizer_name = kwargs.get('tokenizer_name', None)
+        self.token_filters = kwargs.get('token_filters', None)
+        self.char_filters = kwargs.get('char_filters', None)
+
+    def to_analyze_request(self):
+        return AnalyzeRequest(
+            text=self.text,
+            analyzer=self.analyzer_name,
+            tokenizer=self.tokenizer_name,
+            token_filters=self.token_filters,
+            char_filters=self.char_filters
+        )
+
+
+class CustomAnalyzer(LexicalAnalyzer):
+    """Allows you to take control over the process of converting text into indexable/searchable tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters. The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens emitted by the tokenizer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
+     128 characters.
+    :type name: str
+    :param tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
+     sequence of tokens, such as breaking a sentence into words. Possible values include: "classic",
+     "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
+     "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
+     "standard_v2", "uax_url_email", "whitespace".
+    :type tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :param token_filters: A list of token filters used to filter out or modify the tokens generated
+     by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
+     lowercase. The filters are run in the order in which they are listed.
+    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :param char_filters: A list of character filters used to prepare input text before it is
+     processed by the tokenizer. For instance, they can replace certain characters or symbols. The
+     filters are run in the order in which they are listed.
+    :type char_filters: list[str]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+        'tokenizer': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tokenizer_name': {'key': 'tokenizerName', 'type': 'str'},
+        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
+        'char_filters': {'key': 'charFilters', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomAnalyzer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.CustomAnalyzer'
+        self.tokenizer_name = kwargs['tokenizer_name']
+        self.token_filters = kwargs.get('token_filters', None)
+        self.char_filters = kwargs.get('char_filters', None)
 
 
 class PatternAnalyzer(LexicalAnalyzer):

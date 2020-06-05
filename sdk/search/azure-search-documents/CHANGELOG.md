@@ -25,7 +25,7 @@
 - Renamed DataSource methods to DataSourceConnection    #11693
 - Autocomplete & suggest methods now takes arguments search_text & suggester_name rather than query objects   #11747
 - Create_or_updates methods does not support partial updates    #11800
-- Renamed AnalyzeRequest to AnalyzeTextRequest  #11800
+- Renamed AnalyzeRequest to AnalyzeTextOptions  #11800
 - Renamed Batch methods #11800
   
 

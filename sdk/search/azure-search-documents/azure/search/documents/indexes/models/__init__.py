@@ -33,7 +33,6 @@ from .._internal import (
 )
 from ..._internal._generated.models import SuggestOptions
 from .._internal._generated.models import (
-    AnalyzeRequest as AnalyzeTextRequest,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
@@ -43,7 +42,6 @@ from .._internal._generated.models import (
     CommonGramTokenFilter,
     ConditionalSkill,
     CorsOptions,
-    CustomAnalyzer,
     DictionaryDecompounderTokenFilter,
     DistanceScoringFunction,
     DistanceScoringParameters,
@@ -130,6 +128,8 @@ from .._internal._generated.models import (
     WordDelimiterTokenFilter,
 )
 from .._internal._models import (
+    AnalyzeTextOptions,
+    CustomAnalyzer,
     PatternAnalyzer,
     PatternTokenizer,
     SearchIndexerDataSourceConnection,
@@ -139,7 +139,7 @@ from .._internal._models import (
 
 
 __all__ = (
-    "AnalyzeTextRequest",
+    "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",

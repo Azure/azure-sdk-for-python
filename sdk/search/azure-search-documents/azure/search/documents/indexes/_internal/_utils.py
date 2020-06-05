@@ -15,6 +15,7 @@ from azure.core.exceptions import (
 )
 from ._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
+    CustomAnalyzer as _CustomAnalyzer,
     DataSourceCredentials,
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
@@ -25,6 +26,7 @@ from ._generated.models import (
     PatternTokenizer as _PatternTokenizer,
 )
 from ._models import (
+    CustomAnalyzer,
     PatternAnalyzer,
     PatternTokenizer,
     SynonymMap,
@@ -73,7 +75,27 @@ def prep_if_none_match(etag, match_condition):
     return None
 
 
-def delistize_flags_for_pattern_analyzer(pattern_analyzer):
+def pack_custom_analyzer(custom_analyzer):
+    # type: (CustomAnalyzer) -> _CustomAnalyzer
+    return _CustomAnalyzer(
+        odata_type=custom_analyzer.odata_type,
+        tokenizer=custom_analyzer.tokenizer_name,
+        token_filters=custom_analyzer.token_filters,
+        char_filters=custom_analyzer.char_filters
+    )
+
+
+def unpack_custom_analyzer(custom_analyzer):
+    # type: (_CustomAnalyzer) -> CustomAnalyzer
+    return _CustomAnalyzer(
+        odata_type=custom_analyzer.odata_type,
+        tokenizer_name=custom_analyzer.tokenizer,
+        token_filters=custom_analyzer.token_filters,
+        char_filters=custom_analyzer.char_filters
+    )
+
+
+def pack_pattern_analyzer(pattern_analyzer):
     # type: (PatternAnalyzer) -> _PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
@@ -88,8 +110,8 @@ def delistize_flags_for_pattern_analyzer(pattern_analyzer):
     )
 
 
-def listize_flags_for_pattern_analyzer(pattern_analyzer):
-    # type: (PatternAnalyzer) -> PatternAnalyzer
+def unpack_pattern_analyzer(pattern_analyzer):
+    # type: (_PatternAnalyzer) -> PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
     else:
@@ -103,7 +125,27 @@ def listize_flags_for_pattern_analyzer(pattern_analyzer):
     )
 
 
-def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
+def pack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, PatternAnalyzer):
+        return pack_pattern_analyzer(analyzer)
+    if isinstance(analyzer, CustomAnalyzer):
+        return pack_custom_analyzer(analyzer)
+    return analyzer
+
+
+def unpack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, _PatternAnalyzer):
+        return unpack_pattern_analyzer(analyzer)
+    if isinstance(analyzer, _CustomAnalyzer):
+        return unpack_custom_analyzer(analyzer)
+    return analyzer
+
+
+def pack_pattern_tokenizer(pattern_tokenizer):
     # type: (PatternTokenizer) -> _PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
@@ -117,7 +159,7 @@ def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
     )
 
 
-def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
+def unpack_pattern_tokenizer(pattern_tokenizer):
     # type: (PatternTokenizer) -> PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
@@ -137,16 +179,14 @@ def pack_search_index(search_index):
         return None
     if search_index.analyzers:
         analyzers = [
-            delistize_flags_for_pattern_analyzer(x)  # type: ignore
-            if isinstance(x, PatternAnalyzer)
-            else x
+            pack_analyzer(x)  # type: ignore
             for x in search_index.analyzers
         ]  # mypy: ignore
     else:
         analyzers = None
     if search_index.tokenizers:
         tokenizers = [
-            delistize_flags_for_pattern_tokenizer(x)  # type: ignore
+            pack_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, PatternTokenizer)
             else x
             for x in search_index.tokenizers
@@ -180,16 +220,14 @@ def unpack_search_index(search_index):
         return None
     if search_index.analyzers:
         analyzers = [
-            listize_flags_for_pattern_analyzer(x)  # type: ignore
-            if isinstance(x, _PatternAnalyzer)
-            else x
+            unpack_analyzer(x)  # type: ignore
             for x in search_index.analyzers
         ]
     else:
         analyzers = None
     if search_index.tokenizers:
         tokenizers = [
-            listize_flags_for_pattern_tokenizer(x)  # type: ignore
+            unpack_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, _PatternTokenizer)
             else x
             for x in search_index.tokenizers
