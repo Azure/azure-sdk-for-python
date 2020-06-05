@@ -44,7 +44,7 @@ def _test_file(file_name, account, key, root_dir='./samples'):
     os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
     my_env = dict(os.environ)
     if sys.version_info < (3, 5):
-        my_env = {key: str(val) for key, val in my_env}
+        my_env = {key: str(val) for key, val in my_env.items()}
     code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
     print(out)
     assert code == 0
