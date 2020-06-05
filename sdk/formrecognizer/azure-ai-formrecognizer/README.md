@@ -402,7 +402,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [python-fr-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer
 [python-fr-pypi]: https://pypi.org/project/azure-ai-formrecognizer/
-[python-fr-product-docs]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview
+[python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk-python-formrecognizer-ref-docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
@@ -414,11 +414,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
-[fr-labeling-tool]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool
-[fr-train-without-labels]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview#train-without-labels
-[fr-train-with-labels]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview#train-with-labels
+[fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool
+[fr-train-without-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
+[fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
 
-[azure_core]: ../../core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-azure-core
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
@@ -426,14 +426,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[install_azure_identity]: ../../identity/azure-identity#install-the-package
+[install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [cognitive_custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
-[azure_identity_credentials]: ../../identity/azure-identity#credentials
-[default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 [service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
 
 [cla]: https://cla.microsoft.com
