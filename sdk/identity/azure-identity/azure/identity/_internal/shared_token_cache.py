@@ -5,7 +5,6 @@
 import abc
 import time
 
-from azure.core.credentials import AccessToken
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
