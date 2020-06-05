@@ -19,7 +19,6 @@ try:
     from ._models_py3 import QueueDescriptionFeed
     from ._models_py3 import QueueDescriptionResponse
     from ._models_py3 import QueueDescriptionResponseContent
-    from ._models_py3 import QueueRuntimeInfo
     from ._models_py3 import ResponseAuthor
     from ._models_py3 import ResponseLink
     from ._models_py3 import ResponseTitle
@@ -38,7 +37,6 @@ except (SyntaxError, ImportError):
     from ._models import QueueDescriptionFeed  # type: ignore
     from ._models import QueueDescriptionResponse  # type: ignore
     from ._models import QueueDescriptionResponseContent  # type: ignore
-    from ._models import QueueRuntimeInfo  # type: ignore
     from ._models import ResponseAuthor  # type: ignore
     from ._models import ResponseLink  # type: ignore
     from ._models import ResponseTitle  # type: ignore
@@ -64,7 +62,6 @@ __all__ = [
     'QueueDescriptionFeed',
     'QueueDescriptionResponse',
     'QueueDescriptionResponseContent',
-    'QueueRuntimeInfo',
     'ResponseAuthor',
     'ResponseLink',
     'ResponseTitle',

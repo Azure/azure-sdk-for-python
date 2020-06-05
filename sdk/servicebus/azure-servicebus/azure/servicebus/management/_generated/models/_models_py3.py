@@ -18,24 +18,36 @@ from ._service_bus_management_client_enums import *
 class AuthorizationRule(msrest.serialization.Model):
     """Authorization rule of an entity.
 
+    :param type:
+    :type type: str
     :param claim_type:
     :type claim_type: str
-    :param created_time:
-    :type created_time: ~datetime.datetime
-    :param key_name:
-    :type key_name: str
-    :param modified_time:
-    :type modified_time: ~datetime.datetime
+    :param claim_value:
+    :type claim_value: str
     :param rights: Access rights of the entity.
     :type rights: list[str]
+    :param created_time:
+    :type created_time: ~datetime.datetime
+    :param modified_time:
+    :type modified_time: ~datetime.datetime
+    :param key_name:
+    :type key_name: str
+    :param primary_key:
+    :type primary_key: str
+    :param secondary_key:
+    :type secondary_key: str
     """
 
     _attribute_map = {
-        'claim_type': {'key': 'ClaimType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'key_name': {'key': 'KeyName', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'type': {'key': 'Type', 'type': 'str', 'xml': {'prefix': 'i', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'claim_type': {'key': 'ClaimType', 'type': 'str', 'xml': {'attr': True, 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'claim_value': {'key': 'ClaimValue', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'rights': {'key': 'Rights', 'type': '[str]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'key_name': {'key': 'KeyName', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'primary_key': {'key': 'PrimaryKey', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'secondary_key': {'key': 'SecondaryKey', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'AuthorizationRule', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -44,19 +56,27 @@ class AuthorizationRule(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        type: Optional[str] = None,
         claim_type: Optional[str] = None,
-        created_time: Optional[datetime.datetime] = None,
-        key_name: Optional[str] = None,
-        modified_time: Optional[datetime.datetime] = None,
+        claim_value: Optional[str] = None,
         rights: Optional[List[str]] = None,
+        created_time: Optional[datetime.datetime] = None,
+        modified_time: Optional[datetime.datetime] = None,
+        key_name: Optional[str] = None,
+        primary_key: Optional[str] = None,
+        secondary_key: Optional[str] = None,
         **kwargs
     ):
         super(AuthorizationRule, self).__init__(**kwargs)
+        self.type = type
         self.claim_type = claim_type
-        self.created_time = created_time
-        self.key_name = key_name
-        self.modified_time = modified_time
+        self.claim_value = claim_value
         self.rights = rights
+        self.created_time = created_time
+        self.modified_time = modified_time
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
 
 class CreateQueueBody(msrest.serialization.Model):
@@ -213,8 +233,6 @@ class MessageCountDetails(msrest.serialization.Model):
 class QueueDescription(msrest.serialization.Model):
     """Description of a Service Bus queue resource.
 
-    :param queue_name: Name of the queue.
-    :type queue_name: str
     :param authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[~azure.service._control_client2.models.AuthorizationRule]
     :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
@@ -269,10 +287,20 @@ class QueueDescription(msrest.serialization.Model):
     :type status: str or ~azure.service._control_client2.models.EntityStatus
     :param support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
+    :param accessed_at: Last time a message was sent, or the last time there was a receive request
+     to this queue.
+    :type accessed_at: ~datetime.datetime
+    :param updated_at: The exact time a message was updated in the queue.
+    :type updated_at: ~datetime.datetime
+    :param size_in_bytes: The size of the queue, in bytes.
+    :type size_in_bytes: int
+    :param message_count: The number of messages in the queue.
+    :type message_count: int
+    :param message_count_details: Details about the message counts in queue.
+    :type message_count_details: ~azure.service._control_client2.models.MessageCountDetails
     """
 
     _attribute_map = {
-        'queue_name': {'key': 'QueueName', 'type': 'str'},
         'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -291,6 +319,11 @@ class QueueDescription(msrest.serialization.Model):
         'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -299,7 +332,6 @@ class QueueDescription(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        queue_name: Optional[str] = None,
         authorization_rules: Optional[List["AuthorizationRule"]] = None,
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
         created_at: Optional[datetime.datetime] = None,
@@ -318,10 +350,14 @@ class QueueDescription(msrest.serialization.Model):
         requires_session: Optional[bool] = None,
         status: Optional[Union[str, "EntityStatus"]] = None,
         support_ordering: Optional[bool] = None,
+        accessed_at: Optional[datetime.datetime] = None,
+        updated_at: Optional[datetime.datetime] = None,
+        size_in_bytes: Optional[int] = None,
+        message_count: Optional[int] = None,
+        message_count_details: Optional["MessageCountDetails"] = None,
         **kwargs
     ):
         super(QueueDescription, self).__init__(**kwargs)
-        self.queue_name = queue_name
         self.authorization_rules = authorization_rules
         self.auto_delete_on_idle = auto_delete_on_idle
         self.created_at = created_at
@@ -340,6 +376,11 @@ class QueueDescription(msrest.serialization.Model):
         self.requires_session = requires_session
         self.status = status
         self.support_ordering = support_ordering
+        self.accessed_at = accessed_at
+        self.updated_at = updated_at
+        self.size_in_bytes = size_in_bytes
+        self.message_count = message_count
+        self.message_count_details = message_count_details
 
 
 class QueueDescriptionEntry(msrest.serialization.Model):
@@ -544,61 +585,6 @@ class QueueDescriptionResponseContent(msrest.serialization.Model):
         super(QueueDescriptionResponseContent, self).__init__(**kwargs)
         self.type = type
         self.queue_description = queue_description
-
-
-class QueueRuntimeInfo(msrest.serialization.Model):
-    """Service Bus queue metrics.
-
-    :param queue_name: Name of the queue.
-    :type queue_name: str
-    :param accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :param created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
-    :param size_in_bytes: The size of the queue, in bytes.
-    :type size_in_bytes: int
-    :param message_count: The number of messages in the queue.
-    :type message_count: int
-    :param message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.service._control_client2.models.MessageCountDetails
-    """
-
-    _attribute_map = {
-        'queue_name': {'key': 'QueueName', 'type': 'str'},
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
-    }
-    _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
-    }
-
-    def __init__(
-        self,
-        *,
-        queue_name: Optional[str] = None,
-        accessed_at: Optional[datetime.datetime] = None,
-        created_at: Optional[datetime.datetime] = None,
-        updated_at: Optional[datetime.datetime] = None,
-        size_in_bytes: Optional[int] = None,
-        message_count: Optional[int] = None,
-        message_count_details: Optional["MessageCountDetails"] = None,
-        **kwargs
-    ):
-        super(QueueRuntimeInfo, self).__init__(**kwargs)
-        self.queue_name = queue_name
-        self.accessed_at = accessed_at
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.size_in_bytes = size_in_bytes
-        self.message_count = message_count
-        self.message_count_details = message_count_details
 
 
 class ResponseAuthor(msrest.serialization.Model):
