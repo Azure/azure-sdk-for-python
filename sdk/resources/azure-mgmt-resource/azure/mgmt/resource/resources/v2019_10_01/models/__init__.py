@@ -10,9 +10,9 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AliasPathType
-    from ._models_py3 import AliasPatternType1
-    from ._models_py3 import AliasType1
+    from ._models_py3 import Alias
+    from ._models_py3 import AliasPath
+    from ._models_py3 import AliasPattern
     from ._models_py3 import BasicDependency
     from ._models_py3 import DebugSetting
     from ._models_py3 import Dependency
@@ -59,10 +59,10 @@ try:
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
-    from ._models_py3 import TagValue
     from ._models_py3 import Tags
     from ._models_py3 import TagsPatchResource
     from ._models_py3 import TagsResource
+    from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
@@ -70,9 +70,9 @@ try:
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
 except (SyntaxError, ImportError):
-    from ._models import AliasPathType
-    from ._models import AliasPatternType1
-    from ._models import AliasType1
+    from ._models import Alias
+    from ._models import AliasPath
+    from ._models import AliasPattern
     from ._models import BasicDependency
     from ._models import DebugSetting
     from ._models import Dependency
@@ -119,10 +119,10 @@ except (SyntaxError, ImportError):
     from ._models import SubResource
     from ._models import TagCount
     from ._models import TagDetails
-    from ._models import TagValue
     from ._models import Tags
     from ._models import TagsPatchResource
     from ._models import TagsResource
+    from ._models import TagValue
     from ._models import TargetResource
     from ._models import TemplateHashResult
     from ._models import TemplateLink
@@ -143,14 +143,15 @@ from ._resource_management_client_enums import (
     AliasPatternType,
     AliasType,
     ResourceIdentityType,
+    ProvisioningOperation,
     PropertyChangeType,
     ChangeType,
 )
 
 __all__ = [
-    'AliasPathType',
-    'AliasPatternType1',
-    'AliasType1',
+    'Alias',
+    'AliasPath',
+    'AliasPattern',
     'BasicDependency',
     'DebugSetting',
     'Dependency',
@@ -197,10 +198,10 @@ __all__ = [
     'SubResource',
     'TagCount',
     'TagDetails',
-    'TagValue',
     'Tags',
     'TagsPatchResource',
     'TagsResource',
+    'TagValue',
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
@@ -220,6 +221,7 @@ __all__ = [
     'AliasPatternType',
     'AliasType',
     'ResourceIdentityType',
+    'ProvisioningOperation',
     'PropertyChangeType',
     'ChangeType',
 ]
