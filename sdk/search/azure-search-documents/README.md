@@ -68,7 +68,7 @@ client = SearchClient(endpoint="<service endpoint>",
 #### Create a SearchIndexClient
 
 Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
-and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
+and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Index client:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -76,14 +76,14 @@ from azure.search.documents.indexes import SearchIndexClient
 
 credential = AzureKeyCredential("<api key>")
 
-client = SearchIndexClient(endpoint="<service endpoint>"
+client = SearchIndexClient(endpoint="<service endpoint>",
                              credential=credential)
 ```
 
 #### Create a SearchIndexerClient
 
 Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
-and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
+and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Indexer client:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -91,7 +91,7 @@ from azure.search.documents.indexes import SearchIndexerClient
 
 credential = AzureKeyCredential("<api key>")
 
-client = SearchIndexerClient(endpoint="<service endpoint>"
+client = SearchIndexerClient(endpoint="<service endpoint>",
                              credential=credential)
 ```
 
@@ -99,7 +99,7 @@ client = SearchIndexerClient(endpoint="<service endpoint>"
 
 You can use the `SearchClient` you created in the first section above to make a basic search request:
 ```python
-results = client.search(query="spa")
+results = client.search(search_text="spa")
 
 print("Hotels containing 'spa' in the name (or other fields):")
 for result in results:
@@ -142,7 +142,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
-results = client.search(query="spa")
+results = client.search(search_text="spa")
 
 print("Hotels containing 'spa' in the name (or other fields):")
 for result in results:
@@ -268,7 +268,7 @@ client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```python
-result =  client.search(query="spa", logging_enable=True)
+result =  client.search(search_text="spa", logging_enable=True)
 ```
 
 ## Next steps
