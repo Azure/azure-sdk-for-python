@@ -27,12 +27,13 @@ from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 def _setenv(key, val):
     os.environ[key] = os.getenv(val) or os.getenv(key)
 
-def run(cmd):
+def run(cmd, my_env):
     os.environ['PYTHONUNBUFFERED'] = "1"
     # _setenv('CUSTOM_TRAINED_MODEL_ID', 'AZURE_FORM_RECOGNIZER_CUSTOM_TRAINED_MODEL_ID')
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
+        env = my_env
     )
     stdout, stderr = proc.communicate()
 
@@ -41,12 +42,12 @@ def run(cmd):
 def _test_file(file_name, account, key, root_dir='./samples'):
     os.environ['AZURE_FORM_RECOGNIZER_ENDPOINT'] = account
     os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
-    code, _, err = run([sys.executable, root_dir + '/' + file_name])
-    print(_)
+    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=dict(os.environ))
     assert code == 0
     assert err is None
 
 class TestSamples(FormRecognizerTest):
+    @pytest.mark.skip
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_authentication(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -82,7 +83,6 @@ class TestSamples(FormRecognizerTest):
         poller = ftc.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
         os.environ['CUSTOM_TRAINED_MODEL_ID'] = model.model_id
-        print(model.model_id)
         _test_file('sample_recognize_custom_forms.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only

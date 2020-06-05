@@ -39,11 +39,12 @@ def run(cmd):
 
     return proc.returncode, stdout, stderr
 
-def run(cmd):
+def run(cmd, my_env):
     os.environ['PYTHONUNBUFFERED'] = "1"
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
+        env = my_env
     )
     stdout, stderr = proc.communicate()
  
@@ -52,14 +53,14 @@ def run(cmd):
 def _test_file(file_name, account, key, root_dir='./samples/async_samples'):
     os.environ['AZURE_FORM_RECOGNIZER_ENDPOINT'] = account
     os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
-    code, _, err = run([sys.executable, root_dir + '/' + file_name])
-    print(_)
+    code, _, err = run([sys.executable, root_dir + '/' + file_name], my_env=dict(os.environ))
     assert code == 0
     assert err is None
 
 
 class TestSamplesAsync(FormRecognizerTest):
     # Async sample tests
+    @pytest.mark.skip
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_authentication_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
