@@ -21,6 +21,7 @@ from .operations import ExtensionsOperations
 from .operations import ScriptActionsOperations
 from .operations import ScriptExecutionHistoryOperations
 from .operations import Operations
+from .operations import VirtualMachinesOperations
 from . import models
 
 
@@ -46,6 +47,8 @@ class HDInsightManagementClient(SDKClient):
     :vartype script_execution_history: azure.mgmt.hdinsight.operations.ScriptExecutionHistoryOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hdinsight.operations.Operations
+    :ivar virtual_machines: VirtualMachines operations
+    :vartype virtual_machines: azure.mgmt.hdinsight.operations.VirtualMachinesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,4 +86,6 @@ class HDInsightManagementClient(SDKClient):
         self.script_execution_history = ScriptExecutionHistoryOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)

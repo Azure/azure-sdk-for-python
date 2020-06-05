@@ -1322,6 +1322,38 @@ class HardwareProfile(Model):
         self.vm_size = vm_size
 
 
+class HostInfo(Model):
+    """The cluster host information.
+
+    :param name: The host name
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, **kwargs) -> None:
+        super(HostInfo, self).__init__(**kwargs)
+        self.name = name
+
+
+class HostInfoListResult(Model):
+    """Result of the request to list cluster hosts.
+
+    :param value: The list of cluster hosts.
+    :type value: list[~azure.mgmt.hdinsight.models.HostInfo]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[HostInfo]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(HostInfoListResult, self).__init__(**kwargs)
+        self.value = value
+
+
 class KafkaRestProperties(Model):
     """The kafka rest proxy configuration which contains AAD security group
     information.

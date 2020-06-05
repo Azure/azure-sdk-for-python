@@ -1,5 +1,11 @@
 # Release History
 
+## 1.5.0 (2020-05-29)
+
+**Features**
+
+  - Added operation group VirtualMachinesOperations
+
 ## 1.4.0 (2020-01-16)
 
 **Features**
