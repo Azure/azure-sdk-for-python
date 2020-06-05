@@ -103,6 +103,16 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    def test_too_many_documents(self, client):
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.recognize_linked_entities(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     def test_output_same_order_as_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="one"),
@@ -417,7 +427,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         try:
             result = client.recognize_linked_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -438,6 +448,19 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         self.assertIsNotNone(doc_errors[1].error.message)
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for recognize_linked_entities. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.recognize_linked_entities(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

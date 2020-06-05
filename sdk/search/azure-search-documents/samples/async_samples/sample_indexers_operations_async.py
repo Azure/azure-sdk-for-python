@@ -26,37 +26,38 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
-    DataSource, DataContainer, DataSourceCredentials, Index, Indexer, SimpleField, edm
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType
 )
-from azure.search.documents.aio import SearchServiceClient
+from azure.search.documents.indexes.aio import SearchIndexerClient, SearchIndexClient
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
-indexers_client = service_client.get_indexers_client()
+indexers_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_indexer():
     # create an index
     index_name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double)
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double)
     ]
-    index = Index(name=index_name, fields=fields)
-    ind_client = service_client.get_indexes_client()
+    index = SearchIndex(name=index_name, fields=fields)
+    ind_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     async with ind_client:
         await ind_client.create_index(index)
 
     # [START create_indexer_async]
     # create a datasource
-    ds_client = service_client.get_datasources_client()
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    ds = DataSource(name="async-indexer-datasource", type="azureblob", credentials=credentials, container=container)
-    async with ds_client:
-        data_source = await ds_client.create_datasource(ds)
+    container = SearchIndexerDataContainer(name='searchcontainer')
+    async with ind_client:
+        data_source = await ind_client.create_datasource(
+            name="async-indexer-datasource",
+            type="azureblob",
+            connection_string=connection_string,
+            container=container
+        )
 
     # create an indexer
-    indexer = Indexer(name="async-sample-indexer", data_source_name="async-indexer-datasource", target_index_name="hotels")
+    indexer = SearchIndexer(name="async-sample-indexer", data_source_name="async-indexer-datasource", target_index_name="hotels")
     async with indexers_client:
         result = await indexers_client.create_indexer(indexer)
     print("Create new Indexer - async-sample-indexer")
@@ -110,14 +111,14 @@ async def delete_indexer():
     # [END delete_indexer_async]
 
 async def main():
-    # await create_indexer()
-    # await list_indexers()
-    # await get_indexer()
-    # await get_indexer_status()
-    # await run_indexer()
-    # await reset_indexer()
-    # await delete_indexer()
-    # await service_client.close()
+    await create_indexer()
+    await list_indexers()
+    await get_indexer()
+    await get_indexer_status()
+    await run_indexer()
+    await reset_indexer()
+    await delete_indexer()
+    await indexers_client.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

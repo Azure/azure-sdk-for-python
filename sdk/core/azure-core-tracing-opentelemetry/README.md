@@ -4,6 +4,8 @@
 
 ## Getting started
 
+### Install the package
+
 Install the opentelemetry python for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash

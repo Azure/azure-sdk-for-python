@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AzureEntityResource
     from ._models_py3 import CheckDomainAvailabilityParameter
     from ._models_py3 import CheckDomainAvailabilityResult
     from ._models_py3 import CheckSkuAvailabilityParameter
@@ -31,17 +32,29 @@ try:
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import OperationDisplayInfo
     from ._models_py3 import OperationEntity
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionProperties
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import ProxyResource
     from ._models_py3 import RegenerateKeyParameters
+    from ._models_py3 import Resource
     from ._models_py3 import ResourceSku
     from ._models_py3 import ResourceSkuRestrictionInfo
     from ._models_py3 import ResourceSkuRestrictions
     from ._models_py3 import Sku
+    from ._models_py3 import SkuCapability
+    from ._models_py3 import TrackedResource
     from ._models_py3 import Usage
     from ._models_py3 import UsagesResult
     from ._models_py3 import UserAssignedIdentity
     from ._models_py3 import UserOwnedStorage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import AzureEntityResource
     from ._models import CheckDomainAvailabilityParameter
     from ._models import CheckDomainAvailabilityResult
     from ._models import CheckSkuAvailabilityParameter
@@ -63,11 +76,22 @@ except (SyntaxError, ImportError):
     from ._models import NetworkRuleSet
     from ._models import OperationDisplayInfo
     from ._models import OperationEntity
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionProperties
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkServiceConnectionState
+    from ._models import ProxyResource
     from ._models import RegenerateKeyParameters
+    from ._models import Resource
     from ._models import ResourceSku
     from ._models import ResourceSkuRestrictionInfo
     from ._models import ResourceSkuRestrictions
     from ._models import Sku
+    from ._models import SkuCapability
+    from ._models import TrackedResource
     from ._models import Usage
     from ._models import UsagesResult
     from ._models import UserAssignedIdentity
@@ -81,6 +105,8 @@ from ._cognitive_services_management_client_enums import (
     ProvisioningState,
     NetworkRuleAction,
     KeySource,
+    PrivateEndpointServiceConnectionStatus,
+    PublicNetworkAccess,
     IdentityType,
     KeyName,
     UnitType,
@@ -90,6 +116,7 @@ from ._cognitive_services_management_client_enums import (
 )
 
 __all__ = [
+    'AzureEntityResource',
     'CheckDomainAvailabilityParameter',
     'CheckDomainAvailabilityResult',
     'CheckSkuAvailabilityParameter',
@@ -111,11 +138,22 @@ __all__ = [
     'NetworkRuleSet',
     'OperationDisplayInfo',
     'OperationEntity',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionProperties',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnectionState',
+    'ProxyResource',
     'RegenerateKeyParameters',
+    'Resource',
     'ResourceSku',
     'ResourceSkuRestrictionInfo',
     'ResourceSkuRestrictions',
     'Sku',
+    'SkuCapability',
+    'TrackedResource',
     'Usage',
     'UsagesResult',
     'UserAssignedIdentity',
@@ -128,6 +166,8 @@ __all__ = [
     'ProvisioningState',
     'NetworkRuleAction',
     'KeySource',
+    'PrivateEndpointServiceConnectionStatus',
+    'PublicNetworkAccess',
     'IdentityType',
     'KeyName',
     'UnitType',

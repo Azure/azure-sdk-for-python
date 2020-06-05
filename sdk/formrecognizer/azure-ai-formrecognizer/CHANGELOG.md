@@ -11,6 +11,7 @@
 - Added `get_form_recognizer_client` to `FormTrainingClient`
 - A `HttpResponseError` is now raised if a model with `status=="invalid"` is returned from the `begin_train_model()` or `train_model()` methods
 - `PageRange` is renamed to `FormPageRange`
+- `first_page` and `last_page` renamed to `first_page_number` and `last_page_number`, respectively on `FormPageRange`
 - `FormField` does not have a page_number.
 - `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
 - `USReceiptType` is renamed to `ReceiptType`
@@ -19,12 +20,15 @@
 - For recognize receipt methods, parameters have been renamed to `receipt` and `receipt_url`.
 - `created_on` and `last_modified` are renamed to `requested_on` and `completed_on` in the
 `CustomFormModel`  and `CustomFormModelInfo` models.
+- `models` property of `CustomFormModel` is renamed to `submodels`
+- `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 
 **New features**
 
 - Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+- `page_number` attribute has been added to `FormTable`
 
 ## 1.0.0b2 (2020-05-06)
 

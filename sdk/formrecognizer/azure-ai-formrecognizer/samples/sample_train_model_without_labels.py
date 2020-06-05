@@ -28,19 +28,18 @@ import os
 
 class TrainModelWithoutLabelsSample(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    container_sas_url = os.environ["CONTAINER_SAS_URL"]
-
     def train_model_without_labels(self):
         # [START training]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
-        form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-        # Default for begin_train_model is `use_training_labels=False`
-        poller = form_training_client.begin_train_model(self.container_sas_url, use_training_labels=False)
+        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
+
+        poller = form_training_client.begin_train_model(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # Custom model information
@@ -51,7 +50,7 @@ class TrainModelWithoutLabelsSample(object):
 
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on
-        for submodel in model.models:
+        for submodel in model.submodels:
             print("...The submodel has form type '{}'".format(submodel.form_type))
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have label '{}'".format(

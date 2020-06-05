@@ -87,3 +87,67 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     count += 1
                     await message.complete()
             assert count == 1
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    async def test_topic_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False
+        ) as sb_client:
+
+            async with sb_client.get_subscription_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                idle_timeout=5,
+                mode=ReceiveSettleMode.PeekLock,
+                prefetch=10
+            ) as receiver:
+
+                async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
+                    for i in range(10):
+                        message = Message("Dead lettered message no. {}".format(i))
+                        await sender.send(message)
+
+                count = 0
+                messages = await receiver.receive()
+                while messages:
+                    for message in messages:
+                        print_message(_logger, message)
+                        count += 1
+                        await message.dead_letter(reason="Testing reason", description="Testing description")
+                    messages = await receiver.receive()
+
+                assert count == 10
+
+            async with sb_client.get_subscription_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                idle_timeout=5,
+                mode=ReceiveSettleMode.PeekLock
+            ) as receiver:
+                count = 0
+                async for message in receiver:
+                    print_message(_logger, message)
+                    await message.complete()
+                    count += 1
+            assert count == 0
+
+            async with sb_client.get_subscription_deadletter_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                idle_timeout=5,
+                mode=ReceiveSettleMode.PeekLock
+            ) as dl_receiver:
+                count = 0
+                async for message in dl_receiver:
+                    await message.complete()
+                    count += 1
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                assert count == 10

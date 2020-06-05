@@ -8,3 +8,9 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 __all__ = ['TextAnalyticsClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

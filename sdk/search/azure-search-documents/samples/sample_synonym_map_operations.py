@@ -24,9 +24,9 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient
+from azure.search.documents.indexes import SearchIndexClient
 
-client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_synonym_maps_client()
+client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 def create_synonym_map():
     # [START create_synonym_map]

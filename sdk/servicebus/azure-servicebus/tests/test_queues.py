@@ -403,15 +403,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message._receiver
                     message.renew_lock()
                     message.complete()
-    
 
-    @pytest.mark.skip(reason="Pending dead letter receiver")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
@@ -443,7 +441,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", description="Testing description")
     
             count = 0
-            with sb_client.get_deadletter_receiver(servicebus_queue.name,
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
                                                    idle_timeout=5) as receiver:
                 for message in receiver:
                     count += 1
@@ -452,7 +450,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
             assert count == 10
-    
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -523,7 +520,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
                 with pytest.raises(ServiceBusError):
                     deferred = receiver.receive_deferred_messages([5, 6, 7])
-    
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -565,9 +561,19 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.complete()
                     count += 1
             assert count == 0
-    
 
-    @pytest.mark.skip(reason="Pending dead letter receiver")
+            with sb_client.get_queue_deadletter_receiver(
+                    servicebus_queue.name,
+                    idle_timeout=5,
+                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
+                count = 0
+                for message in dl_receiver:
+                    message.complete()
+                    count += 1
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                assert count == 10
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -579,7 +585,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                           idle_timeout=5, 
+                                           idle_timeout=5,
                                            mode=ReceiveSettleMode.PeekLock, 
                                            prefetch=10) as receiver:
             
@@ -600,11 +606,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.receive(1,5)
     
             assert count == 10
-    
-            with sb_client.get_deadletter_receiver(idle_timeout=5) as receiver:
+
+            with sb_client.get_queue_deadletter_receiver(
+                    servicebus_queue.name,
+                    idle_timeout=5,
+                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
                 count = 0
-                for message in receiver:
+                for message in dl_receiver:
                     print_message(_logger, message)
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
                     count += 1
             assert count == 10
@@ -716,36 +727,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 half_too_large = "A" * int((1024 * 256) / 2)
                 with pytest.raises(MessageContentTooLarge):
                     sender.send([Message(half_too_large), Message(half_too_large)])
-    
-
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_fail_send_batch_messages(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
-        
-        pytest.skip("TODO: Pending bugfix in uAMQP")
-        def batch_data(batch):
-            for i in range(3):
-                batch.add(Message(str(i) * 1024 * 256))
-        return batch
-    
-        with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-    
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
-                    batch = BatchMessage()
-                    sender.send(batch_data(batch))
-    
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.queue_message(BatchMessage(batch_data()))
-                results = sender.send_pending_messages()
-                assert len(results) == 4
-                assert not results[0][0]
-                assert isinstance(results[0][1], MessageSendFailed)
-    
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -785,7 +766,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages[0].complete()
                     messages[1].complete()
                     assert (messages[2].locked_until_utc - utc_now()) <= timedelta(seconds=60)
-                    time.sleep((messages[2].locked_until_utc - utc_now()).total_seconds())
+                    sleep_until_expired(messages[2])
                     with pytest.raises(MessageLockExpired):
                         messages[2].complete()
     
@@ -841,9 +822,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             message.complete()
             renewer.shutdown()
             assert len(messages) == 11
-    
 
-    @pytest.mark.skip(reason="Pending dead letter queue receiver")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -862,20 +841,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send(message)
     
             time.sleep(30)
-            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive(5, timeout=10)
+            with sb_client.get_queue_receiver(servicebus_queue.name, prefetch=5) as receiver:
+                messages = receiver.receive(5, max_wait_time=10)
             assert not messages
-    
-            with sb_client.get_deadletter_receiver(servicebus_queue.name,
-                                                      idle_timeout=5, 
-                                                      mode=ReceiveSettleMode.PeekLock) as receiver:
+
+            with sb_client.get_queue_deadletter_receiver(
+                    servicebus_queue.name,
+                    idle_timeout=5,
+                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
                 count = 0
-                for message in receiver:
+                for message in dl_receiver:
                     print_message(_logger, message)
                     message.complete()
                     count += 1
-                assert count == 1
-    
+            assert count == 1
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

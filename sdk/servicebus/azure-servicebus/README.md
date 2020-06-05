@@ -228,6 +228,11 @@ link will extend this timeout.
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 - max_wait_time: Provided when calling receive() to fetch a batch of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
 
+### AutoLockRenew
+
+If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.
+It would also manifest when trying to take action (such as completing a message) on the specified object.
+
 ### Common Exceptions
 
 Please view the [exceptions](./azure/servicebus/exceptions.py) file for detailed descriptions of our common Exception types.

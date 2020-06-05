@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import threading
+import asyncio
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -21,7 +21,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
 
     def __init__(self, credential, *scopes, **kwargs):
         super().__init__(credential, *scopes, **kwargs)
-        self._lock = threading.Lock()
+        self._lock = asyncio.Lock()
 
     async def on_request(self, request: PipelineRequest):
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -32,7 +32,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
         """
         self._enforce_https(request)
 
-        with self._lock:
+        async with self._lock:
             if self._need_new_token:
                 self._token = await self._credential.get_token(*self._scopes)  # type: ignore
         self._update_headers(request.http_request.headers, self._token.token)

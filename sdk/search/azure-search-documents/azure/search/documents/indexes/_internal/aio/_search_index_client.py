@@ -13,9 +13,9 @@ from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SynonymMap
 from ....aio import SearchClient
 from .._utils import (
-    delistize_flags_for_index,
-    listize_flags_for_index,
-    listize_synonyms,
+    pack_search_index,
+    unpack_search_index,
+    unpack_synonyms,
     pack_search_resource_encryption_key,
     get_access_conditions,
     normalize_endpoint,
@@ -87,7 +87,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.indexes.list(cls=lambda objs: [listize_flags_for_index(x) for x in  objs], **kwargs)
+        return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
 
     @distributed_trace_async
     async def get_index(self, index_name, **kwargs):
@@ -111,7 +111,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get(index_name, **kwargs)
-        return listize_flags_for_index(result)
+        return unpack_search_index(result)
 
     @distributed_trace_async
     async def get_index_statistics(self, index_name, **kwargs):
@@ -185,7 +185,7 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_index = delistize_flags_for_index(index)
+        patched_index = pack_search_index(index)
         result = await self._client.indexes.create(patched_index, **kwargs)
         return result
 
@@ -230,7 +230,7 @@ class SearchIndexClient(HeadersMixin):
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_index = delistize_flags_for_index(index)
+        patched_index = pack_search_index(index)
         result = await self._client.indexes.create_or_update(
             index_name=index_name,
             index=patched_index,
@@ -289,7 +289,21 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.list(**kwargs)
-        return [listize_synonyms(x) for x in result.synonym_maps]
+        return [unpack_synonyms(x) for x in result.synonym_maps]
+
+    @distributed_trace_async
+    async def get_synonym_map_names(self, **kwargs):
+        # type: (**Any) -> List[str]
+        """List the Synonym Map names in an Azure Search service.
+
+        :return: List of synonym map names
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.synonym_maps.list(**kwargs)
+        return [x.name for x in result.synonym_maps]
 
     @distributed_trace_async
     async def get_synonym_map(self, name, **kwargs):
@@ -314,7 +328,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return listize_synonyms(result)
+        return unpack_synonyms(result)
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -380,7 +394,7 @@ class SearchIndexClient(HeadersMixin):
         solr_format_synonyms = "\n".join(synonyms)
         synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = await self._client.synonym_maps.create(synonym_map, **kwargs)
-        return listize_synonyms(result)
+        return unpack_synonyms(result)
 
     @distributed_trace_async
     async def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
@@ -418,7 +432,7 @@ class SearchIndexClient(HeadersMixin):
             error_map=error_map,
             **kwargs
         )
-        return listize_synonyms(result)
+        return unpack_synonyms(result)
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):

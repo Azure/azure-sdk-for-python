@@ -25,7 +25,7 @@ pip install azure-ai-formrecognizer
 
 > Note: This version of the client library supports the v2.0-preview version of the Form Recognizer service
 
-### Create a Form Recognizer resource
+#### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource.
 
@@ -66,7 +66,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core], 
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core],
 or as a credential type from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
@@ -75,12 +75,12 @@ See the full details regarding [authentication][cognitive_authentication] of cog
     The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
-    
+
     Use the key as the credential parameter to authenticate the client:
     ```python
     from azure.ai.formrecognizer import FormRecognizerClient
     from azure.core.credentials import AzureKeyCredential
-    
+
     endpoint = "https://<region>.api.cognitive.microsoft.com/"
     credential = AzureKeyCredential("<api_key>")
     form_recognizer_client = FormRecognizerClient(endpoint, credential)
@@ -270,7 +270,7 @@ print("Completed on: {}".format(model.completed_on))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
-for submodel in model.models:
+for submodel in model.submodels:
     print("The submodel with form type '{}' has recognized the following fields: {}".format(
         submodel.form_type,
         ", ".join([label for label in submodel.fields])

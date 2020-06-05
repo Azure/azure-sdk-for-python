@@ -32,7 +32,7 @@ from ._models import (
     FormLine,
     FormWord,
     CustomFormModel,
-    CustomFormSubModel,
+    CustomFormSubmodel,
     CustomFormModelField
 )
 
@@ -63,7 +63,7 @@ __all__ = [
     'FormLine',
     'FormWord',
     'CustomFormModel',
-    'CustomFormSubModel',
+    'CustomFormSubmodel',
     'CustomFormModelField'
 ]
 

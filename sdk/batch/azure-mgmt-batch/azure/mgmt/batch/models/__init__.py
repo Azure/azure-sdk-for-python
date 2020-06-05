@@ -24,6 +24,7 @@ try:
     from ._models_py3 import AzureFileShareConfiguration
     from ._models_py3 import BatchAccount
     from ._models_py3 import BatchAccountCreateParameters
+    from ._models_py3 import BatchAccountIdentity
     from ._models_py3 import BatchAccountKeys
     from ._models_py3 import BatchAccountRegenerateKeyParameters
     from ._models_py3 import BatchAccountUpdateParameters
@@ -94,6 +95,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileShareConfiguration
     from ._models import BatchAccount
     from ._models import BatchAccountCreateParameters
+    from ._models import BatchAccountIdentity
     from ._models import BatchAccountKeys
     from ._models import BatchAccountRegenerateKeyParameters
     from ._models import BatchAccountUpdateParameters
@@ -161,6 +163,7 @@ from ._batch_management_client_enums import (
     KeySource,
     PoolAllocationMode,
     PublicNetworkAccessType,
+    ResourceIdentityType,
     ProvisioningState,
     PrivateEndpointConnectionProvisioningState,
     PrivateLinkServiceConnectionStatus,
@@ -205,6 +208,7 @@ __all__ = [
     'AzureFileShareConfiguration',
     'BatchAccount',
     'BatchAccountCreateParameters',
+    'BatchAccountIdentity',
     'BatchAccountKeys',
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountUpdateParameters',
@@ -271,6 +275,7 @@ __all__ = [
     'KeySource',
     'PoolAllocationMode',
     'PublicNetworkAccessType',
+    'ResourceIdentityType',
     'ProvisioningState',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateLinkServiceConnectionStatus',

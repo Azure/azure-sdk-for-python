@@ -120,17 +120,17 @@ class Point(namedtuple("Point", "x y")):
         return super(Point, cls).__new__(cls, x, y)
 
 
-class FormPageRange(namedtuple("FormPageRange", "first_page last_page")):
+class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the form.
 
-    :ivar int first_page: The first page number of the form.
-    :ivar int last_page: The last page number of the form.
+    :ivar int first_page_number: The first page number of the form.
+    :ivar int last_page_number: The last page number of the form.
     """
 
     __slots__ = ()
 
-    def __new__(cls, first_page, last_page):
-        return super(FormPageRange, cls).__new__(cls, first_page, last_page)
+    def __new__(cls, first_page_number, last_page_number):
+        return super(FormPageRange, cls).__new__(cls, first_page_number, last_page_number)
 
 
 class FormContent(object):
@@ -163,7 +163,7 @@ class RecognizedForm(object):
         without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input form.
+        The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
@@ -191,7 +191,7 @@ class RecognizedReceipt(RecognizedForm):
         without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input form.
+        The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
@@ -239,7 +239,7 @@ class USReceipt(RecognizedReceipt):  # pylint: disable=too-many-instance-attribu
         A dictionary of the fields found on the receipt.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page of the input receipt.
+        The first and last page number of the input receipt.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         Contains page metadata such as page width, length, text angle, unit.
         If `include_text_content=True` is passed, contains a list
@@ -579,6 +579,8 @@ class USReceiptItem(object):
 class FormTable(object):
     """Information about the extracted table contained on a page.
 
+    :ivar int page_number:
+        The 1-based number of the page in which this table is present.
     :ivar list[~azure.ai.formrecognizer.FormTableCell] cells:
         List of cells contained in the table.
     :ivar int row_count:
@@ -588,13 +590,14 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
+        self.page_number = kwargs.get("page_number", None)
         self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
     def __repr__(self):
-        return "FormTable(cells={}, row_count={}, column_count={})".format(
-            repr(self.cells), self.row_count, self.column_count
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})".format(
+            self.page_number, repr(self.cells), self.row_count, self.column_count
         )[:1024]
 
 
@@ -676,7 +679,7 @@ class CustomFormModel(object):
         The date and time (UTC) when model training was requested.
     :ivar ~datetime.datetime completed_on:
         Date and time (UTC) when model training completed.
-    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
+    :ivar list[~azure.ai.formrecognizer.CustomFormSubmodel] submodels:
         A list of submodels that are part of this model, each of
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
@@ -690,7 +693,7 @@ class CustomFormModel(object):
         self.status = kwargs.get("status", None)
         self.requested_on = kwargs.get("requested_on", None)
         self.completed_on = kwargs.get("completed_on", None)
-        self.models = kwargs.get("models", None)
+        self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", [])
 
@@ -701,22 +704,22 @@ class CustomFormModel(object):
             status=model.model_info.status,
             requested_on=model.model_info.created_date_time,
             completed_on=model.model_info.last_updated_date_time,
-            models=CustomFormSubModel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubModel._from_generated_labeled(model),
+            submodels=CustomFormSubmodel._from_generated_unlabeled(model)
+            if model.keys else CustomFormSubmodel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, requested_on={}, completed_on={}, models={}, " \
+        return "CustomFormModel(model_id={}, status={}, requested_on={}, completed_on={}, submodels={}, " \
                 "errors={}, training_documents={})".format(
-                    self.model_id, self.status, self.requested_on, self.completed_on, repr(self.models),
+                    self.model_id, self.status, self.requested_on, self.completed_on, repr(self.submodels),
                     repr(self.errors), repr(self.training_documents)
                 )[:1024]
 
 
-class CustomFormSubModel(object):
+class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
@@ -751,7 +754,7 @@ class CustomFormSubModel(object):
         )] if model.train_result else None
 
     def __repr__(self):
-        return "CustomFormSubModel(accuracy={}, fields={}, form_type={})".format(
+        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})".format(
             self.accuracy, repr(self.fields), self.form_type
         )[:1024]
 
@@ -867,6 +870,8 @@ class CustomFormModelInfo(object):
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
+        if model.status == "succeeded":  # map copy status to model status
+            model.status = "ready"
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
