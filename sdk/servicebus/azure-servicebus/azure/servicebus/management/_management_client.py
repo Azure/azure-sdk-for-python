@@ -60,9 +60,9 @@ def _convert_xml_to_object(queue_name, et):
 
 
 class ServiceBusManagementClient:
-    """Use this client to create, update, list, and delete resources of a ServiceBus namespace
+    """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
-    :param str fully_qualified_namespace:
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: Union[TokenCredential, ServiceBusSharedKeyCredential]
     """
@@ -101,13 +101,14 @@ class ServiceBusManagementClient:
         return Pipeline(transport, policies)
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
+    def from_connection_string(cls, conn_str, **kwargs):
         # type: (str, Any) -> ServiceBusManagementClient
-        """Create a client from connection string
+        """Create a client from connection string.
 
-        :param str connection_string: The connection string of the Service Bus Namespace
+        :param str conn_str: The connection string of the Service Bus Namespace.
+        :rtype: ~azure.servicebus.management.ServiceBusManagementClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(connection_string)
+        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
@@ -128,13 +129,13 @@ class ServiceBusManagementClient:
     def _list_queues(self, **kwargs):
         # type: (Any) -> List[Tuple[str, InternalQueueDescription]]
 
-        skip = kwargs.pop("skip", 0)
+        start_index = kwargs.pop("start_index", 0)
         max_count = kwargs.pop("max_count", 100)
         with _handle_response_error():
             et = cast(
                 ElementTree,
                 self._impl.list_entities(
-                    entity_type=constants.ENTITY_TYPE_QUEUES, skip=skip, top=max_count,
+                    entity_type=constants.ENTITY_TYPE_QUEUES, start_index=start_index, top=max_count,
                     api_version=constants.API_VERSION, **kwargs
                 )
             )
@@ -151,9 +152,10 @@ class ServiceBusManagementClient:
 
     def get_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueDescription
-        """Get a QueueDescription
+        """Get a QueueDescription.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
         queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
             self._get_queue_object(queue_name, **kwargs)
@@ -163,9 +165,10 @@ class ServiceBusManagementClient:
 
     def get_queue_runtime_info(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueRuntimeInfo
-        """Get the runtime information of a queue
+        """Get the runtime information of a queue.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: ~azure.servicebus.management.QueueRuntimeInfo
         """
         runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
             self._get_queue_object(queue_name, **kwargs)
@@ -175,13 +178,13 @@ class ServiceBusManagementClient:
 
     def create_queue(self, queue, **kwargs):
         # type: (Union[str, QueueDescription], Any) -> QueueDescription
-        """Create a queue
+        """Create a queue.
 
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values decided by the
-         ServiceBus. Use a `QueueDesceiption` if you want to set queue properties other than the queue name.
-        :type queue: Union[str, QueueDescription].
-        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
+         ServiceBus. Use a `QueueDescription` if you want to set queue properties other than the queue name.
+        :type queue: Union[str, QueueDescription]
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
         try:
             queue_name = queue.queue_name  # type: ignore
@@ -222,13 +225,13 @@ class ServiceBusManagementClient:
 
     def update_queue(self, queue_description, **kwargs):
         # type: (QueueDescription, Any) -> QueueDescription
-        """Update a queue
+        """Update a queue.
 
         :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
         :type queue_description: ~azure.servicebus.management.QueueDescription
-        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
 
         if not isinstance(queue_description, QueueDescription):
@@ -273,9 +276,10 @@ class ServiceBusManagementClient:
 
     def delete_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> None
-        """Delete a queue
+        """Delete a queue.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: None
         """
 
         if not queue_name:
@@ -285,11 +289,12 @@ class ServiceBusManagementClient:
 
     def list_queues(self, **kwargs):
         # type: (Any) -> List[QueueDescription]
-        """List the queues of a ServiceBus namespace
+        """List the queues of a ServiceBus namespace.
 
-        :keyword int skip: skip this number of queues
+        :keyword int start_index: skip this number of queues.
         :keyword int max_count: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace
+         the ServiceBus namespace.
+        :rtype: List[~azure.servicebus.management.QueueDescription]
         """
         result = []  # type: List[QueueDescription]
         internal_queues = self._list_queues(**kwargs)
@@ -301,11 +306,12 @@ class ServiceBusManagementClient:
 
     def list_queues_runtime_info(self, **kwargs):
         # type: (Any) -> List[QueueRuntimeInfo]
-        """List the queues runtime info of a ServiceBus namespace
+        """List the runtime info of the queues in a ServiceBus namespace.
 
-        :keyword int skip: skip this number of queues
+        :keyword int start_index: skip this number of queues.
         :keyword int max_count: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace
+         the ServiceBus namespace.
+        :rtype: List[~azure.servicebus.management.QueueRuntimeInfo]
         """
 
         result = []  # type: List[QueueRuntimeInfo]

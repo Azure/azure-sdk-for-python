@@ -33,9 +33,9 @@ if TYPE_CHECKING:
 
 
 class ServiceBusManagementClient:
-    """Use this client to create, update, list, and delete resources of a ServiceBus namespace
+    """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
-    :param str fully_qualified_namespace:
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: Union[TokenCredential, ServiceBusSharedKeyCredential]
     """
@@ -76,13 +76,14 @@ class ServiceBusManagementClient:
         return AsyncPipeline(transport, policies)
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
+    def from_connection_string(cls, conn_str, **kwargs):
         # type: (str, Any) -> ServiceBusManagementClient
-        """Create a client from connection string
+        """Create a client from connection string.
 
-        :param str connection_string: The connection string of the Service Bus Namespace
+        :param str conn_str: The connection string of the Service Bus Namespace.
+        :rtype: ~azure.servicebus.management.aio.ServiceBusManagementClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(connection_string)
+        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
@@ -98,13 +99,13 @@ class ServiceBusManagementClient:
             )
         return _convert_xml_to_object(queue_name, et)
 
-    async def _list_queues(self, skip, max_count, **kwargs):
+    async def _list_queues(self, start_index, max_count, **kwargs):
         # type: (int, int, Any) -> List[Tuple[str, InternalQueueDescription]]
         with _handle_response_error():
             et = cast(
                 ElementTree,
                 await self._impl.list_entities(
-                    entity_type=constants.ENTITY_TYPE_QUEUES, skip=skip, top=max_count,
+                    entity_type=constants.ENTITY_TYPE_QUEUES, start_index=start_index, top=max_count,
                     api_version=constants.API_VERSION, **kwargs
                 )
             )
@@ -120,9 +121,10 @@ class ServiceBusManagementClient:
         return queues  # type: ignore
 
     async def get_queue(self, queue_name: str, **kwargs) -> QueueDescription:
-        """Get a QueueDescription
+        """Get a QueueDescription.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
         queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
             await self._get_queue_object(queue_name, **kwargs)
@@ -131,9 +133,10 @@ class ServiceBusManagementClient:
         return queue_description
 
     async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeInfo:
-        """Get the runtime information of a queue
+        """Get the runtime information of a queue.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: ~azure.servicebus.management.QueueRuntimeInfo
         """
         runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
             await self._get_queue_object(queue_name, **kwargs)
@@ -142,13 +145,13 @@ class ServiceBusManagementClient:
         return runtime_info
 
     async def create_queue(self, queue: Union[str, QueueDescription], **kwargs) -> QueueDescription:
-        """Create a queue
+        """Create a queue.
 
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values decided by the
-         ServiceBus. Use a `QueueDesceiption` if you want to set queue properties other than the queue name.
-        :type queue: Union[str, QueueDescription].
-        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
+         ServiceBus. Use a `QueueDescription` if you want to set queue properties other than the queue name.
+        :type queue: Union[str, QueueDescription]
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
         try:
             queue_name = queue.queue_name  # type: ignore
@@ -188,13 +191,13 @@ class ServiceBusManagementClient:
         return result
 
     async def update_queue(self, queue_description: QueueDescription, **kwargs) -> QueueDescription:
-        """Update a queue
+        """Update a queue.
 
         :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
         :type queue_description: ~azure.servicebus.management.QueueDescription
-        :returns: ~azure.servicebus.management.QueueDescription returned from ServiceBus.
+        :rtype: ~azure.servicebus.management.QueueDescription
         """
 
         if not isinstance(queue_description, QueueDescription):
@@ -239,9 +242,10 @@ class ServiceBusManagementClient:
         return result
 
     async def delete_queue(self, queue_name: str, **kwargs) -> None:
-        """Delete a queue
+        """Delete a queue.
 
-        :param str queue_name: The name of the queue
+        :param str queue_name: The name of the queue.
+        :rtype: None
         """
 
         if not queue_name:
@@ -249,15 +253,16 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    async def list_queues(self, *, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueDescription]:
-        """List the queues of a ServiceBus namespace
+    async def list_queues(self, *, start_index: int = 0, max_count: int = 100, **kwargs) -> List[QueueDescription]:
+        """List the queues of a ServiceBus namespace.
 
-        :keyword int skip: skip this number of queues
+        :keyword int start_index: skip this number of queues.
         :keyword int max_count: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace
+         the ServiceBus namespace.
+        :rtype: List[~azure.servicebus.management.QueueDescription]
         """
         result = []  # type: List[QueueDescription]
-        internal_queues = await self._list_queues(skip, max_count, **kwargs)
+        internal_queues = await self._list_queues(start_index, max_count, **kwargs)
         for queue_name, internal_queue in internal_queues:
             qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             qd.queue_name = queue_name
@@ -265,15 +270,16 @@ class ServiceBusManagementClient:
         return result
 
     async def list_queues_runtime_info(
-            self, *, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueRuntimeInfo]:
-        """List the queues runtime info of a ServiceBus namespace
+            self, *, start_index: int = 0, max_count: int = 100, **kwargs) -> List[QueueRuntimeInfo]:
+        """List the runtime info of the queues in a ServiceBus namespace.
 
-        :keyword int skip: skip this number of queues
+        :keyword int start_index: skip this number of queues.
         :keyword int max_count: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace
+         the ServiceBus namespace.
+        :rtype: List[~azure.servicebus.management.QueueRuntimeInfo]
         """
         result = []  # type: List[QueueRuntimeInfo]
-        internal_queues = await self._list_queues(skip, max_count, **kwargs)
+        internal_queues = await self._list_queues(start_index, max_count, **kwargs)
         for queue_name, internal_queue in internal_queues:
             runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             runtime_info.queue_name = queue_name
