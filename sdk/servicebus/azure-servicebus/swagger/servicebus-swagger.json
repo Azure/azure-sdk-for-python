@@ -108,7 +108,7 @@
           }
         },
         "Rights": {
-          "description": "Access rights of the entity",
+          "description": "Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'",
           "type": "array",
           "xml": {
             "wrapped": true,
@@ -123,6 +123,7 @@
           }
         },
         "CreatedTime": {
+          "description": "The date and time when the authorization rule was created.",
           "type": "string",
           "format": "date-time",
           "xml": {
@@ -130,6 +131,7 @@
           }
         },
         "ModifiedTime": {
+          "description": "The date and time when the authorization rule was modified.",
           "type": "string",
           "format": "date-time",
           "xml": {
@@ -137,18 +139,21 @@
           }
         },
         "KeyName": {
+          "description": "The authorization rule key name",
           "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
         "PrimaryKey": {
+          "description": "The primary key of the authorization rule",
           "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
         "SecondaryKey": {
+          "description": "The primary key of the authorization rule",
           "type": "string",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"

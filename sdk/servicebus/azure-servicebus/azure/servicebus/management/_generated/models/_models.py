@@ -19,17 +19,17 @@ class AuthorizationRule(msrest.serialization.Model):
     :type claim_type: str
     :param claim_value:
     :type claim_value: str
-    :param rights: Access rights of the entity.
+    :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
     :type rights: list[str]
-    :param created_time:
+    :param created_time: The date and time when the authorization rule was created.
     :type created_time: ~datetime.datetime
-    :param modified_time:
+    :param modified_time: The date and time when the authorization rule was modified.
     :type modified_time: ~datetime.datetime
-    :param key_name:
+    :param key_name: The authorization rule key name.
     :type key_name: str
-    :param primary_key:
+    :param primary_key: The primary key of the authorization rule.
     :type primary_key: str
-    :param secondary_key:
+    :param secondary_key: The primary key of the authorization rule.
     :type secondary_key: str
     """
 
