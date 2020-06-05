@@ -528,11 +528,11 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         existing one.
 
         :param skillset: The SearchIndexerSkillset object to create or update
-        :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated SearchIndexerSkillset
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))

@@ -24,7 +24,8 @@ from ...._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeRequest, AnalyzeResult, SearchIndex
+    from .._generated.models import AnalyzeResult, SearchIndex
+    from .._models import AnalyzeTextOptions
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -87,6 +88,20 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
         return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
+
+    @distributed_trace
+    def list_index_names(self, **kwargs):
+        # type: (**Any) -> AsyncItemPaged[str]
+        """List the index names in an Azure Search service.
+
+        :return: List of index names
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        return self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
 
     @distributed_trace_async
     async def get_index(self, name, **kwargs):
@@ -239,15 +254,15 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace_async
     async def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
+        # type: (str, AnalyzeTextOptions, **Any) -> AnalyzeResult
         """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test.
-        :type analyze_request: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :return: AnalyzeResult
-        :rtype: :class:`~azure.search.documents.indexes.models.AnalyzeRequest
+        :rtype: ~azure.search.documents.indexes.models.AnalyzeRequest
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -261,7 +276,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name, request=analyze_request, **kwargs
+            index_name=index_name, request=analyze_request.to_analyze_request(), **kwargs
         )
         return result
 
@@ -310,7 +325,7 @@ class SearchIndexClient(HeadersMixin):
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -371,9 +386,9 @@ class SearchIndexClient(HeadersMixin):
         """Create a new Synonym Map in an Azure Search service
 
         :param synonym_map: The Synonym Map object
-        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap
+        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
         :return: The created Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
 
         .. admonition:: Example:
 
@@ -397,11 +412,11 @@ class SearchIndexClient(HeadersMixin):
         existing one.
 
         :param synonym_map: The Synonym Map object
-        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap
+        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap
+        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))

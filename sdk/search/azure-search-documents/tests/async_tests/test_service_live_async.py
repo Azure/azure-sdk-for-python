@@ -20,7 +20,7 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeRequest,
+    AnalyzeTextOptions,
     AnalyzeResult,
     CorsOptions,
     EntityRecognitionSkill,
@@ -260,7 +260,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
         result = await client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
