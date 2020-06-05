@@ -213,6 +213,7 @@ class AadClientBase(ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
+            "client_info": 1,  # request AAD include home_account_id in its response
         }
         request = HttpRequest(
             "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
