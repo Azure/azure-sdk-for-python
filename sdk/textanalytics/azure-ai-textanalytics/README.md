@@ -44,7 +44,7 @@ az cognitiveservices account create \
     --yes
 ```
 
-Interaction with this service begins with an instance of a [client](#client "ta-client").
+Interaction with this service begins with an instance of a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
 
@@ -130,7 +130,7 @@ text_analytics_client = TextAnalyticsClient(
 ## Key concepts
 
 ### TextAnalyticsClient
-The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#Examples "examples").
+The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#examples "Examples").
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
 
 ### Input
@@ -410,11 +410,11 @@ Authenticate the client with a Cognitive Services/Text Analytics API key or a to
 * [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
 In a batch of documents:
-* Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
+* Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
-* Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
+* Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 
 ### Additional documentation
 For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation][TA_product_documentation] on docs.microsoft.com.
@@ -428,7 +428,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[source_code]: azure/ai/textanalytics
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics
 [TA_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [TA_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
 [TA_samples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples
@@ -444,14 +444,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[install_azure_identity]: ../../identity/azure-identity#install-the-package
+[install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [cognitive_custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
-[azure_identity_credentials]: ../../identity/azure-identity#credentials
-[default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 [service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 
@@ -481,8 +481,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
-[azure_core]: ../../core/azure-core/README.md
-[azure_identity]: ../../identity/azure-identity
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
