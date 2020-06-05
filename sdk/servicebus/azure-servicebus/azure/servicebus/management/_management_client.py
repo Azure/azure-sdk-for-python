@@ -125,8 +125,11 @@ class ServiceBusManagementClient:
             )
         return _convert_xml_to_object(queue_name, et)
 
-    def _list_queues(self, skip, max_count, **kwargs):
-        # type: (int, int, Any) -> List[Tuple[str, InternalQueueDescription]]
+    def _list_queues(self, **kwargs):
+        # type: (Any) -> List[Tuple[str, InternalQueueDescription]]
+
+        skip = kwargs.pop("skip", 0)
+        max_count = kwargs.pop("max_count", 100)
         with _handle_response_error():
             et = cast(
                 ElementTree,
@@ -280,32 +283,33 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             self._impl.queue.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_queues(self, skip=0, max_count=100, **kwargs):
-        # type: (int, int, Any) -> List[QueueDescription]
+    def list_queues(self, **kwargs):
+        # type: (Any) -> List[QueueDescription]
         """List the queues of a ServiceBus namespace
 
-        :param int skip: skip this number of queues
-        :param int max_count: return at most this number of queues if there are more than this number in
+        :keyword int skip: skip this number of queues
+        :keyword int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
         result = []  # type: List[QueueDescription]
-        internal_queues = self._list_queues(skip, max_count, **kwargs)
+        internal_queues = self._list_queues(**kwargs)
         for queue_name, internal_queue in internal_queues:
             qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             qd.queue_name = queue_name
             result.append(qd)
         return result
 
-    def list_queues_runtime_info(self, skip=0, max_count=100, **kwargs):
-        # type: (int, int, Any) -> List[QueueRuntimeInfo]
+    def list_queues_runtime_info(self, **kwargs):
+        # type: (Any) -> List[QueueRuntimeInfo]
         """List the queues runtime info of a ServiceBus namespace
 
-        :param int skip: skip this number of queues
-        :param int max_count: return at most this number of queues if there are more than this number in
+        :keyword int skip: skip this number of queues
+        :keyword int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
+
         result = []  # type: List[QueueRuntimeInfo]
-        internal_queues = self._list_queues(skip, max_count, **kwargs)
+        internal_queues = self._list_queues(**kwargs)
         for queue_name, internal_queue in internal_queues:
             runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
             runtime_info.queue_name = queue_name

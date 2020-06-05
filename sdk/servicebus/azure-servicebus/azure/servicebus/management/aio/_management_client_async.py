@@ -249,11 +249,11 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             await self._impl.queue.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    async def list_queues(self, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueDescription]:
+    async def list_queues(self, *, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueDescription]:
         """List the queues of a ServiceBus namespace
 
-        :param int skip: skip this number of queues
-        :param int max_count: return at most this number of queues if there are more than this number in
+        :keyword int skip: skip this number of queues
+        :keyword int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
         result = []  # type: List[QueueDescription]
@@ -264,11 +264,12 @@ class ServiceBusManagementClient:
             result.append(qd)
         return result
 
-    async def list_queues_runtime_info(self, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueRuntimeInfo]:
+    async def list_queues_runtime_info(
+            self, *, skip: int = 0, max_count: int = 100, **kwargs) -> List[QueueRuntimeInfo]:
         """List the queues runtime info of a ServiceBus namespace
 
-        :param int skip: skip this number of queues
-        :param int max_count: return at most this number of queues if there are more than this number in
+        :keyword int skip: skip this number of queues
+        :keyword int max_count: return at most this number of queues if there are more than this number in
          the ServiceBus namespace
         """
         result = []  # type: List[QueueRuntimeInfo]
