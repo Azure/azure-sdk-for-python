@@ -79,7 +79,7 @@ def get_queue_runtime_info(servicebus_mgmt_client):
     print("")
 
 
-servicebus_mgmt_client = ServiceBusManagementClient.from_connection_string(conn_str=CONNECTION_STR)
+servicebus_mgmt_client = ServiceBusManagementClient.from_connection_string(CONNECTION_STR)
 
 create_queue(servicebus_mgmt_client)
 list_queues(servicebus_mgmt_client)
