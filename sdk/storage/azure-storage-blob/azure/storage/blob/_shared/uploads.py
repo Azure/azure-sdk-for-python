@@ -32,7 +32,7 @@ def _parallel_uploads(executor, uploader, pending, running):
         done, running = futures.wait(running, return_when=futures.FIRST_COMPLETED)
         range_ids.extend([chunk.result() for chunk in done])
         try:
-            for i in range(0, len(done)):
+            for _ in range(0, len(done)):
                 next_chunk = next(pending)
                 running.add(executor.submit(with_current_context(uploader), next_chunk))
         except StopIteration:

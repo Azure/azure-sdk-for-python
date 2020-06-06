@@ -32,7 +32,7 @@ async def _parallel_uploads(uploader, pending, running):
         done, running = await asyncio.wait(running, return_when=asyncio.FIRST_COMPLETED)
         range_ids.extend([chunk.result() for chunk in done])
         try:
-            for i in range(0, len(done)):
+            for _ in range(0, len(done)):
                 next_chunk = next(pending)
                 running.add(asyncio.ensure_future(uploader(next_chunk)))
         except StopIteration:
