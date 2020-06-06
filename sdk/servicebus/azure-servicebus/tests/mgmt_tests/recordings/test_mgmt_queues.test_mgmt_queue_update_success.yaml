@@ -1,0 +1,135 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04</id><title
+        type="text">fjrui</title><published>2020-06-05T23:23:55Z</published><updated>2020-06-05T23:23:55Z</updated><author><name>servicebustestsbname</name></author><link
+        rel="self" href="https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:23:55.89Z</CreatedAt><UpdatedAt>2020-06-05T23:23:55.96Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 23:23:55 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription><ns1:LockDuration>PT2M</ns1:LockDuration><ns1:MaxSizeInMegabytes>1024</ns1:MaxSizeInMegabytes><ns1:RequiresDuplicateDetection>false</ns1:RequiresDuplicateDetection><ns1:RequiresSession>false</ns1:RequiresSession><ns1:DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</ns1:DefaultMessageTimeToLive><ns1:DeadLetteringOnMessageExpiration>false</ns1:DeadLetteringOnMessageExpiration><ns1:DuplicateDetectionHistoryTimeWindow>PT10M</ns1:DuplicateDetectionHistoryTimeWindow><ns1:MaxDeliveryCount>10</ns1:MaxDeliveryCount><ns1:EnableBatchedOperations>true</ns1:EnableBatchedOperations><ns1:IsAnonymousAccessible>false</ns1:IsAnonymousAccessible><ns1:AuthorizationRules
+      /><ns1:Status>Active</ns1:Status><ns1:CreatedAt>2020-06-05T23:23:55.890Z</ns1:CreatedAt><ns1:SupportOrdering>true</ns1:SupportOrdering><ns1:AutoDeleteOnIdle>P10675199DT2H48M5.477539S</ns1:AutoDeleteOnIdle><ns1:EnablePartitioning>false</ns1:EnablePartitioning><ns1:EntityAvailabilityStatus>Available</ns1:EntityAvailabilityStatus><ns1:EnableExpress>false</ns1:EnableExpress></ns1:QueueDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1312'
+      Content-Type:
+      - application/xml
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04</id><title
+        type="text">fjrui</title><updated>2020-06-05T23:23:56Z</updated><author><name>servicebustestsbname</name></author><link
+        rel="self" href="https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:23:55.89Z</CreatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 23:23:55 GMT
+      etag:
+      - '637269962359600000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription><ns1:LockDuration>PT13S</ns1:LockDuration><ns1:MaxSizeInMegabytes>3072</ns1:MaxSizeInMegabytes><ns1:RequiresDuplicateDetection>false</ns1:RequiresDuplicateDetection><ns1:RequiresSession>false</ns1:RequiresSession><ns1:DefaultMessageTimeToLive>PT11M</ns1:DefaultMessageTimeToLive><ns1:DeadLetteringOnMessageExpiration>true</ns1:DeadLetteringOnMessageExpiration><ns1:DuplicateDetectionHistoryTimeWindow>PT12M</ns1:DuplicateDetectionHistoryTimeWindow><ns1:MaxDeliveryCount>14</ns1:MaxDeliveryCount><ns1:EnableBatchedOperations>true</ns1:EnableBatchedOperations><ns1:IsAnonymousAccessible>true</ns1:IsAnonymousAccessible><ns1:AuthorizationRules
+      /><ns1:Status>Active</ns1:Status><ns1:CreatedAt>2020-06-05T23:23:55.890Z</ns1:CreatedAt><ns1:SupportOrdering>true</ns1:SupportOrdering><ns1:AutoDeleteOnIdle>PT10M</ns1:AutoDeleteOnIdle><ns1:EnablePartitioning>false</ns1:EnablePartitioning><ns1:EntityAvailabilityStatus>Available</ns1:EntityAvailabilityStatus><ns1:EnableExpress>true</ns1:EnableExpress></ns1:QueueDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1270'
+      Content-Type:
+      - application/xml
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04</id><title
+        type="text">fjrui</title><updated>2020-06-05T23:23:56Z</updated><author><name>servicebustestsbname</name></author><link
+        rel="self" href="https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:23:55.89Z</CreatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Fri, 05 Jun 2020 23:23:56 GMT
+      etag:
+      - '637269962364900000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
