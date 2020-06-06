@@ -1,6 +1,12 @@
 # Release History
 
-## 1.4.0b4 (Unreleased)
+## 1.4.0b4 (2020-06-09)
+- `ManagedIdentityCredential` can configure a user-assigned identity using any
+  identifier supported by the current hosting environment. To specify an
+  identity by its client ID, continue using the `client_id` argument. To
+  specify an identity by any other ID, use the `identity_config` argument,
+  for example: `ManagedIdentityCredential(identity_config={"object_id": ".."})`
+  ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
 - `CertificateCredential` and `ClientSecretCredential` can optionally store
   access tokens they acquire in a persistent cache. To enable this, construct
   the credential with `enable_persistent_cache=True`. On Linux, the persistent
