@@ -508,17 +508,6 @@ class BlobProperties(DictMixin):
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
 
-        # # these are for delete_blobs settings
-        # self.delete_snapshots = kwargs.pop('delete_snapshots', None)
-        # self.lease_id = kwargs.pop('lease_id', None)
-        # self.if_modified_since = kwargs.pop('if_modified_since', None)
-        # self.if_unmodified_since = kwargs.pop('if_unmodified_since', None)
-        # self.match_condition = kwargs.pop('match_condition', None)
-        # self.timeout = kwargs.pop('timeout', None)
-        #
-        # # these are for set_standard_blob_tier_blobs settings
-        # self.rehydrate_priority = kwargs.pop('rehydrate_priority', None)
-
     @classmethod
     def _from_generated(cls, generated):
         blob = BlobProperties()
