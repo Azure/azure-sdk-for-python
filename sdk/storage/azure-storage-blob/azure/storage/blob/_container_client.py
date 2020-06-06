@@ -65,9 +65,12 @@ def _get_blob_name(blob):
     :rtype: str
     """
     try:
-        return blob.get('name')
+        return blob.name
     except AttributeError:
-        return blob
+        try:
+            return blob.get('name')
+        except AttributeError:
+            return blob
 
 
 class ContainerClient(StorageAccountHostsMixin):
@@ -1100,21 +1103,43 @@ class ContainerClient(StorageAccountHostsMixin):
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
             ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                snapshot you want to delete: 'snapshot'
-                whether to delete snapthots when deleting blob: 'delete_snapshots'
-                if the blob modified or not: 'if_modified_since', 'if_unmodified_since'
-                match the etag or not: 'etag', 'match_condition'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+                When the blob type is dict, here's a list of keys, value rules:
+                blob name:
+                    key: 'name', value type: str
+                container name:
+                    key: 'container', value type: str
+                snapshot you want to delete:
+                    key: 'snapshot', value type: str
+                whether to delete snapthots when deleting blob:
+                    key: 'delete_snapshots', value: 'include' or 'only'
+                if the blob modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
@@ -1241,13 +1266,19 @@ class ContainerClient(StorageAccountHostsMixin):
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
             ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                standard blob tier: 'blob_tier'
-                rehydrate priority: 'rehydrate_priority'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+                When the blob type is dict, here's a list of keys, value rules:
+                blob name:
+                    key: 'name', value type: str
+                container name:
+                    key: 'container', value type: str
+                standard blob tier:
+                    key: 'blob_tier', value type: StandardBlobTier
+                rehydrate priority:
+                    key: 'rehydrate_priority', value type: RehydratePriority
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
@@ -1289,12 +1320,17 @@ class ContainerClient(StorageAccountHostsMixin):
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
             ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                premium blob tier: 'blob_tier'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+                When the blob type is dict, here's a list of keys, value rules:
+                blob name:
+                    key: 'name', value type: str
+                container name:
+                    key: 'container', value type: str
+                premium blob tier:
+                    key: 'blob_tier', value type: PremiumPageBlobTier
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword int timeout:
