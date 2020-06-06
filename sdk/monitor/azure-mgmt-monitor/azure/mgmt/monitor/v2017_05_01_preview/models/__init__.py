@@ -26,6 +26,10 @@ try:
     from ._models_py3 import ProxyOnlyResource
     from ._models_py3 import Response
     from ._models_py3 import RetentionPolicy
+    from ._models_py3 import SubscriptionDiagnosticSettingsResource
+    from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
+    from ._models_py3 import SubscriptionLogSettings
+    from ._models_py3 import SubscriptionProxyOnlyResource
     from ._models_py3 import TimeSeriesElement
 except (SyntaxError, ImportError):
     from ._models import DiagnosticSettingsCategoryResource
@@ -44,6 +48,10 @@ except (SyntaxError, ImportError):
     from ._models import ProxyOnlyResource
     from ._models import Response
     from ._models import RetentionPolicy
+    from ._models import SubscriptionDiagnosticSettingsResource
+    from ._models import SubscriptionDiagnosticSettingsResourceCollection
+    from ._models import SubscriptionLogSettings
+    from ._models import SubscriptionProxyOnlyResource
     from ._models import TimeSeriesElement
 from ._paged_models import MetricDefinitionPaged
 from ._monitor_management_client_enums import (
@@ -70,6 +78,10 @@ __all__ = [
     'ProxyOnlyResource',
     'Response',
     'RetentionPolicy',
+    'SubscriptionDiagnosticSettingsResource',
+    'SubscriptionDiagnosticSettingsResourceCollection',
+    'SubscriptionLogSettings',
+    'SubscriptionProxyOnlyResource',
     'TimeSeriesElement',
     'MetricDefinitionPaged',
     'CategoryType',
