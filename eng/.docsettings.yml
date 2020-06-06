@@ -78,6 +78,7 @@ known_content_issues:
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
+  - ['sdk/servicebus/azure-servicebus/swagger/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
   - ['sdk/storage/azure-storage-nspkg/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
