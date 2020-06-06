@@ -1,5 +1,16 @@
 # Release History
 
+## 0.10.0 (2020-06-08)
+
+**Features**
+
+  - Model WebtestLocationAvailabilityCriteria has a new parameter additional_properties
+  - Added operation group SubscriptionDiagnosticSettingsOperations
+
+**Breaking changes**
+
+  - Model WebtestLocationAvailabilityCriteria has a new required parameter odatatype
+
 ## 0.9.0 (2020-04-09)
 
 **Features**
