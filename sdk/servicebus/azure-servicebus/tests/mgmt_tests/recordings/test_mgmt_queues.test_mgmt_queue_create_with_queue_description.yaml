@@ -18,19 +18,19 @@ interactions:
       User-Agent:
       - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
-    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04</id><title
-        type="text">e8d0e74e-0470-4d6f-9510-0d358ad0f03d</title><published>2020-06-05T19:52:10Z</published><updated>2020-06-05T19:52:10Z</updated><author><name>servicebustestt6zusq3zae</name></author><link
-        rel="self" href="https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04</id><title
+        type="text">iweidk</title><published>2020-06-05T23:08:55Z</published><updated>2020-06-05T23:08:55Z</updated><author><name>servicebustestsbname</name></author><link
+        rel="self" href="https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T19:52:10.5Z</CreatedAt><UpdatedAt>2020-06-05T19:52:10.68Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:08:55.13Z</CreatedAt><UpdatedAt>2020-06-05T23:08:55.29Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Fri, 05 Jun 2020 19:52:10 GMT
+      - Fri, 05 Jun 2020 23:08:55 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -52,22 +52,22 @@ interactions:
       User-Agent:
       - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: GET
-    uri: https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/iweidk?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&amp;api-version=2017-04</id><title
-        type="text">e8d0e74e-0470-4d6f-9510-0d358ad0f03d</title><published>2020-06-05T19:52:10Z</published><updated>2020-06-05T19:52:10Z</updated><author><name>servicebustestt6zusq3zae</name></author><link
-        rel="self" href="https://servicebustestt6zusq3zae.servicebus.windows.net/e8d0e74e-0470-4d6f-9510-0d358ad0f03d?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2017-04</id><title
+        type="text">iweidk</title><published>2020-06-05T23:08:55Z</published><updated>2020-06-05T23:08:55Z</updated><author><name>servicebustestsbname</name></author><link
+        rel="self" href="https://servicebustestsbname.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T19:52:10.5Z</CreatedAt><UpdatedAt>2020-06-05T19:52:10.68Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><MaxSizeInMegabytes>49152</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:08:55.13Z</CreatedAt><UpdatedAt>2020-06-05T23:08:55.29Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>true</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Fri, 05 Jun 2020 19:52:11 GMT
+      - Fri, 05 Jun 2020 23:08:55 GMT
       etag:
-      - '637269835306800000'
+      - '637269953352900000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
