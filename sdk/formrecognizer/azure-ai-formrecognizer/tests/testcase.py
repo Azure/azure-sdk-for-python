@@ -498,7 +498,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                     blob_sas_url,
                     "blob_sas_url"
                 )
-            if self.multipage_test_2:
+            elif self.multipage_test_2:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2")
                 url = container_sas_url.split("multipage-vendor-forms")
                 url[0] += "multipage-vendor-forms/multi1.pdf"
