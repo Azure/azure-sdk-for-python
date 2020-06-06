@@ -66,8 +66,10 @@ async def test_context_manager_no_cache():
     """the credential shouldn't open/close sessions when instantiated in an environment with no cache"""
 
     transport = AsyncMockTransport()
-    with patch.dict("azure.identity._internal.shared_token_cache.os.environ", {}, clear=True):
-        # clearing the environment ensures the credential won't try to load a cache
+
+    with patch(
+        "azure.identity._internal.shared_token_cache.load_user_cache", Mock(side_effect=NotImplementedError)
+    ):
         credential = SharedTokenCacheCredential(transport=transport)
 
     async with credential:
@@ -676,3 +678,38 @@ def test_authentication_record_authenticating_tenant():
     assert get_auth_client.call_count == 1
     _, kwargs = get_auth_client.call_args
     assert kwargs["tenant_id"] == expected_tenant_id
+
+
+@pytest.mark.asyncio
+async def test_allow_unencrypted_cache():
+    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
+
+    This test was written when Linux was the only platform on which encryption may not be available.
+    """
+
+    platform_patch = patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
+    platform_patch.start()
+
+    msal_extensions_patch = patch("azure.identity._internal.persistent_cache.msal_extensions")
+    mock_extensions = msal_extensions_patch.start()
+
+    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
+    mock_extensions.PersistedTokenCache.reset_mock()
+
+    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
+    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
+
+    # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
+    credential = SharedTokenCacheCredential()
+    assert mock_extensions.PersistedTokenCache.call_count == 0
+    with pytest.raises(CredentialUnavailableError):
+        await credential.get_token("scope")
+
+    # still no encryption, but now we allow the unencrypted fallback
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
+
+    msal_extensions_patch.stop()
+    platform_patch.stop()
