@@ -32,6 +32,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     @wrap_exceptions
@@ -58,6 +60,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         account = self._get_account(self._username, self._tenant_id)
+
+        token = self._get_cached_access_token(scopes, account)
+        if token:
+            return token
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):

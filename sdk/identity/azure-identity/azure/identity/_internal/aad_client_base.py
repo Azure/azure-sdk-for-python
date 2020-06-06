@@ -4,7 +4,6 @@
 # ------------------------------------
 import abc
 import base64
-import copy
 import json
 import time
 from uuid import uuid4
@@ -12,6 +11,7 @@ from uuid import uuid4
 import six
 from msal import TokenCache
 
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -30,7 +30,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional, Sequence, Union
-    from azure.core.pipeline import AsyncPipeline, Pipeline
+    from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
     from .._internal import AadClientCertificate
@@ -83,24 +83,57 @@ class AadClientBase(ABC):
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         pass
 
-    def _process_response(self, response, scopes, now):
-        # type: (dict, Sequence[str], int) -> AccessToken
-        _raise_for_error(response)
+    def _process_response(self, response, request_time):
+        # type: (PipelineResponse, int) -> AccessToken
 
-        # TokenCache.add mutates the response. In particular, it removes tokens.
-        response_copy = copy.deepcopy(response)
+        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
-        self._cache.add(event={"response": response, "scope": scopes, "client_id": self._client_id}, now=now)
-        if "expires_on" in response_copy:
-            expires_on = int(response_copy["expires_on"])
-        elif "expires_in" in response_copy:
-            expires_on = now + int(response_copy["expires_in"])
+        if response.http_request.body.get("grant_type") == "refresh_token":
+            if content.get("error") == "invalid_grant":
+                # the request's refresh token is invalid -> evict it from the cache
+                cache_entries = self._cache.find(
+                    TokenCache.CredentialType.REFRESH_TOKEN,
+                    query={"secret": response.http_request.body["refresh_token"]},
+                )
+                for invalid_token in cache_entries:
+                    self._cache.remove_rt(invalid_token)
+            if "refresh_token" in content:
+                # AAD returned a new refresh token -> update the cache entry
+                cache_entries = self._cache.find(
+                    TokenCache.CredentialType.REFRESH_TOKEN,
+                    query={"secret": response.http_request.body["refresh_token"]},
+                )
+                # If the old token is in multiple cache entries, the cache is in a state we don't
+                # expect or know how to reason about, so we update nothing.
+                if len(cache_entries) == 1:
+                    self._cache.update_rt(cache_entries[0], content["refresh_token"])
+                    del content["refresh_token"]  # prevent caching a redundant entry
+
+        _raise_for_error(content)
+
+        if "expires_on" in content:
+            expires_on = int(content["expires_on"])
+        elif "expires_in" in content:
+            expires_on = request_time + int(content["expires_in"])
         else:
-            _scrub_secrets(response_copy)
+            _scrub_secrets(content)
             raise ClientAuthenticationError(
-                message="Unexpected response from Azure Active Directory: {}".format(response_copy)
+                message="Unexpected response from Azure Active Directory: {}".format(content)
             )
-        return AccessToken(response_copy["access_token"], expires_on)
+
+        token = AccessToken(content["access_token"], expires_on)
+
+        # caching is the final step because 'add' mutates 'content'
+        self._cache.add(
+            event={
+                "response": content,
+                "scope": response.http_request.body["scope"].split(),
+                "client_id": self._client_id,
+            },
+            now=request_time,
+        )
+
+        return token
 
     def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
         # type: (Sequence[str], str, str, Optional[str]) -> HttpRequest
@@ -180,6 +213,7 @@ class AadClientBase(ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
+            "client_info": 1,  # request AAD include home_account_id in its response
         }
         request = HttpRequest(
             "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
