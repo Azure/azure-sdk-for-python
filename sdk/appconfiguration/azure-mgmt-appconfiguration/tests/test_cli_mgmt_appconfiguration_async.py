@@ -25,11 +25,6 @@
 import time
 import unittest
 
-try:
-  import asyncio
-except:
-  raise unittest.SkipTest("Skipping test - no asyncio")
-
 import azure.mgmt.appconfiguration
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
