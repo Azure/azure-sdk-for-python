@@ -2,7 +2,6 @@ import asyncio
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
-from azure.identity.aio import DefaultAzureCredential
 from devtools_testutils import AzureMgmtTestCase
 
 class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
@@ -16,6 +15,7 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
 
     def create_mgmt_aio_client(self, client, **kwargs):
         if self.is_live:
+            from azure.identity.aio import DefaultAzureCredential
             credential = DefaultAzureCredential()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
