@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Credentials wrapping MSAL applications and delegating token acquisition and caching to them.
-This entails monkeypatching MSAL's OAuth client with an adapter substituting an azure-core pipeline for Requests.
-"""
 import abc
 import base64
 import json
@@ -17,7 +14,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
-from .msal_transport_adapter import MsalTransportAdapter
+from .msal_client import MsalClient
 from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
@@ -102,7 +99,7 @@ class MsalCredential(ABC):
             else:
                 self._cache = msal.TokenCache()
 
-        self._adapter = kwargs.pop("msal_adapter", None) or MsalTransportAdapter(**kwargs)
+        self._client = kwargs.pop("msal_adapter", None) or MsalClient(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
         self._msal_app = None  # type: Optional[msal.ClientApplication]
@@ -119,21 +116,13 @@ class MsalCredential(ABC):
 
     def _create_app(self, cls):
         # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
-        """Creates an MSAL application, patching msal.authority to use an azure-core pipeline during tenant discovery"""
-
-        # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-        with self._adapter:
-            # MSAL's "authority" is a URL e.g. https://login.microsoftonline.com/common
-            app = cls(
-                client_id=self._client_id,
-                client_credential=self._client_credential,
-                authority="{}/{}".format(self._authority, self._tenant_id),
-                token_cache=self._cache,
-            )
-
-        # monkeypatch the app to replace requests.Session with MsalTransportAdapter
-        app.client.session.close()
-        app.client.session = self._adapter
+        app = cls(
+            client_id=self._client_id,
+            client_credential=self._client_credential,
+            authority="{}/{}".format(self._authority, self._tenant_id),
+            token_cache=self._cache,
+            http_client=self._client,
+        )
 
         return app
 
