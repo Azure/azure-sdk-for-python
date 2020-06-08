@@ -304,6 +304,7 @@ class AvailabilitySetsOperations(object):
         """Lists all availability sets in a subscription.
 
         :param expand: The expand expression to apply to the operation.
+         Allowed values are 'instanceView'.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
