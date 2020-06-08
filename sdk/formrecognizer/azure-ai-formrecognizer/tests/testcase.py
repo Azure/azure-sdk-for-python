@@ -75,6 +75,7 @@ class FormRecognizerTest(AzureTestCase):
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
+        self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -85,6 +86,8 @@ class FormRecognizerTest(AzureTestCase):
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
         self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
+        self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
+        self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -413,6 +416,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
         self.multipage_test = kwargs.get("multipage", False)
+        self.multipage_test_2 = kwargs.get("multipage2", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
         self.copy = kwargs.get("copy", False)
 
@@ -494,7 +498,15 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                     blob_sas_url,
                     "blob_sas_url"
                 )
-
+            elif self.multipage_test_2:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2")
+                url = container_sas_url.split("multipage-vendor-forms")
+                url[0] += "multipage-vendor-forms/multi1.pdf"
+                blob_sas_url = url[0] + url[1]
+                self.test_class_instance.scrubber.register_name_pair(
+                    blob_sas_url,
+                    "blob_sas_url"
+                )
             else:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
                 blob_sas_url = None
