@@ -42,3 +42,9 @@ class ActionsRequired(str, Enum):
 
     none = "None"
     recreate = "Recreate"
+
+
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
