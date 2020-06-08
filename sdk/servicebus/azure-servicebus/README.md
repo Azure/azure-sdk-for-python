@@ -212,7 +212,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 Other settlement methods (beyond complete and defer) include:
 * `dead_letter`, removing the message from the primary queue and sending it to a
-special "dead-letter sub-queue" where it can be accessed using the `get_queue_dead_letter_receiver` function.
+special "dead-letter sub-queue" where it can be accessed using the `get_queue_deadletter_receiver` function.
 * `abandon`, immediately returning the message back to the queue to be picked up by another (or the same) receiver.
 
 ## Troubleshooting
