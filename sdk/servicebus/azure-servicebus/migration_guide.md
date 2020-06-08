@@ -31,7 +31,7 @@ semantics with the sender or receiver lifetime.
 
 ### Client constructors
 
-| In v7 | Equivalent in v5 | Sample |
+| In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](./samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](./samples/sync_samples/send_queue.py ) |
@@ -69,6 +69,13 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `session.locked_until < datetime.now()`| `session.locked_until_utc < datetime.utcnow()`| All datetimes are now UTC and named as such|
 | `message.scheduled_enqueue_time < datetime.now()`| `message.scheduled_enqueue_time_utc < datetime.utcnow()`| UTC Datetime normalization applies across all objects and datetime fields|
+
+### Managing queues
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
+| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
+
 
 ## Migration samples
 

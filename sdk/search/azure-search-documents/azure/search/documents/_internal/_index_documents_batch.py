@@ -36,7 +36,7 @@ class IndexDocumentsBatch(object):
         # type: () -> str
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
-    def add_upload_documents(self, *documents):
+    def add_upload_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to upload to the Azure search index.
 
@@ -50,7 +50,7 @@ class IndexDocumentsBatch(object):
         """
         self._extend_batch(flatten_args(documents), "upload")
 
-    def add_delete_documents(self, *documents):
+    def add_delete_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to delete to the Azure search index.
 
@@ -69,7 +69,7 @@ class IndexDocumentsBatch(object):
         """
         self._extend_batch(flatten_args(documents), "delete")
 
-    def add_merge_documents(self, *documents):
+    def add_merge_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to merge in to existing documets in the Azure search
         index.
@@ -85,7 +85,7 @@ class IndexDocumentsBatch(object):
         """
         self._extend_batch(flatten_args(documents), "merge")
 
-    def add_merge_or_upload_documents(self, *documents):
+    def add_merge_or_upload_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to merge in to existing documets in the Azure search
         index, or upload if they do not yet exist.

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +19,15 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 
 
 class TestManagementAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    def test_active_directory_auth_async(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = FormTrainingClient(endpoint, token)
+        props = client.get_account_properties()
+        self.assertIsNotNone(props)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_account_properties_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

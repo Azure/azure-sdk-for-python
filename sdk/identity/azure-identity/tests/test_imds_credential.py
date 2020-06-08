@@ -4,11 +4,14 @@
 # ------------------------------------
 import json
 import time
+from azure.core.credentials import AccessToken
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
+from azure.identity._constants import Endpoints
 from azure.identity._credentials.managed_identity import ImdsCredential
 import pytest
+from azure.identity._internal.user_agent import USER_AGENT
 
 from helpers import mock, mock_response, Request, validating_transport
 
@@ -132,3 +135,41 @@ def test_cache():
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
     assert mock_send.call_count == 3
+
+
+def test_identity_config():
+    param_name, param_value = "foo", "bar"
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    scope = "scope"
+    transport = validating_transport(
+        requests=[
+            Request(base_url=Endpoints.IMDS),
+            Request(
+                base_url=Endpoints.IMDS,
+                method="GET",
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
+                required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": 42,
+                    "expires_on": expires_on,
+                    "ext_expires_in": 42,
+                    "not_before": int(time.time()),
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    credential = ImdsCredential(identity_config={param_name: param_value}, transport=transport)
+    token = credential.get_token(scope)
+
+    assert token == expected_token

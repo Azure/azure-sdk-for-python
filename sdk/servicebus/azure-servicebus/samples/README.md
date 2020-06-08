@@ -45,6 +45,13 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Authenticate and create the client utilizing the `azure.identity` library
 - [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
+- [mgmt_queue](./sync_samples/mgmt_queue.py) ([async_version](./async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
+    - Create a queue
+    - Delete a queue
+    - Update a queue
+    - List queues
+    - Get queue description
+    - Get queue runtime information
 
 
 ## Prerequisites
