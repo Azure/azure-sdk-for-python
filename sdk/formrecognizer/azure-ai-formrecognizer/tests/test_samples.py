@@ -45,8 +45,7 @@ def _test_file(file_name, account, key, root_dir='./samples'):
     my_env = dict(os.environ)
     if sys.version_info < (3, 5):
         my_env = {key: str(val) for key, val in my_env.items()}
-    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
-    print(out)
+    code, _, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
     assert code == 0
     assert err is None
 
@@ -110,4 +109,3 @@ class TestSamples(FormRecognizerTest):
     def test_sample_train_model_without_labels(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         _setenv('CONTAINER_SAS_URL', 'AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL')
         _test_file('sample_train_model_without_labels.py', form_recognizer_account, form_recognizer_account_key)
-
