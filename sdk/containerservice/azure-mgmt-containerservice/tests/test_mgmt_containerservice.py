@@ -19,10 +19,47 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
         self.cs_client = self.create_mgmt_client(
             azure.mgmt.containerservice.ContainerServiceClient
         )
+        if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(
+                NetworkManagementClient
+            )
+    
+    def create_subet(self, group_name, location):
+        # Create virtual network
+        self.network_client.virtual_networks.create_or_update(
+            group_name,
+            "vnet",
+            {
+                "address_space": {
+                    "address_prefixes": [
+                    "10.0.0.0/8"
+                    ]
+                },
+                "location": location 
+            }
+        ).result()
 
-    @ResourceGroupPreparer(location='westus2')
+        # Create subnet
+        subnet = self.network_client.subnets.create_or_update(
+            group_name,
+            "vnet",
+            "v-subnet",
+            {
+                "address_prefix": "10.0.0.0/8"
+            }
+        ).result()
+
+        return subnet.id
+
+    @ResourceGroupPreparer(location='westus')
     def test_container(self, resource_group, location):
         container_name = self.get_resource_name('pycontainer')
+
+        if self.is_live:
+            subnet_id = self.create_subet(resource_group.name, location)
+        else:
+            subnet_id = "<fake_id>"
         
         async_create = self.cs_client.container_services.create_or_update(
             resource_group.name,
@@ -30,18 +67,20 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
             {
                 'location': location,
                 "orchestrator_profile": {
-                    "orchestrator_type": "DCOS"
+                    "orchestrator_type": "Swarm"
                 },
                 "master_profile": {
                     "count": 1,
                     "dns_prefix": "MasterPrefixTest",
-                    "vm_size": ContainerServiceVMSizeTypes.standard_d2_v2
+                    "vm_size": ContainerServiceVMSizeTypes.standard_d2_v2,
+                    "vnet_subnet_id": subnet_id
                 },
                 "agent_pool_profiles": [{
                     "name": "agentpool0",
                     "count": 3,
                     "vm_size": "Standard_A2_v2",
                     # "dns_prefix": "AgentPrefixTest" - Optional in latest version
+                    "vnet_subnet_id": subnet_id
                 }],
                 "linux_profile": {
                     "admin_username": "acslinuxadmin",
