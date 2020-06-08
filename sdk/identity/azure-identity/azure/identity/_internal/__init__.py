@@ -63,8 +63,6 @@ __all__ = [
     "ClientSecretCredentialBase",
     "get_default_authority",
     "InteractiveCredential",
-    "MsalTransportAdapter",
-    "MsalTransportResponse",
     "normalize_authority",
     "PublicClientCredential",
     "wrap_exceptions",
