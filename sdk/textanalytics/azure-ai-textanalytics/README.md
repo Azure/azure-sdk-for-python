@@ -390,6 +390,7 @@ credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 text_analytics_client = TextAnalyticsClient(endpoint, credential, logging_enable=True)
+result = text_analytics_client.analyze_sentiment(["I did not like the restaurant. The food was too spicy."])
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
