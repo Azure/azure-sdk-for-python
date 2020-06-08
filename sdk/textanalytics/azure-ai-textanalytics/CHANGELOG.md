@@ -1,7 +1,7 @@
 # Change Log azure-ai-textanalytics
 
 ## 1.0.0 (2020-06-09)
-- First stable release of the azure-ai-textanalytics package
+- First stable release of the azure-ai-textanalytics package. Targets the service's v3.0 API.
 
 ## 1.0.0b6 (2020-05-27)
 
