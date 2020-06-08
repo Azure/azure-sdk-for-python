@@ -51,6 +51,19 @@ class SettingPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SettingPaged, self).__init__(*args, **kwargs)
+class DeviceSecurityGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DeviceSecurityGroup <azure.mgmt.security.models.DeviceSecurityGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeviceSecurityGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeviceSecurityGroupPaged, self).__init__(*args, **kwargs)
 class IoTSecuritySolutionModelPaged(Paged):
     """
     A paging container for iterating over a list of :class:`IoTSecuritySolutionModel <azure.mgmt.security.models.IoTSecuritySolutionModel>` object
@@ -90,58 +103,6 @@ class IoTSecurityAggregatedRecommendationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(IoTSecurityAggregatedRecommendationPaged, self).__init__(*args, **kwargs)
-class AllowedConnectionsResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`AllowedConnectionsResource <azure.mgmt.security.models.AllowedConnectionsResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AllowedConnectionsResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(AllowedConnectionsResourcePaged, self).__init__(*args, **kwargs)
-class DiscoveredSecuritySolutionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`DiscoveredSecuritySolution <azure.mgmt.security.models.DiscoveredSecuritySolution>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DiscoveredSecuritySolution]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(DiscoveredSecuritySolutionPaged, self).__init__(*args, **kwargs)
-class ExternalSecuritySolutionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ExternalSecuritySolution <azure.mgmt.security.models.ExternalSecuritySolution>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExternalSecuritySolution]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ExternalSecuritySolutionPaged, self).__init__(*args, **kwargs)
-class JitNetworkAccessPolicyPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`JitNetworkAccessPolicy <azure.mgmt.security.models.JitNetworkAccessPolicy>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JitNetworkAccessPolicy]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(JitNetworkAccessPolicyPaged, self).__init__(*args, **kwargs)
 class AscLocationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AscLocation <azure.mgmt.security.models.AscLocation>` object
@@ -181,19 +142,6 @@ class SecurityTaskPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SecurityTaskPaged, self).__init__(*args, **kwargs)
-class TopologyResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`TopologyResource <azure.mgmt.security.models.TopologyResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[TopologyResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(TopologyResourcePaged, self).__init__(*args, **kwargs)
 class AutoProvisioningSettingPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AutoProvisioningSetting <azure.mgmt.security.models.AutoProvisioningSetting>` object
@@ -298,3 +246,185 @@ class RegulatoryComplianceAssessmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RegulatoryComplianceAssessmentPaged, self).__init__(*args, **kwargs)
+class SecuritySubAssessmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecuritySubAssessment <azure.mgmt.security.models.SecuritySubAssessment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecuritySubAssessment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecuritySubAssessmentPaged, self).__init__(*args, **kwargs)
+class AutomationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Automation <azure.mgmt.security.models.Automation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Automation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AutomationPaged, self).__init__(*args, **kwargs)
+class AlertsSuppressionRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AlertsSuppressionRule <azure.mgmt.security.models.AlertsSuppressionRule>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertsSuppressionRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AlertsSuppressionRulePaged, self).__init__(*args, **kwargs)
+class SecurityAssessmentMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityAssessmentMetadata <azure.mgmt.security.models.SecurityAssessmentMetadata>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityAssessmentMetadata]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityAssessmentMetadataPaged, self).__init__(*args, **kwargs)
+class SecurityAssessmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityAssessment <azure.mgmt.security.models.SecurityAssessment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityAssessment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityAssessmentPaged, self).__init__(*args, **kwargs)
+class AdaptiveNetworkHardeningPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AdaptiveNetworkHardening <azure.mgmt.security.models.AdaptiveNetworkHardening>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AdaptiveNetworkHardening]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AdaptiveNetworkHardeningPaged, self).__init__(*args, **kwargs)
+class AllowedConnectionsResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AllowedConnectionsResource <azure.mgmt.security.models.AllowedConnectionsResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AllowedConnectionsResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AllowedConnectionsResourcePaged, self).__init__(*args, **kwargs)
+class TopologyResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TopologyResource <azure.mgmt.security.models.TopologyResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TopologyResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TopologyResourcePaged, self).__init__(*args, **kwargs)
+class JitNetworkAccessPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`JitNetworkAccessPolicy <azure.mgmt.security.models.JitNetworkAccessPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JitNetworkAccessPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JitNetworkAccessPolicyPaged, self).__init__(*args, **kwargs)
+class DiscoveredSecuritySolutionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DiscoveredSecuritySolution <azure.mgmt.security.models.DiscoveredSecuritySolution>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DiscoveredSecuritySolution]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DiscoveredSecuritySolutionPaged, self).__init__(*args, **kwargs)
+class ExternalSecuritySolutionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExternalSecuritySolution <azure.mgmt.security.models.ExternalSecuritySolution>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExternalSecuritySolution]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExternalSecuritySolutionPaged, self).__init__(*args, **kwargs)
+class SecureScoreItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecureScoreItem <azure.mgmt.security.models.SecureScoreItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecureScoreItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecureScoreItemPaged, self).__init__(*args, **kwargs)
+class SecureScoreControlDetailsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecureScoreControlDetails <azure.mgmt.security.models.SecureScoreControlDetails>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecureScoreControlDetails]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecureScoreControlDetailsPaged, self).__init__(*args, **kwargs)
+class SecureScoreControlDefinitionItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecureScoreControlDefinitionItem <azure.mgmt.security.models.SecureScoreControlDefinitionItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecureScoreControlDefinitionItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecureScoreControlDefinitionItemPaged, self).__init__(*args, **kwargs)
