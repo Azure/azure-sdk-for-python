@@ -134,15 +134,6 @@ class TestRepr():
         )[:1024]
         assert repr(model) == model_repr
 
-    def test_recognized_receipt(self, form_field_one, page_range, form_page):
-        model = _models.RecognizedReceipt(
-            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
-        model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
-            form_field_one[1], page_range[1], form_page[1]
-        )[:1024]
-        assert repr(model) == model_repr
-
-
     def test_custom_form_model(self, custom_form_sub_model, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
