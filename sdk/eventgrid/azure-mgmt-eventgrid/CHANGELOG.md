@@ -1,5 +1,30 @@
 # Release History
 
+## 3.0.0rc8 (2020-06-05)
+
+**Breaking changes**
+
+  - Model EventSubscriptionUpdateParameters no longer has parameter dead_letter_with_resource_identity
+  - Model EventSubscriptionUpdateParameters no longer has parameter delivery_with_resource_identity
+  - Model DomainUpdateParameters no longer has parameter sku
+  - Model DomainUpdateParameters no longer has parameter identity
+  - Model Domain no longer has parameter sku
+  - Model Domain no longer has parameter identity
+  - Model EventSubscription no longer has parameter dead_letter_with_resource_identity
+  - Model EventSubscription no longer has parameter delivery_with_resource_identity
+  - Model TopicUpdateParameters no longer has parameter sku
+  - Model TopicUpdateParameters no longer has parameter identity
+  - Model Topic no longer has parameter sku
+  - Model Topic no longer has parameter identity
+  - Removed operation group ExtensionTopicsOperations
+  - Removed operation group PartnerNamespacesOperations
+  - Removed operation group PartnerRegistrationsOperations
+  - Removed operation group PartnerTopicsOperations
+  - Removed operation group SystemTopicEventSubscriptionsOperations
+  - Removed operation group SystemTopicsOperations
+  - Removed operation group PartnerTopicEventSubscriptionsOperations
+  - Removed operation group EventChannelsOperations
+
 ## 3.0.0rc7 (2020-05-14)
 
 **Features**
