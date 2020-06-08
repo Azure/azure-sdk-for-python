@@ -224,7 +224,7 @@
       }
     },
     "EntityAvailabilityStatus": {
-      "description": "Availibility status of the entity",
+      "description": "Availability status of the entity",
       "type": "string",
       "xml": {
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
@@ -570,54 +570,6 @@
             "$ref": "#/definitions/QueueDescriptionEntry"
           }
         }
-      }
-    },
-    "QueueDescriptionResponse": {
-      "description": "The response from a Queue_Get operation",
-      "type": "object",
-      "properties": {
-        "id": {
-          "description": "The URL of the GET request",
-          "type": "string"
-        },
-        "title": {
-          "description": "The name of the queue",
-          "type": "string"
-        },
-        "published": {
-          "description": "The timestamp for when this queue was published",
-          "type": "string"
-        },
-        "updated": {
-          "description": "The timestamp for when this queue was last updated",
-          "type": "string"
-        },
-        "author": {
-          "$ref": "#/definitions/ResponseAuthor"
-        },
-        "link": {
-          "$ref": "#/definitions/ResponseLink"
-        },
-        "content": {
-          "description": "Contents of a Queue_Get response",
-          "type": "object",
-          "properties": {
-            "type": {
-              "description": "Type of content in queue response",
-              "type": "string",
-              "xml": {
-                "attribute": true
-              }
-            },
-            "QueueDescription": {
-              "$ref": "#/definitions/QueueDescription"
-            }
-          }
-        }
-      },
-      "xml": {
-        "name": "entry",
-        "namespace": "http://www.w3.org/2005/Atom"
       }
     },
     "ResponseAuthor": {
