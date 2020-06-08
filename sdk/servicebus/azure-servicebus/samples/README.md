@@ -11,7 +11,7 @@ urlFragment: servicebus-samples
 # Azure Service Bus client library for Python Samples
 
 > **NOTE**: This document outlines the samples for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
+> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
 Both [sync version](./sync_samples) and [async version](./async_samples) of samples are provided, async samples require Python 3.5 or later.
@@ -76,5 +76,5 @@ pip install --pre azure-servicebus
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html) to learn more about
 what you can do with the Azure Service Bus client library.
