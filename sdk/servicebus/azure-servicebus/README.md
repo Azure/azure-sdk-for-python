@@ -210,6 +210,11 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             msg.defer()
 ```
 
+Other settlement methods (beyond complete and defer) include:
+* `dead_letter`, removing the message from the primary queue and sending it to a
+special "dead-letter sub-queue" where it can be accessed using the `get_queue_dead_letter_receiver` function.
+* `abandon`, immediately returning the message back to the queue to be picked up by another (or the same) receiver.
+
 ## Troubleshooting
 
 ### Logging
@@ -269,14 +274,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b2/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b3/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
