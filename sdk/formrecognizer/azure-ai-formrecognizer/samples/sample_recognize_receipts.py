@@ -26,6 +26,7 @@ import os
 class RecognizeReceiptsSample(object):
 
     def recognize_receipts(self):
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         # [START recognize_receipts]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -36,7 +37,7 @@ class RecognizeReceiptsSample(object):
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        with open("sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
+        with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_receipts(receipt=f)
         receipts = poller.result()
 
