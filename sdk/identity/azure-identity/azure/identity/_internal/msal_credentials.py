@@ -127,34 +127,6 @@ class MsalCredential(ABC):
         return app
 
 
-class ConfidentialClientCredential(MsalCredential):
-    """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""
-
-    @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-
-        # MSAL requires scopes be a list
-        scopes = list(scopes)  # type: ignore
-        now = int(time.time())
-
-        # First try to get a cached access token or if a refresh token is cached, redeem it for an access token.
-        # Failing that, acquire a new token.
-        app = self._get_app()
-        result = app.acquire_token_silent(scopes, account=None) or app.acquire_token_for_client(scopes)
-
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
-
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
-
-    def _get_app(self):
-        # type: () -> msal.ConfidentialClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.ConfidentialClientApplication)
-        return self._msal_app
-
-
 class PublicClientCredential(MsalCredential):
     """Wraps an MSAL PublicClientApplication with the TokenCredential API"""
 
