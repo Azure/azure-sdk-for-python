@@ -111,7 +111,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
+            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
+            list[dict[str, str]]
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -175,7 +176,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
             like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -240,7 +242,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -305,7 +308,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -369,7 +373,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of  :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
