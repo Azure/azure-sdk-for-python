@@ -53,10 +53,10 @@ class AuthenticationSampleAsync(object):
             result = await poller.result()
 
     async def authentication_with_azure_active_directory_form_recognizer_client_async(self):
+        # [START create_fr_client_with_aad_async]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_fr_client_with_aad_async]
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         from azure.identity.aio import DefaultAzureCredential
 
@@ -82,10 +82,10 @@ class AuthenticationSampleAsync(object):
             properties = await form_training_client.get_account_properties()
 
     async def authentication_with_azure_active_directory_form_training_client_async(self):
+        # [START create_ft_client_with_aad_async]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_ft_client_with_aad_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.identity.aio import DefaultAzureCredential
 

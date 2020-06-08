@@ -51,10 +51,10 @@ class AuthenticationSample(object):
         receipt = poller.result()
 
     def authentication_with_azure_active_directory_form_recognizer_client(self):
+        # [START create_fr_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_fr_client_with_aad]
         from azure.ai.formrecognizer import FormRecognizerClient
         from azure.identity import DefaultAzureCredential
 
@@ -78,10 +78,10 @@ class AuthenticationSample(object):
         properties = form_training_client.get_account_properties()
 
     def authentication_with_azure_active_directory_form_training_client(self):
+        # [START create_ft_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_ft_client_with_aad]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.identity import DefaultAzureCredential
 
