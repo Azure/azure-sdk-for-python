@@ -62,10 +62,10 @@ class CopyModelSampleAsync(object):
                 model_id=source_model_id,
                 target=target
             )
-            copy = await poller.result()
+            copied_over_model = await poller.result()
 
-            print("Model ID: {}".format(copy.model_id))
-            print("Status: {}".format(copy.status))
+            print("Model ID: {}".format(copied_over_model.model_id))
+            print("Status: {}".format(copied_over_model.status))
         # [END copy_model_async]
 
 
