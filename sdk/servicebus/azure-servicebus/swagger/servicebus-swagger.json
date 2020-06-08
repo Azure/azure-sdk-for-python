@@ -224,7 +224,7 @@
       }
     },
     "EntityAvailabilityStatus": {
-      "description": "Availibility status of the entity",
+      "description": "Availability status of the entity",
       "type": "string",
       "xml": {
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
