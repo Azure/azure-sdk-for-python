@@ -299,10 +299,10 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/
+[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
 [0_50_pypi]: https://pypi.org/project/azure-servicebus/
-[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.2/index.html
+[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html
 [0_50_product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
-[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/samples
-[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/CHANGELOG.md
+[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples
+[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/CHANGELOG.md
 [migration_guide]: ./migration_guide.md
