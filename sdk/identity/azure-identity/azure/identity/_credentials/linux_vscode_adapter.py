@@ -92,7 +92,7 @@ def _get_refresh_token(service_name, account_name):
         _c_str(account_name),
         None,
     )
-    _libsecret.secret_schema_unref(schema)
+    #_libsecret.secret_schema_unref(schema)
     if err.value == 0:
         return p_str.decode("utf-8")
 
