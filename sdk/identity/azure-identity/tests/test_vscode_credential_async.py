@@ -111,16 +111,12 @@ async def test_no_obtain_token_if_cached():
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_distro():
-    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
 
     mock_client = mock.Mock(spec=object)
     token_by_refresh_token = mock.Mock(return_value=None)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with pytest.raises(NotImplementedError):
-        credential = _get_refresh_token("test", "test")
     with pytest.raises(CredentialUnavailableError):
         credential = VSCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
-    
