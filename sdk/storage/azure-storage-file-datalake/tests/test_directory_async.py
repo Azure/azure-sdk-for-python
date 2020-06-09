@@ -385,7 +385,7 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_rename_from_a_shorter_directory_to_longer_directory())
 
     async def _test_rename_from_a_directory_in_another_file_system(self):
-        # create a file dir1 under file system1
+        # create a file dir1 under filesystem1
         old_file_system_name = self._get_directory_reference("oldfilesystem")
         old_dir_name = "olddir"
         old_client = self.dsc.get_file_system_client(old_file_system_name)
@@ -393,13 +393,13 @@ class DirectoryTest(StorageTestCase):
         await old_client.create_file_system()
         await old_client.create_directory(old_dir_name)
 
-        # create a dir2 under file system2
+        # create a dir2 under filesystem2
         new_name = "newname"
         time.sleep(5)
         new_directory_client = await self._create_directory_and_get_directory_client(directory_name=new_name)
         new_directory_client = await new_directory_client.create_sub_directory("newsub")
 
-        # rename dir1 under file system1 to dir2 under file system2
+        # rename dir1 under filesystem1 to dir2 under filesystem2
         await new_directory_client._rename_path('/' + old_file_system_name + '/' + old_dir_name)
         properties = await new_directory_client.get_directory_properties()
 
@@ -410,25 +410,31 @@ class DirectoryTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_rename_from_a_directory_in_another_file_system())
 
-
     async def _test_rename_from_an_unencoded_directory_in_another_file_system(self):
-        # create a file dir1 under file system1
+        # create a directory under filesystem1
         old_file_system_name = self._get_directory_reference("oldfilesystem")
         old_dir_name = "old dir"
         old_client = self.dsc.get_file_system_client(old_file_system_name)
         await old_client.create_file_system()
-        await old_client.create_directory(old_dir_name)
+        old_dir_client =await old_client.create_directory(old_dir_name)
+        file_name = "oldfile"
+        await old_dir_client.create_file(file_name)
 
-        # create a dir2 under file system2
-        new_name = "new name"
-        new_directory_client = await self._create_directory_and_get_directory_client(directory_name=new_name)
-        new_directory_client = await new_directory_client.create_sub_directory("newsub")
+        # create a dir2 under filesystem2
+        new_name = "new name/sub dir"
+        new_file_system_name = self._get_directory_reference("newfilesystem")
+        new_file_system_client = self.dsc.get_file_system_client(new_file_system_name)
+        await new_file_system_client.create_file_system()
+        # the new directory we want to rename to must exist in another file system
+        await new_file_system_client.create_directory(new_name)
 
-        # rename dir1 under file system1 to dir2 under file system2
-        await new_directory_client._rename_path('/' + old_file_system_name + '/' + old_dir_name)
+        # rename dir1 under filesystem1 to dir2 under filesystem2
+        new_directory_client = await old_dir_client.rename_directory('/' + new_file_system_name + '/' + new_name)
         properties = await new_directory_client.get_directory_properties()
+        file_properties = await new_directory_client.get_file_client(file_name).get_file_properties()
 
         self.assertIsNotNone(properties)
+        self.assertIsNotNone(file_properties)
         await old_client.delete_file_system()
 
     @record
@@ -437,7 +443,7 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_rename_from_an_unencoded_directory_in_another_file_system())
 
     async def _test_rename_to_an_existing_directory_in_another_file_system(self):
-        # create a file dir1 under file system1
+        # create a file dir1 under filesystem1
         destination_file_system_name = self._get_directory_reference("destfilesystem")
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
@@ -445,12 +451,12 @@ class DirectoryTest(StorageTestCase):
         await fs_client.create_file_system()
         destination_directory_client = await fs_client.create_directory(destination_dir_name)
 
-        # create a dir2 under file system2
+        # create a dir2 under filesystem2
         source_name = "source"
         source_directory_client = await self._create_directory_and_get_directory_client(directory_name=source_name)
         source_directory_client = await source_directory_client.create_sub_directory("subdir")
 
-        # rename dir2 under file system2 to dir1 under file system1
+        # rename dir2 under filesystem2 to dir1 under filesystem1
         res = await source_directory_client.rename_directory(
             '/' + destination_file_system_name + '/' + destination_dir_name)
 
@@ -468,17 +474,17 @@ class DirectoryTest(StorageTestCase):
     async def _test_rename_with_none_existing_destination_condition_and_source_unmodified_condition(self):
         non_existing_dir_name = "nonexistingdir"
 
-        # create a file system1
+        # create a filesystem1
         destination_file_system_name = self._get_directory_reference("destfilesystem")
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
         await fs_client.create_file_system()
 
-        # create a dir2 under file system2
+        # create a dir2 under filesystem2
         source_name = "source"
         source_directory_client = await self._create_directory_and_get_directory_client(directory_name=source_name)
         source_directory_client = await source_directory_client.create_sub_directory("subdir")
 
-        # rename dir2 under file system2 to a non existing directory under file system1,
+        # rename dir2 under filesystem2 to a non existing directory under filesystem1,
         # when dir1 does not exist and dir2 wasn't modified
         properties = await source_directory_client.get_directory_properties()
         etag = properties['etag']
@@ -501,18 +507,18 @@ class DirectoryTest(StorageTestCase):
             self._test_rename_with_none_existing_destination_condition_and_source_unmodified_condition())
 
     async def _test_rename_to_an_non_existing_directory_in_another_file_system(self):
-        # create a file dir1 under file system1
+        # create a file dir1 under filesystem1
         destination_file_system_name = self._get_directory_reference("destfilesystem")
         non_existing_dir_name = "nonexistingdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
         await fs_client.create_file_system()
 
-        # create a dir2 under file system2
+        # create a dir2 under filesystem2
         source_name = "source"
         source_directory_client = await self._create_directory_and_get_directory_client(directory_name=source_name)
         source_directory_client = await source_directory_client.create_sub_directory("subdir")
 
-        # rename dir2 under file system2 to dir1 under file system1
+        # rename dir2 under filesystem2 to dir1 under filesystem1
         res = await source_directory_client.rename_directory(
             '/' + destination_file_system_name + '/' + non_existing_dir_name)
 
