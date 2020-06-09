@@ -12,10 +12,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-06-02T02:31:00.970748+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-06-02T02:31:00.970748+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{}}'
     headers:
       azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/bd30628d-fccb-dedb-aee6-711fde187914?api-version=2019-11-01-preview
       cache-control: no-cache
@@ -31,7 +31,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
 - request:
     body: null
     headers:
@@ -65,10 +65,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-06-02T02:31:02+00:00","endpoint":"https://configuration7d301eb9.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-06-02T02:31:02+00:00","endpoint":"https://configuration7d301eb9.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9","name":"configuration7d301eb9","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -85,7 +85,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9?api-version=2019-11-01-preview
 - request:
     body: null
     headers:
@@ -94,7 +94,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
   response:
     body:
       string: '{"value":[{"id":"7u0h-l1-s0:QxVXlvvbknjc29cmrxev","name":"Primary","value":"Z9tBkqwNU2iDHWwd3uNOTmmDcUDNiDIdayi5bbaN3bY=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=7u0h-l1-s0:QxVXlvvbknjc29cmrxev;Secret=Z9tBkqwNU2iDHWwd3uNOTmmDcUDNiDIdayi5bbaN3bY=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":false},{"id":"/ZrY-l1-s0:vNPEe9DJXREWRf/CpuAn","name":"Secondary","value":"l7pOuBqo3dAA0jEVN+wKHGjWg0I+ydhiDijtEGJ46i4=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=/ZrY-l1-s0:vNPEe9DJXREWRf/CpuAn;Secret=l7pOuBqo3dAA0jEVN+wKHGjWg0I+ydhiDijtEGJ46i4=","lastModified":"2020-06-02T02:31:01+00:00","readOnly":false},{"id":"ArJh-l1-s0:ANcViP0BM/Cm93gJF76t","name":"Primary
@@ -116,7 +116,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/ListKeys?api-version=2019-11-01-preview
 - request:
     body: '{"id": "7u0h-l1-s0:QxVXlvvbknjc29cmrxev"}'
     headers:
@@ -129,7 +129,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/RegenerateKey?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/RegenerateKey?api-version=2019-11-01-preview
   response:
     body:
       string: '{"id":"W2Kp-l1-s0:kEijy4oUJE42VqVaEzSa","name":"Primary","value":"hwbjfLdOSZQ2CmTyKaHQcRriAXdH6xZCeSonopqph64=","connectionString":"Endpoint=https://configuration7d301eb9.azconfig.io;Id=W2Kp-l1-s0:kEijy4oUJE42VqVaEzSa;Secret=hwbjfLdOSZQ2CmTyKaHQcRriAXdH6xZCeSonopqph64=","lastModified":"2020-06-02T02:31:13+00:00","readOnly":false}'
@@ -149,7 +149,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/RegenerateKey?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/RegenerateKey?api-version=2019-11-01-preview
 - request:
     body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "label":
       "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309", "content_type": "test content
@@ -224,7 +224,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/listKeyValue?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/listKeyValue?api-version=2019-11-01-preview
   response:
     body:
       string: '{"key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","value":"test
@@ -245,5 +245,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_appconfiguration_async_test_appconfiguration_list_key_values7d301eb9/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/listKeyValue?api-version=2019-11-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration7d301eb9/listKeyValue?api-version=2019-11-01-preview
 version: 1
