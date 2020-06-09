@@ -123,7 +123,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<my-custom-subdomain>.api.cognitive.microsoft.com/", credential=credential)
 ```
 
 ## Key concepts
