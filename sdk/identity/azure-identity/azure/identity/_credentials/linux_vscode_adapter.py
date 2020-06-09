@@ -69,7 +69,7 @@ def _get_refresh_token(service_name, account_name):
     try:
         import platform
         distro = platform.uname()
-        if sys.version_info >= (3, 8) and not ("redhat" in distro or "ubuntu" in distro):
+        if sys.version_info >= (3, 8):
             raise NotImplementedError("Not supported")
     except Exception:  # pylint: disable=broad-except
         raise NotImplementedError("Not supported")
