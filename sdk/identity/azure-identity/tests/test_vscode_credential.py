@@ -133,9 +133,3 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
-
-
-@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_get_token():
-    with mock.patch("azure.identity._credentials.linux_vscode_adapter._get_refresh_token", return_value="VALUE"):
-        assert get_credentials() == "VALUE"
