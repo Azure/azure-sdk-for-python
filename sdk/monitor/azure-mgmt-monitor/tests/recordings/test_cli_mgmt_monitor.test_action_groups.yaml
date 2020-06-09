@@ -18,10 +18,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":null,"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":null,"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
         Doe''s email","emailAddress":"johndoe@email.com","status":"Enabled","useCommonAlertSchema":false}],"smsReceivers":[{"name":"John
         Doe''s mobile","countryCode":"1","phoneNumber":"1234567890","status":"Enabled"}],"webhookReceivers":[],"itsmReceivers":[],"azureAppPushReceivers":[],"automationRunbookReceivers":[],"voiceReceivers":[],"logicAppReceivers":[],"azureFunctionReceivers":[],"armRoleReceivers":[]},"identity":null}'
     headers:
@@ -60,10 +60,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":null,"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":null,"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
         Doe''s email","emailAddress":"johndoe@email.com","status":"Enabled","useCommonAlertSchema":false}],"smsReceivers":[{"name":"John
         Doe''s mobile","countryCode":"1","phoneNumber":"1234567890","status":"Enabled"}],"webhookReceivers":[],"itsmReceivers":[],"azureAppPushReceivers":[],"automationRunbookReceivers":[],"voiceReceivers":[],"logicAppReceivers":[],"azureFunctionReceivers":[],"armRoleReceivers":[]},"identity":null}'
     headers:
@@ -108,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d/subscribe?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d/subscribe?api-version=2019-06-01
   response:
     body:
       string: '{"code":"ReceiverAlreadyEnabled","message":null}'
@@ -153,10 +153,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":{"key1":"value1","key2":"value2"},"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d","type":"Microsoft.Insights/ActionGroups","name":"actiongroup534a109d","location":"Global","kind":null,"tags":{"key1":"value1","key2":"value2"},"properties":{"groupShortName":"sample","enabled":true,"emailReceivers":[{"name":"John
         Doe''s email","emailAddress":"johndoe@email.com","status":"Enabled","useCommonAlertSchema":false}],"smsReceivers":[{"name":"John
         Doe''s mobile","countryCode":"1","phoneNumber":"1234567890","status":"Enabled"}],"webhookReceivers":[],"itsmReceivers":[],"azureAppPushReceivers":[],"automationRunbookReceivers":[],"voiceReceivers":[],"logicAppReceivers":[],"azureFunctionReceivers":[],"armRoleReceivers":[]},"identity":null}'
     headers:
@@ -201,7 +201,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_action_groups534a109d/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
     body:
       string: ''

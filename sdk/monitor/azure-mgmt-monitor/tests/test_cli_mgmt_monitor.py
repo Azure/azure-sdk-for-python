@@ -48,7 +48,7 @@ import unittest
 
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -438,7 +438,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
 
         return vmss
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_monitor_diagnostic_settings(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -516,7 +516,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Deletes the diagnostic setting[delete]
         result = self.mgmt_client.diagnostic_settings.delete(RESOURCE_URI, INSIGHT_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_log_profiles(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -580,7 +580,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.log_profiles.delete(LOGPROFILE_NAME)
 
     @unittest.skip("cannot create or modify classic metric alerts")
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_alert_rule(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -681,7 +681,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an alert rulte[delete]
         result = self.mgmt_client.alert_rules.delete(resource_group.name, ALERTRULE_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_metric_alerts(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -848,7 +848,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an alert rule[delete]
         result = self.mgmt_client.metric_alerts.delete(resource_group.name, METRIC_ALERT_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_action_groups(self, resource_group):
 
         ACTION_GROUP_NAME = self.get_resource_name("actiongroup")
@@ -905,7 +905,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an action group[delete]
         result = self.mgmt_client.action_groups.delete(resource_group.name, ACTION_GROUP_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_activity_log_alerts(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         ACTIVITY_LOG_ALERT_NAME = self.get_resource_name("activitylogalertx")
@@ -976,7 +976,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an activity log alert[delete]
         result = self.mgmt_client.activity_log_alerts.delete(resource_group.name, ACTIVITY_LOG_ALERT_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_autoscale_settings(self, resource_group):
         
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -1075,7 +1075,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an autoscale setting[delete]
         result = self.mgmt_client.autoscale_settings.delete(resource_group.name, AUTOSCALESETTING_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_scheduled_query_rules(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         WORKSPACE_NAME = self.get_resource_name("workspacex")
@@ -1146,7 +1146,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.scheduled_query_rules.delete(resource_group.name, SCHEDULED_QUERY_RULE_NAME)
         
     @unittest.skip("(InvalidResourceType) The resource type could not be found in the namespace 'microsoft.insights' for api version '2018-06-01-preview'.")
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_guest_diagnostics_settings(self, resource_group):
         DIAGNOSTIC_SETTINGS_NAME = self.get_resource_name("diagnosticsettings")
 
