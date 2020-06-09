@@ -5,7 +5,6 @@
 import os
 import json
 import ctypes as ct
-from .._constants import VSCODE_CREDENTIALS_SECTION
 
 
 def _c_str(string):
@@ -66,12 +65,7 @@ def _get_refresh_token(service_name, account_name):
     if sys.version_info[0] < 3:
         raise NotImplementedError("Not supported on Python 2.7")
 
-    try:
-        import platform
-        distro = platform.uname()
-        if sys.version_info >= (3, 8) and not ("redhat" in distro or "ubuntu" in distro):
-            raise NotImplementedError("Not supported")
-    except Exception:  # pylint: disable=broad-except
+    if sys.version_info >= (3, 8):
         raise NotImplementedError("Not supported")
 
     err = ct.c_int()
@@ -96,9 +90,5 @@ def _get_refresh_token(service_name, account_name):
 
 
 def get_credentials():
-    try:
-        environment_name = _get_user_settings()
-        credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
-        return credentials
-    except Exception:  # pylint: disable=broad-except
-        return None
+    # Disable linux support for further investigation
+    raise NotImplementedError("Not supported")
