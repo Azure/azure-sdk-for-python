@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class TagsOperations(object):
-    """TagsOperations operations.
+class TagsOperationOperations(object):
+    """TagsOperationOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class TagsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-06-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class TagsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
@@ -115,7 +115,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TagValue or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagValue or
+        :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TagValue or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -182,7 +182,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TagDetails or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagDetails
+        :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TagDetails
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -302,7 +302,7 @@ class TagsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TagDetails
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagDetailsPaged[~azure.mgmt.resource.resources.v2019_10_01.models.TagDetails]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.TagDetailsPaged[~azure.mgmt.resource.resources.v2020_06_01.models.TagDetails]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -370,14 +370,14 @@ class TagsOperations(object):
         :type scope: str
         :param properties: The set of tags.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TagsResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
+        :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TagsResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -445,17 +445,17 @@ class TagsOperations(object):
         :param operation: The operation type for the patch API. Possible
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
-         ~azure.mgmt.resource.resources.v2019_10_01.models.enum
+         ~azure.mgmt.resource.resources.v2020_06_01.models.enum
         :param properties: The set of tags.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TagsResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
+        :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TagsResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -518,7 +518,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TagsResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
+        :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TagsResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

@@ -43,6 +43,22 @@ class AliasType(str, Enum):
     mask = "Mask"  #: Alias value is secret.
 
 
+class ProvisioningState(str, Enum):
+
+    not_specified = "NotSpecified"
+    accepted = "Accepted"
+    running = "Running"
+    ready = "Ready"
+    creating = "Creating"
+    created = "Created"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    canceled = "Canceled"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    updating = "Updating"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
