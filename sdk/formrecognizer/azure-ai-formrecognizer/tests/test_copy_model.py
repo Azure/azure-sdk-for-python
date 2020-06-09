@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.models import CopyOperationResult
@@ -18,10 +19,22 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCopyModel(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    def test_copy_model_none_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            client.begin_copy_model(model_id=None, target={})
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    def test_copy_model_empty_model_id(self, client, container_sas_url):
+        with self.assertRaises(ValueError):
+            client.begin_copy_model(model_id="", target={})
+
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
@@ -31,9 +44,9 @@ class TestCopyModel(FormRecognizerTest):
 
         copied_model = client.get_custom_model(copy.model_id)
 
-        self.assertEqual(copy.status, "succeeded")
-        self.assertIsNotNone(copy.created_on)
-        self.assertIsNotNone(copy.last_modified)
+        self.assertEqual(copy.status, "ready")
+        self.assertIsNotNone(copy.requested_on)
+        self.assertIsNotNone(copy.completed_on)
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
@@ -42,7 +55,7 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         # give an incorrect region
@@ -56,7 +69,7 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalTrainingAccountPreparer(copy=True)
     def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
-        poller = client.begin_train_model(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 
         target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
@@ -74,9 +87,9 @@ class TestCopyModel(FormRecognizerTest):
 
         actual = raw_response[0]
         copy = raw_response[1]
-        self.assertEqual(copy.created_on, actual.created_date_time)
+        self.assertEqual(copy.requested_on, actual.created_date_time)
         self.assertEqual(copy.status, actual.status)
-        self.assertEqual(copy.last_modified, actual.last_updated_date_time)
+        self.assertEqual(copy.completed_on, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()
@@ -90,3 +103,23 @@ class TestCopyModel(FormRecognizerTest):
         self.assertIsNotNone(target["expirationDateTimeTicks"])
         self.assertEqual(target["resourceRegion"], "eastus")
         self.assertEqual(target["resourceId"], resource_id)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer(copy=True)
+    @pytest.mark.live_test_only
+    def test_copy_continuation_token(self, client, container_sas_url, location, resource_id):
+
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        model = poller.result()
+
+        target = client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+        initial_poller = client.begin_copy_model(model.model_id, target=target)
+        cont_token = initial_poller.continuation_token()
+
+        poller = client.begin_copy_model(model.model_id, target=target, continuation_token=cont_token)
+        result = poller.result()
+        self.assertIsNotNone(result)
+
+        copied_model = client.get_custom_model(result.model_id)
+        self.assertIsNotNone(copied_model)
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

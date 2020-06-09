@@ -4,7 +4,8 @@ languages:
   - python
 products:
   - azure
-  - azure-ai-formrecognizer
+  - azure-cognitive-services
+  - azure-form-recognizer
 urlFragment: formrecognizer-samples
 ---
 

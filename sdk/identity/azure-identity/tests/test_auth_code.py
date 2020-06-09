@@ -6,6 +6,7 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import AuthorizationCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
+import msal
 import pytest
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
@@ -56,36 +57,60 @@ def test_auth_code_credential():
     client_id = "client id"
     tenant_id = "tenant"
     expected_code = "auth code"
-    redirect_uri = "https://foo.bar"
-    expected_token = AccessToken("token", 42)
+    redirect_uri = "https://localhost"
+    expected_access_token = "access"
+    expected_refresh_token = "refresh"
+    expected_scope = "scope"
 
-    mock_client = Mock(spec=object)
-    mock_client.obtain_token_by_authorization_code = Mock(return_value=expected_token)
+    auth_response = build_aad_response(access_token=expected_access_token, refresh_token=expected_refresh_token)
+    transport = validating_transport(
+        requests=[
+            Request(  # first call should redeem the auth code
+                url_substring=tenant_id,
+                required_data={
+                    "client_id": client_id,
+                    "code": expected_code,
+                    "grant_type": "authorization_code",
+                    "redirect_uri": redirect_uri,
+                    "scope": expected_scope,
+                },
+            ),
+            Request(  # third call should redeem the refresh token
+                url_substring=tenant_id,
+                required_data={
+                    "client_id": client_id,
+                    "grant_type": "refresh_token",
+                    "refresh_token": expected_refresh_token,
+                    "scope": expected_scope,
+                },
+            ),
+        ],
+        responses=[mock_response(json_payload=auth_response)] * 2,
+    )
+    cache = msal.TokenCache()
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
         tenant_id=tenant_id,
         authorization_code=expected_code,
         redirect_uri=redirect_uri,
-        client=mock_client,
+        transport=transport,
+        cache=cache,
     )
 
     # first call should redeem the auth code
-    token = credential.get_token("scope")
-    assert token is expected_token
-    assert mock_client.obtain_token_by_authorization_code.call_count == 1
-    _, kwargs = mock_client.obtain_token_by_authorization_code.call_args
-    assert kwargs["code"] == expected_code
+    token = credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 1
 
     # no auth code -> credential should return cached token
-    mock_client.obtain_token_by_authorization_code = None  # raise if credential calls this again
-    mock_client.get_cached_access_token = lambda *_: expected_token
-    token = credential.get_token("scope")
-    assert token is expected_token
+    token = credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 1
 
-    # no auth code, no cached token -> credential should use refresh token
-    mock_client.get_cached_access_token = lambda *_: None
-    mock_client.get_cached_refresh_tokens = lambda *_: ["this is a refresh token"]
-    mock_client.obtain_token_by_refresh_token = lambda *_, **__: expected_token
-    token = credential.get_token("scope")
-    assert token is expected_token
+    # no auth code, no cached token -> credential should redeem refresh token
+    cached_access_token = cache.find(cache.CredentialType.ACCESS_TOKEN)[0]
+    cache.remove_at(cached_access_token)
+    token = credential.get_token(expected_scope)
+    assert token.token == expected_access_token
+    assert transport.send.call_count == 2

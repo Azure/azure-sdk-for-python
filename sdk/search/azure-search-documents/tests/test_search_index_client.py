@@ -25,12 +25,7 @@ from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
 )
-from azure.search.documents.models import (
-    AutocompleteQuery,
-    SearchQuery,
-    SuggestQuery,
-    odata,
-)
+from azure.search.documents.models import odata
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -142,15 +137,12 @@ class TestSearchClient(object):
         assert mock_get.call_args[1]["key"] == "some_key"
         assert mock_get.call_args[1]["selected_fields"] == "foo"
 
-    @pytest.mark.parametrize(
-        "query", ["search text", SearchQuery(search_text="search text")], ids=repr
-    )
     @mock.patch(
         "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
-    def test_search_query_argument(self, mock_search_post, query):
+    def test_search_query_argument(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
-        result = client.search(query)
+        result = client.search(search_text="search text")
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
@@ -164,21 +156,13 @@ class TestSearchClient(object):
             mock_search_post.call_args[1]["search_request"].search_text == "search text"
         )
 
-    def test_search_bad_argument(self):
-        client = SearchClient("endpoint", "index name", CREDENTIAL)
-        with pytest.raises(TypeError) as e:
-            client.search(10)
-            assert str(e) == "Expected a SuggestQuery for 'query', but got {}".format(
-                repr(10)
-            )
-
     @mock.patch(
         "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.suggest(
-            SuggestQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
@@ -202,7 +186,7 @@ class TestSearchClient(object):
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(
-            AutocompleteQuery(search_text="search text", suggester_name="sg")
+            search_text="search text", suggester_name="sg"
         )
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
@@ -254,10 +238,10 @@ class TestSearchClient(object):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
 
         batch = IndexDocumentsBatch()
-        batch.add_upload_documents("upload1")
-        batch.add_delete_documents("delete1", "delete2")
-        batch.add_merge_documents(["merge1", "merge2", "merge3"])
-        batch.add_merge_or_upload_documents("merge_or_upload1")
+        batch.add_upload_actions("upload1")
+        batch.add_delete_actions("delete1", "delete2")
+        batch.add_merge_actions(["merge1", "merge2", "merge3"])
+        batch.add_merge_or_upload_actions("merge_or_upload1")
 
         client.index_documents(batch, extra="foo")
         assert mock_index.called

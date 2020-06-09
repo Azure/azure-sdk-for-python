@@ -25,25 +25,34 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import ComplexField, SearchServiceClient, CorsOptions, Index, ScoringProfile, edm, SimpleField, SearchableField
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    CorsOptions,
+    SearchIndex,
+    ScoringProfile,
+    SearchFieldDataType,
+    SimpleField,
+    SearchableField,
+)
 
-client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_indexes_client()
+client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 def create_index():
     # [START create_index]
     name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double),
-        SearchableField(name="description", type=edm.String),
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String),
         ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=edm.String),
-            SimpleField(name="city", type=edm.String),
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
         ])
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
-    index = Index(
+    index = SearchIndex(
         name=name,
         fields=fields,
         scoring_profiles=scoring_profiles,
@@ -62,14 +71,14 @@ def update_index():
     # [START update_index]
     name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double),
-        SearchableField(name="description", type=edm.String),
-        SearchableField(name="hotelName", type=edm.String),
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String),
+        SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=edm.String),
-            SimpleField(name="city", type=edm.String),
-            SimpleField(name="state", type=edm.String),
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
+            SimpleField(name="state", type=SearchFieldDataType.String),
         ])
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)

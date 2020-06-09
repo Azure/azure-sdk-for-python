@@ -75,7 +75,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
-        self._create_session_attributes(**kwargs)
+        self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     @property

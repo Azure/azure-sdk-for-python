@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
@@ -23,27 +24,29 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     async def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            result = await client.train_model("xx", use_training_labels=False)
+            poller = await client.begin_training("xx", use_training_labels=False)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training(self, client, container_sas_url):
 
-        model = await client.train_model(
+        poller = await client.begin_training(
             training_files_url=container_sas_url,
             use_training_labels=False)
+        model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             for key, field in sub.fields.items():
                 self.assertIsNotNone(field.label)
@@ -53,19 +56,20 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, use_training_labels=False)
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             for key, field in sub.fields.items():
                 self.assertIsNotNone(field.label)
@@ -83,10 +87,11 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(
+        poller = await client.begin_training(
             training_files_url=container_sas_url,
             use_training_labels=False,
             cls=callback)
+        model = await poller.result()
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -104,7 +109,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, use_training_labels=False, cls=callback)
+        poller = await client.begin_training(container_sas_url, use_training_labels=False, cls=callback)
+        model = await poller.result()
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -114,19 +120,20 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_labels(self, client, container_sas_url):
 
-        model = await client.train_model(training_files_url=container_sas_url, use_training_labels=True)
+        poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
+        model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             for key, field in sub.fields.items():
                 self.assertIsNotNone(field.accuracy)
@@ -136,19 +143,20 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage_with_labels(self, client, container_sas_url):
 
-        model = await client.train_model(container_sas_url, use_training_labels=True)
+        poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_modified)
+        self.assertIsNotNone(model.requested_on)
+        self.assertIsNotNone(model.completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertIsNotNone(doc.page_count)
-            self.assertEqual(doc.status, "succeeded")
+            self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
-        for sub in model.models:
+        for sub in model.submodels:
             self.assertIsNotNone(sub.form_type)
             self.assertIsNotNone(sub.accuracy)
             for key, field in sub.fields.items():
@@ -167,7 +175,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(training_files_url=container_sas_url, use_training_labels=True, cls=callback)
+        poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True, cls=callback)
+        model = await poller.result()
 
         raw_model = raw_response[0]
         custom_model = raw_response[1]
@@ -185,7 +194,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        model = await client.train_model(container_sas_url, use_training_labels=True, cls=callback)
+        poller = await client.begin_training(container_sas_url, use_training_labels=True, cls=callback)
+        model = await poller.result()
+
         raw_model = raw_response[0]
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model)
@@ -194,13 +205,28 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     async def test_training_with_files_filter(self, client, container_sas_url):
 
-        model = await client.train_model(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
+        poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
+        model = await poller.result()
         self.assertEqual(len(model.training_documents), 6)
         self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders
 
-        model = await client.train_model(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
+        poller = await client.begin_training(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
+        model = await poller.result()
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
         with self.assertRaises(HttpResponseError):
-            model = await client.train_model(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
+            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
+            model = await poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    @pytest.mark.live_test_only
+    async def test_training_continuation_token(self, client, container_sas_url):
+
+        initial_poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
+        cont_token = initial_poller.continuation_token()
+        poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, continuation_token=cont_token)
+        result = await poller.result()
+        self.assertIsNotNone(result)
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

@@ -692,7 +692,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # passes live.
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
         blob_name = await self._create_block_blob()
 
         # Act

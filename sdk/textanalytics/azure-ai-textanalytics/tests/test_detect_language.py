@@ -53,7 +53,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -77,7 +77,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         self.assertEqual(response[3].primary_language.iso6391_name, "de")
 
         for doc in response:
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -128,6 +128,18 @@ class TestDetectLanguage(TextAnalyticsTest):
 
         for resp in response:
             self.assertTrue(resp.is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.detect_language(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -198,7 +210,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -442,7 +455,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             result = client.detect_language(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -460,6 +473,19 @@ class TestDetectLanguage(TextAnalyticsTest):
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[1].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for detect_language. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.detect_language(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import abc
+import base64
 import json
 from typing import TYPE_CHECKING, Optional, Any, Union
 
@@ -446,6 +447,30 @@ class LROBasePolling(PollingMethod):
             )
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
+
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        try:
+            client = kwargs["client"]
+        except KeyError:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+
+        import pickle
+        initial_response = pickle.loads(base64.b64decode(continuation_token))
+        # Restore the transport in the context
+        initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
+        return client, initial_response, deserialization_callback
 
     def run(self):
         try:

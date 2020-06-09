@@ -25,20 +25,14 @@
 # --------------------------------------------------------------------------
 
 from .._internal import (
-    AutocompleteQuery,
     IndexAction,
     IndexingResult,
-    SearchQuery,
-    SuggestQuery,
     odata,
 )
 
 
 __all__ = (
-    "AutocompleteQuery",
     "IndexAction",
     "IndexingResult",
-    "SearchQuery",
-    "SuggestQuery",
     "odata",
 )

@@ -372,7 +372,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.renew_lock()
                     await message.complete()
 
-    @pytest.mark.skip(reason="requires deadletter receiver")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -405,7 +404,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            async with await sb_client.get_deadletter_receiver(idle_timeout=5) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -515,7 +514,18 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-    @pytest.mark.skip(reason="requires deadletter receiver")
+            async with sb_client.get_queue_deadletter_receiver(
+                    servicebus_queue.name,
+                    idle_timeout=5,
+                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
+                count = 0
+                async for message in dl_receiver:
+                    await message.complete()
+                    count += 1
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                assert count == 10
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -543,10 +553,16 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            async with await sb_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(
+                servicebus_queue.name,
+                idle_timeout=5,
+                mode=ReceiveSettleMode.PeekLock
+            ) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
                     count += 1
             assert count == 10
@@ -659,7 +675,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 finally:
                     await messages[0].complete()
                     await messages[1].complete()
-                    time.sleep(30)
+                    sleep_until_expired(messages[2])
                     with pytest.raises(MessageLockExpired):
                         await messages[2].complete()
 
@@ -731,33 +747,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 with pytest.raises(MessageContentTooLarge):
                     await sender.send([Message(half_too_large), Message(half_too_large)])
 
-
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_async_queue_by_servicebus_client_fail_send_batch_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
-        pytest.skip("TODO: Pending bugfix in uAMQP")
-        def batch_data():
-            for i in range(3):
-                yield str(i) * 1024 * 256
-
-        async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
-                    await sender.send(BatchMessage(batch_data()))
-
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.queue_message(BatchMessage(batch_data()))
-                results = await sender.send_pending_messages()
-                assert len(results) == 4
-                assert not results[0][0]
-                assert isinstance(results[0][1], MessageSendFailed)
-
-    @pytest.mark.skip(reason="Requires dead letter receiver")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -779,7 +768,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive(max_wait_time=10)
             assert not messages
 
-            async with await sb_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
@@ -1031,7 +1020,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
-    @pytest.mark.skip(reason="requires scheduler")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

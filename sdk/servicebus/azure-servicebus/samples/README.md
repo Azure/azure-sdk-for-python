@@ -11,7 +11,7 @@ urlFragment: servicebus-samples
 # Azure Service Bus client library for Python Samples
 
 > **NOTE**: This document outlines the samples for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
+> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
 Both [sync version](./sync_samples) and [async version](./async_samples) of samples are provided, async samples require Python 3.5 or later.
@@ -31,6 +31,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [receive_deferred_message_queue.py](./sync_samples/receive_deferred_message_queue.py) ([async_version](./async_samples/receive_deferred_message_queue_async.py)) - Examples to defer received messages and receive deferred messages from a service bus queue:
     - Defer received messages
     - Receive deferred messages
+- [receive_deadlettered_messages.py](./sync_samples/receive_deadlettered_messages.py) ([async_version](./async_samples/receive_deadlettered_messages_async.py)) - Examples to receive dead-lettered messages from a service bus queue:
+    - Receive dead-lettered messages
 - [receive_iterator_queue.py](./sync_samples/receive_iterator_queue.py) ([async_version](./async_samples/receive_iterator_queue_async.py)) - Examples to receive messages from a service bus queue by iterating over ServiceBusReceiver:
     - Receive messages by iterating over ServiceBusReceiver
 - [session_send_receive.py](./sync_samples/session_send_receive.py) ([async_version](./async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
@@ -43,6 +45,13 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Authenticate and create the client utilizing the `azure.identity` library
 - [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
+- [mgmt_queue](./sync_samples/mgmt_queue.py) ([async_version](./async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
+    - Create a queue
+    - Delete a queue
+    - Update a queue
+    - List queues
+    - Get queue description
+    - Get queue runtime information
 
 
 ## Prerequisites
@@ -67,5 +76,5 @@ pip install --pre azure-servicebus
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html) to learn more about
 what you can do with the Azure Service Bus client library.

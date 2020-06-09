@@ -52,7 +52,7 @@ class AuthenticationSampleAsync(object):
             result = await text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].primary_language.name))
-        print("Confidence score: {}".format(result[0].primary_language.score))
+        print("Confidence score: {}".format(result[0].primary_language.confidence_score))
 
     async def authentication_with_azure_active_directory_async(self):
         """DefaultAzureCredential will use the values from these environment
@@ -74,7 +74,7 @@ class AuthenticationSampleAsync(object):
             result = await text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].primary_language.name))
-        print("Confidence score: {}".format(result[0].primary_language.score))
+        print("Confidence score: {}".format(result[0].primary_language.confidence_score))
 
 
 async def main():

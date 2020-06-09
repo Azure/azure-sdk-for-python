@@ -14,8 +14,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Mapping
-    from azure.core.credentials import AccessToken
+    from typing import Any
     from .._internal import AadClientBase
 
 
@@ -31,6 +30,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     @wrap_exceptions
@@ -58,13 +61,17 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         account = self._get_account(self._username, self._tenant_id)
 
+        token = self._get_cached_access_token(scopes, account)
+        if token:
+            return token
+
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = self._client.obtain_token_by_refresh_token(refresh_token, scopes)
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)

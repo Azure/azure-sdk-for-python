@@ -131,7 +131,7 @@ class AbstractSpan(Protocol):
 
     @classmethod
     def link(cls, traceparent, attributes=None):
-        # type: (Dict[str, str], Attributes) -> None
+        # type: (str, Attributes) -> None
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 

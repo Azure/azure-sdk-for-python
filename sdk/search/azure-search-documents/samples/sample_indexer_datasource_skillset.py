@@ -35,60 +35,62 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
-    DataSource, DataContainer, DataSourceCredentials, Index, Indexer, SimpleField, edm,
-    EntityRecognitionSkill, InputFieldMappingEntry, OutputFieldMappingEntry, Skillset,
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType,
+    EntityRecognitionSkill, InputFieldMappingEntry, OutputFieldMappingEntry, SearchIndexerSkillset,
     CorsOptions, IndexingSchedule, SearchableField, IndexingParameters
 )
-from azure.search.documents import SearchServiceClient
+from azure.search.documents.indexes import SearchIndexerClient, SearchIndexClient
 
-
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
 
 def _create_index():
     name = "hotel-index"
 
     # Here we create an index with listed fields.
     fields = [
-        SimpleField(name="hotelId", type=edm.String, filterable=True, sortable=True, key=True),
-        SearchableField(name="hotelName", type=edm.String),
-        SimpleField(name="description", type=edm.String),
-        SimpleField(name="descriptionFr", type=edm.String),
-        SimpleField(name="category", type=edm.String),
-        SimpleField(name="parkingIncluded", type=edm.Boolean, filterable=True),
-        SimpleField(name="smokingAllowed", type=edm.Boolean, filterable=True),
-        SimpleField(name="lastRenovationDate", type=edm.String),
-        SimpleField(name="rating", type=edm.Int64, sortable=True),
-        SimpleField(name="location", type=edm.GeographyPoint),
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, filterable=True, sortable=True, key=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.String),
+        SimpleField(name="description", type=SearchFieldDataType.String),
+        SimpleField(name="descriptionFr", type=SearchFieldDataType.String),
+        SimpleField(name="category", type=SearchFieldDataType.String),
+        SimpleField(name="parkingIncluded", type=SearchFieldDataType.Boolean, filterable=True),
+        SimpleField(name="smokingAllowed", type=SearchFieldDataType.Boolean, filterable=True),
+        SimpleField(name="lastRenovationDate", type=SearchFieldDataType.String),
+        SimpleField(name="rating", type=SearchFieldDataType.Int64, sortable=True),
+        SimpleField(name="location", type=SearchFieldDataType.GeographyPoint),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 
     # pass in the name, fields and cors options and create the index
-    index = Index(
+    index = SearchIndex(
         name=name,
         fields=fields,
         cors_options=cors_options)
-    index_client = service_client.get_indexes_client()
+    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     result = index_client.create_index(index)
     return result
 
 def _create_datasource():
     # Here we create a datasource. As mentioned in the description we have stored it in
     # "searchcontainer"
-    ds_client = service_client.get_datasources_client()
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    ds = DataSource(name="hotel-datasource", type="azureblob", credentials=credentials, container=container)
-    data_source = ds_client.create_datasource(ds)
+    ds_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
+    container = SearchIndexerDataContainer(name='searchcontainer')
+    data_source = ds_client.create_datasource(
+        name="hotel-datasource",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container
+    )
     return data_source
 
 def _create_skillset():
-    client = service_client.get_skillsets_client()
+    client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
     inp = InputFieldMappingEntry(name="text", source="/document/lastRenovationDate")
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    result = client.create_skillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    skillset = SearchIndexerSkillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    result = client.create_skillset(skillset)
     return result
 
 def sample_indexer_workflow():
@@ -105,7 +107,7 @@ def sample_indexer_workflow():
 
     # we pass the data source, skillsets and targeted index to build an indexer
     parameters = IndexingParameters(configuration={"parsingMode": "jsonArray"})
-    indexer = Indexer(
+    indexer = SearchIndexer(
         name="hotel-data-indexer",
         data_source_name=ds_name,
         target_index_name=ind_name,
@@ -113,7 +115,7 @@ def sample_indexer_workflow():
         parameters=parameters
     )
 
-    indexer_client = service_client.get_indexers_client()
+    indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
     indexer_client.create_indexer(indexer) # create the indexer
 
     # to get an indexer

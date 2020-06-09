@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import SearchIndexerSkillset
@@ -23,11 +22,11 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from ._generated.models import SearchIndexer, SearchIndexerStatus
-    from typing import Any, Dict, Optional, Sequence
+    from typing import Any, Optional, Sequence
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexerClient(HeadersMixin):
+class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     """
@@ -54,7 +53,7 @@ class SearchIndexerClient(HeadersMixin):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchIndexerClient` session.
+        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session.
 
         """
         return self._client.close()
@@ -65,9 +64,9 @@ class SearchIndexerClient(HeadersMixin):
         """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created SearchIndexer
-        :rtype: ~azure.search.documents.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
 
         .. admonition:: Example:
 
@@ -83,24 +82,21 @@ class SearchIndexerClient(HeadersMixin):
         return result
 
     @distributed_trace
-    def create_or_update_indexer(self, indexer, name=None, **kwargs):
-        # type: (SearchIndexer, Optional[str], **Any) -> SearchIndexer
+    def create_or_update_indexer(self, indexer, **kwargs):
+        # type: (SearchIndexer, **Any) -> SearchIndexer
         """Creates a new indexer or updates a indexer if it already exists.
 
-        :param name: The name of the indexer to create or update.
-        :type name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created IndexSearchIndexerer
-        :rtype: ~azure.search.documents.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
             indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        if not name:
-            name = indexer.name
+        name = indexer.name
         result = self._client.indexers.create_or_update(
             indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
         )
@@ -114,7 +110,7 @@ class SearchIndexerClient(HeadersMixin):
         :param name: The name of the indexer to retrieve.
         :type name: str
         :return: The SearchIndexer that is fetched.
-        :rtype: ~azure.search.documents.SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
 
         .. admonition:: Example:
 
@@ -135,7 +131,7 @@ class SearchIndexerClient(HeadersMixin):
         """Lists all indexers available for a search service.
 
         :return: List of all the SearchIndexers.
-        :rtype: `list[dict]`
+        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
 
         .. admonition:: Example:
 
@@ -151,6 +147,27 @@ class SearchIndexerClient(HeadersMixin):
         return result.indexers
 
     @distributed_trace
+    def get_indexer_names(self, **kwargs):
+        # type: (**Any) -> Sequence[str]
+        """Lists all indexer names available for a search service.
+
+        :return: List of all the SearchIndexers.
+        :rtype: `list[str]`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_indexer_operations.py
+                :start-after: [START list_indexer]
+                :end-before: [END list_indexer]
+                :language: python
+                :dedent: 4
+                :caption: List all the SearchIndexers
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.indexers.list(**kwargs)
+        return [x.name for x in result.indexers]
+
+    @distributed_trace
     def delete_indexer(self, indexer, **kwargs):
         # type: (Union[str, SearchIndexer], **Any) -> None
         """Deletes an indexer. To use access conditions, the SearchIndexer model
@@ -158,7 +175,7 @@ class SearchIndexerClient(HeadersMixin):
         the name of the indexer to delete unconditionally.
 
         :param indexer: The indexer to delete.
-        :type indexer: str or ~azure.search.documents.SearchIndexer
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -240,7 +257,7 @@ class SearchIndexerClient(HeadersMixin):
         :type name: str
 
         :return: SearchIndexerStatus
-        :rtype: SearchIndexerStatus
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
 
         .. admonition:: Example:
 
@@ -255,50 +272,47 @@ class SearchIndexerClient(HeadersMixin):
         return self._client.indexers.get_status(name, **kwargs)
 
     @distributed_trace
-    def create_datasource(self, data_source, **kwargs):
+    def create_data_source_connection(self, data_source_connection, **kwargs):
         # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
-        """Creates a new datasource.
+        """Creates a new data source connection.
 
-        :param data_source: The definition of the datasource to create.
-        :type data_source: ~search.models.SearchIndexerDataSourceConnection
+        :param data_source_connection: The definition of the data source connection to create.
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START create_data_source]
-                :end-before: [END create_data_source]
+                :start-after: [START create_data_source_connection]
+                :end-before: [END create_data_source_connection]
                 :language: python
                 :dedent: 4
                 :caption: Create a Data Source
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        packed_data_source = pack_search_indexer_data_source(data_source)
+        packed_data_source = pack_search_indexer_data_source(data_source_connection)
         result = self._client.data_sources.create(packed_data_source, **kwargs)
         return unpack_search_indexer_data_source(result)
 
     @distributed_trace
-    def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (SearchIndexerDataSourceConnection, Optional[str], **Any) -> SearchIndexerDataSourceConnection
-        """Creates a new datasource or updates a datasource if it already exists.
-        :param name: The name of the datasource to create or update.
-        :type name: str
-        :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~search.models.SearchIndexerDataSourceConnection
+    def create_or_update_data_source_connection(self, data_source_connection, **kwargs):
+        # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
+        """Creates a new data source connection or updates a data source connection if it already exists.
+        :param data_source_connection: The definition of the data source connection to create or update.
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        if not name:
-            name = data_source.name
-        packed_data_source = pack_search_indexer_data_source(data_source)
+        name = data_source_connection.name
+        packed_data_source = pack_search_indexer_data_source(data_source_connection)
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
@@ -308,20 +322,20 @@ class SearchIndexerClient(HeadersMixin):
         return unpack_search_indexer_data_source(result)
 
     @distributed_trace
-    def get_datasource(self, name, **kwargs):
+    def get_data_source_connection(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndexerDataSourceConnection
-        """Retrieves a datasource definition.
+        """Retrieves a data source connection definition.
 
-        :param name: The name of the datasource to retrieve.
+        :param name: The name of the data source connection to retrieve.
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START get_data_source]
-                :end-before: [END get_data_source]
+                :start-after: [START get_data_source_connection]
+                :end-before: [END get_data_source_connection]
                 :language: python
                 :dedent: 4
                 :caption: Retrieve a SearchIndexerDataSourceConnection
@@ -331,18 +345,18 @@ class SearchIndexerClient(HeadersMixin):
         return unpack_search_indexer_data_source(result)
 
     @distributed_trace
-    def get_datasources(self, **kwargs):
+    def get_data_source_connections(self, **kwargs):
         # type: (**Any) -> Sequence[SearchIndexerDataSourceConnection]
-        """Lists all datasources available for a search service.
+        """Lists all data source connections available for a search service.
 
-        :return: List of all the data sources.
-        :rtype: `list[~search.models.SearchIndexerDataSourceConnection]`
+        :return: List of all the data source connections.
+        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START list_data_source]
-                :end-before: [END list_data_source]
+                :start-after: [START list_data_source_connection]
+                :end-before: [END list_data_source_connection]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexerDataSourceConnections
@@ -352,14 +366,27 @@ class SearchIndexerClient(HeadersMixin):
         return [unpack_search_indexer_data_source(x) for x in result.data_sources]
 
     @distributed_trace
-    def delete_datasource(self, data_source, **kwargs):
+    def get_data_source_connection_names(self, **kwargs):
+        # type: (**Any) -> Sequence[str]
+        """Lists all data source connection names available for a search service.
+
+        :return: List of all the data source connection names.
+        :rtype: `list[str]`
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.data_sources.list(**kwargs)
+        return [x.name for x in result.data_sources]
+
+    @distributed_trace
+    def delete_data_source_connection(self, data_source_connection, **kwargs):
         # type: (Union[str, SearchIndexerDataSourceConnection], **Any) -> None
-        """Deletes a datasource. To use access conditions, the Datasource model must be
-        provided instead of the name. It is enough to provide the name of the datasource
+        """Deletes a data source connection. To use access conditions, the SearchIndexerDataSourceConnection
+        model must be provided instead of the name. It is enough to provide the name of the data source connection
         to delete unconditionally
 
-        :param data_source: The datasource to delete.
-        :type data_source: str or ~search.models.SearchIndexerDataSourceConnection
+        :param data_source_connection: The data source connection to delete.
+        :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -368,21 +395,21 @@ class SearchIndexerClient(HeadersMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START delete_data_source]
-                :end-before: [END delete_data_source]
+                :start-after: [START delete_data_source_connection]
+                :end-before: [END delete_data_source_connection]
                 :language: python
                 :dedent: 4
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
         try:
-            name = data_source.name
+            name = data_source_connection.name
         except AttributeError:
-            name = data_source
+            name = data_source_connection
         self._client.data_sources.delete(
             data_source_name=name, error_map=error_map, **kwargs
         )
@@ -393,7 +420,7 @@ class SearchIndexerClient(HeadersMixin):
         """List the SearchIndexerSkillsets in an Azure Search service.
 
         :return: List of SearchIndexerSkillsets
-        :rtype: list[dict]
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -411,6 +438,20 @@ class SearchIndexerClient(HeadersMixin):
         return result.skillsets
 
     @distributed_trace
+    def get_skillset_names(self, **kwargs):
+        # type: (**Any) -> List[str]
+        """List the SearchIndexerSkillset names in an Azure Search service.
+
+        :return: List of SearchIndexerSkillset names
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.skillsets.list(**kwargs)
+        return [x.name for x in result.skillsets]
+
+    @distributed_trace
     def get_skillset(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndexerSkillset
         """Retrieve a named SearchIndexerSkillset in an Azure Search service
@@ -418,7 +459,7 @@ class SearchIndexerClient(HeadersMixin):
         :param name: The name of the SearchIndexerSkillset to get
         :type name: str
         :return: The retrieved SearchIndexerSkillset
-        :rtype: dict
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -442,7 +483,7 @@ class SearchIndexerClient(HeadersMixin):
         the name of the skillset to delete unconditionally
 
         :param name: The SearchIndexerSkillset to delete
-        :type name: str or ~search.models.SearchIndexerSkillset
+        :type name: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -468,18 +509,14 @@ class SearchIndexerClient(HeadersMixin):
         self._client.skillsets.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[SearchIndexerSkill], str, **Any) -> SearchIndexerSkillset
+    def create_skillset(self, skillset, **kwargs):
+        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
         """Create a new SearchIndexerSkillset in an Azure Search service
 
-        :param name: The name of the SearchIndexerSkillset to create
-        :type name: str
-        :param skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[SearchIndexerSkill]]
-        :param description: A description for the SearchIndexerSkillset
-        :type description: Optional[str]
+        :param skillset: The SearchIndexerSkillset object to create
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :return: The created SearchIndexerSkillset
-        :rtype: dict
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
 
         .. admonition:: Example:
 
@@ -493,59 +530,28 @@ class SearchIndexerClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        skillset = SearchIndexerSkillset(
-            name=name, skills=list(skills), description=description
-        )
-
         return self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace
-    def create_or_update_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerSkillset
+    def create_or_update_skillset(self, skillset, **kwargs):
+        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
         """Create a new SearchIndexerSkillset in an Azure Search service, or update an
-        existing one. The skillset param must be provided to perform the
-        operation with access conditions.
+        existing one.
 
-        :param name: The name of the SearchIndexerSkillset to create or update
-        :type name: str
-        :keyword skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[SearchIndexerSkill]
-        :keyword description: A description for the SearchIndexerSkillset
-        :type description: Optional[str]
-        :keyword skillset: A SearchIndexerSkillset to create or update.
-        :type skillset: :class:`~azure.search.documents.SearchIndexerSkillset`
+        :param skillset: The SearchIndexerSkillset object to create or update
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated SearchIndexerSkillset
-        :rtype: dict
-
-        If a `skillset` is passed in, any optional `skills`, or
-        `description` parameter values will override it.
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-        access_condition = None
-
-        if "skillset" in kwargs:
-            skillset = kwargs.pop("skillset")
-            error_map, access_condition = get_access_conditions(
-                skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-            )
-            kwargs.update(access_condition)
-            skillset = SearchIndexerSkillset.deserialize(skillset.serialize())
-            skillset.name = name
-            for param in ("description", "skills"):
-                if param in kwargs:
-                    setattr(skillset, param, kwargs.pop(param))
-        else:
-
-            skillset = SearchIndexerSkillset(
-                name=name,
-                description=kwargs.pop("description", None),
-                skills=kwargs.pop("skills", None),
-            )
+        error_map, access_condition = get_access_conditions(
+            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
 
         return self._client.skillsets.create_or_update(
-            skillset_name=name, skillset=skillset, error_map=error_map, **kwargs
+            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
         )

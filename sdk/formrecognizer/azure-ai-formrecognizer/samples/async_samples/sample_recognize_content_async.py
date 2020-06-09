@@ -30,22 +30,26 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
-class RecognizeContentSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        
         async with FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                contents = await form_recognizer_client.recognize_content(form=f.read())
+                poller = await form_recognizer_client.begin_recognize_content(form=f)
+
+            contents = await poller.result()
 
             for idx, content in enumerate(contents):
                 print("----Recognizing content from page #{}----".format(idx))

@@ -127,7 +127,7 @@ now you can run live integration test:
 
 ## Fixing Test
 
-It's obvious that when running test for the first time someting is not going to work.
+It's obvious that when running test for the first time something is not going to work.
 
 The best approach is to:
 - fix the test manually
