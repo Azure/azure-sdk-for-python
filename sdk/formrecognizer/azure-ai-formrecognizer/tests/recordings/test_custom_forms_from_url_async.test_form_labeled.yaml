@@ -1,137 +1,227 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": true}'''
+    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}\'''''
     headers:
       Content-Length:
-      - '315'
+      - '287'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 76608322-9e64-4f92-8105-52fc04812a7d
+      apim-request-id: d39b8d64-98e7-47cd-9743-99e32063caba
       content-length: '0'
-      date: Wed, 15 Apr 2020 18:56:45 GMT
-      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8
+      date: Tue, 09 Jun 2020 21:13:08 GMT
+      location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '223'
+      x-envoy-upstream-service-time: '703'
     status:
       code: 201
       message: Created
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8?includeKeys=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"b9638c96-5b74-4428-8930-e5cc540a99e8","status":"creating","createdDateTime":"2020-04-15T18:56:45Z","lastUpdatedDateTime":"2020-04-15T18:56:45Z"}}'
+      string: '{"modelInfo": {"modelId": "eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a", "status":
+        "ready", "createdDateTime": "2020-06-09T21:13:08Z", "lastUpdatedDateTime":
+        "2020-06-09T21:13:12Z"}, "trainResult": {"averageModelAccuracy": 0.973, "trainingDocuments":
+        [{"documentName": "Form_1.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
+        "Form_2.jpg", "pages": 1, "status": "succeeded"}, {"documentName": "Form_3.jpg",
+        "pages": 1, "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
+        1, "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages": 1, "status":
+        "succeeded"}], "fields": [{"fieldName": "CompanyAddress", "accuracy": 0.8},
+        {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber",
+        "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName":
+        "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName":
+        "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
+        1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName": "Signature",
+        "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName":
+        "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy": 1.0}, {"fieldName":
+        "VendorName", "accuracy": 1.0}, {"fieldName": "Website", "accuracy": 1.0}],
+        "errors": []}}'
     headers:
-      apim-request-id: 593ccd29-b399-4adc-9d87-4c33dfc4cc77
+      apim-request-id: 483a5f9d-c475-4e4b-a1db-e9740defc1dd
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 18:56:50 GMT
+      date: Tue, 09 Jun 2020 21:13:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '53'
+      x-envoy-upstream-service-time: '34'
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8?includeKeys=true
+    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a?includeKeys=true
 - request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8?includeKeys=true
-  response:
-    body:
-      string: '{"modelInfo":{"modelId":"b9638c96-5b74-4428-8930-e5cc540a99e8","status":"ready","createdDateTime":"2020-04-15T18:56:45Z","lastUpdatedDateTime":"2020-04-15T18:56:52Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
-    headers:
-      apim-request-id: 71b994bd-f1f6-4168-a57a-8a3779822068
-      content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 18:56:55 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '176'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8?includeKeys=true
-- request:
-    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'''
     headers:
       Content-Length:
       - '160'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 70ee483a-e8b6-481f-848b-d5820a34abd3
+      apim-request-id: aa7f90e9-987b-454f-a46c-88cc0ea4b68e
       content-length: '0'
-      date: Wed, 15 Apr 2020 18:56:56 GMT
-      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8/analyzeresults/b93a3a05-b2f8-47a4-bfaf-cd6805e9c62d
+      date: Tue, 09 Jun 2020 21:13:14 GMT
+      operation-location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyzeresults/9d5e92c7-9a33-4881-be10-c13f84f85e47
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '75'
+      x-envoy-upstream-service-time: '58'
     status:
       code: 202
       message: Accepted
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8/analyze?includeTextDetails=false
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8/analyzeresults/b93a3a05-b2f8-47a4-bfaf-cd6805e9c62d
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyzeresults/9d5e92c7-9a33-4881-be10-c13f84f85e47
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-15T18:56:56Z","lastUpdatedDateTime":"2020-04-15T18:57:01Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":1700,"height":2200,"unit":"pixel"}],"pageResults":[{"page":1,"tables":[{"rows":4,"columns":3,"cells":[{"rowIndex":1,"columnIndex":1,"text":"SUBTOTAL","boundingBox":[1072,1566,1309,1566,1309,1610,1072,1610]},{"rowIndex":1,"columnIndex":2,"text":"$140.00","boundingBox":[1309,1566,1544,1566,1544,1610,1309,1610]},{"rowIndex":2,"columnIndex":1,"text":"TAX","boundingBox":[1072,1610,1309,1610,1309,1658,1072,1658]},{"rowIndex":2,"columnIndex":2,"text":"$4.00","boundingBox":[1309,1610,1544,1610,1544,1658,1309,1658]},{"rowIndex":3,"columnIndex":0,"text":"Bernie
-        Sanders","boundingBox":[482,1658,1072,1658,1072,1708,482,1708]},{"rowIndex":3,"columnIndex":1,"text":"TOTAL","boundingBox":[1072,1658,1309,1658,1309,1708,1072,1708]},{"rowIndex":3,"columnIndex":2,"text":"$144.00","boundingBox":[1309,1658,1544,1658,1544,1708,1309,1708]}]},{"rows":6,"columns":4,"cells":[{"rowIndex":0,"columnIndex":0,"text":"Details","boundingBox":[156,1038,847,1038,847,1087,156,1087]},{"rowIndex":0,"columnIndex":1,"text":"Quantity","boundingBox":[847,1038,1072,1038,1072,1087,847,1087]},{"rowIndex":0,"columnIndex":2,"text":"Unit
-        Price","boundingBox":[1072,1038,1309,1038,1309,1087,1072,1087]},{"rowIndex":0,"columnIndex":3,"text":"Total","boundingBox":[1309,1038,1544,1038,1544,1087,1309,1087]},{"rowIndex":1,"columnIndex":0,"text":"Bindings","boundingBox":[156,1087,847,1087,847,1128,156,1128]},{"rowIndex":1,"columnIndex":1,"text":"20","boundingBox":[847,1087,1072,1087,1072,1128,847,1128]},{"rowIndex":1,"columnIndex":2,"text":"1.00","boundingBox":[1072,1087,1309,1087,1309,1128,1072,1128]},{"rowIndex":1,"columnIndex":3,"text":"20.00","boundingBox":[1309,1087,1544,1087,1544,1128,1309,1128]},{"rowIndex":2,"columnIndex":0,"text":"Covers
-        Small","boundingBox":[156,1128,847,1128,847,1172,156,1172]},{"rowIndex":2,"columnIndex":1,"text":"20","boundingBox":[847,1128,1072,1128,1072,1172,847,1172]},{"rowIndex":2,"columnIndex":2,"text":"1.00","boundingBox":[1072,1128,1309,1128,1309,1172,1072,1172]},{"rowIndex":2,"columnIndex":3,"text":"20.00","boundingBox":[1309,1128,1544,1128,1544,1172,1309,1172]},{"rowIndex":3,"columnIndex":0,"text":"Feather
-        Bookmark","boundingBox":[156,1172,847,1172,847,1216,156,1216]},{"rowIndex":3,"columnIndex":1,"text":"20","boundingBox":[847,1172,1072,1172,1072,1216,847,1216]},{"rowIndex":3,"columnIndex":2,"text":"5,00","boundingBox":[1072,1172,1309,1172,1309,1216,1072,1216]},{"rowIndex":3,"columnIndex":3,"text":"100.00","boundingBox":[1309,1172,1544,1172,1544,1216,1309,1216]},{"rowIndex":4,"columnIndex":0,"text":"Copper
-        Swirl Marker","boundingBox":[156,1216,847,1216,847,1260,156,1260]},{"rowIndex":4,"columnIndex":1,"text":"20","boundingBox":[847,1216,1072,1216,1072,1260,847,1260]},{"rowIndex":4,"columnIndex":2,"text":"5,00","boundingBox":[1072,1216,1309,1216,1309,1260,1072,1260]},{"rowIndex":4,"columnIndex":3,"text":"100.00","boundingBox":[1309,1216,1544,1216,1544,1260,1309,1260]}]}]}],"documentResults":[{"docType":"custom:form","pageRange":[1,1],"fields":{"Subtotal":{"type":"string","valueString":"$140.00","text":"$140.00","page":1,"boundingBox":[1429.0,1570.0,1530.0,1570.0,1530.0,1599.0,1429.0,1599.0],"confidence":1.0},"Tax":{"type":"string","valueString":"$4.00","text":"$4.00","page":1,"boundingBox":[1461.0,1614.0,1530.0,1614.0,1530.0,1642.0,1461.0,1642.0],"confidence":1.0},"Email":{"type":"string","valueString":"accounts@herolimited.com","text":"accounts@herolimited.com","page":1,"boundingBox":[166.0,480.0,475.0,480.0,475.0,503.0,166.0,503.0],"confidence":1.0},"CompanyName":{"type":"string","valueString":"Higgly
-        Wiggly Books","text":"Higgly Wiggly Books","page":1,"boundingBox":[378.0,646.0,629.0,646.0,629.0,682.0,378.0,682.0],"confidence":1.0},"VendorName":{"type":"string","valueString":"Hillary
-        Swank","text":"Hillary Swank","page":1,"boundingBox":[351.0,609.0,518.0,609.0,518.0,641.0,351.0,641.0],"confidence":1.0},"Website":{"type":"string","valueString":"www.herolimited.com","text":"www.herolimited.com","page":1,"boundingBox":[274.0,393.0,529.0,393.0,529.0,419.0,274.0,419.0],"confidence":1.0},"PhoneNumber":{"type":"string","valueString":"555-348-6512","text":"555-348-6512","page":1,"boundingBox":[367.0,351.0,529.0,351.0,529.0,378.0,367.0,378.0],"confidence":1.0},"DatedAs":{"type":"string","valueString":"12/20/2020","text":"12/20/2020","page":1,"boundingBox":[1168.0,420.0,1317.0,420.0,1317.0,450.0,1168.0,450.0],"confidence":1.0},"Quantity":{"type":"number","text":"20","page":1,"boundingBox":[861.0,1089.0,895.0,1089.0,895.0,1120.0,861.0,1120.0],"confidence":1.0},"CompanyAddress":{"type":"string","valueString":"938
-        NE Burner Road Boulder City, CO 92848","text":"938 NE Burner Road Boulder
-        City, CO 92848","page":1,"boundingBox":[277.0,685.0,568.0,685.0,568.0,754.0,277.0,754.0],"confidence":1.0},"Total":{"type":"string","valueString":"$144.00","text":"$144.00","page":1,"boundingBox":[1429.0,1669.0,1530.0,1669.0,1530.0,1697.0,1429.0,1697.0],"confidence":1.0},"Merchant":{"type":"string","valueString":"Hero
-        Limited","text":"Hero Limited","page":1,"boundingBox":[621.0,202.0,1075.0,202.0,1075.0,266.0,621.0,266.0],"confidence":1.0},"CompanyPhoneNumber":{"type":"string","valueString":"938-294-2949","text":"938-294-2949","page":1,"boundingBox":[713.0,722.0,884.0,722.0,884.0,750.0,713.0,750.0],"confidence":1.0},"Signature":{"type":"string","valueString":"Bernie
-        Sanders","text":"Bernie Sanders","page":1,"boundingBox":[482.0,1670.0,764.0,1670.0,764.0,1709.0,482.0,1709.0],"confidence":1.0},"PurchaseOrderNumber":{"type":"string","valueString":"948284","text":"948284","page":1,"boundingBox":[1282.0,461.0,1377.0,461.0,1377.0,489.0,1282.0,489.0],"confidence":1.0}}}],"errors":[]}}'
+      string: '{"status": "notStarted", "createdDateTime": "2020-06-09T21:13:15Z",
+        "lastUpdatedDateTime": "2020-06-09T21:13:15Z"}'
     headers:
-      apim-request-id: 6fb2e598-2be5-431c-bc4f-d0da4414f2ad
+      apim-request-id: dbe07a94-4e57-41d3-a47d-f8972bb0cd62
+      content-length: '109'
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 18:57:01 GMT
+      date: Tue, 09 Jun 2020 21:13:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '18'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b9638c96-5b74-4428-8930-e5cc540a99e8/analyzeresults/b93a3a05-b2f8-47a4-bfaf-cd6805e9c62d
+    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyzeresults/9d5e92c7-9a33-4881-be10-c13f84f85e47
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyzeresults/9d5e92c7-9a33-4881-be10-c13f84f85e47
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:13:15Z",
+        "lastUpdatedDateTime": "2020-06-09T21:13:23Z", "analyzeResult": {"version":
+        "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
+        1700, "height": 2200, "unit": "pixel"}], "pageResults": [{"page": 1, "tables":
+        [{"rows": 4, "columns": 3, "cells": [{"rowIndex": 1, "columnIndex": 1, "text":
+        "SUBTOTAL", "boundingBox": [1072, 1566, 1309, 1566, 1309, 1610, 1072, 1610]},
+        {"rowIndex": 1, "columnIndex": 2, "text": "$140.00", "boundingBox": [1309,
+        1566, 1544, 1566, 1544, 1610, 1309, 1610]}, {"rowIndex": 2, "columnIndex":
+        1, "text": "TAX", "boundingBox": [1072, 1610, 1309, 1610, 1309, 1658, 1072,
+        1658]}, {"rowIndex": 2, "columnIndex": 2, "text": "$4.00", "boundingBox":
+        [1309, 1610, 1544, 1610, 1544, 1658, 1309, 1658]}, {"rowIndex": 3, "columnIndex":
+        0, "text": "Bernie Sanders", "boundingBox": [482, 1658, 1072, 1658, 1072,
+        1708, 482, 1708]}, {"rowIndex": 3, "columnIndex": 1, "text": "TOTAL", "boundingBox":
+        [1072, 1658, 1309, 1658, 1309, 1708, 1072, 1708]}, {"rowIndex": 3, "columnIndex":
+        2, "text": "$144.00", "boundingBox": [1309, 1658, 1544, 1658, 1544, 1708,
+        1309, 1708]}]}, {"rows": 6, "columns": 4, "cells": [{"rowIndex": 0, "columnIndex":
+        0, "text": "Details", "boundingBox": [156, 1038, 847, 1038, 847, 1087, 156,
+        1087]}, {"rowIndex": 0, "columnIndex": 1, "text": "Quantity", "boundingBox":
+        [847, 1038, 1072, 1038, 1072, 1087, 847, 1087]}, {"rowIndex": 0, "columnIndex":
+        2, "text": "Unit Price", "boundingBox": [1072, 1038, 1309, 1038, 1309, 1087,
+        1072, 1087]}, {"rowIndex": 0, "columnIndex": 3, "text": "Total", "boundingBox":
+        [1309, 1038, 1544, 1038, 1544, 1087, 1309, 1087]}, {"rowIndex": 1, "columnIndex":
+        0, "text": "Bindings", "boundingBox": [156, 1087, 847, 1087, 847, 1128, 156,
+        1128]}, {"rowIndex": 1, "columnIndex": 1, "text": "20", "boundingBox": [847,
+        1087, 1072, 1087, 1072, 1128, 847, 1128]}, {"rowIndex": 1, "columnIndex":
+        2, "text": "1.00", "boundingBox": [1072, 1087, 1309, 1087, 1309, 1128, 1072,
+        1128]}, {"rowIndex": 1, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1087, 1544, 1087, 1544, 1128, 1309, 1128]}, {"rowIndex": 2, "columnIndex":
+        0, "text": "Covers Small", "boundingBox": [156, 1128, 847, 1128, 847, 1172,
+        156, 1172]}, {"rowIndex": 2, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1128, 1072, 1128, 1072, 1172, 847, 1172]}, {"rowIndex": 2, "columnIndex":
+        2, "text": "1.00", "boundingBox": [1072, 1128, 1309, 1128, 1309, 1172, 1072,
+        1172]}, {"rowIndex": 2, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1128, 1544, 1128, 1544, 1172, 1309, 1172]}, {"rowIndex": 3, "columnIndex":
+        0, "text": "Feather Bookmark", "boundingBox": [156, 1172, 847, 1172, 847,
+        1216, 156, 1216]}, {"rowIndex": 3, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1172, 1072, 1172, 1072, 1216, 847, 1216]}, {"rowIndex": 3, "columnIndex":
+        2, "text": "5,00", "boundingBox": [1072, 1172, 1309, 1172, 1309, 1216, 1072,
+        1216]}, {"rowIndex": 3, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1172, 1544, 1172, 1544, 1216, 1309, 1216]}, {"rowIndex": 4, "columnIndex":
+        0, "text": "Copper Swirl Marker", "boundingBox": [156, 1216, 847, 1216, 847,
+        1260, 156, 1260]}, {"rowIndex": 4, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1216, 1072, 1216, 1072, 1260, 847, 1260]}, {"rowIndex": 4, "columnIndex":
+        2, "text": "5,00", "boundingBox": [1072, 1216, 1309, 1216, 1309, 1260, 1072,
+        1260]}, {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1216, 1544, 1216, 1544, 1260, 1309, 1260]}]}]}], "documentResults":
+        [{"docType": "custom:form", "pageRange": [1, 1], "fields": {"Total": {"type":
+        "string", "valueString": "$144.00", "text": "$144.00", "page": 1, "boundingBox":
+        [1429.0, 1669.0, 1530.0, 1669.0, 1530.0, 1697.0, 1429.0, 1697.0], "confidence":
+        1.0}, "Website": {"type": "string", "valueString": "www.herolimited.com",
+        "text": "www.herolimited.com", "page": 1, "boundingBox": [274.0, 393.0, 529.0,
+        393.0, 529.0, 419.0, 274.0, 419.0], "confidence": 1.0}, "Quantity": {"type":
+        "number", "text": "20", "page": 1, "boundingBox": [861.0, 1089.0, 895.0, 1089.0,
+        895.0, 1120.0, 861.0, 1120.0], "confidence": 1.0}, "VendorName": {"type":
+        "string", "valueString": "Hillary Swank", "text": "Hillary Swank", "page":
+        1, "boundingBox": [351.0, 609.0, 518.0, 609.0, 518.0, 641.0, 351.0, 641.0],
+        "confidence": 1.0}, "CompanyPhoneNumber": {"type": "string", "valueString":
+        "938-294-2949", "text": "938-294-2949", "page": 1, "boundingBox": [713.0,
+        722.0, 884.0, 722.0, 884.0, 750.0, 713.0, 750.0], "confidence": 1.0}, "CompanyAddress":
+        {"type": "string", "valueString": "938 NE Burner Road Boulder City, CO 92848",
+        "text": "938 NE Burner Road Boulder City, CO 92848", "page": 1, "boundingBox":
+        [277.0, 685.0, 568.0, 685.0, 568.0, 754.0, 277.0, 754.0], "confidence": 1.0},
+        "CompanyName": {"type": "string", "valueString": "Higgly Wiggly Books", "text":
+        "Higgly Wiggly Books", "page": 1, "boundingBox": [378.0, 646.0, 629.0, 646.0,
+        629.0, 682.0, 378.0, 682.0], "confidence": 1.0}, "PurchaseOrderNumber": {"type":
+        "string", "valueString": "948284", "text": "948284", "page": 1, "boundingBox":
+        [1282.0, 461.0, 1377.0, 461.0, 1377.0, 489.0, 1282.0, 489.0], "confidence":
+        1.0}, "Subtotal": {"type": "string", "valueString": "$140.00", "text": "$140.00",
+        "page": 1, "boundingBox": [1429.0, 1570.0, 1530.0, 1570.0, 1530.0, 1599.0,
+        1429.0, 1599.0], "confidence": 1.0}, "Tax": {"type": "string", "valueString":
+        "$4.00", "text": "$4.00", "page": 1, "boundingBox": [1461.0, 1614.0, 1530.0,
+        1614.0, 1530.0, 1642.0, 1461.0, 1642.0], "confidence": 1.0}, "Signature":
+        {"type": "string", "valueString": "Bernie Sanders", "text": "Bernie Sanders",
+        "page": 1, "boundingBox": [482.0, 1670.0, 764.0, 1670.0, 764.0, 1709.0, 482.0,
+        1709.0], "confidence": 1.0}, "Merchant": {"type": "string", "valueString":
+        "Hero Limited", "text": "Hero Limited", "page": 1, "boundingBox": [621.0,
+        202.0, 1075.0, 202.0, 1075.0, 266.0, 621.0, 266.0], "confidence": 1.0}, "PhoneNumber":
+        {"type": "string", "valueString": "555-348-6512", "text": "555-348-6512",
+        "page": 1, "boundingBox": [367.0, 351.0, 529.0, 351.0, 529.0, 378.0, 367.0,
+        378.0], "confidence": 1.0}, "Email": {"type": "string", "valueString": "accounts@herolimited.com",
+        "text": "accounts@herolimited.com", "page": 1, "boundingBox": [166.0, 480.0,
+        475.0, 480.0, 475.0, 503.0, 166.0, 503.0], "confidence": 1.0}, "DatedAs":
+        {"type": "string", "valueString": "12/20/2020", "text": "12/20/2020", "page":
+        1, "boundingBox": [1168.0, 420.0, 1317.0, 420.0, 1317.0, 450.0, 1168.0, 450.0],
+        "confidence": 1.0}}}], "errors": []}}'
+    headers:
+      apim-request-id: b40a0d32-9184-4a06-9ff7-141057708fe1
+      content-length: '5839'
+      content-type: application/json; charset=utf-8
+      date: Tue, 09 Jun 2020 21:13:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '43'
+    status:
+      code: 200
+      message: OK
+    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eb2a58bc-f5ed-474f-8e7d-16f9ca6cab8a/analyzeresults/9d5e92c7-9a33-4881-be10-c13f84f85e47
 version: 1
