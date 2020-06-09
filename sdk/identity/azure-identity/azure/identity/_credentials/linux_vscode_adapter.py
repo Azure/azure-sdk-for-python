@@ -11,6 +11,21 @@ def _c_str(string):
     return ct.c_char_p(string.encode("utf-8"))
 
 
+class _SecretSchemaAttribute(ct.Structure):
+    _fields_ = [
+        ("name", ct.c_char_p),
+        ("type", ct.c_uint),
+    ]
+_PSecretSchemaAttribute = ct.Array(_SecretSchemaAttribute)
+
+class _SecretSchema(ct.Structure):
+    _fields_ = [
+        ("name", ct.c_char_p),
+        ("flags", ct.c_uint),
+        ("attributes", _PSecretSchemaAttribute),
+    ]
+_PSecretSchema = ct.POINTER(_SecretSchema)
+
 try:
     _libsecret = ct.cdll.LoadLibrary("libsecret-1.so.0")
     _libsecret.secret_schema_new.argtypes = [
@@ -59,11 +74,16 @@ def _get_refresh_token(service_name, account_name):
         return None
 
     err = ct.c_int()
-    schema = _libsecret.secret_schema_new(
-        _c_str("org.freedesktop.Secret.Generic"), 2, _c_str("service"), 0, _c_str("account"), 0, None
-    )
+    #schema = _libsecret.secret_schema_new(
+    #    _c_str("org.freedesktop.Secret.Generic"), 2, _c_str("service"), 0, _c_str("account"), 0, None
+    #)
+    schema = _SecretSchema()
+    pschema = _PSecretSchema(schema)
+    ct.memset(pschema, 0, ct.sizeof(schema))
+    setattr(schema, "name", _c_str("org.freedesktop.Secret.Generic"))
+    setattr(schema, "flags", 2)
     p_str = _libsecret.secret_password_lookup_sync(
-        schema,
+        pschema,
         None,
         ct.byref(err),
         _c_str("service"),
