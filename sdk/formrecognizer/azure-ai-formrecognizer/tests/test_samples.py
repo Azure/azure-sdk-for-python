@@ -29,7 +29,6 @@ def _setenv(key, val):
     os.environ[key] = os.getenv(val) or os.getenv(key)
 
 def run(cmd, my_env):
-    os.environ['PYTHONUNBUFFERED'] = "1"
     proc = subprocess.Popen(cmd,
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT,
@@ -45,7 +44,9 @@ def _test_file(file_name, account, key, root_dir='./samples'):
     my_env = dict(os.environ)
     if sys.version_info < (3, 5):
         my_env = {key: str(val) for key, val in my_env.items()}
-    code, _, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
+    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
+    if err is not None:
+        print(out)
     assert code == 0
     assert err is None
 
