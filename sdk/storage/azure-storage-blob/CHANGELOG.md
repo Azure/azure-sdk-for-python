@@ -1,7 +1,10 @@
 # Release History
 
-## 12.3.2 (Unreleased)
-
+## 12.3.2
+**Fixes**
+- Fixed issue where batch requests could not be combined with SAS (#9534)
+- Metadata cannot have leading space (#11457)
+- Improve the performance of upload when using max_concurrency
 
 ## 12.3.1 (2020-04-29)
 

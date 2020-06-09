@@ -1,7 +1,8 @@
 # Release History
 
-## 12.1.2 (Unreleased)
-
+## 12.1.2
+**Fixes**
+- Improve the performance of upload when using max_concurrency
 
 ## 12.1.1 (2020-03-10)
 
