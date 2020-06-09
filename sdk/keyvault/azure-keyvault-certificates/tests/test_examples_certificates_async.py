@@ -38,7 +38,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, client, **kwargs):
         certificate_client = client
 
@@ -108,7 +107,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, client, **kwargs):
         certificate_client = client
 
@@ -175,7 +173,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, client, **kwargs):
         certificate_client = client
 
@@ -224,7 +221,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, client, **kwargs):
         certificate_client = client
 
@@ -268,7 +264,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, client, **kwargs):
         certificate_client = client
 
@@ -315,7 +310,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, client, **kwargs):
         certificate_client = client
 

@@ -23,7 +23,6 @@ class TestCryptoExamples(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_encrypt_decrypt_async(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key = await key_client.create_rsa_key(key_name)
@@ -55,7 +54,6 @@ class TestCryptoExamples(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_wrap_unwrap_async(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
@@ -85,7 +83,6 @@ class TestCryptoExamples(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_sign_verify_async(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
