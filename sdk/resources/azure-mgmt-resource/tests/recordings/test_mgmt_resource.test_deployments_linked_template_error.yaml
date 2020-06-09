@@ -20,7 +20,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-10-01
   response:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template

@@ -15,7 +15,7 @@ import unittest
 
 # import azure.mgmt.managementgroups
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourcePolicyTest(AzureMgmtTestCase):
 
@@ -32,7 +32,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
                 credentials=self.settings.get_credentials()
             )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_policy_definition_at_management_group(self, resource_group, location):
         policy_name = self.get_resource_name('pypolicy')
         policy_assignment_name = self.get_resource_name('passignment')
@@ -215,7 +215,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             result = result.result()
 
     # @unittest.skip("Forbidden")
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_policy_definition(self, resource_group, location):
         policy_name = self.get_resource_name('pypolicy')
         policy_assignment_name = self.get_resource_name('pypolicyassignment')

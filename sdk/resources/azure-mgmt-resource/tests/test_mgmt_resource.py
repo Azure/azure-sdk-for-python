@@ -22,7 +22,7 @@ import unittest
 import azure.mgmt.resource
 import azure.mgmt.resource.resources.v2019_07_01
 import azure.common.exceptions
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 template = {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -228,7 +228,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         result_delete = self.resource_client.resource_groups.begin_delete(group_name)
         result_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_resources(self, resource_group, location):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         resource_name = self.get_resource_name("pytestavset")
@@ -372,7 +372,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_deployments_basic(self, resource_group, location):
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestdeployment")
@@ -482,7 +482,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_deployments_at_scope(self, resource_group, location):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(

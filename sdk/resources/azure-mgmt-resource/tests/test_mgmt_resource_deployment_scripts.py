@@ -13,7 +13,7 @@ import unittest
 
 import azure.core.exceptions
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
 
@@ -29,7 +29,7 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
                 ManagedServiceIdentityClient
             )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_deployment_scripts(self, resource_group, location):
         SUBSCRIPTION = self.settings.SUBSCRIPTION_ID
         script_name = "scripttest"

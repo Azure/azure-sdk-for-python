@@ -13,7 +13,7 @@
 import unittest
 
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
 
@@ -26,7 +26,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             azure.mgmt.resource.resources.ResourceManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_links(self, resource_group, location):
         resource_name = self.get_resource_name("pytestavset")
         if not self.is_playback():

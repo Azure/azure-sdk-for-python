@@ -13,7 +13,7 @@
 import unittest
 
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourceLocksTest(AzureMgmtTestCase):
 
@@ -48,7 +48,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
             lock_name
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_locks_by_scope(self, resource_group):
         lock_name = "pylockrg"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -96,7 +96,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
         result = result.result()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_locks_at_resource_level(self, resource_group, location):
         lock_name = 'pylockrg'
         resource_name = self.get_resource_name("pytestavset")
@@ -163,7 +163,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
         delete_result.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_locks_at_resource_group_level(self, resource_group, location):
         lock_name = 'pylockrg'
 
