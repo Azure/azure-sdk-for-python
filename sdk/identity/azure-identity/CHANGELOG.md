@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.0b5 (Unreleased)
+
+
 ## 1.4.0b4 (2020-06-09)
 - `ManagedIdentityCredential` can configure a user-assigned identity using any
   identifier supported by the current hosting environment. To specify an
