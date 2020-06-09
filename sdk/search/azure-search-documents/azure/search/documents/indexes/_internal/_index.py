@@ -32,13 +32,13 @@ class SearchField(msrest.serialization.Model):
      type Edm.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is false for simple fields and null for complex fields.
     :type key: bool
-    :param is_hidden: A value indicating whether the field can be returned in a search result.
+    :param hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be False for key fields, and it must be null for complex fields. This property can
      be changed on existing fields. Enabling this property does not cause any increase in index
      storage requirements. Default is False for simple fields and null for complex fields.
-    :type is_hidden: bool
+    :type hidden: bool
     :param searchable: A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
      value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -161,7 +161,7 @@ class SearchField(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'key': {'key': 'key', 'type': 'bool'},
-        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'hidden': {'key': 'hidden', 'type': 'bool'},
         'searchable': {'key': 'searchable', 'type': 'bool'},
         'filterable': {'key': 'filterable', 'type': 'bool'},
         'sortable': {'key': 'sortable', 'type': 'bool'},
@@ -181,7 +181,7 @@ class SearchField(msrest.serialization.Model):
         self.name = kwargs['name']
         self.type = kwargs['type']
         self.key = kwargs.get('key', None)
-        self.is_hidden = kwargs.get('is_hidden', None)
+        self.hidden = kwargs.get('hidden', None)
         self.searchable = kwargs.get('searchable', None)
         self.filterable = kwargs.get('filterable', None)
         self.sortable = kwargs.get('sortable', None)
@@ -210,13 +210,13 @@ def SimpleField(**kw):
      type SearchFieldDataType.String. Key fields can be used to look up documents directly and
      update or delete specific documents. Default is False
     :type key: bool
-    :param is_hidden: A value indicating whether the field can be returned in a search result.
+    :param hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be False for key fields. This property can be changed on existing fields.
      Enabling this property does not cause any increase in index storage requirements. Default is
      False.
-    :type is_hidden: bool
+    :type hidden: bool
     :param filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
      SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
@@ -246,7 +246,7 @@ def SimpleField(**kw):
     result["filterable"] = kw.get("filterable", False)
     result["facetable"] = kw.get("facetable", False)
     result["sortable"] = kw.get("sortable", False)
-    result["is_hidden"] = kw.get("is_hidden", False)
+    result["hidden"] = kw.get("hidden", False)
     return SearchField(**result)
 
 
@@ -264,13 +264,13 @@ def SearchableField(**kw):
      type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is False
     :type key: bool
-    :param is_hidden: A value indicating whether the field can be returned in a search result.
+    :param hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be False for key fields. This property can be changed on existing fields.
      Enabling this property does not cause any increase in index storage requirements. Default is
      False.
-    :type is_hidden: bool
+    :type hidden: bool
     :param searchable: A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
      value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -375,7 +375,7 @@ def SearchableField(**kw):
     result["filterable"] = kw.get("filterable", False)
     result["facetable"] = kw.get("facetable", False)
     result["sortable"] = kw.get("sortable", False)
-    result["is_hidden"] = kw.get("is_hidden", False)
+    result["hidden"] = kw.get("hidden", False)
     if "analyzer_name" in kw:
         result["analyzer_name"] = kw["analyzer_name"]
     if "search_analyzer_name" in kw:
@@ -465,13 +465,13 @@ class SearchIndex(msrest.serialization.Model):
         'scoring_profiles': {'key': 'scoringProfiles', 'type': '[ScoringProfile]'},
         'default_scoring_profile': {'key': 'defaultScoringProfile', 'type': 'str'},
         'cors_options': {'key': 'corsOptions', 'type': 'CorsOptions'},
-        'suggesters': {'key': 'suggesters', 'type': '[Suggester]'},
+        'suggesters': {'key': 'suggesters', 'type': '[SearchSuggester]'},
         'analyzers': {'key': 'analyzers', 'type': '[LexicalAnalyzer]'},
         'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
         'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
         'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
-        'similarity': {'key': 'similarity', 'type': 'Similarity'},
+        'similarity': {'key': 'similarity', 'type': 'SimilarityAlgorithm'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 

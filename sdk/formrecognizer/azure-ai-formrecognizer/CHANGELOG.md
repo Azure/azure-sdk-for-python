@@ -1,6 +1,6 @@
 # Change Log azure-ai-formrecognizer
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2020-06-09)
 
 **Breaking Changes**
 
@@ -30,7 +30,7 @@
 `CustomFormModel`  and `CustomFormModelInfo` models
 - `models` property of `CustomFormModel` is renamed to `submodels`
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
-- `begin_recognize_receipts` APIs now return `RecognizedReceipt` instead of `USReceipt`
+- `begin_recognize_receipts` APIs now return a list of `RecognizedReceipt` instead of `USReceipt`
 - Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 - Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 - Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.

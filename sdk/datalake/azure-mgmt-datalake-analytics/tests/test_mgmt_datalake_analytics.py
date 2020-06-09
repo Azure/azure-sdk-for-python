@@ -154,7 +154,7 @@ AS BEGIN
     )
   AS
   T(a, b);
-END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, self.proc_name)
+END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, self.proc_name)    #nosec
 
         # define all the job IDs to be used during execution
         if self.is_playback():

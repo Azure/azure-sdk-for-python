@@ -29,6 +29,7 @@ import os
 class RecognizeCustomForms(object):
 
     def recognize_custom_forms(self):
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -42,7 +43,7 @@ class RecognizeCustomForms(object):
         )
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
-        with open("sample_forms/forms/Form_1.jpg", "rb") as f:
+        with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
                 model_id=model_id, form=f
             )

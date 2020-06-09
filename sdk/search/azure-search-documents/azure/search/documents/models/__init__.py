@@ -27,7 +27,6 @@
 from .._internal import (
     IndexAction,
     IndexingResult,
-    SearchQuery,
     odata,
 )
 
@@ -35,6 +34,5 @@ from .._internal import (
 __all__ = (
     "IndexAction",
     "IndexingResult",
-    "SearchQuery",
     "odata",
 )

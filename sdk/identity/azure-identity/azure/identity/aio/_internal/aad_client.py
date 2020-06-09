@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
     AsyncRetryPolicy,
@@ -25,6 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport
+    from ..._internal import AadClientCertificate
 
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -55,8 +55,22 @@ class AadClient(AadClientBase):
         )
         now = int(time.time())
         response = await self._pipeline.run(request, **kwargs)
-        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
-        return self._process_response(response=content, scopes=scopes, now=now)
+        return self._process_response(response, now)
+
+    async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
+        # type: (Sequence[str], AadClientCertificate, **Any) -> AccessToken
+        request = self._get_client_certificate_request(scopes, certificate)
+        now = int(time.time())
+        response = await self._pipeline.run(request, stream=False, **kwargs)
+        return self._process_response(response, now)
+
+    async def obtain_token_by_client_secret(
+        self, scopes: "Sequence[str]", secret: str, **kwargs: "Any"
+    ) -> "AccessToken":
+        request = self._get_client_secret_request(scopes, secret)
+        now = int(time.time())
+        response = await self._pipeline.run(request, **kwargs)
+        return self._process_response(response, now)
 
     async def obtain_token_by_refresh_token(
         self, scopes: "Sequence[str]", refresh_token: str, **kwargs: "Any"
@@ -64,8 +78,7 @@ class AadClient(AadClientBase):
         request = self._get_refresh_token_request(scopes, refresh_token)
         now = int(time.time())
         response = await self._pipeline.run(request, **kwargs)
-        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
-        return self._process_response(response=content, scopes=scopes, now=now)
+        return self._process_response(response, now)
 
     # pylint:disable=no-self-use
     def _build_pipeline(

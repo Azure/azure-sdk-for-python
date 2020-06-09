@@ -30,13 +30,10 @@ def filter_query():
     # [START facet_query]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
-    from azure.search.documents.models import SearchQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
-
-    results = search_client.search(query=query)
+    results = search_client.search(search_text="WiFi", facets=["Category"], top=0)
 
     facets = results.get_facets()
 
