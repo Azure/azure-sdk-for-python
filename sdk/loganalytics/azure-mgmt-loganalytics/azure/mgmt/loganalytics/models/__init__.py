@@ -22,6 +22,7 @@ try:
     from ._models_py3 import DataSource
     from ._models_py3 import DataSourceFilter
     from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorContract, ErrorContractException
     from ._models_py3 import ErrorResponse
     from ._models_py3 import Identity
     from ._models_py3 import IntelligencePack
@@ -47,10 +48,12 @@ try:
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageInsight
     from ._models_py3 import StorageInsightStatus
+    from ._models_py3 import Table
     from ._models_py3 import Tag
     from ._models_py3 import TrackedResource
     from ._models_py3 import UsageMetric
     from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceCapping
     from ._models_py3 import WorkspacePatch
     from ._models_py3 import WorkspacePurgeBody
     from ._models_py3 import WorkspacePurgeBodyFilters
@@ -70,6 +73,7 @@ except (SyntaxError, ImportError):
     from ._models import DataSource
     from ._models import DataSourceFilter
     from ._models import ErrorAdditionalInfo
+    from ._models import ErrorContract, ErrorContractException
     from ._models import ErrorResponse
     from ._models import Identity
     from ._models import IntelligencePack
@@ -95,10 +99,12 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccount
     from ._models import StorageInsight
     from ._models import StorageInsightStatus
+    from ._models import Table
     from ._models import Tag
     from ._models import TrackedResource
     from ._models import UsageMetric
     from ._models import Workspace
+    from ._models import WorkspaceCapping
     from ._models import WorkspacePatch
     from ._models import WorkspacePurgeBody
     from ._models import WorkspacePurgeBodyFilters
@@ -113,6 +119,7 @@ from ._paged_models import LinkedStorageAccountsResourcePaged
 from ._paged_models import ManagementGroupPaged
 from ._paged_models import OperationPaged
 from ._paged_models import StorageInsightPaged
+from ._paged_models import TablePaged
 from ._paged_models import UsageMetricPaged
 from ._paged_models import WorkspacePaged
 from ._log_analytics_management_client_enums import (
@@ -121,6 +128,7 @@ from ._log_analytics_management_client_enums import (
     LinkedServiceEntityStatus,
     DataSourceType,
     WorkspaceSkuNameEnum,
+    DataIngestionStatus,
     WorkspaceEntityStatus,
     PublicNetworkAccessType,
     ClusterEntityStatus,
@@ -145,6 +153,7 @@ __all__ = [
     'DataSource',
     'DataSourceFilter',
     'ErrorAdditionalInfo',
+    'ErrorContract', 'ErrorContractException',
     'ErrorResponse',
     'Identity',
     'IntelligencePack',
@@ -170,10 +179,12 @@ __all__ = [
     'StorageAccount',
     'StorageInsight',
     'StorageInsightStatus',
+    'Table',
     'Tag',
     'TrackedResource',
     'UsageMetric',
     'Workspace',
+    'WorkspaceCapping',
     'WorkspacePatch',
     'WorkspacePurgeBody',
     'WorkspacePurgeBodyFilters',
@@ -190,11 +201,13 @@ __all__ = [
     'WorkspacePaged',
     'ClusterPaged',
     'StorageInsightPaged',
+    'TablePaged',
     'Type',
     'DataSourceKind',
     'LinkedServiceEntityStatus',
     'DataSourceType',
     'WorkspaceSkuNameEnum',
+    'DataIngestionStatus',
     'WorkspaceEntityStatus',
     'PublicNetworkAccessType',
     'ClusterEntityStatus',

@@ -10,26 +10,26 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .image_url_py3 import ImageUrl
-    from .bounding_box_py3 import BoundingBox
-    from .prediction_py3 import Prediction
-    from .image_prediction_py3 import ImagePrediction
-    from .custom_vision_error_py3 import CustomVisionError, CustomVisionErrorException
+    from ._models_py3 import BoundingBox
+    from ._models_py3 import CustomVisionError, CustomVisionErrorException
+    from ._models_py3 import ImagePrediction
+    from ._models_py3 import ImageUrl
+    from ._models_py3 import Prediction
 except (SyntaxError, ImportError):
-    from .image_url import ImageUrl
-    from .bounding_box import BoundingBox
-    from .prediction import Prediction
-    from .image_prediction import ImagePrediction
-    from .custom_vision_error import CustomVisionError, CustomVisionErrorException
-from .custom_vision_prediction_client_enums import (
+    from ._models import BoundingBox
+    from ._models import CustomVisionError, CustomVisionErrorException
+    from ._models import ImagePrediction
+    from ._models import ImageUrl
+    from ._models import Prediction
+from ._custom_vision_prediction_client_enums import (
     CustomVisionErrorCodes,
 )
 
 __all__ = [
-    'ImageUrl',
     'BoundingBox',
-    'Prediction',
-    'ImagePrediction',
     'CustomVisionError', 'CustomVisionErrorException',
+    'ImagePrediction',
+    'ImageUrl',
+    'Prediction',
     'CustomVisionErrorCodes',
 ]

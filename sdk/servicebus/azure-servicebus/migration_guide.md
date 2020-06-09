@@ -14,12 +14,12 @@ Note: The large version gap is in order to normalize service bus SDK versions ac
 
 ### Specific clients for sending and receiving
 In v7 we've simplified the API surface, making two distinct clients, rather than one for each of queue, topic, and subscription:
-* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.html#azure.servicebus.ServiceBusSender)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
-* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
-* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
+* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSender)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
+* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
@@ -31,7 +31,7 @@ semantics with the sender or receiver lifetime.
 
 ### Client constructors
 
-| In v7 | Equivalent in v5 | Sample |
+| In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](./samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](./samples/sync_samples/send_queue.py ) |
@@ -63,6 +63,19 @@ semantics with the sender or receiver lifetime.
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
 | `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
+
+### Working with UTC time
+| In v0.50 | Equivalent in v7 | Note |
+|---|---|---|
+| `session.locked_until < datetime.now()`| `session.locked_until_utc < datetime.utcnow()`| All datetimes are now UTC and named as such|
+| `message.scheduled_enqueue_time < datetime.now()`| `message.scheduled_enqueue_time_utc < datetime.utcnow()`| UTC Datetime normalization applies across all objects and datetime fields|
+
+### Managing queues
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
+| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
+
 
 ## Migration samples
 

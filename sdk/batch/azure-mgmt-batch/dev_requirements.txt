@@ -1,2 +1,3 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../keyvault/azure-mgmt-keyvault
+-e ../../network/azure-mgmt-network

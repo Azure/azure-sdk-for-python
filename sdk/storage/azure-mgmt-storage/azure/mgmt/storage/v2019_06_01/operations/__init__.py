@@ -16,11 +16,16 @@ from ._usages_operations import UsagesOperations
 from ._management_policies_operations import ManagementPoliciesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._object_replication_policies_operations import ObjectReplicationPoliciesOperations
 from ._encryption_scopes_operations import EncryptionScopesOperations
 from ._blob_services_operations import BlobServicesOperations
 from ._blob_containers_operations import BlobContainersOperations
 from ._file_services_operations import FileServicesOperations
 from ._file_shares_operations import FileSharesOperations
+from ._queue_services_operations import QueueServicesOperations
+from ._queue_operations import QueueOperations
+from ._table_services_operations import TableServicesOperations
+from ._table_operations import TableOperations
 
 __all__ = [
     'Operations',
@@ -30,9 +35,14 @@ __all__ = [
     'ManagementPoliciesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'ObjectReplicationPoliciesOperations',
     'EncryptionScopesOperations',
     'BlobServicesOperations',
     'BlobContainersOperations',
     'FileServicesOperations',
     'FileSharesOperations',
+    'QueueServicesOperations',
+    'QueueOperations',
+    'TableServicesOperations',
+    'TableOperations',
 ]

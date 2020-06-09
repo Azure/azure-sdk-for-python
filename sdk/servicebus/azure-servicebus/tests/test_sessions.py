@@ -25,7 +25,8 @@ from azure.servicebus.exceptions import (
     MessageLockExpired,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
-    MessageSettleFailed)
+    MessageSettleFailed,
+    MessageSendFailed)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -261,7 +262,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                         message.renew_lock()
                     message.complete()
 
-    @pytest.mark.skip(reason='Requires deadletter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -274,9 +274,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 deferred_messages = []
                 session_id = str(uuid.uuid4())
-                messages = [Message("Deferred message no. {}".format(i)) for i in range(10)]
-                results = sender.send(messages, session_id=session_id)
-                assert all(result[0] for result in results)
+                messages = [Message("Deferred message no. {}".format(i), session_id=session_id) for i in range(10)]
+                sender.send(messages)
 
             count = 0
             with sb_client.get_queue_session_receiver(servicebus_queue.name, 
@@ -300,7 +299,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            with sb_client.get_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -379,8 +378,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 with pytest.raises(MessageAlreadySettled):
                     message.complete()
 
-
-    @pytest.mark.skip(reason='Requires deadletter receiver')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -412,17 +409,16 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     messages = receiver.receive()
             assert count == 10
 
-            with sb_client.get_deadletter_receiver(servicebus_queue.name, 
+            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
                                                       idle_timeout=5) as session:
                 count = 0
                 for message in session:
                     print_message(_logger, message)
                     message.complete()
-                    #assert message.user_properties[b'DeadLetterReason'] == b'something'  # TODO
-                    #assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'  # TODO
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     count += 1
             assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -908,12 +904,15 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     sender.send(message)
 
-            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0) as receiver:
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=0, idle_timeout=5) as receiver:
                 message = receiver.next()
                 assert message.sequence_number == 1
                 message.abandon()
-                second_message = receiver.next()
-                assert second_message.sequence_number == 1
+                for next_message in receiver: # we can't be sure there won't be a service delay, so we may not get the message back _immediately_, even if in most cases it shows right back up.
+                    if not next_message:
+                        raise Exception("Did not successfully re-receive abandoned message, sequence_number 1 was not observed.")
+                    if next_message.sequence_number == 1:
+                        return
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -942,3 +941,17 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.complete()
             assert count == 1
 
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    def test_session_non_session_send_to_session_queue_should_fail(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("This should be an invalid non session message")
+                with pytest.raises(MessageSendFailed):
+                    sender.send(message)

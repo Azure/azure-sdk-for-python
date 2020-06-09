@@ -14,22 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35,"text":"Bill
+        Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - d2e296c9-85e4-4a20-ac9a-b6ee181f4404
+      - 13d0c4f6-a5c7-453d-a5ef-d69834f50217
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 02 Apr 2020 15:05:58 GMT
+      - Wed, 27 May 2020 16:04:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '123'
+      - '128'
     status:
       code: 200
       message: OK

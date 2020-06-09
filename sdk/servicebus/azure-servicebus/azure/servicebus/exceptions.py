@@ -62,7 +62,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception, handler):
+def _create_servicebus_exception(logger, exception, handler):  # pylint: disable=too-many-statements
     error_need_close_handler = True
     error_need_retry = True
     if isinstance(exception, errors.MessageAlreadySettled):

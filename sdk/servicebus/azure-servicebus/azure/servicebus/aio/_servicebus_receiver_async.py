@@ -6,13 +6,14 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Any, TYPE_CHECKING, List
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode, LinkCreationMode
 
-from ._base_handler_async import BaseHandlerAsync
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from ._async_message import ReceivedMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
+class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -120,9 +121,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 entity_name=str(entity_name),
                 **kwargs
             )
-        self._message_iter = None
-        self._create_attribute(**kwargs)
-        self._connection = kwargs.get("connection")
+
+        self._populate_attributes(**kwargs)
 
     async def __anext__(self):
         self._check_live()
@@ -154,9 +154,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._config.prefetch,
-            link_creation_mode=link_creation_mode
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            prefetch=self._prefetch,
+            link_creation_mode = link_creation_mode
         )
 
     async def _open(self):
@@ -181,7 +181,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         await self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms
@@ -259,8 +259,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         if kwargs.get("queue_name") and kwargs.get("subscription_name"):
@@ -300,7 +301,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
         """
         self._check_live()
-        if max_batch_size and self._config.prefetch < max_batch_size:
+        if max_batch_size and self._prefetch < max_batch_size:
             raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
                              "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(

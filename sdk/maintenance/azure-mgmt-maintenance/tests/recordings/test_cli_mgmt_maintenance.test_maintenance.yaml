@@ -1,0 +1,306 @@
+interactions:
+- request:
+    body: '{"location": "australiaeast", "properties": {"namespace": "Microsoft.Maintenance"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '83'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: "{\r\n  \"location\": \"australiaeast\",\r\n  \"tags\": {},\r\n  \"\
+        properties\": {\r\n    \"namespace\": \"Microsoft.Maintenance\",\r\n    \"\
+        extensionProperties\": {},\r\n    \"maintenanceScope\": \"All\"\r\n  },\r\n\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX\"\
+        ,\r\n  \"name\": \"myMaintenanceConfigurationX\",\r\n  \"type\": \"Microsoft.Maintenance/maintenanceConfigurations\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '457'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''b\''{"properties": {"maintenanceConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss/providers/Microsoft.Maintenance/configurationAssignments/myConfigurationAssignmentX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"Error":{"Code":"InternalServerError","Message":"Encountered an internal
+        server error. The tracking id is ''a929e66a-fa16-4150-8cbb-5bf9bb16121b''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: 'b''b\''{"properties": {"maintenanceConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss/providers/Microsoft.Maintenance/configurationAssignments/myConfigurationAssignmentX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"Error":{"Code":"InternalServerError","Message":"Encountered an internal
+        server error. The tracking id is ''1045deb7-aa22-4cc3-8913-c9faf2ab393f''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: 'b''b\''{"properties": {"maintenanceConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss/providers/Microsoft.Maintenance/configurationAssignments/myConfigurationAssignmentX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"Error":{"Code":"InternalServerError","Message":"Encountered an internal
+        server error. The tracking id is ''7145cbbe-5317-4483-890d-064bc795232c''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: 'b''b\''{"properties": {"maintenanceConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss/providers/Microsoft.Maintenance/configurationAssignments/myConfigurationAssignmentX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"Error":{"Code":"InternalServerError","Message":"Encountered an internal
+        server error. The tracking id is ''03101a87-58fb-46a1-bbf7-a719bec715e3''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: 'b''b\''{"properties": {"maintenanceConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.Maintenance/maintenanceConfigurations/myMaintenanceConfigurationX"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maintenance/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zimsrg/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss/providers/Microsoft.Maintenance/configurationAssignments/myConfigurationAssignmentX?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"Error":{"Code":"InternalServerError","Message":"Encountered an internal
+        server error. The tracking id is ''e0473d6c-e634-4527-bc5c-3783150eeb80''."}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 01 May 2020 16:52:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 500
+      message: Internal Server Error
+version: 1

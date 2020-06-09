@@ -11,7 +11,7 @@ FILE: sample_differentiate_output_models_trained_with_and_without_labels_async.p
 
 DESCRIPTION:
     This sample demonstrates the differences in output that arise when recognize_custom_forms
-    is called with custom models trained with labeled and unlabeled data. For a more general
+    is called with custom models trained with labels and without labels. For a more general
     example of recognizing custom forms, see sample_recognize_custom_forms_async.py
 USAGE:
     python sample_differentiate_output_models_trained_with_and_without_labels_async.py
@@ -26,35 +26,41 @@ USAGE:
 import os
 import asyncio
 
+
 def format_bounding_box(bounding_box):
     if not bounding_box:
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
-class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
-    model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
+class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
 
     async def recognize_custom_forms(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
+        model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
+
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         async with FormRecognizerClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
-            with open("sample_forms/forms/Form_1.jpg", "rb") as f:
-                stream = f.read()
-            forms_with_labeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_with_labels_id, stream=stream
+            with open(path_to_sample_forms, "rb") as f:
+                form = f.read()
+            with_labels_poller = await form_recognizer_client.begin_recognize_custom_forms(
+                model_id=model_trained_with_labels_id, form=form
             )
-            forms_with_unlabeled_model = await form_recognizer_client.recognize_custom_forms(
-                model_id=self.model_trained_without_labels_id, stream=stream
-            )
+            forms_with_labeled_model = await with_labels_poller.result()
 
+            without_labels_poller = await form_recognizer_client.begin_recognize_custom_forms(
+                model_id=model_trained_without_labels_id, form=form
+            )
+            forms_with_unlabeled_model = await without_labels_poller.result()
             # With a form recognized by a model trained with labels, this 'name' key will be its
             # training-time label, otherwise it will be denoted by numeric indices.
             # Label data is not returned for model trained with labels.
@@ -87,7 +93,6 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
                         format_bounding_box(field.value_data.bounding_box),
                         field.confidence
                     ))
-
 
 
 async def main():

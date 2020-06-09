@@ -49,6 +49,7 @@ try:
     from ._models_py3 import ImportImageParameters
     from ._models_py3 import ImportSource
     from ._models_py3 import ImportSourceCredentials
+    from ._models_py3 import InnerErrorDescription
     from ._models_py3 import IPRule
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import OperationDefinition
@@ -159,6 +160,7 @@ except (SyntaxError, ImportError):
     from ._models import ImportImageParameters
     from ._models import ImportSource
     from ._models import ImportSourceCredentials
+    from ._models import InnerErrorDescription
     from ._models import IPRule
     from ._models import NetworkRuleSet
     from ._models import OperationDefinition
@@ -314,6 +316,7 @@ __all__ = [
     'ImportImageParameters',
     'ImportSource',
     'ImportSourceCredentials',
+    'InnerErrorDescription',
     'IPRule',
     'NetworkRuleSet',
     'OperationDefinition',

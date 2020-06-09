@@ -210,6 +210,11 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             msg.defer()
 ```
 
+Other settlement methods (beyond complete and defer) include:
+* `dead_letter`, removing the message from the primary queue and sending it to a
+special "dead-letter sub-queue" where it can be accessed using the `get_queue_deadletter_receiver` function.
+* `abandon`, immediately returning the message back to the queue to be picked up by another (or the same) receiver.
+
 ## Troubleshooting
 
 ### Logging
@@ -228,6 +233,11 @@ link will extend this timeout.
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 - max_wait_time: Provided when calling receive() to fetch a batch of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
 
+### AutoLockRenew
+
+If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.
+It would also manifest when trying to take action (such as completing a message) on the specified object.
+
 ### Common Exceptions
 
 Please view the [exceptions](./azure/servicebus/exceptions.py) file for detailed descriptions of our common Exception types.
@@ -241,6 +251,12 @@ Please find further examples in the [samples](./samples) directory demonstrating
 ### Additional documentation
 
 For more extensive documentation on the Service Bus service, see the [Service Bus documentation][service_bus_docs] on docs.microsoft.com.
+
+### Management capabilities and documentation
+
+For users seeking to perform management operations against ServiceBus (Creating a queue/topic/etc, altering filter rules, enumerating entities)
+please see the [azure-mgmt-servicebus documentation][service_bus_mgmt_docs] for API documentation.  Terse usage examples can be found
+[here](../azure-mgmt-servicebus/tests) as well.
 
 ## Contributing
 
@@ -258,14 +274,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b2/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b3/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -273,6 +289,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [service_bus_overview]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview
 [queue_status_codes]: https://docs.microsoft.com/rest/api/servicebus/create-queue#response-codes
 [service_bus_docs]: https://docs.microsoft.com/azure/service-bus/
+[service_bus_mgmt_docs]: https://docs.microsoft.com/en-us/python/api/overview/azure/servicebus/management?view=azure-python
 [queue_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#queues
 [topic_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#topics
 [subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
@@ -282,10 +299,10 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/
+[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
 [0_50_pypi]: https://pypi.org/project/azure-servicebus/
-[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.2/index.html
+[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html
 [0_50_product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
-[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/samples
-[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/CHANGELOG.md
+[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples
+[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/CHANGELOG.md
 [migration_guide]: ./migration_guide.md

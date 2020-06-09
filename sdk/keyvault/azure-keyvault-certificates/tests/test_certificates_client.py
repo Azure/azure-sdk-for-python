@@ -208,13 +208,15 @@ class CertificateClientTests(KeyVaultTestCase):
         cert = client.get_certificate(certificate_name=cert_name)
         self._validate_certificate_bundle(cert=cert, cert_name=cert_name, cert_policy=cert_policy)
 
-        # update certificate
+        # update certificate, ensuring the new updated_on value is at least one second later than the original
+        if self.is_live:
+            time.sleep(1)
         tags = {"tag1": "updated_value1"}
-        cert_bundle = client.update_certificate_properties(cert_name, tags=tags)
-        self._validate_certificate_bundle(cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
-        self.assertEqual(tags, cert_bundle.properties.tags)
-        self.assertEqual(cert.id, cert_bundle.id)
-        self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
+        updated_cert = client.update_certificate_properties(cert_name, tags=tags)
+        self._validate_certificate_bundle(cert=updated_cert, cert_name=cert_name, cert_policy=cert_policy)
+        self.assertEqual(tags, updated_cert.properties.tags)
+        self.assertEqual(cert.id, updated_cert.id)
+        self.assertNotEqual(cert.properties.updated_on, updated_cert.properties.updated_on)
 
         # delete certificate
         delete_cert_poller = client.begin_delete_certificate(cert_name)

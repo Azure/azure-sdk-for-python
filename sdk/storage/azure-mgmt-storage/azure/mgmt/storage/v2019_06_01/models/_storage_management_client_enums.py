@@ -268,6 +268,27 @@ class ImmutabilityPolicyUpdateType(str, Enum):
     extend = "extend"
 
 
+class EnabledProtocols(str, Enum):
+
+    smb = "SMB"
+    nfs = "NFS"
+
+
+class RootSquashType(str, Enum):
+
+    no_root_squash = "NoRootSquash"
+    root_squash = "RootSquash"
+    all_squash = "AllSquash"
+
+
+class ShareAccessTier(str, Enum):
+
+    transaction_optimized = "TransactionOptimized"
+    hot = "Hot"
+    cool = "Cool"
+    premium = "Premium"
+
+
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
@@ -277,3 +298,18 @@ class StorageAccountExpand(str, Enum):
 class ListKeyExpand(str, Enum):
 
     kerb = "kerb"
+
+
+class ListContainersInclude(str, Enum):
+
+    deleted = "deleted"
+
+
+class ListSharesExpand(str, Enum):
+
+    deleted = "deleted"
+
+
+class GetShareExpand(str, Enum):
+
+    stats = "stats"

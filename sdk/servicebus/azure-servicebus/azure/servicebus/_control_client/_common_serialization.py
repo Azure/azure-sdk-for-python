@@ -9,7 +9,7 @@ from xml.sax.saxutils import escape as xml_escape
 try:
     from xml.etree import cElementTree as ETree
 except ImportError:
-    from xml.etree import ElementTree as ETree
+    from xml.etree import ElementTree as ETree  # type: ignore
 try:
     from cStringIO import StringIO
 except ImportError:

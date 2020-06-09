@@ -20,21 +20,21 @@ class DetectedLanguage(msrest.serialization.Model):
     :param iso6391_name: Required. A two letter representation of the detected language according
      to the ISO 639-1 standard (e.g. en, fr).
     :type iso6391_name: str
-    :param score: Required. A confidence score between 0 and 1. Scores close to 1 indicate 100%
-     certainty that the identified language is true.
-    :type score: float
+    :param confidence_score: Required. A confidence score between 0 and 1. Scores close to 1
+     indicate 100% certainty that the identified language is true.
+    :type confidence_score: float
     """
 
     _validation = {
         'name': {'required': True},
         'iso6391_name': {'required': True},
-        'score': {'required': True},
+        'confidence_score': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'iso6391_name': {'key': 'iso6391Name', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
     def __init__(
@@ -44,7 +44,7 @@ class DetectedLanguage(msrest.serialization.Model):
         super(DetectedLanguage, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.iso6391_name = kwargs['iso6391_name']
-        self.score = kwargs['score']
+        self.confidence_score = kwargs['confidence_score']
 
 
 class DocumentEntities(msrest.serialization.Model):
@@ -56,6 +56,8 @@ class DocumentEntities(msrest.serialization.Model):
     :type id: str
     :param entities: Required. Recognized entities in the document.
     :type entities: list[~azure.ai.textanalytics.models.Entity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -64,11 +66,13 @@ class DocumentEntities(msrest.serialization.Model):
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[Entity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -79,6 +83,7 @@ class DocumentEntities(msrest.serialization.Model):
         super(DocumentEntities, self).__init__(**kwargs)
         self.id = kwargs['id']
         self.entities = kwargs['entities']
+        self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -122,6 +127,8 @@ class DocumentKeyPhrases(msrest.serialization.Model):
     :param key_phrases: Required. A list of representative words or phrases. The number of key
      phrases returned is proportional to the number of words in the input document.
     :type key_phrases: list[str]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -130,11 +137,13 @@ class DocumentKeyPhrases(msrest.serialization.Model):
     _validation = {
         'id': {'required': True},
         'key_phrases': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -145,6 +154,7 @@ class DocumentKeyPhrases(msrest.serialization.Model):
         super(DocumentKeyPhrases, self).__init__(**kwargs)
         self.id = kwargs['id']
         self.key_phrases = kwargs['key_phrases']
+        self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -155,8 +165,10 @@ class DocumentLanguage(msrest.serialization.Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param detected_languages: Required. A list of extracted languages.
-    :type detected_languages: list[~azure.ai.textanalytics.models.DetectedLanguage]
+    :param detected_language: Required. Detected Language.
+    :type detected_language: ~azure.ai.textanalytics.models.DetectedLanguage
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -164,12 +176,14 @@ class DocumentLanguage(msrest.serialization.Model):
 
     _validation = {
         'id': {'required': True},
-        'detected_languages': {'required': True},
+        'detected_language': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'detected_language': {'key': 'detectedLanguage', 'type': 'DetectedLanguage'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -179,7 +193,8 @@ class DocumentLanguage(msrest.serialization.Model):
     ):
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = kwargs['id']
-        self.detected_languages = kwargs['detected_languages']
+        self.detected_language = kwargs['detected_language']
+        self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -192,6 +207,8 @@ class DocumentLinkedEntities(msrest.serialization.Model):
     :type id: str
     :param entities: Required. Recognized well-known entities in the document.
     :type entities: list[~azure.ai.textanalytics.models.LinkedEntity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -200,11 +217,13 @@ class DocumentLinkedEntities(msrest.serialization.Model):
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[LinkedEntity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -215,6 +234,7 @@ class DocumentLinkedEntities(msrest.serialization.Model):
         super(DocumentLinkedEntities, self).__init__(**kwargs)
         self.id = kwargs['id']
         self.entities = kwargs['entities']
+        self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -231,26 +251,30 @@ class DocumentSentiment(msrest.serialization.Model):
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
-    :param document_scores: Required. Document level sentiment confidence scores between 0 and 1
+    :param confidence_scores: Required. Document level sentiment confidence scores between 0 and 1
      for each sentiment class.
-    :type document_scores: ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
+    :type confidence_scores: ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
     :param sentences: Required. Sentence level sentiment analysis.
     :type sentences: list[~azure.ai.textanalytics.models.SentenceSentiment]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     """
 
     _validation = {
         'id': {'required': True},
         'sentiment': {'required': True},
-        'document_scores': {'required': True},
+        'confidence_scores': {'required': True},
         'sentences': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'sentiment': {'key': 'sentiment', 'type': 'str'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
-        'document_scores': {'key': 'documentScores', 'type': 'SentimentConfidenceScorePerLabel'},
+        'confidence_scores': {'key': 'confidenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'sentences': {'key': 'sentences', 'type': '[SentenceSentiment]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
     }
 
     def __init__(
@@ -261,8 +285,9 @@ class DocumentSentiment(msrest.serialization.Model):
         self.id = kwargs['id']
         self.sentiment = kwargs['sentiment']
         self.statistics = kwargs.get('statistics', None)
-        self.document_scores = kwargs['document_scores']
+        self.confidence_scores = kwargs['confidence_scores']
         self.sentences = kwargs['sentences']
+        self.warnings = kwargs['warnings']
 
 
 class DocumentStatistics(msrest.serialization.Model):
@@ -342,33 +367,33 @@ class Entity(msrest.serialization.Model):
 
     :param text: Required. Entity text as appears in the request.
     :type text: str
-    :param type: Required. Entity type, such as Person/Location/Org/SSN etc.
-    :type type: str
-    :param subtype: Entity sub type, such as Age/Year/TimeRange etc.
-    :type subtype: str
+    :param category: Required. Entity type, such as Person/Location/Org/SSN etc.
+    :type category: str
+    :param subcategory: Entity sub type, such as Age/Year/TimeRange etc.
+    :type subcategory: str
     :param offset: Required. Start position (in Unicode characters) for the entity text.
     :type offset: int
     :param length: Required. Length (in Unicode characters) for the entity text.
     :type length: int
-    :param score: Required. Confidence score between 0 and 1 of the extracted entity.
-    :type score: float
+    :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
+    :type confidence_score: float
     """
 
     _validation = {
         'text': {'required': True},
-        'type': {'required': True},
+        'category': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
-        'score': {'required': True},
+        'confidence_score': {'required': True},
     }
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subtype': {'key': 'subtype', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'subcategory': {'key': 'subcategory', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
     def __init__(
@@ -377,11 +402,11 @@ class Entity(msrest.serialization.Model):
     ):
         super(Entity, self).__init__(**kwargs)
         self.text = kwargs['text']
-        self.type = kwargs['type']
-        self.subtype = kwargs.get('subtype', None)
+        self.category = kwargs['category']
+        self.subcategory = kwargs.get('subcategory', None)
         self.offset = kwargs['offset']
         self.length = kwargs['length']
-        self.score = kwargs['score']
+        self.confidence_score = kwargs['confidence_score']
 
 
 class EntityLinkingResult(msrest.serialization.Model):
@@ -440,8 +465,8 @@ class InnerError(msrest.serialization.Model):
     :type details: dict[str, str]
     :param target: Error target.
     :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~azure.ai.textanalytics.models.InnerError
     """
 
     _validation = {
@@ -454,7 +479,7 @@ class InnerError(msrest.serialization.Model):
         'message': {'key': 'message', 'type': 'str'},
         'details': {'key': 'details', 'type': '{str}'},
         'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
     }
 
     def __init__(
@@ -466,7 +491,7 @@ class InnerError(msrest.serialization.Model):
         self.message = kwargs['message']
         self.details = kwargs.get('details', None)
         self.target = kwargs.get('target', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        self.innererror = kwargs.get('innererror', None)
 
 
 class KeyPhraseResult(msrest.serialization.Model):
@@ -663,9 +688,9 @@ class Match(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param score: Required. If a well-known item is recognized, a decimal number denoting the
-     confidence level between 0 and 1 will be returned.
-    :type score: float
+    :param confidence_score: Required. If a well-known item is recognized, a decimal number
+     denoting the confidence level between 0 and 1 will be returned.
+    :type confidence_score: float
     :param text: Required. Entity text as appears in the request.
     :type text: str
     :param offset: Required. Start position (in Unicode characters) for the entity match text.
@@ -675,14 +700,14 @@ class Match(msrest.serialization.Model):
     """
 
     _validation = {
-        'score': {'required': True},
+        'confidence_score': {'required': True},
         'text': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
     }
 
     _attribute_map = {
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'text': {'key': 'text', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
@@ -693,7 +718,7 @@ class Match(msrest.serialization.Model):
         **kwargs
     ):
         super(Match, self).__init__(**kwargs)
-        self.score = kwargs['score']
+        self.confidence_score = kwargs['confidence_score']
         self.text = kwargs['text']
         self.offset = kwargs['offset']
         self.length = kwargs['length']
@@ -807,33 +832,33 @@ class SentenceSentiment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param text: The sentence text.
+    :type text: str
     :param sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
      "positive", "neutral", "negative".
     :type sentiment: str or ~azure.ai.textanalytics.models.SentenceSentimentValue
-    :param sentence_scores: Required. The sentiment confidence score between 0 and 1 for the
+    :param confidence_scores: Required. The sentiment confidence score between 0 and 1 for the
      sentence for all classes.
-    :type sentence_scores: ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
+    :type confidence_scores: ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
     :param offset: Required. The sentence offset from the start of the document.
     :type offset: int
     :param length: Required. The length of the sentence by Unicode standard.
     :type length: int
-    :param warnings: The warnings generated for the sentence.
-    :type warnings: list[str]
     """
 
     _validation = {
         'sentiment': {'required': True},
-        'sentence_scores': {'required': True},
+        'confidence_scores': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
     }
 
     _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
         'sentiment': {'key': 'sentiment', 'type': 'str'},
-        'sentence_scores': {'key': 'sentenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
+        'confidence_scores': {'key': 'confidenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'warnings': {'key': 'warnings', 'type': '[str]'},
     }
 
     def __init__(
@@ -841,11 +866,11 @@ class SentenceSentiment(msrest.serialization.Model):
         **kwargs
     ):
         super(SentenceSentiment, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
         self.sentiment = kwargs['sentiment']
-        self.sentence_scores = kwargs['sentence_scores']
+        self.confidence_scores = kwargs['confidence_scores']
         self.offset = kwargs['offset']
         self.length = kwargs['length']
-        self.warnings = kwargs.get('warnings', None)
 
 
 class SentimentConfidenceScorePerLabel(msrest.serialization.Model):
@@ -935,8 +960,8 @@ class TextAnalyticsError(msrest.serialization.Model):
     :type message: str
     :param target: Error target.
     :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~azure.ai.textanalytics.models.InnerError
     :param details: Details about specific errors that led to this reported error.
     :type details: list[~azure.ai.textanalytics.models.TextAnalyticsError]
     """
@@ -950,7 +975,7 @@ class TextAnalyticsError(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
         'details': {'key': 'details', 'type': '[TextAnalyticsError]'},
     }
 
@@ -962,5 +987,40 @@ class TextAnalyticsError(msrest.serialization.Model):
         self.code = kwargs['code']
         self.message = kwargs['message']
         self.target = kwargs.get('target', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        self.innererror = kwargs.get('innererror', None)
         self.details = kwargs.get('details', None)
+
+
+class TextAnalyticsWarning(msrest.serialization.Model):
+    """TextAnalyticsWarning.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code. Possible values include: "LongWordsInDocument",
+     "DocumentTruncated".
+    :type code: str or ~azure.ai.textanalytics.models.WarningCodeValue
+    :param message: Required. Warning message.
+    :type message: str
+    :param target_ref: A JSON pointer reference indicating the target object.
+    :type target_ref: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target_ref': {'key': 'targetRef', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TextAnalyticsWarning, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target_ref = kwargs.get('target_ref', None)

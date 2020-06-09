@@ -26,14 +26,15 @@ import os
 
 class AnalyzeSentimentSample(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     def analyze_sentiment(self):
         # [START batch_analyze_sentiment]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+
+        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         documents = [
             "I had the best day of my life.",
             "This was a waste of my time. The speaker put me to sleep.",
@@ -53,8 +54,8 @@ class AnalyzeSentimentSample(object):
                 doc.confidence_scores.neutral,
                 doc.confidence_scores.negative,
             ))
-            for idx, sentence in enumerate(doc.sentences):
-                print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
+            for sentence in doc.sentences:
+                print("Sentence '{}' has sentiment: {}".format(sentence.text, sentence.sentiment))
                 print("Sentence confidence scores: positive={}; neutral={}; negative={}".format(
                     sentence.confidence_scores.positive,
                     sentence.confidence_scores.neutral,

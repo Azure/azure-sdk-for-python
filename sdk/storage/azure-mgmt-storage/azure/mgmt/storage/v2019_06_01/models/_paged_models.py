@@ -64,6 +64,32 @@ class UsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UsagePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
+class ObjectReplicationPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ObjectReplicationPolicy <azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ObjectReplicationPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ObjectReplicationPolicyPaged, self).__init__(*args, **kwargs)
 class EncryptionScopePaged(Paged):
     """
     A paging container for iterating over a list of :class:`EncryptionScope <azure.mgmt.storage.v2019_06_01.models.EncryptionScope>` object
@@ -116,3 +142,29 @@ class FileShareItemPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(FileShareItemPaged, self).__init__(*args, **kwargs)
+class ListQueuePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ListQueue <azure.mgmt.storage.v2019_06_01.models.ListQueue>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ListQueue]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ListQueuePaged, self).__init__(*args, **kwargs)
+class TablePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Table <azure.mgmt.storage.v2019_06_01.models.Table>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Table]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TablePaged, self).__init__(*args, **kwargs)
