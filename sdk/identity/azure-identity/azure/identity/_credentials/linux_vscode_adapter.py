@@ -75,7 +75,7 @@ def _get_refresh_token(service_name, account_name):
     attributes = [attribute1, attribute2]
     pattributes = (_SECRET_SCHEMA_ATTRIBUTE * 2)(*attributes)
     schema = _SECRET_SCHEMA()
-    pschema = _SECRET_SCHEMA(schema)
+    pschema = _PSECRET_SCHEMA(schema)
     ct.memset(pschema, 0, ct.sizeof(schema))
     setattr(schema, "name", _c_str("org.freedesktop.Secret.Generic"))
     setattr(schema, "flags", 2)
