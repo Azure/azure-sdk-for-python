@@ -67,8 +67,6 @@ def _get_refresh_token(service_name, account_name):
         raise NotImplementedError("Not supported on Python 2.7")
 
     try:
-        import platform
-        distro = platform.uname()
         if sys.version_info >= (3, 8):
             raise NotImplementedError("Not supported")
     except Exception:  # pylint: disable=broad-except
