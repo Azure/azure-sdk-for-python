@@ -118,16 +118,9 @@ async def test_distro():
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    if sys.version_info[0] < 3:
-        with pytest.raises(CredentialUnavailableError):
-            credential = VSCodeCredential(_client=mock_client)
-            token = await credential.get_token("scope")
-    elif sys.version_info >= (3, 8):
-        with pytest.raises(NotImplementedError):
-            credential = _get_refresh_token("test", "test")
-        with pytest.raises(CredentialUnavailableError):
-            credential = VSCodeCredential(_client=mock_client)
-            token = await credential.get_token("scope")
-    else:
+    with pytest.raises(NotImplementedError):
+        credential = _get_refresh_token("test", "test")
+    with pytest.raises(CredentialUnavailableError):
         credential = VSCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
+    
