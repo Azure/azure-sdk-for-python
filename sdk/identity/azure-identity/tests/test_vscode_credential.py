@@ -132,6 +132,14 @@ def test_distro():
             with pytest.raises(NotImplementedError):
                 credential = _get_refresh_token("test", "test")
 
+    with mock.patch("platform.uname",
+                    return_value=('Linux', 'deb', '4.19.0-9-cloud-amd64',
+                                  '#1 SMP Debian 4.19.118-2 (2020-04-29)', 'x86_64', '')):
+        if sys.version_info[0] == 3 and sys.version_info[1] == 8:
+            with pytest.raises(CredentialUnavailableError):
+                credential = VSCodeCredential(_client=mock_client)
+                token = credential.get_token("scope")
+
 
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
