@@ -21,7 +21,7 @@ class MicrosoftSupportConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure subscription id
+    :param subscription_id: Azure subscription Id.
     :type subscription_id: str
     :param str base_url: Service URL
     """
