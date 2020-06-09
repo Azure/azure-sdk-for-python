@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"source": "<_io.BufferedReader name=''C:\\\\Users\\\\krpratic\\\\azure-sdk-for-python\\\\sdk\\\\formrecognizer\\\\azure-ai-formrecognizer\\\\tests\\\\conftest.py''>"}'
+    body: 'b''{"source": "<_io.BufferedReader name=\''C:\\\\\\\\Users\\\\\\\\krpratic\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\conftest.py\''>"}'''
     headers:
       Accept:
       - '*/*'
@@ -13,21 +13,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"1001","message":"Specified model not found or not
-        ready, Model Id: xxx"}}'
+      string: '{"error": {"code": "1001", "message": "Specified model not found or
+        not ready, Model Id: xxx"}}'
     headers:
       apim-request-id:
-      - 11c9251a-9820-43ae-8308-0d520579f1c3
+      - 04047a96-0d47-4a2b-a204-05f646556525
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 18:50:35 GMT
+      - Tue, 09 Jun 2020 21:13:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '94'
+      - '9'
     status:
       code: 400
       message: Bad Request

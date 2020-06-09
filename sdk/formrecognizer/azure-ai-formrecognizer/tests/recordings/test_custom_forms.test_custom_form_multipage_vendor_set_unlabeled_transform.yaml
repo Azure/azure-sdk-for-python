@@ -17,25 +17,25 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 1674e73a-e719-4c3f-b265-e8f70ca96b43
+      - 07f0e90f-fcd2-4402-944e-2feff3692ad3
       content-length:
       - '0'
       date:
-      - Fri, 05 Jun 2020 19:00:19 GMT
+      - Tue, 09 Jun 2020 21:12:45 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464
+      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '235'
+      - '60'
     status:
       code: 201
       message: Created
@@ -52,19 +52,92 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464?includeKeys=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "a121cb75-8ff8-4205-b2a2-2f9dc8d70464", "status":
-        "ready", "createdDateTime": "2020-06-05T19:00:19Z", "lastUpdatedDateTime":
-        "2020-06-05T19:00:27Z"}, "keys": {"clusters": {"0": ["Contoso Ltd. Conference
-        will be held on May 28-29, 2020 at the Elm Conference Center in", "Maple City,
-        Massachusetts. The conference has sold out of its 1,500 tickets, with a 400
-        person", "Rates:", "Vendor #:", "Vendor Registration", "below, and attach
-        a check made out to:", "waitlist. Vendor applications are being accepted through
-        Feb 28, 2020. Please fill in the form"], "1": ["Company Name:", "Company Name:",
-        "Contact:", "Contact:", "Preferred Package:", "Preferred Package:", "Special
-        Requests:", "Special Requests:", "Vendor #:", "Vendor #:", "Vendor Details:",
+      string: '{"modelInfo": {"modelId": "9ab680cb-db4e-4b67-9643-121ff5c493ce", "status":
+        "creating", "createdDateTime": "2020-06-09T21:12:45Z", "lastUpdatedDateTime":
+        "2020-06-09T21:12:45Z"}}'
+    headers:
+      apim-request-id:
+      - ee2800c5-b181-481d-b5b9-0078eed45d79
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 09 Jun 2020 21:12:49 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '39'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "9ab680cb-db4e-4b67-9643-121ff5c493ce", "status":
+        "creating", "createdDateTime": "2020-06-09T21:12:45Z", "lastUpdatedDateTime":
+        "2020-06-09T21:12:45Z"}}'
+    headers:
+      apim-request-id:
+      - 0f26a973-2b7b-4600-96ea-00e661f459dc
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 09 Jun 2020 21:12:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '733'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "9ab680cb-db4e-4b67-9643-121ff5c493ce", "status":
+        "ready", "createdDateTime": "2020-06-09T21:12:45Z", "lastUpdatedDateTime":
+        "2020-06-09T21:12:58Z"}, "keys": {"clusters": {"0": ["Contoso Ltd. Conference
+        will be held on May 28-29, 2020 at the Elm Conference Center in", "Included",
+        "Maple City, Massachusetts. The conference has sold out of its 1,500 tickets,
+        with a 400 person", "Package", "Price", "Rates:", "Vendor #:", "Vendor Registration",
+        "below, and attach a check made out to:", "waitlist. Vendor applications are
+        being accepted through Feb 28, 2020. Please fill in the form"], "1": ["Company
+        Name:", "Contact:", "Preferred Package:", "Special Requests:", "Vendor #:",
         "Vendor Details:"]}}, "trainResult": {"trainingDocuments": [{"documentName":
         "multi1.pdf", "pages": 2, "errors": [], "status": "succeeded"}, {"documentName":
         "multi2.pdf", "pages": 2, "errors": [], "status": "succeeded"}, {"documentName":
@@ -74,11 +147,11 @@ interactions:
         []}}'
     headers:
       apim-request-id:
-      - 60cb5e07-2106-4579-9f72-0fb108361729
+      - eec1bc3d-b1cb-454a-b1b9-e052bc4a8b36
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Jun 2020 19:00:29 GMT
+      - Tue, 09 Jun 2020 21:13:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -86,7 +159,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5205'
+      - '34'
     status:
       code: 200
       message: OK
@@ -12592,25 +12665,25 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464/analyze?includeTextDetails=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - eb5ed09f-7071-4961-9e08-6fcb71fb15f6
+      - 4eb8bd2d-406b-4e1a-bd20-628774d1f0aa
       content-length:
       - '0'
       date:
-      - Fri, 05 Jun 2020 19:00:31 GMT
+      - Tue, 09 Jun 2020 21:13:03 GMT
       operation-location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464/analyzeresults/51e77756-7eb8-48b0-bdfe-f228cf644a0f
+      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce/analyzeresults/fb013caa-3a79-4217-b5d5-28355cccb7c1
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '264'
+      - '295'
     status:
       code: 202
       message: Accepted
@@ -12627,26 +12700,26 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464/analyzeresults/51e77756-7eb8-48b0-bdfe-f228cf644a0f
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce/analyzeresults/fb013caa-3a79-4217-b5d5-28355cccb7c1
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-06-05T19:00:31Z", "lastUpdatedDateTime":
-        "2020-06-05T19:00:32Z", "analyzeResult": null}'
+      string: '{"status": "running", "createdDateTime": "2020-06-09T21:13:03Z", "lastUpdatedDateTime":
+        "2020-06-09T21:13:05Z", "analyzeResult": null}'
     headers:
       apim-request-id:
-      - 2dc275c5-14bf-4496-bca1-d6dfcad24aa4
+      - b3953871-ca98-4e65-81d3-4f1bac4fc28b
+      content-length:
+      - '134'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Jun 2020 19:00:36 GMT
+      - Tue, 09 Jun 2020 21:13:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '54'
+      - '38'
     status:
       code: 200
       message: OK
@@ -12663,11 +12736,11 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a121cb75-8ff8-4205-b2a2-2f9dc8d70464/analyzeresults/51e77756-7eb8-48b0-bdfe-f228cf644a0f
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9ab680cb-db4e-4b67-9643-121ff5c493ce/analyzeresults/fb013caa-3a79-4217-b5d5-28355cccb7c1
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-05T19:00:31Z",
-        "lastUpdatedDateTime": "2020-06-05T19:00:37Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:13:03Z",
+        "lastUpdatedDateTime": "2020-06-09T21:13:09Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11.0,
         "unit": "inch", "lines": [{"text": "Vendor #:", "boundingBox": [6.1236, 1.0014,
         7.1167, 1.0014, 7.1167, 1.3056, 6.1236, 1.3056], "words": [{"text": "Vendor",
@@ -12920,21 +12993,21 @@ interactions:
         "boundingBox": [7.1667, 1.0556, 7.5167, 1.0556, 7.5167, 1.2708, 7.1667, 1.2708],
         "words": [{"text": "121", "boundingBox": [7.1667, 1.0556, 7.5167, 1.0556,
         7.5167, 1.2708, 7.1667, 1.2708]}]}, {"text": "Vendor Details:", "boundingBox":
-        [1.0111, 2.1736, 2.3819, 2.1736, 2.3819, 2.3722, 1.0111, 2.3722], "words":
-        [{"text": "Vendor", "boundingBox": [1.0111, 2.1736, 1.6833, 2.1736, 1.6833,
-        2.3722, 1.0111, 2.3722]}, {"text": "Details:", "boundingBox": [1.7222, 2.1736,
-        2.3819, 2.1736, 2.3819, 2.3722, 1.7222, 2.3722]}]}, {"text": "Company Name:",
-        "boundingBox": [1.0028, 2.7611, 2.1597, 2.7611, 2.1597, 2.9278, 1.0028, 2.9278],
-        "words": [{"text": "Company", "boundingBox": [1.0028, 2.7611, 1.6528, 2.7611,
-        1.6528, 2.9278, 1.0028, 2.9278]}, {"text": "Name:", "boundingBox": [1.6833,
-        2.7611, 2.1597, 2.7611, 2.1597, 2.9278, 1.6833, 2.9278]}]}, {"text": "Southridge
-        Video", "boundingBox": [2.1917, 2.7611, 3.3542, 2.7611, 3.3542, 2.9278, 2.1917,
-        2.9278], "words": [{"text": "Southridge", "boundingBox": [2.1917, 2.7611,
-        2.9444, 2.7611, 2.9444, 2.9278, 2.1917, 2.9278]}, {"text": "Video", "boundingBox":
-        [2.9792, 2.7611, 3.3542, 2.7611, 3.3542, 2.9278, 2.9792, 2.9278]}]}, {"text":
-        "Contact:", "boundingBox": [1.0069, 3.0903, 1.5903, 3.0903, 1.5903, 3.2472,
-        1.0069, 3.2472], "words": [{"text": "Contact:", "boundingBox": [1.0069, 3.0903,
-        1.5903, 3.0903, 1.5903, 3.2472, 1.0069, 3.2472]}]}, {"text": "Jamie@southridgevideo.com",
+        [1.0111, 2.1736, 2.375, 2.1736, 2.375, 2.3722, 1.0111, 2.3722], "words": [{"text":
+        "Vendor", "boundingBox": [1.0111, 2.1736, 1.6736, 2.1736, 1.6736, 2.3722,
+        1.0111, 2.3722]}, {"text": "Details:", "boundingBox": [1.7111, 2.1736, 2.375,
+        2.1736, 2.375, 2.3722, 1.7111, 2.3722]}]}, {"text": "Company Name:", "boundingBox":
+        [1.0028, 2.7611, 2.1556, 2.7611, 2.1556, 2.9278, 1.0028, 2.9278], "words":
+        [{"text": "Company", "boundingBox": [1.0028, 2.7611, 1.6639, 2.7611, 1.6639,
+        2.9278, 1.0028, 2.9278]}, {"text": "Name:", "boundingBox": [1.6944, 2.7611,
+        2.1556, 2.7611, 2.1556, 2.9278, 1.6944, 2.9278]}]}, {"text": "Southridge Video",
+        "boundingBox": [2.1917, 2.7611, 3.3542, 2.7611, 3.3542, 2.9278, 2.1917, 2.9278],
+        "words": [{"text": "Southridge", "boundingBox": [2.1917, 2.7611, 2.9444, 2.7611,
+        2.9444, 2.9278, 2.1917, 2.9278]}, {"text": "Video", "boundingBox": [2.975,
+        2.7611, 3.3542, 2.7611, 3.3542, 2.9278, 2.975, 2.9278]}]}, {"text": "Contact:",
+        "boundingBox": [1.0069, 3.0903, 1.5903, 3.0903, 1.5903, 3.2472, 1.0069, 3.2472],
+        "words": [{"text": "Contact:", "boundingBox": [1.0069, 3.0903, 1.5903, 3.0903,
+        1.5903, 3.2472, 1.0069, 3.2472]}]}, {"text": "Jamie@southridgevideo.com",
         "boundingBox": [1.6222, 3.0903, 3.5667, 3.0903, 3.5667, 3.2472, 1.6222, 3.2472],
         "words": [{"text": "Jamie@southridgevideo.com", "boundingBox": [1.6222, 3.0903,
         3.5667, 3.0903, 3.5667, 3.2472, 1.6222, 3.2472]}]}, {"text": "Preferred Package:",
@@ -12942,8 +13015,8 @@ interactions:
         "words": [{"text": "Preferred", "boundingBox": [1.0028, 3.4236, 1.6667, 3.4236,
         1.6667, 3.5806, 1.0028, 3.5806]}, {"text": "Package:", "boundingBox": [1.6972,
         3.4236, 2.3194, 3.4236, 2.3194, 3.5806, 1.6972, 3.5806]}]}, {"text": "Gold",
-        "boundingBox": [2.35, 3.4236, 2.6833, 3.4236, 2.6833, 3.5806, 2.35, 3.5806],
-        "words": [{"text": "Gold", "boundingBox": [2.35, 3.4236, 2.6833, 3.4236, 2.6833,
+        "boundingBox": [2.35, 3.4236, 2.6875, 3.4236, 2.6875, 3.5806, 2.35, 3.5806],
+        "words": [{"text": "Gold", "boundingBox": [2.35, 3.4236, 2.6875, 3.4236, 2.6875,
         3.5806, 2.35, 3.5806]}]}, {"text": "Special Requests:", "boundingBox": [1.0167,
         3.7611, 2.2194, 3.7611, 2.2194, 3.9139, 1.0167, 3.9139], "words": [{"text":
         "Special", "boundingBox": [1.0167, 3.7611, 1.4972, 3.7611, 1.4972, 3.9139,
@@ -13092,7 +13165,7 @@ interactions:
         "#/readResults/1/lines/0/words/1"]}, "value": {"text": "121", "boundingBox":
         [7.1667, 1.0556, 7.5167, 1.0556, 7.5167, 1.2708, 7.1667, 1.2708], "elements":
         ["#/readResults/1/lines/1/words/0"]}, "confidence": 1.0}, {"key": {"text":
-        "Company Name:", "boundingBox": [1.0028, 2.7611, 2.1597, 2.7611, 2.1597, 2.9278,
+        "Company Name:", "boundingBox": [1.0028, 2.7611, 2.1556, 2.7611, 2.1556, 2.9278,
         1.0028, 2.9278], "elements": ["#/readResults/1/lines/3/words/0", "#/readResults/1/lines/3/words/1"]},
         "value": {"text": "Southridge Video", "boundingBox": [2.1917, 2.7611, 3.3542,
         2.7611, 3.3542, 2.9278, 2.1917, 2.9278], "elements": ["#/readResults/1/lines/4/words/0",
@@ -13104,7 +13177,7 @@ interactions:
         "confidence": 0.53}, {"key": {"text": "Preferred Package:", "boundingBox":
         [1.0028, 3.4236, 2.3194, 3.4236, 2.3194, 3.5806, 1.0028, 3.5806], "elements":
         ["#/readResults/1/lines/7/words/0", "#/readResults/1/lines/7/words/1"]}, "value":
-        {"text": "Gold", "boundingBox": [2.35, 3.4236, 2.6833, 3.4236, 2.6833, 3.5806,
+        {"text": "Gold", "boundingBox": [2.35, 3.4236, 2.6875, 3.4236, 2.6875, 3.5806,
         2.35, 3.5806], "elements": ["#/readResults/1/lines/8/words/0"]}, "confidence":
         0.53}, {"key": {"text": "Special Requests:", "boundingBox": [1.0167, 3.7611,
         2.2194, 3.7611, 2.2194, 3.9139, 1.0167, 3.9139], "elements": ["#/readResults/1/lines/9/words/0",
@@ -13112,25 +13185,25 @@ interactions:
         [2.25, 3.7611, 2.5111, 3.7611, 2.5111, 3.9139, 2.25, 3.9139], "elements":
         ["#/readResults/1/lines/10/words/0"]}, "confidence": 0.53}, {"key": {"text":
         "__Tokens__1", "boundingBox": null, "elements": null}, "value": {"text": "Vendor
-        Details:", "boundingBox": [1.0111, 2.1736, 2.3819, 2.1736, 2.3819, 2.3722,
-        1.0111, 2.3722], "elements": ["#/readResults/1/lines/2/words/0", "#/readResults/1/lines/2/words/1"]},
+        Details:", "boundingBox": [1.0111, 2.1736, 2.375, 2.1736, 2.375, 2.3722, 1.0111,
+        2.3722], "elements": ["#/readResults/1/lines/2/words/0", "#/readResults/1/lines/2/words/1"]},
         "confidence": 1.0}], "tables": [], "clusterId": 1}], "documentResults": [],
         "errors": []}}'
     headers:
       apim-request-id:
-      - ddf8a5d1-0f6c-47b7-9c0a-79a65ad1006e
+      - db60f348-2580-4a5a-984e-bd2e247b692f
+      content-length:
+      - '36398'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Jun 2020 19:00:46 GMT
+      - Tue, 09 Jun 2020 21:13:13 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5214'
+      - '68'
     status:
       code: 200
       message: OK
