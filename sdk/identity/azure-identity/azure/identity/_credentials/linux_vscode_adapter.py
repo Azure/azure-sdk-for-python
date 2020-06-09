@@ -15,11 +15,11 @@ try:
     _libsecret = ct.cdll.LoadLibrary("libsecret-1.so.0")
     _libsecret.secret_schema_new.argtypes = [
         ct.c_char_p,
-        ct.c_uint,
+        ct.c_int,
         ct.c_char_p,
-        ct.c_uint,
+        ct.c_int,
         ct.c_char_p,
-        ct.c_uint,
+        ct.c_int,
         ct.c_void_p,
     ]
     _libsecret.secret_password_lookup_sync.argtypes = [
@@ -57,16 +57,6 @@ def _get_user_settings():
 def _get_refresh_token(service_name, account_name):
     if not _libsecret:
         return None
-
-    # _libsecret.secret_password_lookup_sync raises segment fault on Python 2.7
-    # temporarily disable it on 2.7
-    import sys
-
-    if sys.version_info[0] < 3:
-        raise NotImplementedError("Not supported on Python 2.7")
-
-    if sys.version_info >= (3, 8):
-        raise NotImplementedError("Not supported")
 
     err = ct.c_int()
     schema = _libsecret.secret_schema_new(
