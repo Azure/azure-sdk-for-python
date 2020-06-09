@@ -49,9 +49,11 @@ To create a client object, you will need the cognitive services or text analytic
 your resource and a `credential` that allows you access:
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client  = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+credential = AzureKeyCredential("<api_key>")
+text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
 ```
 
 Note that if you create a [custom subdomain][cognitive_custom_subdomain]
@@ -117,14 +119,11 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 
 Use the returned token credential to authenticate the client:
 ```python
-from azure.identity import DefaultAzureCredential
 from azure.ai.textanalytics import TextAnalyticsClient
-token_credential = DefaultAzureCredential()
+from azure.identity import DefaultAzureCredential
 
-text_analytics_client = TextAnalyticsClient(
-    endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
-    credential=token_credential
-)
+credential = DefaultAzureCredential()
+text_analytics_client = TextAnalyticsClient(endpoint="https://<my-custom-subdomain>.api.cognitive.microsoft.com/", credential=credential)
 ```
 
 ## Key concepts
