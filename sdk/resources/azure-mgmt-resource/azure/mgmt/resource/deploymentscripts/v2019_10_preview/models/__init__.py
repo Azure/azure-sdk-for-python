@@ -15,8 +15,8 @@ try:
     from ._models_py3 import AzureResourceBase
     from ._models_py3 import ContainerConfiguration
     from ._models_py3 import DeploymentScript
-    from ._models_py3 import DeploymentScriptUpdateParameter
     from ._models_py3 import DeploymentScriptsError, DeploymentScriptsErrorException
+    from ._models_py3 import DeploymentScriptUpdateParameter
     from ._models_py3 import EnvironmentVariable
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
@@ -24,6 +24,7 @@ try:
     from ._models_py3 import ScriptLog
     from ._models_py3 import ScriptLogsList
     from ._models_py3 import ScriptStatus
+    from ._models_py3 import StorageAccountConfiguration
     from ._models_py3 import SystemData
     from ._models_py3 import UserAssignedIdentity
 except (SyntaxError, ImportError):
@@ -32,8 +33,8 @@ except (SyntaxError, ImportError):
     from ._models import AzureResourceBase
     from ._models import ContainerConfiguration
     from ._models import DeploymentScript
-    from ._models import DeploymentScriptUpdateParameter
     from ._models import DeploymentScriptsError, DeploymentScriptsErrorException
+    from ._models import DeploymentScriptUpdateParameter
     from ._models import EnvironmentVariable
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
@@ -41,6 +42,7 @@ except (SyntaxError, ImportError):
     from ._models import ScriptLog
     from ._models import ScriptLogsList
     from ._models import ScriptStatus
+    from ._models import StorageAccountConfiguration
     from ._models import SystemData
     from ._models import UserAssignedIdentity
 from ._paged_models import DeploymentScriptPaged
@@ -57,8 +59,8 @@ __all__ = [
     'AzureResourceBase',
     'ContainerConfiguration',
     'DeploymentScript',
-    'DeploymentScriptUpdateParameter',
     'DeploymentScriptsError', 'DeploymentScriptsErrorException',
+    'DeploymentScriptUpdateParameter',
     'EnvironmentVariable',
     'ErrorAdditionalInfo',
     'ErrorResponse',
@@ -66,6 +68,7 @@ __all__ = [
     'ScriptLog',
     'ScriptLogsList',
     'ScriptStatus',
+    'StorageAccountConfiguration',
     'SystemData',
     'UserAssignedIdentity',
     'DeploymentScriptPaged',

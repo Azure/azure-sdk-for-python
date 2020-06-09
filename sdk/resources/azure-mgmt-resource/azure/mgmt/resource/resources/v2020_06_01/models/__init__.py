@@ -56,6 +56,7 @@ try:
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import ScopedDeployment
     from ._models_py3 import Sku
+    from ._models_py3 import StatusMessage
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
@@ -116,6 +117,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourcesMoveInfo
     from ._models import ScopedDeployment
     from ._models import Sku
+    from ._models import StatusMessage
     from ._models import SubResource
     from ._models import TagCount
     from ._models import TagDetails
@@ -142,6 +144,7 @@ from ._resource_management_client_enums import (
     WhatIfResultFormat,
     AliasPatternType,
     AliasType,
+    ProvisioningState,
     ResourceIdentityType,
     ProvisioningOperation,
     PropertyChangeType,
@@ -195,6 +198,7 @@ __all__ = [
     'ResourcesMoveInfo',
     'ScopedDeployment',
     'Sku',
+    'StatusMessage',
     'SubResource',
     'TagCount',
     'TagDetails',
@@ -220,6 +224,7 @@ __all__ = [
     'WhatIfResultFormat',
     'AliasPatternType',
     'AliasType',
+    'ProvisioningState',
     'ResourceIdentityType',
     'ProvisioningOperation',
     'PropertyChangeType',
