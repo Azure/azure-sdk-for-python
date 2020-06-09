@@ -1,3 +1,11 @@
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+      ref: refs/tags/azure-sdk-tools_20200514.1
+
 parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
