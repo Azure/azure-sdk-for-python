@@ -56,12 +56,9 @@ class VSCodeCredential(AsyncCredentialBase):
             return token
 
         if not self._refresh_token:
-            try:
-                self._refresh_token = get_credentials()
-                if not self._refresh_token:
-                    raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
-            except NotImplementedError:  # pylint:disable=try-except-raise
-                raise CredentialUnavailableError(message="Not supported")
+            self._refresh_token = get_credentials()
+            if not self._refresh_token:
+                raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
 
         token = await self._client.obtain_token_by_refresh_token(scopes, self._refresh_token, **kwargs)
         return token
