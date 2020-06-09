@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"disknamex66bb1115\",\r\n  \"location\": \"eastus\"\
@@ -72,7 +72,7 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-19T05:15:45.7498474+00:00\",\r\n  \"\
         endTime\": \"2020-05-19T05:15:45.9217294+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"disknamex66bb1115\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -125,10 +125,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"disknamex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+      string: "{\r\n  \"name\": \"disknamex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -170,7 +170,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"creationData": {"createOption":
-      "Copy", "sourceUri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115"}}}'''
+      "Copy", "sourceUri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115"}}}'''
     headers:
       Accept:
       - application/json
@@ -185,11 +185,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"creationData\"\
-        : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceUri\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceUri\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\"\
         : true\r\n  }\r\n}"
@@ -242,11 +242,11 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-19T05:15:50.0311507+00:00\",\r\n  \"\
         endTime\": \"2020-05-19T05:15:50.6561269+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"snapshotx66bb1115\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -296,14 +296,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -342,7 +342,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"storageProfile": {"osDisk": {"snapshot":
-      {"id": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115"},
+      {"id": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115"},
       "osType": "Linux", "osState": "Generalized"}, "zoneResilient": false}, "hyperVGeneration":
       "V1"}}'''
     headers:
@@ -359,14 +359,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115\"\
+      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
         : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
-        ,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        ,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
         : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
         : false\r\n    },\r\n    \"provisioningState\": \"Creating\",\r\n    \"hyperVGeneration\"\
@@ -461,15 +461,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115\"\
+      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
         : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
         ,\r\n        \"diskSizeGB\": 200,\r\n        \"snapshot\": {\r\n         \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
         : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
         : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
@@ -515,14 +515,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -571,15 +571,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115\"\
+      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
         : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
         ,\r\n        \"diskSizeGB\": 200,\r\n        \"snapshot\": {\r\n         \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
         : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
         : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
@@ -629,15 +629,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115\"\
+      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"storageProfile\": {\r\n      \"osDisk\": {\r\n        \"osType\"\
         : \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n        \"diskSizeGB\"\
-        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
         : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
         : false\r\n    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"hyperVGeneration\"\
@@ -736,15 +736,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115\"\
+      string: "{\r\n  \"name\": \"imagex66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"storageProfile\": {\r\n      \"osDisk\": {\r\n        \"osType\"\
         : \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n        \"diskSizeGB\"\
-        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
         : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
         : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
@@ -794,13 +794,13 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"location\": \"eastus\",\r\n  \"sku\": {\r\n    \"name\": \"\
         Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"creationData\": {\r\n      \"createOption\": \"Copy\",\r\n  \
-        \    \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        \    \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"provisioningState\": \"Updating\"\
         ,\r\n    \"isArmResource\": true,\r\n    \"faultDomain\": 0\r\n  }\r\n}"
@@ -853,11 +853,11 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-19T05:17:02.5351176+00:00\",\r\n  \"\
         endTime\": \"2020-05-19T05:17:02.6601061+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"snapshotx66bb1115\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -907,14 +907,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
+      string: "{\r\n  \"name\": \"snapshotx66bb1115\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamex66bb1115\"\
         ,\r\n      \"sourceUniqueId\": \"ab12f51d-9cdd-4d30-b672-a11698d33fc8\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -967,7 +967,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115/beginGetAccess?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115/beginGetAccess?api-version=2019-11-01
   response:
     body:
       string: ''
@@ -1108,7 +1108,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115/endGetAccess?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115/endGetAccess?api-version=2019-11-01
   response:
     body:
       string: ''
@@ -1241,7 +1241,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/images/imagex66bb1115?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -1337,7 +1337,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_shot66bb1115/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotx66bb1115?api-version=2019-11-01
   response:
     body:
       string: ''

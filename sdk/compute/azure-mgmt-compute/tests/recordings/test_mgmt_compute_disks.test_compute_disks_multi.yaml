@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"location\": \"eastus\"\
@@ -72,7 +72,7 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-19T05:09:40.123148+00:00\",\r\n  \"\
         endTime\": \"2020-05-19T05:09:40.2481494+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"disknamexe97813ff\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -123,10 +123,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
+      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -176,10 +176,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
+      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -233,7 +233,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"location\": \"eastus\"\
@@ -290,7 +290,7 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-19T05:09:43.2325219+00:00\",\r\n  \"\
         endTime\": \"2020-05-19T05:09:43.3419069+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"disknamexe97813ff\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -341,10 +341,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
+      string: "{\r\n  \"name\": \"disknamexe97813ff\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -398,7 +398,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff/beginGetAccess?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff/beginGetAccess?api-version=2019-03-01
   response:
     body:
       string: ''
@@ -539,7 +539,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff/endGetAccess?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff/endGetAccess?api-version=2019-03-01
   response:
     body:
       string: ''
@@ -672,7 +672,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_disks_test_compute_disks_multie97813ff/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexe97813ff?api-version=2019-03-01
   response:
     body:
       string: ''

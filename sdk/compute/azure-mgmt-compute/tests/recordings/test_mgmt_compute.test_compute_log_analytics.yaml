@@ -21,7 +21,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_compute_log_analytics9b271243/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -67,7 +67,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/a21371b1-8837-494e-b65c-f7c6c4d667db?monitor=true&api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_compute_log_analytics9b271243/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243","name":"accountxyz9b271243","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-18T15:03:48.1189336Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-18T15:03:48.1189336Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-18T15:03:48.0252078Z","primaryEndpoints":{"dfs":"https://accountxyz9b271243.dfs.core.windows.net/","web":"https://accountxyz9b271243.z13.web.core.windows.net/","blob":"https://accountxyz9b271243.blob.core.windows.net/","queue":"https://accountxyz9b271243.queue.core.windows.net/","table":"https://accountxyz9b271243.table.core.windows.net/","file":"https://accountxyz9b271243.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243","name":"accountxyz9b271243","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-18T15:03:48.1189336Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-05-18T15:03:48.1189336Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-05-18T15:03:48.0252078Z","primaryEndpoints":{"dfs":"https://accountxyz9b271243.dfs.core.windows.net/","web":"https://accountxyz9b271243.z13.web.core.windows.net/","blob":"https://accountxyz9b271243.blob.core.windows.net/","queue":"https://accountxyz9b271243.queue.core.windows.net/","table":"https://accountxyz9b271243.table.core.windows.net/","file":"https://accountxyz9b271243.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -111,7 +111,7 @@ interactions:
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_compute_log_analytics9b271243/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243/listKeys?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243/listKeys?api-version=2019-06-01
   response:
     body:
       string: '{"keys":[{"keyName":"key1","value":"qgNmRis/6xMtWLv1dgahhRl8u99KXX2h3LnvH7YdNR2auSQooBdSHjgvOdGPink7RoeoYAYDAeTX3UNi5BqP7A==","permissions":"FULL"},{"keyName":"key2","value":"FyxANqI0H3CVEL6RvEQnOz1PEq30FmD+YX3q2bcnjDWwF4mn33O1OwOdRha7k00QjpzEvd4tF4sEebcUV4d/dQ==","permissions":"FULL"}]}'

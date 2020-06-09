@@ -13,7 +13,7 @@
 import unittest
 
 import azure.mgmt.compute
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -25,7 +25,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             azure.mgmt.compute.ComputeManagementClient
         )
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_dedicated_hosts(self, resource_group):
         HOST_GROUP_NAME = self.get_resource_name("hostgroup")
         HOST_NAME = self.get_resource_name("hostname")

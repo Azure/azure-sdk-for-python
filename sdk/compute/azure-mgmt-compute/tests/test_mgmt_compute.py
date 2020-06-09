@@ -19,7 +19,7 @@ import unittest
 
 import azure.mgmt.compute
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -107,7 +107,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         else:
             return "fakeuri"
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
 
         # List operations (TODO: need swagger file)
@@ -119,7 +119,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Lists all available Resource SKUs[get]
         result = self.mgmt_client.resource_skus.list()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_availability_sets(self, resource_group):
         AVAILABILITY_SET_NAME = self.get_resource_name("availabilitysets")
 
@@ -153,7 +153,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete availability sets (TODO: need a swagger file)
         resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_proximity_placement_groups(self, resource_group):
         PROXIMITY_PLACEMENT_GROUP_NAME = self.get_resource_name("proximiityplacementgroups")
         
@@ -183,7 +183,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete a proximity placement group.[delete]
         result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_log_analytics(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = self.get_resource_name("accountxyz")

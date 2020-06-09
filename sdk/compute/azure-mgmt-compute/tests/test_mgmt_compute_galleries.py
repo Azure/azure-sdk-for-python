@@ -16,7 +16,7 @@
 import unittest
 
 import azure.mgmt.compute
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -68,7 +68,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.snapshots.begin_delete(group_name, snapshot_name)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_galleries(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name

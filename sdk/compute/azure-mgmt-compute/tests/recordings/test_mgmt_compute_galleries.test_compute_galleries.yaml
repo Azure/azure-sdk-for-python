@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"diskname10bb14a9\",\r\n  \"location\": \"eastus\"\
@@ -72,7 +72,7 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-18T15:13:53.5083598+00:00\",\r\n  \"\
         endTime\": \"2020-05-18T15:13:53.648954+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"diskname10bb14a9\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -125,10 +125,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"diskname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
+      string: "{\r\n  \"name\": \"diskname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -170,7 +170,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"creationData": {"createOption":
-      "Copy", "sourceUri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9"}}}'''
+      "Copy", "sourceUri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9"}}}'''
     headers:
       Accept:
       - application/json
@@ -185,11 +185,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"creationData\"\
-        : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceUri\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
+        : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceUri\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
         ,\r\n      \"sourceUniqueId\": \"817f7cf6-bb15-405f-bccc-f458b370afd6\"\r\n\
         \    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\"\
         : true\r\n  }\r\n}"
@@ -242,11 +242,11 @@ interactions:
       string: "{\r\n  \"startTime\": \"2020-05-18T15:13:57.8991053+00:00\",\r\n  \"\
         endTime\": \"2020-05-18T15:13:58.4147095+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"snapshotname10bb14a9\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
         ,\r\n      \"sourceUniqueId\": \"817f7cf6-bb15-405f-bccc-f458b370afd6\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -296,14 +296,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"snapshotname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+      string: "{\r\n  \"name\": \"snapshotname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/diskname10bb14a9\"\
         ,\r\n      \"sourceUniqueId\": \"817f7cf6-bb15-405f-bccc-f458b370afd6\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
@@ -357,10 +357,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
+      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
         ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME10BB14A9\"\
@@ -453,10 +453,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
+      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
         ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME10BB14A9\"\
@@ -508,10 +508,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
+      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
         ,\r\n    \"description\": \"This is the gallery application description.\"\
@@ -555,10 +555,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
+      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
         ,\r\n    \"description\": \"This is the gallery application description.\"\
@@ -610,10 +610,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
+      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
         \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
@@ -708,10 +708,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
+      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
         \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
@@ -751,7 +751,7 @@ interactions:
     body: 'b''{"location": "eastus", "properties": {"publishingProfile": {"targetRegions":
       [{"name": "East US", "regionalReplicaCount": 2, "storageAccountType": "Standard_ZRS"}]},
       "storageProfile": {"osDiskImage": {"hostCaching": "ReadOnly", "source": {"id":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9"}}}}}'''
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9"}}}}}'''
     headers:
       Accept:
       - application/json
@@ -766,10 +766,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
         : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
@@ -778,7 +778,7 @@ interactions:
         \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-05-18T15:15:39.6720797+00:00\"\
         ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
         : {\r\n      \"osDiskImage\": {\r\n        \"hostCaching\": \"ReadOnly\",\r\
-        \n        \"source\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        \n        \"source\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Creating\"\
         \r\n  }\r\n}"
     headers:
@@ -1715,10 +1715,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
         : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
@@ -1728,7 +1728,7 @@ interactions:
         ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
         : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
         hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -1772,10 +1772,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?$expand=ReplicationStatus&api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?$expand=ReplicationStatus&api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
         : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
@@ -1785,7 +1785,7 @@ interactions:
         ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
         : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
         hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"replicationStatus\": {\r\n      \"aggregatedState\": \"Completed\"\
         ,\r\n      \"summary\": [\r\n        {\r\n          \"region\": \"eastus\"\
@@ -1832,10 +1832,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
+      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
         \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
@@ -1883,10 +1883,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
+      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
         ,\r\n    \"description\": \"This is the gallery application description.\"\
@@ -1932,10 +1932,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
+      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
         ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME10BB14A9\"\
@@ -1972,7 +1972,7 @@ interactions:
 - request:
     body: 'b''{"properties": {"publishingProfile": {"targetRegions": [{"name": "East
       US", "regionalReplicaCount": 2, "storageAccountType": "Standard_ZRS"}]}, "storageProfile":
-      {"osDiskImage": {"hostCaching": "ReadOnly", "source": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9"}}}}}'''
+      {"osDiskImage": {"hostCaching": "ReadOnly", "source": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9"}}}}}'''
     headers:
       Accept:
       - application/json
@@ -1987,10 +1987,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
         : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
@@ -2000,7 +2000,7 @@ interactions:
         ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
         : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
         hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Updating\"\
         \r\n  }\r\n}"
     headers:
@@ -2189,10 +2189,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
         : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
@@ -2202,7 +2202,7 @@ interactions:
         ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
         : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
         hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9\"\
         \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -2251,10 +2251,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
+      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
         \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
@@ -2353,10 +2353,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
+      string: "{\r\n  \"name\": \"imagex10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
         \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
@@ -2410,10 +2410,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
+      string: "{\r\n  \"name\": \"applicationname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"tag1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"supportedOSType\": \"Windows\",\r\n    \"description\": \"This\
@@ -2466,10 +2466,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
+      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
         ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME10BB14A9\"\
@@ -2566,10 +2566,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
+      string: "{\r\n  \"name\": \"galleryname10bb14a9\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9\"\
         ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
         ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME10BB14A9\"\
@@ -2617,7 +2617,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9/versions/1.0.0?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -2805,7 +2805,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/applications/applicationname10bb14a9?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -2848,7 +2848,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9/endGetAccess?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9/endGetAccess?api-version=2019-11-01
   response:
     body:
       string: ''
@@ -2981,7 +2981,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/snapshots/snapshotname10bb14a9?api-version=2019-11-01
   response:
     body:
       string: ''
@@ -3075,7 +3075,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9/images/imagex10bb14a9?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3169,7 +3169,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/galleries/galleryname10bb14a9?api-version=2019-12-01
   response:
     body:
       string: ''

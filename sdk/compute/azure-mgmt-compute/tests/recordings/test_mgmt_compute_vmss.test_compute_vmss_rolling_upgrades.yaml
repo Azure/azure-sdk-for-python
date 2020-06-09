@@ -19,10 +19,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networknamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db\"\
+      string: "{\r\n  \"name\": \"networknamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db\"\
         ,\r\n  \"etag\": \"W/\\\"2432a962-a464-4fda-95bb-ca827c8a4c7e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -121,10 +121,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networknamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db\"\
+      string: "{\r\n  \"name\": \"networknamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db\"\
         ,\r\n  \"etag\": \"W/\\\"bfa0e8c0-3c28-48be-8ece-960b48212c18\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -183,10 +183,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetnamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
+      string: "{\r\n  \"name\": \"subnetnamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
         ,\r\n  \"etag\": \"W/\\\"7dd008f4-9bd7-4b98-91cc-a347e9a165a7\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -280,10 +280,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetnamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
+      string: "{\r\n  \"name\": \"subnetnamexb4bb17db\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
         ,\r\n  \"etag\": \"W/\\\"6e54b4db-8221-422f-be19-50d5587b62e7\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -331,7 +331,7 @@ interactions:
       "createOption": "FromImage", "diskSizeGB": 512, "managedDisk": {"storageAccountType":
       "Standard_LRS"}}}, "networkProfile": {"networkInterfaceConfigurations": [{"name":
       "testPC", "properties": {"primary": true, "ipConfigurations": [{"name": "testPC",
-      "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db"}}}]}}]}},
+      "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db"}}}]}}]}},
       "overprovision": true}}'''
     headers:
       Accept:
@@ -347,11 +347,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachinescalesetb4bb17db\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachineScaleSets\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"sku\": {\r\n    \"name\": \"Standard_D1_v2\",\r\n   \
         \ \"tier\": \"Standard\",\r\n    \"capacity\": 1\r\n  },\r\n  \"properties\"\
@@ -375,7 +375,7 @@ interactions:
         networkProfile\": {\"networkInterfaceConfigurations\":[{\"name\":\"testPC\"\
         ,\"properties\":{\"primary\":true,\"enableAcceleratedNetworking\":false,\"\
         dnsSettings\":{\"dnsServers\":[]},\"enableIPForwarding\":false,\"ipConfigurations\"\
-        :[{\"name\":\"testPC\",\"properties\":{\"subnet\":{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
+        :[{\"name\":\"testPC\",\"properties\":{\"subnet\":{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
         },\"privateIPAddressVersion\":\"IPv4\"}}]}}]},\r\n      \"extensionProfile\"\
         : {\r\n        \"extensions\": [\r\n          {\r\n            \"name\": \"\
         Microsoft.Azure.Geneva.GenevaMonitoring\",\r\n            \"properties\":\
@@ -854,11 +854,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachinescalesetb4bb17db\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachineScaleSets\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"sku\": {\r\n    \"name\": \"Standard_D1_v2\",\r\n   \
         \ \"tier\": \"Standard\",\r\n    \"capacity\": 1\r\n  },\r\n  \"properties\"\
@@ -882,7 +882,7 @@ interactions:
         networkProfile\": {\"networkInterfaceConfigurations\":[{\"name\":\"testPC\"\
         ,\"properties\":{\"primary\":true,\"enableAcceleratedNetworking\":false,\"\
         dnsSettings\":{\"dnsServers\":[]},\"enableIPForwarding\":false,\"ipConfigurations\"\
-        :[{\"name\":\"testPC\",\"properties\":{\"subnet\":{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
+        :[{\"name\":\"testPC\",\"properties\":{\"subnet\":{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexb4bb17db/subnets/subnetnamexb4bb17db\"\
         },\"privateIPAddressVersion\":\"IPv4\"}}]}}]},\r\n      \"extensionProfile\"\
         : {\r\n        \"extensions\": [\r\n          {\r\n            \"name\": \"\
         Microsoft.Azure.Geneva.GenevaMonitoring\",\r\n            \"properties\":\
@@ -936,7 +936,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/extensionRollingUpgrade?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/extensionRollingUpgrade?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -2528,7 +2528,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/osRollingUpgrade?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/osRollingUpgrade?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -2575,7 +2575,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/rollingUpgrades/latest?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/rollingUpgrades/latest?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"type\": \"Microsoft.Compute/virtualMachineScaleSets/rollingUpgrades\"\
@@ -2631,7 +2631,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/rollingUpgrades/cancel?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db/rollingUpgrades/cancel?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -2852,7 +2852,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_vmss_test_compute_vmss_rolling_upgradesb4bb17db/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachineScaleSets/virtualmachinescalesetb4bb17db?api-version=2019-12-01
   response:
     body:
       string: ''

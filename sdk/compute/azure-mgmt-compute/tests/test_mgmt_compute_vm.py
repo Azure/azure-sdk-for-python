@@ -18,7 +18,7 @@ import unittest
 
 import azure.mgmt.compute
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -81,7 +81,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
 
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -291,7 +291,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm_2(self, resource_group):
         
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -386,7 +386,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm_image(self, resource_group):
         PUBLISHER_NAME = "MicrosoftWindowsServer"
         OFFER = "WindowsServer"
@@ -408,7 +408,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List Virtual Machine image skus (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_images.list_skus(AZURE_LOCATION, PUBLISHER_NAME, OFFER)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm_extension_image(self, resource_group):
         EXTENSION_PUBLISHER_NAME = "Microsoft.Compute"
         EXTENSION_IMAGE_TYPE = "VMAccessAgent"

@@ -19,10 +19,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networknamexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234\"\
+      string: "{\r\n  \"name\": \"networknamexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"83e156c5-41bd-4078-846e-48c36618870e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -213,10 +213,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networknamexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234\"\
+      string: "{\r\n  \"name\": \"networknamexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"176f14c9-ea2a-4933-9bd4-f66c0b30c98f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -275,10 +275,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetxxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
+      string: "{\r\n  \"name\": \"subnetxxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"4a445e90-1036-4d61-a0c9-883bd5e0288a\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -372,10 +372,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetxxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
+      string: "{\r\n  \"name\": \"subnetxxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"ed5693e2-2fc9-4ac0-bdcb-78aa759bc844\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -414,7 +414,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
-      {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234"}},
+      {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234"}},
       "name": "MyIpConfig"}]}}'''
     headers:
       Accept:
@@ -433,20 +433,20 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+      string: "{\r\n  \"name\": \"interfacexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"61a769b9-17cf-4823-8055-672efcfc6846\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"7d3e32e6-c37c-476c-af4a-67480fb6f077\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"61a769b9-17cf-4823-8055-672efcfc6846\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -544,20 +544,20 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+      string: "{\r\n  \"name\": \"interfacexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\r\n  \"etag\": \"W/\\\"61a769b9-17cf-4823-8055-672efcfc6846\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"7d3e32e6-c37c-476c-af4a-67480fb6f077\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"61a769b9-17cf-4823-8055-672efcfc6846\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networknamexxx9a731234/subnets/subnetxxx9a731234\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -605,7 +605,7 @@ interactions:
       0, "createOption": "Empty", "diskSizeGB": 1023}, {"lun": 1, "createOption":
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
-      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234",
+      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234",
       "properties": {"primary": true}}]}}}'''
     headers:
       Accept:
@@ -617,10 +617,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -646,7 +646,7 @@ interactions:
         : {\r\n        \"provisionVMAgent\": true,\r\n        \"enableAutomaticUpdates\"\
         : true\r\n      },\r\n      \"secrets\": [],\r\n      \"allowExtensionOperations\"\
         : true,\r\n      \"requireGuestProvisionSignal\": true\r\n    },\r\n    \"\
-        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Creating\"\
         \r\n  }\r\n}"
     headers:
@@ -666,7 +666,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -760,10 +760,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -775,18 +775,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -794,7 +794,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -813,7 +813,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
 - request:
     body: '{"location": "eastus", "properties": {"publisher": "Microsoft.Azure.NetworkWatcher",
       "type": "NetworkWatcherAgentWindows", "typeHandlerVersion": "1.4", "autoUpgradeMinorVersion":
@@ -828,11 +828,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionxxx9a731234\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Creating\",\r\n    \"publisher\":\
@@ -855,7 +855,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -949,11 +949,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionxxx9a731234\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -975,7 +975,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -984,7 +984,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/instanceView?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/instanceView?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"computerName\": \"myVM\",\r\n  \"osName\": \"Windows Server\
@@ -1042,7 +1042,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/instanceView?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/instanceView?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -1051,11 +1051,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionxxx9a731234\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -1077,7 +1077,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -1125,7 +1125,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/vmSizes?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/vmSizes?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Standard_A0\",\r\n\
@@ -1573,7 +1573,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/vmSizes?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/vmSizes?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -1582,11 +1582,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"virtualmachineextensionxxx9a731234\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n      \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n\
         \      \"location\": \"eastus\",\r\n      \"properties\": {\r\n        \"\
         autoUpgradeMinorVersion\": true,\r\n        \"provisioningState\": \"Succeeded\"\
@@ -1609,7 +1609,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -2748,10 +2748,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?$expand=instanceView&api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?$expand=instanceView&api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -2763,18 +2763,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -2782,7 +2782,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"instanceView\": {\r\n      \"computerName\": \"myVM\",\r\n    \
         \  \"osName\": \"Windows Server 2016 Datacenter\",\r\n      \"osVersion\"\
@@ -2832,7 +2832,7 @@ interactions:
         ,\r\n          \"level\": \"Info\",\r\n          \"displayStatus\": \"VM running\"\
         \r\n        }\r\n      ]\r\n    }\r\n  },\r\n  \"resources\": [\r\n    {\r\
         \n      \"name\": \"virtualmachineextensionxxx9a731234\",\r\n      \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n      \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n\
         \      \"location\": \"eastus\",\r\n      \"properties\": {\r\n        \"\
         autoUpgradeMinorVersion\": true,\r\n        \"provisioningState\": \"Succeeded\"\
@@ -2855,7 +2855,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?$expand=instanceView&api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?$expand=instanceView&api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -2864,11 +2864,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"virtualmachinexxx9a731234\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n      \"type\": \"Microsoft.Compute/virtualMachines\",\r\n      \"location\"\
         : \"eastus\",\r\n      \"properties\": {\r\n        \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n        \"hardwareProfile\": {\r\n          \"vmSize\": \"Standard_D2_v2\"\
@@ -2880,19 +2880,19 @@ interactions:
         \            \"osType\": \"Windows\",\r\n            \"name\": \"myVMosdisk\"\
         ,\r\n            \"createOption\": \"FromImage\",\r\n            \"caching\"\
         : \"ReadWrite\",\r\n            \"managedDisk\": {\r\n              \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        : \"Standard_LRS\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n            },\r\n            \"diskSizeGB\": 127\r\n          },\r\n\
         \          \"dataDisks\": [\r\n            {\r\n              \"lun\": 0,\r\
         \n              \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n              \"createOption\": \"Empty\",\r\n              \"caching\"\
         : \"None\",\r\n              \"managedDisk\": {\r\n                \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n              },\r\n              \"diskSizeGB\": 1023,\r\n          \
         \    \"toBeDetached\": false\r\n            },\r\n            {\r\n      \
         \        \"lun\": 1,\r\n              \"name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n              \"createOption\": \"Empty\",\r\n              \"caching\"\
         : \"None\",\r\n              \"managedDisk\": {\r\n                \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n              },\r\n              \"diskSizeGB\": 1023,\r\n          \
         \    \"toBeDetached\": false\r\n            }\r\n          ]\r\n        },\r\
         \n        \"osProfile\": {\r\n          \"computerName\": \"myVM\",\r\n  \
@@ -2900,10 +2900,10 @@ interactions:
         : {\r\n            \"provisionVMAgent\": true,\r\n            \"enableAutomaticUpdates\"\
         : true\r\n          },\r\n          \"secrets\": [],\r\n          \"allowExtensionOperations\"\
         : true,\r\n          \"requireGuestProvisionSignal\": true\r\n        },\r\
-        \n        \"networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        \n        \"networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n        \"provisioningState\": \"\
         Succeeded\"\r\n      },\r\n      \"resources\": [\r\n        {\r\n       \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         \r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control: no-cache
@@ -2921,7 +2921,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -2933,7 +2933,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/virtualMachines?api-version=2019-12-01
   response:
     body:
-      string: '{"value":[{"name":"pyvmirvm507d1052","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST-CHANGLONG/providers/Microsoft.Compute/virtualMachines/pyvmirvm507d1052","type":"Microsoft.Compute/virtualMachines","location":"eastus","identity":{"type":"SystemAssigned","principalId":"b13295c3-db33-4a18-af8b-69a113d180fa","tenantId":"00000000-0000-0000-0000-000000000000"},"properties":{"vmId":"d1afda73-64fc-4a74-8d4b-ae67558b78a6","hardwareProfile":{"vmSize":"Standard_A0"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04.0-LTS","version":"latest","exactVersion":"16.04.202004290"},"osDisk":{"osType":"Linux","name":"pyvmirvm507d1052_OsDisk_1_793c84bb182d4249a638b2827b4631e8","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST-CHANGLONG/providers/Microsoft.Compute/disks/pyvmirvm507d1052_OsDisk_1_793c84bb182d4249a638b2827b4631e8"},"diskSizeGB":30},"dataDisks":[]},"osProfile":{"computerName":"test","adminUsername":"Foo12","linuxConfiguration":{"disablePasswordAuthentication":false,"provisionVMAgent":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Network/networkInterfaces/pyvmirnic507d1052"}]},"provisioningState":"Succeeded"}},{"name":"testvm","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/virtualMachines/testvm","type":"Microsoft.Compute/virtualMachines","location":"eastus","properties":{"vmId":"7d191832-5270-4c7e-8a32-f36c35b5d968","hardwareProfile":{"vmSize":"Standard_D2_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter","version":"latest","exactVersion":"14393.3686.2005061700"},"osDisk":{"osType":"Windows","name":"myVMosdisk","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/myVMosdisk"},"diskSizeGB":127},"dataDisks":[{"lun":0,"name":"testvm_disk2_81ac60155f5d4be0a0941f6a1e07809a","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/testvm_disk2_81ac60155f5d4be0a0941f6a1e07809a"},"diskSizeGB":1023,"toBeDetached":false},{"lun":1,"name":"testvm_disk3_39fd44e369a94dea9fb929b8fac5efee","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/testvm_disk3_39fd44e369a94dea9fb929b8fac5efee"},"diskSizeGB":1023,"toBeDetached":false}]},"osProfile":{"computerName":"myVM","adminUsername":"testuser","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testvmmultiapi/providers/Microsoft.Network/networkInterfaces/testinterface","properties":{"primary":true}}]},"provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/virtualMachines/testvm/extensions/Microsoft.Azure.Geneva.GenevaMonitoring"}]},{"name":"virtualmachinexxx9a731234","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234","type":"Microsoft.Compute/virtualMachines","location":"eastus","properties":{"vmId":"883a4b52-0091-48f3-a443-4ca2c729b516","hardwareProfile":{"vmSize":"Standard_D2_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter","version":"latest","exactVersion":"14393.3686.2005061700"},"osDisk":{"osType":"Windows","name":"myVMosdisk","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk"},"diskSizeGB":127},"dataDisks":[{"lun":0,"name":"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3"},"diskSizeGB":1023,"toBeDetached":false},{"lun":1,"name":"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d"},"diskSizeGB":1023,"toBeDetached":false}]},"osProfile":{"computerName":"myVM","adminUsername":"testuser","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234","properties":{"primary":true}}]},"provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234"}]},{"name":"dev-box","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/virtualMachines/dev-box","type":"Microsoft.Compute/virtualMachines","location":"westus","properties":{"vmId":"7ef2a73a-fe58-49fd-988a-053b093087a2","hardwareProfile":{"vmSize":"Standard_DS5_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsDesktop","offer":"Windows-10","sku":"rs4-pro","version":"latest","exactVersion":"17134.167.46"},"osDisk":{"osType":"Windows","name":"dev-box_OsDisk_1_8ba56531ddec4304b95f695aafae0df3","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/disks/dev-box_OsDisk_1_8ba56531ddec4304b95f695aafae0df3"}},"dataDisks":[]},"osProfile":{"computerName":"dev-box","adminUsername":"billytrend","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[]},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box/providers/Microsoft.Network/networkInterfaces/dev-box323"}]},"diagnosticsProfile":{"bootDiagnostics":{"enabled":true,"storageUri":"https://devboxdiag862.blob.core.windows.net/"}},"licenseType":"Windows_Client","provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/virtualMachines/dev-box/extensions/enablevmaccess"}]},{"name":"pythonVM","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-PYTHON-RG/providers/Microsoft.Compute/virtualMachines/pythonVM","type":"Microsoft.Compute/virtualMachines","location":"westeurope","properties":{"vmId":"bdd7a492-3764-49b8-bd2c-1f4270423692","hardwareProfile":{"vmSize":"Standard_D4s_v3"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest","exactVersion":"18.04.202004290"},"osDisk":{"osType":"Linux","name":"pythonVM_OsDisk_1_df5c7bb605c041a88fadb7b909d100c4","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-PYTHON-RG/providers/Microsoft.Compute/disks/pythonVM_OsDisk_1_df5c7bb605c041a88fadb7b909d100c4"},"diskSizeGB":30},"dataDisks":[{"lun":0,"name":"pythonVM_DataDisk_0","createOption":"Attach","caching":"None","writeAcceleratorEnabled":false,"managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Compute/disks/pythonVM_DataDisk_0"},"diskSizeGB":1024,"toBeDetached":false}]},"osProfile":{"computerName":"pythonVM","adminUsername":"AzurePython","linuxConfiguration":{"disablePasswordAuthentication":false,"provisionVMAgent":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Network/networkInterfaces/pythonvm887"}]},"diagnosticsProfile":{"bootDiagnostics":{"enabled":true,"storageUri":"https://armpythonrgdiag.blob.core.windows.net/"}},"provisioningState":"Succeeded"}},{"name":"vpn-lon","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VPN-LON/providers/Microsoft.Compute/virtualMachines/vpn-lon","type":"Microsoft.Compute/virtualMachines","location":"ukwest","tags":{},"properties":{"vmId":"9785a7cc-b6ec-4bfb-b02d-cd61880333b8","hardwareProfile":{"vmSize":"Standard_D2s_v3"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest","exactVersion":"18.04.201810030"},"osDisk":{"osType":"Linux","name":"vpn-lon_OsDisk_1_72c0563cdc194870aa69ffbae71161b8","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VPN-LON/providers/Microsoft.Compute/disks/vpn-lon_OsDisk_1_72c0563cdc194870aa69ffbae71161b8"},"diskSizeGB":30},"dataDisks":[]},"osProfile":{"computerName":"vpn-lon","adminUsername":"bt","linuxConfiguration":{"disablePasswordAuthentication":true,"ssh":{"publicKeys":[{"path":"/home/bt/.ssh/authorized_keys","keyData":"ssh-rsa
+      string: '{"value":[{"name":"pyvmirvm507d1052","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST-CHANGLONG/providers/Microsoft.Compute/virtualMachines/pyvmirvm507d1052","type":"Microsoft.Compute/virtualMachines","location":"eastus","identity":{"type":"SystemAssigned","principalId":"b13295c3-db33-4a18-af8b-69a113d180fa","tenantId":"00000000-0000-0000-0000-000000000000"},"properties":{"vmId":"d1afda73-64fc-4a74-8d4b-ae67558b78a6","hardwareProfile":{"vmSize":"Standard_A0"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04.0-LTS","version":"latest","exactVersion":"16.04.202004290"},"osDisk":{"osType":"Linux","name":"pyvmirvm507d1052_OsDisk_1_793c84bb182d4249a638b2827b4631e8","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST-CHANGLONG/providers/Microsoft.Compute/disks/pyvmirvm507d1052_OsDisk_1_793c84bb182d4249a638b2827b4631e8"},"diskSizeGB":30},"dataDisks":[]},"osProfile":{"computerName":"test","adminUsername":"Foo12","linuxConfiguration":{"disablePasswordAuthentication":false,"provisionVMAgent":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.Network/networkInterfaces/pyvmirnic507d1052"}]},"provisioningState":"Succeeded"}},{"name":"testvm","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/virtualMachines/testvm","type":"Microsoft.Compute/virtualMachines","location":"eastus","properties":{"vmId":"7d191832-5270-4c7e-8a32-f36c35b5d968","hardwareProfile":{"vmSize":"Standard_D2_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter","version":"latest","exactVersion":"14393.3686.2005061700"},"osDisk":{"osType":"Windows","name":"myVMosdisk","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/myVMosdisk"},"diskSizeGB":127},"dataDisks":[{"lun":0,"name":"testvm_disk2_81ac60155f5d4be0a0941f6a1e07809a","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/testvm_disk2_81ac60155f5d4be0a0941f6a1e07809a"},"diskSizeGB":1023,"toBeDetached":false},{"lun":1,"name":"testvm_disk3_39fd44e369a94dea9fb929b8fac5efee","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/disks/testvm_disk3_39fd44e369a94dea9fb929b8fac5efee"},"diskSizeGB":1023,"toBeDetached":false}]},"osProfile":{"computerName":"myVM","adminUsername":"testuser","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testvmmultiapi/providers/Microsoft.Network/networkInterfaces/testinterface","properties":{"primary":true}}]},"provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/virtualMachines/testvm/extensions/Microsoft.Azure.Geneva.GenevaMonitoring"}]},{"name":"virtualmachinexxx9a731234","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234","type":"Microsoft.Compute/virtualMachines","location":"eastus","properties":{"vmId":"883a4b52-0091-48f3-a443-4ca2c729b516","hardwareProfile":{"vmSize":"Standard_D2_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter","version":"latest","exactVersion":"14393.3686.2005061700"},"osDisk":{"osType":"Windows","name":"myVMosdisk","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk"},"diskSizeGB":127},"dataDisks":[{"lun":0,"name":"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3"},"diskSizeGB":1023,"toBeDetached":false},{"lun":1,"name":"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d","createOption":"Empty","caching":"None","managedDisk":{"storageAccountType":"Standard_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d"},"diskSizeGB":1023,"toBeDetached":false}]},"osProfile":{"computerName":"myVM","adminUsername":"testuser","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234","properties":{"primary":true}}]},"provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234"}]},{"name":"dev-box","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/virtualMachines/dev-box","type":"Microsoft.Compute/virtualMachines","location":"westus","properties":{"vmId":"7ef2a73a-fe58-49fd-988a-053b093087a2","hardwareProfile":{"vmSize":"Standard_DS5_v2"},"storageProfile":{"imageReference":{"publisher":"MicrosoftWindowsDesktop","offer":"Windows-10","sku":"rs4-pro","version":"latest","exactVersion":"17134.167.46"},"osDisk":{"osType":"Windows","name":"dev-box_OsDisk_1_8ba56531ddec4304b95f695aafae0df3","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/disks/dev-box_OsDisk_1_8ba56531ddec4304b95f695aafae0df3"}},"dataDisks":[]},"osProfile":{"computerName":"dev-box","adminUsername":"billytrend","windowsConfiguration":{"provisionVMAgent":true,"enableAutomaticUpdates":true},"secrets":[]},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box/providers/Microsoft.Network/networkInterfaces/dev-box323"}]},"diagnosticsProfile":{"bootDiagnostics":{"enabled":true,"storageUri":"https://devboxdiag862.blob.core.windows.net/"}},"licenseType":"Windows_Client","provisioningState":"Succeeded"},"resources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DEV-BOX/providers/Microsoft.Compute/virtualMachines/dev-box/extensions/enablevmaccess"}]},{"name":"pythonVM","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-PYTHON-RG/providers/Microsoft.Compute/virtualMachines/pythonVM","type":"Microsoft.Compute/virtualMachines","location":"westeurope","properties":{"vmId":"bdd7a492-3764-49b8-bd2c-1f4270423692","hardwareProfile":{"vmSize":"Standard_D4s_v3"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest","exactVersion":"18.04.202004290"},"osDisk":{"osType":"Linux","name":"pythonVM_OsDisk_1_df5c7bb605c041a88fadb7b909d100c4","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-PYTHON-RG/providers/Microsoft.Compute/disks/pythonVM_OsDisk_1_df5c7bb605c041a88fadb7b909d100c4"},"diskSizeGB":30},"dataDisks":[{"lun":0,"name":"pythonVM_DataDisk_0","createOption":"Attach","caching":"None","writeAcceleratorEnabled":false,"managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Compute/disks/pythonVM_DataDisk_0"},"diskSizeGB":1024,"toBeDetached":false}]},"osProfile":{"computerName":"pythonVM","adminUsername":"AzurePython","linuxConfiguration":{"disablePasswordAuthentication":false,"provisionVMAgent":true},"secrets":[],"allowExtensionOperations":true,"requireGuestProvisionSignal":true},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Network/networkInterfaces/pythonvm887"}]},"diagnosticsProfile":{"bootDiagnostics":{"enabled":true,"storageUri":"https://armpythonrgdiag.blob.core.windows.net/"}},"provisioningState":"Succeeded"}},{"name":"vpn-lon","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VPN-LON/providers/Microsoft.Compute/virtualMachines/vpn-lon","type":"Microsoft.Compute/virtualMachines","location":"ukwest","tags":{},"properties":{"vmId":"9785a7cc-b6ec-4bfb-b02d-cd61880333b8","hardwareProfile":{"vmSize":"Standard_D2s_v3"},"storageProfile":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest","exactVersion":"18.04.201810030"},"osDisk":{"osType":"Linux","name":"vpn-lon_OsDisk_1_72c0563cdc194870aa69ffbae71161b8","createOption":"FromImage","caching":"ReadWrite","managedDisk":{"storageAccountType":"Premium_LRS","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VPN-LON/providers/Microsoft.Compute/disks/vpn-lon_OsDisk_1_72c0563cdc194870aa69ffbae71161b8"},"diskSizeGB":30},"dataDisks":[]},"osProfile":{"computerName":"vpn-lon","adminUsername":"bt","linuxConfiguration":{"disablePasswordAuthentication":true,"ssh":{"publicKeys":[{"path":"/home/bt/.ssh/authorized_keys","keyData":"ssh-rsa
         AAAAB3NzaC1yc2EAAAADAQABAAABAQDABvnbH7C1XfWjAvowYViqnjhwOQhdQ+8NleFKx9+oV32AdaQz0iJRKvKlF6M+6vpIsPvo/JxywAP1eHEF39MEYMTaumw2LqTDhXZYIKmyRHQidS3cJazhO2kCQ99noXFP6vrX1vhDPzyd81OWz11svMIdciZykyf9WzCQoEytw1IHlOda/7o3/JVm24sJDyrKZ+vD4mqUK1ZFfP9JjNh6+kKX6BEHjdDe6G7Z2nicGcA5FzD2M/BkBBNMrEbnWSOySJgOdESycaRsyC1LKWODOwzMELpfAkiulsgZcDXBENEtIvUNIz/HVAGEGoWaFFJJ0uHtgc/Jkz8grDf6AR/3"}]}},"secrets":[]},"networkProfile":{"networkInterfaces":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn-lon/providers/Microsoft.Network/networkInterfaces/vpn-lon393"}]},"diagnosticsProfile":{"bootDiagnostics":{"enabled":true,"storageUri":"https://vpnlondiag.blob.core.windows.net/"}},"provisioningState":"Succeeded"}}]}'
     headers:
       cache-control: no-cache
@@ -3025,7 +3025,7 @@ interactions:
         Succeeded\"\r\n      },\r\n      \"resources\": [\r\n        {\r\n       \
         \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TESTVMMULTIAPI/providers/Microsoft.Compute/virtualMachines/testvm/extensions/Microsoft.Azure.Geneva.GenevaMonitoring\"\
         \r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"virtualmachinexxx9a731234\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n      \"type\": \"Microsoft.Compute/virtualMachines\",\r\n      \"location\"\
         : \"eastus\",\r\n      \"properties\": {\r\n        \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n        \"hardwareProfile\": {\r\n          \"vmSize\": \"Standard_D2_v2\"\
@@ -3037,19 +3037,19 @@ interactions:
         \            \"osType\": \"Windows\",\r\n            \"name\": \"myVMosdisk\"\
         ,\r\n            \"createOption\": \"FromImage\",\r\n            \"caching\"\
         : \"ReadWrite\",\r\n            \"managedDisk\": {\r\n              \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        : \"Standard_LRS\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n            },\r\n            \"diskSizeGB\": 127\r\n          },\r\n\
         \          \"dataDisks\": [\r\n            {\r\n              \"lun\": 0,\r\
         \n              \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n              \"createOption\": \"Empty\",\r\n              \"caching\"\
         : \"None\",\r\n              \"managedDisk\": {\r\n                \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n              },\r\n              \"diskSizeGB\": 1023,\r\n          \
         \    \"toBeDetached\": false\r\n            },\r\n            {\r\n      \
         \        \"lun\": 1,\r\n              \"name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n              \"createOption\": \"Empty\",\r\n              \"caching\"\
         : \"None\",\r\n              \"managedDisk\": {\r\n                \"storageAccountType\"\
-        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        : \"Standard_LRS\",\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n              },\r\n              \"diskSizeGB\": 1023,\r\n          \
         \    \"toBeDetached\": false\r\n            }\r\n          ]\r\n        },\r\
         \n        \"osProfile\": {\r\n          \"computerName\": \"myVM\",\r\n  \
@@ -3057,10 +3057,10 @@ interactions:
         : {\r\n            \"provisionVMAgent\": true,\r\n            \"enableAutomaticUpdates\"\
         : true\r\n          },\r\n          \"secrets\": [],\r\n          \"allowExtensionOperations\"\
         : true,\r\n          \"requireGuestProvisionSignal\": true\r\n        },\r\
-        \n        \"networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        \n        \"networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n        \"provisioningState\": \"\
         Succeeded\"\r\n      },\r\n      \"resources\": [\r\n        {\r\n       \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         \r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control: no-cache
@@ -3091,7 +3091,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/runCommand?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/runCommand?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3111,7 +3111,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/runCommand?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/runCommand?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3210,7 +3210,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/restart?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/restart?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3230,7 +3230,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/restart?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/restart?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3290,7 +3290,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3310,7 +3310,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3370,7 +3370,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/start?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/start?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3390,7 +3390,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/start?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/start?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3456,11 +3456,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionxxx9a731234\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Updating\",\r\n    \"publisher\":\
@@ -3484,7 +3484,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3520,11 +3520,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionxxx9a731234\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -3546,14 +3546,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3574,7 +3574,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/extensions/virtualmachineextensionxxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3639,7 +3639,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3659,7 +3659,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/powerOff?skipShutdown=false&api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3719,7 +3719,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/reapply?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/reapply?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3739,7 +3739,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/reapply?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/reapply?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3799,7 +3799,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/redeploy?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/redeploy?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -3819,7 +3819,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/redeploy?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/redeploy?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -3903,7 +3903,7 @@ interactions:
       message: OK
     url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Compute/locations/eastus/operations/b9470517-4d35-4457-9e6d-dc7cd48f89fd?monitor=true&api-version=2019-12-01
 - request:
-    body: 'b''{"properties": {"networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234",
+    body: 'b''{"properties": {"networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234",
       "properties": {"primary": true}}]}}}'''
     headers:
       Accept:
@@ -3915,10 +3915,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -3930,18 +3930,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -3949,7 +3949,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Updating\"\
         \r\n  }\r\n}"
     headers:
@@ -3971,7 +3971,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -4007,10 +4007,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
+      string: "{\r\n  \"name\": \"virtualmachinexxx9a731234\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"883a4b52-0091-48f3-a443-4ca2c729b516\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -4022,18 +4022,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk2_85ee171b01894583b0bb14ce0bbbc0a3\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_BASE_ASYNC_TEST_COMPUTE_VM9A731234/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinexxx9a731234_disk3_9e84ad297eb046bb918518a475f01c5d\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -4041,7 +4041,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexxx9a731234\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -4060,14 +4060,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/deallocate?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/deallocate?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -4087,7 +4087,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/deallocate?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234/deallocate?api-version=2019-12-01
 - request:
     body: null
     headers:
@@ -4379,7 +4379,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
   response:
     body:
       string: ''
@@ -4400,7 +4400,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_compute_base_async_test_compute_vm9a731234/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinexxx9a731234?api-version=2019-12-01
 - request:
     body: null
     headers:

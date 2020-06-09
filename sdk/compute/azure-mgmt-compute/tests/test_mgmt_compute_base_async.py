@@ -8,7 +8,7 @@
 import unittest
 
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
@@ -72,7 +72,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
 
         return nic_info.id
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

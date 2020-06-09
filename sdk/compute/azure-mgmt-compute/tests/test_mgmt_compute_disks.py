@@ -16,7 +16,7 @@ import unittest
 
 import azure.mgmt.compute
 from azure.profiles import ProfileDefinition
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -57,7 +57,7 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
             self.mgmt_client._PROFILE_TAG + " test"
         )
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_disks_multi(self, resource_group):
 
         DISK_NAME = self.get_resource_name("disknamex")
@@ -184,7 +184,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         else:
             return ('000', '000')
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_disk_encryption(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
@@ -244,7 +244,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.disk_encryption_sets.begin_delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
         result = result.result()
     
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_shot(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -355,7 +355,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.snapshots.begin_delete(resource_group.name, SNAPSHOT_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_disks(self, resource_group):
 
         DISK_NAME = self.get_resource_name("disknamex")
