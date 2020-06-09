@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.1.2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 08 Jun 2020 17:05:03 GMT
+      - Mon, 08 Jun 2020 17:04:07 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pyqueuesynce42613c2
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9ccd0b37
   response:
     body:
       string: ''
@@ -25,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 08 Jun 2020 17:04:57 GMT
+      - Mon, 08 Jun 2020 17:04:00 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,22 +51,22 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.1.2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 08 Jun 2020 17:05:04 GMT
+      - Mon, 08 Jun 2020 17:04:08 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://storagename.queue.core.windows.net/pyqueuesynce42613c2/messages
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9ccd0b37/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4dd60b84-d499-4a8a-b09e-ef983c46e553</MessageId><InsertionTime>Mon,
-        08 Jun 2020 17:04:57 GMT</InsertionTime><ExpirationTime>Mon, 15 Jun 2020 17:04:57
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA4sop8LY91gE=</PopReceipt><TimeNextVisible>Mon,
-        08 Jun 2020 17:04:57 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b0996dac-fe4c-41e5-8d7b-2b8d3377feed</MessageId><InsertionTime>Mon,
+        08 Jun 2020 17:04:01 GMT</InsertionTime><ExpirationTime>Mon, 15 Jun 2020 17:04:01
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAgq6pzrY91gE=</PopReceipt><TimeNextVisible>Mon,
+        08 Jun 2020 17:04:01 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Mon, 08 Jun 2020 17:04:57 GMT
+      - Mon, 08 Jun 2020 17:04:00 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -80,7 +80,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -88,25 +88,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.1.2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 08 Jun 2020 17:05:04 GMT
+      - Mon, 08 Jun 2020 17:04:08 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://storagename.queue.core.windows.net/pyqueuesynce42613c2?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9ccd0b37/messages?se=2020-06-08T18%3A04%3A08Z&sp=p&sv=2018-03-28&sig=vWh%2BrCFVfVCPesedK3URqwsmUYnODczF8vTQ21vRFjc%3D
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b0996dac-fe4c-41e5-8d7b-2b8d3377feed</MessageId><InsertionTime>Mon,
+        08 Jun 2020 17:04:01 GMT</InsertionTime><ExpirationTime>Mon, 15 Jun 2020 17:04:01
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAI7LT4LY91gE=</PopReceipt><TimeNextVisible>Mon,
+        08 Jun 2020 17:04:31 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
       - no-cache
-      content-length:
-      - '0'
+      content-type:
+      - application/xml
       date:
-      - Mon, 08 Jun 2020 17:04:57 GMT
+      - Mon, 08 Jun 2020 17:04:01 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-approximate-messages-count:
-      - '1'
+      transfer-encoding:
+      - chunked
       x-ms-version:
       - '2018-03-28'
     status:

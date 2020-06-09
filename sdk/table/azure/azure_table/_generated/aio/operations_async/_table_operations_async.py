@@ -9,7 +9,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from azure.azure_table.generated import models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

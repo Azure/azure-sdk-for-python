@@ -9,7 +9,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from azure.azure_table.generated import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

@@ -4,13 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._azure_table_enums import *
 
 
 class AccessPolicy(msrest.serialization.Model):
@@ -43,16 +38,12 @@ class AccessPolicy(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start: datetime.datetime,
-        expiry: datetime.datetime,
-        permission: str,
         **kwargs
     ):
         super(AccessPolicy, self).__init__(**kwargs)
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        self.start = kwargs['start']
+        self.expiry = kwargs['expiry']
+        self.permission = kwargs['permission']
 
 
 class CorsRule(msrest.serialization.Model):
@@ -101,20 +92,14 @@ class CorsRule(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        allowed_origins: str,
-        allowed_methods: str,
-        allowed_headers: str,
-        exposed_headers: str,
-        max_age_in_seconds: int,
         **kwargs
     ):
         super(CorsRule, self).__init__(**kwargs)
-        self.allowed_origins = allowed_origins
-        self.allowed_methods = allowed_methods
-        self.allowed_headers = allowed_headers
-        self.exposed_headers = exposed_headers
-        self.max_age_in_seconds = max_age_in_seconds
+        self.allowed_origins = kwargs['allowed_origins']
+        self.allowed_methods = kwargs['allowed_methods']
+        self.allowed_headers = kwargs['allowed_headers']
+        self.exposed_headers = kwargs['exposed_headers']
+        self.max_age_in_seconds = kwargs['max_age_in_seconds']
 
 
 class GeoReplication(msrest.serialization.Model):
@@ -146,14 +131,11 @@ class GeoReplication(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        status: Union[str, "GeoReplicationStatusType"],
-        last_sync_time: datetime.datetime,
         **kwargs
     ):
         super(GeoReplication, self).__init__(**kwargs)
-        self.status = status
-        self.last_sync_time = last_sync_time
+        self.status = kwargs['status']
+        self.last_sync_time = kwargs['last_sync_time']
 
 
 class Logging(msrest.serialization.Model):
@@ -194,20 +176,14 @@ class Logging(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        version: str,
-        delete: bool,
-        read: bool,
-        write: bool,
-        retention_policy: "RetentionPolicy",
         **kwargs
     ):
         super(Logging, self).__init__(**kwargs)
-        self.version = version
-        self.delete = delete
-        self.read = read
-        self.write = write
-        self.retention_policy = retention_policy
+        self.version = kwargs['version']
+        self.delete = kwargs['delete']
+        self.read = kwargs['read']
+        self.write = kwargs['write']
+        self.retention_policy = kwargs['retention_policy']
 
 
 class Metrics(msrest.serialization.Model):
@@ -242,18 +218,13 @@ class Metrics(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        enabled: bool,
-        version: Optional[str] = None,
-        include_apis: Optional[bool] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
         **kwargs
     ):
         super(Metrics, self).__init__(**kwargs)
-        self.version = version
-        self.enabled = enabled
-        self.include_apis = include_apis
-        self.retention_policy = retention_policy
+        self.version = kwargs.get('version', None)
+        self.enabled = kwargs['enabled']
+        self.include_apis = kwargs.get('include_apis', None)
+        self.retention_policy = kwargs.get('retention_policy', None)
 
 
 class QueryOptions(msrest.serialization.Model):
@@ -285,18 +256,13 @@ class QueryOptions(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        format: Optional[Union[str, "OdataMetadataFormat"]] = None,
-        top: Optional[int] = None,
-        select: Optional[str] = None,
-        filter: Optional[str] = None,
         **kwargs
     ):
         super(QueryOptions, self).__init__(**kwargs)
-        self.format = format
-        self.top = top
-        self.select = select
-        self.filter = filter
+        self.format = kwargs.get('format', None)
+        self.top = kwargs.get('top', None)
+        self.select = kwargs.get('select', None)
+        self.filter = kwargs.get('filter', None)
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -326,14 +292,11 @@ class RetentionPolicy(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        enabled: bool,
-        days: Optional[int] = None,
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.enabled = enabled
-        self.days = days
+        self.enabled = kwargs['enabled']
+        self.days = kwargs.get('days', None)
 
 
 class SignedIdentifier(msrest.serialization.Model):
@@ -362,14 +325,11 @@ class SignedIdentifier(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        access_policy: "AccessPolicy",
         **kwargs
     ):
         super(SignedIdentifier, self).__init__(**kwargs)
-        self.id = id
-        self.access_policy = access_policy
+        self.id = kwargs['id']
+        self.access_policy = kwargs['access_policy']
 
 
 class TableEntityQueryResponse(msrest.serialization.Model):
@@ -388,14 +348,11 @@ class TableEntityQueryResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        odata_metadata: Optional[str] = None,
-        value: Optional[List[Dict[str, object]]] = None,
         **kwargs
     ):
         super(TableEntityQueryResponse, self).__init__(**kwargs)
-        self.odata_metadata = odata_metadata
-        self.value = value
+        self.odata_metadata = kwargs.get('odata_metadata', None)
+        self.value = kwargs.get('value', None)
 
 
 class TableProperties(msrest.serialization.Model):
@@ -411,12 +368,10 @@ class TableProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        table_name: Optional[str] = None,
         **kwargs
     ):
         super(TableProperties, self).__init__(**kwargs)
-        self.table_name = table_name
+        self.table_name = kwargs.get('table_name', None)
 
 
 class TableQueryResponse(msrest.serialization.Model):
@@ -435,14 +390,11 @@ class TableQueryResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        odata_metadata: Optional[str] = None,
-        value: Optional[List["TableResponseProperties"]] = None,
         **kwargs
     ):
         super(TableQueryResponse, self).__init__(**kwargs)
-        self.odata_metadata = odata_metadata
-        self.value = value
+        self.odata_metadata = kwargs.get('odata_metadata', None)
+        self.value = kwargs.get('value', None)
 
 
 class TableResponseProperties(msrest.serialization.Model):
@@ -467,18 +419,13 @@ class TableResponseProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        table_name: Optional[str] = None,
-        odata_type: Optional[str] = None,
-        odata_id: Optional[str] = None,
-        odata_edit_link: Optional[str] = None,
         **kwargs
     ):
         super(TableResponseProperties, self).__init__(**kwargs)
-        self.table_name = table_name
-        self.odata_type = odata_type
-        self.odata_id = odata_id
-        self.odata_edit_link = odata_edit_link
+        self.table_name = kwargs.get('table_name', None)
+        self.odata_type = kwargs.get('odata_type', None)
+        self.odata_id = kwargs.get('odata_id', None)
+        self.odata_edit_link = kwargs.get('odata_edit_link', None)
 
 
 class TableResponse(TableResponseProperties):
@@ -506,16 +453,10 @@ class TableResponse(TableResponseProperties):
 
     def __init__(
         self,
-        *,
-        table_name: Optional[str] = None,
-        odata_type: Optional[str] = None,
-        odata_id: Optional[str] = None,
-        odata_edit_link: Optional[str] = None,
-        odata_metadata: Optional[str] = None,
         **kwargs
     ):
-        super(TableResponse, self).__init__(table_name=table_name, odata_type=odata_type, odata_id=odata_id, odata_edit_link=odata_edit_link, **kwargs)
-        self.odata_metadata = odata_metadata
+        super(TableResponse, self).__init__(**kwargs)
+        self.odata_metadata = kwargs.get('odata_metadata', None)
 
 
 class TableServiceError(msrest.serialization.Model):
@@ -534,12 +475,10 @@ class TableServiceError(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        message: Optional[str] = None,
         **kwargs
     ):
         super(TableServiceError, self).__init__(**kwargs)
-        self.message = message
+        self.message = kwargs.get('message', None)
 
 
 class TableServiceProperties(msrest.serialization.Model):
@@ -563,21 +502,19 @@ class TableServiceProperties(msrest.serialization.Model):
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
     }
+    _xml_map = {
+        'name': 'StorageServiceProperties'
+    }
 
     def __init__(
         self,
-        *,
-        logging: Optional["Logging"] = None,
-        hour_metrics: Optional["Metrics"] = None,
-        minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
         **kwargs
     ):
         super(TableServiceProperties, self).__init__(**kwargs)
-        self.logging = logging
-        self.hour_metrics = hour_metrics
-        self.minute_metrics = minute_metrics
-        self.cors = cors
+        self.logging = kwargs.get('logging', None)
+        self.hour_metrics = kwargs.get('hour_metrics', None)
+        self.minute_metrics = kwargs.get('minute_metrics', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class TableServiceStats(msrest.serialization.Model):
@@ -591,14 +528,12 @@ class TableServiceStats(msrest.serialization.Model):
         'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
     _xml_map = {
-        
+        'name': 'StorageServiceStats'
     }
 
     def __init__(
         self,
-        *,
-        geo_replication: Optional["GeoReplication"] = None,
         **kwargs
     ):
         super(TableServiceStats, self).__init__(**kwargs)
-        self.geo_replication = geo_replication
+        self.geo_replication = kwargs.get('geo_replication', None)

@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-queue/12.1.2 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 30 Oct 2019 19:51:26 GMT
+      - Mon, 08 Jun 2020 17:02:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:367f59b4-c003-0052-775b-8f17f8000000\nTime:2019-10-30T19:51:25.8477780Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:d644a252-0003-0015-7eb6-3dad31000000\nTime:2020-06-08T17:02:25.2173183Z</Message></Error>"
     headers:
       content-length:
       - '243'
       content-type:
       - application/xml
       date:
-      - Wed, 30 Oct 2019 19:51:25 GMT
+      - Mon, 08 Jun 2020 17:02:24 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
