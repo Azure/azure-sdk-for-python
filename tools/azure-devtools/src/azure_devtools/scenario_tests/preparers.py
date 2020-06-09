@@ -126,7 +126,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                         _logger.debug("Storing cached resource for %s", self.__class__.__name__)
                         AbstractPreparer._resource_cache[aggregate_cache_key] = AbstractPreparer.ResourceCacheEntry(resource_name, kwargs, self)
 
-            if self.is_live:
+            if test_class_instance.is_live:
                 test_class_instance.scrubber.register_name_pair(
                     resource_name,
                     self.resource_moniker
