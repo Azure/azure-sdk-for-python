@@ -122,7 +122,7 @@ async def test_distro():
                     return_value=('Linux', 'redhat', '4.18.0-193.el8.x86_64',
                                   '#1 SMP Fri Mar 27 14:35:58 UTC 2020', 'x86_64', 'x86_64')):
         if sys.version_info[0] < 3:
-            with pytest.raises(NotImplementedError):
+            with pytest.raises(CredentialUnavailableError):
                 credential = VSCodeCredential(_client=mock_client)
                 token = await credential.get_token("scope")
         else:
@@ -133,7 +133,7 @@ async def test_distro():
                     return_value=('Linux', 'ubuntu', '5.3.0-1022-azure',
                                   '#23~18.04.1-Ubuntu SMP Mon May 11 11:55:56 UTC 2020', 'x86_64', 'x86_64')):
         if sys.version_info[0] < 3:
-            with pytest.raises(NotImplementedError):
+            with pytest.raises(CredentialUnavailableError):
                 credential = VSCodeCredential(_client=mock_client)
                 token = await credential.get_token("scope")
         else:
