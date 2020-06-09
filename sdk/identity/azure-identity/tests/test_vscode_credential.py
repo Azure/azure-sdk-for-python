@@ -106,31 +106,13 @@ def test_no_obtain_token_if_cached():
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 def test_distro():
-    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
-    expected_token = AccessToken("token", 42)
-
     mock_client = mock.Mock(spec=object)
-    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
-    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=None)
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with mock.patch("platform.uname",
-                    return_value=('Linux', 'redhat', '4.18.0-193.el8.x86_64',
-                                  '#1 SMP Fri Mar 27 14:35:58 UTC 2020', 'x86_64', 'x86_64')):
+    with pytest.raises(CredentialUnavailableError):
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
-
-    with mock.patch("platform.uname",
-                    return_value=('Linux', 'ubuntu', '5.3.0-1022-azure',
-                                  '#23~18.04.1-Ubuntu SMP Mon May 11 11:55:56 UTC 2020', 'x86_64', 'x86_64')):
-        credential = VSCodeCredential(_client=mock_client)
-        token = credential.get_token("scope")
-
-    with mock.patch("platform.uname",
-                    return_value=('Linux', 'deb', '4.19.0-9-cloud-amd64',
-                                  '#1 SMP Debian 4.19.118-2 (2020-04-29)', 'x86_64', '')):
-        if sys.version_info[0] == 3 and sys.version_info[1] == 8:
-            with pytest.raises(NotImplementedError):
-                credential = _get_refresh_token("test", "test")
 
 
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
@@ -147,9 +129,3 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
-
-
-@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_get_token():
-    with mock.patch("azure.identity._credentials.linux_vscode_adapter._get_refresh_token", return_value="VALUE"):
-        assert get_credentials() == "VALUE"
