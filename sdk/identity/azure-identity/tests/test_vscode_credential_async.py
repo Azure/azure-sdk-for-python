@@ -100,7 +100,7 @@ async def test_no_obtain_token_if_cached():
     mock_client = mock.Mock(spec=object)
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
-    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
     with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(_client=mock_client)

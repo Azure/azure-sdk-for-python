@@ -110,7 +110,7 @@ def test_distro():
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=None)
-    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
     with mock.patch("platform.uname",
                     return_value=('Linux', 'redhat', '4.18.0-193.el8.x86_64',
