@@ -112,10 +112,9 @@ async def test_no_obtain_token_if_cached():
 @pytest.mark.asyncio
 async def test_distro():
     from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
-    expected_token = AccessToken("token", 42)
 
     mock_client = mock.Mock(spec=object)
-    token_by_refresh_token = mock.Mock(return_value=expected_token)
+    token_by_refresh_token = mock.Mock(return_value=None)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
     mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
 
