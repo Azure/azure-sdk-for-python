@@ -66,6 +66,14 @@ def _get_refresh_token(service_name, account_name):
     if sys.version_info[0] < 3:
         raise NotImplementedError("Not supported on Python 2.7")
 
+    try:
+        import platform
+        distro = platform.uname()
+        if sys.version_info >= (3, 8) and not ("redhat" in distro or "ubuntu" in distro):
+            raise NotImplementedError("Not supported")
+    except Exception:  # pylint: disable=broad-except
+        raise NotImplementedError("Not supported")
+
     err = ct.c_int()
     schema = _libsecret.secret_schema_new(
         _c_str("org.freedesktop.Secret.Generic"), 2, _c_str("service"), 0, _c_str("account"), 0, None
@@ -92,7 +100,5 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
-    except NotImplementedError:  # pylint:disable=try-except-raise
-        raise
     except Exception:  # pylint: disable=broad-except
         return None
