@@ -15,10 +15,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable\"\
+      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable\"\
         ,\r\n  \"etag\": \"W/\\\"820b4cde-bc2c-478d-af68-b339a26a9d61\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -112,10 +112,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable\"\
+      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable\"\
         ,\r\n  \"etag\": \"W/\\\"6daab3d4-8081-4dfe-9637-0fc772ebc1b4\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -168,10 +168,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
+      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
         ,\r\n  \"etag\": \"W/\\\"69069dca-d363-41e0-b038-673c8507cc8d\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.3.0/24\",\r\n    \"nextHopType\": \"VirtualNetworkGateway\"\
@@ -263,10 +263,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
+      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
         ,\r\n  \"etag\": \"W/\\\"522c0c61-e16a-4ee2-bf60-e844e13e4bb4\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.3.0/24\",\r\n    \"nextHopType\": \"VirtualNetworkGateway\"\
@@ -315,10 +315,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
+      string: "{\r\n  \"name\": \"myRoute\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
         ,\r\n  \"etag\": \"W/\\\"522c0c61-e16a-4ee2-bf60-e844e13e4bb4\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.3.0/24\",\r\n    \"nextHopType\": \"VirtualNetworkGateway\"\
@@ -367,16 +367,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable\"\
+      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable\"\
         ,\r\n  \"etag\": \"W/\\\"522c0c61-e16a-4ee2-bf60-e844e13e4bb4\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"9df9b2ec-ce96-4ddb-8d07-1b83a619785e\",\r\n    \"\
         disableBgpRoutePropagation\": false,\r\n    \"routes\": [\r\n      {\r\n \
-        \       \"name\": \"myRoute\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
+        \       \"name\": \"myRoute\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
         ,\r\n        \"etag\": \"W/\\\"522c0c61-e16a-4ee2-bf60-e844e13e4bb4\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.3.0/24\",\r\n          \"nextHopType\"\
@@ -430,17 +430,17 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable\"\
+      string: "{\r\n  \"name\": \"myRouteTable\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable\"\
         ,\r\n  \"etag\": \"W/\\\"f78d8d7d-e48b-4d21-b838-2534f6057e47\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"9df9b2ec-ce96-4ddb-8d07-1b83a619785e\",\r\n \
         \   \"disableBgpRoutePropagation\": false,\r\n    \"routes\": [\r\n      {\r\
-        \n        \"name\": \"myRoute\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
+        \n        \"name\": \"myRoute\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute\"\
         ,\r\n        \"etag\": \"W/\\\"f78d8d7d-e48b-4d21-b838-2534f6057e47\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.3.0/24\",\r\n          \"nextHopType\"\
@@ -494,7 +494,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable/routes/myRoute?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -586,7 +586,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_route_table_test_networkc22a1321/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/myRouteTable?api-version=2020-04-01
   response:
     body:
       string: ''

@@ -15,10 +15,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
+      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
         ,\r\n  \"etag\": \"W/\\\"ffa0d2e0-c269-4a1a-abe2-c87e7f8edd21\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/serviceEndpointPolicies\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
@@ -112,10 +112,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
+      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
         ,\r\n  \"etag\": \"W/\\\"ada7c4da-18a8-4466-8dfb-8e4662504a39\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/serviceEndpointPolicies\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -154,7 +154,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"properties": {"description": "Storage Service EndpointPolicy Definition",
-      "service": "Microsoft.Storage", "serviceResources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db"]}}'''
+      "service": "Microsoft.Storage", "serviceResources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"]}}'''
     headers:
       Accept:
       - application/json
@@ -169,16 +169,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"myServiceEndpointPolicyDefinition\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
         ,\r\n  \"etag\": \"W/\\\"2e5a8bb6-d988-4c20-9ae4-a398149acb64\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         service\": \"Microsoft.Storage\",\r\n    \"description\": \"Storage Service\
         \ EndpointPolicy Definition\",\r\n    \"serviceResources\": [\r\n      \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname\"\
         \r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/serviceEndpointPolicies/serviceEndpointPolicyDefinitions\"\
         \r\n}"
     headers:
@@ -267,16 +267,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"myServiceEndpointPolicyDefinition\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
         ,\r\n  \"etag\": \"W/\\\"f0d34fc8-1830-42c9-b6bf-1bf9d2775313\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         service\": \"Microsoft.Storage\",\r\n    \"description\": \"Storage Service\
         \ EndpointPolicy Definition\",\r\n    \"serviceResources\": [\r\n      \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname\"\
         \r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/serviceEndpointPolicies/serviceEndpointPolicyDefinitions\"\
         \r\n}"
     headers:
@@ -322,16 +322,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"myServiceEndpointPolicyDefinition\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
         ,\r\n  \"etag\": \"W/\\\"f0d34fc8-1830-42c9-b6bf-1bf9d2775313\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         service\": \"Microsoft.Storage\",\r\n    \"description\": \"Storage Service\
         \ EndpointPolicy Definition\",\r\n    \"serviceResources\": [\r\n      \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname\"\
         \r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/serviceEndpointPolicies/serviceEndpointPolicyDefinitions\"\
         \r\n}"
     headers:
@@ -377,21 +377,21 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
+      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
         ,\r\n  \"etag\": \"W/\\\"f0d34fc8-1830-42c9-b6bf-1bf9d2775313\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/serviceEndpointPolicies\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"7b78a566-f2f9-4164-94bb-9e1aee22f9b8\",\r\n \
         \   \"serviceEndpointPolicyDefinitions\": [\r\n      {\r\n        \"name\"\
-        : \"myServiceEndpointPolicyDefinition\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
+        : \"myServiceEndpointPolicyDefinition\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
         ,\r\n        \"etag\": \"W/\\\"f0d34fc8-1830-42c9-b6bf-1bf9d2775313\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"service\": \"Microsoft.Storage\",\r\n          \"description\"\
         : \"Storage Service EndpointPolicy Definition\",\r\n          \"serviceResources\"\
-        : [\r\n            \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db\"\
+        : [\r\n            \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname\"\
         \r\n          ]\r\n        },\r\n        \"type\": \"Microsoft.Network/serviceEndpointPolicies/serviceEndpointPolicyDefinitions\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
@@ -441,22 +441,22 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
+      string: "{\r\n  \"name\": \"myServiceEndpointPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy\"\
         ,\r\n  \"etag\": \"W/\\\"f66bba06-d936-45dd-a84b-0ff1aef044f1\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/serviceEndpointPolicies\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\"\
         : \"value2\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":\
         \ \"Succeeded\",\r\n    \"resourceGuid\": \"7b78a566-f2f9-4164-94bb-9e1aee22f9b8\"\
         ,\r\n    \"serviceEndpointPolicyDefinitions\": [\r\n      {\r\n        \"\
-        name\": \"myServiceEndpointPolicyDefinition\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
+        name\": \"myServiceEndpointPolicyDefinition\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition\"\
         ,\r\n        \"etag\": \"W/\\\"f66bba06-d936-45dd-a84b-0ff1aef044f1\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"service\": \"Microsoft.Storage\",\r\n          \"description\"\
         : \"Storage Service EndpointPolicy Definition\",\r\n          \"serviceResources\"\
-        : [\r\n            \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db\"\
+        : [\r\n            \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname\"\
         \r\n          ]\r\n        },\r\n        \"type\": \"Microsoft.Network/serviceEndpointPolicies/serviceEndpointPolicyDefinitions\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
@@ -506,7 +506,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy/serviceEndpointPolicyDefinitions/myServiceEndpointPolicyDefinition?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -598,7 +598,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_endpoint_policy_test_network138814db/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/serviceEndpointPolicies/myServiceEndpointPolicy?api-version=2020-04-01
   response:
     body:
       string: ''

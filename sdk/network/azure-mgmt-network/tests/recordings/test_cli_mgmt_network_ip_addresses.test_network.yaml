@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"c3b02fa7-c8a8-4670-9032-fd3a428671f8\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         westus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"e0478620-fa5d-433a-9f8d-600b987d094f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         westus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -173,10 +173,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"5ae6a24c-80a0-4b0c-812b-293a80d8989f\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Updating\",\r\n    \"resourceGuid\": \"049566db-fae0-4313-a6f3-b7a59a5edb53\"\
@@ -272,10 +272,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"86e5a9b1-311c-453b-b457-f8d7e098de38\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"049566db-fae0-4313-a6f3-b7a59a5edb53\"\
@@ -326,10 +326,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"86e5a9b1-311c-453b-b457-f8d7e098de38\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"049566db-fae0-4313-a6f3-b7a59a5edb53\"\
@@ -380,10 +380,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"e0478620-fa5d-433a-9f8d-600b987d094f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         westus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -438,10 +438,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipaddressd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"5fcf9509-940d-4c84-ac5e-a880127caa48\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\
         \n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\"\
@@ -499,10 +499,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
+      string: "{\r\n  \"name\": \"publicipprefixd3db1381\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381\"\
         ,\r\n  \"etag\": \"W/\\\"e71e3f65-19aa-478b-bbd8-4c1e5b1fbea5\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         westus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"\
@@ -558,7 +558,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressd3db1381?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -652,7 +652,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_ip_addresses_test_networkd3db1381/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefixd3db1381?api-version=2020-04-01
   response:
     body:
       string: ''

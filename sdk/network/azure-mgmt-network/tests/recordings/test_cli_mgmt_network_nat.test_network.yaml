@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddress\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+      string: "{\r\n  \"name\": \"publicipaddress\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         ,\r\n  \"etag\": \"W/\\\"05143790-5fa0-492e-9143-c1a65d53a25e\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Updating\",\r\n    \"resourceGuid\": \"083fc03f-2bbc-4be3-bd8c-ab57c985300d\"\
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddress\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+      string: "{\r\n  \"name\": \"publicipaddress\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         ,\r\n  \"etag\": \"W/\\\"ae34ddae-4196-4b55-b466-096d0e1e399c\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"083fc03f-2bbc-4be3-bd8c-ab57c985300d\"\
@@ -174,10 +174,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefix\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+      string: "{\r\n  \"name\": \"publicipprefix\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         ,\r\n  \"etag\": \"W/\\\"730b8a92-8cea-4a76-b207-a977c059986e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
@@ -273,10 +273,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipprefix\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+      string: "{\r\n  \"name\": \"publicipprefix\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         ,\r\n  \"etag\": \"W/\\\"f1a89603-7f13-4738-a994-499784f781f6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/publicIPPrefixes\",\r\n  \"location\": \"\
         eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -317,8 +317,8 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "sku": {"name": "Standard"}, "properties": {"publicIpAddresses":
-      [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress"}],
-      "publicIpPrefixes": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix"}]}}'''
+      [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress"}],
+      "publicIpPrefixes": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix"}]}}'''
     headers:
       Accept:
       - application/json
@@ -333,18 +333,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway\"\
+      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway\"\
         ,\r\n  \"etag\": \"W/\\\"ffe22844-4f2e-4db3-8e65-83029dd12c0d\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/natGateways\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
         \   \"resourceGuid\": \"bbf398a3-a252-45a4-ae48-aafa0c5ac224\",\r\n    \"\
         idleTimeoutInMinutes\": 4,\r\n    \"publicIpAddresses\": [\r\n      {\r\n\
-        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         \r\n      }\r\n    ],\r\n    \"publicIpPrefixes\": [\r\n      {\r\n      \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         \r\n      }\r\n    ]\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard\"\
         \r\n  }\r\n}"
     headers:
@@ -435,18 +435,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway\"\
+      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway\"\
         ,\r\n  \"etag\": \"W/\\\"31cd35d6-3817-4e30-bf20-3ba243c75ba5\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/natGateways\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"bbf398a3-a252-45a4-ae48-aafa0c5ac224\",\r\n    \"\
         idleTimeoutInMinutes\": 4,\r\n    \"publicIpAddresses\": [\r\n      {\r\n\
-        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         \r\n      }\r\n    ],\r\n    \"publicIpPrefixes\": [\r\n      {\r\n      \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         \r\n      }\r\n    ]\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard\"\
         \r\n  }\r\n}"
     headers:
@@ -492,18 +492,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway\"\
+      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway\"\
         ,\r\n  \"etag\": \"W/\\\"31cd35d6-3817-4e30-bf20-3ba243c75ba5\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/natGateways\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"bbf398a3-a252-45a4-ae48-aafa0c5ac224\",\r\n    \"\
         idleTimeoutInMinutes\": 4,\r\n    \"publicIpAddresses\": [\r\n      {\r\n\
-        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+        \        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         \r\n      }\r\n    ],\r\n    \"publicIpPrefixes\": [\r\n      {\r\n      \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         \r\n      }\r\n    ]\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard\"\
         \r\n  }\r\n}"
     headers:
@@ -553,19 +553,19 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway\"\
+      string: "{\r\n  \"name\": \"myNatGateway\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway\"\
         ,\r\n  \"etag\": \"W/\\\"dd063c7a-1e4e-4226-8f48-84577702b736\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/natGateways\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"bbf398a3-a252-45a4-ae48-aafa0c5ac224\",\r\n \
         \   \"idleTimeoutInMinutes\": 4,\r\n    \"publicIpAddresses\": [\r\n     \
-        \ {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
+        \ {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddress\"\
         \r\n      }\r\n    ],\r\n    \"publicIpPrefixes\": [\r\n      {\r\n      \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPPrefixes/publicipprefix\"\
         \r\n      }\r\n    ]\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard\"\
         \r\n  }\r\n}"
     headers:
@@ -615,7 +615,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_nat_test_network33b20fce/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/natGateways/myNatGateway?api-version=2020-04-01
   response:
     body:
       string: ''

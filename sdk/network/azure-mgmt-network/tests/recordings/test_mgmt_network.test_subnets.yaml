@@ -18,10 +18,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"6e900b30-a5fc-4230-b6ac-6b684ab75b15\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -30,7 +30,7 @@ interactions:
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
         ,\r\n        \"etag\": \"W/\\\"6e900b30-a5fc-4230-b6ac-6b684ab75b15\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
@@ -127,10 +127,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"faa40a2e-4a7e-4fca-b382-f112cc3999c7\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -139,7 +139,7 @@ interactions:
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
         ,\r\n        \"etag\": \"W/\\\"faa40a2e-4a7e-4fca-b382-f112cc3999c7\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
@@ -195,10 +195,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"d4563496-8db1-430c-8717-1a8b2af7f347\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -290,10 +290,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -342,10 +342,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -354,7 +354,7 @@ interactions:
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
         ,\r\n        \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
@@ -362,7 +362,7 @@ interactions:
         \        \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\
         \n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    \
         \  },\r\n      {\r\n        \"name\": \"pysubnettwoc2cc0c8f\",\r\n       \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
         ,\r\n        \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.2.0/24\",\r\n          \"delegations\"\
@@ -414,10 +414,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
+      string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
         ,\r\n  \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -466,18 +466,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pysubnetonec2cc0c8f\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
         ,\r\n      \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.0.1.0/24\",\r\n        \"delegations\"\
         : [],\r\n        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n    \
         \    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n      },\r\n  \
         \    \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    },\r\n\
-        \    {\r\n      \"name\": \"pysubnettwoc2cc0c8f\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
+        \    {\r\n      \"name\": \"pysubnettwoc2cc0c8f\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
         ,\r\n      \"etag\": \"W/\\\"e8f2fdc7-03dc-47c8-9688-6f97290d6a0e\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.0.2.0/24\",\r\n        \"delegations\"\
@@ -528,7 +528,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2020-04-01
   response:
     body:
       string: ''

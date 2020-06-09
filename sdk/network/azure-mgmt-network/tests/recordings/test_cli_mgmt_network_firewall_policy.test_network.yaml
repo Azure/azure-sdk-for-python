@@ -16,12 +16,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
         \    \"childPolicies\": [],\r\n    \"ruleGroups\": [],\r\n    \"firewalls\"\
-        : [],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        : [],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
         ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
@@ -105,13 +105,13 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
         \    \"childPolicies\": [],\r\n    \"ruleGroups\": [],\r\n    \"firewalls\"\
         : [],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
         ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
@@ -161,7 +161,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -176,7 +176,7 @@ interactions:
         \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
         \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
         \    }\r\n    ],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"\
-        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
         ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
@@ -260,7 +260,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -275,7 +275,7 @@ interactions:
         \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
         \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
         \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
         ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
@@ -317,7 +317,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -332,7 +332,7 @@ interactions:
         \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
         \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
         \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
         ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
@@ -374,14 +374,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
         \    \"childPolicies\": [],\r\n    \"ruleGroups\": [\r\n      {\r\n      \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         \r\n      }\r\n    ],\r\n    \"firewalls\": [],\r\n    \"provisioningState\"\
-        : \"Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        : \"Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
         ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
         ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
@@ -425,7 +425,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
@@ -440,7 +440,7 @@ interactions:
         \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
         \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
         \    }\r\n    ],\r\n    \"provisioningState\": \"Deleting\"\r\n  },\r\n  \"\
-        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
         ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
         ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
         : \"westus\"\r\n}"
@@ -528,7 +528,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_policy_test_network12aa14d0/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
   response:
     body:
       string: ''

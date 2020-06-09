@@ -15,10 +15,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"b86f11a2-a7a4-4b24-b17a-6681d72573af\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -112,10 +112,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"7e850a43-5b34-4d6d-8bc3-bb310c793c56\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -164,10 +164,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"7e850a43-5b34-4d6d-8bc3-bb310c793c56\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -216,11 +216,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
         ,\r\n      \"etag\": \"W/\\\"7e850a43-5b34-4d6d-8bc3-bb310c793c56\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/routeTables\",\r\n      \"location\"\
         : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
@@ -271,7 +271,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/routeTables?api-version=2020-04-01
   response:
     body:
-      string: '{"value":[{"name":"pyroutetableb6760c2d","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d","etag":"W/\"7e850a43-5b34-4d6d-8bc3-bb310c793c56\"","type":"Microsoft.Network/routeTables","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"893042ef-bfce-4c5e-8551-71e0d0e573b8","disableBgpRoutePropagation":false,"routes":[]}},{"name":"aks-agentpool-21324540-routetable","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","type":"Microsoft.Network/routeTables","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"98c090cc-0e58-4616-8b6a-8e5177b9d126","disableBgpRoutePropagation":false,"routes":[{"name":"aks-agentpool-21324540-0","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-0","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.0.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.6","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-agentpool-21324540-2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-2","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.2.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.4","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-agentpool-21324540-1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-1","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.1.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.5","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}],"subnets":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/virtualNetworks/aks-vnet-21324540/subnets/aks-subnet"}]}},{"name":"aks-agentpool-29767185-routetable","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","type":"Microsoft.Network/routeTables","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"f76b16eb-f28a-4e68-953c-7c4c2a1276ca","disableBgpRoutePropagation":false,"routes":[{"name":"aks-nodepool1-29767185-2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-2","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.0.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.6","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-nodepool1-29767185-1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-1","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.1.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.5","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-nodepool1-29767185-0","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-0","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.2.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.4","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}],"subnets":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/virtualNetworks/aks-vnet-29767185/subnets/aks-subnet"}]}},{"name":"AzureFirewall_firewall1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsfirewall/providers/Microsoft.Network/routeTables/AzureFirewall_firewall1","etag":"W/\"b1e3f827-235c-4e04-baf5-f445b23fd5e8\"","type":"Microsoft.Network/routeTables","properties":{"provisioningState":"Succeeded","resourceGuid":"37753caf-2e4f-4ca8-8d2d-71bda54da1bc","disableBgpRoutePropagation":false,"routes":[{"name":"FirewallDefaultRoute","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsfirewall/providers/Microsoft.Network/routeTables/AzureFirewall_firewall1/routes/FirewallDefaultRoute","etag":"W/\"b1e3f827-235c-4e04-baf5-f445b23fd5e8\"","properties":{"provisioningState":"Succeeded","addressPrefix":"0.0.0.0/0","nextHopType":"Internet","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}]}}]}'
+      string: '{"value":[{"name":"pyroutetableb6760c2d","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d","etag":"W/\"7e850a43-5b34-4d6d-8bc3-bb310c793c56\"","type":"Microsoft.Network/routeTables","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"893042ef-bfce-4c5e-8551-71e0d0e573b8","disableBgpRoutePropagation":false,"routes":[]}},{"name":"aks-agentpool-21324540-routetable","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","type":"Microsoft.Network/routeTables","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"98c090cc-0e58-4616-8b6a-8e5177b9d126","disableBgpRoutePropagation":false,"routes":[{"name":"aks-agentpool-21324540-0","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-0","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.0.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.6","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-agentpool-21324540-2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-2","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.2.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.4","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-agentpool-21324540-1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-21324540-routetable/routes/aks-agentpool-21324540-1","etag":"W/\"4484fe8e-0276-4d74-b84c-cc734693f9d5\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.1.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.5","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}],"subnets":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Network/virtualNetworks/aks-vnet-21324540/subnets/aks-subnet"}]}},{"name":"aks-agentpool-29767185-routetable","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","type":"Microsoft.Network/routeTables","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"f76b16eb-f28a-4e68-953c-7c4c2a1276ca","disableBgpRoutePropagation":false,"routes":[{"name":"aks-nodepool1-29767185-2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-2","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.0.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.6","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-nodepool1-29767185-1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-1","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.1.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.5","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"},{"name":"aks-nodepool1-29767185-0","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/routeTables/aks-agentpool-29767185-routetable/routes/aks-nodepool1-29767185-0","etag":"W/\"933f86e7-0d9f-43ba-8b4a-7ab51d7354f6\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.244.2.0/24","nextHopType":"VirtualAppliance","nextHopIpAddress":"10.240.0.4","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}],"subnets":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Network/virtualNetworks/aks-vnet-29767185/subnets/aks-subnet"}]}},{"name":"AzureFirewall_firewall1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsfirewall/providers/Microsoft.Network/routeTables/AzureFirewall_firewall1","etag":"W/\"b1e3f827-235c-4e04-baf5-f445b23fd5e8\"","type":"Microsoft.Network/routeTables","properties":{"provisioningState":"Succeeded","resourceGuid":"37753caf-2e4f-4ca8-8d2d-71bda54da1bc","disableBgpRoutePropagation":false,"routes":[{"name":"FirewallDefaultRoute","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsfirewall/providers/Microsoft.Network/routeTables/AzureFirewall_firewall1/routes/FirewallDefaultRoute","etag":"W/\"b1e3f827-235c-4e04-baf5-f445b23fd5e8\"","properties":{"provisioningState":"Succeeded","addressPrefix":"0.0.0.0/0","nextHopType":"Internet","hasBgpOverride":false},"type":"Microsoft.Network/routeTables/routes"}]}}]}'
     headers:
       cache-control:
       - no-cache
@@ -313,10 +313,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"e0dcc0c8-0a6f-4ae9-bfd7-bff1c9abfe4e\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\",\r\n  \
@@ -408,10 +408,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"737eac83-3b47-40ce-b0b4-0b927949eb84\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\",\r\n  \
@@ -460,10 +460,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
         ,\r\n  \"etag\": \"W/\\\"737eac83-3b47-40ce-b0b4-0b927949eb84\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\",\r\n  \
@@ -512,11 +512,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyrouteb6760c2d\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
         ,\r\n      \"etag\": \"W/\\\"737eac83-3b47-40ce-b0b4-0b927949eb84\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.1.0.0/16\",\r\n        \"nextHopType\"\
@@ -565,7 +565,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -657,7 +657,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2020-04-01
   response:
     body:
       string: ''
