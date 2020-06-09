@@ -11,6 +11,10 @@ resources:
 trigger: none
 pr: none
 
+variables:
+  Skip.MyPy: true
+  Skip.Pylint: true
+
 jobs:
 - job: 'ValidateDependencies'
   variables:
