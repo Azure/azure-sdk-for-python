@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 from msrestazure import AzureConfiguration
 
-from ..version import VERSION
+from .version import VERSION
 
 
 class ResourceManagementClientConfiguration(AzureConfiguration):
