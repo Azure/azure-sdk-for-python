@@ -66,10 +66,7 @@ def _get_refresh_token(service_name, account_name):
     if sys.version_info[0] < 3:
         raise NotImplementedError("Not supported on Python 2.7")
 
-    try:
-        if sys.version_info >= (3, 8):
-            raise NotImplementedError("Not supported")
-    except Exception:  # pylint: disable=broad-except
+    if sys.version_info >= (3, 8):
         raise NotImplementedError("Not supported")
 
     err = ct.c_int()
