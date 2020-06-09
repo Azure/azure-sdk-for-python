@@ -18,7 +18,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157?api-version=2019-04-01
   response:
     body:
       string: ''
@@ -64,7 +64,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/1dc7a385-4b62-402a-9e54-95351122e05f?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","name":"storageaccount75861157","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-26T09:26:39.8431994Z","primaryEndpoints":{"blob":"https://storageaccount75861157.blob.core.windows.net/","queue":"https://storageaccount75861157.queue.core.windows.net/","table":"https://storageaccount75861157.table.core.windows.net/","file":"https://storageaccount75861157.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","name":"storageaccount75861157","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-26T09:26:39.8431994Z","primaryEndpoints":{"blob":"https://storageaccount75861157.blob.core.windows.net/","queue":"https://storageaccount75861157.queue.core.windows.net/","table":"https://storageaccount75861157.table.core.windows.net/","file":"https://storageaccount75861157.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -113,17 +113,17 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
+      string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
         ,\r\n  \"etag\": \"W/\\\"2bc0c762-db3e-466b-8831-2d5fc8b527b1\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
         \   \"resourceGuid\": \"7cae4761-af6d-49d1-97db-5dbda8ce347d\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
+        : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
         ,\r\n        \"etag\": \"W/\\\"2bc0c762-db3e-466b-8831-2d5fc8b527b1\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
@@ -268,17 +268,17 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
+      string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
         ,\r\n  \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"7cae4761-af6d-49d1-97db-5dbda8ce347d\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
+        : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
         ,\r\n        \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
@@ -333,10 +333,10 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnet75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
+      string: "{\r\n  \"name\": \"subnet75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
         ,\r\n  \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -386,10 +386,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:27:40.367Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
@@ -408,17 +408,17 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:27:40.367Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
@@ -436,17 +436,17 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control: no-cache
@@ -464,7 +464,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -473,10 +473,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-05-26T09:27:42.3183966Z","revision":3}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-05-26T09:27:42.3183966Z","revision":3}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -493,12 +493,12 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
 - request:
     body: 'b''{"properties": {"messageRetentionInDays": 4, "partitionCount": 4, "status":
       "Active", "captureDescription": {"enabled": true, "encoding": "Avro", "intervalInSeconds":
       120, "sizeLimitInBytes": 10485763, "destination": {"name": "EventHubArchive.AzureBlockBlob",
-      "properties": {"storageAccountResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157",
+      "properties": {"storageAccountResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157",
       "blobContainer": "container", "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}}}}}'''
     headers:
       Accept:
@@ -510,11 +510,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57Z","updatedAt":"2020-05-26T09:28:55.22Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57Z","updatedAt":"2020-05-26T09:28:55.22Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -532,10 +532,10 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
     body: 'b''{"properties": {"defaultAction": "Deny", "virtualNetworkRules": [{"subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},
       "ignoreMissingVnetServiceEndpoint": true}], "ipRules": [{"ipMask": "1.1.1.1",
       "action": "Allow"}]}}'''
     headers:
@@ -548,11 +548,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
-        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
+        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -570,7 +570,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
 - request:
     body: '{"properties": {"rights": ["Listen", "Send"]}}'
     headers:
@@ -583,10 +583,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control: no-cache
@@ -605,7 +605,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: '{"properties": {"userMetadata": "New consumergroup"}}'
     headers:
@@ -618,10 +618,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
         Central US","properties":{"createdAt":"2020-05-26T09:29:27.1938923Z","updatedAt":"2020-05-26T09:29:27.1938923Z","userMetadata":"New
         consumergroup"}}'
     headers:
@@ -641,7 +641,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: '{"properties": {"rights": ["Listen", "Send"]}}'
     headers:
@@ -654,10 +654,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control: no-cache
@@ -676,7 +676,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -685,10 +685,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control: no-cache
@@ -706,7 +706,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -715,10 +715,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}'
     headers:
       cache-control: no-cache
@@ -736,7 +736,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -745,10 +745,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
         Central US","properties":{"createdAt":"2020-05-26T09:29:27.189Z","updatedAt":"2020-05-26T09:29:27.189Z","userMetadata":"New
         consumergroup"}}'
     headers:
@@ -767,7 +767,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -776,10 +776,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}]}'
     headers:
       cache-control: no-cache
@@ -797,7 +797,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -806,11 +806,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/$Default","name":"$Default","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-05-26T09:28:54.672Z","updatedAt":"2020-05-26T09:28:54.672Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/$Default","name":"$Default","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
+        Central US","properties":{"createdAt":"2020-05-26T09:28:54.672Z","updatedAt":"2020-05-26T09:28:54.672Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
         Central US","properties":{"createdAt":"2020-05-26T09:29:27.189Z","updatedAt":"2020-05-26T09:29:27.189Z","userMetadata":"New
         consumergroup"}}]}'
     headers:
@@ -830,7 +830,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -839,11 +839,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
-        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
+        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -860,7 +860,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -869,11 +869,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -890,7 +890,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -899,11 +899,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
-        Central US","properties":{"rights":["Listen","Manage","Send"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+        Central US","properties":{"rights":["Listen","Manage","Send"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157","name":"authorizationrule75861157","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Listen","Send"]}}]}'
     headers:
       cache-control: no-cache
@@ -921,7 +921,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -930,11 +930,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
-        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default","name":"default","type":"Microsoft.EventHub/Namespaces/NetworkRuleSets","location":"South
+        Central US","properties":{"defaultAction":"Deny","virtualNetworkRules":[{"subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},"ignoreMissingVnetServiceEndpoint":true}],"ipRules":[{"ipMask":"1.1.1.1","action":"Allow"}]}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -951,7 +951,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -960,11 +960,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
@@ -982,7 +982,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -991,10 +991,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control: no-cache
@@ -1012,7 +1012,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -1021,10 +1021,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control: no-cache
@@ -1042,7 +1042,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -1171,7 +1171,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control: no-cache
@@ -1496,7 +1496,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
   response:
     body:
       string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=;EntityPath=eventhub75861157","primaryKey":"XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=","secondaryKey":"KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=","keyName":"authorizationrule75861157"}'
@@ -1517,7 +1517,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -1526,7 +1526,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
   response:
     body:
       string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=;EntityPath=eventhub75861157","primaryKey":"XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=","secondaryKey":"KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=","keyName":"authorizationrule75861157"}'
@@ -1547,7 +1547,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
 - request:
     body: '{"keyType": "PrimaryKey"}'
     headers:
@@ -1560,7 +1560,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
   response:
     body:
       string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","primaryKey":"ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryKey":"3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","keyName":"authorizationrule75861157"}'
@@ -1581,7 +1581,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
 - request:
     body: null
     headers:
@@ -1590,7 +1590,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
   response:
     body:
       string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","primaryKey":"ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryKey":"3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","keyName":"authorizationrule75861157"}'
@@ -1611,7 +1611,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
 - request:
     body: '{"location": "South Central US", "tags": {"tag3": "value3", "tag4": "value4"}}'
     headers:
@@ -1624,10 +1624,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
         Central US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:30:00.48Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
@@ -1646,7 +1646,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: '{"name": "sdk-DisasterRecovery-9474"}'
     headers:
@@ -1687,7 +1687,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1705,14 +1705,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1730,14 +1730,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1755,14 +1755,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1780,14 +1780,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1796,7 +1796,7 @@ interactions:
       content-length: '0'
       date: Tue, 26 May 2020 09:30:30 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
       server-sb: Service-Bus-Resource-Provider/CH3
@@ -1806,14 +1806,14 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1830,5 +1830,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_cli_mgmt_eventhub_async_test_eventhub75861157/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
 version: 1

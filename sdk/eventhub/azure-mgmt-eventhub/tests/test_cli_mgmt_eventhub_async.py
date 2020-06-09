@@ -29,7 +29,7 @@ import unittest
 
 import azure.core
 import azure.mgmt.eventhub.aio
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase 
 
@@ -103,7 +103,7 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
         self.assertEqual(result_get.name, subnet_name)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_eventhub(self, resource_group):
 
         SKU_NAME = "Basic"
