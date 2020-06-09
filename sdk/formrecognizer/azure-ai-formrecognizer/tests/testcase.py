@@ -8,6 +8,7 @@
 
 
 import os
+import time
 import pytest
 import re
 from azure.core.credentials import AzureKeyCredential, AccessToken
@@ -385,7 +386,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
             )
 
         return {
-            'location': 'westus',
+            'location': 'westcentralus',
             'resource_group': rg,
         }
 
@@ -400,7 +401,7 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
         return {
-            'location': 'westus',
+            'location': 'westcentralus',
             'resource_group': FormRecognizerTest._RESOURCE_GROUP,
             'form_recognizer_account': form_recognizer_account,
             'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY
@@ -459,13 +460,13 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 
                 resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
                               "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = "westus"
+                resource_location = "westcentralus"
                 self.test_class_instance.scrubber.register_name_pair(
                     resource_id,
                     "resource_id"
                 )
             else:
-                resource_location = "westus"
+                resource_location = "westcentralus"
                 resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
 
             return {
@@ -529,13 +530,14 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="westus")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="westcentralus")
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="westus"
+        location="westcentralus"
     )
+    time.sleep(60)  # current ask until race condition bug fixed
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)

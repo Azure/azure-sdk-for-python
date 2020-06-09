@@ -128,6 +128,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         forms = await poller.result()
 
         for form in forms:
+            if form.form_type is None:
+                continue  # blank page
             self.assertEqual(form.form_type, "form-0")
             self.assertFormPagesHasValues(form.pages)
             for label, field in form.fields.items():

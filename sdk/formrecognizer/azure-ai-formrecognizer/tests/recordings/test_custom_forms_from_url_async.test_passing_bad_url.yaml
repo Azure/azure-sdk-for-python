@@ -1,30 +1,30 @@
 interactions:
 - request:
-    body: '{"source": "https://badurl.jpg"}'
+    body: 'b''{"source": "https://badurl.jpg"}'''
     headers:
       Content-Length:
       - '32'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"1001","message":"Specified model not found or not
-        ready, Model Id: xx"}}'
+      string: '{"error": {"code": "1001", "message": "Specified model not found or
+        not ready, Model Id: xx"}}'
     headers:
-      apim-request-id: bd0317b3-68dc-4c5a-aed7-8eafce9203e7
+      apim-request-id: 61182e76-df67-4552-b0f3-b385ba882d00
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 18:57:06 GMT
+      date: Tue, 09 Jun 2020 21:14:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5102'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 400
       message: Bad Request
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
 version: 1
