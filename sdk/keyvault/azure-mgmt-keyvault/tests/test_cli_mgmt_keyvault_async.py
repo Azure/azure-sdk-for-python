@@ -19,7 +19,7 @@
 import unittest
 
 import azure.mgmt.keyvault.aio
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
@@ -33,7 +33,7 @@ class MgmtKeyVaultTest(AzureMgmtAsyncTestCase):
             azure.mgmt.keyvault.aio.KeyVaultManagementClient
         )
     
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_keyvault(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
