@@ -8,6 +8,7 @@
 
 
 import os
+import time
 import pytest
 import re
 from azure.core.credentials import AzureKeyCredential, AccessToken
@@ -536,6 +537,7 @@ def form_recognizer_account():
         name_prefix='pycog',
         location="westcentralus"
     )
+    time.sleep(60)  # current ask until race condition bug fixed
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
