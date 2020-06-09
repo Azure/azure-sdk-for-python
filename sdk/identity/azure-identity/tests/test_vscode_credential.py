@@ -129,7 +129,7 @@ def test_distro():
                     return_value=('Linux', 'deb', '4.19.0-9-cloud-amd64',
                                   '#1 SMP Debian 4.19.118-2 (2020-04-29)', 'x86_64', '')):
         if sys.version_info[0] == 3 and sys.version_info[1] == 8:
-            with pytest.raises(CredentialUnavailableError):
+            with pytest.raises(NotImplementedError):
                 credential = _get_refresh_token("test", "test")
 
 
