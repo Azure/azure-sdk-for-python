@@ -16,13 +16,12 @@ class _SecretSchemaAttribute(ct.Structure):
         ("name", ct.c_char_p),
         ("type", ct.c_uint),
     ]
-_PSecretSchemaAttribute = ct.Array(_SecretSchemaAttribute)
 
 class _SecretSchema(ct.Structure):
     _fields_ = [
         ("name", ct.c_char_p),
         ("flags", ct.c_uint),
-        ("attributes", _PSecretSchemaAttribute),
+        ("attributes", _SecretSchemaAttribute * 2),
     ]
 _PSecretSchema = ct.POINTER(_SecretSchema)
 
@@ -77,11 +76,20 @@ def _get_refresh_token(service_name, account_name):
     #schema = _libsecret.secret_schema_new(
     #    _c_str("org.freedesktop.Secret.Generic"), 2, _c_str("service"), 0, _c_str("account"), 0, None
     #)
+    attribute1 = _SecretSchemaAttribute()
+    setattr(attribute1, "name", _c_str("service"))
+    setattr(attribute1, "type", 0)
+    attribute2 = _SecretSchemaAttribute()
+    setattr(attribute2, "name", _c_str("account"))
+    setattr(attribute2, "type", 0)
+    attributes = [attribute1, attribute2]
+    pattributes = (_SecretSchemaAttribute * 2)(*attributes)
     schema = _SecretSchema()
     pschema = _PSecretSchema(schema)
     ct.memset(pschema, 0, ct.sizeof(schema))
     setattr(schema, "name", _c_str("org.freedesktop.Secret.Generic"))
     setattr(schema, "flags", 2)
+    setattr(schema, "attributes", pattributes)
     p_str = _libsecret.secret_password_lookup_sync(
         pschema,
         None,
