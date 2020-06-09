@@ -210,7 +210,7 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: List model information for each model on the account.
         """
-        return self._client.list_custom_models(
+        return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
             error_map=error_map,
             **kwargs
