@@ -115,14 +115,24 @@ def test_distro():
     with mock.patch("platform.uname",
                     return_value=('Linux', 'redhat', '4.18.0-193.el8.x86_64',
                                   '#1 SMP Fri Mar 27 14:35:58 UTC 2020', 'x86_64', 'x86_64')):
-        credential = VSCodeCredential(_client=mock_client)
-        token = credential.get_token("scope")
+        if sys.version_info[0] < 3:
+            with pytest.raises(NotImplementedError):
+                credential = VSCodeCredential(_client=mock_client)
+                token = credential.get_token("scope")
+        else:
+            credential = VSCodeCredential(_client=mock_client)
+            token = credential.get_token("scope")
 
     with mock.patch("platform.uname",
                     return_value=('Linux', 'ubuntu', '5.3.0-1022-azure',
                                   '#23~18.04.1-Ubuntu SMP Mon May 11 11:55:56 UTC 2020', 'x86_64', 'x86_64')):
-        credential = VSCodeCredential(_client=mock_client)
-        token = credential.get_token("scope")
+        if sys.version_info[0] < 3:
+            with pytest.raises(NotImplementedError):
+                credential = VSCodeCredential(_client=mock_client)
+                token = credential.get_token("scope")
+        else:
+            credential = VSCodeCredential(_client=mock_client)
+            token = credential.get_token("scope")
 
     with mock.patch("platform.uname",
                     return_value=('Linux', 'deb', '4.19.0-9-cloud-amd64',
