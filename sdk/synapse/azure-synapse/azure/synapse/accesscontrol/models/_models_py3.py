@@ -145,7 +145,7 @@ class RoleAssignmentDetails(msrest.serialization.Model):
         self.principal_id = principal_id
 
 
-class RoleAssignmentOption(msrest.serialization.Model):
+class RoleAssignmentOptions(msrest.serialization.Model):
     """Role Assignment request details.
 
     All required parameters must be populated in order to send to Azure.
@@ -173,7 +173,7 @@ class RoleAssignmentOption(msrest.serialization.Model):
         principal_id: str,
         **kwargs
     ):
-        super(RoleAssignmentOption, self).__init__(**kwargs)
+        super(RoleAssignmentOptions, self).__init__(**kwargs)
         self.role_id = role_id
         self.principal_id = principal_id
 

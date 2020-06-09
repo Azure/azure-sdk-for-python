@@ -17,14 +17,14 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SparkBatchOperations:
-    """SparkBatchOperations async operations.
+class PipelineRunOperations:
+    """PipelineRunOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.synapse.spark.models
+    :type models: ~azure.synapse.artifacts.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -39,106 +39,36 @@ class SparkBatchOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def get_spark_batch_jobs(
+    async def query_pipeline_runs_by_workspace(
         self,
-        from_parameter: Optional[int] = None,
-        size: Optional[int] = None,
-        detailed: Optional[bool] = None,
+        filter_parameters: "models.RunFilterParameters",
         **kwargs
-    ) -> "models.SparkBatchJobCollection":
-        """List all spark batch jobs which are running under a particular spark pool.
+    ) -> "models.PipelineRunsQueryResponse":
+        """Query pipeline runs in the workspace based on input filter conditions.
 
-        :param from_parameter: Optional param specifying which index the list should begin from.
-        :type from_parameter: int
-        :param size: Optional param specifying the size of the returned list.
-                     By default it is 20 and that is the maximum.
-        :type size: int
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
+        :param filter_parameters: Parameters to filter the pipeline run.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkBatchJobCollection, or the result of cls(response)
-        :rtype: ~azure.synapse.spark.models.SparkBatchJobCollection
+        :return: PipelineRunsQueryResponse, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkBatchJobCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRunsQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        # Construct URL
-        url = self.get_spark_batch_jobs.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if from_parameter is not None:
-            query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'int')
-        if size is not None:
-            query_parameters['size'] = self._serialize.query("size", size, 'int')
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('SparkBatchJobCollection', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_spark_batch_jobs.metadata = {'url': '/batches'}  # type: ignore
-
-    async def create_spark_batch_job(
-        self,
-        spark_batch_job_options: "models.SparkBatchJobOptions",
-        detailed: Optional[bool] = None,
-        **kwargs
-    ) -> "models.SparkBatchJob":
-        """Create new spark batch job.
-
-        :param spark_batch_job_options: Livy compatible batch job request payload.
-        :type spark_batch_job_options: ~azure.synapse.spark.models.SparkBatchJobOptions
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkBatchJob, or the result of cls(response)
-        :rtype: ~azure.synapse.spark.models.SparkBatchJob
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkBatchJob"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create_spark_batch_job.metadata['url']  # type: ignore
+        url = self.query_pipeline_runs_by_workspace.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -146,7 +76,7 @@ class SparkBatchOperations:
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(spark_batch_job_options, 'SparkBatchJobOptions')
+        body_content = self._serialize.body(filter_parameters, 'RunFilterParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -155,52 +85,47 @@ class SparkBatchOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+        deserialized = self._deserialize('PipelineRunsQueryResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_spark_batch_job.metadata = {'url': '/batches'}  # type: ignore
+    query_pipeline_runs_by_workspace.metadata = {'url': '/queryPipelineRuns'}  # type: ignore
 
-    async def get_spark_batch_job(
+    async def get_pipeline_run(
         self,
-        batch_id: int,
-        detailed: Optional[bool] = None,
+        run_id: str,
         **kwargs
-    ) -> "models.SparkBatchJob":
-        """Gets a single spark batch job.
+    ) -> "models.PipelineRun":
+        """Get a pipeline run by its run ID.
 
-        :param batch_id: Identifier for the batch job.
-        :type batch_id: int
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
+        :param run_id: The pipeline run identifier.
+        :type run_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkBatchJob, or the result of cls(response)
-        :rtype: ~azure.synapse.spark.models.SparkBatchJob
+        :return: PipelineRun, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.PipelineRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkBatchJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-06-01-preview"
 
         # Construct URL
-        url = self.get_spark_batch_job.metadata['url']  # type: ignore
+        url = self.get_pipeline_run.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
-            'batchId': self._serialize.url("batch_id", batch_id, 'int'),
+            'runId': self._serialize.url("run_id", run_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -212,25 +137,95 @@ class SparkBatchOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+        deserialized = self._deserialize('PipelineRun', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    get_pipeline_run.metadata = {'url': '/pipelineruns/{runId}'}  # type: ignore
 
-    async def cancel_spark_batch_job(
+    async def query_activity_runs(
         self,
-        batch_id: int,
+        pipeline_name: str,
+        run_id: str,
+        filter_parameters: "models.RunFilterParameters",
+        **kwargs
+    ) -> "models.ActivityRunsQueryResponse":
+        """Query activity runs based on input filter conditions.
+
+        :param pipeline_name: The pipeline name.
+        :type pipeline_name: str
+        :param run_id: The pipeline run identifier.
+        :type run_id: str
+        :param filter_parameters: Parameters to filter the activity runs.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ActivityRunsQueryResponse, or the result of cls(response)
+        :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityRunsQueryResponse"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-06-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+
+        # Construct URL
+        url = self.query_activity_runs.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'pipelineName': self._serialize.url("pipeline_name", pipeline_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+            'runId': self._serialize.url("run_id", run_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/json'
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(filter_parameters, 'RunFilterParameters')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('ActivityRunsQueryResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    query_activity_runs.metadata = {'url': '/pipelines/{pipelineName}/pipelineruns/{runId}/queryActivityruns'}  # type: ignore
+
+    async def cancel_pipeline_run(
+        self,
+        run_id: str,
+        is_recursive: Optional[bool] = None,
         **kwargs
     ) -> None:
-        """Cancels a running spark batch job.
+        """Cancel a pipeline run by its run ID.
 
-        :param batch_id: Identifier for the batch job.
-        :type batch_id: int
+        :param run_id: The pipeline run identifier.
+        :type run_id: str
+        :param is_recursive: If true, cancel all the Child pipelines that are triggered by the current
+         pipeline.
+        :type is_recursive: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -239,32 +234,35 @@ class SparkBatchOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-06-01-preview"
 
         # Construct URL
-        url = self.cancel_spark_batch_job.metadata['url']  # type: ignore
+        url = self.cancel_pipeline_run.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
-            'batchId': self._serialize.url("batch_id", batch_id, 'int'),
+            'runId': self._serialize.url("run_id", run_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if is_recursive is not None:
+            query_parameters['isRecursive'] = self._serialize.query("is_recursive", is_recursive, 'bool')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        request = self._client.delete(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.CloudError, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    cancel_pipeline_run.metadata = {'url': '/pipelineruns/{runId}/cancel'}  # type: ignore

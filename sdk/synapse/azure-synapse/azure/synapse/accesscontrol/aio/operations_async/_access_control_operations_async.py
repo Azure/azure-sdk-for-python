@@ -57,6 +57,10 @@ class AccessControlOperations:
         api_version = "2020-02-01-preview"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.get_role_definitions.metadata['url']  # type: ignore
@@ -68,6 +72,7 @@ class AccessControlOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
@@ -75,12 +80,7 @@ class AccessControlOperations:
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -143,7 +143,6 @@ class AccessControlOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -163,13 +162,13 @@ class AccessControlOperations:
 
     async def create_role_assignment(
         self,
-        request: "models.RoleAssignmentOption",
+        create_role_assignment_options: "models.RoleAssignmentOptions",
         **kwargs
     ) -> "models.RoleAssignmentDetails":
         """Create role assignment.
 
-        :param request: Details of role id and object id.
-        :type request: ~azure.synapse.accesscontrol.models.RoleAssignmentOption
+        :param create_role_assignment_options: Details of role id and object id.
+        :type create_role_assignment_options: ~azure.synapse.accesscontrol.models.RoleAssignmentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignmentDetails, or the result of cls(response)
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
@@ -197,9 +196,8 @@ class AccessControlOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request, 'RoleAssignmentOption')
+        body_content = self._serialize.body(create_role_assignment_options, 'RoleAssignmentOptions')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -223,7 +221,7 @@ class AccessControlOperations:
         self,
         role_id: Optional[str] = None,
         principal_id: Optional[str] = None,
-        continuation_token: Optional[str] = None,
+        continuation_token_parameter: Optional[str] = None,
         **kwargs
     ) -> List["models.RoleAssignmentDetails"]:
         """List role assignments.
@@ -232,8 +230,8 @@ class AccessControlOperations:
         :type role_id: str
         :param principal_id: Object ID of the AAD principal or security-group.
         :type principal_id: str
-        :param continuation_token: Continuation token.
-        :type continuation_token: str
+        :param continuation_token_parameter: Continuation token.
+        :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of RoleAssignmentDetails, or the result of cls(response)
         :rtype: list[~azure.synapse.accesscontrol.models.RoleAssignmentDetails]
@@ -261,11 +259,10 @@ class AccessControlOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if continuation_token is not None:
-            header_parameters['x-ms-continuation'] = self._serialize.header("continuation_token", continuation_token, 'str')
+        if continuation_token_parameter is not None:
+            header_parameters['x-ms-continuation'] = self._serialize.header("continuation_token_parameter", continuation_token_parameter, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -320,7 +317,6 @@ class AccessControlOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -372,7 +368,6 @@ class AccessControlOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -418,7 +413,6 @@ class AccessControlOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

@@ -11,7 +11,7 @@ try:
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import RoleAssignmentDetails
-    from ._models_py3 import RoleAssignmentOption
+    from ._models_py3 import RoleAssignmentOptions
     from ._models_py3 import RolesListResponse
     from ._models_py3 import SynapseRole
 except (SyntaxError, ImportError):
@@ -19,7 +19,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import RoleAssignmentDetails  # type: ignore
-    from ._models import RoleAssignmentOption  # type: ignore
+    from ._models import RoleAssignmentOptions  # type: ignore
     from ._models import RolesListResponse  # type: ignore
     from ._models import SynapseRole  # type: ignore
 
@@ -28,7 +28,7 @@ __all__ = [
     'ErrorDetail',
     'ErrorResponse',
     'RoleAssignmentDetails',
-    'RoleAssignmentOption',
+    'RoleAssignmentOptions',
     'RolesListResponse',
     'SynapseRole',
 ]
