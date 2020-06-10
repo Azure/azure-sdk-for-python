@@ -66,13 +66,7 @@ def _get_refresh_token(service_name, account_name):
         return None
 
     err = ct.c_int()
-    attribute1 = _SECRET_SCHEMA_ATTRIBUTE()
-    setattr(attribute1, "name", _c_str("service"))
-    setattr(attribute1, "type", 0)
-    attribute2 = _SECRET_SCHEMA_ATTRIBUTE()
-    setattr(attribute2, "name", _c_str("account"))
-    setattr(attribute2, "type", 0)
-    attributes = [attribute1, attribute2]
+    attributes = [_SECRET_SCHEMA_ATTRIBUTE(_c_str("service"), 0), _SECRET_SCHEMA_ATTRIBUTE(_c_str("account"), 0)]
     pattributes = (_SECRET_SCHEMA_ATTRIBUTE * 2)(*attributes)
     schema = _SECRET_SCHEMA()
     pschema = _PSECRET_SCHEMA(schema)
