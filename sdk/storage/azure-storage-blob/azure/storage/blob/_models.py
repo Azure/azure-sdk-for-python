@@ -22,6 +22,7 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItemInternal
+from ._generated.models import DelimitedTextConfiguration as GenDelimitedTextConfiguration
 
 
 class BlobType(str, Enum):
@@ -1112,3 +1113,48 @@ class ContainerEncryptionScope(object):
             )
             return scope
         return None
+
+
+class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
+    """Defines the input or output delimited (CSV) serialization for a blob quick query request.
+
+    :keyword str column_separator: column separator, defaults to ','
+    :keyword str field_quote: field quote, defaults to '"'
+    :keyword str record_separator: record separator, defaults to '\n'
+    :keyword str escape_char: escape char, defaults to empty
+    :keyword bool headers_present: has headers, defaults to False
+    """
+    def __init__(self, **kwargs):
+        column_separator = kwargs.pop('column_separator', ',')
+        field_quote = kwargs.pop('field_quote', '"')
+        record_separator = kwargs.pop('record_separator', '\n')
+        escape_char = kwargs.pop('escape_char', "")
+        headers_present = kwargs.pop('headers_present', False)
+
+        super(DelimitedTextConfiguration, self).__init__(
+            column_separator=column_separator,
+            field_quote=field_quote,
+            record_separator=record_separator,
+            escape_char=escape_char,
+            headers_present=headers_present)
+
+
+class QuickQueryError(object):
+    """The error happened during quick query operation.
+
+    :ivar str name:
+        The name of the error.
+    :ivar bool is_fatal:
+        If true, this error prevents further query processing. More result data may be returned,
+        but there is no guarantee that all of the original data will be processed.
+        If false, this error does not prevent further query processing.
+    :ivar str description:
+        A description of the error.
+    :ivar int position:
+        The blob offset at which the error occurred.
+    """
+    def __init__(self, name=None, is_fatal=False, description=None, position=None):
+        self.name = name
+        self.is_fatal = is_fatal
+        self.description = description
+        self.position = position

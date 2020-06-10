@@ -26,7 +26,7 @@ from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -35,10 +35,12 @@ from ._generated.models import ( # pylint: disable=unused-import
     AppendPositionAccessConditions,
     SequenceNumberAccessConditions,
     StorageErrorException,
-    UserDelegationKey,
+    QueryRequest,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
+from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version, \
+    get_quick_query_serialization_info
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
+from ._quick_query_helper import QuickQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
@@ -51,9 +53,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
-        ContainerProperties,
         BlobProperties,
-        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -623,6 +623,103 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         return StorageStreamDownloader(**options)
+
+    def _quick_query_options(self, query_expression,
+                             **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
+        input_serialization = kwargs.pop('input_serialization', None)
+        output_serialization = kwargs.pop('output_serialization', None)
+        query_request = QueryRequest(expression=query_expression,
+                                     input_serialization=get_quick_query_serialization_info(input_serialization),
+                                     output_serialization=get_quick_query_serialization_info(output_serialization))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = get_modify_conditions(kwargs)
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.scheme.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+        options = {
+            'query_request': query_request,
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
+            'progress_callback': kwargs.pop('progress_callback', None),
+            'snapshot': self.snapshot,
+            'timeout': kwargs.pop('timeout', None),
+            'cls': return_headers_and_deserialized,
+            'client': self._client,
+            'name': self.blob_name,
+            'container': self.container_name}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def query(self, query_expression,  # type: str
+              **kwargs):
+        # type: (str, **Any) -> QuickQueryReader
+        """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
+        This operations returns a QuickQueryReader, users need to use readall() or readinto() to get query data.
+
+        :param str query_expression:
+            Required. a query statement.
+        :keyword func(~azure.storage.blob.QuickQueryError, int, int) progress_callback:
+            Callback where the caller can track progress of the operation as well as the quick query failures.
+        :keyword input_serialization:
+            Optional. Defines the input serialization for a blob quick query request.
+            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
+            When the input_serialization is set for JSON records, only a record separator in str format is needed.
+        :paramtype input_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str
+        :keyword output_serialization:
+            Optional. Defines the output serialization for a blob quick query request.
+            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
+            When the input_serialization is set for JSON records, only a record separator in str format is needed.
+        :paramtype output_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A streaming object (QuickQueryReader)
+        :rtype: ~azure.storage.blob.QuickQueryReader
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_query.py
+                :start-after: [START query]
+                :end-before: [END query]
+                :language: python
+                :dedent: 4
+                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
+        """
+        options = self._quick_query_options(query_expression, **kwargs)
+        return QuickQueryReader(**options)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
