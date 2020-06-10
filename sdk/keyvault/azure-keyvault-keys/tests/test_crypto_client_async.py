@@ -8,10 +8,11 @@ import hashlib
 import os
 
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
-from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+import pytest
+
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
 
@@ -79,7 +80,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_encrypt_and_decrypt(self, key_client, credential, **kwargs):
         # TODO: use iv, authentication_data
         key_name = self.get_resource_name("keycrypt")
@@ -98,7 +98,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_sign_and_verify(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("keysign")
 
@@ -120,7 +119,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_wrap_and_unwrap(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("keywrap")
 
@@ -136,27 +134,9 @@ class CryptoClientTests(KeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    @KeyVaultTestCase.await_prepared_test
-    async def test_symmetric_wrap_and_unwrap_local(self, *args, **kwargs):
-        key = KeyVaultKey(
-            key_id="http://fake.test.vault/keys/key/version",
-            k=os.urandom(32),
-            kty="oct",
-            key_ops=["unwrapKey", "wrapKey"],
-        )
-
-        crypto_client = CryptographyClient(key, credential=lambda *_: None)
-
-        # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
-        key_bytes = os.urandom(32)
-        wrap_result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, key_bytes)
-        unwrap_result = await crypto_client.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
-        self.assertEqual(unwrap_result.key, key_bytes)
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_encrypt_local(self, key_client, credential, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
 
@@ -173,7 +153,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_wrap_local(self, key_client, credential, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
 
@@ -190,7 +169,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_rsa_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
 
@@ -216,7 +194,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @CryptoClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_ec_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
 
@@ -238,3 +215,21 @@ class CryptoClientTests(KeyVaultTestCase):
 
             result = await crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
+
+
+@pytest.mark.asyncio
+async def test_symmetric_wrap_and_unwrap_local():
+    key = KeyVaultKey(
+        key_id="http://fake.test.vault/keys/key/version",
+        k=os.urandom(32),
+        kty="oct",
+        key_ops=["unwrapKey", "wrapKey"],
+    )
+
+    crypto_client = CryptographyClient(key, credential=lambda *_: None)
+
+    # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
+    key_bytes = os.urandom(32)
+    wrap_result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, key_bytes)
+    unwrap_result = await crypto_client.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
+    assert unwrap_result.key == key_bytes
