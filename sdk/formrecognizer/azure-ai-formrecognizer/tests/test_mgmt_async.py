@@ -22,11 +22,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @pytest.mark.live_test_only
-    def test_active_directory_auth_async(self):
+    async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         client = FormTrainingClient(endpoint, token)
-        props = client.get_account_properties()
+        props = await client.get_account_properties()
         self.assertIsNotNone(props)
 
     @GlobalFormRecognizerAccountPreparer()
