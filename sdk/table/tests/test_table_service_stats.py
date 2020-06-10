@@ -48,7 +48,7 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     # @GlobalStorageAccountPreparer()
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
