@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from threading import RLock
+import time
 
-from uamqp import Connection, c_uamqp
+from uamqp import Connection, AMQPClient, c_uamqp
 
 from .utils import create_authentication
+from .constants import CONNECTION_END_STATUS
 
 
-class ServiceBusConnection(object):
+class SharedServiceBusConnection(object):
     def __init__(self, client):
         self._conn = None
         self._client = client
@@ -18,13 +20,8 @@ class ServiceBusConnection(object):
     def get_connection(self):
         # pylint:disable=c-extension-no-member
         with self._lock:
-            if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,
-                c_uamqp.ConnectionState.CLOSE_SENT,
-                c_uamqp.ConnectionState.DISCARDING,
-                c_uamqp.ConnectionState.END,
-                c_uamqp.ConnectionState.ERROR
-            ):
+            if self._conn and self._conn._state in CONNECTION_END_STATUS:  # pylint:disable=protected-access
+                # Each uamqp handler controls its own lifecycle to simplify the logic.
                 self._conn.destroy()
                 self._conn = None
 
@@ -35,7 +32,6 @@ class ServiceBusConnection(object):
                     auth,
                     debug=self._client._config.logging_enable  # pylint:disable=protected-access
                 )
-
             return self._conn
 
     def close(self):

@@ -162,19 +162,19 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
             prefetch=self._prefetch,
-            link_creation_mode = link_creation_mode
+            link_creation_mode=link_creation_mode
         )
 
     def _open(self):
         if self._running:
             return
         if self._handler:
-            self._handler.close()
+            self._close_handler()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
-            self._handler.open(connection=(self._connection.get_connection() if self._connection else None))
+            self._servicebus_client._open_handler(self._handler)
             self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
             while not self._handler.client_ready():
                 time.sleep(0.05)

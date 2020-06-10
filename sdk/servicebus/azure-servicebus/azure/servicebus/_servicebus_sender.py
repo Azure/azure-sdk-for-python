@@ -151,7 +151,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         self._max_message_size_on_link = 0
         self._create_attribute()
-        self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
@@ -173,19 +172,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if self._running:
             return
         if self._handler:
-            self._handler.close()
+            self._close_handler()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
-            self._handler.open(connection=(self._connection.get_connection() if self._connection else None))
+            self._servicebus_client._open_handler(self._handler)
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            self._close_handler()
             raise
 
     def _send(self, message, timeout=None, last_exception=None):

@@ -6,7 +6,7 @@
 
 from enum import Enum
 
-from uamqp import constants
+from uamqp import constants, c_uamqp
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -110,6 +110,15 @@ class ReceiveSettleMode(Enum):
 
 class SessionFilter(Enum):
     NextAvailable = 0
+
+
+CONNECTION_END_STATUS = (
+    c_uamqp.ConnectionState.CLOSE_RCVD,
+    c_uamqp.ConnectionState.CLOSE_SENT,
+    c_uamqp.ConnectionState.DISCARDING,
+    c_uamqp.ConnectionState.END,
+    c_uamqp.ConnectionState.ERROR
+)
 
 
 NEXT_AVAILABLE = SessionFilter.NextAvailable
