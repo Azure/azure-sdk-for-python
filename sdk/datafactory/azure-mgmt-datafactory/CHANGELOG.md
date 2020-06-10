@@ -1,5 +1,70 @@
 # Release History
 
+## 0.11.0 (2020-06-10)
+
+**Features**
+
+  - Model SftpReadSettings has a new parameter delete_files_after_completion
+  - Model SftpReadSettings has a new parameter enable_partition_discovery
+  - Model SftpReadSettings has a new parameter partition_root_path
+  - Model AzureSqlSource has a new parameter partition_settings
+  - Model AzureSqlSource has a new parameter partition_option
+  - Model AmazonS3ReadSettings has a new parameter delete_files_after_completion
+  - Model AmazonS3ReadSettings has a new parameter partition_root_path
+  - Model Factory has a new parameter global_parameters
+  - Model HdfsReadSettings has a new parameter partition_root_path
+  - Model DynamicsAXSource has a new parameter http_request_timeout
+  - Model GoogleCloudStorageReadSettings has a new parameter delete_files_after_completion
+  - Model GoogleCloudStorageReadSettings has a new parameter partition_root_path
+  - Model SqlDWSource has a new parameter partition_settings
+  - Model SqlDWSource has a new parameter partition_option
+  - Model SapCloudForCustomerSink has a new parameter http_request_timeout
+  - Model SqlServerSource has a new parameter partition_settings
+  - Model SqlServerSource has a new parameter partition_option
+  - Model DelimitedTextReadSettings has a new parameter compression_properties
+  - Model SapCloudForCustomerSource has a new parameter http_request_timeout
+  - Model DeleteActivity has a new parameter store_settings
+  - Model IntegrationRuntimeSsisProperties has a new parameter package_stores
+  - Model AzureBlobFSReadSettings has a new parameter delete_files_after_completion
+  - Model AzureBlobFSReadSettings has a new parameter partition_root_path
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_after
+  - Model AzureDataLakeStoreReadSettings has a new parameter delete_files_after_completion
+  - Model AzureDataLakeStoreReadSettings has a new parameter partition_root_path
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_before
+  - Model BinarySource has a new parameter format_settings
+  - Model SqlMISource has a new parameter partition_settings
+  - Model SqlMISource has a new parameter partition_option
+  - Model GetMetadataActivity has a new parameter format_settings
+  - Model GetMetadataActivity has a new parameter store_settings
+  - Model SapEccSource has a new parameter http_request_timeout
+  - Model FileServerReadSettings has a new parameter delete_files_after_completion
+  - Model FileServerReadSettings has a new parameter partition_root_path
+  - Model FileServerReadSettings has a new parameter file_filter
+  - Model DataFlowSink has a new parameter linked_service
+  - Model DataFlowSink has a new parameter schema_linked_service
+  - Model AzureBlobStorageReadSettings has a new parameter delete_files_after_completion
+  - Model AzureBlobStorageReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageLinkedService has a new parameter file_share
+  - Model AzureFileStorageLinkedService has a new parameter connection_string
+  - Model AzureFileStorageLinkedService has a new parameter sas_token
+  - Model AzureFileStorageLinkedService has a new parameter account_key
+  - Model AzureFileStorageLinkedService has a new parameter sas_uri
+  - Model SqlSource has a new parameter partition_settings
+  - Model SqlSource has a new parameter partition_option
+  - Model HttpReadSettings has a new parameter enable_partition_discovery
+  - Model HttpReadSettings has a new parameter partition_root_path
+  - Model DataFlowSource has a new parameter linked_service
+  - Model DataFlowSource has a new parameter schema_linked_service
+  - Model ODataSource has a new parameter http_request_timeout
+  - Model FtpReadSettings has a new parameter delete_files_after_completion
+  - Model FtpReadSettings has a new parameter enable_partition_discovery
+  - Model FtpReadSettings has a new parameter partition_root_path
+  - Model SSISPackageLocation has a new parameter configuration_access_credential
+  - Model JsonSource has a new parameter format_settings
+  - Model AzureFileStorageReadSettings has a new parameter delete_files_after_completion
+  - Model AzureFileStorageReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageReadSettings has a new parameter prefix
+
 ## 0.10.0 (2020-03-10)
 
 **Features**

@@ -47,7 +47,6 @@ try:
     from ._models_py3 import AzureBlobStorageLocation
     from ._models_py3 import AzureBlobStorageReadSettings
     from ._models_py3 import AzureBlobStorageWriteSettings
-    from ._models_py3 import AzureDatabricksLinkedService
     from ._models_py3 import AzureDataExplorerCommandActivity
     from ._models_py3 import AzureDataExplorerLinkedService
     from ._models_py3 import AzureDataExplorerSink
@@ -61,6 +60,7 @@ try:
     from ._models_py3 import AzureDataLakeStoreSink
     from ._models_py3 import AzureDataLakeStoreSource
     from ._models_py3 import AzureDataLakeStoreWriteSettings
+    from ._models_py3 import AzureDatabricksLinkedService
     from ._models_py3 import AzureFileStorageLinkedService
     from ._models_py3 import AzureFileStorageLocation
     from ._models_py3 import AzureFileStorageReadSettings
@@ -68,15 +68,15 @@ try:
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
     from ._models_py3 import AzureKeyVaultSecretReference
-    from ._models_py3 import AzureMariaDBLinkedService
-    from ._models_py3 import AzureMariaDBSource
-    from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMLBatchExecutionActivity
     from ._models_py3 import AzureMLExecutePipelineActivity
     from ._models_py3 import AzureMLLinkedService
     from ._models_py3 import AzureMLServiceLinkedService
     from ._models_py3 import AzureMLUpdateResourceActivity
     from ._models_py3 import AzureMLWebServiceFile
+    from ._models_py3 import AzureMariaDBLinkedService
+    from ._models_py3 import AzureMariaDBSource
+    from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMySqlLinkedService
     from ._models_py3 import AzureMySqlSink
     from ._models_py3 import AzureMySqlSource
@@ -89,9 +89,9 @@ try:
     from ._models_py3 import AzureSearchIndexDataset
     from ._models_py3 import AzureSearchIndexSink
     from ._models_py3 import AzureSearchLinkedService
-    from ._models_py3 import AzureSqlDatabaseLinkedService
     from ._models_py3 import AzureSqlDWLinkedService
     from ._models_py3 import AzureSqlDWTableDataset
+    from ._models_py3 import AzureSqlDatabaseLinkedService
     from ._models_py3 import AzureSqlMILinkedService
     from ._models_py3 import AzureSqlMITableDataset
     from ._models_py3 import AzureSqlSink
@@ -103,6 +103,7 @@ try:
     from ._models_py3 import AzureTableSource
     from ._models_py3 import AzureTableStorageLinkedService
     from ._models_py3 import BinaryDataset
+    from ._models_py3 import BinaryReadSettings
     from ._models_py3 import BinarySink
     from ._models_py3 import BinarySource
     from ._models_py3 import BlobEventsTrigger
@@ -119,6 +120,7 @@ try:
     from ._models_py3 import CommonDataServiceForAppsSink
     from ._models_py3 import CommonDataServiceForAppsSource
     from ._models_py3 import ComponentSetup
+    from ._models_py3 import CompressionReadSettings
     from ._models_py3 import ConcurLinkedService
     from ._models_py3 import ConcurObjectDataset
     from ._models_py3 import ConcurSource
@@ -143,12 +145,11 @@ try:
     from ._models_py3 import CreateRunResponse
     from ._models_py3 import CustomActivity
     from ._models_py3 import CustomActivityReferenceObject
-    from ._models_py3 import CustomDataset
     from ._models_py3 import CustomDataSourceLinkedService
+    from ._models_py3 import CustomDataset
     from ._models_py3 import CustomSetupBase
-    from ._models_py3 import DatabricksNotebookActivity
-    from ._models_py3 import DatabricksSparkJarActivity
-    from ._models_py3 import DatabricksSparkPythonActivity
+    from ._models_py3 import DWCopyCommandDefaultValue
+    from ._models_py3 import DWCopyCommandSettings
     from ._models_py3 import DataFlow
     from ._models_py3 import DataFlowDebugCommandPayload
     from ._models_py3 import DataFlowDebugCommandRequest
@@ -165,6 +166,9 @@ try:
     from ._models_py3 import DataFlowSourceSetting
     from ._models_py3 import DataFlowStagingInfo
     from ._models_py3 import DataLakeAnalyticsUSQLActivity
+    from ._models_py3 import DatabricksNotebookActivity
+    from ._models_py3 import DatabricksSparkJarActivity
+    from ._models_py3 import DatabricksSparkPythonActivity
     from ._models_py3 import Dataset
     from ._models_py3 import DatasetBZip2Compression
     from ._models_py3 import DatasetCompression
@@ -195,8 +199,6 @@ try:
     from ._models_py3 import DrillLinkedService
     from ._models_py3 import DrillSource
     from ._models_py3 import DrillTableDataset
-    from ._models_py3 import DWCopyCommandDefaultValue
-    from ._models_py3 import DWCopyCommandSettings
     from ._models_py3 import DynamicsAXLinkedService
     from ._models_py3 import DynamicsAXResourceDataset
     from ._models_py3 import DynamicsAXSource
@@ -213,11 +215,14 @@ try:
     from ._models_py3 import EloquaSource
     from ._models_py3 import EntityReference
     from ._models_py3 import EnvironmentVariableSetup
+    from ._models_py3 import ExcelDataset
+    from ._models_py3 import ExcelSource
     from ._models_py3 import ExecuteDataFlowActivity
     from ._models_py3 import ExecuteDataFlowActivityTypePropertiesCompute
     from ._models_py3 import ExecutePipelineActivity
     from ._models_py3 import ExecuteSSISPackageActivity
     from ._models_py3 import ExecutionActivity
+    from ._models_py3 import ExportSettings
     from ._models_py3 import ExposureControlRequest
     from ._models_py3 import ExposureControlResponse
     from ._models_py3 import Expression
@@ -247,6 +252,7 @@ try:
     from ._models_py3 import GetSsisObjectMetadataRequest
     from ._models_py3 import GitHubAccessTokenRequest
     from ._models_py3 import GitHubAccessTokenResponse
+    from ._models_py3 import GlobalParameterSpecification
     from ._models_py3 import GoogleAdWordsLinkedService
     from ._models_py3 import GoogleAdWordsObjectDataset
     from ._models_py3 import GoogleAdWordsSource
@@ -262,10 +268,6 @@ try:
     from ._models_py3 import HBaseLinkedService
     from ._models_py3 import HBaseObjectDataset
     from ._models_py3 import HBaseSource
-    from ._models_py3 import HdfsLinkedService
-    from ._models_py3 import HdfsLocation
-    from ._models_py3 import HdfsReadSettings
-    from ._models_py3 import HdfsSource
     from ._models_py3 import HDInsightHiveActivity
     from ._models_py3 import HDInsightLinkedService
     from ._models_py3 import HDInsightMapReduceActivity
@@ -273,6 +275,10 @@ try:
     from ._models_py3 import HDInsightPigActivity
     from ._models_py3 import HDInsightSparkActivity
     from ._models_py3 import HDInsightStreamingActivity
+    from ._models_py3 import HdfsLinkedService
+    from ._models_py3 import HdfsLocation
+    from ._models_py3 import HdfsReadSettings
+    from ._models_py3 import HdfsSource
     from ._models_py3 import HiveLinkedService
     from ._models_py3 import HiveObjectDataset
     from ._models_py3 import HiveSource
@@ -288,6 +294,7 @@ try:
     from ._models_py3 import ImpalaLinkedService
     from ._models_py3 import ImpalaObjectDataset
     from ._models_py3 import ImpalaSource
+    from ._models_py3 import ImportSettings
     from ._models_py3 import InformixLinkedService
     from ._models_py3 import InformixSink
     from ._models_py3 import InformixSource
@@ -317,6 +324,7 @@ try:
     from ._models_py3 import JiraSource
     from ._models_py3 import JsonDataset
     from ._models_py3 import JsonFormat
+    from ._models_py3 import JsonReadSettings
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
@@ -394,6 +402,7 @@ try:
     from ._models_py3 import OrcFormat
     from ._models_py3 import OrcSink
     from ._models_py3 import OrcSource
+    from ._models_py3 import PackageStore
     from ._models_py3 import ParameterSpecification
     from ._models_py3 import ParquetDataset
     from ._models_py3 import ParquetFormat
@@ -439,6 +448,13 @@ try:
     from ._models_py3 import RunFilterParameters
     from ._models_py3 import RunQueryFilter
     from ._models_py3 import RunQueryOrderBy
+    from ._models_py3 import SSISAccessCredential
+    from ._models_py3 import SSISChildPackage
+    from ._models_py3 import SSISExecutionCredential
+    from ._models_py3 import SSISExecutionParameter
+    from ._models_py3 import SSISLogLocation
+    from ._models_py3 import SSISPackageLocation
+    from ._models_py3 import SSISPropertyOverride
     from ._models_py3 import SalesforceLinkedService
     from ._models_py3 import SalesforceMarketingCloudLinkedService
     from ._models_py3 import SalesforceMarketingCloudObjectDataset
@@ -450,8 +466,8 @@ try:
     from ._models_py3 import SalesforceServiceCloudSource
     from ._models_py3 import SalesforceSink
     from ._models_py3 import SalesforceSource
-    from ._models_py3 import SapBwCubeDataset
     from ._models_py3 import SapBWLinkedService
+    from ._models_py3 import SapBwCubeDataset
     from ._models_py3 import SapBwSource
     from ._models_py3 import SapCloudForCustomerLinkedService
     from ._models_py3 import SapCloudForCustomerResourceDataset
@@ -488,10 +504,19 @@ try:
     from ._models_py3 import SftpReadSettings
     from ._models_py3 import SftpServerLinkedService
     from ._models_py3 import SftpWriteSettings
+    from ._models_py3 import SharePointOnlineListLinkedService
+    from ._models_py3 import SharePointOnlineListResourceDataset
+    from ._models_py3 import SharePointOnlineListSource
     from ._models_py3 import ShopifyLinkedService
     from ._models_py3 import ShopifyObjectDataset
     from ._models_py3 import ShopifySource
     from ._models_py3 import SkipErrorFile
+    from ._models_py3 import SnowflakeDataset
+    from ._models_py3 import SnowflakeExportCopyCommand
+    from ._models_py3 import SnowflakeImportCopyCommand
+    from ._models_py3 import SnowflakeLinkedService
+    from ._models_py3 import SnowflakeSink
+    from ._models_py3 import SnowflakeSource
     from ._models_py3 import SparkLinkedService
     from ._models_py3 import SparkObjectDataset
     from ._models_py3 import SparkSource
@@ -499,6 +524,7 @@ try:
     from ._models_py3 import SqlDWSource
     from ._models_py3 import SqlMISink
     from ._models_py3 import SqlMISource
+    from ._models_py3 import SqlPartitionSettings
     from ._models_py3 import SqlServerLinkedService
     from ._models_py3 import SqlServerSink
     from ._models_py3 import SqlServerSource
@@ -509,27 +535,20 @@ try:
     from ._models_py3 import SquareLinkedService
     from ._models_py3 import SquareObjectDataset
     from ._models_py3 import SquareSource
-    from ._models_py3 import SSISAccessCredential
-    from ._models_py3 import SSISChildPackage
     from ._models_py3 import SsisEnvironment
     from ._models_py3 import SsisEnvironmentReference
-    from ._models_py3 import SSISExecutionCredential
-    from ._models_py3 import SSISExecutionParameter
     from ._models_py3 import SsisFolder
-    from ._models_py3 import SSISLogLocation
     from ._models_py3 import SsisObjectMetadata
     from ._models_py3 import SsisObjectMetadataListResponse
     from ._models_py3 import SsisObjectMetadataStatusResponse
     from ._models_py3 import SsisPackage
-    from ._models_py3 import SSISPackageLocation
     from ._models_py3 import SsisParameter
     from ._models_py3 import SsisProject
-    from ._models_py3 import SSISPropertyOverride
     from ._models_py3 import SsisVariable
     from ._models_py3 import StagingSettings
-    from ._models_py3 import StoredProcedureParameter
     from ._models_py3 import StoreReadSettings
     from ._models_py3 import StoreWriteSettings
+    from ._models_py3 import StoredProcedureParameter
     from ._models_py3 import SubResource
     from ._models_py3 import SubResourceDebugResource
     from ._models_py3 import SwitchActivity
@@ -580,6 +599,10 @@ try:
     from ._models_py3 import XeroLinkedService
     from ._models_py3 import XeroObjectDataset
     from ._models_py3 import XeroSource
+    from ._models_py3 import XmlDataset
+    from ._models_py3 import XmlReadSettings
+    from ._models_py3 import XmlSource
+    from ._models_py3 import ZipDeflateReadSettings
     from ._models_py3 import ZohoLinkedService
     from ._models_py3 import ZohoObjectDataset
     from ._models_py3 import ZohoSource
@@ -621,7 +644,6 @@ except (SyntaxError, ImportError):
     from ._models import AzureBlobStorageLocation
     from ._models import AzureBlobStorageReadSettings
     from ._models import AzureBlobStorageWriteSettings
-    from ._models import AzureDatabricksLinkedService
     from ._models import AzureDataExplorerCommandActivity
     from ._models import AzureDataExplorerLinkedService
     from ._models import AzureDataExplorerSink
@@ -635,6 +657,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureDataLakeStoreSink
     from ._models import AzureDataLakeStoreSource
     from ._models import AzureDataLakeStoreWriteSettings
+    from ._models import AzureDatabricksLinkedService
     from ._models import AzureFileStorageLinkedService
     from ._models import AzureFileStorageLocation
     from ._models import AzureFileStorageReadSettings
@@ -642,15 +665,15 @@ except (SyntaxError, ImportError):
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
     from ._models import AzureKeyVaultSecretReference
-    from ._models import AzureMariaDBLinkedService
-    from ._models import AzureMariaDBSource
-    from ._models import AzureMariaDBTableDataset
     from ._models import AzureMLBatchExecutionActivity
     from ._models import AzureMLExecutePipelineActivity
     from ._models import AzureMLLinkedService
     from ._models import AzureMLServiceLinkedService
     from ._models import AzureMLUpdateResourceActivity
     from ._models import AzureMLWebServiceFile
+    from ._models import AzureMariaDBLinkedService
+    from ._models import AzureMariaDBSource
+    from ._models import AzureMariaDBTableDataset
     from ._models import AzureMySqlLinkedService
     from ._models import AzureMySqlSink
     from ._models import AzureMySqlSource
@@ -663,9 +686,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureSearchIndexDataset
     from ._models import AzureSearchIndexSink
     from ._models import AzureSearchLinkedService
-    from ._models import AzureSqlDatabaseLinkedService
     from ._models import AzureSqlDWLinkedService
     from ._models import AzureSqlDWTableDataset
+    from ._models import AzureSqlDatabaseLinkedService
     from ._models import AzureSqlMILinkedService
     from ._models import AzureSqlMITableDataset
     from ._models import AzureSqlSink
@@ -677,6 +700,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureTableSource
     from ._models import AzureTableStorageLinkedService
     from ._models import BinaryDataset
+    from ._models import BinaryReadSettings
     from ._models import BinarySink
     from ._models import BinarySource
     from ._models import BlobEventsTrigger
@@ -693,6 +717,7 @@ except (SyntaxError, ImportError):
     from ._models import CommonDataServiceForAppsSink
     from ._models import CommonDataServiceForAppsSource
     from ._models import ComponentSetup
+    from ._models import CompressionReadSettings
     from ._models import ConcurLinkedService
     from ._models import ConcurObjectDataset
     from ._models import ConcurSource
@@ -717,12 +742,11 @@ except (SyntaxError, ImportError):
     from ._models import CreateRunResponse
     from ._models import CustomActivity
     from ._models import CustomActivityReferenceObject
-    from ._models import CustomDataset
     from ._models import CustomDataSourceLinkedService
+    from ._models import CustomDataset
     from ._models import CustomSetupBase
-    from ._models import DatabricksNotebookActivity
-    from ._models import DatabricksSparkJarActivity
-    from ._models import DatabricksSparkPythonActivity
+    from ._models import DWCopyCommandDefaultValue
+    from ._models import DWCopyCommandSettings
     from ._models import DataFlow
     from ._models import DataFlowDebugCommandPayload
     from ._models import DataFlowDebugCommandRequest
@@ -739,6 +763,9 @@ except (SyntaxError, ImportError):
     from ._models import DataFlowSourceSetting
     from ._models import DataFlowStagingInfo
     from ._models import DataLakeAnalyticsUSQLActivity
+    from ._models import DatabricksNotebookActivity
+    from ._models import DatabricksSparkJarActivity
+    from ._models import DatabricksSparkPythonActivity
     from ._models import Dataset
     from ._models import DatasetBZip2Compression
     from ._models import DatasetCompression
@@ -769,8 +796,6 @@ except (SyntaxError, ImportError):
     from ._models import DrillLinkedService
     from ._models import DrillSource
     from ._models import DrillTableDataset
-    from ._models import DWCopyCommandDefaultValue
-    from ._models import DWCopyCommandSettings
     from ._models import DynamicsAXLinkedService
     from ._models import DynamicsAXResourceDataset
     from ._models import DynamicsAXSource
@@ -787,11 +812,14 @@ except (SyntaxError, ImportError):
     from ._models import EloquaSource
     from ._models import EntityReference
     from ._models import EnvironmentVariableSetup
+    from ._models import ExcelDataset
+    from ._models import ExcelSource
     from ._models import ExecuteDataFlowActivity
     from ._models import ExecuteDataFlowActivityTypePropertiesCompute
     from ._models import ExecutePipelineActivity
     from ._models import ExecuteSSISPackageActivity
     from ._models import ExecutionActivity
+    from ._models import ExportSettings
     from ._models import ExposureControlRequest
     from ._models import ExposureControlResponse
     from ._models import Expression
@@ -821,6 +849,7 @@ except (SyntaxError, ImportError):
     from ._models import GetSsisObjectMetadataRequest
     from ._models import GitHubAccessTokenRequest
     from ._models import GitHubAccessTokenResponse
+    from ._models import GlobalParameterSpecification
     from ._models import GoogleAdWordsLinkedService
     from ._models import GoogleAdWordsObjectDataset
     from ._models import GoogleAdWordsSource
@@ -836,10 +865,6 @@ except (SyntaxError, ImportError):
     from ._models import HBaseLinkedService
     from ._models import HBaseObjectDataset
     from ._models import HBaseSource
-    from ._models import HdfsLinkedService
-    from ._models import HdfsLocation
-    from ._models import HdfsReadSettings
-    from ._models import HdfsSource
     from ._models import HDInsightHiveActivity
     from ._models import HDInsightLinkedService
     from ._models import HDInsightMapReduceActivity
@@ -847,6 +872,10 @@ except (SyntaxError, ImportError):
     from ._models import HDInsightPigActivity
     from ._models import HDInsightSparkActivity
     from ._models import HDInsightStreamingActivity
+    from ._models import HdfsLinkedService
+    from ._models import HdfsLocation
+    from ._models import HdfsReadSettings
+    from ._models import HdfsSource
     from ._models import HiveLinkedService
     from ._models import HiveObjectDataset
     from ._models import HiveSource
@@ -862,6 +891,7 @@ except (SyntaxError, ImportError):
     from ._models import ImpalaLinkedService
     from ._models import ImpalaObjectDataset
     from ._models import ImpalaSource
+    from ._models import ImportSettings
     from ._models import InformixLinkedService
     from ._models import InformixSink
     from ._models import InformixSource
@@ -891,6 +921,7 @@ except (SyntaxError, ImportError):
     from ._models import JiraSource
     from ._models import JsonDataset
     from ._models import JsonFormat
+    from ._models import JsonReadSettings
     from ._models import JsonSink
     from ._models import JsonSource
     from ._models import JsonWriteSettings
@@ -968,6 +999,7 @@ except (SyntaxError, ImportError):
     from ._models import OrcFormat
     from ._models import OrcSink
     from ._models import OrcSource
+    from ._models import PackageStore
     from ._models import ParameterSpecification
     from ._models import ParquetDataset
     from ._models import ParquetFormat
@@ -1013,6 +1045,13 @@ except (SyntaxError, ImportError):
     from ._models import RunFilterParameters
     from ._models import RunQueryFilter
     from ._models import RunQueryOrderBy
+    from ._models import SSISAccessCredential
+    from ._models import SSISChildPackage
+    from ._models import SSISExecutionCredential
+    from ._models import SSISExecutionParameter
+    from ._models import SSISLogLocation
+    from ._models import SSISPackageLocation
+    from ._models import SSISPropertyOverride
     from ._models import SalesforceLinkedService
     from ._models import SalesforceMarketingCloudLinkedService
     from ._models import SalesforceMarketingCloudObjectDataset
@@ -1024,8 +1063,8 @@ except (SyntaxError, ImportError):
     from ._models import SalesforceServiceCloudSource
     from ._models import SalesforceSink
     from ._models import SalesforceSource
-    from ._models import SapBwCubeDataset
     from ._models import SapBWLinkedService
+    from ._models import SapBwCubeDataset
     from ._models import SapBwSource
     from ._models import SapCloudForCustomerLinkedService
     from ._models import SapCloudForCustomerResourceDataset
@@ -1062,10 +1101,19 @@ except (SyntaxError, ImportError):
     from ._models import SftpReadSettings
     from ._models import SftpServerLinkedService
     from ._models import SftpWriteSettings
+    from ._models import SharePointOnlineListLinkedService
+    from ._models import SharePointOnlineListResourceDataset
+    from ._models import SharePointOnlineListSource
     from ._models import ShopifyLinkedService
     from ._models import ShopifyObjectDataset
     from ._models import ShopifySource
     from ._models import SkipErrorFile
+    from ._models import SnowflakeDataset
+    from ._models import SnowflakeExportCopyCommand
+    from ._models import SnowflakeImportCopyCommand
+    from ._models import SnowflakeLinkedService
+    from ._models import SnowflakeSink
+    from ._models import SnowflakeSource
     from ._models import SparkLinkedService
     from ._models import SparkObjectDataset
     from ._models import SparkSource
@@ -1073,6 +1121,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlDWSource
     from ._models import SqlMISink
     from ._models import SqlMISource
+    from ._models import SqlPartitionSettings
     from ._models import SqlServerLinkedService
     from ._models import SqlServerSink
     from ._models import SqlServerSource
@@ -1083,27 +1132,20 @@ except (SyntaxError, ImportError):
     from ._models import SquareLinkedService
     from ._models import SquareObjectDataset
     from ._models import SquareSource
-    from ._models import SSISAccessCredential
-    from ._models import SSISChildPackage
     from ._models import SsisEnvironment
     from ._models import SsisEnvironmentReference
-    from ._models import SSISExecutionCredential
-    from ._models import SSISExecutionParameter
     from ._models import SsisFolder
-    from ._models import SSISLogLocation
     from ._models import SsisObjectMetadata
     from ._models import SsisObjectMetadataListResponse
     from ._models import SsisObjectMetadataStatusResponse
     from ._models import SsisPackage
-    from ._models import SSISPackageLocation
     from ._models import SsisParameter
     from ._models import SsisProject
-    from ._models import SSISPropertyOverride
     from ._models import SsisVariable
     from ._models import StagingSettings
-    from ._models import StoredProcedureParameter
     from ._models import StoreReadSettings
     from ._models import StoreWriteSettings
+    from ._models import StoredProcedureParameter
     from ._models import SubResource
     from ._models import SubResourceDebugResource
     from ._models import SwitchActivity
@@ -1154,6 +1196,10 @@ except (SyntaxError, ImportError):
     from ._models import XeroLinkedService
     from ._models import XeroObjectDataset
     from ._models import XeroSource
+    from ._models import XmlDataset
+    from ._models import XmlReadSettings
+    from ._models import XmlSource
+    from ._models import ZipDeflateReadSettings
     from ._models import ZohoLinkedService
     from ._models import ZohoObjectDataset
     from ._models import ZohoSource
@@ -1167,6 +1213,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import PipelineResourcePaged
 from ._paged_models import TriggerResourcePaged
 from ._data_factory_management_client_enums import (
+    GlobalParameterType,
     IntegrationRuntimeState,
     IntegrationRuntimeAutoUpdate,
     ParameterType,
@@ -1221,6 +1268,7 @@ from ._data_factory_management_client_enums import (
     NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
     TeradataPartitionOption,
+    SqlPartitionOption,
     StoredProcedureParameterType,
     SapTablePartitionOption,
     SapHanaPartitionOption,
@@ -1283,7 +1331,6 @@ __all__ = [
     'AzureBlobStorageLocation',
     'AzureBlobStorageReadSettings',
     'AzureBlobStorageWriteSettings',
-    'AzureDatabricksLinkedService',
     'AzureDataExplorerCommandActivity',
     'AzureDataExplorerLinkedService',
     'AzureDataExplorerSink',
@@ -1297,6 +1344,7 @@ __all__ = [
     'AzureDataLakeStoreSink',
     'AzureDataLakeStoreSource',
     'AzureDataLakeStoreWriteSettings',
+    'AzureDatabricksLinkedService',
     'AzureFileStorageLinkedService',
     'AzureFileStorageLocation',
     'AzureFileStorageReadSettings',
@@ -1304,15 +1352,15 @@ __all__ = [
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
     'AzureKeyVaultSecretReference',
-    'AzureMariaDBLinkedService',
-    'AzureMariaDBSource',
-    'AzureMariaDBTableDataset',
     'AzureMLBatchExecutionActivity',
     'AzureMLExecutePipelineActivity',
     'AzureMLLinkedService',
     'AzureMLServiceLinkedService',
     'AzureMLUpdateResourceActivity',
     'AzureMLWebServiceFile',
+    'AzureMariaDBLinkedService',
+    'AzureMariaDBSource',
+    'AzureMariaDBTableDataset',
     'AzureMySqlLinkedService',
     'AzureMySqlSink',
     'AzureMySqlSource',
@@ -1325,9 +1373,9 @@ __all__ = [
     'AzureSearchIndexDataset',
     'AzureSearchIndexSink',
     'AzureSearchLinkedService',
-    'AzureSqlDatabaseLinkedService',
     'AzureSqlDWLinkedService',
     'AzureSqlDWTableDataset',
+    'AzureSqlDatabaseLinkedService',
     'AzureSqlMILinkedService',
     'AzureSqlMITableDataset',
     'AzureSqlSink',
@@ -1339,6 +1387,7 @@ __all__ = [
     'AzureTableSource',
     'AzureTableStorageLinkedService',
     'BinaryDataset',
+    'BinaryReadSettings',
     'BinarySink',
     'BinarySource',
     'BlobEventsTrigger',
@@ -1355,6 +1404,7 @@ __all__ = [
     'CommonDataServiceForAppsSink',
     'CommonDataServiceForAppsSource',
     'ComponentSetup',
+    'CompressionReadSettings',
     'ConcurLinkedService',
     'ConcurObjectDataset',
     'ConcurSource',
@@ -1379,12 +1429,11 @@ __all__ = [
     'CreateRunResponse',
     'CustomActivity',
     'CustomActivityReferenceObject',
-    'CustomDataset',
     'CustomDataSourceLinkedService',
+    'CustomDataset',
     'CustomSetupBase',
-    'DatabricksNotebookActivity',
-    'DatabricksSparkJarActivity',
-    'DatabricksSparkPythonActivity',
+    'DWCopyCommandDefaultValue',
+    'DWCopyCommandSettings',
     'DataFlow',
     'DataFlowDebugCommandPayload',
     'DataFlowDebugCommandRequest',
@@ -1401,6 +1450,9 @@ __all__ = [
     'DataFlowSourceSetting',
     'DataFlowStagingInfo',
     'DataLakeAnalyticsUSQLActivity',
+    'DatabricksNotebookActivity',
+    'DatabricksSparkJarActivity',
+    'DatabricksSparkPythonActivity',
     'Dataset',
     'DatasetBZip2Compression',
     'DatasetCompression',
@@ -1431,8 +1483,6 @@ __all__ = [
     'DrillLinkedService',
     'DrillSource',
     'DrillTableDataset',
-    'DWCopyCommandDefaultValue',
-    'DWCopyCommandSettings',
     'DynamicsAXLinkedService',
     'DynamicsAXResourceDataset',
     'DynamicsAXSource',
@@ -1449,11 +1499,14 @@ __all__ = [
     'EloquaSource',
     'EntityReference',
     'EnvironmentVariableSetup',
+    'ExcelDataset',
+    'ExcelSource',
     'ExecuteDataFlowActivity',
     'ExecuteDataFlowActivityTypePropertiesCompute',
     'ExecutePipelineActivity',
     'ExecuteSSISPackageActivity',
     'ExecutionActivity',
+    'ExportSettings',
     'ExposureControlRequest',
     'ExposureControlResponse',
     'Expression',
@@ -1483,6 +1536,7 @@ __all__ = [
     'GetSsisObjectMetadataRequest',
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
+    'GlobalParameterSpecification',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
     'GoogleAdWordsSource',
@@ -1498,10 +1552,6 @@ __all__ = [
     'HBaseLinkedService',
     'HBaseObjectDataset',
     'HBaseSource',
-    'HdfsLinkedService',
-    'HdfsLocation',
-    'HdfsReadSettings',
-    'HdfsSource',
     'HDInsightHiveActivity',
     'HDInsightLinkedService',
     'HDInsightMapReduceActivity',
@@ -1509,6 +1559,10 @@ __all__ = [
     'HDInsightPigActivity',
     'HDInsightSparkActivity',
     'HDInsightStreamingActivity',
+    'HdfsLinkedService',
+    'HdfsLocation',
+    'HdfsReadSettings',
+    'HdfsSource',
     'HiveLinkedService',
     'HiveObjectDataset',
     'HiveSource',
@@ -1524,6 +1578,7 @@ __all__ = [
     'ImpalaLinkedService',
     'ImpalaObjectDataset',
     'ImpalaSource',
+    'ImportSettings',
     'InformixLinkedService',
     'InformixSink',
     'InformixSource',
@@ -1553,6 +1608,7 @@ __all__ = [
     'JiraSource',
     'JsonDataset',
     'JsonFormat',
+    'JsonReadSettings',
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
@@ -1630,6 +1686,7 @@ __all__ = [
     'OrcFormat',
     'OrcSink',
     'OrcSource',
+    'PackageStore',
     'ParameterSpecification',
     'ParquetDataset',
     'ParquetFormat',
@@ -1675,6 +1732,13 @@ __all__ = [
     'RunFilterParameters',
     'RunQueryFilter',
     'RunQueryOrderBy',
+    'SSISAccessCredential',
+    'SSISChildPackage',
+    'SSISExecutionCredential',
+    'SSISExecutionParameter',
+    'SSISLogLocation',
+    'SSISPackageLocation',
+    'SSISPropertyOverride',
     'SalesforceLinkedService',
     'SalesforceMarketingCloudLinkedService',
     'SalesforceMarketingCloudObjectDataset',
@@ -1686,8 +1750,8 @@ __all__ = [
     'SalesforceServiceCloudSource',
     'SalesforceSink',
     'SalesforceSource',
-    'SapBwCubeDataset',
     'SapBWLinkedService',
+    'SapBwCubeDataset',
     'SapBwSource',
     'SapCloudForCustomerLinkedService',
     'SapCloudForCustomerResourceDataset',
@@ -1724,10 +1788,19 @@ __all__ = [
     'SftpReadSettings',
     'SftpServerLinkedService',
     'SftpWriteSettings',
+    'SharePointOnlineListLinkedService',
+    'SharePointOnlineListResourceDataset',
+    'SharePointOnlineListSource',
     'ShopifyLinkedService',
     'ShopifyObjectDataset',
     'ShopifySource',
     'SkipErrorFile',
+    'SnowflakeDataset',
+    'SnowflakeExportCopyCommand',
+    'SnowflakeImportCopyCommand',
+    'SnowflakeLinkedService',
+    'SnowflakeSink',
+    'SnowflakeSource',
     'SparkLinkedService',
     'SparkObjectDataset',
     'SparkSource',
@@ -1735,6 +1808,7 @@ __all__ = [
     'SqlDWSource',
     'SqlMISink',
     'SqlMISource',
+    'SqlPartitionSettings',
     'SqlServerLinkedService',
     'SqlServerSink',
     'SqlServerSource',
@@ -1745,27 +1819,20 @@ __all__ = [
     'SquareLinkedService',
     'SquareObjectDataset',
     'SquareSource',
-    'SSISAccessCredential',
-    'SSISChildPackage',
     'SsisEnvironment',
     'SsisEnvironmentReference',
-    'SSISExecutionCredential',
-    'SSISExecutionParameter',
     'SsisFolder',
-    'SSISLogLocation',
     'SsisObjectMetadata',
     'SsisObjectMetadataListResponse',
     'SsisObjectMetadataStatusResponse',
     'SsisPackage',
-    'SSISPackageLocation',
     'SsisParameter',
     'SsisProject',
-    'SSISPropertyOverride',
     'SsisVariable',
     'StagingSettings',
-    'StoredProcedureParameter',
     'StoreReadSettings',
     'StoreWriteSettings',
+    'StoredProcedureParameter',
     'SubResource',
     'SubResourceDebugResource',
     'SwitchActivity',
@@ -1816,6 +1883,10 @@ __all__ = [
     'XeroLinkedService',
     'XeroObjectDataset',
     'XeroSource',
+    'XmlDataset',
+    'XmlReadSettings',
+    'XmlSource',
+    'ZipDeflateReadSettings',
     'ZohoLinkedService',
     'ZohoObjectDataset',
     'ZohoSource',
@@ -1828,6 +1899,7 @@ __all__ = [
     'TriggerResourcePaged',
     'DataFlowResourcePaged',
     'DataFlowDebugSessionInfoPaged',
+    'GlobalParameterType',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
@@ -1882,6 +1954,7 @@ __all__ = [
     'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
     'TeradataPartitionOption',
+    'SqlPartitionOption',
     'StoredProcedureParameterType',
     'SapTablePartitionOption',
     'SapHanaPartitionOption',
