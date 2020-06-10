@@ -1099,27 +1099,25 @@ class ContainerEncryptionScope(object):
 class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
     """Defines the input or output delimited (CSV) serialization for a blob quick query request.
 
-    :keyword str column_separator: Required. column separator
-    :keyword str field_quote: Required. field quote
-    :keyword str record_separator: Required. record separator
-    :keyword str escape_char: Required. escape char
-    :keyword bool headers_present: Required. has headers
+    :keyword str column_separator: column separator, defaults to ','
+    :keyword str field_quote: field quote, defaults to '"'
+    :keyword str record_separator: record separator, defaults to '\n'
+    :keyword str escape_char: escape char, defaults to empty
+    :keyword bool headers_present: has headers, defaults to False
     """
     def __init__(self, **kwargs):
+        column_separator = kwargs.pop('column_separator', ',')
         field_quote = kwargs.pop('field_quote', '"')
+        record_separator = kwargs.pop('record_separator', '\n')
         escape_char = kwargs.pop('escape_char', "")
-        super(DelimitedTextConfiguration, self).__init__(field_quote=field_quote,
-                                                         escape_char=escape_char,
-                                                         **kwargs)
+        headers_present = kwargs.pop('headers_present', False)
 
-
-class JsonTextConfiguration(GenJsonTextConfiguration):
-    """Defines the input or output JSON serialization for a blob quick query request.
-
-    :keyword str record_separator: Required. record separator
-    """
-    def __init__(self, **kwargs):
-        super(JsonTextConfiguration, self).__init__(**kwargs)
+        super(DelimitedTextConfiguration, self).__init__(
+            column_separator=column_separator,
+            field_quote=field_quote,
+            record_separator=record_separator,
+            escape_char=escape_char,
+            headers_present=headers_present)
 
 
 class QuickQueryError(object):

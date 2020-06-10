@@ -52,7 +52,6 @@ from ._models import (
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
     QuickQueryError,
-    JsonTextConfiguration,
     DelimitedTextConfiguration
 )
 
@@ -212,7 +211,6 @@ __all__ = [
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
     'QuickQueryError',
-    'JsonTextConfiguration',
     'DelimitedTextConfiguration',
     'QuickQueryReader'
 ]

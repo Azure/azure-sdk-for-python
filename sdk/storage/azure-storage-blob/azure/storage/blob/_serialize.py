@@ -116,7 +116,7 @@ def get_quick_query_serialization_info(serialization_settings=None):
             qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
                                          delimited_text_configuration=serialization_settings)
         elif isinstance(serialization_settings, str):
-            qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
+            qq_format = QuickQueryFormat(type=QuickQueryFormatType.json,
                                          json_text_configuration=JsonTextConfiguration(
                                              record_separator=serialization_settings))
         else:

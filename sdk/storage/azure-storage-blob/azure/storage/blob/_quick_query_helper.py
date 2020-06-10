@@ -99,7 +99,8 @@ class QuickQueryStreamer(object):
         self.iterator = iter(generator)
         self._buf = b""
         self._point = 0
-        self.leftover = b""
+        self._download_offset = 0
+        self._buf_start = 0
         self.file_length = None
 
     def __len__(self):
@@ -113,6 +114,7 @@ class QuickQueryStreamer(object):
 
     def next(self):
         next_part = next(self.iterator)
+        self._download_offset += len(next_part)
         return next_part
 
     def tell(self):
@@ -131,20 +133,26 @@ class QuickQueryStreamer(object):
     def read(self, size):
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
-            while self._point + size > len(self._buf):
+            while self._point + size > self._download_offset:
                 self._buf += self.next()
-
-            # if it's already EOF, get file_length right now
-            self._buf += self.next()
         except StopIteration:
-            self.file_length = len(self._buf)
+            self.file_length = self._download_offset
             pass
         start_point = self._point
 
         # EOF
-        if self._point + size > len(self._buf):
-            self._point = len(self._buf)
-        else:
-            self._point += size
+        self._point = min(self._point + size, self._download_offset)
 
-        return self._buf[start_point:self._point]
+        relative_start = start_point - self._buf_start
+        if relative_start < 0:
+            raise ValueError("Buffer has dumped too much data")
+        relative_end = relative_start + size
+        data = self._buf[relative_start: relative_end]
+
+        # dump the extra data in buffer
+        # buffer start--------------------16bytes----current read position
+        dumped_size = max(relative_end - 16 - relative_start, 0)
+        self._buf_start += dumped_size
+        self._buf = self._buf[dumped_size:]
+
+        return data

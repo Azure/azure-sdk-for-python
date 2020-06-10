@@ -10,7 +10,6 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
     DelimitedTextConfiguration,
-    JsonTextConfiguration
 )
 
 # ------------------------------------------------------------------------------

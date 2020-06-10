@@ -30,7 +30,10 @@ def main():
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     container_name = "quickquerycontainer"
     container_client = blob_service_client.get_container_client(container_name)
-    container_client.create_container()
+    try:
+        container_client.create_container()
+    except:
+        pass
     # [START query]
     errors = []
 
@@ -45,12 +48,13 @@ def main():
 
     # upload the csv file
     blob_client = blob_service_client.get_blob_client(container_name, "csvfile")
-    with open("./sample-blobs/query.csv", "rb") as stream:
+    with open("./sample-blobs/quick_query.csv", "rb") as stream:
         blob_client.upload_blob(stream)
 
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
-    reader = blob_client.query(query_expression, progress_callback=progress_callback)
+    output_seri = ';'
+    reader = blob_client.query(query_expression, progress_callback=progress_callback, output_serialization=output_seri)
     content = reader.readall()
     # [END query]
     print(content)
