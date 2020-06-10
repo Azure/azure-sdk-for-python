@@ -339,7 +339,6 @@ class IPVersion(str, Enum):
 class OrchestrationServiceNames(str, Enum):
 
     automatic_repairs = "AutomaticRepairs"
-    
 
 
 class OrchestrationServiceState(str, Enum):
