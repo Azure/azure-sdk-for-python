@@ -507,7 +507,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         try:
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None) or self.version_id,
+                version_id=kwargs.pop('version_id', None),
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

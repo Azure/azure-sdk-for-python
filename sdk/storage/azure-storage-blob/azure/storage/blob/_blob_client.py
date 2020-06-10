@@ -84,13 +84,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :keyword str version_id:
-        The version id parameter is an opaque DateTime
-        value that, when present, specifies the version of the blob to get properties, delete or download that version.
-
-        .. versionadded:: 12.4.0
-        This keyword argument was introduced in API version '2019-12-12'.
-
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -161,8 +154,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
-
-        self.version_id = kwargs.pop('version_id', None)
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
@@ -533,7 +524,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'config': self._config,
             'start_range': offset,
             'end_range': length,
-            'version_id': kwargs.pop('version_id', None) or self.version_id,
+            'version_id': kwargs.pop('version_id', None),
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -654,7 +645,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
-        options['version_id'] = kwargs.pop('version_id', None) or self.version_id
+        options['version_id'] = kwargs.pop('version_id', None)
         return options
 
     @distributed_trace
@@ -817,7 +808,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None) or self.version_id,
+                version_id=kwargs.pop('version_id', None),
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

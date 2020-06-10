@@ -807,7 +807,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             blob_client.blob_name,
             version_id=version_id,
             account_key=storage_account_key,
-            permission=BlobSasPermissions(delete=True, delete_version=True),
+            permission=BlobSasPermissions(delete=True, delete_previous_version=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 

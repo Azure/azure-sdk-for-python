@@ -998,23 +998,23 @@ class BlobSasPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
-    :param bool delete_version:
-        Delete the blob version for the versioning enabled storage account.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_version=False):
+                 delete=False, delete_previous_version=False):
         self.read = read
         self.add = add
         self.create = create
         self.write = write
         self.delete = delete
-        self.delete_version = delete_version
+        self.delete_previous_version = delete_previous_version
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
-                     ('x' if self.delete_version else ''))
+                     ('x' if self.delete_previous_version else ''))
 
     def __str__(self):
         return self._str
@@ -1037,9 +1037,9 @@ class BlobSasPermissions(object):
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
-        p_delete_version = 'x' in permission
+        p_delete_previous_version = 'x' in permission
 
-        parsed = cls(p_read, p_add, p_create, p_write, p_delete, p_delete_version)
+        parsed = cls(p_read, p_add, p_create, p_write, p_delete, p_delete_previous_version)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
 
