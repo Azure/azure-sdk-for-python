@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote  # type: ignore
 
 from azure.core import MatchConditions
 
@@ -17,7 +21,9 @@ from ._generated.models import (
     QuickQuerySerialization,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    QuickQueryFormatType
+    QuickQueryFormatType,
+    BlobTag,
+    BlobTags
 )
 
 
@@ -124,3 +130,27 @@ def get_quick_query_serialization_info(serialization_settings=None):
                              "or JsonTextConfiguration")
         return QuickQuerySerialization(format=qq_format)
     return None
+
+
+def serialize_blob_tags_header(tags=None):
+    # type: (Optional[Dict[str, str]]) -> str
+    components = list()
+    if tags:
+        for key, value in tags.items():
+            components.append(quote(key, safe='.-'))
+            components.append('=')
+            components.append(quote(value, safe='.-'))
+            components.append('&')
+
+    if components:
+        del components[-1]
+
+    return ''.join(components)
+
+
+def serialize_blob_tags(tags=None):
+    # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
+    tag_list = list()
+    if tags:
+        tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
+    return BlobTags(blob_tag_set=tag_list)

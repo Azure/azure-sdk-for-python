@@ -26,7 +26,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .._models import BlobType, BlobBlock
+from .._models import BlobType, BlobBlock, BlobProperties
 from .._lease import get_access_conditions
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
@@ -35,9 +35,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
     from .._models import (  # pylint: disable=unused-import
-        ContainerProperties,
-        BlobProperties,
-        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -165,6 +162,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -640,6 +647,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
             track requests. The value of the sequence number must be between 0
@@ -705,6 +722,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -882,6 +909,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1251,6 +1288,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1339,6 +1386,67 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
                 **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def set_blob_tags(self, tags=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
+            Each call to this operation replaces all existing tags attached to the blob. To remove all
+            tags from the blob, call this operation with no tags set.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+        :type tags: dict(str, str)
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash of the tags content. The storage
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https, as https (the default),
+            will already validate. Note that this MD5 hash is not stored with the
+            blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Any]
+        """
+        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        try:
+            return await self._client.blob.set_tags(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def get_blob_tags(self, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to add tags to.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+        options = self._get_blob_tags_options(**kwargs)
+        try:
+            _, tags = await self._client.blob.get_tags(**options)
+            return BlobProperties._parse_tags(tags)  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 

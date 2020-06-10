@@ -28,7 +28,7 @@ from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
+from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
@@ -425,6 +425,37 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 results_per_page=results_per_page,
                 page_iterator_class=ContainerPropertiesPaged
             )
+
+    @distributed_trace
+    def find_blobs_by_tags(self, filter_expression, **kwargs):
+        # type: (str, **Any) -> ItemPaged[FilteredBlob]
+        """The Filter Blobs operation enables callers to list blobs across all
+        containers whose tags match a given search expression.  Filter blobs
+        searches across all containers within a storage account but can be
+        scoped within the expression to a single container.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "yourtagname='firsttag' and yourtagname2='secondtag'"
+            To specify a container, eg. "@container=’containerName’ and Name = ‘C’"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of BlobProperties.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.FilteredBlob]
+        """
+
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.service.filter_blobs,
+            where=filter_expression,
+            timeout=timeout,
+            **kwargs)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace
     def create_container(
