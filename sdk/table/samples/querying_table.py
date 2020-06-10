@@ -25,10 +25,10 @@ class QueryTable(object):
             print(table.table_name)
 
     def query_tables(self):
-        from azure.azure_table import TableClient
+        from azure.azure_table import TableServiceClient
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
-        queried_tables = table_client.query_tables(query_options=self.name_filter)
+        table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        queried_tables = table_service_client.query_tables(query_options=self.name_filter)
         # table_client.query_tables() returns an itemPaged
         # queried_tables is a list of filtered tables
 

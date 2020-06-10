@@ -15,6 +15,7 @@ class CreateODataQuery(object):
     table_name = "Office Supplies"
     entity_name = "marker"
     name_filter = "EntityName eq '{}'".format(entity_name)
+    # change select filter
     query_options = QueryOptions(filter=name_filter)
 
     def create_query_entities(self):
@@ -24,8 +25,7 @@ class CreateODataQuery(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            queried_entities = table_client.query_table_entities(table_name=self.table_name,
-                                                                 query_options=self.query_options)
+            queried_entities = table_client.query_entity(query_options=self.query_options)
 
             # queried_entities type is ItemPaged
             for entity_chosen in queried_entities:

@@ -9,7 +9,6 @@ class InsertDeleteEntity(object):
     partition_key = "1"
     row_key = "1"
     entity = {
-        'PartitionKey': 'test', 'RowKey': 'test1',
         'text': 'Marker', 'color': 'Purple', 'price': '5'}
 
     def insert_entity(self):
@@ -19,7 +18,8 @@ class InsertDeleteEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            inserted_entity = table_client.insert_entity(table_name=self.table_name,
+            inserted_entity = table_client.insert_entity(partition_key=self.partition_key,
+                                                         row_key=self.row_key,
                                                          table_entity_properties=self.entity)
             # inserted_entity type is dict[str,object]
             print(inserted_entity.items())  # print out key-value pair of entity
@@ -35,8 +35,8 @@ class InsertDeleteEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            deleted_entity = table_client.delete_entity(table_name=self.table_name, partition_key=self.partition_key,
-                                                        row_key=self.row_key)
+            table_client.delete_entity(partition_key=self.partition_key,
+                                       row_key=self.row_key)
             # deleted_entity type is None
         except HttpResponseError:
             print(HttpResponseError.response)
