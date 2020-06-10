@@ -202,7 +202,7 @@ We can use the Network client (azure.mgmt.resource.NetworkManagementClient) we h
 
 Async and sync operations
 -------------------------
-In Python>=3.5, we have to use async client (like azure.mgmt.network.aio.NetworkManagementClient) in [asynchronous programming](https://docs.python.org/3/library/asyncio.html).
+In python>=3.5, Azure Python SDK provides the choice for user to use the asynchronous client for asynchronous programming.
 
 **Create Management Client in async**
 ::
