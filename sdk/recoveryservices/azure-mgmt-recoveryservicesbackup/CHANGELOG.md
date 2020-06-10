@@ -1,5 +1,19 @@
 # Release History
 
+## 0.8.0 (2020-06-05)
+
+**Features**
+
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter health_details
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter health_status
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter health_details
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter health_status
+  - Model AzureFileshareProtectedItem has a new parameter health_details
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter health_details
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter health_status
+  - Model AzureVmWorkloadProtectedItem has a new parameter health_details
+  - Model AzureVmWorkloadProtectedItem has a new parameter health_status
+
 ## 0.7.0 (2020-03-24)
 
 **Features**

@@ -52,6 +52,11 @@ class HealthStatus(str, Enum):
     passed = "Passed"
     action_required = "ActionRequired"
     action_suggested = "ActionSuggested"
+    healthy = "Healthy"
+    transient_degraded = "TransientDegraded"
+    persistent_degraded = "PersistentDegraded"
+    transient_unhealthy = "TransientUnhealthy"
+    persistent_unhealthy = "PersistentUnhealthy"
     invalid = "Invalid"
 
 
