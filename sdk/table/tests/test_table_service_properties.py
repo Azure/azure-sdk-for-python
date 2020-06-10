@@ -107,7 +107,7 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

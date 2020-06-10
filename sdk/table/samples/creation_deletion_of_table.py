@@ -1,6 +1,3 @@
-import os
-
-
 class CreateDeleteTable(object):
     connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
     table_name = "NAME"
@@ -8,16 +5,19 @@ class CreateDeleteTable(object):
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
 
-    # functions correctly
+    def shared_key_credential(self):
+        from azure.azure_table import TableClient
+
+        table_service = TableClient(account_url=self.account_url, credential=self.access_key)
+
     def create_table(self):
-        from azure.azure_table import TableServiceClient
+        from azure.azure_table import TableClient
         from azure.core.exceptions import HttpResponseError, ResourceExistsError
-        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
 
         try:
             table_created = table_client.create_table(table_name=self.table_name)
-            # table_created type is TableResponse
-            # Table Response: table_name,odata_type,odata_id,odata_edit_link,odata_metadata
             print(table_created.table_name)
         except HttpResponseError:
             print(HttpResponseError.response)
@@ -25,9 +25,10 @@ class CreateDeleteTable(object):
             raise ResourceExistsError
 
     def delete_table(self):
-        from azure.azure_table import TableServiceClient
+        from azure.azure_table import TableClient
         from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
             table_deleted = table_client.delete_table(table_name=self.table_name)
             # table_deleted type is None

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from ._configuration import AzureTableConfiguration
 from .operations import TableOperations
 from .operations import ServiceOperations
-from azure.azure_table.generated import models
+from azure.azure_table._generated import models
 
 
 class AzureTable(object):

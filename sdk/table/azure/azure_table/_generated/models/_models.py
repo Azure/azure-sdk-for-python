@@ -28,8 +28,8 @@ class AccessPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'iso-8601', 'str': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'str': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {

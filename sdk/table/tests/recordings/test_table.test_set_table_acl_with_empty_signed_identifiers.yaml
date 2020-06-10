@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "pytablesyncb07a0bab"}'
+    body: '{"TableName": "pytablesyncd1eb182e"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 10 Jun 2020 15:51:31 GMT
+      - Wed, 10 Jun 2020 16:52:26 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 10 Jun 2020 15:51:31 GMT
+      - Wed, 10 Jun 2020 16:52:26 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncb07a0bab"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncd1eb182e"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 10 Jun 2020 15:51:31 GMT
+      - Wed, 10 Jun 2020 16:52:26 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('pytablesyncb07a0bab')
+      - https://storagename.table.core.windows.net/Tables('pytablesyncd1eb182e')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -56,16 +56,54 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/xml
       Date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:27 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:27 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.table.core.windows.net/pytablesyncd1eb182e?comp=acl
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 10 Jun 2020 16:52:26 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 10 Jun 2020 16:52:27 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 10 Jun 2020 16:52:27 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.table.core.windows.net/pytablesyncb07a0bab?comp=acl
+    uri: https://storagename.table.core.windows.net/pytablesyncd1eb182e?comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
@@ -74,7 +112,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:26 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -96,15 +134,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:27 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:27 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytablesyncb07a0bab')
+    uri: https://storagename.table.core.windows.net/Tables('pytablesyncd1eb182e')
   response:
     body:
       string: ''
@@ -114,7 +152,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 10 Jun 2020 15:51:32 GMT
+      - Wed, 10 Jun 2020 16:52:26 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
