@@ -12,7 +12,7 @@ from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
 from ._configuration_async import ServiceBusManagementClientConfiguration
-from .operations_async import QueueOperations
+from .operations_async import EntityOperations
 from .operations_async import ServiceBusManagementClientOperationsMixin
 from .. import models
 
@@ -20,8 +20,8 @@ from .. import models
 class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
     """Azure Service Bus client for managing Queues, Topics, and Subscriptions.
 
-    :ivar queue: QueueOperations operations
-    :vartype queue: azure.servicebus.management._generated.aio.operations_async.QueueOperations
+    :ivar entity: EntityOperations operations
+    :vartype entity: azure.servicebus.management._generated.aio.operations_async.EntityOperations
     :param endpoint: The Service Bus fully qualified domain name.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -40,7 +40,7 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.queue = QueueOperations(
+        self.entity = EntityOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:

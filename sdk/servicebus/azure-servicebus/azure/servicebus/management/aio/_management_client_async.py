@@ -6,6 +6,7 @@ from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Tuple
 from xml.etree.ElementTree import ElementTree, Element
 
+from azure.servicebus.management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from msrest.exceptions import ValidationError
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import AsyncPipeline
@@ -50,6 +51,13 @@ class ServiceBusManagementClient:
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
+    async def __aenter__(self) -> "ServiceBusManagementClient":
+        await self._impl.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details) -> None:
+        await self._impl.__aexit__(*exc_details)
+
     def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
@@ -64,6 +72,7 @@ class ServiceBusManagementClient:
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 ContentDecodePolicy(**kwargs),
+                ServiceBusXMLWorkaroundPolicy(),
                 self._config.redirect_policy,
                 self._config.retry_policy,
                 credential_policy,

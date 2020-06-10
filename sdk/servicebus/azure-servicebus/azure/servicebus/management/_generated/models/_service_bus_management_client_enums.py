@@ -17,7 +17,7 @@ class AccessRights(str, Enum):
     listen = "Listen"
 
 class EntityAvailabilityStatus(str, Enum):
-    """Availibility status of the entity
+    """Availability status of the entity
     """
 
     available = "Available"

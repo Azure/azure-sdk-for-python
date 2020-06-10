@@ -17,13 +17,13 @@ try:
     from ._models_py3 import QueueDescriptionEntry
     from ._models_py3 import QueueDescriptionEntryContent
     from ._models_py3 import QueueDescriptionFeed
-    from ._models_py3 import QueueDescriptionResponse
-    from ._models_py3 import QueueDescriptionResponseContent
     from ._models_py3 import ResponseAuthor
     from ._models_py3 import ResponseLink
-    from ._models_py3 import ResponseTitle
     from ._models_py3 import ServiceBusManagementError
     from ._models_py3 import TopicDescription
+    from ._models_py3 import TopicDescriptionEntry
+    from ._models_py3 import TopicDescriptionEntryContent
+    from ._models_py3 import TopicDescriptionFeed
 except (SyntaxError, ImportError):
     from ._models import AuthorizationRule  # type: ignore
     from ._models import CreateQueueBody  # type: ignore
@@ -35,13 +35,13 @@ except (SyntaxError, ImportError):
     from ._models import QueueDescriptionEntry  # type: ignore
     from ._models import QueueDescriptionEntryContent  # type: ignore
     from ._models import QueueDescriptionFeed  # type: ignore
-    from ._models import QueueDescriptionResponse  # type: ignore
-    from ._models import QueueDescriptionResponseContent  # type: ignore
     from ._models import ResponseAuthor  # type: ignore
     from ._models import ResponseLink  # type: ignore
-    from ._models import ResponseTitle  # type: ignore
     from ._models import ServiceBusManagementError  # type: ignore
     from ._models import TopicDescription  # type: ignore
+    from ._models import TopicDescriptionEntry  # type: ignore
+    from ._models import TopicDescriptionEntryContent  # type: ignore
+    from ._models import TopicDescriptionFeed  # type: ignore
 
 from ._service_bus_management_client_enums import (
     AccessRights,
@@ -60,13 +60,13 @@ __all__ = [
     'QueueDescriptionEntry',
     'QueueDescriptionEntryContent',
     'QueueDescriptionFeed',
-    'QueueDescriptionResponse',
-    'QueueDescriptionResponseContent',
     'ResponseAuthor',
     'ResponseLink',
-    'ResponseTitle',
     'ServiceBusManagementError',
     'TopicDescription',
+    'TopicDescriptionEntry',
+    'TopicDescriptionEntryContent',
+    'TopicDescriptionFeed',
     'AccessRights',
     'EntityAvailabilityStatus',
     'EntityStatus',

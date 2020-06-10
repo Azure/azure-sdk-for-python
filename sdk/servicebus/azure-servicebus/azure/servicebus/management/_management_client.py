@@ -2,14 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import functools
 from copy import copy
-from contextlib import contextmanager
-from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Tuple
-from xml.etree.ElementTree import ElementTree, Element
+from typing import TYPE_CHECKING, Dict, Any, Union, cast
+from xml.etree.ElementTree import ElementTree
 
 import six
+from azure.core.paging import ItemPaged
+from azure.servicebus.management._generated.models import QueueDescriptionFeed, TopicDescription, TopicDescriptionEntry, \
+    QueueDescriptionEntry
+from azure.servicebus.management._utils import extract_data_template, get_next_template
+from azure.servicebus.management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from msrest.exceptions import ValidationError
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, raise_with_traceback
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
@@ -26,37 +31,10 @@ from ._generated._service_bus_management_client import ServiceBusManagementClien
 from ._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
 from . import _constants as constants
 from ._models import QueueRuntimeInfo, QueueDescription
-
+from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
-
-
-@contextmanager
-def _handle_response_error():
-    try:
-        yield
-    except HttpResponseError as response_error:
-        try:
-            new_response_error = HttpResponseError(
-                message=response_error.model.detail,
-                response=response_error.response,
-                model=response_error.model
-            )
-        except AttributeError:
-            new_response_error = response_error
-        raise new_response_error
-
-
-def _convert_xml_to_object(queue_name, et):
-    # type: (str, Union[Element, ElementTree]) -> InternalQueueDescription
-    content_ele = cast(ElementTree, et).find(constants.CONTENT_TAG)
-    if not content_ele:
-        raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-    qc_ele = content_ele.find(constants.QUEUE_DESCRIPTION_TAG)
-    obj = InternalQueueDescription.deserialize(qc_ele)
-
-    return obj
 
 
 class ServiceBusManagementClient:
@@ -76,6 +54,13 @@ class ServiceBusManagementClient:
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
+    def __enter__(self):
+        self._impl.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        self._impl.__exit__(*exc_details)
+
     def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
@@ -89,6 +74,7 @@ class ServiceBusManagementClient:
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 ContentDecodePolicy(**kwargs),
+                ServiceBusXMLWorkaroundPolicy(),
                 self._config.redirect_policy,
                 self._config.retry_policy,
                 credential_policy,
@@ -110,45 +96,21 @@ class ServiceBusManagementClient:
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
-            endpoint = endpoint[endpoint.index("//")+2:]
+            endpoint = endpoint[endpoint.index("//") + 2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    def _get_queue_object(self, queue_name, **kwargs):
-        # type: (str, Any) -> InternalQueueDescription
+    def _get_entity_element(self, entity_name, **kwargs):
+        # type: (str, Any) -> ElementTree
 
-        if not queue_name:
+        if not entity_name:
             raise ValueError("queue_name must be a non-empty str")
 
         with _handle_response_error():
-            et = cast(
+            element = cast(
                 ElementTree,
-                self._impl.queue.get(queue_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+                self._impl.entity.get(entity_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
-        return _convert_xml_to_object(queue_name, et)
-
-    def _list_queues(self, **kwargs):
-        # type: (Any) -> List[Tuple[str, InternalQueueDescription]]
-
-        start_index = kwargs.pop("start_index", 0)
-        max_count = kwargs.pop("max_count", 100)
-        with _handle_response_error():
-            et = cast(
-                ElementTree,
-                self._impl.list_entities(
-                    entity_type=constants.ENTITY_TYPE_QUEUES, skip=start_index, top=max_count,
-                    api_version=constants.API_VERSION, **kwargs
-                )
-            )
-        entries = et.findall(constants.ENTRY_TAG)
-        queues = []
-        for entry in entries:
-            entity_name = entry.find(constants.TITLE_TAG).text  # type: ignore
-            internal_object = _convert_xml_to_object(
-                entity_name,   # type: ignore
-                cast(Element, entry)
-            )
-            queues.append((entity_name, internal_object))
-        return queues   # type: ignore
+        return element
 
     def get_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueDescription
@@ -157,9 +119,9 @@ class ServiceBusManagementClient:
         :param str queue_name: The name of the queue.
         :rtype: ~azure.servicebus.management.QueueDescription
         """
-        queue_description = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
-            self._get_queue_object(queue_name, **kwargs)
-        )
+        entry_ele = self._get_entity_element(queue_name, **kwargs)
+        entry = QueueDescriptionEntry.deserialize(entry_ele)
+        queue_description = QueueDescription._from_internal_entity(entry.content.queue_description)
         queue_description.queue_name = queue_name
         return queue_description
 
@@ -170,9 +132,9 @@ class ServiceBusManagementClient:
         :param str queue_name: The name of the queue.
         :rtype: ~azure.servicebus.management.QueueRuntimeInfo
         """
-        runtime_info = QueueRuntimeInfo._from_internal_entity(  # pylint:disable=protected-access
-            self._get_queue_object(queue_name, **kwargs)
-        )
+        entry_ele = self._get_entity_element(queue_name, **kwargs)
+        entry = QueueDescriptionEntry.deserialize(entry_ele)
+        runtime_info = QueueRuntimeInfo._from_internal_entity(entry.content.queue_description)
         runtime_info.queue_name = queue_name
         return runtime_info
 
@@ -201,9 +163,9 @@ class ServiceBusManagementClient:
         request_body = create_entity_body.serialize(is_xml=True)
         try:
             with _handle_response_error():
-                et = cast(
+                entry_ele = cast(
                     ElementTree,
-                    self._impl.queue.put(
+                    self._impl.entity.put(
                         queue_name,  # type: ignore
                         request_body, api_version=constants.API_VERSION, **kwargs)
                 )
@@ -217,9 +179,8 @@ class ServiceBusManagementClient:
                 TypeError,
                 message="queue must be a non-empty str or a QueueDescription with non-empty str queue_name")
 
-        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
-                _convert_xml_to_object(queue_name, et)
-        )
+        entry = QueueDescriptionEntry.deserialize(entry_ele)
+        result = QueueDescription._from_internal_entity(entry.content.queue_description)
         result.queue_name = queue_name
         return result
 
@@ -237,10 +198,11 @@ class ServiceBusManagementClient:
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
 
-        to_update = copy(queue_description._to_internal_entity())  # pylint:disable=protected-access
+        internal_description = queue_description._to_internal_entity()
+        to_update = copy(internal_description)  # pylint:disable=protected-access
 
         for attr in QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES:
-            setattr(to_update, attr, getattr(queue_description, attr, None))
+            setattr(to_update, attr, getattr(internal_description, attr, None))
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -252,9 +214,9 @@ class ServiceBusManagementClient:
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             try:
-                et = cast(
+                entry_ele = cast(
                     ElementTree,
-                    self._impl.queue.put(
+                    self._impl.entity.put(
                         queue_description.queue_name,  # type: ignore
                         request_body,
                         api_version=constants.API_VERSION,
@@ -268,9 +230,8 @@ class ServiceBusManagementClient:
                     ValueError,
                     message="queue_description must be a QueueDescription with valid fields, "
                             "including non-empty string queue name")
-        result = QueueDescription._from_internal_entity(  # pylint:disable=protected-access
-            _convert_xml_to_object(queue_description.queue_name, et)
-        )
+        entry = QueueDescriptionEntry.deserialize(entry_ele)
+        result = QueueDescription._from_internal_entity(entry.content.queue_description)
         result.queue_name = queue_description.queue_name
         return result
 
@@ -285,10 +246,10 @@ class ServiceBusManagementClient:
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            self._impl.queue.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
+            self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_queues(self, **kwargs):
-        # type: (Any) -> List[QueueDescription]
+        # type: (Any) -> ItemPaged[QueueDescription]
         """List the queues of a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
@@ -296,16 +257,18 @@ class ServiceBusManagementClient:
          the ServiceBus namespace.
         :rtype: List[~azure.servicebus.management.QueueDescription]
         """
-        result = []  # type: List[QueueDescription]
-        internal_queues = self._list_queues(**kwargs)
-        for queue_name, internal_queue in internal_queues:
-            qd = QueueDescription._from_internal_entity(internal_queue)  # pylint:disable=protected-access
-            qd.queue_name = queue_name
-            result.append(qd)
-        return result
+
+        extract_data = functools.partial(
+            extract_data_template, QueueDescriptionFeed, QueueDescription
+        )
+        get_next = functools.partial(
+            get_next_template, self._impl.list_entities, **kwargs
+        )
+        return ItemPaged(
+            get_next, extract_data)
 
     def list_queues_runtime_info(self, **kwargs):
-        # type: (Any) -> List[QueueRuntimeInfo]
+        # type: (Any) -> ItemPaged[QueueRuntimeInfo]
         """List the runtime info of the queues in a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
@@ -314,10 +277,24 @@ class ServiceBusManagementClient:
         :rtype: List[~azure.servicebus.management.QueueRuntimeInfo]
         """
 
-        result = []  # type: List[QueueRuntimeInfo]
-        internal_queues = self._list_queues(**kwargs)
-        for queue_name, internal_queue in internal_queues:
-            runtime_info = QueueRuntimeInfo._from_internal_entity(internal_queue)  # pylint:disable=protected-access
-            runtime_info.queue_name = queue_name
-            result.append(runtime_info)
-        return result
+        extract_data = functools.partial(
+            extract_data_template, QueueDescriptionFeed, QueueRuntimeInfo
+        )
+        get_next = functools.partial(
+            get_next_template, self._impl.list_entities, **kwargs
+        )
+        return ItemPaged(
+            get_next, extract_data)
+
+    def get_topic(self, topic_name, **kwargs):
+        # type: (str, Any) -> TopicDescription
+        """Get a TopicDescription.
+
+        :param str queue_name: The name of the queue.
+        :rtype: ~azure.servicebus.management.TopicDescription
+        """
+        entry_ele = self._get_entity_element(topic_name, **kwargs)
+        entry = TopicDescriptionEntry.deserialize(entry_ele)
+        topic_description = entry.content.topic_description
+        # TODO: wrap it in external TopicDescription and set name
+        return topic_description

@@ -6,10 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._queue_operations import QueueOperations
+from ._entity_operations import EntityOperations
 from ._service_bus_management_client_operations import ServiceBusManagementClientOperationsMixin
 
 __all__ = [
-    'QueueOperations',
+    'EntityOperations',
     'ServiceBusManagementClientOperationsMixin',
 ]
