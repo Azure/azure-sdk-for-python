@@ -1,6 +1,7 @@
 import platform
 import pytest
 import uamqp
+from packaging import version
 from azure.eventhub import _common
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
@@ -93,6 +94,14 @@ def test_event_data_batch():
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=100, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=100, partition_id=None, partition_key='par', event_count=1)"
-    assert batch.size_in_bytes == 89 and len(batch) == 1
+
+    # In uamqp v1.2.8, the encoding size of a message has changed. delivery_count in message header is now set to 0
+    # instead of None according to the C spec.
+    # This uamqp change is transparent to EH users so it's not considered as a breaking change. However, it's breaking
+    # the unit test here. The solution is to add backward compatibility in test.
+    if version.parse(uamqp.__version__) >= version.parse("1.2.8"):
+        assert batch.size_in_bytes == 97 and len(batch) == 1
+    else:
+        assert batch.size_in_bytes == 89 and len(batch) == 1
     with pytest.raises(ValueError):
         batch.add(EventData("A"))

@@ -10,7 +10,7 @@
 
 # Core
 /sdk/core/                                                           @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/                                                @xiangyan99 @bryevdv @lmazuel
+/sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
 /sdk/identity/                                                       @chlowell @schaabs
@@ -39,6 +39,9 @@
 /sdk/synapse/                                                        @aim-for-better @idear1203
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
 /**/*mgmt*/     @zikalino

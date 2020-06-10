@@ -26,6 +26,7 @@ try:
     from ._models_py3 import CustomDomain
     from ._models_py3 import DateAfterCreation
     from ._models_py3 import DateAfterModification
+    from ._models_py3 import DeletedShare
     from ._models_py3 import DeleteRetentionPolicy
     from ._models_py3 import Dimension
     from ._models_py3 import Encryption
@@ -51,7 +52,10 @@ try:
     from ._models_py3 import LegalHoldProperties
     from ._models_py3 import ListAccountSasResponse
     from ._models_py3 import ListContainerItem
+    from ._models_py3 import ListQueue
+    from ._models_py3 import ListQueueServices
     from ._models_py3 import ListServiceSasResponse
+    from ._models_py3 import ListTableServices
     from ._models_py3 import ManagementPolicy
     from ._models_py3 import ManagementPolicyAction
     from ._models_py3 import ManagementPolicyBaseBlob
@@ -62,6 +66,9 @@ try:
     from ._models_py3 import ManagementPolicySnapShot
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import ObjectReplicationPolicy
+    from ._models_py3 import ObjectReplicationPolicyFilter
+    from ._models_py3 import ObjectReplicationPolicyRule
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateEndpoint
@@ -70,6 +77,7 @@ try:
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QueueServiceProperties
     from ._models_py3 import Resource
     from ._models_py3 import RestorePolicyProperties
     from ._models_py3 import Restriction
@@ -88,6 +96,10 @@ try:
     from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import StorageQueue
+    from ._models_py3 import Table
+    from ._models_py3 import TableServiceProperties
+    from ._models_py3 import TagFilter
     from ._models_py3 import TagProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateHistoryProperty
@@ -111,6 +123,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomDomain
     from ._models import DateAfterCreation
     from ._models import DateAfterModification
+    from ._models import DeletedShare
     from ._models import DeleteRetentionPolicy
     from ._models import Dimension
     from ._models import Encryption
@@ -136,7 +149,10 @@ except (SyntaxError, ImportError):
     from ._models import LegalHoldProperties
     from ._models import ListAccountSasResponse
     from ._models import ListContainerItem
+    from ._models import ListQueue
+    from ._models import ListQueueServices
     from ._models import ListServiceSasResponse
+    from ._models import ListTableServices
     from ._models import ManagementPolicy
     from ._models import ManagementPolicyAction
     from ._models import ManagementPolicyBaseBlob
@@ -147,6 +163,9 @@ except (SyntaxError, ImportError):
     from ._models import ManagementPolicySnapShot
     from ._models import MetricSpecification
     from ._models import NetworkRuleSet
+    from ._models import ObjectReplicationPolicy
+    from ._models import ObjectReplicationPolicyFilter
+    from ._models import ObjectReplicationPolicyRule
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateEndpoint
@@ -155,6 +174,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceListResult
     from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
+    from ._models import QueueServiceProperties
     from ._models import Resource
     from ._models import RestorePolicyProperties
     from ._models import Restriction
@@ -173,6 +193,10 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountMicrosoftEndpoints
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
+    from ._models import StorageQueue
+    from ._models import Table
+    from ._models import TableServiceProperties
+    from ._models import TagFilter
     from ._models import TagProperty
     from ._models import TrackedResource
     from ._models import UpdateHistoryProperty
@@ -183,9 +207,13 @@ from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import EncryptionScopePaged
 from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
+from ._paged_models import ListQueuePaged
+from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
+from ._paged_models import TablePaged
 from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
     ReasonCode,
@@ -224,8 +252,14 @@ from ._storage_management_client_enums import (
     LeaseDuration,
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
+    EnabledProtocols,
+    RootSquashType,
+    ShareAccessTier,
     StorageAccountExpand,
     ListKeyExpand,
+    ListContainersInclude,
+    ListSharesExpand,
+    GetShareExpand,
 )
 
 __all__ = [
@@ -245,6 +279,7 @@ __all__ = [
     'CustomDomain',
     'DateAfterCreation',
     'DateAfterModification',
+    'DeletedShare',
     'DeleteRetentionPolicy',
     'Dimension',
     'Encryption',
@@ -270,7 +305,10 @@ __all__ = [
     'LegalHoldProperties',
     'ListAccountSasResponse',
     'ListContainerItem',
+    'ListQueue',
+    'ListQueueServices',
     'ListServiceSasResponse',
+    'ListTableServices',
     'ManagementPolicy',
     'ManagementPolicyAction',
     'ManagementPolicyBaseBlob',
@@ -281,6 +319,9 @@ __all__ = [
     'ManagementPolicySnapShot',
     'MetricSpecification',
     'NetworkRuleSet',
+    'ObjectReplicationPolicy',
+    'ObjectReplicationPolicyFilter',
+    'ObjectReplicationPolicyRule',
     'Operation',
     'OperationDisplay',
     'PrivateEndpoint',
@@ -289,6 +330,7 @@ __all__ = [
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
+    'QueueServiceProperties',
     'Resource',
     'RestorePolicyProperties',
     'Restriction',
@@ -307,6 +349,10 @@ __all__ = [
     'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
+    'StorageQueue',
+    'Table',
+    'TableServiceProperties',
+    'TagFilter',
     'TagProperty',
     'TrackedResource',
     'UpdateHistoryProperty',
@@ -317,10 +363,14 @@ __all__ = [
     'SkuInformationPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'PrivateEndpointConnectionPaged',
+    'ObjectReplicationPolicyPaged',
     'EncryptionScopePaged',
     'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
     'FileShareItemPaged',
+    'ListQueuePaged',
+    'TablePaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',
@@ -357,6 +407,12 @@ __all__ = [
     'LeaseDuration',
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
+    'EnabledProtocols',
+    'RootSquashType',
+    'ShareAccessTier',
     'StorageAccountExpand',
     'ListKeyExpand',
+    'ListContainersInclude',
+    'ListSharesExpand',
+    'GetShareExpand',
 ]

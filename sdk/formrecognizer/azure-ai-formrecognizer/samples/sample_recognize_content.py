@@ -10,7 +10,7 @@
 FILE: sample_recognize_content.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and content information from a document
+    This sample demonstrates how to extract text and content information from a document
     given through a file.
 USAGE:
     python sample_recognize_content.py
@@ -29,17 +29,18 @@ def format_bounding_box(bounding_box):
 
 class RecognizeContentSample(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-
     def recognize_content(self):
-        from azure.ai.formrecognizer import FormWord, FormLine
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
-        form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        with open("sample_forms/forms/Invoice_1.pdf", "rb") as f:
-            poller = form_recognizer_client.begin_recognize_content(stream=f.read())
+
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+        with open(path_to_sample_forms, "rb") as f:
+            poller = form_recognizer_client.begin_recognize_content(form=f)
         contents = poller.result()
 
         for idx, content in enumerate(contents):
@@ -66,6 +67,8 @@ class RecognizeContentSample(object):
                     line.text,
                     format_bounding_box(line.bounding_box)
                 ))
+                for word in line.words:
+                    print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
             print("----------------------------------------")
 
 

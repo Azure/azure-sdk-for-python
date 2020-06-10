@@ -78,15 +78,14 @@ def test_authenticate():
         _cache=TokenCache(),
     )
     record = credential.authenticate(scopes=(scope,))
-
-    # credential should have a cached access token for the scope used in authenticate
-    token = credential.get_token(scope)
-    assert token.token == access_token
-
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
     assert record.tenant_id == home_tenant
     assert record.username == username
+
+    # credential should have a cached access token for the scope used in authenticate
+    token = credential.get_token(scope)
+    assert token.token == access_token
 
 
 def test_disable_automatic_authentication():

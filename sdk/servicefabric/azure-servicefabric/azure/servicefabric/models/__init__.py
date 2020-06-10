@@ -35,6 +35,7 @@ try:
     from ._models_py3 import ApplicationHealthStateFilter
     from ._models_py3 import ApplicationInfo
     from ._models_py3 import ApplicationLoadInfo
+    from ._models_py3 import ApplicationLoadMetricInformation
     from ._models_py3 import ApplicationMetricDescription
     from ._models_py3 import ApplicationNameInfo
     from ._models_py3 import ApplicationNewHealthReportEvent
@@ -144,6 +145,7 @@ try:
     from ._models_py3 import CreateComposeDeploymentDescription
     from ._models_py3 import CurrentUpgradeDomainProgressInfo
     from ._models_py3 import DeactivationIntentDescription
+    from ._models_py3 import DefaultExecutionPolicy
     from ._models_py3 import DeletePropertyBatchOperation
     from ._models_py3 import DeltaNodesCheckHealthEvaluation
     from ._models_py3 import DeployedApplicationHealth
@@ -533,6 +535,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationHealthStateFilter
     from ._models import ApplicationInfo
     from ._models import ApplicationLoadInfo
+    from ._models import ApplicationLoadMetricInformation
     from ._models import ApplicationMetricDescription
     from ._models import ApplicationNameInfo
     from ._models import ApplicationNewHealthReportEvent
@@ -642,6 +645,7 @@ except (SyntaxError, ImportError):
     from ._models import CreateComposeDeploymentDescription
     from ._models import CurrentUpgradeDomainProgressInfo
     from ._models import DeactivationIntentDescription
+    from ._models import DefaultExecutionPolicy
     from ._models import DeletePropertyBatchOperation
     from ._models import DeltaNodesCheckHealthEvaluation
     from ._models import DeployedApplicationHealth
@@ -1144,6 +1148,7 @@ __all__ = [
     'ApplicationHealthStateFilter',
     'ApplicationInfo',
     'ApplicationLoadInfo',
+    'ApplicationLoadMetricInformation',
     'ApplicationMetricDescription',
     'ApplicationNameInfo',
     'ApplicationNewHealthReportEvent',
@@ -1253,6 +1258,7 @@ __all__ = [
     'CreateComposeDeploymentDescription',
     'CurrentUpgradeDomainProgressInfo',
     'DeactivationIntentDescription',
+    'DefaultExecutionPolicy',
     'DeletePropertyBatchOperation',
     'DeltaNodesCheckHealthEvaluation',
     'DeployedApplicationHealth',

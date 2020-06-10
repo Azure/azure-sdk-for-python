@@ -1,31 +1,26 @@
 interactions:
 - request:
-    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'''
     headers:
       Content-Length:
       - '160'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
+      string: '{"error": {"code": "401", "message": "Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: 94d26759-6254-4d2e-8aaa-5e7c45a94157
-      content-length: '225'
-      content-type: application/json
-      date: Thu, 16 Apr 2020 17:46:54 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      www-authenticate: AzureApiManagementKey realm="https://westus.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options: nosniff
+      content-length: '224'
+      date: Tue, 09 Jun 2020 21:14:27 GMT
     status:
       code: 401
-      message: Access Denied
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+      message: PermissionDenied
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
 version: 1

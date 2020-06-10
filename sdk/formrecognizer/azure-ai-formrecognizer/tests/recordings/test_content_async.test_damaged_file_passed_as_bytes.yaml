@@ -5,18 +5,18 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
-      string: '{"error":{"code":"BadArgument","message":"Bad or unrecognizable request
-        JSON or binary file."}}'
+      string: '{"error": {"code": "BadArgument", "message": "Bad or unrecognizable
+        request JSON or binary file."}}'
     headers:
-      apim-request-id: e8935d10-a4a4-4aed-8723-5603965c9f8f
+      apim-request-id: c02f1a4f-be24-4edf-a1d1-cf661c466d9b
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:04:44 GMT
+      date: Tue, 09 Jun 2020 21:11:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -24,5 +24,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
 version: 1

@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError, KnownAuthorities
+from azure.identity import CredentialUnavailableError
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
 from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
@@ -204,6 +204,26 @@ async def test_shared_cache_username():
         credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
+
+
+@pytest.mark.asyncio
+async def test_default_credential_shared_cache_use():
+    with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as mock_credential:
+        mock_credential.supported = Mock(return_value=False)
+
+        # unsupported platform -> default credential shouldn't use shared cache
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 0
+        assert mock_credential.supported.call_count == 1
+        mock_credential.supported.reset_mock()
+
+        mock_credential.supported = Mock(return_value=True)
+
+        # supported platform -> default credential should use shared cache
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 1
+        assert mock_credential.supported.call_count == 1
+        mock_credential.supported.reset_mock()
 
 
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):

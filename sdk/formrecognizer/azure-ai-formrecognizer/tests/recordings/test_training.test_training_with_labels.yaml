@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": true}'''
+    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}\'''''
     headers:
       Accept:
       - '*/*'
@@ -10,32 +10,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '306'
+      - '287'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 29422b84-85fb-40e0-a1ff-b2218895d80a
+      - 805356f5-969e-4252-9c80-c87e18a03109
       content-length:
       - '0'
       date:
-      - Wed, 15 Apr 2020 19:13:41 GMT
+      - Tue, 09 Jun 2020 21:15:08 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6baf62c7-26e1-4bb3-84aa-80d1b0419bae
+      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/501a3991-67fe-4cd8-8c74-3364a45d4378
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '49'
+      - '41'
     status:
       code: 201
       message: Created
@@ -49,20 +49,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6baf62c7-26e1-4bb3-84aa-80d1b0419bae?includeKeys=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/501a3991-67fe-4cd8-8c74-3364a45d4378?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"6baf62c7-26e1-4bb3-84aa-80d1b0419bae","status":"ready","createdDateTime":"2020-04-15T19:13:41Z","lastUpdatedDateTime":"2020-04-15T19:13:43Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo": {"modelId": "501a3991-67fe-4cd8-8c74-3364a45d4378", "status":
+        "creating", "createdDateTime": "2020-06-09T21:15:09Z", "lastUpdatedDateTime":
+        "2020-06-09T21:15:09Z"}}'
     headers:
       apim-request-id:
-      - e2e68b30-31b8-4fbb-8558-c8fc4f589fce
+      - 7ab244bc-777b-4d3a-8ab3-4d8efb1c27ef
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 19:13:46 GMT
+      - Tue, 09 Jun 2020 21:15:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +72,58 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '944'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/501a3991-67fe-4cd8-8c74-3364a45d4378?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "501a3991-67fe-4cd8-8c74-3364a45d4378", "status":
+        "ready", "createdDateTime": "2020-06-09T21:15:09Z", "lastUpdatedDateTime":
+        "2020-06-09T21:15:16Z"}, "trainResult": {"averageModelAccuracy": 0.973, "trainingDocuments":
+        [{"documentName": "Form_1.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
+        "Form_2.jpg", "pages": 1, "status": "succeeded"}, {"documentName": "Form_3.jpg",
+        "pages": 1, "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
+        1, "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages": 1, "status":
+        "succeeded"}], "fields": [{"fieldName": "CompanyAddress", "accuracy": 0.8},
+        {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber",
+        "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName":
+        "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName":
+        "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
+        1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName": "Signature",
+        "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName":
+        "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy": 1.0}, {"fieldName":
+        "VendorName", "accuracy": 1.0}, {"fieldName": "Website", "accuracy": 1.0}],
+        "errors": []}}'
+    headers:
+      apim-request-id:
+      - 25bd7d63-ca5e-45c5-b9eb-284cefa70594
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 09 Jun 2020 21:15:20 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '18'
     status:
       code: 200
       message: OK

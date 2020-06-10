@@ -1,0 +1,793 @@
+interactions:
+- request:
+    body: '{"location": "westcentralus", "properties": {"publicNetworkAccess": "Disabled"},
+      "identity": {"type": "SystemAssigned"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '120'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a?api-version=2020-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 29 May 2020 03:08:12 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/153cbbf5-472d-46c4-8772-0728a64cef0f?api-version=2020-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/153cbbf5-472d-46c4-8772-0728a64cef0f?api-version=2020-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batchpendpointdefb137a.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":false,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService","publicNetworkAccess":"Disabled","privateEndpointConnections":[],"encryption":{"keySource":"Microsoft.Batch"}},"identity":{"principalId":"9f75e0be-fe8d-4314-bf11-d49e7f28ceeb","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2478'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:28 GMT
+      etag:
+      - '"0x8D8037D8F629560"'
+      expires:
+      - '-1'
+      last-modified:
+      - Fri, 29 May 2020 03:08:28 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "westcentralus", "properties": {"addressSpace": {"addressPrefixes":
+      ["10.0.0.0/16"]}, "subnets": [{"properties": {"addressPrefix": "10.0.0.0/24",
+      "privateEndpointNetworkPolicies": "Disabled"}, "name": "subnetdefb137a"}], "enableDdosProtection":
+      false, "enableVmProtection": false}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '294'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\",\r\n
+        \ \"etag\": \"W/\\\"073eb38c-eca8-4e64-99c7-b0c40922e9a8\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
+        \"12559fdb-fc54-42fb-8c53-fbf3491609e6\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [\r\n
+        \     {\r\n        \"name\": \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\",\r\n
+        \       \"etag\": \"W/\\\"073eb38c-eca8-4e64-99c7-b0c40922e9a8\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
+        \         \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\":
+        [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n          \"privateLinkServiceNetworkPolicies\":
+        \"Enabled\"\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n
+        \     }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\":
+        false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/bd1050e4-8401-42b0-a699-c147f1a53417?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1411'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - ee96102a-72a3-4b5b-9f34-99c60019b5f8
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/bd1050e4-8401-42b0-a699-c147f1a53417?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - f38bcfe2-4680-42e0-b5cb-5d0682aae247
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\",\r\n
+        \ \"etag\": \"W/\\\"6618c5b8-665c-4eb8-b461-3aa12538cfda\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
+        \"12559fdb-fc54-42fb-8c53-fbf3491609e6\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [\r\n
+        \     {\r\n        \"name\": \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\",\r\n
+        \       \"etag\": \"W/\\\"6618c5b8-665c-4eb8-b461-3aa12538cfda\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\":
+        [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n          \"privateLinkServiceNetworkPolicies\":
+        \"Enabled\"\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n
+        \     }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\":
+        false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1413'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:34 GMT
+      etag:
+      - W/"6618c5b8-665c-4eb8-b461-3aa12538cfda"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 058492e9-1099-430c-a5b1-4bc2e1d1a037
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''b\''b\\\''{"location": "westcentralus", "properties": {"subnet": {"id":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a"},
+      "manualPrivateLinkServiceConnections": [{"properties": {"privateLinkServiceId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a",
+      "groupIds": ["batchAccount"]}, "name": "pecdefb137a"}]}}\\\''\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '634'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\",\r\n
+        \ \"etag\": \"W/\\\"aaddeb06-c44f-4ffb-9870-20d50a6f4bb8\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"westcentralus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
+        \"1dfeba6e-c3e8-4a61-8c02-cb28211cead2\",\r\n    \"privateLinkServiceConnections\":
+        [],\r\n    \"manualPrivateLinkServiceConnections\": [\r\n      {\r\n        \"name\":
+        \"pecdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\",\r\n
+        \       \"etag\": \"W/\\\"aaddeb06-c44f-4ffb-9870-20d50a6f4bb8\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\",\r\n
+        \         \"groupIds\": [\r\n            \"batchAccount\"\r\n          ],\r\n
+        \         \"privateLinkServiceConnectionState\": {\r\n            \"status\":
+        \"Pending\",\r\n            \"description\": \"Awaiting Approval\",\r\n            \"actionsRequired\":
+        \"None\"\r\n          }\r\n        },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\r\n
+        \     }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\r\n
+        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.2ebb2359-4cf0-41fd-8411-03c4ed7dc473\"\r\n
+        \     }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/1487798a-65a1-45c7-8cf0-01c3502111d5?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '2246'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 340013b5-d7ac-49c7-a079-ace3d430f8dd
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/1487798a-65a1-45c7-8cf0-01c3502111d5?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - a5e6dadd-65ab-4115-89e1-202075f60d21
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\",\r\n
+        \ \"etag\": \"W/\\\"3f048a5b-91b3-4d59-9154-626a601d0f44\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"westcentralus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
+        \"1dfeba6e-c3e8-4a61-8c02-cb28211cead2\",\r\n    \"privateLinkServiceConnections\":
+        [],\r\n    \"manualPrivateLinkServiceConnections\": [\r\n      {\r\n        \"name\":
+        \"pecdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\",\r\n
+        \       \"etag\": \"W/\\\"3f048a5b-91b3-4d59-9154-626a601d0f44\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\",\r\n
+        \         \"groupIds\": [\r\n            \"batchAccount\"\r\n          ],\r\n
+        \         \"privateLinkServiceConnectionState\": {\r\n            \"status\":
+        \"Pending\",\r\n            \"description\": \"Manual approval still required\",\r\n
+        \           \"actionsRequired\": \"Manual approval request\"\r\n          }\r\n
+        \       },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\r\n
+        \     }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\r\n
+        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.2ebb2359-4cf0-41fd-8411-03c4ed7dc473\"\r\n
+        \     }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2279'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:47 GMT
+      etag:
+      - W/"3f048a5b-91b3-4d59-9154-626a601d0f44"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 60d27e08-ac5e-4d0e-8b39-e0df149e6f08
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources?api-version=2020-05-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts/privateLinkResources","properties":{"groupId":"batchAccount","requiredMembers":["batchAccount"],"requiredZoneNames":["privatelink.westcentralus.batch.azure.com"]}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '503'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a?api-version=2020-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts/privateLinkResources","properties":{"groupId":"batchAccount","requiredMembers":["batchAccount"],"requiredZoneNames":["privatelink.westcentralus.batch.azure.com"]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '491'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections?api-version=2020-05-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
+        approval still required","actionsRequired":"Manual approval request"}}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '878'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
+        approval still required","actionsRequired":"Manual approval request"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '866'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:48 GMT
+      etag:
+      - W/"0x8D8037D9843C789"
+      expires:
+      - '-1'
+      last-modified:
+      - Fri, 29 May 2020 03:08:43 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"privateLinkServiceConnectionState": {"status": "Approved",
+      "description": "Approved for test"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '113'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Updating","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
+        for test","actionsRequired":"Manual approval request"}}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '853'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:08:48 GMT
+      etag:
+      - W/"0x8D8037D9843C789"
+      expires:
+      - '-1'
+      last-modified:
+      - Fri, 29 May 2020 03:08:43 GMT
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded","retryAfter":0}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '37'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:09:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
+        for test","actionsRequired":"Manual approval request"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '854'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 May 2020 03:09:04 GMT
+      etag:
+      - W/"0x8D8037D9843C789"
+      expires:
+      - '-1'
+      last-modified:
+      - Fri, 29 May 2020 03:08:43 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

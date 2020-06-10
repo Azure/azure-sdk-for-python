@@ -20,12 +20,7 @@ BATCH = json.load(open(join(CWD, "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import (
-    AutocompleteQuery,
-    SearchClient,
-    SearchQuery,
-    SuggestQuery,
-)
+from azure.search.documents import SearchClient
 
 TIME_TO_SLEEP = 3
 
@@ -66,10 +61,10 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        results = list(client.search(query="hotel"))
+        results = list(client.search(search_text="hotel"))
         assert len(results) == 7
 
-        results = list(client.search(query="motel"))
+        results = list(client.search(search_text="motel"))
         assert len(results) == 2
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -79,12 +74,13 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi")
-        query.filter("category eq 'Budget'")
-        query.select("hotelName", "category", "description")
-        query.order_by("hotelName desc")
-
-        results = list(client.search(query=query))
+        select = ("hotelName", "category", "description")
+        results = list(client.search(
+            search_text="WiFi",
+            filter="category eq 'Budget'",
+            select=",".join(select),
+            order_by="hotelName desc"
+        ))
         assert [x["hotelName"] for x in results] == sorted(
             [x["hotelName"] for x in results], reverse=True
         )
@@ -105,12 +101,10 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="hotel")
-        results = client.search(query=query)
+        results = client.search(search_text="hotel")
         assert results.get_count() is None
 
-        query = SearchQuery(search_text="hotel", include_total_result_count=True)
-        results = client.search(query=query)
+        results = client.search(search_text="hotel", include_total_result_count=True)
         assert results.get_count() == 7
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -120,12 +114,10 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="hotel")
-        results = client.search(query=query)
+        results = client.search(search_text="hotel")
         assert results.get_coverage() is None
 
-        query = SearchQuery(search_text="hotel", minimum_coverage=50.0)
-        results = client.search(query=query)
+        results = client.search(search_text="hotel", minimum_coverage=50.0)
         cov = results.get_coverage()
         assert isinstance(cov, float)
         assert cov >= 50.0
@@ -137,10 +129,8 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi")
-        query.select("hotelName", "category", "description")
-
-        results = client.search(query=query)
+        select = ("hotelName", "category", "description")
+        results = client.search(search_text="WiFi", select=",".join(select))
         assert results.get_facets() is None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -150,10 +140,11 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        query = SearchQuery(search_text="WiFi", facets=["category"])
-        query.select("hotelName", "category", "description")
-
-        results = client.search(query=query)
+        select = ("hotelName", "category", "description")
+        results = client.search(search_text="WiFi",
+                                facets=["category"],
+                                select=",".join(select)
+                                )
         assert results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},
@@ -167,8 +158,7 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        query = AutocompleteQuery(search_text="mot", suggester_name="sg")
-        results = client.autocomplete(query=query)
+        results = client.autocomplete(search_text="mot", suggester_name="sg")
         assert results == [{"text": "motel", "query_plus_text": "motel"}]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -177,8 +167,7 @@ class SearchClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        query = SuggestQuery(search_text="mot", suggester_name="sg")
-        results = client.suggest(query=query)
+        results = client.suggest(search_text="mot", suggester_name="sg")
         assert results == [
             {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
             {"hotelId": "9", "text": "Secret Point Motel"},

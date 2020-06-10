@@ -1,0 +1,79 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
+  response:
+    body:
+      string: '{"summary": {"count": 6, "limit": 5000, "lastUpdatedDateTime": "2020-06-09T21:14:07Z"}}'
+    headers:
+      apim-request-id: d353c230-237d-4591-ad74-5490a976b875
+      content-type: application/json; charset=utf-8
+      date: Tue, 09 Jun 2020 21:14:07 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '32'
+    status:
+      code: 200
+      message: OK
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models?op=summary
+- request:
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"}'''
+    headers:
+      Content-Length:
+      - '172'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 97d898fc-b73e-47e9-858e-fe3a9750af93
+      content-length: '0'
+      date: Tue, 09 Jun 2020 21:14:07 GMT
+      operation-location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/97d898fc-b73e-47e9-858e-fe3a9750af93
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '321'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
+  response:
+    body:
+      string: '{"summary": {"count": 6, "limit": 5000, "lastUpdatedDateTime": "2020-06-09T21:14:08Z"}}'
+    headers:
+      apim-request-id: c01d2b5f-bf63-402a-8e4d-e0194d11bedf
+      content-type: application/json; charset=utf-8
+      date: Tue, 09 Jun 2020 21:14:08 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '25'
+    status:
+      code: 200
+      message: OK
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models?op=summary
+version: 1

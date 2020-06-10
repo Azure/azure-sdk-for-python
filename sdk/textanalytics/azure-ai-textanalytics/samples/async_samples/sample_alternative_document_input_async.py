@@ -27,13 +27,14 @@ import asyncio
 
 class AlternativeDocumentInputSampleAsync(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     async def alternative_document_input(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+
+        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         documents = [
             {"id": "0", "language": "en", "text": "I had the best day of my life."},
@@ -51,7 +52,7 @@ class AlternativeDocumentInputSampleAsync(object):
                 print("Document text: {}".format(documents[idx]))
                 print("Language detected: {}".format(doc.primary_language.name))
                 print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-                print("Confidence score: {}\n".format(doc.primary_language.score))
+                print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
             if doc.is_error:
                 print(doc.id, doc.error)
 

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._internal.user_agent import USER_AGENT
@@ -10,6 +9,7 @@ import pytest
 
 from helpers import (
     build_aad_response,
+    build_id_token,
     get_discovery_response,
     mock_response,
     Request,
@@ -26,7 +26,7 @@ def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
     credential = UsernamePasswordCredential("client-id", "username", "password")
-    with pytest.raises(ClientAuthenticationError):
+    with pytest.raises(ValueError):
         credential.get_token()
 
 
@@ -88,13 +88,49 @@ def test_username_password_credential():
     assert token.token == expected_token
 
 
-def test_cache_persistence():
-    """The credential should cache only in memory"""
+def test_authenticate():
+    client_id = "client-id"
+    environment = "localhost"
+    issuer = "https://" + environment
+    tenant_id = "some-tenant"
+    authority = issuer + "/" + tenant_id
 
-    expected_cache = Mock()
-    raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
-    with patch.multiple("msal_extensions.token_cache", WindowsTokenCache=raise_when_called):
-        with patch("msal.TokenCache", Mock(return_value=expected_cache)):
-            credential = UsernamePasswordCredential("...", "...", "...")
+    access_token = "***"
+    scope = "scope"
 
-    assert credential._cache is expected_cache
+    # mock AAD response with id token
+    object_id = "object-id"
+    home_tenant = "home-tenant-id"
+    username = "me@work.com"
+    id_token = build_id_token(aud=client_id, iss=issuer, object_id=object_id, tenant_id=home_tenant, username=username)
+    auth_response = build_aad_response(
+        uid=object_id, utid=home_tenant, access_token=access_token, refresh_token="**", id_token=id_token
+    )
+
+    transport = validating_transport(
+        requests=[Request(url_substring=issuer)] * 4,
+        responses=[
+            get_discovery_response(authority),  # instance discovery
+            get_discovery_response(authority),  # tenant discovery
+            mock_response(status_code=404),  # user realm discovery
+            mock_response(json_payload=auth_response),  # token request following authenticate()
+        ],
+    )
+
+    credential = UsernamePasswordCredential(
+        username=username,
+        password="1234",
+        authority=environment,
+        client_id=client_id,
+        tenant_id=tenant_id,
+        transport=transport,
+    )
+    record = credential.authenticate(scopes=(scope,))
+    assert record.authority == environment
+    assert record.home_account_id == object_id + "." + home_tenant
+    assert record.tenant_id == home_tenant
+    assert record.username == username
+
+    # credential should have a cached access token for the scope passed to authenticate
+    token = credential.get_token(scope)
+    assert token.token == access_token

@@ -13,6 +13,7 @@ from ..._credentials.azure_cli import (
     CLI_NOT_FOUND,
     COMMAND_LINE,
     get_safe_working_dir,
+    NOT_LOGGED_IN,
     parse_token,
     sanitize_output,
 )
@@ -82,6 +83,9 @@ async def _run_command(command):
 
     if proc.returncode == 127 or output.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
+
+    if "az login" in output or "az account set" in output:
+        raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(output) if output else "Failed to invoke Azure CLI"
     raise ClientAuthenticationError(message=message)

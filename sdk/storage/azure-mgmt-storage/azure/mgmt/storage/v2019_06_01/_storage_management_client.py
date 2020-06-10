@@ -20,11 +20,16 @@ from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ObjectReplicationPoliciesOperations
 from .operations import EncryptionScopesOperations
 from .operations import BlobServicesOperations
 from .operations import BlobContainersOperations
 from .operations import FileServicesOperations
 from .operations import FileSharesOperations
+from .operations import QueueServicesOperations
+from .operations import QueueOperations
+from .operations import TableServicesOperations
+from .operations import TableOperations
 from . import models
 
 
@@ -48,6 +53,8 @@ class StorageManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.storage.v2019_06_01.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.storage.v2019_06_01.operations.PrivateLinkResourcesOperations
+    :ivar object_replication_policies: ObjectReplicationPolicies operations
+    :vartype object_replication_policies: azure.mgmt.storage.v2019_06_01.operations.ObjectReplicationPoliciesOperations
     :ivar encryption_scopes: EncryptionScopes operations
     :vartype encryption_scopes: azure.mgmt.storage.v2019_06_01.operations.EncryptionScopesOperations
     :ivar blob_services: BlobServices operations
@@ -58,6 +65,14 @@ class StorageManagementClient(SDKClient):
     :vartype file_services: azure.mgmt.storage.v2019_06_01.operations.FileServicesOperations
     :ivar file_shares: FileShares operations
     :vartype file_shares: azure.mgmt.storage.v2019_06_01.operations.FileSharesOperations
+    :ivar queue_services: QueueServices operations
+    :vartype queue_services: azure.mgmt.storage.v2019_06_01.operations.QueueServicesOperations
+    :ivar queue: Queue operations
+    :vartype queue: azure.mgmt.storage.v2019_06_01.operations.QueueOperations
+    :ivar table_services: TableServices operations
+    :vartype table_services: azure.mgmt.storage.v2019_06_01.operations.TableServicesOperations
+    :ivar table: Table operations
+    :vartype table: azure.mgmt.storage.v2019_06_01.operations.TableOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -92,6 +107,8 @@ class StorageManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.object_replication_policies = ObjectReplicationPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.encryption_scopes = EncryptionScopesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.blob_services = BlobServicesOperations(
@@ -101,4 +118,12 @@ class StorageManagementClient(SDKClient):
         self.file_services = FileServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.file_shares = FileSharesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.queue_services = QueueServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.queue = QueueOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.table_services = TableServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.table = TableOperations(
             self._client, self.config, self._serialize, self._deserialize)
