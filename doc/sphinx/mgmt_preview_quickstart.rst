@@ -162,7 +162,7 @@ We can use the Network client (azure.mgmt.resource.NetworkManagementClient) we h
     ).result()
     print("Create Public IP Address:\n{}".format(public_ip_address))
 
-**Update a Network Public IP Address**
+**Get a Network Public IP Address**
 
 ::
 
@@ -172,7 +172,7 @@ We can use the Network client (azure.mgmt.resource.NetworkManagementClient) we h
    )
    print("Get Public IP Address:\n{}".format(public_ip_address))
 
-**List all Network Public IP Address**
+**Update tags in Network Public IP Address**
 
 ::
 
@@ -200,8 +200,50 @@ We can use the Network client (azure.mgmt.resource.NetworkManagementClient) we h
     ).result()
     print("Delete Public IP Address.\n")
 
+Async and sync operations
+-------------------------
+In python>=3.5, Azure Python SDK provides the choice for user to use the asynchronous client for asynchronous programming.
 
+**Create Management Client in async**
+::
 
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.mgmt.network.aio import NetworkManagementClient
+    from azure.mgmt.resource.resources.aio import ResourceManagementClient
+
+    SUBSCRIPTION_ID = os.environ.get("SUBSCRIPTION_ID", None)
+    credential = DefaultAzureCredential()
+    resource_client = ResourceManagementClient(
+        credential=credential,
+        subscription_id=SUBSCRIPTION_ID
+    )
+    network_client = NetworkManagementClient(
+        credential=credential,
+        subscription_id=SUBSCRIPTION_ID
+    )
+
+**Create a Network Public IP Address**
+::
+
+    GROUP_NAME = "testgroup"
+    PUBLIC_IP_ADDRESS = "public_ip_address_name"
+
+    # Create Resource Group
+    await resource_client.resource_groups.create_or_update(
+        GROUP_NAME,
+        {"location": "eastus"}
+    )
+
+    # Create Public IP Address
+    async_poller = await network_client.public_ip_addresses.begin_create_or_update(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS,
+        {
+        "location": "eastus"
+        }
+    )
+    public_ip_address = await async_poller.result()
+    print("Create Public IP Address:\n{}".format(public_ip_address))
 
 Need help?
 ----------
