@@ -41,6 +41,7 @@ try:
         ct.c_void_p,
     ]
     _libsecret.secret_password_lookup_sync.restype = ct.c_char_p
+    _libsecret.secret_password_free.argtypes = [ct.c_char_p]
 except OSError:
     _libsecret = None
 
@@ -85,7 +86,9 @@ def _get_refresh_token(service_name, account_name):
         None,
     )
     if err.value == 0:
-        return p_str.decode("utf-8")
+        password = p_str.decode("utf-8")
+        _libsecret.secret_password_free(p_str)
+        return password
 
     return None
 
