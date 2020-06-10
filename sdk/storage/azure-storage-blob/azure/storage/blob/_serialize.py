@@ -17,11 +17,11 @@ from ._generated.models import (
     SourceModifiedAccessConditions,
     CpkScopeInfo,
     ContainerCpkScopeInfo,
-    QuickQueryFormat,
-    QuickQuerySerialization,
+    QueryFormat,
+    QuerySerialization,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    QuickQueryFormatType,
+    QueryFormatType,
     BlobTag,
     BlobTags
 )
@@ -119,16 +119,16 @@ def get_api_version(kwargs, default):
 def get_quick_query_serialization_info(serialization_settings=None):
     if serialization_settings:
         if isinstance(serialization_settings, DelimitedTextConfiguration):
-            qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
-                                         delimited_text_configuration=serialization_settings)
+            qq_format = QueryFormat(type=QueryFormatType.delimited,
+                                    delimited_text_configuration=serialization_settings)
         elif isinstance(serialization_settings, str):
-            qq_format = QuickQueryFormat(type=QuickQueryFormatType.json,
-                                         json_text_configuration=JsonTextConfiguration(
-                                             record_separator=serialization_settings))
+            qq_format = QueryFormat(type=QueryFormatType.json,
+                                    json_text_configuration=JsonTextConfiguration(
+                                        record_separator=serialization_settings))
         else:
             raise ValueError("the class type of serialization settings should be either DelimitedTextConfiguration"
                              "or JsonTextConfiguration")
-        return QuickQuerySerialization(format=qq_format)
+        return QuerySerialization(format=qq_format)
     return None
 
 
