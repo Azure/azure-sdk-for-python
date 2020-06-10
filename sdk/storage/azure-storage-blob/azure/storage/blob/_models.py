@@ -492,6 +492,8 @@ class BlobProperties(DictMixin):
         self.name = kwargs.get('name')
         self.container = None
         self.snapshot = kwargs.get('x-ms-snapshot')
+        self.version_id = kwargs.get('x-ms-version-id')
+        self.is_current_version = kwargs.get('x-ms-is-current-version')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
         self.encrypted_metadata = kwargs.get('encrypted_metadata')
@@ -545,6 +547,8 @@ class BlobProperties(DictMixin):
         blob.blob_tier_inferred = generated.properties.access_tier_inferred
         blob.archive_status = generated.properties.archive_status
         blob.blob_tier_change_time = generated.properties.access_tier_change_time
+        blob.version_id = generated.version_id
+        blob.is_current_version = generated.is_current_version
         return blob
 
 
@@ -1005,19 +1009,23 @@ class BlobSasPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False):
+                 delete=False, delete_previous_version=False):
         self.read = read
         self.add = add
         self.create = create
         self.write = write
         self.delete = delete
+        self.delete_previous_version = delete_previous_version
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
-                     ('d' if self.delete else ''))
+                     ('d' if self.delete else '') +
+                     ('x' if self.delete_previous_version else ''))
 
     def __str__(self):
         return self._str
@@ -1040,8 +1048,9 @@ class BlobSasPermissions(object):
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
+        p_delete_previous_version = 'x' in permission
 
-        parsed = cls(p_read, p_add, p_create, p_write, p_delete)
+        parsed = cls(p_read, p_add, p_create, p_write, p_delete, p_delete_previous_version)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
 

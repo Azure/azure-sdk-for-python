@@ -51,7 +51,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
+class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
 
     def _setup(self):
         self.container_name = self.get_resource_name('utcontainer')
@@ -1617,6 +1617,30 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
         await blob.commit_block_list(block_list, if_modified_since=test_datetime)
 
         # Assert
+        content = await blob.download_blob()
+        content = await content.readall()
+        self.assertEqual(content, b'AAABBBCCC')
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_block_list_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        self._setup()
+        container, blob = await self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'', bsc)
+        await asyncio.gather(*[
+            blob.stage_block('1', b'AAA'),
+            blob.stage_block('2', b'BBB'),
+            blob.stage_block('3', b'CCC')])
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        resp = await blob.commit_block_list(block_list, if_modified_since=test_datetime)
+
+        # Assert
+        self.assertIsNotNone(resp['version_id'])
         content = await blob.download_blob()
         content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
