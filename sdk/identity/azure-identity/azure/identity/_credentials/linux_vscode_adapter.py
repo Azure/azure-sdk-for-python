@@ -86,9 +86,7 @@ def _get_refresh_token(service_name, account_name):
         None,
     )
     if err.value == 0:
-        password = p_str.decode("utf-8")
-        _libsecret.secret_password_free(p_str)
-        return password
+        return p_str.decode("utf-8")
 
     return None
 
