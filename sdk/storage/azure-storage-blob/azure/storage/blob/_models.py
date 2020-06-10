@@ -23,7 +23,6 @@ from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItemInternal
 from ._generated.models import DelimitedTextConfiguration as GenDelimitedTextConfiguration
-from ._generated.models import JsonTextConfiguration as GenJsonTextConfiguration
 
 
 class BlobType(str, Enum):

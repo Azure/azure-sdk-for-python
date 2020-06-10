@@ -45,7 +45,7 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self._encoding = encoding
 
     def __len__(self):
-        return self.size
+        return self.total_bytes
 
     def readall(self):
         """Return all quick query results.
@@ -109,7 +109,8 @@ class QuickQueryStreamer(object):
     def __iter__(self):
         return self.iterator
 
-    def seekable(self):
+    @staticmethod
+    def seekable():
         return True
 
     def next(self):
@@ -137,7 +138,7 @@ class QuickQueryStreamer(object):
                 self._buf += self.next()
         except StopIteration:
             self.file_length = self._download_offset
-            pass
+
         start_point = self._point
 
         # EOF
