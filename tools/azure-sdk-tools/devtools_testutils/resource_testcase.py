@@ -29,13 +29,13 @@ FakeResource = namedtuple(
 class ResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
                  use_cache=False,
-                 delete_after_tag_timedelta=datetime.timedelta(days=1),
                  random_name_length=75,
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
-                 random_name_enabled=False):
+                 random_name_enabled=False,
+                 delete_after_tag_timedelta=datetime.timedelta(days=1)):
         super(ResourceGroupPreparer, self).__init__(name_prefix, random_name_length,
                                                     disable_recording=disable_recording,
                                                     playback_fake_resource=playback_fake_resource,
