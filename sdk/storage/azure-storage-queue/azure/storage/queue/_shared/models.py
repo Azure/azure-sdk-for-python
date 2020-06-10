@@ -310,6 +310,8 @@ class AccountSasPermissions(object):
         Permits write permissions to the specified resource type.
     :param bool delete:
         Valid for Container and Object resource types, except for queue messages.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
     :param bool list:
         Valid for Service and Container resource types only.
     :param bool add:
@@ -323,19 +325,22 @@ class AccountSasPermissions(object):
     :param bool process:
         Valid for the following Object resource type only: queue messages.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False):
+    def __init__(self, read=False, write=False, delete=False,
+                 list=False,  # pylint: disable=redefined-builtin
+                 add=False, create=False, update=False, process=False, delete_previous_version=False):
         self.read = read
         self.write = write
         self.delete = delete
+        self.delete_previous_version = delete_previous_version
         self.list = list
         self.add = add
         self.create = create
         self.update = update
         self.process = process
         self._str = (('r' if self.read else '') +
-                     ('w' if  self.write else '') +
+                     ('w' if self.write else '') +
                      ('d' if self.delete else '') +
+                     ('x' if self.delete_previous_version else '') +
                      ('l' if self.list else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
@@ -361,15 +366,17 @@ class AccountSasPermissions(object):
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
+        p_delete_previous_version = 'x' in permission
         p_list = 'l' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
         p_update = 'u' in permission
         p_process = 'p' in permission
 
-        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
+        parsed = cls(p_read, p_write, p_delete, p_delete_previous_version, p_list, p_add, p_create, p_update, p_process)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
+
 
 class Services(object):
     """Specifies the services accessible with the account SAS.

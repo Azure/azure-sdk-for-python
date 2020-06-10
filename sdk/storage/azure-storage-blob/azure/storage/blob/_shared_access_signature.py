@@ -9,7 +9,8 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.storage.blob._shared import sign_string, url_quote
-from azure.storage.blob._shared.constants import X_MS_VERSION
+# TODO: Uncomment the next line
+# from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.models import Services
 from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
@@ -23,6 +24,8 @@ if TYPE_CHECKING:
         ContainerSasPermissions,
         BlobSasPermissions
     )
+
+X_MS_VERSION = '2019-10-10'
 
 class BlobQueryStringConstants(object):
     SIGNED_TIMESTAMP = 'snapshot'
@@ -50,7 +53,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
 
-    def generate_blob(self, container_name, blob_name, snapshot=None, permission=None,
+    def generate_blob(self, container_name, blob_name, snapshot=None, version_id=None, permission=None,
                       expiry=None, start=None, policy_id=None, ip=None, protocol=None,
                       cache_control=None, content_disposition=None,
                       content_encoding=None, content_language=None,
@@ -122,8 +125,12 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
-        sas.add_resource('b' if snapshot is None else 'bs')
-        sas.add_timestamp(snapshot)
+
+        resource = 'bs' if snapshot else 'b'
+        resource = 'bv' if version_id else resource
+        sas.add_resource(resource)
+
+        sas.add_timestamp(snapshot or version_id)
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
@@ -474,6 +481,7 @@ def generate_blob_sas(
         start=None,  # type: Optional[Union[datetime, str]]
         policy_id=None,  # type: Optional[str]
         ip=None,  # type: Optional[str]
+        version_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> Any
@@ -490,6 +498,12 @@ def generate_blob_sas(
         The name of the blob.
     :param str snapshot:
         An optional blob snapshot ID.
+    :param str version_id:
+        An optional blob version ID. This parameter is only for versioning enabled account
+
+        .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
         Either `account_key` or `user_delegation_key` must be specified.
@@ -553,7 +567,8 @@ def generate_blob_sas(
     """
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-
+    if version_id and snapshot:
+        raise ValueError("snapshot and version_id cannot be set at the same time.")
     if user_delegation_key:
         sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
     else:
@@ -562,6 +577,7 @@ def generate_blob_sas(
         container_name,
         blob_name,
         snapshot=snapshot,
+        version_id=version_id,
         permission=permission,
         expiry=expiry,
         start=start,
