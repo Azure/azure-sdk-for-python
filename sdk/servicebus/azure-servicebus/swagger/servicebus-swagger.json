@@ -672,33 +672,25 @@
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
-        "TopicName": {
-          "description": "Name of the topic",
-          "type": "string"
-        },
-        "AuthorizationRules": {
-          "description": "Authorization rules for resource.",
-          "type": "array",
-          "xml": {
-            "wrapped": true,
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          },
-          "items": {
-            "$ref": "#/definitions/AuthorizationRule"
-          }
-        },
-        "AutoDeleteOnIdle": {
-          "description": "ISO 8601 timeSpan idle interval after which the topic is automatically deleted. The minimum duration is 5 minutes.",
-          "type": "string",
-          "format": "duration",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
         "DefaultMessageTimeToLive": {
           "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
           "type": "string",
           "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MaxSizeInMegabytes": {
+          "description": "The maximum size of the topic in megabytes, which is the size of memory allocated for the topic.",
+          "type": "integer",
+          "format": "int64",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "RequiresDuplicateDetection": {
+          "description": "A value indicating if this topic requires duplicate detection.",
+          "type": "boolean",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -718,27 +710,64 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "EnablePartitioning": {
-          "description": "A value that indicates whether the topic is to be partitioned across multiple message brokers.",
+        "SizeInBytes": {
+          "description": "The size of the queue, in bytes.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "FilteringMessagesBeforePublishing":{
+          "description": "Filter messages before publishing.",
           "type": "boolean",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "MaxSizeInMegabytes": {
-          "description": "The maximum size of the topic in megabytes, which is the size of memory allocated for the topic.",
-          "type": "integer",
-          "format": "int64"
-        },
-        "RequiresDuplicateDetection": {
-          "description": "A value indicating if this topic requires duplicate detection.",
+        "IsAnonymousAccessible": {
+          "description": "A value indicating if the resource can be accessed without authorization.",
           "type": "boolean",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "AuthorizationRules": {
+          "description": "Authorization rules for resource.",
+          "type": "array",
+          "xml": {
+            "wrapped": true,
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          },
+          "items": {
+            "$ref": "#/definitions/AuthorizationRule"
           }
         },
         "Status": {
           "$ref": "#/definitions/EntityStatus"
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "UpdatedAt": {
+          "description": "The exact time a message was updated in the queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "AccessedAt": {
+          "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
         },
         "SupportOrdering": {
           "description": "A value that indicates whether the topic supports ordering.",
@@ -747,9 +776,171 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
+        "MessageCountDetails": {
+          "$ref": "#/definitions/MessageCountDetails"
+        },
+        "SubscriptionCount": {
+          "description": "The number of subscriptions in the topic.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "AutoDeleteOnIdle": {
+          "description": "ISO 8601 timeSpan idle interval after which the topic is automatically deleted. The minimum duration is 5 minutes.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnablePartitioning": {
+          "description": "A value that indicates whether the topic is to be partitioned across multiple message brokers.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EntityAvailabilityStatus": {
+          "$ref": "#/definitions/EntityAvailabilityStatus"
+        },
+        "EnableSubscriptionPartitioning": {
+          "description": "A value that indicates whether the topic's subscription is to be partitioned.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnableExpress": {
+          "description": "A value that indicates whether Express Entities are enabled. An express queue holds a message in memory temporarily before writing it to persistent storage.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
         "UserMetadata": {
           "description": "Metadata associated with the topic.",
-          "type": "string"
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        }
+      }
+    },
+    "TopicDescriptionEntry": {
+      "description": "Represents an entry in the feed when querying topics",
+      "type": "object",
+      "properties": {
+        "base": {
+          "description": "Base URL for the query.",
+          "type": "string",
+          "xml": {
+            "name": "base",
+            "attribute": true,
+            "prefix": "xml"
+          }
+        },
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The name of the queue",
+          "$ref": "#/definitions/ResponseTitle"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "author": {
+          "$ref": "#/definitions/ResponseAuthor"
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "The QueueDescription",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "TopicDescription": {
+              "$ref": "#/definitions/TopicDescription"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "TopicDescriptionFeed": {
+      "description": "Response from listing Service Bus queues.",
+      "type": "object",
+      "xml": {
+        "name": "feed",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "id": {
+          "description": "URL of the list queues query.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The entity type for the feed.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "Datetime of the query.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "link": {
+          "description": "Links to paginated response.",
+          "type":"array",
+          "items": {
+            "$ref": "#/definitions/ResponseLink"
+          }
+        },
+        "entry": {
+          "description": "Topic entries.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TopicDescriptionEntry"
+          }
         }
       }
     }
@@ -774,12 +965,12 @@
     }
   },
   "paths": {
-    "/{queueName}": {
+    "/{entityName}": {
       "parameters": [
         {
-          "name": "queueName",
+          "name": "entityName",
           "in": "path",
-          "description": "The name of the queue relative to the Service Bus namespace.",
+          "description": "The name of the queue or topic relative to the Service Bus namespace.",
           "minLength": 1,
           "x-ms-parameter-location": "method",
           "required": true,
@@ -787,11 +978,11 @@
         }
       ],
       "get": {
-        "operationId": "Queue_Get",
-        "summary": "Get Queue",
-        "description": "Get the details about the Queue with the given queueName.",
+        "operationId": "Entity_Get",
+        "summary": "Get Queue or Topic",
+        "description": "Get the details about the Queue or Topic with the given entityName.",
         "tags": [
-          "Queue Operations"
+          "Entity Operations"
         ],
         "parameters": [
           {
@@ -815,10 +1006,10 @@
       },
       "put": {
         "tags": [
-          "Queue Operations"
+          "Entity Operations"
         ],
-        "operationId": "Queue_Put",
-        "description": "Create or update a queue at the provided queuePath",
+        "operationId": "Entity_Put",
+        "description": "Create or update a queue or topic at the provided entityName",
         "parameters": [
           {
             "name": "requestBody",
@@ -827,7 +1018,7 @@
               "type": "object"
             },
             "required": true,
-            "description": "Parameters required to make or edit a queue.",
+            "description": "Parameters required to make or edit a queue or topic.",
             "x-ms-parameter-location": "method"
           },
           {
@@ -844,13 +1035,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Update -- Update Queue operation completed successfully.",
+            "description": "Update -- Update Queue/Topic operation completed successfully.",
             "schema": {
               "type": "object"
             }
           },
           "201": {
-            "description": "Created -- Create Queue operation completed successfully.",
+            "description": "Created -- Create Queue/Topic operation completed successfully.",
             "schema": {
               "type": "object"
             }
@@ -861,11 +1052,11 @@
         }
       },
       "delete": {
-        "operationId": "Queue_Delete",
-        "summary": "Delete Queue",
-        "description": "Delete the Queue with the given queueName.",
+        "operationId": "Entity_Delete",
+        "summary": "Delete Queue or Topic",
+        "description": "Delete the Queue or Topic with the given entityName.",
         "tags": [
-          "Queue Operations"
+          "Entity Operations"
         ],
         "parameters": [
           {
