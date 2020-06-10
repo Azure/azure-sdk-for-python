@@ -667,8 +667,6 @@ class FilteredBlob(FilterBlobItem):
     :ivar tag_value: tag value filtered by the expression.
     :type tag_value: str
     """
-    def __init__(self, **kwargs):  # pylint:disable=useless-super-delegation
-        super(FilteredBlob, self).__init__(**kwargs)
 
 
 class FilteredBlobPaged(PageIterator):
