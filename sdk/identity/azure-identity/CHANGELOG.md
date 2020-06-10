@@ -1,7 +1,9 @@
 # Release History
 
 ## 1.4.0b5 (Unreleased)
-
+- `SharedTokenCacheCredential.get_token` raises `ValueError` instead of
+  `ClientAuthenticationError` when called with no scopes.
+  ([#11553](https://github.com/Azure/azure-sdk-for-python/issues/11553))
 
 ## 1.4.0b4 (2020-06-09)
 - `ManagedIdentityCredential` can configure a user-assigned identity using any
