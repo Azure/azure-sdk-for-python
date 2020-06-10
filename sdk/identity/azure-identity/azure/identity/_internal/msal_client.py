@@ -79,7 +79,7 @@ class MsalClient(object):
         # type: (**Any) -> None
         self._pipeline = _build_pipeline(**kwargs)
 
-    def post(self, url, params=None, data=None, headers=None, **kwargs):
+    def post(self, url, params=None, data=None, headers=None, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Optional[Dict[str, str]], RequestData, Optional[Dict[str, str]], **Any) -> MsalResponse
         request = HttpRequest("POST", url, headers=headers)
         if params:
@@ -94,15 +94,15 @@ class MsalClient(object):
             else:
                 raise ValueError('expected "data" to be text or a dict')
 
-        response = self._pipeline.run(request, **kwargs)
+        response = self._pipeline.run(request)
         return MsalResponse(response)
 
-    def get(self, url, params=None, headers=None, **kwargs):
+    def get(self, url, params=None, headers=None, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], **Any) -> MsalResponse
         request = HttpRequest("GET", url, headers=headers)
         if params:
             request.format_parameters(params)
-        response = self._pipeline.run(request, **kwargs)
+        response = self._pipeline.run(request)
         return MsalResponse(response)
 
 
