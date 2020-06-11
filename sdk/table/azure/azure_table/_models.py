@@ -1,3 +1,4 @@
+import kwargs as kwargs
 from azure.azure_table._generated.models import TableProperties
 from azure.azure_table._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from azure.core.exceptions import HttpResponseError
@@ -7,6 +8,55 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+
+
+class AccessPolicy(GenAccessPolicy):
+    """Access Policy class used by the set and get access policy methods.
+
+    A stored access policy can specify the start time, expiry time, and
+    permissions for the Shared Access Signatures with which it's associated.
+    Depending on how you want to control access to your resource, you can
+    specify all of these parameters within the stored access policy, and omit
+    them from the URL for the Shared Access Signature. Doing so permits you to
+    modify the associated signature's behavior at any time, as well as to revoke
+    it. Or you can specify one or more of the access policy parameters within
+    the stored access policy, and the others on the URL. Finally, you can
+    specify all of the parameters on the URL. In this case, you can use the
+    stored access policy to revoke the signature, but not to modify its behavior.
+
+    Together the Shared Access Signature and the stored access policy must
+    include all fields required to authenticate the signature. If any required
+    fields are missing, the request will fail. Likewise, if a field is specified
+    both in the Shared Access Signature URL and in the stored access policy, the
+    request will fail with status code 400 (Bad Request).
+
+    :param str permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has been
+        specified in an associated stored access policy.
+    :param expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :type expiry: ~datetime.datetime or str
+    :param start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :type start: ~datetime.datetime or str
+    """
+
+    def __init__(self, permission=None, expiry=None, start=None):
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -38,7 +88,8 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)
+            # pylint: disable=protected-access
         )
 
 
@@ -69,7 +120,8 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)
+            # pylint: disable=protected-access
         )
 
 
@@ -149,6 +201,7 @@ class CorsRule(GeneratedCorsRule):
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
+
 class TablePropertiesPaged(PageIterator):
     """An iterable of Table properties.
 
@@ -166,6 +219,7 @@ class TablePropertiesPaged(PageIterator):
         call.
     :param str continuation_token: An opaque continuation token.
     """
+
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
@@ -173,26 +227,85 @@ class TablePropertiesPaged(PageIterator):
             continuation_token=continuation_token or ""
         )
         self._command = command
-        self.service_endpoint = None
         self.prefix = prefix
-        self.marker = None
+        self.service_endpoint = None
+        self.next_table_name = None
+        self._headers = None
         self.results_per_page = results_per_page
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
         try:
             return self._command(
-                 cls=return_context_and_deserialized,
-                 use_location=self.location_mode)
+                next_table_name=continuation_token or None,
+                query_options=self.results_per_page or None,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
+        self.location_mode, self._response, self._headers = get_next_return
         props_list = [t for t in self._response.value]
         # props_list = [TableProperties._from_generated(q) for q in self._response.value] # pylint: disable=protected-access
         # return self._response.next_marker or None, props_list
-        return None, props_list
+        return self._headers['x-ms-continuation-NextTableName'] or None, props_list
+
+
+class TableSasPermissions(object):
+    """QueueSasPermissions class to be used with the
+    :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
+    :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
+
+    :param bool read:
+        Read metadata and properties, including message count. Peek at messages.
+    :param bool add:
+        Add messages to the queue.
+    :param bool update:
+        Update messages in the queue. Note: Use the Process permission with
+        Update so you can first get the message you want to update.
+    :param bool process:
+        Get and delete messages from the queue.
+    """
+    def __init__(self, read=False, add=False, update=False, process=False, query=False):
+        self.read = read
+        self.add = add
+        self.update = update
+        self.process = process
+        self.query = query
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('u' if self.update else '') +
+                     ('q' if self.query else '') +
+                     ('p' if self.process else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a QueueSasPermissions from a string.
+
+        To specify read, add, update, or process permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        update permissions, you would provide a string "ru".
+
+        :param str permission: The string which dictates the
+            read, add, update, or process permissions.
+        :return: A QueueSasPermissions object
+        :rtype: ~azure.storage.queue.QueueSasPermissions
+        """
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+        p_query = 'q' in permission
+
+        parsed = cls(p_read, p_add, p_update, p_process,p_query)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
+
 
 def service_stats_deserialize(generated):
     """Deserialize a ServiceStats objects into a dict.
@@ -209,7 +322,8 @@ def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict.
     """
     return {
-        'analytics_logging': TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        'analytics_logging': TableAnalyticsLogging._from_generated(generated.logging),
+        # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access

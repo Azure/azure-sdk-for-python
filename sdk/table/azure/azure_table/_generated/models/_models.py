@@ -28,8 +28,8 @@ class AccessPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'iso-8601', 'str': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'str': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
@@ -502,9 +502,6 @@ class TableServiceProperties(msrest.serialization.Model):
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
     }
-    _xml_map = {
-        'name': 'StorageServiceProperties'
-    }
 
     def __init__(
         self,
@@ -528,7 +525,7 @@ class TableServiceStats(msrest.serialization.Model):
         'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
     _xml_map = {
-        'name': 'StorageServiceStats'
+        
     }
 
     def __init__(

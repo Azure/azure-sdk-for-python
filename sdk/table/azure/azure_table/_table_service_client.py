@@ -9,7 +9,7 @@ from azure.azure_table._shared.base_client import StorageAccountHostsMixin, pars
     TransportWrapper
 from azure.azure_table._shared.models import LocationMode
 from azure.azure_table._shared.request_handlers import serialize_iso
-from azure.azure_table._shared.response_handlers import process_storage_error
+from azure.azure_table._shared.response_handlers import process_storage_error, return_headers_and_deserialized
 from azure.azure_table._version import VERSION
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -84,43 +84,37 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_table_access_policy(
             self,
-            table,
+            table_name,
             **kwargs
     ):
         timeout = kwargs.pop('timeout', None)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
         try:
             _, identifiers = self._client.table.get_access_policy(
-                table=table,
+                table=table_name,
                 timeout=timeout,
-                request_id_parameter=request_id_parameter,
+                cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_table_access_policy(self, table, signed_identifiers, **kwargs):
+    def set_table_access_policy(self, table_name, signed_identifiers, **kwargs):
         # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
-        timeout = kwargs.pop('timeout', None)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
-        if len(signed_identifiers) > 15:
+        if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
-                'more than 15 access policies on a single resource.')
+                'more than 5 access policies on a single resource.')
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
-                table=table,
-                timeout=timeout,
-                request_id_parameter=request_id_parameter,
-                table_acl=signed_identifiers or None,
+                table=table_name,
+                table_acl=identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -192,12 +186,13 @@ class TableServiceClient(StorageAccountHostsMixin):
     def list_tables(
             self,
             request_id_parameter=None,
-            next_table_name=None,
-            query_options=None,
+            next_table_name=None,  # type: Optional[str]
+            query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
         command = functools.partial(
-            self._client.table.query, **kwargs)
+            self._client.table.query,
+            **kwargs)
         return ItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
@@ -211,14 +206,23 @@ class TableServiceClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        print(query_options)
-        # returning something slightly off - check test_table assert
-        command = functools.partial(self._client.table.query, **kwargs)
+        command = functools.partial(self._client.table.query,
+                                    **kwargs)
         return ItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
-            )
+        )
 
+    def upsert_item(self,
+                    table_name,
+                    timeout=None,
+                    request_id_parameter=None,
+                    if_match=None,
+                    table_entity_properties=None,
+                    query_options=None
+                    ):
+        response = self._client.table.insert_entity(table=table_name, table_entity_properties=table_entity_properties)
+        return response
 
     @distributed_trace
     def query_table_entities(

@@ -9,7 +9,11 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from azure.azure_table.generated import models
+<<<<<<< HEAD:sdk/table/azure/azure_table/_generated/operations/_service_operations.py
+from azure.azure_table._generated import models
+=======
+from .. import models
+>>>>>>> parent of 10e929bf7... 'fixing SDK and auth errors due to copied auth.py file':sdk/Table/azure/azure_table/_generated/operations/_service_operations.py
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -244,6 +248,7 @@ class ServiceOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         deserialized = self._deserialize('TableServiceStats', pipeline_response)
+
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

@@ -7,14 +7,17 @@ class QueryTable(object):
     account_url = "https://example.table.core.windows.net/"
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
-    # query tables by some filter type
-    # query_options = QueryOptions(select="name")
+
+    # Creating query filter for that table
+    table_name = "Office Supplies"
     name_filter = "TableName eq '{}'".format(table_name)
+    query_options = QueryOptions(filter=name_filter)
 
     def list_tables(self):
-        from azure.azure_table import TableServiceClient
-        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        tables = list(table_client.list_tables())
+        from azure.azure_table import TableClient
+
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
+        tables = table_client.list_tables()
         # table_client.list_tables() returns an itemPaged
         # tables is a list of tables
 
@@ -23,8 +26,9 @@ class QueryTable(object):
 
     def query_tables(self):
         from azure.azure_table import TableServiceClient
-        table_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        queried_tables = list(table_client.query_tables(query_options=self.name_filter))
+
+        table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        queried_tables = table_service_client.query_tables(query_options=self.name_filter)
         # table_client.query_tables() returns an itemPaged
         # queried_tables is a list of filtered tables
 

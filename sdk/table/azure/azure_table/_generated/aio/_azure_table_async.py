@@ -12,7 +12,7 @@ from msrest import Deserializer, Serializer
 from ._configuration_async import AzureTableConfiguration
 from .operations_async import TableOperations
 from .operations_async import ServiceOperations
-from azure.azure_table.generated import models
+from .. import models
 
 
 class AzureTable(object):

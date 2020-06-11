@@ -177,7 +177,6 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
-        print(request.http_request.headers)
         if options.pop("logging_enable", self.enable_http_logger):
             request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):
