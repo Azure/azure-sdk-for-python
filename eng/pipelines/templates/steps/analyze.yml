@@ -83,3 +83,9 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - template: ../steps/run_apistub.yml
+    parameters: 
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
