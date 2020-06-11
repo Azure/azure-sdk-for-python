@@ -12,7 +12,10 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
+    from ._models_py3 import ApiProperties
     from ._models_py3 import AutoUpgradePolicyResource
+    from ._models_py3 import AutoscaleSettings
+    from ._models_py3 import AutoscaleSettingsResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
@@ -60,6 +63,7 @@ try:
     from ._models_py3 import IncludedPath
     from ._models_py3 import Indexes
     from ._models_py3 import IndexingPolicy
+    from ._models_py3 import IpAddressOrRange
     from ._models_py3 import Location
     from ._models_py3 import Metric
     from ._models_py3 import MetricAvailability
@@ -93,7 +97,6 @@ try:
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
-    from ._models_py3 import ProvisionedThroughputSettingsResource
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
@@ -138,7 +141,10 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
+    from ._models import ApiProperties
     from ._models import AutoUpgradePolicyResource
+    from ._models import AutoscaleSettings
+    from ._models import AutoscaleSettingsResource
     from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
@@ -186,6 +192,7 @@ except (SyntaxError, ImportError):
     from ._models import IncludedPath
     from ._models import Indexes
     from ._models import IndexingPolicy
+    from ._models import IpAddressOrRange
     from ._models import Location
     from ._models import Metric
     from ._models import MetricAvailability
@@ -219,7 +226,6 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkServiceConnectionStateProperty
-    from ._models import ProvisionedThroughputSettingsResource
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
@@ -290,6 +296,7 @@ from ._cosmos_db_management_client_enums import (
     DefaultConsistencyLevel,
     ConnectorOffer,
     PublicNetworkAccess,
+    ServerVersion,
     IndexingMode,
     DataType,
     IndexKind,
@@ -307,7 +314,10 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
+    'ApiProperties',
     'AutoUpgradePolicyResource',
+    'AutoscaleSettings',
+    'AutoscaleSettingsResource',
     'AzureEntityResource',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
@@ -355,6 +365,7 @@ __all__ = [
     'IncludedPath',
     'Indexes',
     'IndexingPolicy',
+    'IpAddressOrRange',
     'Location',
     'Metric',
     'MetricAvailability',
@@ -388,7 +399,6 @@ __all__ = [
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkServiceConnectionStateProperty',
-    'ProvisionedThroughputSettingsResource',
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
@@ -458,6 +468,7 @@ __all__ = [
     'DefaultConsistencyLevel',
     'ConnectorOffer',
     'PublicNetworkAccess',
+    'ServerVersion',
     'IndexingMode',
     'DataType',
     'IndexKind',
