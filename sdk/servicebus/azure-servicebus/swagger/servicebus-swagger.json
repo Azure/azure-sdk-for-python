@@ -35,6 +35,9 @@
     },
     {
       "name": "Subscription Operations"
+    },
+    {
+      "name": "Rule Operations"
     }
   ],
   "parameters": {
@@ -218,6 +221,68 @@
             "TopicDescription": {
               "description": "Topic information to create.",
               "$ref": "#/definitions/TopicDescription"
+            }
+          }
+        }
+      }
+    },
+    "CreateSubscriptionBody": {
+      "description": "The request body for creating a topic.",
+      "type": "object",
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "content": {
+          "description": "TopicDescription for the new topic.",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "MIME type of content.",
+              "type": "string",
+              "default": "application/xml",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "SubscriptionDescription": {
+              "description": "Topic information to create.",
+              "$ref": "#/definitions/SubscriptionDescription"
+            }
+          }
+        }
+      }
+    },
+    "CreateRuleBody": {
+      "description": "The request body for creating a topic.",
+      "type": "object",
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "content": {
+          "description": "TopicDescription for the new topic.",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "MIME type of content.",
+              "type": "string",
+              "default": "application/xml",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "TopicDescription": {
+              "description": "Topic information to create.",
+              "$ref": "#/definitions/RuleDescription"
             }
           }
         }
@@ -1171,6 +1236,267 @@
           }
         }
       }
+    },
+    "RuleFilter": {
+      "type":"object",
+      "discriminator": "type",
+      "xml": {
+        "name": "Filter",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "type":{
+          "type": "string",
+          "xml": {
+            "attribute": true,
+            "prefix": "xsi",
+            "namespace": "http://www.w3.org/2001/XMLSchema-instance"
+          }
+        }
+      }
+    },
+    "KeyValue": {
+      "type":"object",
+      "xml": {
+        "name": "KeyValueOfstringanyType",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "Key": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Value": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        }
+      }
+    },
+    "CorrelationFilter": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/RuleFilter"
+        },
+        {
+          "type":"object",
+          "properties": {
+            "CorrelationId" :{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "MessageId":{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "To" :{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "ReplyTo":{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "Label" :{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "SessionId":{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "ReplyToSessionId" :{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            },
+            "ContentType":{
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "xml": {
+              "name": "Properties",
+              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+            },
+            "$ref": "#/definitions/KeyValue"
+          }
+        }
+      ]
+    },
+    "SqlFilter" :{
+      "allOf": [
+        {
+          "$ref": "#/definitions/RuleFilter"
+        },
+        {
+          "type":"object",
+          "properties": {
+            "SqlExpression": {
+              "type": "string",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "RuleDescription": {
+      "type": "object",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "Filter": {
+          "$ref": "#/definitions/RuleFilter"
+        },
+        "Action": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Name": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        }
+      }
+    },
+    "RuleDescriptionEntry": {
+      "description": "Represents an entry in the feed when querying rules",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The name of the rule",
+          "$ref": "#/definitions/ResponseTitle"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "The QueueDescription",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "RuleDescription": {
+              "$ref": "#/definitions/RuleDescription"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "RuleDescriptionFeed": {
+      "description": "Response from listing Service Bus queues.",
+      "type": "object",
+      "xml": {
+        "name": "feed",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "id": {
+          "description": "URL of the list queues query.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The entity type for the feed.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "Datetime of the query.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "link": {
+          "description": "Links to paginated response.",
+          "type":"array",
+          "items": {
+            "$ref": "#/definitions/ResponseLink"
+          }
+        },
+        "entry": {
+          "description": "Queue entries.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleDescriptionEntry"
+          }
+        }
+      }
     }
   },
   "responses": {
@@ -1285,6 +1611,362 @@
         "description": "Delete the Queue or Topic with the given entityName.",
         "tags": [
           "Entity Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      }
+    },
+    "/{topicName}/subscriptions": {
+      "parameters": [
+        {
+          "name": "topicName",
+          "in": "path",
+          "description": "name of the topic.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "operationId": "listSubscriptions",
+        "summary": "Get subscriptions",
+        "description": "Get the details about the subscriptions of the given topic.",
+        "tags": [
+          "Subscription Operations"
+        ],
+        "parameters": [
+          {
+            "name": "$skip",
+            "type": "integer",
+            "in": "query",
+            "default": 0
+          },
+          {
+            "name": "$top",
+            "type": "integer",
+            "in": "query",
+            "default": 100
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      }
+    },
+    "/{topicName}/subscriptions/{subscriptionName}": {
+      "parameters": [
+        {
+          "name": "topicName",
+          "in": "path",
+          "description": "name of the topic.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "subscriptionName",
+          "in": "path",
+          "description": "name of the subscription.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "operationId": "Subscription_Get",
+        "summary": "Get Subscription",
+        "description": "Get the details about the subscription of a topic.",
+        "tags": [
+          "Subscription Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Enrich"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscription Operations"
+        ],
+        "operationId": "Subscription_Put",
+        "description": "Create or update a subscription",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            },
+            "required": true,
+            "description": "Parameters required to make or edit a subscription.",
+            "x-ms-parameter-location": "method"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Match condition for an entity to be updated. If specified and a matching entity is not found, an error will be raised. To force an unconditional update, set to the wildcard character (*). If not specified, an insert will be performed when no existing entity is found to update and a replace will be performed if an existing entity is found.",
+            "x-ms-parameter-location": "method"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update -- Update Subscription operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created -- Create Subscription operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Subscription_Delete",
+        "summary": "Delete Subscription",
+        "description": "Delete the subscription with the given topicName and subscriptionName.",
+        "tags": [
+          "Subscription Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      }
+    },
+    "/{topicName}/subscriptions/{subscriptionName}/rules":{
+      "parameters": [
+        {
+          "name": "topicName",
+          "in": "path",
+          "description": "name of the topic.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "subscriptionName",
+          "in": "path",
+          "description": "name of the subscription.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "operationId": "listRules",
+        "summary": "Get rules of a topic subscription",
+        "description": "Get the details about the rules of the given topic subscription.",
+        "tags": [
+          "Subscription Operations"
+        ],
+        "parameters": [
+          {
+            "name": "$skip",
+            "type": "integer",
+            "in": "query",
+            "default": 0
+          },
+          {
+            "name": "$top",
+            "type": "integer",
+            "in": "query",
+            "default": 100
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      }
+    },
+    "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}":{
+      "parameters": [
+        {
+          "name": "topicName",
+          "in": "path",
+          "description": "name of the topic.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "subscriptionName",
+          "in": "path",
+          "description": "name of the subscription.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "ruleName",
+          "in": "path",
+          "description": "name of the filter.",
+          "minLength": 1,
+          "x-ms-parameter-location": "method",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "operationId": "Rule_Get",
+        "summary": "Get Rule",
+        "description": "Get the details about the rule of a subscription of a topic.",
+        "tags": [
+          "Rule Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Enrich"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Rule Operations"
+        ],
+        "operationId": "Rule_Put",
+        "description": "Create or update a rule",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            },
+            "required": true,
+            "description": "Parameters required to make or edit a rule.",
+            "x-ms-parameter-location": "method"
+          },
+          {
+            "$ref": "#/parameters/ApiVersion"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Match condition for an entity to be updated. If specified and a matching entity is not found, an error will be raised. To force an unconditional update, set to the wildcard character (*). If not specified, an insert will be performed when no existing entity is found to update and a replace will be performed if an existing entity is found.",
+            "x-ms-parameter-location": "method"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update -- Update Rule operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created -- Create Rule operation completed successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Rule_Delete",
+        "summary": "Delete Subscription",
+        "description": "Delete the rule with the given topicName, subscriptionName and ruleName.",
+        "tags": [
+          "Rule Operations"
         ],
         "parameters": [
           {
