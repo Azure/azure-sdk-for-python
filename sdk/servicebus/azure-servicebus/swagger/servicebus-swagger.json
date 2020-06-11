@@ -1171,22 +1171,6 @@
           }
         }
       }
-    },
-    "RuleDescription": {
-      "description": "Description of a Service Bus topic resource.",
-      "type": "object",
-      "xml": {
-        "name": "TopicDescription",
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "properties": {
-        "Filter":{
-          "$ref": "#/definitions/RuleFilter"
-        },
-        "Action": {
-          
-        }
-      }
     }
   },
   "responses": {
