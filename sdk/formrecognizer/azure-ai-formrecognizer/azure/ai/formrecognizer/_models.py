@@ -23,23 +23,20 @@ def adjust_confidence(score):
 def get_elements(field, read_result):
     text_elements = []
 
-    try:
-        for item in field.elements:
-            nums = [int(s) for s in re.findall(r"\d+", item)]
-            read = nums[0]
-            line = nums[1]
-            if len(nums) == 3:
-                word = nums[2]
-                ocr_word = read_result[read].lines[line].words[word]
-                extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
-                text_elements.append(extracted_word)
-                continue
-            ocr_line = read_result[read].lines[line]
-            extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
-            text_elements.append(extracted_line)
-        return text_elements
-    except IndexError:
-        return None  # https://github.com/Azure/azure-sdk-for-python/issues/11014
+    for item in field.elements:
+        nums = [int(s) for s in re.findall(r"\d+", item)]
+        read = nums[0]
+        line = nums[1]
+        if len(nums) == 3:
+            word = nums[2]
+            ocr_word = read_result[read].lines[line].words[word]
+            extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
+            text_elements.append(extracted_word)
+            continue
+        ocr_line = read_result[read].lines[line]
+        extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
+        text_elements.append(extracted_line)
+    return text_elements
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
