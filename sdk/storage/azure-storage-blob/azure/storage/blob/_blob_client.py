@@ -670,13 +670,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
-            'progress_callback': kwargs.pop('progress_callback', None),
             'snapshot': self.snapshot,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_headers_and_deserialized,
-            'client': self._client,
-            'name': self.blob_name,
-            'container': self.container_name}
+        }
         options.update(kwargs)
         return options
 
@@ -751,8 +748,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
+        errors = kwargs.pop("errors", None) or 'strict'
+        encoding = kwargs.pop("encoding", None)
         options = self._quick_query_options(query_expression, **kwargs)
-        return BlobQueryReader(**options)
+        try:
+            headers, raw_response_body = self._client.blob.query(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return BlobQueryReader(
+            name=self.blob_name,
+            container=self.container_name,
+            errors=errors,
+            encoding=encoding,
+            headers=headers,
+            response=raw_response_body)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):

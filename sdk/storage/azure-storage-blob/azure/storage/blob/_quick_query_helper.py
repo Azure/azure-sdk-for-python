@@ -5,11 +5,15 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
+import logging
 
 from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
 from ._models import BlobQueryError
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
@@ -27,25 +31,57 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        client=None,
         name=None,
         container=None,
-        progress_callback=None,
+        errors='strict',
         encoding=None,
-        **kwargs
+        headers=None,
+        response=None
     ):
         self.name = name
         self.container = container
-        self.response_headers = None
-        self.total_bytes = None
+        self.response_headers = headers
+        self.size = None
         self.bytes_processed = 0
-        self._progress_callback = progress_callback
-        self._client = client
+        self._errors = errors
         self._request_options = kwargs
         self._encoding = encoding
+        self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
+        self._first_result = self._process_record(next(self._parsed_results))
 
     def __len__(self):
-        return self.total_bytes
+        return self.size
+
+    def _process_record(self, result):
+        self.size = result.get('totalBytes')
+        self.bytes_processed = result.get('bytesScanned')
+        if result.get('data'):
+            return result.get('data')
+        if result.get('fatal') is not None and self._errors != 'ignore':
+            error = BlobQueryError(
+                error=result['name'],
+                is_fatal=result['fatal'],
+                description=result['description'],
+                position=result['position']
+            )
+            if result['fatal'] or self._errors == 'strict':
+                raise error
+            if self._errors == 'warning':
+                _LOGGER.warning(str(error))
+            else:
+                self._errors(error)
+        return None
+
+    def _iter_records(self):
+        if first_result:
+            yield first_result
+        for next_result in self._parsed_results:
+            processed_result = self._process_record(next_result)
+            if processed_result:
+                yield processed_result
+
+    def tell(self):
+        return self.bytes_processed
 
     def readall(self):
         """Return all quick query results.
@@ -68,25 +104,15 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             or any writable stream.
         :returns: None
         """
-        headers, raw_response_body = self._client.blob.query(**self._request_options)
-        self.response_headers = headers
-        self._parse_quick_query_result(raw_response_body, stream, progress_callback=self._progress_callback)
+        for record in self._iter_records():
+            stream.write(record)
 
-    def _parse_quick_query_result(self, raw_response_body, stream, progress_callback=None):
-        parsed_results = DataFileReader(QuickQueryStreamer(raw_response_body), DatumReader())
-        for parsed_result in parsed_results:
-            if parsed_result.get('data'):
-                stream.write(parsed_result.get('data'))
-                continue
+    def records(self):
+        """Returns a record generator for the query result.
 
-            self.bytes_processed = parsed_result.get('bytesScanned')
-            self.total_bytes = parsed_result.get('totalBytes')
-            fatal = BlobQueryError(parsed_result['name'],
-                                    parsed_result['fatal'],
-                                    parsed_result['description'],
-                                    parsed_result['position']) if parsed_result.get('fatal') else None
-            if progress_callback:
-                progress_callback(fatal, self.bytes_processed, self.total_bytes)
+        :rtype: Iterable[bytes]
+        """
+        return self._iter_records()
 
 
 class QuickQueryStreamer(object):
