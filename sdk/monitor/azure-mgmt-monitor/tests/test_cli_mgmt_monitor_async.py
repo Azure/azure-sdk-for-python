@@ -10,7 +10,7 @@ import unittest
 
 import azure.mgmt.monitor.aio
 import azure.mgmt.monitor.models
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
@@ -281,7 +281,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
         result = self.vm_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
         return result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_monitor_diagnostic_settings(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name

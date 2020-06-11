@@ -19,10 +19,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx\"\
+      string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
         ,\r\n  \"etag\": \"W/\\\"e51c1544-1c41-41f4-8256-327bfde999b6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -121,10 +121,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx\"\
+      string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
         ,\r\n  \"etag\": \"W/\\\"663d6a09-9c96-4661-81b9-db50538ca5ed\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -183,10 +183,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
+      string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
         ,\r\n  \"etag\": \"W/\\\"948010da-8504-4a6f-8835-71404b180f9a\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -280,10 +280,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
+      string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
         ,\r\n  \"etag\": \"W/\\\"47f34bbb-c7b1-4411-8fa1-c41ac930e5f2\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -322,7 +322,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
-      {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx"}},
+      {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx"}},
       "name": "MyIpConfig"}]}}'''
     headers:
       Accept:
@@ -341,20 +341,20 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
+      string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
         ,\r\n  \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"e6bc2ffc-e27d-49db-b956-ff2907e33890\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -452,20 +452,20 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
+      string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
         ,\r\n  \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"e6bc2ffc-e27d-49db-b956-ff2907e33890\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -513,7 +513,7 @@ interactions:
       0, "createOption": "Empty", "diskSizeGB": 1023}, {"lun": 1, "createOption":
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
-      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx",
+      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx",
       "properties": {"primary": true}}]}}}'''
     headers:
       Accept:
@@ -532,10 +532,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+      string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6970ba6d-543d-4448-9f7c-87378e42b9fc\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -561,7 +561,7 @@ interactions:
         : {\r\n        \"provisionVMAgent\": true,\r\n        \"enableAutomaticUpdates\"\
         : true\r\n      },\r\n      \"secrets\": [],\r\n      \"allowExtensionOperations\"\
         : true,\r\n      \"requireGuestProvisionSignal\": true\r\n    },\r\n    \"\
-        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
+        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Creating\"\
         \r\n  }\r\n}"
     headers:
@@ -752,10 +752,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+      string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6970ba6d-543d-4448-9f7c-87378e42b9fc\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -767,18 +767,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_MONITOR_TEST_METRIC_ALERTS535F108E/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"vm_name_disk2_e41807eba91a48e3b56df4551adf767f\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_MONITOR_TEST_METRIC_ALERTS535F108E/providers/Microsoft.Compute/disks/vm_name_disk2_e41807eba91a48e3b56df4551adf767f\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk2_e41807eba91a48e3b56df4551adf767f\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"vm_name_disk3_530d798b661242f1a348217eebcd0263\",\r\n          \"\
         createOption\": \"Empty\",\r\n          \"caching\": \"None\",\r\n       \
         \   \"managedDisk\": {\r\n            \"storageAccountType\": \"Standard_LRS\"\
-        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_MONITOR_TEST_METRIC_ALERTS535F108E/providers/Microsoft.Compute/disks/vm_name_disk3_530d798b661242f1a348217eebcd0263\"\
+        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk3_530d798b661242f1a348217eebcd0263\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -786,7 +786,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -1748,7 +1748,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "global", "properties": {"description": "This is the description
-      of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name"],
+      of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name"],
       "evaluationFrequency": "PT1M", "windowSize": "PT15M", "targetResourceType":
       "Microsoft.Compute/virtualMachines", "targetResourceRegion": "southcentralus",
       "criteria": {"odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
@@ -1772,14 +1772,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
     body:
       string: "{\r\n  \"location\": \"global\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
-        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the description\
         \ of the rule1\",\r\n    \"severity\": 3,\r\n    \"enabled\": true,\r\n  \
-        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         \r\n    ],\r\n    \"evaluationFrequency\": \"PT1M\",\r\n    \"windowSize\"\
         : \"PT15M\",\r\n    \"templateType\": 13,\r\n    \"templateSpecificParameters\"\
         : {\r\n      \"direction\": \"UpAndDown\",\r\n      \"sensitivity\": \"Medium\"\
@@ -1841,14 +1841,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
     body:
       string: "{\r\n  \"location\": \"global\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
-        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
         ,\r\n  \"properties\": {\r\n    \"description\": \"This is the description\
         \ of the rule1\",\r\n    \"severity\": 3,\r\n    \"enabled\": true,\r\n  \
-        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         \r\n    ],\r\n    \"evaluationFrequency\": \"PT1M\",\r\n    \"windowSize\"\
         : \"PT15M\",\r\n    \"templateType\": 13,\r\n    \"templateSpecificParameters\"\
         : {\r\n      \"direction\": \"UpAndDown\",\r\n      \"sensitivity\": \"Medium\"\
@@ -1908,18 +1908,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx/status?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status?api-version=2018-03-01
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw==\"\
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw==\"\
         ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
         ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
         status\": \"Healthy\",\r\n        \"timestamp\": \"2020-05-27T05:13:06.5686612Z\"\
-        \r\n      }\r\n    },\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/bWljcm9zb2Z0LnJlc291cmNlSWQ9L3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL3Rlc3RfY2xpX21nbXRfbW9uaXRvcl90ZXN0X21ldHJpY19hbGVydHM1MzVmMTA4ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3ZtX25hbWVfX19taWNyb3NvZnQucmVzb3VyY2VUeXBlPU1pY3Jvc29mdC5Db21wdXRlL3ZpcnR1YWxNYWNoaW5lcw==\"\
+        \r\n      }\r\n    },\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/bWljcm9zb2Z0LnJlc291cmNlSWQ9L3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL3Rlc3RfY2xpX21nbXRfbW9uaXRvcl90ZXN0X21ldHJpY19hbGVydHM1MzVmMTA4ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3ZtX25hbWVfX19taWNyb3NvZnQucmVzb3VyY2VUeXBlPU1pY3Jvc29mdC5Db21wdXRlL3ZpcnR1YWxNYWNoaW5lcw==\"\
         ,\r\n      \"name\": \"bWljcm9zb2Z0LnJlc291cmNlSWQ9L3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL3Rlc3RfY2xpX21nbXRfbW9uaXRvcl90ZXN0X21ldHJpY19hbGVydHM1MzVmMTA4ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3ZtX25hbWVfX19taWNyb3NvZnQucmVzb3VyY2VUeXBlPU1pY3Jvc29mdC5Db21wdXRlL3ZpcnR1YWxNYWNoaW5lcw==\"\
         ,\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\",\r\n     \
         \ \"properties\": {\r\n        \"dimensions\": {\r\n          \"microsoft.resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n          \"microsoft.resourceType\": \"Microsoft.Compute/virtualMachines\"\
         \r\n        },\r\n        \"status\": \"Healthy\",\r\n        \"timestamp\"\
         : \"2020-05-27T05:13:06.5686612Z\"\r\n      }\r\n    }\r\n  ]\r\n}"
@@ -1967,10 +1967,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw%3D%3D?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw%3D%3D?api-version=2018-03-01
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
         ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
         ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
         status\": \"Healthy\",\r\n        \"timestamp\": \"2020-05-27T05:13:08.9145178Z\"\
@@ -2019,10 +2019,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default?api-version=2018-11-27-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default?api-version=2018-11-27-preview
   response:
     body:
-      string: '{"properties":{"resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name","onboardingStatus":"unknown","dataStatus":"notPresent","data":[]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default","type":"Microsoft.Insights/vmInsightsOnboardingStatuses","name":"default"}'
+      string: '{"properties":{"resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name","onboardingStatus":"unknown","dataStatus":"notPresent","data":[]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default","type":"Microsoft.Insights/vmInsightsOnboardingStatuses","name":"default"}'
     headers:
       cache-control:
       - no-cache
@@ -2064,10 +2064,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name/providers/microsoft.insights/metrics?api-version=2018-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/microsoft.insights/metrics?api-version=2018-01-01
   response:
     body:
-      string: '{"cost":0,"timespan":"2020-05-27T04:13:09Z/2020-05-27T05:13:09Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
+      string: '{"cost":0,"timespan":"2020-05-27T04:13:09Z/2020-05-27T05:13:09Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
         CPU","type":"Microsoft.Insights/metrics","name":{"value":"Percentage CPU","localizedValue":"Percentage
         CPU"},"displayDescription":"The percentage of allocated compute units that
         are currently in use by the Virtual Machine(s)","unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2020-05-27T04:13:00Z"},{"timeStamp":"2020-05-27T04:14:00Z"},{"timeStamp":"2020-05-27T04:15:00Z"},{"timeStamp":"2020-05-27T04:16:00Z"},{"timeStamp":"2020-05-27T04:17:00Z"},{"timeStamp":"2020-05-27T04:18:00Z"},{"timeStamp":"2020-05-27T04:19:00Z"},{"timeStamp":"2020-05-27T04:20:00Z"},{"timeStamp":"2020-05-27T04:21:00Z"},{"timeStamp":"2020-05-27T04:22:00Z"},{"timeStamp":"2020-05-27T04:23:00Z"},{"timeStamp":"2020-05-27T04:24:00Z"},{"timeStamp":"2020-05-27T04:25:00Z"},{"timeStamp":"2020-05-27T04:26:00Z"},{"timeStamp":"2020-05-27T04:27:00Z"},{"timeStamp":"2020-05-27T04:28:00Z"},{"timeStamp":"2020-05-27T04:29:00Z"},{"timeStamp":"2020-05-27T04:30:00Z"},{"timeStamp":"2020-05-27T04:31:00Z"},{"timeStamp":"2020-05-27T04:32:00Z"},{"timeStamp":"2020-05-27T04:33:00Z"},{"timeStamp":"2020-05-27T04:34:00Z"},{"timeStamp":"2020-05-27T04:35:00Z"},{"timeStamp":"2020-05-27T04:36:00Z"},{"timeStamp":"2020-05-27T04:37:00Z"},{"timeStamp":"2020-05-27T04:38:00Z"},{"timeStamp":"2020-05-27T04:39:00Z"},{"timeStamp":"2020-05-27T04:40:00Z"},{"timeStamp":"2020-05-27T04:41:00Z"},{"timeStamp":"2020-05-27T04:42:00Z"},{"timeStamp":"2020-05-27T04:43:00Z"},{"timeStamp":"2020-05-27T04:44:00Z"},{"timeStamp":"2020-05-27T04:45:00Z"},{"timeStamp":"2020-05-27T04:46:00Z"},{"timeStamp":"2020-05-27T04:47:00Z"},{"timeStamp":"2020-05-27T04:48:00Z"},{"timeStamp":"2020-05-27T04:49:00Z"},{"timeStamp":"2020-05-27T04:50:00Z"},{"timeStamp":"2020-05-27T04:51:00Z"},{"timeStamp":"2020-05-27T04:52:00Z"},{"timeStamp":"2020-05-27T04:53:00Z"},{"timeStamp":"2020-05-27T04:54:00Z"},{"timeStamp":"2020-05-27T04:55:00Z"},{"timeStamp":"2020-05-27T04:56:00Z"},{"timeStamp":"2020-05-27T04:57:00Z"},{"timeStamp":"2020-05-27T04:58:00Z"},{"timeStamp":"2020-05-27T04:59:00Z"},{"timeStamp":"2020-05-27T05:00:00Z"},{"timeStamp":"2020-05-27T05:01:00Z"},{"timeStamp":"2020-05-27T05:02:00Z"},{"timeStamp":"2020-05-27T05:03:00Z"},{"timeStamp":"2020-05-27T05:04:00Z"},{"timeStamp":"2020-05-27T05:05:00Z"},{"timeStamp":"2020-05-27T05:06:00Z"},{"timeStamp":"2020-05-27T05:07:00Z"},{"timeStamp":"2020-05-27T05:08:00Z"},{"timeStamp":"2020-05-27T05:09:00Z"},{"timeStamp":"2020-05-27T05:10:00Z"},{"timeStamp":"2020-05-27T05:11:00Z"},{"timeStamp":"2020-05-27T05:12:00Z"}]}],"errorCode":"Success"}],"namespace":"Microsoft.Compute/virtualMachines","resourceregion":"eastus"}'
@@ -2111,7 +2111,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_monitor_test_metric_alerts535f108e/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
     body:
       string: ''
