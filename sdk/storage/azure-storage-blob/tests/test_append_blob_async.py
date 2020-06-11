@@ -367,6 +367,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         )
 
         destination_blob_client = await self._create_blob(bsc)
+        destination_blob_client.get_blob_properties()
 
         # Act part 1: make append block from url calls
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
@@ -374,6 +375,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
                                                                    source_length=LARGE_BLOB_SIZE,
                                                                    source_if_unmodified_since=source_blob_properties.get(
                                                                        'last_modified'))
+        destination_blob_client.get_blob_properties()
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -554,12 +556,14 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         )
 
         destination_blob_client = await self._create_blob(bsc)
+        destination_blob_client.get_blob_properties()
 
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        destination_blob_client.get_blob_properties()
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -688,12 +692,14 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         )
 
         destination_blob_client = await self._create_blob(bsc)
+        destination_blob_client.get_blob_properties()
 
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_modified_since=source_properties.get('last_modified') - timedelta(minutes=15))
+        destination_blob_client.get_blob_properties()
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))

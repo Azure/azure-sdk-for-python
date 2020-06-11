@@ -381,6 +381,7 @@ class StorageAppendBlobTest(StorageTestCase):
         )
 
         destination_blob_client = self._create_blob(bsc)
+        destination_blob_client.get_blob_properties()
 
         # Act part 1: make append block from url calls
         resp = destination_blob_client. \
@@ -388,6 +389,8 @@ class StorageAppendBlobTest(StorageTestCase):
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   source_etag=source_blob_properties.get('etag'),
                                   source_match_condition=MatchConditions.IfNotModified)
+        destination_blob_client.get_blob_properties()
+
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -603,12 +606,14 @@ class StorageAppendBlobTest(StorageTestCase):
         )
 
         destination_blob_client = self._create_blob(bsc)
+        destination_blob_client.get_blob_properties()
 
         # Act part 1: make append block from url calls
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   appendpos_condition=0)
+        destination_blob_client.get_blob_properties()
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
