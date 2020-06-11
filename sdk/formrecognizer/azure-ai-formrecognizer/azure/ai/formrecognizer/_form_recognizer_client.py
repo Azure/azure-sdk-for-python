@@ -28,7 +28,7 @@ from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import RecognizedReceipt, FormPage, RecognizedForm
+    from ._models import FormPage, RecognizedForm
 
 
 class FormRecognizerClient(object):
@@ -80,7 +80,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedReceipt]]
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -97,8 +97,8 @@ class FormRecognizerClient(object):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -135,7 +135,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[RecognizedReceipt]]
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
 
@@ -148,8 +148,8 @@ class FormRecognizerClient(object):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
