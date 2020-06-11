@@ -53,7 +53,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
-        BlobProperties,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,

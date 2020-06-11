@@ -18,7 +18,7 @@ try:
     from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobMetadata
     from ._models_py3 import BlobPrefix
-    from ._models_py3 import BlobProperties
+    from ._models_py3 import BlobPropertiesInternal
     from ._models_py3 import BlobTag
     from ._models_py3 import BlobTags
     from ._models_py3 import Block
@@ -49,9 +49,9 @@ try:
     from ._models_py3 import ModifiedAccessConditions
     from ._models_py3 import PageList
     from ._models_py3 import PageRange
+    from ._models_py3 import QueryFormat
     from ._models_py3 import QueryRequest
-    from ._models_py3 import QuickQueryFormat
-    from ._models_py3 import QuickQuerySerialization
+    from ._models_py3 import QuerySerialization
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import SequenceNumberAccessConditions
     from ._models_py3 import SignedIdentifier
@@ -70,7 +70,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobItemInternal
     from ._models import BlobMetadata
     from ._models import BlobPrefix
-    from ._models import BlobProperties
+    from ._models import BlobPropertiesInternal
     from ._models import BlobTag
     from ._models import BlobTags
     from ._models import Block
@@ -101,9 +101,9 @@ except (SyntaxError, ImportError):
     from ._models import ModifiedAccessConditions
     from ._models import PageList
     from ._models import PageRange
+    from ._models import QueryFormat
     from ._models import QueryRequest
-    from ._models import QuickQueryFormat
-    from ._models import QuickQuerySerialization
+    from ._models import QuerySerialization
     from ._models import RetentionPolicy
     from ._models import SequenceNumberAccessConditions
     from ._models import SignedIdentifier
@@ -134,7 +134,7 @@ from ._azure_blob_storage_enums import (
     PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
-    QuickQueryFormatType,
+    QueryFormatType,
     RehydratePriority,
     SequenceNumberActionType,
     SkuName,
@@ -151,7 +151,7 @@ __all__ = [
     'BlobItemInternal',
     'BlobMetadata',
     'BlobPrefix',
-    'BlobProperties',
+    'BlobPropertiesInternal',
     'BlobTag',
     'BlobTags',
     'Block',
@@ -182,9 +182,9 @@ __all__ = [
     'ModifiedAccessConditions',
     'PageList',
     'PageRange',
+    'QueryFormat',
     'QueryRequest',
-    'QuickQueryFormat',
-    'QuickQuerySerialization',
+    'QuerySerialization',
     'RetentionPolicy',
     'SequenceNumberAccessConditions',
     'SignedIdentifier',
@@ -204,7 +204,7 @@ __all__ = [
     'BlobType',
     'StorageErrorCode',
     'GeoReplicationStatusType',
-    'QuickQueryFormatType',
+    'QueryFormatType',
     'AccessTierRequired',
     'AccessTierOptional',
     'PremiumPageBlobAccessTier',

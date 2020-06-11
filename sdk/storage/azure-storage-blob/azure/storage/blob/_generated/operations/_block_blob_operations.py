@@ -145,6 +145,9 @@ class BlockBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct URL
         url = self.upload.metadata['url']
@@ -204,6 +207,8 @@ class BlockBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
 
@@ -622,6 +627,9 @@ class BlockBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "blocklist"
 
@@ -684,6 +692,8 @@ class BlockBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
         body_content = self._serialize.body(blocks, 'BlockLookupList')
@@ -716,7 +726,7 @@ class BlockBlobOperations(object):
             return cls(response, None, response_headers)
     commit_block_list.metadata = {'url': '/{containerName}/{blob}'}
 
-    def get_block_list(self, list_type="committed", snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def get_block_list(self, list_type="committed", snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -743,6 +753,10 @@ class BlockBlobOperations(object):
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlockList or the result of cls(response)
@@ -754,6 +768,9 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "blocklist"
 
@@ -781,6 +798,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)

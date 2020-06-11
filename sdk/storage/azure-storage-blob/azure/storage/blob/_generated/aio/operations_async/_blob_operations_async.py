@@ -118,6 +118,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct URL
         url = self.download.metadata['url']
@@ -163,6 +166,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -335,6 +340,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct URL
         url = self.get_properties.metadata['url']
@@ -373,6 +381,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
@@ -508,6 +518,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct URL
         url = self.delete.metadata['url']
@@ -542,6 +555,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -839,8 +854,7 @@ class BlobOperations:
          default umask - 0027 will be used.
         :type posix_umask: str
         :param source_lease_id: A lease ID for the source path. If specified,
-         the source path must have an active lease and the leaase ID must
-         match.
+         the source path must have an active lease and the lease ID must match.
         :type source_lease_id: str
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
@@ -1188,6 +1202,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "properties"
 
@@ -1231,6 +1248,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1325,6 +1344,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "metadata"
 
@@ -1366,6 +1388,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1440,6 +1464,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "lease"
         action = "acquire"
@@ -1475,6 +1502,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1538,6 +1567,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "lease"
         action = "release"
@@ -1570,6 +1602,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1632,6 +1666,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "lease"
         action = "renew"
@@ -1664,6 +1701,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1732,6 +1771,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "lease"
         action = "change"
@@ -1765,6 +1807,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1836,6 +1880,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "lease"
         action = "break"
@@ -1869,6 +1916,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1959,6 +2008,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -2001,6 +2053,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
@@ -2105,6 +2159,9 @@ class BlobOperations:
         source_if_none_match = None
         if source_modified_access_conditions is not None:
             source_if_none_match = source_modified_access_conditions.source_if_none_match
+        source_if_tags = None
+        if source_modified_access_conditions is not None:
+            source_if_tags = source_modified_access_conditions.source_if_tags
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -2117,6 +2174,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -2157,6 +2217,8 @@ class BlobOperations:
             header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", source_if_match, 'str')
         if source_if_none_match is not None:
             header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", source_if_none_match, 'str')
+        if source_if_tags is not None:
+            header_parameters['x-ms-source-if-tags'] = self._serialize.header("source_if_tags", source_if_tags, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -2165,6 +2227,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
@@ -2279,6 +2343,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -2328,6 +2395,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
@@ -2588,9 +2657,9 @@ class BlobOperations:
             return cls(response, None, response_headers)
     get_account_info.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def quick_query(self, query_request=None, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
-        """The QuickQuery operation enables users to select/project on blob data
-        by providing simple query expressions.
+    async def query(self, query_request=None, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+        """The Query operation enables users to select/project on blob data by
+        providing simple query expressions.
 
         :param query_request: the query request
         :type query_request: ~azure.storage.blob.models.QueryRequest
@@ -2655,7 +2724,7 @@ class BlobOperations:
         comp = "query"
 
         # Construct URL
-        url = self.quick_query.metadata['url']
+        url = self.query.metadata['url']
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
         }
@@ -2792,9 +2861,9 @@ class BlobOperations:
             return cls(response, deserialized, header_dict)
 
         return deserialized
-    quick_query.metadata = {'url': '/{containerName}/{blob}'}
+    query.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def get_tags(self, timeout=None, request_id=None, snapshot=None, version_id=None, *, cls=None, **kwargs):
+    async def get_tags(self, timeout=None, request_id=None, snapshot=None, version_id=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Get Tags operation enables users to get the tags associated with a
         blob.
 
@@ -2817,6 +2886,10 @@ class BlobOperations:
          value that, when present, specifies the version of the blob to operate
          on. It's for service version 2019-10-10 and newer.
         :type version_id: str
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlobTags or the result of cls(response)
@@ -2825,6 +2898,10 @@ class BlobOperations:
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
+
         comp = "tags"
 
         # Construct URL
@@ -2850,6 +2927,8 @@ class BlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2878,7 +2957,7 @@ class BlobOperations:
         return deserialized
     get_tags.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def set_tags(self, timeout=None, snapshot=None, version_id=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, tags=None, *, cls=None, **kwargs):
+    async def set_tags(self, timeout=None, version_id=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, tags=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -2886,12 +2965,6 @@ class BlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
-        :param snapshot: The snapshot parameter is an opaque DateTime value
-         that, when present, specifies the blob snapshot to retrieve. For more
-         information on working with blob snapshots, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>
-        :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime
          value that, when present, specifies the version of the blob to operate
          on. It's for service version 2019-10-10 and newer.
@@ -2908,6 +2981,10 @@ class BlobOperations:
         :type request_id: str
         :param tags: Blob tags
         :type tags: ~azure.storage.blob.models.BlobTags
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -2916,6 +2993,10 @@ class BlobOperations:
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
+
         comp = "tags"
 
         # Construct URL
@@ -2929,8 +3010,6 @@ class BlobOperations:
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if snapshot is not None:
-            query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
         if version_id is not None:
             query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
@@ -2945,6 +3024,8 @@ class BlobOperations:
             header_parameters['x-ms-content-crc64'] = self._serialize.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
         if tags is not None:

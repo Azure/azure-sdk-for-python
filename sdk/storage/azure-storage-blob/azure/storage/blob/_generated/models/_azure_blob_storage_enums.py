@@ -200,7 +200,7 @@ class GeoReplicationStatusType(str, Enum):
     unavailable = "unavailable"
 
 
-class QuickQueryFormatType(str, Enum):
+class QueryFormatType(str, Enum):
 
     delimited = "delimited"
     json = "json"

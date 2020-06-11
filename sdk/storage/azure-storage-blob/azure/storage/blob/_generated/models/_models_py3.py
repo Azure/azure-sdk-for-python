@@ -191,15 +191,13 @@ class BlobItemInternal(Model):
     :param is_current_version:
     :type is_current_version: bool
     :param properties: Required.
-    :type properties: ~azure.storage.blob.models.BlobProperties
+    :type properties: ~azure.storage.blob.models.BlobPropertiesInternal
     :param metadata:
     :type metadata: ~azure.storage.blob.models.BlobMetadata
     :param blob_tags:
     :type blob_tags: ~azure.storage.blob.models.BlobTags
-    :param object_replication_policy_id:
-    :type object_replication_policy_id: str
-    :param object_replication_rule_status:
-    :type object_replication_rule_status: dict[str, str]
+    :param object_replication_metadata:
+    :type object_replication_metadata: dict[str, str]
     """
 
     _validation = {
@@ -215,17 +213,16 @@ class BlobItemInternal(Model):
         'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
         'version_id': {'key': 'VersionId', 'type': 'str', 'xml': {'name': 'VersionId'}},
         'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool', 'xml': {'name': 'IsCurrentVersion'}},
-        'properties': {'key': 'Properties', 'type': 'BlobProperties', 'xml': {'name': 'Properties'}},
+        'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags', 'xml': {'name': 'BlobTags'}},
-        'object_replication_policy_id': {'key': 'ObjectReplicationPolicyId', 'type': 'str', 'xml': {'name': 'ObjectReplicationPolicyId'}},
-        'object_replication_rule_status': {'key': 'ObjectReplicationRuleStatus', 'type': '{str}', 'xml': {'name': 'ObjectReplicationRuleStatus'}},
+        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}', 'xml': {'name': 'ObjectReplicationMetadata'}},
     }
     _xml_map = {
         'name': 'Blob'
     }
 
-    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, version_id: str=None, is_current_version: bool=None, metadata=None, blob_tags=None, object_replication_policy_id: str=None, object_replication_rule_status=None, **kwargs) -> None:
+    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, version_id: str=None, is_current_version: bool=None, metadata=None, blob_tags=None, object_replication_metadata=None, **kwargs) -> None:
         super(BlobItemInternal, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
@@ -235,8 +232,7 @@ class BlobItemInternal(Model):
         self.properties = properties
         self.metadata = metadata
         self.blob_tags = blob_tags
-        self.object_replication_policy_id = object_replication_policy_id
-        self.object_replication_rule_status = object_replication_rule_status
+        self.object_replication_metadata = object_replication_metadata
 
 
 class BlobMetadata(Model):
@@ -287,7 +283,7 @@ class BlobPrefix(Model):
         self.name = name
 
 
-class BlobProperties(Model):
+class BlobPropertiesInternal(Model):
     """Properties of a blob.
 
     All required parameters must be populated in order to send to Azure.
@@ -417,7 +413,7 @@ class BlobProperties(Model):
     }
 
     def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, **kwargs) -> None:
-        super(BlobProperties, self).__init__(**kwargs)
+        super(BlobPropertiesInternal, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
         self.etag = etag
@@ -874,19 +870,20 @@ class CpkScopeInfo(Model):
 class DataLakeStorageError(Model):
     """DataLakeStorageError.
 
-    :param error: The service error response object.
-    :type error: ~azure.storage.blob.models.DataLakeStorageErrorError
+    :param data_lake_storage_error_details: The service error response object.
+    :type data_lake_storage_error_details:
+     ~azure.storage.blob.models.DataLakeStorageErrorError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'DataLakeStorageErrorError', 'xml': {'name': 'error'}},
+        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError', 'xml': {'name': 'error'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, error=None, **kwargs) -> None:
+    def __init__(self, *, data_lake_storage_error_details=None, **kwargs) -> None:
         super(DataLakeStorageError, self).__init__(**kwargs)
-        self.error = error
+        self.data_lake_storage_error_details = data_lake_storage_error_details
 
 
 class DataLakeStorageErrorException(HttpResponseError):
@@ -1442,6 +1439,9 @@ class ModifiedAccessConditions(Model):
     :param if_none_match: Specify an ETag value to operate only on blobs
      without a matching value.
     :type if_none_match: str
+    :param if_tags: Specify a SQL where clause on blob tags to operate only on
+     blobs with a matching value.
+    :type if_tags: str
     """
 
     _attribute_map = {
@@ -1449,16 +1449,18 @@ class ModifiedAccessConditions(Model):
         'if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'if_unmodified_since'}},
         'if_match': {'key': '', 'type': 'str', 'xml': {'name': 'if_match'}},
         'if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'if_none_match'}},
+        'if_tags': {'key': '', 'type': 'str', 'xml': {'name': 'if_tags'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, if_modified_since=None, if_unmodified_since=None, if_match: str=None, if_none_match: str=None, **kwargs) -> None:
+    def __init__(self, *, if_modified_since=None, if_unmodified_since=None, if_match: str=None, if_none_match: str=None, if_tags: str=None, **kwargs) -> None:
         super(ModifiedAccessConditions, self).__init__(**kwargs)
         self.if_modified_since = if_modified_since
         self.if_unmodified_since = if_unmodified_since
         self.if_match = if_match
         self.if_none_match = if_none_match
+        self.if_tags = if_tags
 
 
 class PageList(Model):
@@ -1513,6 +1515,34 @@ class PageRange(Model):
         self.end = end
 
 
+class QueryFormat(Model):
+    """QueryFormat.
+
+    :param type: Possible values include: 'delimited', 'json'
+    :type type: str or ~azure.storage.blob.models.QueryFormatType
+    :param delimited_text_configuration:
+    :type delimited_text_configuration:
+     ~azure.storage.blob.models.DelimitedTextConfiguration
+    :param json_text_configuration:
+    :type json_text_configuration:
+     ~azure.storage.blob.models.JsonTextConfiguration
+    """
+
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'QueryFormatType', 'xml': {'name': 'Type'}},
+        'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
+        'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, type=None, delimited_text_configuration=None, json_text_configuration=None, **kwargs) -> None:
+        super(QueryFormat, self).__init__(**kwargs)
+        self.type = type
+        self.delimited_text_configuration = delimited_text_configuration
+        self.json_text_configuration = json_text_configuration
+
+
 class QueryRequest(Model):
     """the quick query body.
 
@@ -1526,11 +1556,9 @@ class QueryRequest(Model):
     :param expression: Required. a query statement
     :type expression: str
     :param input_serialization:
-    :type input_serialization:
-     ~azure.storage.blob.models.QuickQuerySerialization
+    :type input_serialization: ~azure.storage.blob.models.QuerySerialization
     :param output_serialization:
-    :type output_serialization:
-     ~azure.storage.blob.models.QuickQuerySerialization
+    :type output_serialization: ~azure.storage.blob.models.QuerySerialization
     """
 
     _validation = {
@@ -1541,8 +1569,8 @@ class QueryRequest(Model):
     _attribute_map = {
         'query_type': {'key': 'QueryType', 'type': 'str', 'xml': {'name': 'QueryType'}},
         'expression': {'key': 'Expression', 'type': 'str', 'xml': {'name': 'Expression'}},
-        'input_serialization': {'key': 'InputSerialization', 'type': 'QuickQuerySerialization', 'xml': {'name': 'InputSerialization'}},
-        'output_serialization': {'key': 'OutputSerialization', 'type': 'QuickQuerySerialization', 'xml': {'name': 'OutputSerialization'}},
+        'input_serialization': {'key': 'InputSerialization', 'type': 'QuerySerialization', 'xml': {'name': 'InputSerialization'}},
+        'output_serialization': {'key': 'OutputSerialization', 'type': 'QuerySerialization', 'xml': {'name': 'OutputSerialization'}},
     }
     _xml_map = {
         'name': 'QueryRequest'
@@ -1557,41 +1585,13 @@ class QueryRequest(Model):
         self.output_serialization = output_serialization
 
 
-class QuickQueryFormat(Model):
-    """QuickQueryFormat.
-
-    :param type: Possible values include: 'delimited', 'json'
-    :type type: str or ~azure.storage.blob.models.QuickQueryFormatType
-    :param delimited_text_configuration:
-    :type delimited_text_configuration:
-     ~azure.storage.blob.models.DelimitedTextConfiguration
-    :param json_text_configuration:
-    :type json_text_configuration:
-     ~azure.storage.blob.models.JsonTextConfiguration
-    """
-
-    _attribute_map = {
-        'type': {'key': 'Type', 'type': 'QuickQueryFormatType', 'xml': {'name': 'Type'}},
-        'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
-        'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, *, type=None, delimited_text_configuration=None, json_text_configuration=None, **kwargs) -> None:
-        super(QuickQueryFormat, self).__init__(**kwargs)
-        self.type = type
-        self.delimited_text_configuration = delimited_text_configuration
-        self.json_text_configuration = json_text_configuration
-
-
-class QuickQuerySerialization(Model):
-    """QuickQuerySerialization.
+class QuerySerialization(Model):
+    """QuerySerialization.
 
     All required parameters must be populated in order to send to Azure.
 
     :param format: Required.
-    :type format: ~azure.storage.blob.models.QuickQueryFormat
+    :type format: ~azure.storage.blob.models.QueryFormat
     """
 
     _validation = {
@@ -1599,13 +1599,13 @@ class QuickQuerySerialization(Model):
     }
 
     _attribute_map = {
-        'format': {'key': 'Format', 'type': 'QuickQueryFormat', 'xml': {'name': 'Format'}},
+        'format': {'key': 'Format', 'type': 'QueryFormat', 'xml': {'name': 'Format'}},
     }
     _xml_map = {
     }
 
     def __init__(self, *, format, **kwargs) -> None:
-        super(QuickQuerySerialization, self).__init__(**kwargs)
+        super(QuerySerialization, self).__init__(**kwargs)
         self.format = format
 
 
@@ -1718,6 +1718,9 @@ class SourceModifiedAccessConditions(Model):
     :param source_if_none_match: Specify an ETag value to operate only on
      blobs without a matching value.
     :type source_if_none_match: str
+    :param source_if_tags: Specify a SQL where clause on blob tags to operate
+     only on blobs with a matching value.
+    :type source_if_tags: str
     """
 
     _attribute_map = {
@@ -1725,16 +1728,18 @@ class SourceModifiedAccessConditions(Model):
         'source_if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'source_if_unmodified_since'}},
         'source_if_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_match'}},
         'source_if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_none_match'}},
+        'source_if_tags': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_tags'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, source_if_modified_since=None, source_if_unmodified_since=None, source_if_match: str=None, source_if_none_match: str=None, **kwargs) -> None:
+    def __init__(self, *, source_if_modified_since=None, source_if_unmodified_since=None, source_if_match: str=None, source_if_none_match: str=None, source_if_tags: str=None, **kwargs) -> None:
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_modified_since = source_if_modified_since
         self.source_if_unmodified_since = source_if_unmodified_since
         self.source_if_match = source_if_match
         self.source_if_none_match = source_if_none_match
+        self.source_if_tags = source_if_tags
 
 
 class StaticWebsite(Model):

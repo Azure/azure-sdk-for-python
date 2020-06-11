@@ -68,7 +68,7 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
             or any writable stream.
         :returns: None
         """
-        headers, raw_response_body = self._client.blob.quick_query(**self._request_options)
+        headers, raw_response_body = self._client.blob.query(**self._request_options)
         self.response_headers = headers
         self._parse_quick_query_result(raw_response_body, stream, progress_callback=self._progress_callback)
 
