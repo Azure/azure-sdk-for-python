@@ -943,6 +943,250 @@
           }
         }
       }
+    },
+    "SubscriptionDescription": {
+      "description": "Description of a Service Bus queue resource.",
+      "type": "object",
+      "xml": {
+        "name": "SubscriptionDescription",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "LockDuration": {
+          "description": "ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "RequiresSession": {
+          "description": "A value that indicates whether the queue supports the concept of sessions.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "DefaultMessageTimeToLive": {
+          "description": "ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "DeadLetteringOnMessageExpiration": {
+          "description": "A value that indicates whether this queue has dead letter support when a message expires.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "DeadLetteringOnFilterEvaluationExceptions": {
+          "description": "A value that indicates whether this queue has dead letter support when a message expires.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessageCount": {
+          "description": "The number of messages in the queue.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MaxDeliveryCount": {
+          "description": "The maximum delivery count. A message is automatically deadlettered after this number of deliveries. Default value is 10.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnableBatchedOperations": {
+          "description": "Value that indicates whether server-side batched operations are enabled.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Status": {
+          "$ref": "#/definitions/EntityStatus"
+        },
+        "ForwardTo": {
+          "description": "<to add>",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedAt": {
+          "description": "The exact time the queue was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "UpdatedAt": {
+          "description": "The exact time a message was updated in the queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "AccessedAt": {
+          "description": "Last time a message was sent, or the last time there was a receive request to this queue.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessageCountDetails": {
+          "$ref": "#/definitions/MessageCountDetails"
+        },
+        "AutoDeleteOnIdle": {
+          "description": "ISO 8601 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.",
+          "type": "string",
+          "format": "duration",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EnablePartitioning": {
+          "description": "A value that indicates whether the queue is to be partitioned across multiple message brokers.",
+          "type": "boolean",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "EntityAvailabilityStatus": {
+          "$ref": "#/definitions/EntityAvailabilityStatus"
+        }
+      }
+    },
+    "SubscriptionDescriptionEntry": {
+      "description": "Represents an entry in the feed when querying queues",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The name of the queue",
+          "$ref": "#/definitions/ResponseTitle"
+        },
+        "published": {
+          "description": "The timestamp for when this queue was published",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "The timestamp for when this queue was last updated",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "The QueueDescription",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "Type of content in queue response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "SubscriptionDescription": {
+              "$ref": "#/definitions/SubscriptionDescription"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "SubscriptionDescriptionFeed": {
+      "description": "Response from listing Service Bus queues.",
+      "type": "object",
+      "xml": {
+        "name": "feed",
+        "namespace": "http://www.w3.org/2005/Atom"
+      },
+      "properties": {
+        "id": {
+          "description": "URL of the list queues query.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The entity type for the feed.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "updated": {
+          "description": "Datetime of the query.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "link": {
+          "description": "Links to paginated response.",
+          "type":"array",
+          "items": {
+            "$ref": "#/definitions/ResponseLink"
+          }
+        },
+        "entry": {
+          "description": "Queue entries.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscriptionDescriptionEntry"
+          }
+        }
+      }
+    },
+    "RuleDescription": {
+      "description": "Description of a Service Bus topic resource.",
+      "type": "object",
+      "xml": {
+        "name": "TopicDescription",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "Filter":{
+          "$ref": "#/definitions/RuleFilter"
+        },
+        "Action": {
+          
+        }
+      }
     }
   },
   "responses": {
