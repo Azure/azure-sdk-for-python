@@ -11,7 +11,11 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._models import ContainerEncryptionScope
+from ._models import (
+    ContainerEncryptionScope,
+    JSONEncoder,
+    CSVDialect
+)
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
@@ -23,7 +27,9 @@ from ._generated.models import (
     JsonTextConfiguration,
     QueryFormatType,
     BlobTag,
-    BlobTags
+    BlobTags,
+    JsonTextConfiguration,
+    DelimitedTextConfiguration,
 )
 
 
@@ -116,22 +122,6 @@ def get_api_version(kwargs, default):
     return api_version or default
 
 
-def get_quick_query_serialization_info(serialization_settings=None):
-    if serialization_settings:
-        if isinstance(serialization_settings, DelimitedTextConfiguration):
-            qq_format = QueryFormat(type=QueryFormatType.delimited,
-                                    delimited_text_configuration=serialization_settings)
-        elif isinstance(serialization_settings, str):
-            qq_format = QueryFormat(type=QueryFormatType.json,
-                                    json_text_configuration=JsonTextConfiguration(
-                                        record_separator=serialization_settings))
-        else:
-            raise ValueError("the class type of serialization settings should be either DelimitedTextConfiguration"
-                             "or JsonTextConfiguration")
-        return QuerySerialization(format=qq_format)
-    return None
-
-
 def serialize_blob_tags_header(tags=None):
     # type: (Optional[Dict[str, str]]) -> str
     components = list()
@@ -154,3 +144,32 @@ def serialize_blob_tags(tags=None):
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)
+
+
+def serialize_query_format(formater, headers=None):
+    if headers or isinstance(formater, CSVDialect):
+        if not formater:
+            formater = CSVDialect()
+        serialization_settings = DelimitedTextConfiguration(
+            column_separator=formater.delimiter,
+            field_quote=formater.quotechar,
+            record_separator=formater.lineterminator,
+            escape_char=formater.escapechar,
+            headers_present=headers or False
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.delimited,
+            delimited_text_configuration=serialization_settings
+        )
+    elif isinstance(formater, JSONEncoder):
+        serialization_settings = JsonTextConfiguration(
+            record_separator=formater.record_separator
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.json,
+            json_text_configuration=serialization_settings)
+    elif not formater:
+        return None
+    else:
+        raise TypeError("Format must be CSVDialect or JSONEncoder.")
+    return QuerySerialization(format=qq_format)

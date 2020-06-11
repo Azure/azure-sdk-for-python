@@ -37,8 +37,15 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     QueryRequest,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version, \
-    serialize_blob_tags_header, serialize_blob_tags, get_quick_query_serialization_info
+from ._serialize import (
+    get_modify_conditions,
+    get_source_conditions,
+    get_cpk_scope_info,
+    get_api_version,
+    serialize_blob_tags_header,
+    serialize_blob_tags,
+    serialize_query_format
+)
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
@@ -637,11 +644,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _quick_query_options(self, query_expression,
                              **kwargs):
         # type: (str, **Any) -> Dict[str, Any]
-        input_serialization = kwargs.pop('input_serialization', None)
-        output_serialization = kwargs.pop('output_serialization', None)
-        query_request = QueryRequest(expression=query_expression,
-                                     input_serialization=get_quick_query_serialization_info(input_serialization),
-                                     output_serialization=get_quick_query_serialization_info(output_serialization))
+        input_format = kwargs.pop('blob_format', None)
+        output_format = kwargs.pop('output_format', None)
+        has_header = kwargs.pop('has_header', None)
+        query_request = QueryRequest(
+            expression=query_expression,
+            input_serialization=serialize_query_format(input_format, headers=has_header),
+            output_serialization=serialize_query_format(output_format, headers=has_header)
+        )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
 
@@ -650,8 +660,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if cpk:
             if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+            cpk_info = CpkInfo(
+                encryption_key=cpk.key_value,
+                encryption_key_sha256=cpk.key_hash,
+                encryption_algorithm=cpk.algorithm
+            )
         options = {
             'query_request': query_request,
             'lease_access_conditions': access_conditions,
@@ -681,16 +694,23 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 - 'ignore': Non-fatal errors will be ignored, this may result in dropped records.
                 - 'warning': Non-fatal errors will be logged at the warning level.
                 - Callable[Exception]: If a callable is provided, customer error handling can be defined.
-        :keyword blob_dialect:
-            Optional. Defines the input serialization for a blob quick query request.
-            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
-            When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype blob_dialect: ~azure.storage.blob.DelimitedTextConfiguration or str
-        :keyword output_dialect:
-            Optional. Defines the output serialization for a blob quick query request.
-            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
-            When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype output_dialect: ~azure.storage.blob.DelimitedTextConfiguration or str.
+        :keyword blob_format:
+            Optional. Defines the serialization of the data currently stored in the blob. The default is to
+            treat the blob data as CSV data formatted in the default dialect. This can be overridden with
+            a custom CSVDialect, or alternatively a JSONEncoder.
+        :paramtype blob_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.JSONEncoder
+        :keyword output_format:
+            Optional. Defines the output serialization for the data stream. By default the data will be returned
+            as it is represented in the blob. By providing an output format, the blob data will be reformatted
+            according to that profile. This value can be a CSVDialect or a JSONEncoder.
+        :paramtype output_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.JSONEncoder
+        :keyword bool has_header:
+            Whether the blob data includes headers in the first line. The default value is False, meaning that the
+            data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
+            of the first line.
+
+            .. note: This parameter only applies to blob data formatted as CSV.
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
