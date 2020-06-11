@@ -8,12 +8,12 @@ import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
-from azure.ai.formrecognizer import FormTrainingClient, FormRecognizerClient
+from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestManagement(FormRecognizerTest):
@@ -31,14 +31,14 @@ class TestManagement(FormRecognizerTest):
             result = client.get_custom_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_get_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_get_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             result = client.get_custom_model("")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_get_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_get_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             result = client.get_custom_model(None)
 
@@ -57,27 +57,27 @@ class TestManagement(FormRecognizerTest):
             client.delete_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_delete_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_delete_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             result = client.delete_model(None)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_delete_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_delete_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             result = client.delete_model("")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_account_properties(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_account_properties(self, client):
         properties = client.get_account_properties()
 
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_mgmt_model_labeled(self, client, container_sas_url):
 
         poller = client.begin_training(container_sas_url, use_training_labels=True)
@@ -113,7 +113,7 @@ class TestManagement(FormRecognizerTest):
             client.get_custom_model(labeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_mgmt_model_unlabeled(self, client, container_sas_url):
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)

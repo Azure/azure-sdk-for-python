@@ -12,10 +12,11 @@ from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
@@ -28,7 +29,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_training(self, client, container_sas_url):
 
         poller = await client.begin_training(
@@ -53,7 +54,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     async def test_training_multipage(self, client, container_sas_url):
 
         poller = await client.begin_training(container_sas_url, use_training_labels=False)
@@ -76,7 +77,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_training_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -98,7 +99,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     async def test_training_multipage_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -117,7 +118,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_training_with_labels(self, client, container_sas_url):
 
         poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
@@ -140,7 +141,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     async def test_training_multipage_with_labels(self, client, container_sas_url):
 
         poller = await client.begin_training(container_sas_url, use_training_labels=True)
@@ -164,7 +165,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_training_with_labels_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -183,7 +184,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     async def test_train_multipage_w_lbls_trnsfrm(self, client, container_sas_url):
 
         raw_response = []
@@ -202,7 +203,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_training_with_files_filter(self, client, container_sas_url):
 
         poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
@@ -220,7 +221,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             model = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     @pytest.mark.live_test_only
     async def test_training_continuation_token(self, client, container_sas_url):
 

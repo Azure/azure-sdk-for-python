@@ -11,27 +11,28 @@ from azure.ai.formrecognizer._generated.models import CopyOperationResult
 from azure.ai.formrecognizer import CustomFormModelInfo
 from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCopyModel(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_copy_model_none_model_id(self, client, container_sas_url):
         with self.assertRaises(ValueError):
             client.begin_copy_model(model_id=None, target={})
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_copy_model_empty_model_id(self, client, container_sas_url):
         with self.assertRaises(ValueError):
             client.begin_copy_model(model_id="", target={})
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
@@ -52,7 +53,7 @@ class TestCopyModel(FormRecognizerTest):
         self.assertIsNotNone(copied_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
@@ -66,7 +67,7 @@ class TestCopyModel(FormRecognizerTest):
             copy = poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
@@ -93,7 +94,7 @@ class TestCopyModel(FormRecognizerTest):
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     def test_copy_authorization(self, client, container_sas_url, location, resource_id):
 
         target = client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
@@ -105,7 +106,7 @@ class TestCopyModel(FormRecognizerTest):
         self.assertEqual(target["resourceId"], resource_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     @pytest.mark.live_test_only
     def test_copy_continuation_token(self, client, container_sas_url, location, resource_id):
 

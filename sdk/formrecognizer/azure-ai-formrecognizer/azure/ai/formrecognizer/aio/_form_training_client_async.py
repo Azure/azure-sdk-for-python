@@ -83,11 +83,13 @@ class FormTrainingClient(object):
         self._credential = credential
 
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -138,7 +140,7 @@ class FormTrainingClient(object):
 
         cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         deserialization_callback = cls if cls else callback
 
         if continuation_token:
@@ -361,7 +363,7 @@ class FormTrainingClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
