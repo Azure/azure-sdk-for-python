@@ -84,7 +84,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         return request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        #uri_path = request.path.split('?')[0]
+        # uri_path = request.path.split('?')[0]
         uri_path = urlparse(request.url).path
 
         # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
@@ -129,17 +129,21 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             ) + \
             self._get_canonicalized_resource(request) + \
             self._get_canonicalized_resource_query(request)
-
         self._add_authorization_header(request, string_to_sign)
         logger.debug("String_to_sign=%s", string_to_sign)
 
     def _get_canonicalized_resource_query(self, request):
-        sorted_queries = [(name, value) for name, value in request.query.items()]
-        sorted_queries.sort()
+        for name, value in request.query.items():
+            if name == 'comp':
+                return '?comp=' + value
+        return ''
 
-        string_to_sign = ''
-        for name, value in sorted_queries:
-            if value is not None:
-                string_to_sign += '\n' + name.lower() + ':' + value
-
-        return string_to_sign
+    # def _get_canonicalized_resource_query(self, request):
+    #     sorted_queries = [(name, value) for name, value in request.query.items()]
+    #     sorted_queries.sort()
+    #
+    #     string_to_sign = ''
+    #     for name, value in sorted_queries:
+    #         if value is not None:
+    #             string_to_sign += '\n' + name.lower() + ':' + value
+    #     return string_to_sign

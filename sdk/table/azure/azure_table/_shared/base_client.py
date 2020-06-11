@@ -326,9 +326,7 @@ def format_shared_key_credential(account, credential):
             raise ValueError("Shared key credential missing 'account_name")
         if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
-        print('SharedKey ', credential)
         return SharedKeyCredentialPolicy(**credential)
-    print(credential)
     return credential
 
 

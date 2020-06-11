@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from azure.azure_table.generated import models
+from xml.etree import ElementTree
+from azure.azure_table._generated import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -1025,6 +1025,7 @@ class TableOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/xml'
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -1034,10 +1035,13 @@ class TableOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
+
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        print(request.body)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
+
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
