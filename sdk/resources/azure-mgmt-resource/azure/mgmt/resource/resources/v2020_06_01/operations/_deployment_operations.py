@@ -25,7 +25,7 @@ class DeploymentOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-06-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class DeploymentOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
@@ -56,7 +56,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentOperation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -120,7 +120,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentOperation
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -193,7 +193,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentOperation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -254,7 +254,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentOperation
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -328,7 +328,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentOperation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -392,7 +392,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentOperation
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -465,7 +465,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentOperation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -527,7 +527,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentOperation
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -603,7 +603,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentOperation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -669,7 +669,7 @@ class DeploymentOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentOperation
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentOperation]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

@@ -27,7 +27,7 @@ class DeploymentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-06-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DeploymentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
@@ -248,7 +248,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -257,9 +257,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentExtended or
          ClientRawResponse<DeploymentExtended> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_at_scope_initial(
@@ -304,7 +304,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExtended or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -470,7 +470,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -480,9 +480,9 @@ class DeploymentsOperations(object):
          DeploymentValidateResult or
          ClientRawResponse<DeploymentValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_at_scope_initial(
@@ -527,7 +527,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExportResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -592,7 +592,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentExtended
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -848,7 +848,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -857,9 +857,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentExtended or
          ClientRawResponse<DeploymentExtended> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_at_tenant_scope_initial(
@@ -901,7 +901,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExtended or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1060,7 +1060,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1070,9 +1070,9 @@ class DeploymentsOperations(object):
          DeploymentValidateResult or
          ClientRawResponse<DeploymentValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_at_tenant_scope_initial(
@@ -1114,7 +1114,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExportResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1176,7 +1176,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentExtended
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1438,7 +1438,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1447,9 +1447,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentExtended or
          ClientRawResponse<DeploymentExtended> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_at_management_group_scope_initial(
@@ -1494,7 +1494,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExtended or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1660,7 +1660,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.ScopedDeployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1670,9 +1670,9 @@ class DeploymentsOperations(object):
          DeploymentValidateResult or
          ClientRawResponse<DeploymentValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_at_management_group_scope_initial(
@@ -1717,7 +1717,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExportResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1782,7 +1782,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentExtended
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -2041,7 +2041,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2050,9 +2050,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentExtended or
          ClientRawResponse<DeploymentExtended> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_at_subscription_scope_initial(
@@ -2094,7 +2094,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExtended or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2256,7 +2256,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2266,9 +2266,9 @@ class DeploymentsOperations(object):
          DeploymentValidateResult or
          ClientRawResponse<DeploymentValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_at_subscription_scope_initial(
@@ -2363,7 +2363,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIfProperties
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
         :param location: The location to store the deployment data.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -2374,9 +2374,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns WhatIfOperationResult
          or ClientRawResponse<WhatIfOperationResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.WhatIfOperationResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfOperationResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.WhatIfOperationResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfOperationResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._what_if_at_subscription_scope_initial(
@@ -2424,7 +2424,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExportResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2487,7 +2487,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentExtended
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -2761,7 +2761,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2770,9 +2770,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentExtended or
          ClientRawResponse<DeploymentExtended> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -2818,7 +2818,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExtended or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2989,7 +2989,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param parameters: Parameters to validate.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Deployment
+         ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2999,9 +2999,9 @@ class DeploymentsOperations(object):
          DeploymentValidateResult or
          ClientRawResponse<DeploymentValidateResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentValidateResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentValidateResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._validate_initial(
@@ -3101,7 +3101,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIfProperties
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfProperties
         :param location: The location to store the deployment data.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -3112,9 +3112,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns WhatIfOperationResult
          or ClientRawResponse<WhatIfOperationResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.WhatIfOperationResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfOperationResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.WhatIfOperationResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2020_06_01.models.WhatIfOperationResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._what_if_initial(
@@ -3166,7 +3166,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExportResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -3233,7 +3233,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentExtended
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended]
+         ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtendedPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -3306,7 +3306,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: TemplateHashResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TemplateHashResult
+         ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateHashResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
