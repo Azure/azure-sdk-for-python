@@ -65,12 +65,9 @@ def _get_blob_name(blob):
     :rtype: str
     """
     try:
-        return blob.name
+        return blob.get('name')
     except AttributeError:
-        try:
-            return blob.get('name')
-        except AttributeError:
-            return blob
+        return blob
 
 
 class ContainerClient(StorageAccountHostsMixin):
