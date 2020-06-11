@@ -21,7 +21,7 @@ jobs:
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2: $(python-formrecognizer-test-storage-multipage-sas-url2)
         AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
-        REGION: 'centraluseuap'
+        REGION: 'westcentralus'
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

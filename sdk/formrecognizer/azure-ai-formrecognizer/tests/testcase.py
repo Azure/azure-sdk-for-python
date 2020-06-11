@@ -25,6 +25,8 @@ from azure_devtools.scenario_tests import (
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
 
+REGION = os.getenv('REGION', 'centraluseuap')
+
 
 class AccessTokenReplacer(RecordingProcessor):
     """Replace the access token in a request/response body."""
@@ -459,13 +461,13 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 
                 resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
                               "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = "centraluseuap"
+                resource_location = REGION
                 self.test_class_instance.scrubber.register_name_pair(
                     resource_id,
                     "resource_id"
                 )
             else:
-                resource_location = "centraluseuap"
+                resource_location = REGION
                 resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
 
             return {
@@ -529,12 +531,12 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="centraluseuap")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="centraluseuap"
+        location=REGION
     )
 
     try:
