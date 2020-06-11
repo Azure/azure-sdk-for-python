@@ -14,17 +14,18 @@ pr: none
 variables:
   Skip.MyPy: true
   Skip.Pylint: true
+  Skip.ApiStubGen: true
 
 jobs:
 - job: 'ValidateDependencies'
   variables:
-  - template: ../variables/globals.yml
+  - template: ./templates/variables/globals.yml
 
   pool:
     vmImage: 'windows-2019'
 
   steps:
-  - template: ../steps/analyze.yml
+  - template: ./templates/steps/analyze.yml
 
   - task: AzureFileCopy@2
     displayName: 'Upload dependency report'

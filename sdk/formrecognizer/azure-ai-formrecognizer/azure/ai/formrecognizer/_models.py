@@ -176,29 +176,6 @@ class RecognizedForm(object):
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
         )[:1024]
 
-class RecognizedReceipt(RecognizedForm):
-    """Represents a receipt that has been recognized by a trained model.
-
-    :ivar str form_type:
-        The type of form the model identified the submitted form to be.
-    :ivar fields:
-        A dictionary of the fields found on the form. The fields dictionary
-        keys are the `name` of the field. For models trained with labels,
-        this is the training-time label of the field. For models trained
-        without labels, a unique name is generated for each field.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page number of the input form.
-    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
-    """
-
-    def __repr__(self):
-        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={})".format(
-            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
-        )[:1024]
-
 
 class FormField(object):
     """Represents a field recognized in an input form.

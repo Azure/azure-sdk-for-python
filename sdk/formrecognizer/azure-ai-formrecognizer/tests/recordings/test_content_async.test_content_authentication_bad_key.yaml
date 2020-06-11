@@ -5,10 +5,10 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
@@ -16,9 +16,9 @@ interactions:
         an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       content-length: '224'
-      date: Tue, 09 Jun 2020 21:11:46 GMT
+      date: Thu, 11 Jun 2020 15:40:54 GMT
     status:
       code: 401
       message: PermissionDenied
-    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
 version: 1
