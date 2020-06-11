@@ -18,10 +18,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai?api-version=2015-08-31-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai?api-version=2015-08-31-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai","name":"uai","type":"Microsoft.ManagedIdentity/userAssignedIdentities","location":"westus","tags":{"key1":"value1"},"properties":{"tenantId":"00000000-0000-0000-0000-000000000000","principalId":"121200f5-5381-41e8-aec7-d3fb33135038","clientId":"67f79419-f80f-479e-aab9-b6244dfdf7f7","clientSecretUrl":"https://control-westus.identity.azure.net/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai/credentials?tid=00000000-0000-0000-0000-000000000000&oid=121200f5-5381-41e8-aec7-d3fb33135038&aid=67f79419-f80f-479e-aab9-b6244dfdf7f7"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai","name":"uai","type":"Microsoft.ManagedIdentity/userAssignedIdentities","location":"westus","tags":{"key1":"value1"},"properties":{"tenantId":"00000000-0000-0000-0000-000000000000","principalId":"121200f5-5381-41e8-aec7-d3fb33135038","clientId":"67f79419-f80f-479e-aab9-b6244dfdf7f7","clientSecretUrl":"https://control-westus.identity.azure.net/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai/credentials?tid=00000000-0000-0000-0000-000000000000&oid=121200f5-5381-41e8-aec7-d3fb33135038&aid=67f79419-f80f-479e-aab9-b6244dfdf7f7"}}'
     headers:
       cache-control:
       - no-cache
@@ -51,7 +51,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"identity": {"type": "UserAssigned", "userAssignedIdentities": {"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai":
+    body: 'b''{"identity": {"type": "UserAssigned", "userAssignedIdentities": {"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai":
       {}}}, "location": "westus", "kind": "AzurePowerShell", "properties": {"cleanupPreference":
       "Always", "scriptContent": "Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\''test\'']
       = \''value\'' Get-AzResourceGroup -Location $Location -Name $Name", "arguments":
@@ -71,12 +71,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
     body:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"\
         type\": \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\"\
-        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
+        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
         : {\r\n        \"principalId\": \"121200f5-5381-41e8-aec7-d3fb33135038\",\r\
         \n        \"clientId\": \"67f79419-f80f-479e-aab9-b6244dfdf7f7\"\r\n     \
         \ }\r\n    }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"systemData\": {\r\
@@ -91,7 +91,7 @@ interactions:
         \ \"arguments\": \"-Location 'westus' -Name \\\"*rg2\\\"\",\r\n    \"retentionInterval\"\
         : \"P7D\",\r\n    \"timeout\": \"PT1H\",\r\n    \"containerSettings\": {},\r\
         \n    \"status\": {},\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n\
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
         ,\r\n  \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\"\
         : \"scripttest\"\r\n}"
     headers:
@@ -286,12 +286,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
     body:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"\
         type\": \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\"\
-        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
+        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
         : {\r\n        \"principalId\": \"121200f5-5381-41e8-aec7-d3fb33135038\",\r\
         \n        \"clientId\": \"67f79419-f80f-479e-aab9-b6244dfdf7f7\"\r\n     \
         \ }\r\n    }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"tags\": {\r\n \
@@ -315,7 +315,7 @@ interactions:
         \ scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope\
         \ is invalid. If access was recently granted, please refresh your credentials.\"\
         \r\n      }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n\
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
         ,\r\n  \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\"\
         : \"scripttest\"\r\n}"
     headers:
@@ -358,12 +358,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
     body:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"\
         type\": \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\"\
-        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
+        ,\r\n    \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\"\
         : {\r\n        \"principalId\": \"121200f5-5381-41e8-aec7-d3fb33135038\",\r\
         \n        \"clientId\": \"67f79419-f80f-479e-aab9-b6244dfdf7f7\"\r\n     \
         \ }\r\n    }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"tags\": {\r\n \
@@ -387,7 +387,7 @@ interactions:
         \ scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope\
         \ is invalid. If access was recently granted, please refresh your credentials.\"\
         \r\n      }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n\
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\"\
         ,\r\n  \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\"\
         : \"scripttest\"\r\n}"
     headers:
@@ -428,10 +428,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default?api-version=2019-10-01-preview
   response:
     body:
-      string: "{\r\n  \"properties\": {},\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\"\
+      string: "{\r\n  \"properties\": {},\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\"\
         ,\r\n  \"type\": \"Microsoft.Resources/deploymentScripts/logs\",\r\n  \"name\"\
         : \"default\"\r\n}"
     headers:
@@ -472,11 +472,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest/logs?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs?api-version=2019-10-01-preview
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"properties\": {},\r\n     \
-        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\"\
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\"\
         ,\r\n      \"type\": \"Microsoft.Resources/deploymentScripts/logs\",\r\n \
         \     \"name\": \"default\"\r\n    }\r\n  ]\r\n}"
     headers:
@@ -519,7 +519,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_deployment_scripts_test_deployment_scripts18bf1998/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
     body:
       string: ''

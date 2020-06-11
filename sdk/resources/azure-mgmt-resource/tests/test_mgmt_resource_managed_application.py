@@ -14,7 +14,7 @@ import unittest
 
 import azure.mgmt.resource
 # import azure.mgmt.managementgroups
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
 
@@ -34,7 +34,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
                 credentials=self.settings.get_credentials()
             )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_application_by_id(self, resource_group, location):
         application_name = "applicationtest"
         app_def_name = "applicationdefinition"
@@ -140,7 +140,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         result_delete = self.resource_client.resource_groups.begin_delete(group_name)
         result_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_application(self, resource_group, location):
         app_def_name = "applicationdefinition"
         application_name = "applicationtest"

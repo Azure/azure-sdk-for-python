@@ -11,7 +11,7 @@ import unittest
 
 import azure.mgmt.resource.resources.v2019_10_01
 import azure.common.exceptions
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 

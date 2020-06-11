@@ -59,11 +59,11 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
@@ -99,11 +99,11 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
@@ -141,11 +141,11 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/844A4_1C5B82EE92944568B0C0B9C523BC0D86_7BFBBDEE70FA823E830F329075AEAFC1461E5661/cb79ecea0882417fb656a9618e8854f8/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
@@ -174,7 +174,7 @@ interactions:
 - request:
     body: 'b''{"location": "East US", "kind": "ServiceCatalog", "properties": {"managedResourceGroupId":
       "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz",
-      "applicationDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition"}}'''
+      "applicationDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition"}}'''
     headers:
       Accept:
       - application/json
@@ -189,14 +189,14 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","authorizations":[],"createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
+      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","authorizations":[],"createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
         US"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East
         US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZVByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFRFU1Q6M0E1Rk1HTVQ6M0E1RlJFU09VUkNFOjNBNUZNQU5BR0VEOjNBNUZBUFBMSUNBVElPTjozQTo3QzFBODMzOUY5NzREOUYxOUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
       cache-control:
       - no-cache
@@ -209,7 +209,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZVByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFRFU1Q6M0E1Rk1HTVQ6M0E1RlJFU09VUkNFOjNBNUZNQU5BR0VEOjNBNUZBUFBMSUNBVElPTjozQTo3QzFBODMzOUY5NzREOUYxOUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZVByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFRFU1Q6M0E1Rk1HTVQ6M0E1RlJFU09VUkNFOjNBNUZNQU5BR0VEOjNBNUZBUFBMSUNBVElPTjozQTo3QzFBODMzOUY5NzREOUYxOUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -233,10 +233,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","authorizations":[],"createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
+      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","authorizations":[],"createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
         US"}'
     headers:
       cache-control:
@@ -279,10 +279,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
+      string: '{"properties":{"managedResourceGroupId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz","applicationDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","publisherPackageId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","provisioningState":"Accepted","createdBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"},"updatedBy":{"oid":"20d81029-94cd-4923-a766-994415ff73bd","applicationId":"5f27a805-7ee7-4f96-a47e-ae04821aef22"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest","name":"applicationtest","type":"Microsoft.Solutions/applications","kind":"ServiceCatalog","location":"East
         US"}'
     headers:
       cache-control:
@@ -324,7 +324,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
   response:
     body:
       string: ''
@@ -338,7 +338,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -362,7 +362,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZVByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFRFU1Q6M0E1Rk1HTVQ6M0E1RlJFU09VUkNFOjNBNUZNQU5BR0VEOjNBNUZBUFBMSUNBVElPTjozQTo3QzFBODMzOUY5NzREOUYxOUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZVByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFRFU1Q6M0E1Rk1HTVQ6M0E1RlJFU09VUkNFOjNBNUZNQU5BR0VEOjNBNUZBUFBMSUNBVElPTjozQTo3QzFBODMzOUY5NzREOUYxOUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
   response:
     body:
       string: '{"status":"Failed","error":{"code":"InvalidApplianceState","message":"The
@@ -404,7 +404,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
   response:
     body:
       string: '{"status":"Accepted"}'
@@ -440,7 +440,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMWM1YjgyZWUtOTI5NC00NTY4LWIwYzAtYjljNTIzYmMwZDg2L3Jlc291cmNlR3JvdXBzL3Rlc3RfbWdtdF9yZXNvdXJjZV9tYW5hZ2VkX2FwcGxpY2F0aW9uX3Rlc3RfYXBwbGljYXRpb25fYnlfaWRjOGQxOTAyL3Byb3ZpZGVycy9NaWNyb3NvZnQuU29sdXRpb25zL2FwcGxpY2F0aW9ucy9hcHBsaWNhdGlvbnRlc3QiLCJqb2JJZCI6IkFwcGxpYW5jZURlcHJvdmlzaW9uaW5nSm9iOjJEUkdBOjJEVEVTVDozQTVGTUdNVDozQTVGUkVTT1VSQ0U6M0E1Rk1BTkFHRUQ6M0E1RkFQUExJQ0FUSU9OOjNBOjdDMUE4MzM5Rjk3NEQ5RjE5QnxDNDlCODEyRDdENzZCMTUzIn0?api-version=2018-06-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -482,7 +482,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_managed_application_test_application_by_idc8d1902/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
   response:
     body:
       string: ''
