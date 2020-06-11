@@ -53,7 +53,8 @@ from ._models import (
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
     BlobQueryError,
-    DelimitedTextConfiguration
+    JSONEncoder,
+    CSVDialect
 )
 
 __version__ = VERSION
@@ -213,6 +214,7 @@ __all__ = [
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
     'BlobQueryError',
-    'DelimitedTextConfiguration',
+    'JSONEncoder',
+    'CSVDialect'
     'BlobQueryReader'
 ]
