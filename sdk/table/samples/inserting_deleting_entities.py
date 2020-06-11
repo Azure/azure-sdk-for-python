@@ -11,6 +11,7 @@ class InsertDeleteEntity(object):
     entity = {
         'product': 'Marker', 'color': 'Purple', 'price': '$5'}
 
+
     def insert_entity(self):
 
         from azure.azure_table import TableClient
