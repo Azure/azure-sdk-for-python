@@ -5,25 +5,25 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
   response:
     body:
-      string: '{"modelId": "d3fe7002-7670-48b3-9267-609daab2917f", "accessToken":
-        "redacted", "expirationDateTimeTicks": 1591823628}'
+      string: '{"modelId": "5858edb8-5891-46e7-b9f7-47368b513f67", "accessToken":
+        "redacted", "expirationDateTimeTicks": 1591976587}'
     headers:
-      apim-request-id: 0ca6c21c-a239-4d30-bd32-f51185851d8d
+      apim-request-id: 4e32278c-c7bc-428f-bc03-9624cc0cf618
       content-type: application/json; charset=utf-8
-      date: Tue, 09 Jun 2020 21:13:48 GMT
-      location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d3fe7002-7670-48b3-9267-609daab2917f
+      date: Thu, 11 Jun 2020 15:43:07 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/5858edb8-5891-46e7-b9f7-47368b513f67
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '32'
+      x-envoy-upstream-service-time: '54'
     status:
       code: 201
       message: Created
-    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
 version: 1

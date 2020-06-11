@@ -1925,28 +1925,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - ee9b81b8-a784-4ac9-a84f-b1102b30a89e
+      - 9775be8b-3072-479c-9705-1b0c43af7524
       content-length:
       - '0'
       date:
-      - Tue, 09 Jun 2020 21:14:22 GMT
+      - Thu, 11 Jun 2020 15:56:22 GMT
       operation-location:
-      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/ee9b81b8-a784-4ac9-a84f-b1102b30a89e
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/9775be8b-3072-479c-9705-1b0c43af7524
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '96'
+      - '117'
     status:
       code: 202
       message: Accepted
@@ -1960,14 +1960,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/ee9b81b8-a784-4ac9-a84f-b1102b30a89e
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/9775be8b-3072-479c-9705-1b0c43af7524
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:14:23Z",
-        "lastUpdatedDateTime": "2020-06-09T21:14:26Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:56:22Z",
+        "lastUpdatedDateTime": "2020-06-11T15:56:27Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "language": "en", "lines": [{"text": "Company A Invoice",
         "boundingBox": [0.8861, 1.1217, 2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812],
@@ -2280,22 +2280,22 @@ interactions:
         {"type": "number", "valueNumber": 100, "text": "100.00", "boundingBox": [5.811,
         5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533], "page": 1, "confidence":
         0.99, "elements": ["#/readResults/0/lines/36/words/1"]}}}, {"docType": "prebuilt:receipt",
-        "pageRange": [2, 2]}, {"docType": "prebuilt:receipt", "pageRange": [3, 3],
-        "fields": {"ReceiptType": {"type": "string", "valueString": "Itemized", "confidence":
-        0.99}, "MerchantName": {"type": "string", "valueString": "Frodo Baggins",
-        "text": "Frodo Baggins", "boundingBox": [6.0164, 1.4506, 6.9506, 1.4506, 6.9506,
-        1.5931, 6.0164, 1.5931], "page": 3, "confidence": 0.98, "elements": ["#/readResults/2/lines/3/words/0",
-        "#/readResults/2/lines/3/words/1"]}, "MerchantAddress": {"type": "string",
-        "valueString": "123 Hobbit Lane 567 Main St. Redmond, WA Redmond, WA", "text":
-        "123 Hobbit Lane 567 Main St. Redmond, WA Redmond, WA", "boundingBox": [0.8852,
-        1.6707, 7.1006, 1.6707, 7.1006, 2.1975, 0.8852, 2.1975], "page": 3, "confidence":
-        0.99, "elements": ["#/readResults/2/lines/4/words/0", "#/readResults/2/lines/4/words/1",
-        "#/readResults/2/lines/4/words/2", "#/readResults/2/lines/5/words/0", "#/readResults/2/lines/5/words/1",
-        "#/readResults/2/lines/5/words/2", "#/readResults/2/lines/6/words/0", "#/readResults/2/lines/6/words/1",
-        "#/readResults/2/lines/7/words/0", "#/readResults/2/lines/7/words/1"]}, "MerchantPhoneNumber":
-        {"type": "phoneNumber", "valuePhoneNumber": "+15555555555", "text": "555-555-5555",
-        "boundingBox": [6.0105, 2.1187, 6.9371, 2.1187, 6.9371, 2.2254, 6.0105, 2.2254],
-        "page": 3, "confidence": 0.99, "elements": ["#/readResults/2/lines/8/words/0"]},
+        "pageRange": [2, 2], "fields": {}}, {"docType": "prebuilt:receipt", "pageRange":
+        [3, 3], "fields": {"ReceiptType": {"type": "string", "valueString": "Itemized",
+        "confidence": 0.99}, "MerchantName": {"type": "string", "valueString": "Frodo
+        Baggins", "text": "Frodo Baggins", "boundingBox": [6.0164, 1.4506, 6.9506,
+        1.4506, 6.9506, 1.5931, 6.0164, 1.5931], "page": 3, "confidence": 0.98, "elements":
+        ["#/readResults/2/lines/3/words/0", "#/readResults/2/lines/3/words/1"]}, "MerchantAddress":
+        {"type": "string", "valueString": "123 Hobbit Lane 567 Main St. Redmond, WA
+        Redmond, WA", "text": "123 Hobbit Lane 567 Main St. Redmond, WA Redmond, WA",
+        "boundingBox": [0.8852, 1.6707, 7.1006, 1.6707, 7.1006, 2.1975, 0.8852, 2.1975],
+        "page": 3, "confidence": 0.99, "elements": ["#/readResults/2/lines/4/words/0",
+        "#/readResults/2/lines/4/words/1", "#/readResults/2/lines/4/words/2", "#/readResults/2/lines/5/words/0",
+        "#/readResults/2/lines/5/words/1", "#/readResults/2/lines/5/words/2", "#/readResults/2/lines/6/words/0",
+        "#/readResults/2/lines/6/words/1", "#/readResults/2/lines/7/words/0", "#/readResults/2/lines/7/words/1"]},
+        "MerchantPhoneNumber": {"type": "phoneNumber", "valuePhoneNumber": "+15555555555",
+        "text": "555-555-5555", "boundingBox": [6.0105, 2.1187, 6.9371, 2.1187, 6.9371,
+        2.2254, 6.0105, 2.2254], "page": 3, "confidence": 0.99, "elements": ["#/readResults/2/lines/8/words/0"]},
         "Items": {"type": "array", "valueArray": [{"type": "object", "valueObject":
         {"Name": {"type": "string", "valueString": "E", "text": "E", "boundingBox":
         [1.0943, 4.0561, 1.153, 4.0561, 1.153, 4.1614, 1.0943, 4.1614], "page": 3,
@@ -2325,11 +2325,11 @@ interactions:
         "confidence": 0.985, "elements": ["#/readResults/2/lines/36/words/1"]}}}]}}'
     headers:
       apim-request-id:
-      - 3557076d-e07d-4c77-ad15-f38e9941010f
+      - 0dffce43-b55a-43d5-b2ba-88834e806410
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:14:28 GMT
+      - Thu, 11 Jun 2020 15:56:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2337,7 +2337,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '28'
     status:
       code: 200
       message: OK
