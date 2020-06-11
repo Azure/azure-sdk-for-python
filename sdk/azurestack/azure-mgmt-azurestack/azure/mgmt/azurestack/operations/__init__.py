@@ -10,12 +10,14 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
+from ._cloud_manifest_file_operations import CloudManifestFileOperations
 from ._products_operations import ProductsOperations
 from ._registrations_operations import RegistrationsOperations
 from ._customer_subscriptions_operations import CustomerSubscriptionsOperations
 
 __all__ = [
     'Operations',
+    'CloudManifestFileOperations',
     'ProductsOperations',
     'RegistrationsOperations',
     'CustomerSubscriptionsOperations',

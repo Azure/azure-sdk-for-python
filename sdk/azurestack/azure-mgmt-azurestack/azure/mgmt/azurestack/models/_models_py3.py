@@ -37,34 +37,53 @@ class CloudError(Model):
     }
 
 
-class Compatibility(Model):
-    """Product compatibility.
+class CloudManifestFileDeploymentData(Model):
+    """Cloud specific manifest data for AzureStack deployment.
 
-    :param is_compatible: Tells if product is compatible with current device
-    :type is_compatible: bool
-    :param message: Short error message if any compatibility issues are found
-    :type message: str
-    :param description: Full error message if any compatibility issues are
-     found
-    :type description: str
-    :param issues: List of all issues found
-    :type issues: list[str or
-     ~azure.mgmt.azurestack.models.CompatibilityIssue]
+    :param external_dsms_certificates: Dsms external certificates.
+    :type external_dsms_certificates: str
+    :param custom_cloud_verification_key: Signing verification public key.
+    :type custom_cloud_verification_key: str
+    :param custom_cloud_arm_endpoint: ARM endpoint.
+    :type custom_cloud_arm_endpoint: str
+    :param external_dsms_endpoint: Dsms endpoint.
+    :type external_dsms_endpoint: str
     """
 
     _attribute_map = {
-        'is_compatible': {'key': 'isCompatible', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'issues': {'key': 'issues', 'type': '[str]'},
+        'external_dsms_certificates': {'key': 'externalDsmsCertificates', 'type': 'str'},
+        'custom_cloud_verification_key': {'key': 'customCloudVerificationKey', 'type': 'str'},
+        'custom_cloud_arm_endpoint': {'key': 'customEnvironmentEndpoints.customCloudArmEndpoint', 'type': 'str'},
+        'external_dsms_endpoint': {'key': 'customEnvironmentEndpoints.externalDsmsEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, *, is_compatible: bool=None, message: str=None, description: str=None, issues=None, **kwargs) -> None:
-        super(Compatibility, self).__init__(**kwargs)
-        self.is_compatible = is_compatible
-        self.message = message
-        self.description = description
-        self.issues = issues
+    def __init__(self, *, external_dsms_certificates: str=None, custom_cloud_verification_key: str=None, custom_cloud_arm_endpoint: str=None, external_dsms_endpoint: str=None, **kwargs) -> None:
+        super(CloudManifestFileDeploymentData, self).__init__(**kwargs)
+        self.external_dsms_certificates = external_dsms_certificates
+        self.custom_cloud_verification_key = custom_cloud_verification_key
+        self.custom_cloud_arm_endpoint = custom_cloud_arm_endpoint
+        self.external_dsms_endpoint = external_dsms_endpoint
+
+
+class CloudManifestFileProperties(Model):
+    """Cloud specific manifest JSON properties.
+
+    :param deployment_data: Cloud specific manifest data.
+    :type deployment_data:
+     ~azure.mgmt.azurestack.models.CloudManifestFileDeploymentData
+    :param signature: Signature of the cloud specific manifest data.
+    :type signature: str
+    """
+
+    _attribute_map = {
+        'deployment_data': {'key': 'deploymentData', 'type': 'CloudManifestFileDeploymentData'},
+        'signature': {'key': 'signature', 'type': 'str'},
+    }
+
+    def __init__(self, *, deployment_data=None, signature: str=None, **kwargs) -> None:
+        super(CloudManifestFileProperties, self).__init__(**kwargs)
+        self.deployment_data = deployment_data
+        self.signature = signature
 
 
 class Resource(Model):
@@ -103,6 +122,75 @@ class Resource(Model):
         self.name = None
         self.type = None
         self.etag = etag
+
+
+class CloudManifestFileResponse(Resource):
+    """Cloud specific manifest GET response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :param etag: The entity tag used for optimistic concurrency when modifying
+     the resource.
+    :type etag: str
+    :param properties: Cloud specific manifest data.
+    :type properties:
+     ~azure.mgmt.azurestack.models.CloudManifestFileProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CloudManifestFileProperties'},
+    }
+
+    def __init__(self, *, etag: str=None, properties=None, **kwargs) -> None:
+        super(CloudManifestFileResponse, self).__init__(etag=etag, **kwargs)
+        self.properties = properties
+
+
+class Compatibility(Model):
+    """Product compatibility.
+
+    :param is_compatible: Tells if product is compatible with current device
+    :type is_compatible: bool
+    :param message: Short error message if any compatibility issues are found
+    :type message: str
+    :param description: Full error message if any compatibility issues are
+     found
+    :type description: str
+    :param issues: List of all issues found
+    :type issues: list[str or
+     ~azure.mgmt.azurestack.models.CompatibilityIssue]
+    """
+
+    _attribute_map = {
+        'is_compatible': {'key': 'isCompatible', 'type': 'bool'},
+        'message': {'key': 'message', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'issues': {'key': 'issues', 'type': '[str]'},
+    }
+
+    def __init__(self, *, is_compatible: bool=None, message: str=None, description: str=None, issues=None, **kwargs) -> None:
+        super(Compatibility, self).__init__(**kwargs)
+        self.is_compatible = is_compatible
+        self.message = message
+        self.description = description
+        self.issues = issues
 
 
 class CustomerSubscription(Resource):
@@ -855,18 +943,22 @@ class Registration(TrackedResource):
 class RegistrationParameter(Model):
     """Registration resource.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param registration_token: Required. The token identifying registered
      Azure Stack
     :type registration_token: str
-    :param location: Location of the resource. Possible values include:
-     'global'
-    :type location: str or ~azure.mgmt.azurestack.models.Location
+    :ivar location: Required. Location of the resource. Default value:
+     "global" .
+    :vartype location: str
     """
 
     _validation = {
         'registration_token': {'required': True},
+        'location': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -874,10 +966,11 @@ class RegistrationParameter(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, registration_token: str, location=None, **kwargs) -> None:
+    location = "global"
+
+    def __init__(self, *, registration_token: str, **kwargs) -> None:
         super(RegistrationParameter, self).__init__(**kwargs)
         self.registration_token = registration_token
-        self.location = location
 
 
 class VirtualMachineExtensionProductProperties(Model):

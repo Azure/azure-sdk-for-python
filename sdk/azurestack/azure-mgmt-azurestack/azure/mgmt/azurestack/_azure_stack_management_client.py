@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import AzureStackManagementClientConfiguration
 from .operations import Operations
+from .operations import CloudManifestFileOperations
 from .operations import ProductsOperations
 from .operations import RegistrationsOperations
 from .operations import CustomerSubscriptionsOperations
@@ -28,6 +29,8 @@ class AzureStackManagementClient(SDKClient):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestack.operations.Operations
+    :ivar cloud_manifest_file: CloudManifestFile operations
+    :vartype cloud_manifest_file: azure.mgmt.azurestack.operations.CloudManifestFileOperations
     :ivar products: Products operations
     :vartype products: azure.mgmt.azurestack.operations.ProductsOperations
     :ivar registrations: Registrations operations
@@ -57,6 +60,8 @@ class AzureStackManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cloud_manifest_file = CloudManifestFileOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.products = ProductsOperations(
             self._client, self.config, self._serialize, self._deserialize)
