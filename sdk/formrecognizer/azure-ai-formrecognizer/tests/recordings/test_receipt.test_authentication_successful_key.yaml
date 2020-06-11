@@ -2724,28 +2724,28 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 2774a02e-f32c-4110-84c5-8cee8a70927d
+      - d10b6b64-5c34-499c-b89c-7bf8aceb64e3
       content-length:
       - '0'
       date:
-      - Tue, 09 Jun 2020 21:13:52 GMT
+      - Thu, 11 Jun 2020 15:43:55 GMT
       operation-location:
-      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/2774a02e-f32c-4110-84c5-8cee8a70927d
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/d10b6b64-5c34-499c-b89c-7bf8aceb64e3
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '131'
+      - '242'
     status:
       code: 202
       message: Accepted
@@ -2759,14 +2759,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/2774a02e-f32c-4110-84c5-8cee8a70927d
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/d10b6b64-5c34-499c-b89c-7bf8aceb64e3
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:13:52Z",
-        "lastUpdatedDateTime": "2020-06-09T21:13:54Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:43:56Z",
+        "lastUpdatedDateTime": "2020-06-11T15:43:58Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -2800,20 +2800,20 @@ interactions:
         1257, 1952, 1259.1, 2036, 1136, 2039], "page": 1, "confidence": 0.916}}}]},
         "Subtotal": {"type": "number", "valueNumber": 11.7, "text": "11.70", "boundingBox":
         [1146, 2221, 1297.3, 2223, 1296, 2319, 1144.7, 2317], "page": 1, "confidence":
-        0.964}, "Tax": {"type": "number", "valueNumber": 1.17, "text": "1.17", "boundingBox":
+        0.955}, "Tax": {"type": "number", "valueNumber": 1.17, "text": "1.17", "boundingBox":
         [1190, 2359, 1304, 2359, 1304, 2456, 1190, 2456], "page": 1, "confidence":
-        0.98}, "Tip": {"type": "number", "valueNumber": 1.63, "text": "1.63", "boundingBox":
+        0.979}, "Tip": {"type": "number", "valueNumber": 1.63, "text": "1.63", "boundingBox":
         [1094, 2479, 1267.7, 2485, 1264, 2591, 1090.3, 2585], "page": 1, "confidence":
         0.941}, "Total": {"type": "number", "valueNumber": 14.5, "text": "$14.50",
         "boundingBox": [1034.2, 2617, 1387.5, 2638.2, 1380, 2763, 1026.7, 2741.8],
         "page": 1, "confidence": 0.985}}}]}}'
     headers:
       apim-request-id:
-      - 9f7ed6a0-ada0-4895-9061-dd97e2d9c6fe
+      - 56f119c1-0872-4d4b-bd99-b4d2d470700d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:13:57 GMT
+      - Thu, 11 Jun 2020 15:44:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2821,7 +2821,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '22'
+      - '14'
     status:
       code: 200
       message: OK

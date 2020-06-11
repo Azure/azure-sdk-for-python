@@ -1925,28 +1925,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - b0a6b0ac-c6af-4fe5-8243-f26fd55bfe43
+      - 438ee868-d961-4ed7-8567-adbc61c90a40
       content-length:
       - '0'
       date:
-      - Tue, 09 Jun 2020 21:11:34 GMT
+      - Thu, 11 Jun 2020 15:40:40 GMT
       operation-location:
-      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/b0a6b0ac-c6af-4fe5-8243-f26fd55bfe43
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/438ee868-d961-4ed7-8567-adbc61c90a40
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '87'
+      - '65'
     status:
       code: 202
       message: Accepted
@@ -1960,21 +1960,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/b0a6b0ac-c6af-4fe5-8243-f26fd55bfe43
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/438ee868-d961-4ed7-8567-adbc61c90a40
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-06-09T21:11:34Z", "lastUpdatedDateTime":
-        "2020-06-09T21:11:38Z"}'
+      string: '{"status": "running", "createdDateTime": "2020-06-11T15:40:41Z", "lastUpdatedDateTime":
+        "2020-06-11T15:40:46Z"}'
     headers:
       apim-request-id:
-      - c38efdaf-5407-4dcd-a43c-7cde5a5318d8
+      - 25d310ec-c90e-43db-b4d6-4eb1e647d373
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:11:38 GMT
+      - Thu, 11 Jun 2020 15:40:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -1982,7 +1982,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '39'
     status:
       code: 200
       message: OK
@@ -1996,14 +1996,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/b0a6b0ac-c6af-4fe5-8243-f26fd55bfe43
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/438ee868-d961-4ed7-8567-adbc61c90a40
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:11:34Z",
-        "lastUpdatedDateTime": "2020-06-09T21:11:39Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:40:41Z",
+        "lastUpdatedDateTime": "2020-06-11T15:40:46Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [0.8861, 1.1217,
         2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812], "text": "Company A Invoice",
@@ -2385,11 +2385,11 @@ interactions:
         4.4181, 7.4997, 4.4181, 7.4997, 4.6281, 5.3353, 4.6281], "elements": ["#/readResults/2/lines/33/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - 91d88deb-cf7f-4a47-a6be-dae39793f51c
+      - 36c9226c-99df-4578-ab54-4474e046f8dc
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:11:44 GMT
+      - Thu, 11 Jun 2020 15:40:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2397,7 +2397,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '77'
+      - '125'
     status:
       code: 200
       message: OK
