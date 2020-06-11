@@ -7,37 +7,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 37a92d8d-c81f-4f9b-987d-7a340709816f
+      apim-request-id: 5e134b98-55ee-4d30-874f-7a059d53a19b
       content-length: '0'
-      date: Tue, 09 Jun 2020 21:14:41 GMT
-      operation-location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/37a92d8d-c81f-4f9b-987d-7a340709816f
+      date: Thu, 11 Jun 2020 15:44:38 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/5e134b98-55ee-4d30-874f-7a059d53a19b
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '157'
+      x-envoy-upstream-service-time: '124'
     status:
       code: 202
       message: Accepted
-    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/37a92d8d-c81f-4f9b-987d-7a340709816f
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/5e134b98-55ee-4d30-874f-7a059d53a19b
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:14:41Z",
-        "lastUpdatedDateTime": "2020-06-09T21:14:42Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:44:39Z",
+        "lastUpdatedDateTime": "2020-06-11T15:44:41Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en", "lines": [{"text": "Contoso", "boundingBox":
         [635, 510, 1086, 461, 1098, 558, 643, 604], "words": [{"text": "Contoso",
@@ -159,15 +159,15 @@ interactions:
         [1034.2, 2617, 1387.5, 2638.2, 1380, 2763, 1026.7, 2741.8], "page": 1, "confidence":
         0.985, "elements": ["#/readResults/0/lines/19/words/0"]}}}]}}'
     headers:
-      apim-request-id: 261addcd-66ca-4c17-bdc0-595ece55f6bd
+      apim-request-id: b7aa5fc6-4384-476c-8b39-c3cb88f07587
       content-type: application/json; charset=utf-8
-      date: Tue, 09 Jun 2020 21:14:45 GMT
+      date: Thu, 11 Jun 2020 15:44:44 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '15'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/37a92d8d-c81f-4f9b-987d-7a340709816f
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/5e134b98-55ee-4d30-874f-7a059d53a19b
 version: 1

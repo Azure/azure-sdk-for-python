@@ -31802,28 +31802,28 @@ interactions:
       Content-Type:
       - image/png
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - b981a973-3969-428b-a77c-cb9a12768863
+      - b1f88538-9624-4fe4-8a2d-3a5cef18be78
       content-length:
       - '0'
       date:
-      - Tue, 09 Jun 2020 21:14:08 GMT
+      - Thu, 11 Jun 2020 15:44:39 GMT
       operation-location:
-      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/b981a973-3969-428b-a77c-cb9a12768863
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/b1f88538-9624-4fe4-8a2d-3a5cef18be78
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '576'
+      - '569'
     status:
       code: 202
       message: Accepted
@@ -31837,14 +31837,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/b981a973-3969-428b-a77c-cb9a12768863
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/b1f88538-9624-4fe4-8a2d-3a5cef18be78
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:14:08Z",
-        "lastUpdatedDateTime": "2020-06-09T21:14:10Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:44:40Z",
+        "lastUpdatedDateTime": "2020-06-11T15:44:41Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -31883,11 +31883,11 @@ interactions:
         2678.1, 948.2, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
       apim-request-id:
-      - 1be8dea5-c6c1-4342-a3a9-695ad0b789d7
+      - e8ed15ff-efda-4c4b-8ed9-c28981b815e3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:14:13 GMT
+      - Thu, 11 Jun 2020 15:44:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -31895,7 +31895,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '12'
+      - '13'
     status:
       code: 200
       message: OK

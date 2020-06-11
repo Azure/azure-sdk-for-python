@@ -390,7 +390,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
         # check hardcoded values
         for receipt, actual in zip(returned_model, actual):
-            if actual.fields is None:  # second page is blank
+            if not actual.fields:  # second page is blank
                 continue
 
             # check dict values
