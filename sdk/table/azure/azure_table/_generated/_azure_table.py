@@ -16,11 +16,8 @@ if TYPE_CHECKING:
 from ._configuration import AzureTableConfiguration
 from .operations import TableOperations
 from .operations import ServiceOperations
-<<<<<<< HEAD:sdk/table/azure/azure_table/_generated/_azure_table.py
 from azure.azure_table._generated import models
-=======
-from . import models
->>>>>>> parent of 10e929bf7... 'fixing SDK and auth errors due to copied auth.py file':sdk/Table/azure/azure_table/_generated/_azure_table.py
+
 
 
 class AzureTable(object):

@@ -78,3 +78,23 @@ class HttpProtocol(str, Enum):
 
     httpshttp = "https,http"
     https = "https"
+
+
+class SignedResource(str, Enum):
+
+    b = "b"
+    c = "c"
+    f = "f"
+    s = "s"
+
+
+class Permissions(str, Enum):
+
+    r = "r"
+    d = "d"
+    w = "w"
+    l = "l"
+    a = "a"
+    c = "c"
+    u = "u"
+    p = "p"

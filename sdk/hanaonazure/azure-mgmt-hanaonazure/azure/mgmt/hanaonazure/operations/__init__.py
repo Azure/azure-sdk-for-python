@@ -10,11 +10,11 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._hana_instances_operations import HanaInstancesOperations
 from ._sap_monitors_operations import SapMonitorsOperations
+from ._provider_instances_operations import ProviderInstancesOperations
 
 __all__ = [
     'Operations',
-    'HanaInstancesOperations',
     'SapMonitorsOperations',
+    'ProviderInstancesOperations',
 ]

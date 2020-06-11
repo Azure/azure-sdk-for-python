@@ -23,7 +23,9 @@ from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
-    TOKEN_TYPE_SASTOKEN
+    TOKEN_TYPE_SASTOKEN,
+    DEAD_LETTER_QUEUE_SUFFIX,
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 )
 
 _log = logging.getLogger(__name__)
@@ -59,26 +61,6 @@ def utc_from_timestamp(timestamp):
 
 def utc_now():
     return datetime.datetime.now(tz=TZ_UTC)
-
-
-def get_running_loop():
-    try:
-        import asyncio  # pylint: disable=import-error
-        return asyncio.get_running_loop()
-    except AttributeError:  # 3.5 / 3.6
-        loop = None
-        try:
-            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
-        except AttributeError:
-            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
-        if loop is None:
-            _log.warning('No running event loop')
-            loop = asyncio.get_event_loop()
-        return loop
-    except RuntimeError:
-        # For backwards compatibility, create new event loop
-        _log.warning('No running event loop')
-        return asyncio.get_event_loop()
 
 
 def parse_conn_str(conn_str):
@@ -159,6 +141,21 @@ def create_authentication(client):
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
     )
+
+
+def generate_dead_letter_entity_name(
+        queue_name=None,
+        topic_name=None,
+        subscription_name=None,
+        transfer_deadletter=False
+):
+    entity_name = queue_name if queue_name else (topic_name + "/Subscriptions/" + subscription_name)
+    entity_name = "{}{}".format(
+        entity_name,
+        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX
+    )
+
+    return entity_name
 
 
 class AutoLockRenew(object):

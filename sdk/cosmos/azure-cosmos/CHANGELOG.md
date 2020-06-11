@@ -1,7 +1,11 @@
-# Release History
+## 4.0.1 (Unreleased)
 
-## 4.0.0 (unreleased)
+- Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue 11793 - thank you @Rabbit994.
 
+
+## 4.0.0 (2020-05-20)
+
+- Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
 
 
@@ -99,7 +103,7 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
     - `Container`: This client handles operations for a particular container. This includes querying and inserting items and managing properties.
     - `User`: This client handles operations for a particular user. This includes adding and deleting permissions and managing user properties.
     
-    These clients can be accessed by navigating down the client hierarchy using the `get_<child>_client` method. For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html).
+    These clients can be accessed by navigating down the client hierarchy using the `get_<child>_client` method. For full details on the new API, please see the [reference documentation](https://aka.ms/azsdk-python-cosmos-ref).
 - Clients are accessed by name rather than by Id. No need to concatenate strings to create links.
 - No more need to import types and methods from individual modules. The public API surface area is available directly in the `azure.cosmos` package.
 - Individual request properties can be provided as keyword arguments rather than constructing a separate `RequestOptions` instance.

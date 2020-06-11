@@ -71,6 +71,8 @@ MGMT_REQUEST_PARTITION_KEY = 'partition-key'
 MGMT_REQUEST_VIA_PARTITION_KEY = 'via-partition-key'
 MGMT_REQUEST_DEAD_LETTER_REASON = 'deadletter-reason'
 MGMT_REQUEST_DEAD_LETTER_DESCRIPTION = 'deadletter-description'
+RECEIVER_LINK_DEAD_LETTER_REASON = 'DeadLetterReason'
+RECEIVER_LINK_DEAD_LETTER_DESCRIPTION = 'DeadLetterErrorDescription'
 MGMT_REQUEST_OP_TYPE_ENTITY_MGMT = b"entity-mgmt"
 
 MESSAGE_COMPLETE = 'complete'
@@ -95,6 +97,10 @@ _X_OPT_VIA_PARTITION_KEY = b'x-opt-via-partition-key'
 _X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
 _X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
 _X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
+
+
+DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
+TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
 
 
 class ReceiveSettleMode(Enum):

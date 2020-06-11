@@ -62,6 +62,9 @@ try:
     from ._models_py3 import CrossSiteAccessPolicies
     from ._models_py3 import DefaultKey
     from ._models_py3 import Deinterlace
+    from ._models_py3 import EdgePolicies
+    from ._models_py3 import EdgeUsageDataCollectionPolicy
+    from ._models_py3 import EdgeUsageDataEventHub
     from ._models_py3 import EnabledProtocols
     from ._models_py3 import EntityNameAvailabilityCheckOutput
     from ._models_py3 import EnvelopeEncryption
@@ -94,6 +97,7 @@ try:
     from ._models_py3 import Layer
     from ._models_py3 import ListContainerSasInput
     from ._models_py3 import ListContentKeysResponse
+    from ._models_py3 import ListEdgePoliciesInput
     from ._models_py3 import ListPathsResponse
     from ._models_py3 import ListStreamingLocatorsResponse
     from ._models_py3 import LiveEvent
@@ -208,6 +212,9 @@ except (SyntaxError, ImportError):
     from ._models import CrossSiteAccessPolicies
     from ._models import DefaultKey
     from ._models import Deinterlace
+    from ._models import EdgePolicies
+    from ._models import EdgeUsageDataCollectionPolicy
+    from ._models import EdgeUsageDataEventHub
     from ._models import EnabledProtocols
     from ._models import EntityNameAvailabilityCheckOutput
     from ._models import EnvelopeEncryption
@@ -240,6 +247,7 @@ except (SyntaxError, ImportError):
     from ._models import Layer
     from ._models import ListContainerSasInput
     from ._models import ListContentKeysResponse
+    from ._models import ListEdgePoliciesInput
     from ._models import ListPathsResponse
     from ._models import ListStreamingLocatorsResponse
     from ._models import LiveEvent
@@ -411,6 +419,9 @@ __all__ = [
     'CrossSiteAccessPolicies',
     'DefaultKey',
     'Deinterlace',
+    'EdgePolicies',
+    'EdgeUsageDataCollectionPolicy',
+    'EdgeUsageDataEventHub',
     'EnabledProtocols',
     'EntityNameAvailabilityCheckOutput',
     'EnvelopeEncryption',
@@ -443,6 +454,7 @@ __all__ = [
     'Layer',
     'ListContainerSasInput',
     'ListContentKeysResponse',
+    'ListEdgePoliciesInput',
     'ListPathsResponse',
     'ListStreamingLocatorsResponse',
     'LiveEvent',

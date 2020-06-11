@@ -1,7 +1,61 @@
 # Release History
 
-## 1.4.0b4 (Unreleased)
+## 1.4.0b5 (Unreleased)
+- `SharedTokenCacheCredential.get_token` raises `ValueError` instead of
+  `ClientAuthenticationError` when called with no scopes.
+  ([#11553](https://github.com/Azure/azure-sdk-for-python/issues/11553))
 
+## 1.4.0b4 (2020-06-09)
+- `ManagedIdentityCredential` can configure a user-assigned identity using any
+  identifier supported by the current hosting environment. To specify an
+  identity by its client ID, continue using the `client_id` argument. To
+  specify an identity by any other ID, use the `identity_config` argument,
+  for example: `ManagedIdentityCredential(identity_config={"object_id": ".."})`
+  ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
+- `CertificateCredential` and `ClientSecretCredential` can optionally store
+  access tokens they acquire in a persistent cache. To enable this, construct
+  the credential with `enable_persistent_cache=True`. On Linux, the persistent
+  cache requires libsecret and `pygobject`. If these are unavailable or
+  unusable (e.g. in an SSH session), loading the persistent cache will raise an
+  error. You may optionally configure the credential to fall back to an
+  unencrypted cache by constructing it with keyword argument 
+  `allow_unencrypted_cache=True`.
+  ([#11347](https://github.com/Azure/azure-sdk-for-python/issues/11347))
+- `AzureCliCredential` raises `CredentialUnavailableError` when no user is
+  logged in to the Azure CLI.
+  ([#11819](https://github.com/Azure/azure-sdk-for-python/issues/11819))
+- `AzureCliCredential` and `VSCodeCredential`, which enable authenticating as
+  the identity signed in to the Azure CLI and Visual Studio Code, respectively,
+  can be imported from `azure.identity` and `azure.identity.aio`.
+- `azure.identity.aio.AuthorizationCodeCredential.get_token()` no longer accepts
+  optional keyword arguments `executor` or `loop`. Prior versions of the method
+  didn't use these correctly, provoking exceptions, and internal changes in this
+  version have made them obsolete.
+- `InteractiveBrowserCredential` raises `CredentialUnavailableError` when it
+  can't start an HTTP server on `localhost`.
+  ([#11665](https://github.com/Azure/azure-sdk-for-python/pull/11665))
+- When constructing `DefaultAzureCredential`, you can now configure a tenant ID
+  for `InteractiveBrowserCredential`. When none is specified, the credential
+  authenticates users in their home tenants. To specify a different tenant, use
+  the keyword argument `interactive_browser_tenant_id`, or set the environment
+  variable `AZURE_TENANT_ID`.
+  ([#11548](https://github.com/Azure/azure-sdk-for-python/issues/11548))
+- `SharedTokenCacheCredential` can be initialized with an `AuthenticationRecord`
+  provided by a user credential.
+  ([#11448](https://github.com/Azure/azure-sdk-for-python/issues/11448))
+- The user authentication API added to `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` in 1.4.0b3 is available on
+  `UsernamePasswordCredential` as well.
+  ([#11449](https://github.com/Azure/azure-sdk-for-python/issues/11449))
+- The optional persistent cache for `DeviceCodeCredential` and
+  `InteractiveBrowserCredential` added in 1.4.0b3 is now available on Linux and
+  macOS as well as Windows.
+  ([#11134](https://github.com/Azure/azure-sdk-for-python/issues/11134))
+  - On Linux, the persistent cache requires libsecret and `pygobject`. If these
+    are unavailable, or libsecret is unusable (e.g. in an SSH session), loading
+    the persistent cache will raise an error. You may optionally configure the
+    credential to fall back to an unencrypted cache by constructing it with
+    keyword argument `allow_unencrypted_cache=True`.
 
 ## 1.4.0b3 (2020-05-04)
 - `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`

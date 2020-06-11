@@ -13,6 +13,79 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """Resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """The resource model definition for a Azure Resource Manager resource with an
+    etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class CheckDomainAvailabilityParameter(Model):
     """Check Domain availability parameter.
 
@@ -327,6 +400,11 @@ class CognitiveServicesAccountProperties(Model):
     :vartype endpoint: str
     :ivar internal_id: The internal identifier.
     :vartype internal_id: str
+    :ivar capabilities: Gets the capabilities of the cognitive services
+     account. Each item indicates the capability of a specific feature. The
+     values are read-only and for reference only.
+    :vartype capabilities:
+     list[~azure.mgmt.cognitiveservices.models.SkuCapability]
     :param custom_sub_domain_name: Optional subdomain name used for
      token-based authentication.
     :type custom_sub_domain_name: str
@@ -338,6 +416,15 @@ class CognitiveServicesAccountProperties(Model):
     :param user_owned_storage: The storage accounts for this resource.
     :type user_owned_storage:
      list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+    :param private_endpoint_connections: The private endpoint connection
+     associated with the Cognitive Services account.
+    :type private_endpoint_connections:
+     list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this account. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.cognitiveservices.models.PublicNetworkAccess
     :param api_properties: The api properties for special APIs.
     :type api_properties:
      ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
@@ -347,16 +434,20 @@ class CognitiveServicesAccountProperties(Model):
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
         'internal_id': {'readonly': True},
+        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
         'internal_id': {'key': 'internalId', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
         'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
         'encryption': {'key': 'encryption', 'type': 'Encryption'},
         'user_owned_storage': {'key': 'userOwnedStorage', 'type': '[UserOwnedStorage]'},
+        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
     }
 
@@ -365,10 +456,13 @@ class CognitiveServicesAccountProperties(Model):
         self.provisioning_state = None
         self.endpoint = None
         self.internal_id = None
+        self.capabilities = None
         self.custom_sub_domain_name = kwargs.get('custom_sub_domain_name', None)
         self.network_acls = kwargs.get('network_acls', None)
         self.encryption = kwargs.get('encryption', None)
         self.user_owned_storage = kwargs.get('user_owned_storage', None)
+        self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.api_properties = kwargs.get('api_properties', None)
 
 
@@ -672,6 +766,254 @@ class OperationEntity(Model):
         self.properties = kwargs.get('properties', None)
 
 
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param properties: Resource properties.
+    :type properties:
+     ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateEndpointConnectionProperties(Model):
+    """Properties of the PrivateEndpointConnectProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint:
+     ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.cognitiveservices.models.PrivateLinkServiceConnectionState
+    :param group_ids: The private link resource group ids.
+    :type group_ids: list[str]
+    """
+
+    _validation = {
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'group_ids': {'key': 'groupIds', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.group_ids = kwargs.get('group_ids', None)
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param properties: Resource properties.
+    :type properties:
+     ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar display_name: The private link resource display name.
+    :vartype display_name: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'display_name': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.display_name = None
+        self.required_members = None
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.cognitiveservices.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param action_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type action_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.action_required = kwargs.get('action_required', None)
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
 class RegenerateKeyParameters(Model):
     """Regenerate key parameters.
 
@@ -848,6 +1190,69 @@ class Sku(Model):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.tier = None
+
+
+class SkuCapability(Model):
+    """SkuCapability indicates the capability of a certain feature.
+
+    :param name: The name of the SkuCapability.
+    :type name: str
+    :param value: The value of the SkuCapability.
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuCapability, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
 
 
 class Usage(Model):

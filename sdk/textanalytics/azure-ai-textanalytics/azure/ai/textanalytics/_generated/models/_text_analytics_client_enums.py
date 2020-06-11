@@ -8,6 +8,15 @@
 
 from enum import Enum
 
+class DocumentSentimentValue(str, Enum):
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
+    """
+
+    positive = "positive"
+    neutral = "neutral"
+    negative = "negative"
+    mixed = "mixed"
+
 class ErrorCodeValue(str, Enum):
     """Error code.
     """
@@ -39,11 +48,9 @@ class SentenceSentimentValue(str, Enum):
     neutral = "neutral"
     negative = "negative"
 
-class DocumentSentimentValue(str, Enum):
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
+class WarningCodeValue(str, Enum):
+    """Error code.
     """
 
-    positive = "positive"
-    neutral = "neutral"
-    negative = "negative"
-    mixed = "mixed"
+    long_words_in_document = "LongWordsInDocument"
+    document_truncated = "DocumentTruncated"

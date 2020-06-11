@@ -175,7 +175,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_crud_operations(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
@@ -205,13 +204,15 @@ class CertificateClientTests(KeyVaultTestCase):
         cert = await client.get_certificate(certificate_name=cert_name)
         self._validate_certificate_bundle(cert=cert, cert_name=cert_name, cert_policy=cert_policy)
 
-        # update certificate
+        # update certificate, ensuring the new updated_on value is at least one second later than the original
+        if self.is_live:
+            await asyncio.sleep(1)
         tags = {"tag1": "updated_value1"}
-        cert_bundle = await client.update_certificate_properties(cert_name, tags=tags)
-        self._validate_certificate_bundle(cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
-        self.assertEqual(tags, cert_bundle.properties.tags)
-        self.assertEqual(cert.id, cert_bundle.id)
-        self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
+        updated_cert = await client.update_certificate_properties(cert_name, tags=tags)
+        self._validate_certificate_bundle(cert=updated_cert, cert_name=cert_name, cert_policy=cert_policy)
+        self.assertEqual(tags, updated_cert.properties.tags)
+        self.assertEqual(cert.id, updated_cert.id)
+        self.assertNotEqual(cert.properties.updated_on, updated_cert.properties.updated_on)
 
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(certificate_name=cert_name)
@@ -228,7 +229,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list(self, client, **kwargs):
 
         max_certificates = self.list_test_size
@@ -258,7 +258,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list_certificate_versions(self, client, **kwargs):
         cert_name = self.get_resource_name("certver")
 
@@ -294,7 +293,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_crud_contacts(self, client, **kwargs):
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
@@ -324,7 +322,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_recover_and_purge(self, client, **kwargs):
         certs = {}
         # create certificates to recover
@@ -377,7 +374,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_async_request_cancellation_and_deletion(self, client, **kwargs):
         cert_name = "asyncCanceledDeletedCert"
         cert_policy = CertificatePolicy.get_default()
@@ -437,7 +433,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_policy(self, client, **kwargs):
         cert_name = "policyCertificate"
         cert_policy = CertificatePolicy(
@@ -474,7 +469,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_get_pending_certificate_signing_request(self, client, **kwargs):
         cert_name = "unknownIssuerCert"
 
@@ -487,7 +481,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
@@ -509,7 +502,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_crud_issuer(self, client, **kwargs):
         issuer_name = "issuer"
         admin_contacts = [
@@ -589,7 +581,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -614,7 +605,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 

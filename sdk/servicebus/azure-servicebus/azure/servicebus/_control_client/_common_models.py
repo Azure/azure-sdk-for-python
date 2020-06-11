@@ -79,8 +79,8 @@ class _xml_attribute:
 
 
 try:
-    _unicode_type = unicode
-    _strtype = basestring
+    _unicode_type = unicode  # type: ignore
+    _strtype = basestring  # type: ignore
 except NameError:
     _unicode_type = str
     _strtype = str

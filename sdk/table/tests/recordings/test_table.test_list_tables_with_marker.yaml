@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:16 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:16 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable03f561007')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable13f561007')
       server:
@@ -111,11 +111,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -129,7 +129,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable23f561007')
       server:
@@ -159,11 +159,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -177,7 +177,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable33f561007')
       server:
@@ -203,11 +203,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:57 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -221,7 +221,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -229,7 +229,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-continuation-nexttablename:
-      - 1!48!bGlzdHRhYmxlMjNmNTYxMDA3ATAxZDYzZmYzMzA3MjBmZDA-
+      - 1!48!bGlzdHRhYmxlMjNmNTYxMDA3ATAxZDYzZmY5OTE0YjI3M2Q-
       x-ms-version:
       - '2019-07-07'
     status:
@@ -247,15 +247,15 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:57 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables?$top=2&NextTableName=1%2148%21bGlzdHRhYmxlMjNmNTYxMDA3ATAxZDYzZmYzMzA3MjBmZDA-
+    uri: https://storagename.table.core.windows.net/Tables?$top=2&NextTableName=1%2148%21bGlzdHRhYmxlMjNmNTYxMDA3ATAxZDYzZmY5OTE0YjI3M2Q-
   response:
     body:
       string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable23f561007"},{"TableName":"listtable33f561007"}]}'
@@ -265,7 +265,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 11 Jun 2020 13:21:17 GMT
+      - Thu, 11 Jun 2020 14:06:56 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -273,7 +273,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-continuation-nexttablename:
-      - 1!48!cHl0YWJsZXN5bmMzZjU3MTAwYgEwMWQ2M2ZmMzJmZTVlM2Qz
+      - 1!48!cHl0YWJsZXN5bmMzZjU3MTAwYgEwMWQ2M2ZmOTkwYWVjYjA1
       x-ms-version:
       - '2019-07-07'
     status:

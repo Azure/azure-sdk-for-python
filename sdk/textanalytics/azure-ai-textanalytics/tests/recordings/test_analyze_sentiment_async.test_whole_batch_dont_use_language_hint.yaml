@@ -12,24 +12,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":33}]},{"id":"1","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.0,"negative":0.99},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.0,"negative":0.99},"offset":0,"length":42}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":33,"text":"This
+        was the best day of my life."}],"warnings":[]},{"id":"1","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38,"text":"I
+        did not like the hotel we stayed at."},{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21,"text":"It
+        was too expensive."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.0,"negative":0.99},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.0,"negative":0.99},"offset":0,"length":42,"text":"The
+        restaurant was not as good as I hoped."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: fee9cc64-82f6-4ae4-a431-875e1c59be2a
+      apim-request-id: 3014402d-3f99-4c6a-b364-0180ba843b2a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 02 Apr 2020 15:06:19 GMT
+      date: Wed, 27 May 2020 16:04:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '124'
+      x-envoy-upstream-service-time: '100'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

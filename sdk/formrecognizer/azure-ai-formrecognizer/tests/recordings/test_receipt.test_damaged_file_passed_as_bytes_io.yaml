@@ -18,21 +18,21 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"BadArgument","innerError":{"requestId":"180905cc-b574-4901-bce3-112c7a5da6a3"},"message":"Bad
-        or unrecognizable request JSON or binary file."}}'
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "4a1b4b1b-7e12-4670-b555-4f6642f5d0ba"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 180905cc-b574-4901-bce3-112c7a5da6a3
+      - 4a1b4b1b-7e12-4670-b555-4f6642f5d0ba
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 22:35:16 GMT
+      - Tue, 09 Jun 2020 21:13:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '38'
+      - '10'
     status:
       code: 400
       message: Bad Request

@@ -322,7 +322,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
-        md5 = hashlib.md5()
+        md5 = hashlib.md5() #nosec
         if isinstance(data, bytes):
             md5.update(data)
         elif hasattr(data, 'read'):

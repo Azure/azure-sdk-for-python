@@ -3,15 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-import os
-import sys
+import time
 
 from msal import TokenCache
+import six
 from six.moves.urllib_parse import urlparse
 
+from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, wrap_exceptions
+from .._internal.persistent_cache import load_user_cache
 
 try:
     ABC = abc.ABC
@@ -25,10 +27,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional
-    import msal_extensions
-    from azure.core.credentials import AccessToken
+    from typing import Any, Iterable, List, Mapping, Optional, Sequence
     from .._internal import AadClientBase
+    from azure.identity import AuthenticationRecord
 
     CacheItem = Mapping[str, str]
 
@@ -88,33 +89,37 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        authority = kwargs.pop("authority", None)
-        self._authority = normalize_authority(authority) if authority else get_default_authority()
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+        if self._auth_record:
+            # authenticate in the tenant that produced the record unless 'tenant_id' specifies another
+            authenticating_tenant = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+            self._tenant_id = self._auth_record.tenant_id
+            self._authority = self._auth_record.authority
+            self._username = self._auth_record.username
+            self._environment_aliases = frozenset((self._authority,))
+        else:
+            authenticating_tenant = "organizations"
+            authority = kwargs.pop("authority", None)
+            self._authority = normalize_authority(authority) if authority else get_default_authority()
+            environment = urlparse(self._authority).netloc
+            self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
+            self._username = username
+            self._tenant_id = kwargs.pop("tenant_id", None)
 
-        environment = urlparse(self._authority).netloc
-        self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
-        self._username = username
-        self._tenant_id = kwargs.pop("tenant_id", None)
+        self._cache = kwargs.pop("_cache", None)
+        if not self._cache:
+            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            try:
+                self._cache = load_user_cache(allow_unencrypted)
+            except Exception:  # pylint:disable=broad-except
+                pass
 
-        cache = kwargs.pop("_cache", None)  # for ease of testing
-
-        if not cache and sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-            from msal_extensions.token_cache import WindowsTokenCache
-
-            cache = WindowsTokenCache(
-                cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
-            )
-
-            # prevent writing to the shared cache
-            # TODO: seperating deserializing access tokens from caching them would make this cleaner
-            cache.add = lambda *_, **__: None
-
-        if cache:
-            self._cache = cache
+        if self._cache:
             self._client = self._get_auth_client(
-                authority=self._authority, cache=cache, **kwargs
+                authority=self._authority, cache=self._cache, tenant_id=authenticating_tenant, **kwargs
             )  # type: Optional[AadClientBase]
         else:
+            # couldn't load the cache -> credential will be unavailable
             self._client = None
 
     @abc.abstractmethod
@@ -154,6 +159,7 @@ class SharedTokenCacheBase(ABC):
                     accounts[account["home_account_id"]] = account
         return accounts.values()
 
+    @wrap_exceptions
     def _get_account(self, username=None, tenant_id=None):
         # type: (Optional[str], Optional[str]) -> CacheItem
         """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
@@ -162,6 +168,14 @@ class SharedTokenCacheBase(ABC):
         if not accounts:
             # cache is empty or contains no refresh token -> user needs to sign in
             raise CredentialUnavailableError(message=NO_ACCOUNTS)
+
+        if self._auth_record:
+            for account in accounts:
+                if account.get("home_account_id") == self._auth_record.home_account_id:
+                    return account
+            raise CredentialUnavailableError(
+                message="The cache contains no account matching the given AuthenticationRecord."
+            )
 
         filtered_accounts = _filtered_accounts(accounts, username, tenant_id)
         if len(filtered_accounts) == 1:
@@ -181,10 +195,39 @@ class SharedTokenCacheBase(ABC):
 
         raise CredentialUnavailableError(message=message)
 
+    def _get_cached_access_token(self, scopes, account):
+        # type: (Sequence[str], CacheItem) -> Optional[AccessToken]
+        if "home_account_id" not in account:
+            return None
+
+        try:
+            cache_entries = self._cache.find(
+                TokenCache.CredentialType.ACCESS_TOKEN,
+                target=list(scopes),
+                query={"home_account_id": account["home_account_id"]},
+            )
+            for token in cache_entries:
+                expires_on = int(token["expires_on"])
+                if expires_on - 300 > int(time.time()):
+                    return AccessToken(token["secret"], expires_on)
+        except Exception as ex:  # pylint:disable=broad-except
+            message = "Error accessing cached data: {}".format(ex)
+            six.raise_from(CredentialUnavailableError(message=message), ex)
+
+        return None
+
     def _get_refresh_tokens(self, account):
-        return self._cache.find(
-            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
-        )
+        if "home_account_id" not in account:
+            return None
+
+        try:
+            cache_entries = self._cache.find(
+                TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
+            )
+            return [token["secret"] for token in cache_entries if "secret" in token]
+        except Exception as ex:  # pylint:disable=broad-except
+            message = "Error accessing cached data: {}".format(ex)
+            six.raise_from(CredentialUnavailableError(message=message), ex)
 
     @staticmethod
     def supported():
@@ -193,4 +236,12 @@ class SharedTokenCacheBase(ABC):
 
         :rtype: bool
         """
-        return sys.platform.startswith("win")
+        try:
+            load_user_cache(allow_unencrypted=False)
+        except NotImplementedError:
+            return False
+        except ValueError:
+            # cache is supported but can't be encrypted
+            pass
+
+        return True

@@ -9,8 +9,6 @@ import abc
 import base64
 import json
 import logging
-import os
-import sys
 import time
 
 import msal
@@ -20,6 +18,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
+from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
@@ -62,32 +61,25 @@ def _build_auth_record(response):
     """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request"""
 
     try:
-        client_info = json.loads(_decode_client_info(response["client_info"]))
         id_token = response["id_token_claims"]
+
+        if "client_info" in response:
+            client_info = json.loads(_decode_client_info(response["client_info"]))
+            home_account_id = "{uid}.{utid}".format(**client_info)
+        else:
+            # MSAL uses the subject claim as home_account_id when the STS doesn't provide client_info
+            home_account_id = id_token["sub"]
 
         return AuthenticationRecord(
             authority=urlparse(id_token["iss"]).netloc,  # "iss" is the URL of the issuing tenant
             client_id=id_token["aud"],
-            home_account_id="{uid}.{utid}".format(**client_info),
+            home_account_id=home_account_id,
             tenant_id=id_token["tid"],  # tenant which issued the token, not necessarily user's home tenant
             username=id_token["preferred_username"],
         )
     except (KeyError, ValueError):
-        # surprising: msal.ClientApplication always requests client_info and an id token, whose shapes shouldn't change
+        # surprising: msal.ClientApplication always requests an id token, whose shape shouldn't change
         return None
-
-
-def _load_persistent_cache():
-    # type: () -> msal.TokenCache
-
-    if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-        from msal_extensions.token_cache import WindowsTokenCache
-
-        return WindowsTokenCache(
-            cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
-        )
-
-    raise NotImplementedError("A persistent cache is not available on this platform.")
 
 
 class MsalCredential(ABC):
@@ -105,7 +97,8 @@ class MsalCredential(ABC):
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
             if kwargs.pop("enable_persistent_cache", False):
-                self._cache = _load_persistent_cache()
+                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+                self._cache = load_user_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
 
@@ -265,13 +258,7 @@ class InteractiveCredential(PublicClientCredential):
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
         _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
-        return self.authentication_record  # type: ignore
-
-    @property
-    def authentication_record(self):
-        # type: () -> Optional[AuthenticationRecord]
-        """:class:`~azure.identity.AuthenticationRecord` for the most recent authentication"""
-        return self._auth_record
+        return self._auth_record  # type: ignore
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes, **kwargs):

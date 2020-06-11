@@ -8,8 +8,8 @@ import datetime
 import uuid
 import requests
 try:
-    from urlparse import urlparse
-    from urllib import unquote_plus
+    from urlparse import urlparse  # type: ignore
+    from urllib import unquote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
     from urllib.parse import unquote_plus

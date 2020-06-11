@@ -2,4 +2,5 @@
 -e ../../core/azure-core
 -e ../../keyvault/azure-keyvault-keys
 -e ../../keyvault/azure-mgmt-keyvault
+-e ../../loganalytics/azure-mgmt-loganalytics
 -e ../../resources/azure-mgmt-msi/

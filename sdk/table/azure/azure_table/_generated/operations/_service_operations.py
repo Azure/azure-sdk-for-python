@@ -9,11 +9,8 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-<<<<<<< HEAD:sdk/table/azure/azure_table/_generated/operations/_service_operations.py
+
 from azure.azure_table._generated import models
-=======
-from .. import models
->>>>>>> parent of 10e929bf7... 'fixing SDK and auth errors due to copied auth.py file':sdk/Table/azure/azure_table/_generated/operations/_service_operations.py
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

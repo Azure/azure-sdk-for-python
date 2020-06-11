@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": true}'''
+    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}\'''''
     headers:
       Accept:
       - '*/*'
@@ -10,32 +10,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '316'
+      - '300'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 81bb5a9b-762f-4fd6-b1ca-db150b343d52
+      - 7080001e-db05-499f-a8c6-d0d400fc37c9
       content-length:
       - '0'
       date:
-      - Thu, 23 Apr 2020 22:39:40 GMT
+      - Tue, 09 Jun 2020 21:14:48 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/5692beda-52d5-4278-b8ef-b076f8a2d9f8
+      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/7be20b5c-8c53-4791-b535-e074f0f17232
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '256'
+      - '55'
     status:
       code: 201
       message: Created
@@ -49,20 +49,38 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/5692beda-52d5-4278-b8ef-b076f8a2d9f8?includeKeys=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/7be20b5c-8c53-4791-b535-e074f0f17232?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"5692beda-52d5-4278-b8ef-b076f8a2d9f8","status":"ready","createdDateTime":"2020-04-23T22:39:40Z","lastUpdatedDateTime":"2020-04-23T22:39:42Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo": {"modelId": "7be20b5c-8c53-4791-b535-e074f0f17232", "status":
+        "ready", "createdDateTime": "2020-06-09T21:14:49Z", "lastUpdatedDateTime":
+        "2020-06-09T21:14:53Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+        [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice4.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice5.pdf", "pages": 3, "status": "succeeded"}],
+        "fields": [{"fieldName": "Customer2", "accuracy": 1.0}, {"fieldName": "CustomerAddress",
+        "accuracy": 1.0}, {"fieldName": "CustomerName", "accuracy": 1.0}, {"fieldName":
+        "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName": "FirstItem", "accuracy":
+        1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0}, {"fieldName": "FirstQuantity",
+        "accuracy": 1.0}, {"fieldName": "Merchant", "accuracy": 0.0}, {"fieldName":
+        "Merchant2", "accuracy": 0.0}, {"fieldName": "MerchantAddress", "accuracy":
+        1.0}, {"fieldName": "MerchantPhoneNumber", "accuracy": 1.0}, {"fieldName":
+        "Signature", "accuracy": 1.0}, {"fieldName": "Signature2", "accuracy": 1.0},
+        {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
+        1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
+        1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - a2fc950c-d791-4eb1-923e-5242df42d618
+      - a0180915-a4ec-4383-a8e6-f1d59b97ffaf
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Apr 2020 22:39:45 GMT
+      - Tue, 09 Jun 2020 21:14:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +88,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '62'
+      - '28'
     status:
       code: 200
       message: OK
