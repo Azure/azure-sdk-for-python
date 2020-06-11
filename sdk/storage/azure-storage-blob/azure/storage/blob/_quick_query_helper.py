@@ -12,7 +12,7 @@ from ._shared.avro.avro_io import DatumReader
 from ._models import BlobQueryError
 
 
-class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
+class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to read quick query result.
 
     :ivar str name:

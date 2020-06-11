@@ -40,7 +40,7 @@ from ._generated.models import ( # pylint: disable=unused-import
 from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version, \
     serialize_blob_tags_header, serialize_blob_tags, get_quick_query_serialization_info
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
-from ._quick_query_helper import QuickQueryReader
+from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
@@ -668,26 +668,29 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def query(self, query_expression,  # type: str
-              **kwargs):
-        # type: (str, **Any) -> QuickQueryReader
+    def query_blob(self, query_expression, **kwargs):
+        # type: (str, **Any) -> BlobQueryReader
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
-        This operations returns a QuickQueryReader, users need to use readall() or readinto() to get query data.
+        This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
             Required. a query statement.
-        :keyword func(~azure.storage.blob.BlobQueryError, int, int) progress_callback:
-            Callback where the caller can track progress of the operation as well as the quick query failures.
-        :keyword input_serialization:
+        :keyword Union[str, Callable[Exception]] errors:
+            Determines the error behaviour. The default value is 'strict', where any non-fatal error will be
+            raised. Other possible values include:
+                - 'ignore': Non-fatal errors will be ignored, this may result in dropped records.
+                - 'warning': Non-fatal errors will be logged at the warning level.
+                - Callable[Exception]: If a callable is provided, customer error handling can be defined.
+        :keyword blob_dialect:
             Optional. Defines the input serialization for a blob quick query request.
             This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
             When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype input_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str
-        :keyword output_serialization:
+        :paramtype blob_dialect: ~azure.storage.blob.DelimitedTextConfiguration or str
+        :keyword output_dialect:
             Optional. Defines the output serialization for a blob quick query request.
             This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
             When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype output_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str.
+        :paramtype output_dialect: ~azure.storage.blob.DelimitedTextConfiguration or str.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -716,8 +719,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A streaming object (QuickQueryReader)
-        :rtype: ~azure.storage.blob.QuickQueryReader
+        :returns: A streaming object (BlobQueryReader)
+        :rtype: ~azure.storage.blob.BlobQueryReader
 
         .. admonition:: Example:
 
@@ -729,7 +732,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
         options = self._quick_query_options(query_expression, **kwargs)
-        return QuickQueryReader(**options)
+        return BlobQueryReader(**options)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
