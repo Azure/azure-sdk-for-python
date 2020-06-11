@@ -40,7 +40,7 @@ def _get_match_headers(kwargs, match_param, etag_param):
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
-        if etag_param in kwargs:
+        if kwargs.get(etag_param):
             raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
     else:
         raise TypeError("Invalid match condition: {}".format(match_condition))

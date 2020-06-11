@@ -42,12 +42,12 @@ def authentication_with_api_key_credential():
 def authentication_service_client_with_api_key_credential():
     # [START create_search_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import SearchServiceClient
+    from azure.search.documents.indexes import SearchIndexClient
 
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
     key = os.getenv("AZURE_SEARCH_API_KEY")
 
-    search_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+    search_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     # [END create_search_service_client_with_key]
 
 if __name__ == '__main__':

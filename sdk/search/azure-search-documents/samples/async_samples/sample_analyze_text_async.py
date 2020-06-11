@@ -29,15 +29,14 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 async def simple_analyze_text():
     # [START simple_analyze_text_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.aio import SearchServiceClient
-    from azure.search.documents import AnalyzeRequest
+    from azure.search.documents.indexes.aio import SearchIndexClient
+    from azure.search.documents.indexes.models import AnalyzeTextOptions
 
-    service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
-    client = service_client.get_indexes_client()
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
-    analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+    analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
 
-    async with service_client:
+    async with client:
         result = await client.analyze_text(index_name, analyze_request)
         print(result.as_dict())
     # [END simple_analyze_text_async]

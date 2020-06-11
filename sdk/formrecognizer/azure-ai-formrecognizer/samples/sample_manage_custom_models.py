@@ -26,16 +26,16 @@ import os
 
 class ManageCustomModelsSample(object):
 
-    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
-    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-
     def manage_custom_models(self):
         # [START get_account_properties]
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer import FormTrainingClient
 
-        form_training_client = FormTrainingClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         # First, we see how many custom models we have, and what our limit is
         account_properties = form_training_client.get_account_properties()
         print("Our account has {} custom models, and we can have at most {} custom models".format(
@@ -44,8 +44,8 @@ class ManageCustomModelsSample(object):
         # [END get_account_properties]
 
         # Next, we get a paged list of all of our custom models
-        # [START list_model_infos]
-        custom_models = form_training_client.list_model_infos()
+        # [START list_custom_models]
+        custom_models = form_training_client.list_custom_models()
 
         print("We have models with the following ids:")
 
@@ -54,15 +54,15 @@ class ManageCustomModelsSample(object):
         print(first_model.model_id)
         for model in custom_models:
             print(model.model_id)
-        # [END list_model_infos]
+        # [END list_custom_models]
 
         # Now we'll get the first custom model in the paged list
         # [START get_custom_model]
         custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
         print("Model ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
-        print("Created on: {}".format(custom_model.created_on))
-        print("Last modified: {}".format(custom_model.last_modified))
+        print("Requested on: {}".format(custom_model.requested_on))
+        print("Completed on: {}".format(custom_model.completed_on))
         # [END get_custom_model]
 
         # Finally, we will delete this model by ID

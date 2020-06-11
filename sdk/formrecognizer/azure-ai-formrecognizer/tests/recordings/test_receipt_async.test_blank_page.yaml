@@ -456,46 +456,50 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: db660ec1-18f6-4abf-822e-181077831ee1
+      apim-request-id: 356e8fb3-2017-4183-9092-2a5381eb69c8
       content-length: '0'
-      date: Wed, 22 Apr 2020 22:53:11 GMT
-      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/db660ec1-18f6-4abf-822e-181077831ee1
+      date: Tue, 09 Jun 2020 21:14:06 GMT
+      operation-location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/356e8fb3-2017-4183-9092-2a5381eb69c8
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '748'
+      x-envoy-upstream-service-time: '70'
     status:
       code: 202
       message: Accepted
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/db660ec1-18f6-4abf-822e-181077831ee1
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/356e8fb3-2017-4183-9092-2a5381eb69c8
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-22T22:53:11Z","lastUpdatedDateTime":"2020-04-22T22:53:15Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0,"width":8.4967,"height":10.9967,"unit":"inch","language":"en"}],"documentResults":[{"docType":"prebuilt:receipt","pageRange":[1,1]}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:14:06Z",
+        "lastUpdatedDateTime": "2020-06-09T21:14:08Z", "analyzeResult": {"version":
+        "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.4967, "height":
+        10.9967, "unit": "inch", "language": "en"}], "documentResults": [{"docType":
+        "prebuilt:receipt", "pageRange": [1, 1]}]}}'
     headers:
-      apim-request-id: d0a496cc-96f4-4dcc-afd8-d1c50545a6b5
+      apim-request-id: ff3b2ff2-542b-4c2b-899a-ecaf10bb6598
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Apr 2020 22:53:16 GMT
+      date: Tue, 09 Jun 2020 21:14:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '317'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/db660ec1-18f6-4abf-822e-181077831ee1
+    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/356e8fb3-2017-4183-9092-2a5381eb69c8
 version: 1

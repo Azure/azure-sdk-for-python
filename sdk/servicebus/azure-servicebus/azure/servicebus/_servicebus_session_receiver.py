@@ -2,14 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import time
 import logging
-from typing import Any, TYPE_CHECKING, Optional, Union
-import six
+from typing import Any, TYPE_CHECKING
 
-from ._base_handler import BaseHandler
-from ._common.utils import utc_from_timestamp, utc_now
-from ._common.constants import ReceiveSettleMode
 from ._common.receiver_mixins import SessionReceiverMixin
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
@@ -80,7 +75,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
-        self._create_session_attributes(**kwargs)
+        self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     @property
@@ -155,4 +150,4 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)
+        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore

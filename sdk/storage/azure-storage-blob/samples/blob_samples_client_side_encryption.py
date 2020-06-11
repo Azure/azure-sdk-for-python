@@ -87,8 +87,8 @@ class RSAKeyWrapper:
         if algorithm == 'RSA':
             return self.public_key.encrypt(key,
                                            OAEP(
-                                               mgf=MGF1(algorithm=SHA1()),
-                                               algorithm=SHA1(),
+                                               mgf=MGF1(algorithm=SHA1()),  #nosec
+                                               algorithm=SHA1(),    #nosec
                                                label=None)
                                            )
         raise ValueError('Unknown key wrap algorithm.')
@@ -97,8 +97,8 @@ class RSAKeyWrapper:
         if algorithm == 'RSA':
             return self.private_key.decrypt(key,
                                             OAEP(
-                                                mgf=MGF1(algorithm=SHA1()),
-                                                algorithm=SHA1(),
+                                                mgf=MGF1(algorithm=SHA1()), #nosec
+                                                algorithm=SHA1(),   #nosec
                                                 label=None)
                                             )
         raise ValueError('Unknown key wrap algorithm.')

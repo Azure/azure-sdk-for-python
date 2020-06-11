@@ -10,8 +10,9 @@ import uamqp
 from uamqp import SendClientAsync, types
 
 from .._common.message import Message, BatchMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._servicebus_sender import SenderMixin
-from ._base_handler_async import BaseHandlerAsync
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSender(BaseHandlerAsync, SenderMixin):
+class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
@@ -228,8 +229,9 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         return cls(**constructor_args)
@@ -265,11 +267,11 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """
         try:
             batch = await self.create_batch()
-            batch._from_list(message)
+            batch._from_list(message)  # pylint: disable=protected-access
             message = batch
         except TypeError:  # Message was not a list or generator.
             pass
-        if isinstance(message, BatchMessage) and len(message) == 0:
+        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
         await self._do_retryable_operation(

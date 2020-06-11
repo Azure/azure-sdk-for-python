@@ -9,6 +9,8 @@
 import os
 import time
 import json
+from typing import Dict
+
 try:
     from urllib2 import quote as url_quote
     from urllib2 import unquote as url_unquote
@@ -1252,7 +1254,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
 
 # Token cache for Authentication
 # Shared by the different instances of ServiceBusWrapTokenAuthentication
-_tokens = {}
+_tokens = {}  # type: Dict[str, str]
 
 
 class ServiceBusWrapTokenAuthentication:
