@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+      string: "{\r\n  \"name\": \"publicipname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
         ,\r\n  \"etag\": \"W/\\\"2f5df85c-6083-4b7f-962b-c7163587da98\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Updating\",\r\n    \"resourceGuid\": \"5d8c5f2d-bb47-4b76-bc1e-825ba23ecdb4\"\
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+      string: "{\r\n  \"name\": \"publicipname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
         ,\r\n  \"etag\": \"W/\\\"9f381a52-817f-4658-8d92-29a81fa5c12e\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"5d8c5f2d-bb47-4b76-bc1e-825ba23ecdb4\"\
@@ -174,10 +174,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"924d516e-ea30-409e-b0ec-fd2b94842618\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -274,10 +274,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"2c8db917-eaf2-4493-9a56-25fde80cee3a\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -334,10 +334,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"rmvirtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+      string: "{\r\n  \"name\": \"rmvirtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"d5f58506-7464-486a-98ef-96b7875cb794\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -434,10 +434,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"rmvirtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+      string: "{\r\n  \"name\": \"rmvirtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"436a6e1a-301c-4c1b-bffe-4de48a5df8ec\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -493,10 +493,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         ,\r\n  \"etag\": \"W/\\\"1c466630-a780-4983-a141-b41a8b741d4b\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -588,10 +588,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         ,\r\n  \"etag\": \"W/\\\"26fb741c-950d-4268-be3c-3708ac2a41ab\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -630,7 +630,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"name":
-      "ipconfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname"}}}]}}'''
+      "ipconfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname"}}}]}}'''
     headers:
       Accept:
       - application/json
@@ -645,20 +645,20 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkinterfacename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename\"\
+      string: "{\r\n  \"name\": \"networkinterfacename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename\"\
         ,\r\n  \"etag\": \"W/\\\"a561a30f-0236-4d29-87b4-f09021cb5c88\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"13ffc9e4-cbc1-4989-a6bb-2697d5842942\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"ipconfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"a561a30f-0236-4d29-87b4-f09021cb5c88\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -755,20 +755,20 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkinterfacename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename\"\
+      string: "{\r\n  \"name\": \"networkinterfacename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename\"\
         ,\r\n  \"etag\": \"W/\\\"a561a30f-0236-4d29-87b4-f09021cb5c88\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"13ffc9e4-cbc1-4989-a6bb-2697d5842942\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"ipconfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"a561a30f-0236-4d29-87b4-f09021cb5c88\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -824,10 +824,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         ,\r\n  \"etag\": \"W/\\\"607de663-1344-4528-8e34-de750186c9b2\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.1.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -919,10 +919,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         ,\r\n  \"etag\": \"W/\\\"383edd27-a847-4f60-8a34-8ccfd0ebab1f\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.1.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -976,10 +976,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"9cc8b92a-a232-4809-b73f-e3b17a5de5e2\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/localNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
@@ -1075,10 +1075,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"dd6247c0-71f9-42f7-a3f7-13cfbcee9458\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/localNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -1120,8 +1120,8 @@ interactions:
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"name":
       "ipconfig", "properties": {"privateIPAllocationMethod": "Dynamic", "subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
-      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
+      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
       "gatewayType": "Vpn", "vpnType": "RouteBased", "enableBgp": false, "sku": {"name":
       "VpnGw1", "tier": "VpnGw1"}, "bgpSettings": {"asn": 65515, "bgpPeeringAddress":
       "10.0.1.30", "peerWeight": 0}, "customRoutes": {"addressPrefixes": ["101.168.0.6/32"]},
@@ -1140,23 +1140,23 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"1f4bee9f-2126-43b8-9c4b-3c8e0ef26b6b\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
         ,\r\n    \"resourceGuid\": \"ce83bca6-9412-4a9d-a682-501b99d7f277\",\r\n \
         \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"1f4bee9f-2126-43b8-9c4b-3c8e0ef26b6b\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
@@ -1167,7 +1167,7 @@ interactions:
         \n      \"vpnClientIpsecPolicies\": []\r\n    },\r\n    \"bgpSettings\": {\r\
         \n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\",\r\n\
         \      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n        {\r\
-        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n          \"defaultBgpIpAddresses\": [],\r\n          \"customBgpIpAddresses\"\
         : []\r\n        }\r\n      ]\r\n    },\r\n    \"customRoutes\": {\r\n    \
         \  \"addressPrefixes\": [\r\n        \"101.168.0.6/32\"\r\n      ]\r\n   \
@@ -7246,30 +7246,30 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"b7922963-0f8f-47f1-b552-bb5367b81da2\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"ce83bca6-9412-4a9d-a682-501b99d7f277\",\r\n \
         \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"b7922963-0f8f-47f1-b552-bb5367b81da2\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"activeActive\": false,\r\n    \"bgpSettings\"\
         : {\r\n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\"\
         ,\r\n      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n    \
-        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n          \"defaultBgpIpAddresses\": [\r\n            \"10.0.1.30\"\r\
         \n          ],\r\n          \"customBgpIpAddresses\": [],\r\n          \"\
         tunnelIpAddresses\": [\r\n            \"13.68.245.51\"\r\n          ]\r\n\
@@ -7308,7 +7308,7 @@ interactions:
 - request:
     body: 'b''{"properties": {"allowVirtualNetworkAccess": true, "allowForwardedTraffic":
       true, "allowGatewayTransit": false, "useRemoteGateways": false, "remoteVirtualNetwork":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname"}}}'''
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname"}}}'''
     headers:
       Accept:
       - application/json
@@ -7323,14 +7323,14 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
         ,\r\n  \"etag\": \"W/\\\"82a865a2-0635-4ce5-86e0-b86e42a92025\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         resourceGuid\": \"5b07840a-5a8d-0335-3377-86a04f504aec\",\r\n    \"peeringState\"\
-        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         \r\n    },\r\n    \"allowVirtualNetworkAccess\": true,\r\n    \"allowForwardedTraffic\"\
         : true,\r\n    \"allowGatewayTransit\": false,\r\n    \"useRemoteGateways\"\
         : false,\r\n    \"doNotVerifyRemoteGateways\": false,\r\n    \"remoteAddressSpace\"\
@@ -7423,14 +7423,14 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
         ,\r\n  \"etag\": \"W/\\\"0da6ab0d-8888-4521-8ffa-bbd864a657df\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         resourceGuid\": \"5b07840a-5a8d-0335-3377-86a04f504aec\",\r\n    \"peeringState\"\
-        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         \r\n    },\r\n    \"allowVirtualNetworkAccess\": true,\r\n    \"allowForwardedTraffic\"\
         : true,\r\n    \"allowGatewayTransit\": false,\r\n    \"useRemoteGateways\"\
         : false,\r\n    \"doNotVerifyRemoteGateways\": false,\r\n    \"remoteAddressSpace\"\
@@ -7470,14 +7470,14 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"virtualNetworkGateway1": {"id":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname",
-      "location": "eastus", "properties": {"ipConfigurations": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig",
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname",
+      "location": "eastus", "properties": {"ipConfigurations": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig",
       "name": "ipconfig", "properties": {"privateIPAllocationMethod": "Dynamic", "subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
-      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
+      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
       "gatewayType": "Vpn", "vpnType": "RouteBased", "enableBgp": false, "sku": {"name":
       "VpnGw1", "tier": "VpnGw1"}, "bgpSettings": {"asn": 65514, "bgpPeeringAddress":
-      "10.0.2.30", "peerWeight": 0}}}, "localNetworkGateway2": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname",
+      "10.0.2.30", "peerWeight": 0}}}, "localNetworkGateway2": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname",
       "location": "eastus", "properties": {"localNetworkAddressSpace": {"addressPrefixes":
       ["10.1.0.0/16"]}, "gatewayIpAddress": "10.1.0.1"}}, "connectionType": "IPsec",
       "connectionProtocol": "IKEv2", "routingWeight": 0, "sharedKey": "Abc123", "enableBgp":
@@ -7497,17 +7497,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname\"\
+      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname\"\
         ,\r\n  \"etag\": \"W/\\\"0e315efc-ba5d-492c-8e49-faf01c87a6c3\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/connections\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
         \   \"resourceGuid\": \"a781ec31-ebab-427e-b301-1a5af84f19d8\",\r\n    \"\
         packetCaptureDiagnosticState\": \"None\",\r\n    \"virtualNetworkGateway1\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         \r\n    },\r\n    \"connectionType\": \"IPsec\",\r\n    \"connectionProtocol\"\
         : \"IKEv2\",\r\n    \"routingWeight\": 0,\r\n    \"sharedKey\": \"Abc123\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"useLocalAzureIpAddress\": false,\r\
@@ -7603,17 +7603,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname\"\
+      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname\"\
         ,\r\n  \"etag\": \"W/\\\"b3d2de81-d4ba-401c-a756-b1c3f63c2d23\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/connections\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"a781ec31-ebab-427e-b301-1a5af84f19d8\",\r\n    \"\
         packetCaptureDiagnosticState\": \"None\",\r\n    \"virtualNetworkGateway1\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         \r\n    },\r\n    \"connectionType\": \"IPsec\",\r\n    \"connectionProtocol\"\
         : \"IKEv2\",\r\n    \"routingWeight\": 0,\r\n    \"sharedKey\": \"Abc123\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"useLocalAzureIpAddress\": false,\r\
@@ -7667,7 +7667,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -7755,7 +7755,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"value\": \"AzureAbc123\"\r\n}"
@@ -7800,14 +7800,14 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
         ,\r\n  \"etag\": \"W/\\\"0da6ab0d-8888-4521-8ffa-bbd864a657df\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         resourceGuid\": \"5b07840a-5a8d-0335-3377-86a04f504aec\",\r\n    \"peeringState\"\
-        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+        : \"Initiated\",\r\n    \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         \r\n    },\r\n    \"allowVirtualNetworkAccess\": true,\r\n    \"allowForwardedTraffic\"\
         : true,\r\n    \"allowGatewayTransit\": false,\r\n    \"useRemoteGateways\"\
         : false,\r\n    \"doNotVerifyRemoteGateways\": false,\r\n    \"remoteAddressSpace\"\
@@ -7857,7 +7857,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname/ServiceAssociationLinks?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname/ServiceAssociationLinks?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"value\": []\r\n}"
@@ -7902,7 +7902,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname/ResourceNavigationLinks?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname/ResourceNavigationLinks?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"value\": []\r\n}"
@@ -7947,7 +7947,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.1.4&api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.1.4&api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"available\": true,\r\n  \"isPlatformReserved\": false\r\n}"
@@ -7992,16 +7992,16 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         ,\r\n  \"etag\": \"W/\\\"a4eaf002-23b5-41e6-9764-78534afa4342\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"networkSecurityGroup\": {\r\n \
-        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
+        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
         \r\n    },\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
         \r\n      }\r\n    ],\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
@@ -8048,30 +8048,30 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"f6de442a-4be1-42de-aea1-d84ae152ab73\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"ce83bca6-9412-4a9d-a682-501b99d7f277\",\r\n \
         \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"f6de442a-4be1-42de-aea1-d84ae152ab73\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"activeActive\": false,\r\n    \"bgpSettings\"\
         : {\r\n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\"\
         ,\r\n      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n    \
-        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n          \"defaultBgpIpAddresses\": [\r\n            \"10.0.1.30\"\r\
         \n          ],\r\n          \"customBgpIpAddresses\": [],\r\n          \"\
         tunnelIpAddresses\": [\r\n            \"13.68.245.51\"\r\n          ]\r\n\
@@ -8119,10 +8119,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"dd6247c0-71f9-42f7-a3f7-13cfbcee9458\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/localNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
@@ -8173,7 +8173,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"value\": \"AzureAbc123\"\r\n}"
@@ -8218,43 +8218,43 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"a4eaf002-23b5-41e6-9764-78534afa4342\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"a6ffc210-8178-43d2-aa14-9985ef8c2ce6\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"GatewaySubnet\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        : \"GatewaySubnet\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         ,\r\n        \"etag\": \"W/\\\"a4eaf002-23b5-41e6-9764-78534afa4342\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"ipConfigurations\"\
-        : [\r\n            {\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        : [\r\n            {\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         \r\n            }\r\n          ],\r\n          \"delegations\": [],\r\n  \
         \        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n          \"\
         privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\n       \
         \ \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n      },\r\n\
-        \      {\r\n        \"name\": \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+        \      {\r\n        \"name\": \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         ,\r\n        \"etag\": \"W/\\\"a4eaf002-23b5-41e6-9764-78534afa4342\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"networkSecurityGroup\"\
-        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
+        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
         \r\n          },\r\n          \"ipConfigurations\": [\r\n            {\r\n\
-        \              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
+        \              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
         \r\n            }\r\n          ],\r\n          \"delegations\": [],\r\n  \
         \        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n          \"\
         privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\n       \
         \ \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n      }\r\n \
         \   ],\r\n    \"virtualNetworkPeerings\": [\r\n      {\r\n        \"name\"\
-        : \"virtualnetworkpeeringname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
+        : \"virtualnetworkpeeringname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
         ,\r\n        \"etag\": \"W/\\\"a4eaf002-23b5-41e6-9764-78534afa4342\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"resourceGuid\": \"5b07840a-5a8d-0335-3377-86a04f504aec\"\
         ,\r\n          \"peeringState\": \"Initiated\",\r\n          \"remoteVirtualNetwork\"\
-        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         \r\n          },\r\n          \"allowVirtualNetworkAccess\": true,\r\n   \
         \       \"allowForwardedTraffic\": true,\r\n          \"allowGatewayTransit\"\
         : false,\r\n          \"useRemoteGateways\": false,\r\n          \"doNotVerifyRemoteGateways\"\
@@ -8307,17 +8307,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname\"\
+      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname\"\
         ,\r\n  \"etag\": \"W/\\\"13437b29-b439-41f4-95fa-57c2564facb7\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/connections\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"a781ec31-ebab-427e-b301-1a5af84f19d8\",\r\n    \"\
         packetCaptureDiagnosticState\": \"None\",\r\n    \"virtualNetworkGateway1\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         \r\n    },\r\n    \"connectionType\": \"IPsec\",\r\n    \"connectionProtocol\"\
         : \"IKEv2\",\r\n    \"routingWeight\": 0,\r\n    \"sharedKey\": \"AzureAbc123\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"useLocalAzureIpAddress\": false,\r\
@@ -8369,7 +8369,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getAdvertisedRoutes?peer=10.0.0.2&api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getAdvertisedRoutes?peer=10.0.0.2&api-version=2020-03-01
   response:
     body:
       string: 'null'
@@ -8466,7 +8466,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getBgpPeerStatus?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getBgpPeerStatus?api-version=2020-03-01
   response:
     body:
       string: 'null'
@@ -8560,7 +8560,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getLearnedRoutes?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/getLearnedRoutes?api-version=2020-03-01
   response:
     body:
       string: 'null'
@@ -8656,7 +8656,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname/sharedkey/reset?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname/sharedkey/reset?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -8797,7 +8797,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/reset?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/reset?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -12405,10 +12405,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"9d8c6a0b-9739-4569-8783-20fb49243039\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\"\
@@ -12416,13 +12416,13 @@ interactions:
         \ \"Updating\",\r\n    \"resourceGuid\": \"ce83bca6-9412-4a9d-a682-501b99d7f277\"\
         ,\r\n    \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n        \"etag\": \"W/\\\"9d8c6a0b-9739-4569-8783-20fb49243039\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
@@ -12433,7 +12433,7 @@ interactions:
         \n      \"vpnClientIpsecPolicies\": []\r\n    },\r\n    \"bgpSettings\": {\r\
         \n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\",\r\n\
         \      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n        {\r\
-        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         ,\r\n          \"defaultBgpIpAddresses\": [\r\n            \"10.0.1.30\"\r\
         \n          ],\r\n          \"customBgpIpAddresses\": [],\r\n          \"\
         tunnelIpAddresses\": [\r\n            \"13.68.245.51\"\r\n          ]\r\n\
@@ -12489,10 +12489,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+      string: "{\r\n  \"name\": \"localnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         ,\r\n  \"etag\": \"W/\\\"a3add5f7-6182-4b1f-99ec-41acf04f7605\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/localNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\"\
@@ -12550,10 +12550,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
+      string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
         ,\r\n  \"etag\": \"W/\\\"df1b4a20-375f-4d68-85f5-1541464b97b4\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
@@ -12561,33 +12561,33 @@ interactions:
         ,\r\n    \"resourceGuid\": \"a6ffc210-8178-43d2-aa14-9985ef8c2ce6\",\r\n \
         \   \"addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"GatewaySubnet\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
+        : \"GatewaySubnet\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
         ,\r\n        \"etag\": \"W/\\\"df1b4a20-375f-4d68-85f5-1541464b97b4\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"ipConfigurations\"\
-        : [\r\n            {\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
+        : [\r\n            {\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
         \r\n            }\r\n          ],\r\n          \"delegations\": [],\r\n  \
         \        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n          \"\
         privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\n       \
         \ \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n      },\r\n\
-        \      {\r\n        \"name\": \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
+        \      {\r\n        \"name\": \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
         ,\r\n        \"etag\": \"W/\\\"df1b4a20-375f-4d68-85f5-1541464b97b4\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"networkSecurityGroup\"\
-        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
+        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/virtualnetworkname-subnetname-NRMS\"\
         \r\n          },\r\n          \"ipConfigurations\": [\r\n            {\r\n\
-        \              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
+        \              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename/ipConfigurations/ipconfig\"\
         \r\n            }\r\n          ],\r\n          \"delegations\": [],\r\n  \
         \        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n          \"\
         privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\n       \
         \ \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n      }\r\n \
         \   ],\r\n    \"virtualNetworkPeerings\": [\r\n      {\r\n        \"name\"\
-        : \"virtualnetworkpeeringname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
+        : \"virtualnetworkpeeringname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
         ,\r\n        \"etag\": \"W/\\\"df1b4a20-375f-4d68-85f5-1541464b97b4\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"resourceGuid\": \"5b07840a-5a8d-0335-3377-86a04f504aec\"\
         ,\r\n          \"peeringState\": \"Initiated\",\r\n          \"remoteVirtualNetwork\"\
-        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
+        : {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
         \r\n          },\r\n          \"allowVirtualNetworkAccess\": true,\r\n   \
         \       \"allowForwardedTraffic\": true,\r\n          \"allowGatewayTransit\"\
         : false,\r\n          \"useRemoteGateways\": false,\r\n          \"doNotVerifyRemoteGateways\"\
@@ -12646,17 +12646,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname\"\
+      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname\"\
         ,\r\n  \"etag\": \"W/\\\"7d6a2bd0-e327-4494-99c6-50920e01a332\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/connections\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"a781ec31-ebab-427e-b301-1a5af84f19d8\",\r\n    \"\
         packetCaptureDiagnosticState\": \"None\",\r\n    \"virtualNetworkGateway1\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
+        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
+        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
         \r\n    },\r\n    \"connectionType\": \"IPsec\",\r\n    \"connectionProtocol\"\
         : \"IKEv2\",\r\n    \"routingWeight\": 0,\r\n    \"sharedKey\": \"4Pb07CuO6AwIXfITJGQremJVFop4hCohl8cyOBu2ymgjmotkB2FvzHqRgLPcLhux6NqOSMfWbHhAWkJH7J3utPxd91UbU6NvwAiHzUPaRKzEMsAV3RbtzbS3qTOHaJPx\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"useLocalAzureIpAddress\": false,\r\
@@ -12709,7 +12709,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -12803,7 +12803,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -12895,7 +12895,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"error\": {\r\n    \"code\": \"AnotherOperationInProgress\"\
@@ -12943,7 +12943,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16322,7 +16322,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16358,7 +16358,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16394,7 +16394,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16488,7 +16488,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/networkinterfacename?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16582,7 +16582,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -16674,7 +16674,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_base_test_network42d41026/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-03-01
   response:
     body:
       string: ''

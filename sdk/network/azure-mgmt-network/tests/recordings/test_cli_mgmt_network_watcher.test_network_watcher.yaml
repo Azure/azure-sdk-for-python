@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetwork121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
+      string: "{\r\n  \"name\": \"virtualnetwork121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"02525291-205a-4f84-80c0-7d40a8bc3876\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -116,10 +116,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetwork121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
+      string: "{\r\n  \"name\": \"virtualnetwork121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"d67bb2ba-244c-43cf-acef-72ea1469011f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -175,10 +175,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnet121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+      string: "{\r\n  \"name\": \"subnet121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"8eec63ba-445d-44f5-896f-065a95fba7ab\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -270,10 +270,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnet121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+      string: "{\r\n  \"name\": \"subnet121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"411b2e53-28e0-4705-bd03-ed6c64274f93\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -312,7 +312,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"name":
-      "MyIpConfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6"}}}]}}'''
+      "MyIpConfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6"}}}]}}'''
     headers:
       Accept:
       - application/json
@@ -327,20 +327,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interface121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+      string: "{\r\n  \"name\": \"interface121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"8ce426af-abf1-4127-8664-7200121e6d5b\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"5ac6901f-3187-491a-90a6-0f2f22a67fd2\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"8ce426af-abf1-4127-8664-7200121e6d5b\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -437,20 +437,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interface121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+      string: "{\r\n  \"name\": \"interface121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"8ce426af-abf1-4127-8664-7200121e6d5b\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"5ac6901f-3187-491a-90a6-0f2f22a67fd2\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"8ce426af-abf1-4127-8664-7200121e6d5b\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -499,7 +499,7 @@ interactions:
       0, "createOption": "Empty", "diskSizeGB": 1023}, {"lun": 1, "createOption":
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
-      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6",
+      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6",
       "properties": {"primary": true}}]}}}'''
     headers:
       Accept:
@@ -518,10 +518,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachine121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
+      string: "{\r\n  \"name\": \"virtualmachine121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"35f6d605-f843-431a-989e-97c5f4c011a7\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -547,7 +547,7 @@ interactions:
         : {\r\n        \"provisionVMAgent\": true,\r\n        \"enableAutomaticUpdates\"\
         : true\r\n      },\r\n      \"secrets\": [],\r\n      \"allowExtensionOperations\"\
         : true,\r\n      \"requireGuestProvisionSignal\": true\r\n    },\r\n    \"\
-        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Creating\"\
         \r\n  }\r\n}"
     headers:
@@ -690,10 +690,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachine121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
+      string: "{\r\n  \"name\": \"virtualmachine121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"35f6d605-f843-431a-989e-97c5f4c011a7\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -705,18 +705,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER121614C6/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachine121614c6_disk2_86318a7cc93f437e87db38e38d5fb77b\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER121614C6/providers/Microsoft.Compute/disks/virtualmachine121614c6_disk2_86318a7cc93f437e87db38e38d5fb77b\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachine121614c6_disk2_86318a7cc93f437e87db38e38d5fb77b\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachine121614c6_disk3_c9032d804fd94e55972351a5ddbb9600\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER121614C6/providers/Microsoft.Compute/disks/virtualmachine121614c6_disk3_c9032d804fd94e55972351a5ddbb9600\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachine121614c6_disk3_c9032d804fd94e55972351a5ddbb9600\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -724,7 +724,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -777,11 +777,11 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextension121614c6\",\r\n  \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Creating\",\r\n    \"publisher\":\
@@ -975,11 +975,11 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextension121614c6\",\r\n  \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6/extensions/virtualmachineextension121614c6\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -1033,7 +1033,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Storage/storageAccounts/storagename121614c6?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagename121614c6?api-version=2019-04-01
   response:
     body:
       string: ''
@@ -1079,7 +1079,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/99931e84-c709-4d7d-b174-1b3785bf5dcb?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Storage/storageAccounts/storagename121614c6","name":"storagename121614c6","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-06-01T05:16:26.8675119Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-06-01T05:16:26.8675119Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-06-01T05:16:26.8049648Z","primaryEndpoints":{"blob":"https://storagename121614c6.blob.core.windows.net/","queue":"https://storagename121614c6.queue.core.windows.net/","table":"https://storagename121614c6.table.core.windows.net/","file":"https://storagename121614c6.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagename121614c6","name":"storagename121614c6","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-06-01T05:16:26.8675119Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-06-01T05:16:26.8675119Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-06-01T05:16:26.8049648Z","primaryEndpoints":{"blob":"https://storagename121614c6.blob.core.windows.net/","queue":"https://storagename121614c6.queue.core.windows.net/","table":"https://storagename121614c6.table.core.windows.net/","file":"https://storagename121614c6.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -1122,10 +1122,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
+      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"b26c3607-f896-47ac-9f48-5c53373455d3\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkWatchers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -1173,10 +1173,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
+      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"a07398ea-8399-4bfa-baf1-17f48c5593d4\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkWatchers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -1213,7 +1213,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6",
+    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6",
       "profiles": [{"direction": "Inbound", "protocol": "TCP", "source": "10.1.0.4",
       "destination": "12.11.12.14", "destinationPort": "12100"}]}'''
     headers:
@@ -1230,7 +1230,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/networkConfigurationDiagnostic?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/networkConfigurationDiagnostic?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -1282,7 +1282,7 @@ interactions:
         \       \"destinationPort\": \"12100\"\r\n      },\r\n      \"networkSecurityGroupResult\"\
         : {\r\n        \"securityRuleAccessResult\": \"Allow\",\r\n        \"evaluatedNetworkSecurityGroups\"\
         : [\r\n          {\r\n            \"networkSecurityGroupId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg2\"\
-        ,\r\n            \"appliedTo\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        ,\r\n            \"appliedTo\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n            \"matchedRule\": {\r\n              \"ruleName\": \"UserRule_Cleanuptool-Allow-4001\"\
         ,\r\n              \"action\": \"Allow\"\r\n            },\r\n           \
         \ \"rulesEvaluationResult\": [\r\n              {\r\n                \"name\"\
@@ -1359,7 +1359,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6"}'''
+    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6"}'''
     headers:
       Accept:
       - application/json
@@ -1374,7 +1374,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/securityGroupView?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/securityGroupView?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -1455,7 +1455,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"source": {"resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6"},
+    body: 'b''{"source": {"resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6"},
       "destination": {"address": "192.168.100.4", "port": 3389}}'''
     headers:
       Accept:
@@ -1471,7 +1471,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/connectivityCheck?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/connectivityCheck?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -1992,7 +1992,7 @@ interactions:
     body:
       string: "{\r\n  \"hops\": [\r\n    {\r\n      \"type\": \"Source\",\r\n    \
         \  \"id\": \"55440af7-76da-40a0-bfb2-7ca505782f70\",\r\n      \"address\"\
-        : \"10.0.0.4\",\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
+        : \"10.0.0.4\",\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
         ,\r\n      \"nextHopIds\": [\r\n        \"63da36a2-3b88-4c5f-99b4-7465e7b14f4e\"\
         \r\n      ],\r\n      \"links\": [\r\n        {\r\n          \"nextHopId\"\
         : \"63da36a2-3b88-4c5f-99b4-7465e7b14f4e\",\r\n          \"linkType\": \"\
@@ -2049,7 +2049,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"targetResourceGroupName": "test_cli_mgmt_network_watcher_test_network_watcher121614c6"}'
+    body: '{"targetResourceGroupName": "rgname"}'
     headers:
       Accept:
       - application/json
@@ -2064,222 +2064,222 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/topology?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/topology?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"id\": \"94e7806e-e311-4dd9-ad1b-c76e878a68dd\",\r\n  \"createdDateTime\"\
         : \"2020-06-01T05:19:23.3809544Z\",\r\n  \"lastModified\": \"2020-06-01T05:14:48.0517065Z\"\
         ,\r\n  \"resources\": [\r\n    {\r\n      \"name\": \"virtualmachine121614c6\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
         ,\r\n      \"location\": \"eastus\",\r\n      \"associations\": [\r\n    \
         \    {\r\n          \"name\": \"interface121614c6\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        }\r\n      ],\r\
         \n      \"properties\": {}\r\n    },\r\n    {\r\n      \"name\": \"interface121614c6\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6\"\
         ,\r\n      \"location\": \"eastus\",\r\n      \"associations\": [\r\n    \
         \    {\r\n          \"name\": \"virtualmachine121614c6\",\r\n          \"\
-        resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
+        resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6\"\
         ,\r\n          \"associationType\": \"Associated\"\r\n        },\r\n     \
         \   {\r\n          \"name\": \"subnet121614c6\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n          \"associationType\": \"Associated\"\r\n        }\r\n      ],\r\
         \n      \"properties\": {}\r\n    },\r\n    {\r\n      \"name\": \"_e41f87a2_NSG-FrontEnd\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd\"\
         ,\r\n      \"associations\": [\r\n        {\r\n          \"name\": \"outboundRule-100\"\
-        ,\r\n          \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/outboundRule-100\"\
+        ,\r\n          \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/outboundRule-100\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-100\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-100\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-100\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-101\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-101\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-101\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-102\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-102\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-102\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-103\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-103\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-103\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-104\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-104\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-104\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-105\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-105\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-105\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-106\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-106\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-106\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-107\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-107\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-107\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-108\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-108\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-108\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-109\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-109\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-109\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-110\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-110\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-110\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-111\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-111\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-111\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-112\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-112\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-112\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-113\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-113\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-113\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-114\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-114\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-114\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-115\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-115\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-115\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-116\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-116\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-116\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-117\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-117\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-117\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-118\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-118\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-118\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-119\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-119\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-119\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-120\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-120\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-120\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-121\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-121\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-121\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-122\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-122\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-122\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-123\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-123\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-123\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-124\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-124\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-124\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-125\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-125\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-125\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-126\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-126\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-126\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-127\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-127\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-127\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-128\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-128\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-128\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-129\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-129\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-129\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-130\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-130\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-130\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-131\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-131\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-131\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-132\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-132\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-132\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-133\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-133\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-133\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"inboundRule-134\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-134\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-134\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        },\r\n       \
         \ {\r\n          \"name\": \"rdp-saw-inbound\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/rdp-saw-inbound\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/rdp-saw-inbound\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        }\r\n      ],\r\
         \n      \"properties\": {}\r\n    },\r\n    {\r\n      \"name\": \"outboundRule-100\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/outboundRule-100\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/outboundRule-100\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-100\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-100\"\
+        \    {\r\n      \"name\": \"inboundRule-100\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-100\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-101\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-101\"\
+        \    {\r\n      \"name\": \"inboundRule-101\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-101\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-102\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-102\"\
+        \    {\r\n      \"name\": \"inboundRule-102\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-102\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-103\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-103\"\
+        \    {\r\n      \"name\": \"inboundRule-103\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-103\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-104\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-104\"\
+        \    {\r\n      \"name\": \"inboundRule-104\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-104\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-105\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-105\"\
+        \    {\r\n      \"name\": \"inboundRule-105\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-105\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-106\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-106\"\
+        \    {\r\n      \"name\": \"inboundRule-106\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-106\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-107\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-107\"\
+        \    {\r\n      \"name\": \"inboundRule-107\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-107\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-108\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-108\"\
+        \    {\r\n      \"name\": \"inboundRule-108\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-108\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-109\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-109\"\
+        \    {\r\n      \"name\": \"inboundRule-109\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-109\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-110\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-110\"\
+        \    {\r\n      \"name\": \"inboundRule-110\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-110\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-111\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-111\"\
+        \    {\r\n      \"name\": \"inboundRule-111\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-111\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-112\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-112\"\
+        \    {\r\n      \"name\": \"inboundRule-112\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-112\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-113\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-113\"\
+        \    {\r\n      \"name\": \"inboundRule-113\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-113\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-114\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-114\"\
+        \    {\r\n      \"name\": \"inboundRule-114\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-114\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-115\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-115\"\
+        \    {\r\n      \"name\": \"inboundRule-115\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-115\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-116\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-116\"\
+        \    {\r\n      \"name\": \"inboundRule-116\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-116\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-117\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-117\"\
+        \    {\r\n      \"name\": \"inboundRule-117\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-117\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-118\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-118\"\
+        \    {\r\n      \"name\": \"inboundRule-118\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-118\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-119\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-119\"\
+        \    {\r\n      \"name\": \"inboundRule-119\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-119\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-120\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-120\"\
+        \    {\r\n      \"name\": \"inboundRule-120\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-120\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-121\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-121\"\
+        \    {\r\n      \"name\": \"inboundRule-121\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-121\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-122\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-122\"\
+        \    {\r\n      \"name\": \"inboundRule-122\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-122\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-123\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-123\"\
+        \    {\r\n      \"name\": \"inboundRule-123\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-123\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-124\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-124\"\
+        \    {\r\n      \"name\": \"inboundRule-124\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-124\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-125\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-125\"\
+        \    {\r\n      \"name\": \"inboundRule-125\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-125\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-126\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-126\"\
+        \    {\r\n      \"name\": \"inboundRule-126\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-126\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-127\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-127\"\
+        \    {\r\n      \"name\": \"inboundRule-127\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-127\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-128\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-128\"\
+        \    {\r\n      \"name\": \"inboundRule-128\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-128\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-129\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-129\"\
+        \    {\r\n      \"name\": \"inboundRule-129\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-129\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-130\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-130\"\
+        \    {\r\n      \"name\": \"inboundRule-130\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-130\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-131\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-131\"\
+        \    {\r\n      \"name\": \"inboundRule-131\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-131\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-132\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-132\"\
+        \    {\r\n      \"name\": \"inboundRule-132\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-132\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-133\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-133\"\
+        \    {\r\n      \"name\": \"inboundRule-133\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-133\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"inboundRule-134\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-134\"\
+        \    {\r\n      \"name\": \"inboundRule-134\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/inboundRule-134\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
-        \    {\r\n      \"name\": \"rdp-saw-inbound\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/rdp-saw-inbound\"\
+        \    {\r\n      \"name\": \"rdp-saw-inbound\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/_e41f87a2_NSG-FrontEnd/securityRules/rdp-saw-inbound\"\
         ,\r\n      \"associations\": [],\r\n      \"properties\": {}\r\n    },\r\n\
         \    {\r\n      \"name\": \"virtualnetwork121614c6\",\r\n      \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6\"\
         ,\r\n      \"location\": \"eastus\",\r\n      \"associations\": [\r\n    \
         \    {\r\n          \"name\": \"subnet121614c6\",\r\n          \"resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n          \"associationType\": \"Contains\"\r\n        }\r\n      ],\r\
         \n      \"properties\": {}\r\n    },\r\n    {\r\n      \"name\": \"subnet121614c6\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork121614c6/subnets/subnet121614c6\"\
         ,\r\n      \"location\": \"eastus\",\r\n      \"associations\": [\r\n    \
         \    {\r\n          \"name\": \"rg-cleanupservice-nsg2\",\r\n          \"\
         resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg2\"\
@@ -2319,9 +2319,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6",
+    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachine121614c6",
       "sourceIPAddress": "10.0.0.5", "destinationIPAddress": "10.0.0.10", "targetNicResourceId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkInterfaces/interface121614c6"}'''
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interface121614c6"}'''
     headers:
       Accept:
       - application/json
@@ -2336,7 +2336,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/nextHop?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6/nextHop?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -2431,10 +2431,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
+      string: "{\r\n  \"name\": \"networkwatcher121614c6\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6\"\
         ,\r\n  \"etag\": \"W/\\\"28d5549c-fd10-4275-9fde-64ea0d472649\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkWatchers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
@@ -2487,7 +2487,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher121614c6/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcher121614c6?api-version=2020-04-01
   response:
     body:
       string: ''

@@ -34,7 +34,7 @@ import time
 
 from azure.core.exceptions import HttpResponseError
 import azure.mgmt.network.v2020_03_01
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -83,7 +83,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         return result.result()
    
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"

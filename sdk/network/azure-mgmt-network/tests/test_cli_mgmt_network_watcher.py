@@ -31,7 +31,7 @@ import unittest
 
 import azure.mgmt.network
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -284,7 +284,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_network_gateways.begin_create_or_update(group_name, vn_gateway, BODY)
         result = result.result()
     
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_troubleshoot(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -335,7 +335,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_ip_flow(self, resource_group):
         
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -378,7 +378,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
  
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_flow_log(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -459,7 +459,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_monitor(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -599,7 +599,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher_packet_capture(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -664,7 +664,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.packet_captures.begin_delete(resource_group.name, NETWORK_WATCHER_NAME, PACKET_CAPTURE_NAME)
         result = result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network_watcher(self, resource_group):
         
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -798,7 +798,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.begin_delete(resource_group.name, NETWORK_WATCHER_NAME)
         result = result.result()
     
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

@@ -15,7 +15,7 @@ import time
 
 import azure.mgmt.network.aio
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
@@ -29,7 +29,7 @@ class MgmtNetworkTest(AzureMgmtAsyncTestCase):
             azure.mgmt.network.aio.NetworkManagementClient
         )
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"

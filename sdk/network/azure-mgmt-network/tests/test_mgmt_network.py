@@ -10,7 +10,7 @@ import unittest
 import azure.mgmt.network.models
 from devtools_testutils import (
     AzureMgmtTestCase,
-    ResourceGroupPreparer,
+    RandomNameResourceGroupPreparer,
 )
 
 class MgmtNetworkTest(AzureMgmtTestCase):
@@ -21,7 +21,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             azure.mgmt.network.NetworkManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_network_interface_card(self, resource_group, location):
         vnet_name = self.get_resource_name('pyvnet')
         subnet_name = self.get_resource_name('pysubnet')
@@ -84,7 +84,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_load_balancers(self, resource_group, location):
         raise unittest.SkipTest("Skipping test_search")
         public_ip_name = self.get_resource_name('pyipname')
@@ -246,7 +246,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         async_lb_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_public_ip_addresses(self, resource_group, location):
         public_ip_name = self.get_resource_name('pyipname')
 
@@ -289,7 +289,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result_list = list(result_list)
         self.assertEqual(len(result_list), 0)
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_virtual_networks(self, resource_group, location):
         network_name = self.get_resource_name('pyvnet')
         subnet1_name = self.get_resource_name('pyvnetsubnetone')
@@ -359,7 +359,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         self.assertTrue(result_check)
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_subnets(self, resource_group, location):
         network_name = self.get_resource_name('pysubnet')
         subnet1_name = self.get_resource_name('pysubnetone')
@@ -429,7 +429,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         result_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_network_security_groups(self, resource_group, location):
         raise unittest.SkipTest("Skipping test_search")
         security_group_name = self.get_resource_name('pysecgroup')
@@ -518,7 +518,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         result_delete.wait()
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_routes(self, resource_group, location):
         route_table_name = self.get_resource_name('pyroutetable')
         route_name = self.get_resource_name('pyroute')
@@ -591,7 +591,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.assertGreater(len(ersp), 0)
         self.assertTrue(all(hasattr(u, 'bandwidths_offered') for u in ersp))
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_virtual_network_gateway_operations(self, resource_group, location):
         raise unittest.SkipTest("Skipping test_search")
         # https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal

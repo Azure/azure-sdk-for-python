@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinedf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e\"\
+      string: "{\r\n  \"name\": \"virtualmachinedf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"b29c725a-1e04-4d7c-a346-cba6959083bb\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -116,10 +116,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinedf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e\"\
+      string: "{\r\n  \"name\": \"virtualmachinedf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"8ebda739-fca6-467c-b26a-063def7578cd\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -175,10 +175,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
+      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
         ,\r\n  \"etag\": \"W/\\\"4dd913e9-5937-4bf7-a1c3-f2e0b90cedbc\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -270,10 +270,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
+      string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
         ,\r\n  \"etag\": \"W/\\\"b1b5f090-1233-4440-8eb4-4748ec7fa2ad\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -327,10 +327,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
+      string: "{\r\n  \"name\": \"publicipaddressdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"50b660f0-11a0-44a5-a297-e36a679d00ce\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Updating\",\r\n    \"resourceGuid\": \"89844412-5133-4f79-aebb-db56b7228b11\"\
@@ -426,10 +426,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"publicipaddressdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
+      string: "{\r\n  \"name\": \"publicipaddressdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"2e7e0fcf-591f-48e3-bae7-ea30a3b182a5\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"89844412-5133-4f79-aebb-db56b7228b11\"\
@@ -471,8 +471,8 @@ interactions:
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"name":
       "ipconfigdf79187e", "properties": {"privateIPAllocationMethod": "Dynamic", "subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet"},
-      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e"}}}],
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet"},
+      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e"}}}],
       "gatewayType": "Vpn", "vpnType": "RouteBased", "enableBgp": false, "sku": {"name":
       "VpnGw1", "tier": "VpnGw1"}, "bgpSettings": {"asn": 65515, "bgpPeeringAddress":
       "10.0.1.30", "peerWeight": 0}, "customRoutes": {"addressPrefixes": ["101.168.0.6/32"]},
@@ -491,24 +491,24 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkgatewaydf79187e\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"1599449e-9a9a-4bf4-b95e-d7fa536429b6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
         ,\r\n    \"resourceGuid\": \"de9d1362-3a1c-4597-99cb-80480470dae6\",\r\n \
         \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfigdf79187e\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
+        ipconfigdf79187e\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
         ,\r\n        \"etag\": \"W/\\\"1599449e-9a9a-4bf4-b95e-d7fa536429b6\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
@@ -519,7 +519,7 @@ interactions:
         \n      \"vpnClientIpsecPolicies\": []\r\n    },\r\n    \"bgpSettings\": {\r\
         \n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\",\r\n\
         \      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n        {\r\
-        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
+        \n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
         ,\r\n          \"defaultBgpIpAddresses\": [],\r\n          \"customBgpIpAddresses\"\
         : []\r\n        }\r\n      ]\r\n    },\r\n    \"customRoutes\": {\r\n    \
         \  \"addressPrefixes\": [\r\n        \"101.168.0.6/32\"\r\n      ]\r\n   \
@@ -6643,31 +6643,31 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkgatewaydf79187e\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"8ddef346-289c-4ac8-8bbc-2245a98129c2\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"de9d1362-3a1c-4597-99cb-80480470dae6\",\r\n \
         \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
         : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfigdf79187e\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
+        ipconfigdf79187e\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
         ,\r\n        \"etag\": \"W/\\\"8ddef346-289c-4ac8-8bbc-2245a98129c2\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
+        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipaddressdf79187e\"\
+        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualmachinedf79187e/subnets/GatewaySubnet\"\
         \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"sku\": {\r\n  \
         \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
         : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
         ,\r\n    \"enableBgp\": false,\r\n    \"activeActive\": false,\r\n    \"bgpSettings\"\
         : {\r\n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\"\
         ,\r\n      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n    \
-        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
+        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewaydf79187e/ipConfigurations/ipconfigdf79187e\"\
         ,\r\n          \"defaultBgpIpAddresses\": [\r\n            \"10.0.1.30\"\r\
         \n          ],\r\n          \"customBgpIpAddresses\": [],\r\n          \"\
         tunnelIpAddresses\": [\r\n            \"20.185.73.28\"\r\n          ]\r\n\
@@ -6722,7 +6722,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e?api-version=2019-04-01
   response:
     body:
       string: ''
@@ -6768,7 +6768,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/aab84a98-915f-45bb-92e0-c9edd1761de3?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e","name":"storagenamedf79187e","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-06-01T03:19:41.3784440Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-06-01T03:19:41.3784440Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-06-01T03:19:41.3003514Z","primaryEndpoints":{"blob":"https://storagenamedf79187e.blob.core.windows.net/","queue":"https://storagenamedf79187e.queue.core.windows.net/","table":"https://storagenamedf79187e.table.core.windows.net/","file":"https://storagenamedf79187e.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e","name":"storagenamedf79187e","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-06-01T03:19:41.3784440Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-06-01T03:19:41.3784440Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-06-01T03:19:41.3003514Z","primaryEndpoints":{"blob":"https://storagenamedf79187e.blob.core.windows.net/","queue":"https://storagenamedf79187e.queue.core.windows.net/","table":"https://storagenamedf79187e.table.core.windows.net/","file":"https://storagenamedf79187e.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -6811,10 +6811,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkwatcherdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e\"\
+      string: "{\r\n  \"name\": \"networkwatcherdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"3ae855a3-47d2-44c2-89ba-d0f57ee1ae41\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkWatchers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -6866,17 +6866,17 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"networksecuritygroupdf79187e\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
         ,\r\n    \"resourceGuid\": \"73d233a4-1f8d-4030-8f06-dcddd2175f98\",\r\n \
         \   \"securityRules\": [],\r\n    \"defaultSecurityRules\": [\r\n      {\r\
-        \n        \"name\": \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetInBound\"\
+        \n        \"name\": \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetInBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -6889,7 +6889,7 @@ interactions:
         \ [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\
-        \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowAzureLoadBalancerInBound\"\
+        \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowAzureLoadBalancerInBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -6902,7 +6902,7 @@ interactions:
         \ [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n        \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllInBound\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllInBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -6914,7 +6914,7 @@ interactions:
         : \"Inbound\",\r\n          \"sourcePortRanges\": [],\r\n          \"destinationPortRanges\"\
         : [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\"\
         : []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowVnetOutBound\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetOutBound\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -6927,7 +6927,7 @@ interactions:
         : [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n    \
-        \    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowInternetOutBound\"\
+        \    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowInternetOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -6940,7 +6940,7 @@ interactions:
         \n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n        \"\
-        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllOutBound\"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"06564d78-0291-4299-a0db-54ae3ae63f54\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
@@ -7040,17 +7040,17 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"name\": \"networksecuritygroupdf79187e\",\r\n  \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"resourceGuid\": \"73d233a4-1f8d-4030-8f06-dcddd2175f98\",\r\n \
         \   \"securityRules\": [],\r\n    \"defaultSecurityRules\": [\r\n      {\r\
-        \n        \"name\": \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetInBound\"\
+        \n        \"name\": \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetInBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7063,7 +7063,7 @@ interactions:
         \ [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\
-        \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowAzureLoadBalancerInBound\"\
+        \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowAzureLoadBalancerInBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7076,7 +7076,7 @@ interactions:
         \ [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n        \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllInBound\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllInBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7088,7 +7088,7 @@ interactions:
         : \"Inbound\",\r\n          \"sourcePortRanges\": [],\r\n          \"destinationPortRanges\"\
         : [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\"\
         : []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowVnetOutBound\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetOutBound\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowVnetOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7101,7 +7101,7 @@ interactions:
         : [],\r\n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n    \
-        \    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowInternetOutBound\"\
+        \    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/AllowInternetOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7114,7 +7114,7 @@ interactions:
         \n          \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\"\
         : [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n   \
         \   },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n        \"\
-        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllOutBound\"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e/defaultSecurityRules/DenyAllOutBound\"\
         ,\r\n        \"etag\": \"W/\\\"9c9d272d-9814-4b75-aa0c-b368021ab59f\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkSecurityGroups/defaultSecurityRules\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
@@ -7158,8 +7158,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"location": "eastus", "properties": {"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e",
-      "storageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e",
+    body: 'b''{"location": "eastus", "properties": {"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e",
+      "storageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e",
       "enabled": true, "format": {"type": "JSON", "version": 1}}}'''
     headers:
       Accept:
@@ -7175,15 +7175,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
+      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"17829a37-114e-4658-a113-e746d12ed94a\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
-        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
         ,\r\n    \"targetResourceGuid\": \"73d233a4-1f8d-4030-8f06-dcddd2175f98\"\
-        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
+        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
         ,\r\n    \"enabled\": true,\r\n    \"flowAnalyticsConfiguration\": {},\r\n\
         \    \"retentionPolicy\": {\r\n      \"days\": 0,\r\n      \"enabled\": false\r\
         \n    },\r\n    \"format\": {\r\n      \"type\": \"JSON\",\r\n      \"version\"\
@@ -7277,15 +7277,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
+      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"877c112b-450f-4f2a-82f8-02fe151d40b0\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
-        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
         ,\r\n    \"targetResourceGuid\": \"73d233a4-1f8d-4030-8f06-dcddd2175f98\"\
-        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
+        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
         ,\r\n    \"enabled\": true,\r\n    \"flowAnalyticsConfiguration\": {},\r\n\
         \    \"retentionPolicy\": {\r\n      \"days\": 0,\r\n      \"enabled\": false\r\
         \n    },\r\n    \"format\": {\r\n      \"type\": \"JSON\",\r\n      \"version\"\
@@ -7334,15 +7334,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
+      string: "{\r\n  \"name\": \"floglogdf79187e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/FlowLogs/floglogdf79187e\"\
         ,\r\n  \"etag\": \"W/\\\"877c112b-450f-4f2a-82f8-02fe151d40b0\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
-        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
         ,\r\n    \"targetResourceGuid\": \"73d233a4-1f8d-4030-8f06-dcddd2175f98\"\
-        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
+        ,\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
         ,\r\n    \"enabled\": true,\r\n    \"flowAnalyticsConfiguration\": {},\r\n\
         \    \"retentionPolicy\": {\r\n      \"days\": 0,\r\n      \"enabled\": false\r\
         \n    },\r\n    \"format\": {\r\n      \"type\": \"JSON\",\r\n      \"version\"\
@@ -7380,7 +7380,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e"}'''
+    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e"}'''
     headers:
       Accept:
       - application/json
@@ -7395,11 +7395,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/queryFlowLogStatus?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/queryFlowLogStatus?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
-        ,\r\n  \"properties\": {\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
+      string: "{\r\n  \"targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        ,\r\n  \"properties\": {\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
         ,\r\n    \"enabled\": true,\r\n    \"retentionPolicy\": {\r\n      \"days\"\
         : 0,\r\n      \"enabled\": false\r\n    },\r\n    \"format\": {\r\n      \"\
         type\": \"JSON\",\r\n      \"version\": 1\r\n    }\r\n  },\r\n  \"flowAnalyticsConfiguration\"\
@@ -7434,8 +7434,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e",
-      "properties": {"storageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e",
+    body: 'b''{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e",
+      "properties": {"storageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e",
       "enabled": true}}'''
     headers:
       Accept:
@@ -7451,7 +7451,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/configureFlowLog?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/configureFlowLog?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -7499,8 +7499,8 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/683388c6-df92-4306-b435-44e2348f769a?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
-        ,\r\n  \"properties\": {\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
+      string: "{\r\n  \"targetResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkSecurityGroups/networksecuritygroupdf79187e\"\
+        ,\r\n  \"properties\": {\r\n    \"storageId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamedf79187e\"\
         ,\r\n    \"enabled\": true,\r\n    \"format\": {\r\n      \"type\": \"JSON\"\
         ,\r\n      \"version\": 1\r\n    }\r\n  }\r\n}"
     headers:
@@ -7550,7 +7550,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e/flowLogs/floglogdf79187e?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -7644,7 +7644,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_flow_logdf79187e/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherdf79187e?api-version=2020-04-01
   response:
     body:
       string: ''

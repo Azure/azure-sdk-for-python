@@ -21,7 +21,7 @@
 import unittest
 
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -33,7 +33,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             azure.mgmt.network.NetworkManagementClient
         )
     
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

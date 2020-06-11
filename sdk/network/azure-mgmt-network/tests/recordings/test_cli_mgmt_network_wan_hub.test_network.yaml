@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"349634f1-d606-42ea-8298-71dc9e0989b3\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"b00c4c4a-df3d-4ad8-b0ab-66e30f60fcec\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
@@ -159,7 +159,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "West US", "tags": {"key1": "value1"}, "properties": {"virtualWan":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f"},
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f"},
       "addressSpace": {"addressPrefixes": ["10.0.0.0/16"]}, "isSecuritySite": false,
       "vpnSiteLinks": [{"name": "vpnSiteLink1", "properties": {"linkProperties": {"linkProviderName":
       "vendor1", "linkSpeedInMbps": 0}, "ipAddress": "50.50.50.56", "bgpProperties":
@@ -178,19 +178,19 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"a7d52e26-2681-449c-add9-5c1108bafe7d\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnSites\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Updating\",\r\n    \"addressSpace\": {\r\
         \n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n \
         \   },\r\n    \"deviceProperties\": {\r\n      \"linkSpeedInMbps\": 0\r\n\
-        \    },\r\n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \    },\r\n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         \r\n    },\r\n    \"isSecuritySite\": false,\r\n    \"vpnSiteLinks\": [\r\n\
-        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         ,\r\n        \"etag\": \"W/\\\"a7d52e26-2681-449c-add9-5c1108bafe7d\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"ipAddress\": \"50.50.50.56\",\r\n          \"bgpProperties\"\
@@ -287,19 +287,19 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"f1a3691e-6bdf-4adf-9513-ad9ee24eeead\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnSites\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"addressSpace\":\
         \ {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\r\n      ]\r\
         \n    },\r\n    \"deviceProperties\": {\r\n      \"linkSpeedInMbps\": 0\r\n\
-        \    },\r\n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \    },\r\n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         \r\n    },\r\n    \"isSecuritySite\": false,\r\n    \"vpnSiteLinks\": [\r\n\
-        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         ,\r\n        \"etag\": \"W/\\\"f1a3691e-6bdf-4adf-9513-ad9ee24eeead\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"ipAddress\": \"50.50.50.56\",\r\n          \"bgpProperties\"\
@@ -341,7 +341,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "West US", "tags": {"key1": "value1"}, "properties": {"virtualWan":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f"},
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f"},
       "addressPrefix": "10.168.0.0/24", "sku": "Basic"}}'''
     headers:
       Accept:
@@ -357,17 +357,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"2e848308-d851-4f41-81c8-afd456f4d19b\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Updating\",\r\n    \"virtualNetworkConnections\"\
         : [],\r\n    \"virtualHubRouteTableV2s\": [],\r\n    \"addressPrefix\": \"\
         10.168.0.0/24\",\r\n    \"routeTable\": {\r\n      \"routes\": []\r\n    },\r\
-        \n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         \r\n    },\r\n    \"sku\": \"Basic\"\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
@@ -1132,17 +1132,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"46958034-90a0-4102-89e1-bbbc1ee358b2\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"virtualNetworkConnections\"\
         : [],\r\n    \"virtualHubRouteTableV2s\": [],\r\n    \"addressPrefix\": \"\
         10.168.0.0/24\",\r\n    \"routeTable\": {\r\n      \"routes\": []\r\n    },\r\
-        \n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         \r\n    },\r\n    \"sku\": \"Basic\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1175,11 +1175,11 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "West US", "tags": {"key1": "value1"}, "properties": {"virtualHub":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f"},
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f"},
       "connections": [{"name": "vpnConnection1", "properties": {"remoteVpnSite": {"id":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f"},
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f"},
       "vpnLinkConnections": [{"name": "Connection-Link1", "properties": {"vpnSiteLink":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1"},
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1"},
       "vpnConnectionProtocolType": "IKEv2", "connectionBandwidth": 200, "sharedKey":
       "key"}}]}}], "bgpSettings": {"asn": 65515, "peerWeight": 0}}}'''
     headers:
@@ -1196,25 +1196,25 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"c9377018-30ff-46c4-a838-f6e491b0e1f1\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnGateways\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Updating\",\r\n    \"connections\": [\r\
-        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
+        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
         ,\r\n        \"etag\": \"W/\\\"c9377018-30ff-46c4-a838-f6e491b0e1f1\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
-        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n          },\r\n          \"enableInternetSecurity\": false,\r\n     \
         \     \"vpnLinkConnections\": [\r\n            {\r\n              \"name\"\
-        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
+        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
         ,\r\n              \"etag\": \"W/\\\"c9377018-30ff-46c4-a838-f6e491b0e1f1\\\
         \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
         : \"Updating\",\r\n                \"vpnSiteLink\": {\r\n                \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         \r\n                },\r\n                \"connectionBandwidth\": 200,\r\n\
         \                \"ipsecPolicies\": [],\r\n                \"vpnConnectionProtocolType\"\
         : \"IKEv2\",\r\n                \"sharedKey\": \"key\",\r\n              \
@@ -1227,7 +1227,7 @@ interactions:
         \r\n            }\r\n          ],\r\n          \"ingressBytesTransferred\"\
         : 0,\r\n          \"egressBytesTransferred\": 0\r\n        },\r\n        \"\
         type\": \"Microsoft.Network/vpnGateways/vpnConnections\"\r\n      }\r\n  \
-        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    },\r\n    \"bgpSettings\": {\r\n      \"asn\": 65515,\r\n      \"\
         peerWeight\": 0\r\n    },\r\n    \"vpnGatewayScaleUnit\": 1\r\n  }\r\n}"
     headers:
@@ -8878,25 +8878,25 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnGateways\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"connections\": [\r\
-        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
+        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
         ,\r\n        \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n          },\r\n          \"enableInternetSecurity\": false,\r\n     \
         \     \"vpnLinkConnections\": [\r\n            {\r\n              \"name\"\
-        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
+        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
         ,\r\n              \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\
         \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
         : \"Succeeded\",\r\n                \"vpnSiteLink\": {\r\n               \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         \r\n                },\r\n                \"connectionBandwidth\": 200,\r\n\
         \                \"ipsecPolicies\": [],\r\n                \"vpnConnectionProtocolType\"\
         : \"IKEv2\",\r\n                \"sharedKey\": \"key\",\r\n              \
@@ -8909,7 +8909,7 @@ interactions:
         \r\n            }\r\n          ],\r\n          \"ingressBytesTransferred\"\
         : 0,\r\n          \"egressBytesTransferred\": 0\r\n        },\r\n        \"\
         type\": \"Microsoft.Network/vpnGateways/vpnConnections\"\r\n      }\r\n  \
-        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    },\r\n    \"bgpSettings\": {\r\n      \"asn\": 65515,\r\n      \"\
         peerWeight\": 0\r\n    },\r\n    \"vpnGatewayScaleUnit\": 1\r\n  }\r\n}"
     headers:
@@ -8943,7 +8943,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "West US", "tags": {"key1": "value1"}, "properties": {"securityProviderName":
-      "ZScaler", "virtualHub": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f"}}}'''
+      "ZScaler", "virtualHub": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f"}}}'''
     headers:
       Accept:
       - application/json
@@ -8958,16 +8958,16 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"mySecurityPartnerProvider76dc116f\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"7df38479-b6ff-47c8-8037-fc722d81ae57\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/securityPartnerProviders\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"\
         properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"securityProviderName\"\
-        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
@@ -9057,16 +9057,16 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"mySecurityPartnerProvider76dc116f\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"7df38479-b6ff-47c8-8037-fc722d81ae57\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/securityPartnerProviders\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"\
         properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"securityProviderName\"\
-        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       cache-control:
@@ -9109,10 +9109,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"c3591b32-ba37-44fd-a05b-d866772752df\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
@@ -9123,9 +9123,9 @@ interactions:
         :\\\"10.168.0.100\\\"},{\\\"InstanceName\\\":\\\"RouteServiceRole_IN_1\\\"\
         ,\\\"IPAddress\\\":\\\"10.168.0.101\\\"}]\",\r\n    \"routeTable\": {\r\n\
         \      \"routes\": []\r\n    },\r\n    \"virtualWan\": {\r\n      \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
-        \r\n    },\r\n    \"vpnGateway\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
-        \r\n    },\r\n    \"securityPartnerProvider\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \r\n    },\r\n    \"vpnGateway\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+        \r\n    },\r\n    \"securityPartnerProvider\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       cache-control:
@@ -9168,25 +9168,25 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnGateways\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"connections\": [\r\
-        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
+        \n      {\r\n        \"name\": \"vpnConnection1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
         ,\r\n        \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n          },\r\n          \"enableInternetSecurity\": false,\r\n     \
         \     \"vpnLinkConnections\": [\r\n            {\r\n              \"name\"\
-        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
+        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
         ,\r\n              \"etag\": \"W/\\\"52937c73-6606-4770-b1fb-469668399e75\\\
         \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
         : \"Succeeded\",\r\n                \"vpnSiteLink\": {\r\n               \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         \r\n                },\r\n                \"connectionBandwidth\": 200,\r\n\
         \                \"ipsecPolicies\": [],\r\n                \"vpnConnectionProtocolType\"\
         : \"IKEv2\",\r\n                \"sharedKey\": \"key\",\r\n              \
@@ -9199,7 +9199,7 @@ interactions:
         \r\n            }\r\n          ],\r\n          \"ingressBytesTransferred\"\
         : 0,\r\n          \"egressBytesTransferred\": 0\r\n        },\r\n        \"\
         type\": \"Microsoft.Network/vpnGateways/vpnConnections\"\r\n      }\r\n  \
-        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    },\r\n    \"bgpSettings\": {\r\n      \"asn\": 65515,\r\n      \"\
         peerWeight\": 0\r\n    },\r\n    \"vpnGatewayScaleUnit\": 1\r\n  }\r\n}"
     headers:
@@ -9243,19 +9243,19 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"f34f97e4-cab2-4b28-a216-235af19a3a43\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
         : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"disableVpnEncryption\"\
         : false,\r\n    \"allowBranchToBranchTraffic\": true,\r\n    \"allowVnetToVnetTraffic\"\
         : false,\r\n    \"office365LocalBreakoutCategory\": \"None\",\r\n    \"type\"\
-        : \"Basic\",\r\n    \"virtualHubs\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        : \"Basic\",\r\n    \"virtualHubs\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n      }\r\n    ],\r\n    \"vpnSites\": [\r\n      {\r\n        \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
@@ -9300,10 +9300,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vpnSiteLink1\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+      string: "{\r\n  \"name\": \"vpnSiteLink1\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         ,\r\n  \"etag\": \"W/\\\"f1a3691e-6bdf-4adf-9513-ad9ee24eeead\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         ipAddress\": \"50.50.50.56\",\r\n    \"bgpProperties\": {\r\n      \"asn\"\
@@ -9354,16 +9354,16 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"mySecurityPartnerProvider76dc116f\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"7df38479-b6ff-47c8-8037-fc722d81ae57\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/securityPartnerProviders\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"\
         properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"securityProviderName\"\
-        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        : \"ZScaler\",\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       cache-control:
@@ -9408,7 +9408,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/reset?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/reset?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -13286,10 +13286,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualhubx76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"dbbb3216-09a6-4a1f-9144-63c1ec6e2565\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\",\r\n    \"key2\": \"value2\"\
@@ -13300,9 +13300,9 @@ interactions:
         \"RouteServiceRole_IN_0\\\",\\\"IPAddress\\\":\\\"10.168.0.100\\\"},{\\\"\
         InstanceName\\\":\\\"RouteServiceRole_IN_1\\\",\\\"IPAddress\\\":\\\"10.168.0.101\\\
         \"}]\",\r\n    \"routeTable\": {\r\n      \"routes\": []\r\n    },\r\n   \
-        \ \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
-        \r\n    },\r\n    \"vpnGateway\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
-        \r\n    },\r\n    \"securityPartnerProvider\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        \ \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        \r\n    },\r\n    \"vpnGateway\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+        \r\n    },\r\n    \"securityPartnerProvider\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
@@ -13353,10 +13353,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+      string: "{\r\n  \"name\": \"virtualwan76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"bce7287a-c9d0-4df8-a961-8cce16b40560\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\",\r\n    \"key2\": \"value2\"\
@@ -13364,9 +13364,9 @@ interactions:
         ,\r\n    \"disableVpnEncryption\": false,\r\n    \"allowBranchToBranchTraffic\"\
         : true,\r\n    \"allowVnetToVnetTraffic\": false,\r\n    \"office365LocalBreakoutCategory\"\
         : \"None\",\r\n    \"type\": \"Basic\",\r\n    \"virtualHubs\": [\r\n    \
-        \  {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        \  {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n      }\r\n    ],\r\n    \"vpnSites\": [\r\n      {\r\n        \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
@@ -13417,26 +13417,26 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
+      string: "{\r\n  \"name\": \"vpngateway76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"b9e783c2-c856-4a32-887e-fbdf81ddfc3e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnGateways\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"connections\": [\r\n      {\r\n        \"name\": \"vpnConnection1\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1\"\
         ,\r\n        \"etag\": \"W/\\\"b9e783c2-c856-4a32-887e-fbdf81ddfc3e\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+        ,\r\n          \"remoteVpnSite\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         \r\n          },\r\n          \"enableInternetSecurity\": false,\r\n     \
         \     \"vpnLinkConnections\": [\r\n            {\r\n              \"name\"\
-        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
+        : \"Connection-Link1\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f/vpnConnections/vpnConnection1/vpnLinkConnections/Connection-Link1\"\
         ,\r\n              \"etag\": \"W/\\\"b9e783c2-c856-4a32-887e-fbdf81ddfc3e\\\
         \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
         : \"Succeeded\",\r\n                \"vpnSiteLink\": {\r\n               \
-        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         \r\n                },\r\n                \"connectionBandwidth\": 200,\r\n\
         \                \"ipsecPolicies\": [],\r\n                \"vpnConnectionProtocolType\"\
         : \"IKEv2\",\r\n                \"sharedKey\": \"3082020706092A864886F70D010703A08201F8308201F4020100318201C0308201BC0201003081A330818B310B3009060355040613025553311330110603550408130A57617368696E67746F6E3110300E060355040713075265646D6F6E64311E301C060355040A13154D6963726F736F667420436F72706F726174696F6E31153013060355040B130C4D6963726F736F6674204954311E301C060355040313154D6963726F736F667420495420544C5320434120340213160004ED1A5F8195F19DC23FEC00000004ED1A300D06092A864886F70D01010105000482010085F3D7F9950A4B86AFBF29B1A6068E5F6C3F7A0FD325B20F25D30F58C81F2B3516BC6B4C9925DAAFDC7AE7E73DBBCCA72D9660EEC90761607D1203A9A2FC0E4899ECA8671F30B0379923F82447E58C56363B4587245F4B221684A658D5A50ED2DAF892A094B5285FBFDF4ACB809F8176A86B56E2D4A80F6E40351058E98907714570103DB7380691F66FF8174865F4898174F5BA9185232065A2285F5ABD60D0CE3CCFF4CAF96C1B2118397D20A0FE1C86244E034094F5FA81C17F1DCA5F6E2A56C37DAA019D7EB00C4B748E4EE74C57A8FEE7158F7ACE60DE8575E9780E3EB873438D5B948BB71D46C6C9DEB665252B33684ABF4845FF396B5CBF653FF8759E302B06092A864886F70D010701301406082A864886F70D030704086B6D5C2BD3491CFA80086127F16E21EF17C3\"\
@@ -13449,7 +13449,7 @@ interactions:
         \r\n            }\r\n          ],\r\n          \"ingressBytesTransferred\"\
         : 0,\r\n          \"egressBytesTransferred\": 0\r\n        },\r\n        \"\
         type\": \"Microsoft.Network/vpnGateways/vpnConnections\"\r\n      }\r\n  \
-        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        \  ],\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    },\r\n    \"bgpSettings\": {\r\n      \"asn\": 65515,\r\n      \"\
         peerWeight\": 0\r\n    },\r\n    \"vpnGatewayScaleUnit\": 1\r\n  }\r\n}"
     headers:
@@ -13501,10 +13501,10 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
+      string: "{\r\n  \"name\": \"vnpsite76dc116f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"10ba064f-1251-4e05-a4aa-d94c354b2cf5\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/vpnSites\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\",\r\n    \"key2\": \"value2\"\
@@ -13512,9 +13512,9 @@ interactions:
         ,\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"\
         10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"deviceProperties\": {\r\n    \
         \  \"linkSpeedInMbps\": 0\r\n    },\r\n    \"virtualWan\": {\r\n      \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f\"\
         \r\n    },\r\n    \"isSecuritySite\": false,\r\n    \"vpnSiteLinks\": [\r\n\
-        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
+        \      {\r\n        \"name\": \"vpnSiteLink1\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f/vpnSiteLinks/vpnSiteLink1\"\
         ,\r\n        \"etag\": \"W/\\\"10ba064f-1251-4e05-a4aa-d94c354b2cf5\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"ipAddress\": \"50.50.50.56\",\r\n          \"bgpProperties\"\
@@ -13572,17 +13572,17 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"mySecurityPartnerProvider76dc116f\",\r\n  \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f\"\
         ,\r\n  \"etag\": \"W/\\\"a014ae50-e08a-4824-8a65-ece4e829aff1\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/securityPartnerProviders\",\r\n  \"location\"\
         : \"westus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\"\
         : \"value2\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":\
         \ \"Succeeded\",\r\n    \"securityProviderName\": \"ZScaler\",\r\n    \"virtualHub\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
+        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f\"\
         \r\n    }\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
@@ -13631,7 +13631,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/securityPartnerProviders/mySecurityPartnerProvider76dc116f?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -13725,7 +13725,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnGateways/vpngateway76dc116f?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -18679,7 +18679,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualHubs/virtualhubx76dc116f?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -20753,7 +20753,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/vpnSites/vnpsite76dc116f?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -20847,7 +20847,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-network/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualWans/virtualwan76dc116f?api-version=2020-03-01
   response:
     body:
       string: ''

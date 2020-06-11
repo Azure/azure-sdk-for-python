@@ -16,10 +16,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d\"\
+      string: "{\r\n  \"name\": \"virtualnetworkc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"72c4578a-a7d9-4739-afbf-170fe68a0835\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
@@ -116,10 +116,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d\"\
+      string: "{\r\n  \"name\": \"virtualnetworkc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"e7a42f9a-8583-4b9e-ab95-b455a140e8f6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -175,10 +175,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
+      string: "{\r\n  \"name\": \"subnetc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"21d4b7a8-2609-476f-997d-a07eff1e3210\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -270,10 +270,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"subnetc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
+      string: "{\r\n  \"name\": \"subnetc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"11913b34-00ab-4c0c-8d16-831ab634964b\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -312,7 +312,7 @@ interactions:
       message: OK
 - request:
     body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"name":
-      "MyIpConfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d"}}}]}}'''
+      "MyIpConfig", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d"}}}]}}'''
     headers:
       Accept:
       - application/json
@@ -327,20 +327,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
+      string: "{\r\n  \"name\": \"interfacec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
         ,\r\n  \"etag\": \"W/\\\"5fcd40fa-26b5-46a8-a011-391583496ea4\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"23e6b530-794f-4d37-a346-a14901576440\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"5fcd40fa-26b5-46a8-a011-391583496ea4\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -437,20 +437,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"interfacec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
+      string: "{\r\n  \"name\": \"interfacec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
         ,\r\n  \"etag\": \"W/\\\"5fcd40fa-26b5-46a8-a011-391583496ea4\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"23e6b530-794f-4d37-a346-a14901576440\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d/ipConfigurations/MyIpConfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d/ipConfigurations/MyIpConfig\"\
         ,\r\n        \"etag\": \"W/\\\"5fcd40fa-26b5-46a8-a011-391583496ea4\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkc749182d/subnets/subnetc749182d\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -499,7 +499,7 @@ interactions:
       0, "createOption": "Empty", "diskSizeGB": 1023}, {"lun": 1, "createOption":
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
-      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d",
+      true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d",
       "properties": {"primary": true}}]}}}'''
     headers:
       Accept:
@@ -518,10 +518,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+      string: "{\r\n  \"name\": \"virtualmachinec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6bd3f4b3-c4f8-4b25-84f4-bde8a25af359\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -547,7 +547,7 @@ interactions:
         : {\r\n        \"provisionVMAgent\": true,\r\n        \"enableAutomaticUpdates\"\
         : true\r\n      },\r\n      \"secrets\": [],\r\n      \"allowExtensionOperations\"\
         : true,\r\n      \"requireGuestProvisionSignal\": true\r\n    },\r\n    \"\
-        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
+        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Creating\"\
         \r\n  }\r\n}"
     headers:
@@ -738,10 +738,10 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualmachinec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+      string: "{\r\n  \"name\": \"virtualmachinec749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6bd3f4b3-c4f8-4b25-84f4-bde8a25af359\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
@@ -753,18 +753,18 @@ interactions:
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER_MONITORC749182D/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
         : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"virtualmachinec749182d_disk2_d58d8c1ff3434ac9a1a9a3df27c7721e\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER_MONITORC749182D/providers/Microsoft.Compute/disks/virtualmachinec749182d_disk2_d58d8c1ff3434ac9a1a9a3df27c7721e\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinec749182d_disk2_d58d8c1ff3434ac9a1a9a3df27c7721e\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
         name\": \"virtualmachinec749182d_disk3_b01c7747f9404da28012c70df478ac42\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_NETWORK_WATCHER_TEST_NETWORK_WATCHER_MONITORC749182D/providers/Microsoft.Compute/disks/virtualmachinec749182d_disk3_b01c7747f9404da28012c70df478ac42\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/virtualmachinec749182d_disk3_b01c7747f9404da28012c70df478ac42\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -772,7 +772,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacec749182d\"\
         ,\"properties\":{\"primary\":true}}]},\r\n    \"provisioningState\": \"Succeeded\"\
         \r\n  }\r\n}"
     headers:
@@ -825,11 +825,11 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionc749182d\",\r\n  \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Creating\",\r\n    \"publisher\":\
@@ -1023,11 +1023,11 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualmachineextensionc749182d\",\r\n  \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d/extensions/virtualmachineextensionc749182d\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"eastus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -1078,10 +1078,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"networkwatcherc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d\"\
+      string: "{\r\n  \"name\": \"networkwatcherc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"a1b981e2-850f-479f-81fa-d652418e2aa1\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/networkWatchers\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
@@ -1118,7 +1118,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"location": "eastus", "properties": {"source": {"resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d"},
+    body: 'b''{"location": "eastus", "properties": {"source": {"resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d"},
       "destination": {"address": "bing.com", "port": 80}, "monitoringIntervalInSeconds":
       60}}'''
     headers:
@@ -1135,14 +1135,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2019-06-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
+      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"40561c34-9b75-4e5b-ae3b-60620430ccb3\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         resourceGuid\": \"6c0b8d7b-6ffa-437f-a855-95a48a9f7eaf\",\r\n    \"source\"\
-        : {\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+        : {\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         ,\r\n      \"port\": 0\r\n    },\r\n    \"destination\": {\r\n      \"address\"\
         : \"bing.com\",\r\n      \"port\": 80\r\n    },\r\n    \"monitoringIntervalInSeconds\"\
         : 60,\r\n    \"autoStart\": true,\r\n    \"monitoringStatus\": \"NotStarted\"\
@@ -1236,14 +1236,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2019-06-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
+      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"8a819730-f8f8-4fa9-a9a6-091951b9e6eb\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         resourceGuid\": \"6c0b8d7b-6ffa-437f-a855-95a48a9f7eaf\",\r\n    \"source\"\
-        : {\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+        : {\r\n      \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         ,\r\n      \"port\": 0\r\n    },\r\n    \"destination\": {\r\n      \"address\"\
         : \"bing.com\",\r\n      \"port\": 80\r\n    },\r\n    \"monitoringIntervalInSeconds\"\
         : 60,\r\n    \"autoStart\": true,\r\n    \"startTime\": \"2020-05-19T05:45:23.3071803Z\"\
@@ -1292,15 +1292,15 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
+      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"8a819730-f8f8-4fa9-a9a6-091951b9e6eb\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         resourceGuid\": \"6c0b8d7b-6ffa-437f-a855-95a48a9f7eaf\",\r\n    \"endpoints\"\
         : [\r\n      {\r\n        \"name\": \"defaultSourceEndpoint\",\r\n       \
-        \ \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+        \ \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         \r\n      },\r\n      {\r\n        \"name\": \"defaultDestinationEndpoint\"\
         ,\r\n        \"address\": \"bing.com\"\r\n      }\r\n    ],\r\n    \"testConfigurations\"\
         : [\r\n      {\r\n        \"name\": \"defaultTestConfiguration\",\r\n    \
@@ -1361,7 +1361,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/query?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/query?api-version=2020-04-01
   response:
     body:
       string: 'null'
@@ -1416,7 +1416,7 @@ interactions:
         \     \"probesSent\": 3,\r\n      \"probesFailed\": 0,\r\n      \"hops\":\
         \ [\r\n        {\r\n          \"type\": \"Source\",\r\n          \"id\": \"\
         19e0abe4-a664-42ef-95b4-971cbf24b227\",\r\n          \"address\": \"10.0.0.4\"\
-        ,\r\n          \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
+        ,\r\n          \"resourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/virtualmachinec749182d\"\
         ,\r\n          \"nextHopIds\": [\r\n            \"f97b437f-f9f0-4b4a-9087-a6452278597a\"\
         \r\n          ],\r\n          \"links\": [\r\n            {\r\n          \
         \    \"nextHopId\": \"f97b437f-f9f0-4b4a-9087-a6452278597a\",\r\n        \
@@ -1475,7 +1475,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/start?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/start?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -1612,7 +1612,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/stop?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d/stop?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -1755,10 +1755,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
+      string: "{\r\n  \"name\": \"connectionmonitorc749182d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d\"\
         ,\r\n  \"etag\": \"W/\\\"70ce2765-53dc-4758-bd2a-a068c80888a8\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         resourceGuid\": \"6c0b8d7b-6ffa-437f-a855-95a48a9f7eaf\",\r\n    \"endpoints\"\
@@ -1813,7 +1813,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d/connectionMonitors/connectionmonitorc749182d?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -1907,7 +1907,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network_watcher_monitorc749182d/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkWatchers/networkwatcherc749182d?api-version=2020-04-01
   response:
     body:
       string: ''
