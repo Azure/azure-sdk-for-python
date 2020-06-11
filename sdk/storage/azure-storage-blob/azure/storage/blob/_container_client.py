@@ -1053,7 +1053,6 @@ class ContainerClient(StorageAccountHostsMixin):
             container_name = self.container_name
 
             try:
-                container_name = blob.get('container') if blob.get('container') else container_name
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
@@ -1102,12 +1101,11 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When the blob type is dict, here's a list of keys, value rules:
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
                 blob name:
                     key: 'name', value type: str
-                container name:
-                    key: 'container', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
                 whether to delete snapthots when deleting blob:
@@ -1213,7 +1211,6 @@ class ContainerClient(StorageAccountHostsMixin):
             container_name = self.container_name
 
             try:
-                container_name = blob.get('container') if blob.get('container') else container_name
                 tier = blob_tier or blob.get('blob_tier')
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
@@ -1256,7 +1253,7 @@ class ContainerClient(StorageAccountHostsMixin):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
 
-            ..note::
+            .. note::
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
@@ -1265,12 +1262,11 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When the blob type is dict, here's a list of keys, value rules:
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
                 blob name:
                     key: 'name', value type: str
-                container name:
-                    key: 'container', value type: str
                 standard blob tier:
                     key: 'blob_tier', value type: StandardBlobTier
                 rehydrate priority:
@@ -1310,7 +1306,7 @@ class ContainerClient(StorageAccountHostsMixin):
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
 
-            ..note::
+            .. note::
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
@@ -1319,12 +1315,11 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When the blob type is dict, here's a list of keys, value rules:
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
                 blob name:
                     key: 'name', value type: str
-                container name:
-                    key: 'container', value type: str
                 premium blob tier:
                     key: 'blob_tier', value type: PremiumPageBlobTier
                 lease:
