@@ -52,7 +52,7 @@ from ._models import (
     BlobSasPermissions,
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
-    QuickQueryError,
+    BlobQueryError,
     DelimitedTextConfiguration
 )
 
@@ -212,7 +212,7 @@ __all__ = [
     'generate_blob_sas',
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
-    'QuickQueryError',
+    'BlobQueryError',
     'DelimitedTextConfiguration',
     'QuickQueryReader'
 ]

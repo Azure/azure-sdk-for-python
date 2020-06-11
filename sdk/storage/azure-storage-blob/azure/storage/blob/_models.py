@@ -1238,7 +1238,7 @@ class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
             headers_present=headers_present)
 
 
-class QuickQueryError(object):
+class BlobQueryError(object):
     """The error happened during quick query operation.
 
     :ivar str name:

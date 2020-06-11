@@ -9,7 +9,7 @@ from io import BytesIO
 from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
-from ._models import QuickQueryError
+from ._models import BlobQueryError
 
 
 class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
@@ -81,7 +81,7 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
             self.bytes_processed = parsed_result.get('bytesScanned')
             self.total_bytes = parsed_result.get('totalBytes')
-            fatal = QuickQueryError(parsed_result['name'],
+            fatal = BlobQueryError(parsed_result['name'],
                                     parsed_result['fatal'],
                                     parsed_result['description'],
                                     parsed_result['position']) if parsed_result.get('fatal') else None

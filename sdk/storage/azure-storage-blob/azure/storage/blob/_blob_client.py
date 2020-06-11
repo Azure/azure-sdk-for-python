@@ -676,7 +676,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str query_expression:
             Required. a query statement.
-        :keyword func(~azure.storage.blob.QuickQueryError, int, int) progress_callback:
+        :keyword func(~azure.storage.blob.BlobQueryError, int, int) progress_callback:
             Callback where the caller can track progress of the operation as well as the quick query failures.
         :keyword input_serialization:
             Optional. Defines the input serialization for a blob quick query request.
