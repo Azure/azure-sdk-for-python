@@ -1,0 +1,38 @@
+Metadata-Version: 2.1
+Name: azure-ai-nspkg
+Version: 1.0.0
+Summary: Microsoft Azure ai Namespace Package [Internal]
+Home-page: https://github.com/Azure/azure-sdk-for-python
+Author: Microsoft Corporation
+Author-email: azpysdkhelp@microsoft.com
+License: MIT License
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: License :: OSI Approved :: MIT License
+Requires-Dist: azure-nspkg (>=3.0.0)
+
+# Microsoft Azure SDK for Python
+
+This is the Microsoft Azure ai Services namespace package.
+
+This package is not intended to be installed directly by the end user.
+
+Since version 3.0, this is Python 2 package only, Python 3.x SDKs will use `PEP420 <https://www.python.org/dev/peps/pep-0420/>` as namespace package strategy.
+To avoid issues with package servers that does not support `python_requires`, a Python 3 package is installed but is empty.
+
+It provides the necessary files for other packages to extend the azure.ai namespace.
+
+If you are looking to install the Azure client libraries, see the
+`azure <https://pypi.python.org/pypi/azure>`__ bundle package.
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftextanalytics%2Fazure-ai-nspkg%2FREADME.png)
+

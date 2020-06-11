@@ -1,0 +1,10 @@
+[opentelemetry_context]
+contextvars_context = opentelemetry.context.contextvars_context:ContextVarsRuntimeContext
+threadlocal_context = opentelemetry.context.threadlocal_context:ThreadLocalRuntimeContext
+
+[opentelemetry_meter_provider]
+default_meter_provider = opentelemetry.metrics:DefaultMeterProvider
+
+[opentelemetry_tracer_provider]
+default_tracer_provider = opentelemetry.trace:DefaultTracerProvider
+

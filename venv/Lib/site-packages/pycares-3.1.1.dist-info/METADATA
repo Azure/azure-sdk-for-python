@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: pycares
+Version: 3.1.1
+Summary: Python interface for c-ares
+Home-page: http://github.com/saghul/pycares
+Author: Saúl Ibarra Corretgé
+Author-email: s@saghul.net
+License: UNKNOWN
+Requires-Dist: cffi (>=1.5.0)
+Provides-Extra: idna
+Requires-Dist: idna (>=2.1) ; extra == 'idna'
+
+pycares: Python interface for c-ares
+
+

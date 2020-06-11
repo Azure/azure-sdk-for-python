@@ -1,0 +1,38 @@
+#!C:\Users\t-lilaw\Desktop\Summer\azure-sdk-for-python\venv\Scripts\python.exe
+'''json_cat(1) - Concatenate files together as a JSON array'''
+from __future__ import print_function, unicode_literals
+
+import sys, json
+
+from json_delta import _util as util
+
+def decode_or_str(flo):
+    '''If the contents of the file-like object are valid JSON, decode and
+    return them, otherwise return them as a string.'''
+    text = util.read_bytestring(flo)
+    try:
+        return util.decode_json(text)
+    except (ValueError, UnicodeError):
+        try: 
+            return util.decode_udiff(text)
+        except (ValueError, UnicodeError):
+            return text
+
+def main():
+    '''Banana banana banana.'''
+    if len(sys.argv) == 1:
+        args = ['-']
+    else:
+        args = sys.argv[1:]
+
+    out = []
+    for filename in args:
+        if filename == '-':
+            out.append(decode_or_str(sys.stdin))
+        else:
+            with open(filename, 'rb') as file_obj:
+                out.append(decode_or_str(file_obj))
+    json.dump(out, sys.stdout)
+
+if __name__ == '__main__':
+    main()

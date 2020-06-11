@@ -1,0 +1,138 @@
+#!C:\Users\t-lilaw\Desktop\Summer\azure-sdk-for-python\venv\Scripts\python.exe
+'''json_diff(1) - Compute deltas between JSON-serialized objects.'''
+from __future__ import print_function, unicode_literals
+
+from contextlib import closing
+import json
+import sys
+import argparse
+import time
+import os
+import codecs
+import io
+
+import json_delta
+from json_delta._util import read_bytestring
+
+try:
+    import msvcrt
+    msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
+    msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+except ImportError:
+    pass
+
+def udiff_headers(left, right):
+    'Generate the header lines for a udiff.'
+    time_format = '%Y-%m-%d %H:%m:%S %Z'
+    if left is None:
+        assert right is sys.stdin
+        for line in ('--- <stdin>[0]', '+++ <stdin>[1]'):
+            yield line
+    else:
+        for flo, sigil in ((left, '---'), (right, '+++')):
+            if hasattr(flo, 'name'):
+                name = flo.name
+                try:
+                    mtime = os.stat(name).st_mtime
+                    dateline = time.strftime(time_format, 
+                                             time.localtime(mtime))
+                except OSError:
+                    dateline = ''
+            else:
+                name = '????'
+                dateline = time.strftime(time_format, time.localtime())
+            yield '{} {}\t{}'.format(sigil, name, dateline)
+
+
+def main():
+    'Banana banana banana.'
+    parser = argparse.ArgumentParser(
+        description=
+        '''Produces deltas between JSON-serialized data structures.
+        If no arguments are specified, stdin will be expected to be a
+        JSON structure [left, right], and the output will be written
+        to stdout.
+        ''',
+        )
+    parser.add_argument('left', nargs='?', type=argparse.FileType('rb'),
+                        help='Starting point for the comparison.')
+    parser.add_argument(
+        'right', nargs='?', type=argparse.FileType('rb'),
+        help='Result for the comparison.  Standard input is the default.',
+        default=sys.stdin
+    )
+    parser.add_argument(
+        '--output', '-o', type=argparse.FileType('wb'), metavar='FILE',
+        help='Filename to output the diff to.  Standard output is the default.',
+        default=sys.stdout
+    )
+    parser.add_argument('--verbose', '-v',
+                        help='Print compression statistics on stderr',
+                        action='store_true')
+    parser.add_argument(
+        '--unified', '-u',
+        help='Outputs a more legible diff, in a format inspired by diff -u',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--fast', '-f',
+        help='Trade potentially increased diff size for a faster result.',
+        action='store_true')
+    version = '''%(prog)s - part of json-delta {}
+Copyright 2012-2015 Philip J. Roberts <himself@phil-roberts.name>.
+BSD License applies; see http://opensource.org/licenses/BSD-2-Clause
+'''.format(json_delta.__VERSION__)
+    parser.add_argument(
+        '--version', action='version', version=version
+    )
+    parser.add_argument(
+        '--encoding', help='Select output encoding (default UTF-8).',
+        default='UTF-8'
+    )
+
+    namespace = parser.parse_args()
+    if namespace.fast:
+        flags = {'common_key_threshold': 0.5, 'array_align': False,
+                 'compare_lengths': False}
+    elif namespace.unified:
+        flags = {'common_key_threshold': 0.0, 'array_align': 'udiff',
+                 'compare_lengths': False}
+    else:
+        flags = {'common_key_threshold': 0.0, 'array_align': True,
+                 'compare_lengths': True}
+
+    if namespace.left is None:
+        assert namespace.right is sys.stdin
+        left_text = None
+        right_text = None
+        both_text = read_bytestring(sys.stdin)
+        diff = json_delta.load_and_diff(both=both_text,
+                                        verbose=namespace.verbose,
+                                        **flags)
+    else:
+        with closing(namespace.left) as left_f, \
+             closing(namespace.right) as right_f:
+            left_text = read_bytestring(left_f)
+            right_text = read_bytestring(right_f)
+        both_text = None
+        diff = json_delta.load_and_diff(left_text, right_text,
+                                        verbose=namespace.verbose,
+                                        **flags)
+    with closing(namespace.output) as out_f:
+        out_f = getattr(out_f, 'buffer', out_f)
+        if namespace.unified:
+            for line in udiff_headers(namespace.left, namespace.right):
+                out_f.write(line.encode(namespace.encoding))
+                out_f.write('\n'.encode(namespace.encoding))
+            for line in json_delta.load_and_udiff(left_text, right_text,
+                                                  both_text, diff):
+                out_f.write(line.encode(namespace.encoding))
+                out_f.write('\n'.encode(namespace.encoding))
+        else:
+            diff = json_delta._util.compact_json_dumps(diff)
+            out_f.write(diff.encode(namespace.encoding))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

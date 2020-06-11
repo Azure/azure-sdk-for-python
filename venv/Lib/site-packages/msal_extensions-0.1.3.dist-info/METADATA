@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: msal-extensions
+Version: 0.1.3
+Summary: UNKNOWN
+Home-page: UNKNOWN
+Author: UNKNOWN
+Author-email: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Requires-Dist: msal (<2.0.0,>=0.4.1)
+Requires-Dist: portalocker (~=1.0)
+
+UNKNOWN
+
+
