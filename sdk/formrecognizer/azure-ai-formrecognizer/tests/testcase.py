@@ -214,14 +214,14 @@ class FormRecognizerTest(AzureTestCase):
                     read_results
                 )
 
-    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None, **kwargs):
+    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
         if actual_fields is None:
             return
         for idx, a in enumerate(actual_fields):
             self.assertEqual(a.confidence, form_fields["field-"+str(idx)].confidence if a.confidence is not None else 1.0)
             self.assertEqual(a.key.text, form_fields["field-"+str(idx)].label_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
-            if read_results and not kwargs.get("bug_skip_text_content", False):
+            if read_results:
                 self.assertTextContentTransformCorrect(
                     form_fields["field-"+str(idx)].label_data.text_content,
                     a.key.elements,
@@ -229,7 +229,7 @@ class FormRecognizerTest(AzureTestCase):
                 )
             self.assertEqual(a.value.text, form_fields["field-" + str(idx)].value_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
-            if read_results and not kwargs.get("bug_skip_text_content", False):
+            if read_results:
                 self.assertTextContentTransformCorrect(
                     form_fields["field-"+str(idx)].value_data.text_content,
                     a.value.elements,
@@ -287,8 +287,7 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(cell.is_header, actual_cell.is_header if actual_cell.is_header is not None else False)
                 self.assertEqual(cell.is_footer, actual_cell.is_footer if actual_cell.is_footer is not None else False)
                 self.assertBoundingBoxTransformCorrect(cell.bounding_box, actual_cell.bounding_box)
-                if not kwargs.get("bug_skip_text_content", False):
-                    self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
+                self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
 
     def assertReceiptItemsHasValues(self, items, page_number, include_text_content):
         for item in items:
@@ -537,7 +536,6 @@ def form_recognizer_account():
         name_prefix='pycog',
         location="westcentralus"
     )
-    time.sleep(60)  # current ask until race condition bug fixed
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
@@ -545,6 +543,8 @@ def form_recognizer_account():
         try:
             form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
                 test_case, **rg_kwargs)
+            if test_case.is_live:
+                time.sleep(60)  # current ask until race condition bug fixed
             FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
             FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
             FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
