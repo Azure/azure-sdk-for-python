@@ -3,6 +3,9 @@
 
 ## 1.6.1 (Unreleased)
 
+### Bug fixes
+
+- `AzureKeyCredentialPolicy` will now accept (and ignore) passed in kwargs  #11963
 
 ## 1.6.0 (2020-06-03)
 
