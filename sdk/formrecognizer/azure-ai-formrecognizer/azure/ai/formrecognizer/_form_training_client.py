@@ -17,6 +17,7 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline import Pipeline
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
@@ -26,7 +27,7 @@ from ._generated.models import (
     CopyOperationResult,
     CopyAuthorizationResult
 )
-from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
+from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -77,6 +78,7 @@ class FormTrainingClient(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
+        self._kwargs = kwargs.copy()
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
@@ -373,9 +375,16 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.FormRecognizerClient
         :return: A FormRecognizerClient
         """
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),
+            policies=self._client._client._pipeline._impl_policies
+        )
+        kwargs.update(self._kwargs)
         return FormRecognizerClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
+            self._endpoint,
+            self._credential,
+            pipeline=_pipeline,
             **kwargs
         )
 

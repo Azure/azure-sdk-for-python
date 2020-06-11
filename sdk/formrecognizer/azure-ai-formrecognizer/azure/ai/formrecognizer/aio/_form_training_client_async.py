@@ -15,10 +15,12 @@ from typing import (
     TYPE_CHECKING,
 )
 from azure.core.polling import AsyncLROPoller
+from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._form_recognizer_client_async import FormRecognizerClient
+from ._helpers_async import AsyncTransportWrapper
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
     TrainRequest,
@@ -81,7 +83,7 @@ class FormTrainingClient(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-
+        self._kwargs = kwargs.copy()
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
@@ -397,9 +399,15 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
         :return: A FormRecognizerClient
         """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
+            policies=self._client._client._pipeline._impl_policies
+        )
+        kwargs.update(self._kwargs)
         return FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
+            pipeline=_pipeline,
             **kwargs
         )
 
