@@ -26,7 +26,7 @@ import time
 import unittest
 
 import azure.mgmt.appconfiguration
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 KEY_UUID = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
@@ -121,7 +121,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
 
         return result.result()
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration_list_key_values(self, resource_group):
         CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
 
@@ -158,7 +158,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.configuration_stores.list_key_value(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
