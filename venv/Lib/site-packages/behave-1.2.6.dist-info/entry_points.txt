@@ -1,6 +1,0 @@
-[console_scripts]
-behave = behave.__main__:main
-
-[distutils.commands]
-behave_test = setuptools_behave:behave_test
-
