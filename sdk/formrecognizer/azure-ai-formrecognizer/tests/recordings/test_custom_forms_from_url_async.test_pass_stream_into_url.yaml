@@ -1,30 +1,30 @@
 interactions:
 - request:
-    body: '{"source": "<_io.BufferedReader name=''C:\\\\Users\\\\krpratic\\\\azure-sdk-for-python\\\\sdk\\\\formrecognizer\\\\azure-ai-formrecognizer\\\\tests\\\\conftest.py''>"}'
+    body: 'b''{"source": "<_io.BufferedReader name=\''C:\\\\\\\\Users\\\\\\\\krpratic\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\conftest.py\''>"}'''
     headers:
       Content-Length:
       - '165'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"1001","message":"Specified model not found or not
-        ready, Model Id: xxx"}}'
+      string: '{"error": {"code": "1001", "message": "Specified model not found or
+        not ready, Model Id: xxx"}}'
     headers:
-      apim-request-id: e7321ce4-6861-4cc3-ae78-642ebfb0ad83
+      apim-request-id: 1b969cb5-10bb-4f96-9a02-862bb6565bb3
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 18:57:10 GMT
+      date: Tue, 09 Jun 2020 21:14:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '43'
+      x-envoy-upstream-service-time: '22'
     status:
       code: 400
       message: Bad Request
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xxx/analyze?includeTextDetails=false
 version: 1

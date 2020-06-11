@@ -116,6 +116,8 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         forms = await poller.result()
 
         for form in forms:
+            if form.form_type is None:
+                continue  # blank page
             self.assertEqual(form.form_type, "form-0")
             self.assertFormPagesHasValues(form.pages)
             for label, field in form.fields.items():
@@ -234,12 +236,12 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         read_results = actual.analyze_result.read_results
         page_results = actual.analyze_result.page_results
 
-        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results, bug_skip_text_content=True)
+        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
 
         for form, actual in zip(recognized_form, page_results):
             self.assertEqual(form.page_range.first_page_number, actual.page)
             self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
+            self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()

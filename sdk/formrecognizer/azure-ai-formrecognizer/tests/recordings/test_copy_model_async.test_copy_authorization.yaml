@@ -8,22 +8,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
+    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
   response:
     body:
-      string: '{"modelId": "adcd2786-9aa5-4098-9a55-7d68eaeaaf2f", "accessToken":
-        "redacted", "expirationDateTimeTicks": 637255866617034918}'
+      string: '{"modelId": "d3fe7002-7670-48b3-9267-609daab2917f", "accessToken":
+        "redacted", "expirationDateTimeTicks": 1591823628}'
     headers:
-      apim-request-id: 99a50a5e-a423-47ae-8e9e-9369a4ac8d90
+      apim-request-id: 0ca6c21c-a239-4d30-bd32-f51185851d8d
       content-type: application/json; charset=utf-8
-      date: Tue, 19 May 2020 15:51:01 GMT
-      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/adcd2786-9aa5-4098-9a55-7d68eaeaaf2f
+      date: Tue, 09 Jun 2020 21:13:48 GMT
+      location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d3fe7002-7670-48b3-9267-609daab2917f
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '226'
+      x-envoy-upstream-service-time: '32'
     status:
       code: 201
       message: Created
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
+    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
 version: 1

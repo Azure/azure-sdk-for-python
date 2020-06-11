@@ -40,7 +40,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, client, **kwargs):
         key_client = client
         # [START create_key]
@@ -133,7 +132,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, client, **kwargs):
         key_client = client
 
@@ -184,7 +182,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_keys_backup_restore(self, client, **kwargs):
         key_client = client
         key_name = "test-key"
@@ -214,7 +211,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_keys_recover(self, client, **kwargs):
         key_client = client
         created_key = await key_client.create_key("key-name", "RSA")
