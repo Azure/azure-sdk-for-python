@@ -5,6 +5,7 @@
 **BugFixes**
 
 * Fixed bug where sync AutoLockRenew does not shutdown itself timely.
+* Fixed bug where async AutoLockRenew does not support context manager.
 
 ## 7.0.0b3 (2020-06-08)
 

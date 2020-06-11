@@ -106,7 +106,7 @@ class AutoLockRenew:
         self.sleep_time = 1
         self.renew_period = 10
 
-    def __aenter__(self):
+    async def __aenter__(self):
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
