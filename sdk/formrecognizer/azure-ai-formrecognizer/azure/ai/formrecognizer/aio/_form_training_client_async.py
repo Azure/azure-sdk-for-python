@@ -402,7 +402,7 @@ class FormTrainingClient(object):
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
             policies=self._client._client._pipeline._impl_policies
-        )
+        )  # type: AsyncPipeline
         kwargs.update(self._kwargs)
         return FormRecognizerClient(
             endpoint=self._endpoint,

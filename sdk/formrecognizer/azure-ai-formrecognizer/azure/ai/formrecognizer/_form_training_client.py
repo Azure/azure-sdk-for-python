@@ -379,7 +379,7 @@ class FormTrainingClient(object):
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),
             policies=self._client._client._pipeline._impl_policies
-        )
+        )  # type: Pipeline
         kwargs.update(self._kwargs)
         return FormRecognizerClient(
             self._endpoint,
