@@ -77,7 +77,6 @@ class FormTrainingClient(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
-        self._kwargs = kwargs
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
