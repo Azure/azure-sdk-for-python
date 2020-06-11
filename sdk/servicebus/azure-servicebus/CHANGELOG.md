@@ -2,6 +2,9 @@
 
 ## 7.0.0b4 (Unreleased)
 
+**BugFixes**
+
+* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
 
 ## 7.0.0b3 (2020-06-08)
 

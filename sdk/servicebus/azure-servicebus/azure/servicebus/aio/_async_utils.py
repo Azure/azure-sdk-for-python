@@ -12,7 +12,7 @@ import functools
 from uamqp import authentication
 
 from .._common.utils import renewable_start_time, utc_now
-from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed
+from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 from .._common.constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
@@ -107,6 +107,9 @@ class AutoLockRenew:
         self.renew_period = 10
 
     def __aenter__(self):
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         return self
 
     async def __aexit__(self, *args):
@@ -150,6 +153,9 @@ class AutoLockRenew:
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
         """
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout), loop=self.loop)
         self._futures.append(renew_future)
