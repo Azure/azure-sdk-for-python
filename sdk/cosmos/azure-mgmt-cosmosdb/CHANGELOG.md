@@ -4,43 +4,44 @@
 
 **Features**
 
-  - Model CassandraTableResource has a new parameter analytical_storage_ttl
-  - Model SqlDatabaseGetPropertiesOptions has a new parameter autoscale_settings
-  - Model GremlinGraphGetPropertiesOptions has a new parameter autoscale_settings
-  - Model CassandraKeyspaceGetPropertiesOptions has a new parameter autoscale_settings
-  - Model CassandraTableGetPropertiesResource has a new parameter analytical_storage_ttl
-  - Model ThroughputSettingsResource has a new parameter autoscale_settings
-  - Model SqlContainerGetPropertiesOptions has a new parameter autoscale_settings
-  - Model MongoDBDatabaseGetPropertiesOptions has a new parameter autoscale_settings
-  - Model DatabaseAccountUpdateParameters has a new parameter enable_free_tier
-  - Model DatabaseAccountUpdateParameters has a new parameter ip_rules
-  - Model DatabaseAccountUpdateParameters has a new parameter enable_analytical_storage
-  - Model DatabaseAccountUpdateParameters has a new parameter api_properties
-  - Model CassandraTableGetPropertiesOptions has a new parameter autoscale_settings
-  - Model MongoDBCollectionGetPropertiesResource has a new parameter analytical_storage_ttl
   - Model MongoDBCollectionResource has a new parameter analytical_storage_ttl
-  - Model OptionsResource has a new parameter autoscale_settings
-  - Model GremlinDatabaseGetPropertiesOptions has a new parameter autoscale_settings
-  - Model DatabaseAccountGetResults has a new parameter enable_free_tier
-  - Model DatabaseAccountGetResults has a new parameter ip_rules
-  - Model DatabaseAccountGetResults has a new parameter enable_analytical_storage
-  - Model DatabaseAccountGetResults has a new parameter api_properties
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_free_tier
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter ip_rules
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_analytical_storage
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter api_properties
-  - Model TableGetPropertiesOptions has a new parameter autoscale_settings
-  - Model MongoDBCollectionGetPropertiesOptions has a new parameter autoscale_settings
+  - Model MongoDBDatabaseGetPropertiesOptions has a new parameter autoscale_settings
   - Model ThroughputSettingsGetPropertiesResource has a new parameter autoscale_settings
+  - Model SqlContainerGetPropertiesOptions has a new parameter autoscale_settings
+  - Model CassandraTableGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model CassandraTableResource has a new parameter analytical_storage_ttl
+  - Model OptionsResource has a new parameter autoscale_settings
+  - Model TableGetPropertiesOptions has a new parameter autoscale_settings
+  - Model ThroughputSettingsResource has a new parameter autoscale_settings
+  - Model CassandraTableGetPropertiesOptions has a new parameter autoscale_settings
+  - Model GremlinDatabaseGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountGetResults has a new parameter api_properties
+  - Model DatabaseAccountGetResults has a new parameter ip_rules
+  - Model DatabaseAccountGetResults has a new parameter enable_free_tier
+  - Model DatabaseAccountGetResults has a new parameter enable_analytical_storage
+  - Model GremlinGraphGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter api_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter ip_rules
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_free_tier
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_analytical_storage
+  - Model MongoDBCollectionGetPropertiesOptions has a new parameter autoscale_settings
+  - Model CassandraKeyspaceGetPropertiesOptions has a new parameter autoscale_settings
+  - Model SqlDatabaseGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter api_properties
+  - Model DatabaseAccountUpdateParameters has a new parameter ip_rules
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_free_tier
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_analytical_storage
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter analytical_storage_ttl
 
 **Breaking changes**
 
+  - Model ThroughputSettingsGetPropertiesResource no longer has parameter provisioned_throughput_settings
   - Model ThroughputSettingsResource no longer has parameter provisioned_throughput_settings
-  - Model DatabaseAccountUpdateParameters no longer has parameter ip_range_filter
   - Model DatabaseAccountGetResults no longer has parameter ip_range_filter
   - Model DatabaseAccountCreateUpdateParameters no longer has parameter ip_range_filter
-  - Model ThroughputSettingsGetPropertiesResource no longer has parameter provisioned_throughput_settings
+  - Model DatabaseAccountUpdateParameters no longer has parameter ip_range_filter
   - Model CreateUpdateOptions has a new signature
+
 
 ## 0.14.0 (2020-05-05)
 

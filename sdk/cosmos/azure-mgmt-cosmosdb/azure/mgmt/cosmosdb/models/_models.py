@@ -13,6 +13,23 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ApiProperties(Model):
+    """ApiProperties.
+
+    :param server_version: Describes the ServerVersion of an a MongoDB
+     account. Possible values include: '3.2', '3.6'
+    :type server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
+    """
+
+    _attribute_map = {
+        'server_version': {'key': 'serverVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiProperties, self).__init__(**kwargs)
+        self.server_version = kwargs.get('server_version', None)
+
+
 class ARMProxyResource(Model):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
@@ -89,41 +106,6 @@ class ARMResourceProperties(Model):
         self.tags = kwargs.get('tags', None)
 
 
-class ApiProperties(Model):
-    """ApiProperties.
-
-    :param server_version: Describes the ServerVersion of an a MongoDB
-     account. Possible values include: '3.2', '3.6'
-    :type server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
-    """
-
-    _attribute_map = {
-        'server_version': {'key': 'serverVersion', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ApiProperties, self).__init__(**kwargs)
-        self.server_version = kwargs.get('server_version', None)
-
-
-class AutoUpgradePolicyResource(Model):
-    """Cosmos DB resource auto-upgrade policy.
-
-    :param throughput_policy: Represents throughput policy which service must
-     adhere to for auto-upgrade
-    :type throughput_policy:
-     ~azure.mgmt.cosmosdb.models.ThroughputPolicyResource
-    """
-
-    _attribute_map = {
-        'throughput_policy': {'key': 'throughputPolicy', 'type': 'ThroughputPolicyResource'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutoUpgradePolicyResource, self).__init__(**kwargs)
-        self.throughput_policy = kwargs.get('throughput_policy', None)
-
-
 class AutoscaleSettings(Model):
     """AutoscaleSettings.
 
@@ -176,6 +158,24 @@ class AutoscaleSettingsResource(Model):
         self.max_throughput = kwargs.get('max_throughput', None)
         self.auto_upgrade_policy = kwargs.get('auto_upgrade_policy', None)
         self.target_max_throughput = None
+
+
+class AutoUpgradePolicyResource(Model):
+    """Cosmos DB resource auto-upgrade policy.
+
+    :param throughput_policy: Represents throughput policy which service must
+     adhere to for auto-upgrade
+    :type throughput_policy:
+     ~azure.mgmt.cosmosdb.models.ThroughputPolicyResource
+    """
+
+    _attribute_map = {
+        'throughput_policy': {'key': 'throughputPolicy', 'type': 'ThroughputPolicyResource'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoUpgradePolicyResource, self).__init__(**kwargs)
+        self.throughput_policy = kwargs.get('throughput_policy', None)
 
 
 class Resource(Model):

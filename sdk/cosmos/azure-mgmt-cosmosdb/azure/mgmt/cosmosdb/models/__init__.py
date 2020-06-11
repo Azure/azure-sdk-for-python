@@ -10,12 +10,12 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ApiProperties
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
-    from ._models_py3 import ApiProperties
-    from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AutoscaleSettings
     from ._models_py3 import AutoscaleSettingsResource
+    from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
@@ -139,12 +139,12 @@ try:
     from ._models_py3 import Usage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import ApiProperties
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
-    from ._models import ApiProperties
-    from ._models import AutoUpgradePolicyResource
     from ._models import AutoscaleSettings
     from ._models import AutoscaleSettingsResource
+    from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
@@ -312,12 +312,12 @@ from ._cosmos_db_management_client_enums import (
 )
 
 __all__ = [
+    'ApiProperties',
     'ARMProxyResource',
     'ARMResourceProperties',
-    'ApiProperties',
-    'AutoUpgradePolicyResource',
     'AutoscaleSettings',
     'AutoscaleSettingsResource',
+    'AutoUpgradePolicyResource',
     'AzureEntityResource',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
