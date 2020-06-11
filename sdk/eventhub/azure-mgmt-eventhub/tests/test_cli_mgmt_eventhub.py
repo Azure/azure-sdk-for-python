@@ -33,7 +33,7 @@ import azure.mgmt.eventhub
 # import azure.mgmt.network.models
 # import azure.mgmt.storage
 # import azure.mgmt.storage.models
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -104,7 +104,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         )
         self.assertEqual(result_get.name, subnet_name)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_eventhub(self, resource_group):
 
         SKU_NAME = "Basic"
@@ -303,7 +303,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
         result = result.result()
    
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_disaster_recovery_configs(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
