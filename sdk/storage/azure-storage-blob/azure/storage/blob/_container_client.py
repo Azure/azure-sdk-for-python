@@ -1037,6 +1037,8 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         delete_snapshots = kwargs.pop('delete_snapshots', None)
+        if_modified_since = kwargs.pop('if_modified_since', None)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1053,8 +1055,8 @@ class ContainerClient(StorageAccountHostsMixin):
                     snapshot=blob.get('snapshot'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
-                    if_modified_since=blob.get('if_modified_since'),
-                    if_unmodified_since=blob.get('if_unmodified_since'),
+                    if_modified_since=if_modified_since or blob.get('if_modified_since'),
+                    if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
                     etag=blob.get('etag'),
                     match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
                     else None,
@@ -1062,7 +1064,11 @@ class ContainerClient(StorageAccountHostsMixin):
                 )
                 query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
             except AttributeError:
-                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options()
+                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(
+                    delete_snapshots=delete_snapshots,
+                    if_modified_since=if_modified_since,
+                    if_unmodified_since=if_unmodified_since
+                )
 
             req = HttpRequest(
                 "DELETE",
@@ -1191,7 +1197,8 @@ class ContainerClient(StorageAccountHostsMixin):
                     timeout=timeout or blob.get('timeout')
                 )
             except AttributeError:
-                query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(blob_tier)
+                query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
+                    blob_tier, rehydrate_priority=rehydrate_priority)
 
             req = HttpRequest(
                 "PUT",
