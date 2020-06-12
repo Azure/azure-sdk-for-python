@@ -1,0 +1,60 @@
+{
+    "chosen_version": "2018-01-01-preview",
+    "total_api_version_list": ["2017-04-01", "2018-01-01-preview"],
+    "client": {
+        "name": "EventHubManagementClient",
+        "filename": "_event_hub_management_client",
+        "description": "Azure Event Hubs client for managing Event Hubs Cluster, IPFilter Rules and VirtualNetworkRules resources."
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "method_signature": "subscription_id,  # type: str",
+                "description": "Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "method_signature": "subscription_id,  # type: str",
+                "description": "Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"]
+    },
+    "operation_groups": {
+        "clusters": "ClustersOperations",
+        "namespaces": "NamespacesOperations",
+        "configuration": "ConfigurationOperations",
+        "disaster_recovery_configs": "DisasterRecoveryConfigsOperations",
+        "event_hubs": "EventHubsOperations",
+        "consumer_groups": "ConsumerGroupsOperations",
+        "operations": "Operations",
+        "regions": "RegionsOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}
