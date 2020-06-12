@@ -3,7 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._generated.models import QueueDescription as InternalQueueDescription
+from copy import deepcopy
+from ._generated.models import QueueDescription as InternalQueueDescription, \
+    TopicDescription as InternalTopicDescription, \
+    SubscriptionDescription as InternalSubscriptionDescription, \
+    RuleDescription as InternalRuleDescription
 
 
 class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
@@ -95,7 +99,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     def _from_internal_entity(cls, internal_qd):
         # type: (InternalQueueDescription) -> QueueDescription
         qd = cls()
-        qd._internal_qd = internal_qd  # pylint:disable=protected-access
+        qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
 
         qd.authorization_rules = internal_qd.authorization_rules
         qd.auto_delete_on_idle = internal_qd.auto_delete_on_idle
@@ -183,7 +187,7 @@ class QueueRuntimeInfo(object):
     def _from_internal_entity(cls, internal_qr):
         # type: (InternalQueueDescription) -> QueueRuntimeInfo
         qr = cls()
-        qr._internal_qr = internal_qr  # pylint:disable=protected-access
+        qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
 
         qr.accessed_at = internal_qr.accessed_at
         qr.created_at = internal_qr.created_at
@@ -195,3 +199,106 @@ class QueueRuntimeInfo(object):
         return qr
 
 
+class TopicDescription(object):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TopicDescription, self).__init__(**kwargs)
+        self.topic_name = kwargs.get('topic_name', None)
+        self._internal_td = None
+
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
+        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.size_in_bytes = kwargs.get('size_in_bytes', None)
+        self.filtering_messages_before_publishing = kwargs.get('filtering_messages_before_publishing', None)
+        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
+        self.authorization_rules = kwargs.get('authorization_rules', None)
+        self.status = kwargs.get('status', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.accessed_at = kwargs.get('accessed_at', None)
+        self.support_ordering = kwargs.get('support_ordering', None)
+        self.message_count_details = kwargs.get('message_count_details', None)
+        self.subscription_count = kwargs.get('subscription_count', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.enable_partitioning = kwargs.get('enable_partitioning', None)
+        self.entity_availability_status = kwargs.get('entity_availability_status', None)
+        self.enable_subscription_partitioning = kwargs.get('enable_subscription_partitioning', None)
+        self.enable_express = kwargs.get('enable_express', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
+
+    @classmethod
+    def _from_internal_entity(cls, internal_td):
+        qd = cls()
+        qd._internal_td = deepcopy(internal_td)
+
+        qd.default_message_time_to_live = internal_td.default_message_time_to_live
+        qd.max_size_in_megabytes = internal_td.max_size_in_megabytes
+        qd.requires_duplicate_detection = internal_td.requires_duplicate_detection
+        qd.duplicate_detection_history_time_window = internal_td.duplicate_detection_history_time_window
+        qd.enable_batched_operations = internal_td.enable_batched_operations
+        qd.size_in_bytes = internal_td.size_in_bytes
+        qd.filtering_messages_before_publishing = internal_td.filtering_messages_before_publishing
+        qd.is_anonymous_accessible = internal_td.is_anonymous_accessible
+        qd.authorization_rules = internal_td.authorization_rules
+        qd.status = internal_td.status
+        qd.created_at = internal_td.created_at
+        qd.updated_at = internal_td.updated_at
+        qd.accessed_at = internal_td.accessed_at
+        qd.support_ordering = internal_td.support_ordering
+        qd.message_count_details = internal_td.message_count_details
+        qd.subscription_count = internal_td.subscription_count
+        qd.auto_delete_on_idle = internal_td.auto_delete_on_idle
+        qd.enable_partitioning = internal_td.enable_partitioning
+        qd.entity_availability_status = internal_td.entity_availability_status
+        qd.enable_subscription_partitioning = internal_td.enable_subscription_partitioning
+        qd.enable_express = internal_td.enable_express
+        qd.user_metadata = internal_td.user_metadata
+
+    def _to_internal_entity(self):
+        if not self._internal_td:
+            self._internal_td = InternalQueueDescription()
+        self._internal_td.default_message_time_to_live = self.default_message_time_to_live
+        self._internal_td.max_size_in_megabytes = self.max_size_in_megabytes
+        self._internal_td.requires_duplicate_detection = self.requires_duplicate_detection
+        self._internal_td.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
+        self._internal_td.enable_batched_operations = self.enable_batched_operations
+        self._internal_td.size_in_bytes = self.size_in_bytes
+        self._internal_td.filtering_messages_before_publishing = self.filtering_messages_before_publishing
+        self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
+        self._internal_td.authorization_rules = self.authorization_rules
+        self._internal_td.status = self.status
+        self._internal_td.created_at = self.created_at
+        self._internal_td.updated_at = self.updated_at
+        self._internal_td.accessed_at = self.accessed_at
+        self._internal_td.support_ordering = self.support_ordering
+        self._internal_td.message_count_details = self.message_count_details
+        self._internal_td.subscription_count = self.subscription_count
+        self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
+        self._internal_td.enable_partitioning = self.enable_partitioning
+        self._internal_td.entity_availability_status = self.entity_availability_status
+        self._internal_td.enable_subscription_partitioning = self.enable_subscription_partitioning
+        self._internal_td.enable_express = self.enable_express
+        self._internal_td.user_metadata = self.user_metadata
+
+        return self._internal_td
+
+
+class SubscriptionDescription(InternalSubscriptionDescription):
+    def __init__(self, **kwargs):
+        super(SubscriptionDescription, self).__init__(**kwargs)
+        self.topic_name = kwargs.get("topic_name")
+        self.subscription_name = kwargs.get("subscription_name")
+        self._internal_sd = None
+
+
+class RuleDescription(InternalRuleDescription):
+    def __init__(self, **kwargs):
+        self.topic_name = kwargs.get("topic_name")
+        self.subscription_name = kwargs.get("subscription_name")
+        self._internal_rd = None
+        super(RuleDescription, self).__init__(**kwargs)

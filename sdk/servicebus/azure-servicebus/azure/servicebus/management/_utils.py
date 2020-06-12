@@ -12,15 +12,9 @@ from azure.servicebus.management import _constants as constants
 from ._handle_response_error import _handle_response_error
 
 
-def convert_to_external(entity_class, entry):
-    qd = entity_class._from_internal_entity(entry.content.queue_description)
-    qd.queue_name = entry.title
-    return qd
-
-
-def extract_data_template(feed_class, entity_class, feed_element):
+def extract_data_template(feed_class, convert, feed_element):
     deserialized = feed_class.deserialize(feed_element)
-    list_of_qd = [convert_to_external(entity_class, x) for x in deserialized.entry]
+    list_of_qd = [convert(x) if convert else x for x in deserialized.entry]
     next_link = None
     if deserialized.link and len(deserialized.link) == 2:
         next_link = deserialized.link[1].href
@@ -45,8 +39,9 @@ def get_next_template(list_func, *args, **kwargs):
         feed_element = cast(
             ElementTree,
             list_func(
-                entity_type=constants.ENTITY_TYPE_QUEUES, skip=start_index, top=max_count,
-                api_version=api_version
+                skip=start_index, top=max_count,
+                api_version=api_version,
+                **kwargs
             )
         )
     return feed_element

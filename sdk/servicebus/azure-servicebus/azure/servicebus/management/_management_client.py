@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import functools
+import xml
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
@@ -10,7 +11,8 @@ from xml.etree.ElementTree import ElementTree
 import six
 from azure.core.paging import ItemPaged
 from azure.servicebus.management._generated.models import QueueDescriptionFeed, TopicDescription, TopicDescriptionEntry, \
-    QueueDescriptionEntry
+    QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
+    RuleDescriptionFeed, RuleDescription
 from azure.servicebus.management._utils import extract_data_template, get_next_template
 from azure.servicebus.management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from msrest.exceptions import ValidationError
@@ -102,13 +104,30 @@ class ServiceBusManagementClient:
     def _get_entity_element(self, entity_name, **kwargs):
         # type: (str, Any) -> ElementTree
 
-        if not entity_name:
-            raise ValueError("queue_name must be a non-empty str")
-
         with _handle_response_error():
             element = cast(
                 ElementTree,
                 self._impl.entity.get(entity_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+            )
+        return element
+
+    def _get_subscription_element(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> ElementTree
+
+        with _handle_response_error():
+            element = cast(
+                ElementTree,
+                self._impl.subscription.get(topic_name, subscription_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+            )
+        return element
+
+    def _get_rule_element(self, topic_name, subscription_name, rule_name, **kwargs):
+        # type: (str, str, str, Any) -> ElementTree
+
+        with _handle_response_error():
+            element = cast(
+                ElementTree,
+                self._impl.rule.get(topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
@@ -258,11 +277,16 @@ class ServiceBusManagementClient:
         :rtype: List[~azure.servicebus.management.QueueDescription]
         """
 
+        def entry_to_qd(entry):
+            qd = QueueDescription._from_internal_entity(entry.content.queue_description)
+            qd.queue_name = entry.title
+            return qd
+
         extract_data = functools.partial(
-            extract_data_template, QueueDescriptionFeed, QueueDescription
+            extract_data_template, QueueDescriptionFeed, entry_to_qd
         )
         get_next = functools.partial(
-            get_next_template, self._impl.list_entities, **kwargs
+            get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES), **kwargs
         )
         return ItemPaged(
             get_next, extract_data)
@@ -277,11 +301,16 @@ class ServiceBusManagementClient:
         :rtype: List[~azure.servicebus.management.QueueRuntimeInfo]
         """
 
+        def entry_to_qr(entry):
+            qd = QueueRuntimeInfo._from_internal_entity(entry.content.queue_description)
+            qd.queue_name = entry.title
+            return qd
+
         extract_data = functools.partial(
-            extract_data_template, QueueDescriptionFeed, QueueRuntimeInfo
+            extract_data_template, QueueDescriptionFeed, entry_to_qr
         )
         get_next = functools.partial(
-            get_next_template, self._impl.list_entities, **kwargs
+            get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES), **kwargs
         )
         return ItemPaged(
             get_next, extract_data)
@@ -298,3 +327,98 @@ class ServiceBusManagementClient:
         topic_description = entry.content.topic_description
         # TODO: wrap it in external TopicDescription and set name
         return topic_description
+
+    def get_topic_runtime_info(self, topic_name, **kwargs):
+        pass
+
+    def create_topic(self, topic, **kwargs):
+        pass
+
+    def update_topic(self, topic, **kwargs):
+        pass
+
+    def delete_topic(self, topic_name, **kwargs):
+        pass
+
+    def list_topics(self, topic_name, **kwargs):
+        pass
+
+    def list_topics_runtime_info(self, topic_name, **kwargs):
+        pass
+
+    def get_subscription(self, topic_name, subscription_name, **kwargs):
+        self._impl.subscription.get()
+        entry_ele = self._get_subscription_element("{}/Subscriptions/{}".format(topic_name, subscription_name), **kwargs)
+        subscription = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        print(subscription)
+
+    def get_subscription_runtime_info(self, topic_name, subscription_name, **kwargs):
+        pass
+
+    def create_subscriptiono(self, subscription, **kwargs):
+        pass
+
+    def update_subscription(self, subscription, **kwargs):
+        pass
+
+    def delete_subscription(self, topic_name, subscription_name, **kwargs):
+        pass
+
+    def list_subscriptions(self, topic_name, **kwargs):
+        def entry_to_rule(entry):
+            rule = entry.content.subscription_description
+            # TODO: convert to external SubscriptionDescription
+            return rule
+
+        extract_data = functools.partial(
+            extract_data_template, SubscriptionDescriptionFeed, entry_to_rule
+        )
+        get_next = functools.partial(
+            get_next_template, functools.partial(self._impl.list_subscriptions, topic_name), **kwargs
+        )
+        return ItemPaged(
+            get_next, extract_data)
+
+    def list_subscriptions_runtime_info(self, topic_name, **kwargs):
+        pass
+
+    def get_rule(self, topic_name, subscription_name, rule_name, **kwargs):
+        entry_ele = self._get_rule_element(topic_name, subscription_name, rule_name, **kwargs)
+        rule = RuleDescriptionEntry.deserialize(entry_ele)
+        print(rule)
+
+    def get_rule_runtime_info(self, topic_name, subscription_name, rule_name, **kwargs):
+        pass
+
+    def create_rule(self, rule, **kwargs):
+        pass
+
+    def update_rule(self, rule, **kwargs):
+        pass
+
+    def delete_rule(self, topic_name, subscription_name, rule_name, **kwargs):
+        pass
+
+    def list_rules(self, topic_name, subscription_name, **kwargs):
+        def entry_to_rule(entry):
+            rule = entry.content.rule_description
+            # TODO: convert to external RuleDescription
+            return rule
+
+        extract_data = functools.partial(
+            extract_data_template, RuleDescriptionFeed, entry_to_rule
+        )
+        get_next = functools.partial(
+            get_next_template, functools.partial(self._impl.list_rules, topic_name, subscription_name), **kwargs
+        )
+        return ItemPaged(
+            get_next, extract_data)
+
+    def list_rules_runtime_info(self, topic_name, subscription_name, **kwargs):
+        pass
+
+    def get_management_properties(self):
+        pass
+
+    # TODO: discuss whether we need API xxx_exists in Python. It's easy to tell by get_xxx(), which
+    # raises ResourceNotExists

@@ -1120,13 +1120,6 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "EnablePartitioning": {
-          "description": "A value that indicates whether the queue is to be partitioned across multiple message brokers.",
-          "type": "boolean",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
         "EntityAvailabilityStatus": {
           "$ref": "#/definitions/EntityAvailabilityStatus"
         }
