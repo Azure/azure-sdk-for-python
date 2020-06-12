@@ -20,7 +20,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/storage/
+    - sdk/table/
     - sdk/core/
     - tools/
     - eng/
@@ -35,7 +35,7 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/storage/
+    - sdk/table/
     - sdk/core/
     - tools/
     - eng/
@@ -43,21 +43,8 @@ pr:
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: storage
+    ServiceDirectory: table
     Artifacts:
-    - name: azure_storage_blob
-      safeName: azurestorageblob
-    - name: azure_storage_file_share
-      safeName: azurestoragefileshare
-    - name: azure_storage_file_datalake
-      safeName: azurestoragefiledatalake
-    - name: azure_storage_queue
-      safeName: azurestoragequeue
-    - name: azure_mgmt_storage
-      safeName: azuremgmtstorage
-    - name: azure_mgmt_storagecache
-      safeName: azuremgmtstoragecache
-    - name: azure_mgmt_storagesync
-      safeName: azuremgmtstoragesync
-    - name: azure_mgmt_storageimportexport
-      safeName: azuremgmtstorageimportexport
+    - name: azure_table
+      safeName: azuretable
+
