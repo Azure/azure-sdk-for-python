@@ -93,27 +93,26 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         msi_principal_id = vm_result.identity.principal_id
 
         # Do not do the Authorization part in playback, since it has nothing to do with Compute
-        # removed the role assignment code since: 1) it do not belong to azure-mgmt-compute, 2) the MSI extension below has been commented out
-        # if not self.is_playback():
+        if not self.is_playback():
 
-        #     # Get the Role ID of Contributor of a Resource Group
-        #     role_name = 'Contributor'
-        #     roles = list(self.authorization_client.role_definitions.list(
-        #         resource_group.id,
-        #         filter="roleName eq '{}'".format(role_name)
-        #     ))
-        #     assert len(roles) == 1
-        #     contributor_role = roles[0]
+            # Get the Role ID of Contributor of a Resource Group
+            role_name = 'Contributor'
+            roles = list(self.authorization_client.role_definitions.list(
+                resource_group.id,
+                filter="roleName eq '{}'".format(role_name)
+            ))
+            assert len(roles) == 1
+            contributor_role = roles[0]
 
-        #     # Add RG scope to the MSI token
-        #     self.authorization_client.role_assignments.create(
-        #         resource_group.id,
-        #         uuid.uuid4(), # Role assignment name
-        #         {
-        #             'role_definition_id': contributor_role.id,
-        #             'principal_id': msi_principal_id
-        #         }
-        #     )
+            # Add RG scope to the MSI token
+            self.authorization_client.role_assignments.create(
+                resource_group.id,
+                uuid.uuid4(), # Role assignment name
+                {
+                    'role_definition_id': contributor_role.id,
+                    'principal_id': msi_principal_id
+                }
+            )
 
         # Adds the MSI extension
         # This is deprecated, no extension needed anymore. Keep the code as extension example still.

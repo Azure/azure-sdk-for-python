@@ -44,8 +44,7 @@ class ResourceSkusOperations(object):
         """Gets the list of Microsoft.Compute SKUs available for your
         Subscription.
 
-        :param filter: The filter to apply on the operation. Only **location**
-         filter is supported currently.
+        :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

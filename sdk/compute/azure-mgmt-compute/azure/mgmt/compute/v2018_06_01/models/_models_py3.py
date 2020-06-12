@@ -1874,8 +1874,7 @@ class ImageReference(SubResource):
     about platform images, marketplace images, or virtual machine images. This
     element is required when you want to use a platform image, marketplace
     image, or virtual machine image, but is not used in other creation
-    operations. NOTE: Image reference publisher and offer can only be set when
-    you create the scale set.
+    operations.
 
     :param id: Resource Id
     :type id: str
@@ -3405,9 +3404,7 @@ class RunCommandResult(Model):
 
 
 class Sku(Model):
-    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not
-    supported on the hardware the scale set is currently on, you need to
-    deallocate the VMs in the scale set before you modify the SKU name.
+    """Describes a virtual machine scale set sku.
 
     :param name: The sku name.
     :type name: str
@@ -4936,8 +4933,7 @@ class VirtualMachineScaleSet(Resource):
      configured.
     :type identity:
      ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetIdentity
-    :param zones: The virtual machine scale set zones. NOTE: Availability
-     zones can only be set when you create the scale set.
+    :param zones: The virtual machine scale set zones.
     :type zones: list[str]
     """
 
@@ -5897,9 +5893,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      should be overprovisioned.
     :type overprovision: bool
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines. NOTE: If
-     singlePlacementGroup is true, it may be modified to false. However, if
-     singlePlacementGroup is false, it may not be modified to true.
+     single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine scale set should be
