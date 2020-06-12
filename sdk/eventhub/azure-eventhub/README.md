@@ -167,7 +167,7 @@ from azure.eventhub import EventHubConsumerClient
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group=consumer_group, eventhub_name=eventhub_name)
 
 logger = logging.getLogger("azure.eventhub")
 logging.basicConfig(level=logging.INFO)
