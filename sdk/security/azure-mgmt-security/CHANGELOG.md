@@ -1,5 +1,11 @@
 # Release History
 
+## 0.4.1 (2020-06-12)
+
+**Bugfixes**
+
+  - skip url-encoding for resource id
+
 ## 0.4.0 (2020-06-05)
 
 **Features**

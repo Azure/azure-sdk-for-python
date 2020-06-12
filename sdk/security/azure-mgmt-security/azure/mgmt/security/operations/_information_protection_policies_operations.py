@@ -63,7 +63,7 @@ class InformationProtectionPoliciesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'informationProtectionPolicyName': self._serialize.url("information_protection_policy_name", information_protection_policy_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -133,7 +133,7 @@ class InformationProtectionPoliciesOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'informationProtectionPolicyName': self._serialize.url("information_protection_policy_name", information_protection_policy_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -201,7 +201,7 @@ class InformationProtectionPoliciesOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

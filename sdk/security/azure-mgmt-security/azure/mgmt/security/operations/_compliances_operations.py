@@ -62,7 +62,7 @@ class CompliancesOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -132,7 +132,7 @@ class CompliancesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'complianceName': self._serialize.url("compliance_name", compliance_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
