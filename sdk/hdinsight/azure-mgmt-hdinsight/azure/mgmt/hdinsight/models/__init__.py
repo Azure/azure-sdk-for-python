@@ -51,7 +51,6 @@ try:
     from ._models_py3 import GatewaySettings
     from ._models_py3 import HardwareProfile
     from ._models_py3 import HostInfo
-    from ._models_py3 import HostInfoListResult
     from ._models_py3 import KafkaRestProperties
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
@@ -128,7 +127,6 @@ except (SyntaxError, ImportError):
     from ._models import GatewaySettings
     from ._models import HardwareProfile
     from ._models import HostInfo
-    from ._models import HostInfoListResult
     from ._models import KafkaRestProperties
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
@@ -221,7 +219,6 @@ __all__ = [
     'GatewaySettings',
     'HardwareProfile',
     'HostInfo',
-    'HostInfoListResult',
     'KafkaRestProperties',
     'LinuxOperatingSystemProfile',
     'LocalizedName',

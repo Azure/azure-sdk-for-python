@@ -1,5 +1,11 @@
 # Release History
 
+## 1.5.1 (2020-06-11)
+
+**Bugfixes**
+  - Fix the List Response
+
+
 ## 1.5.0 (2020-05-29)
 
 **Features**
