@@ -1,7 +1,8 @@
 # Release History
 
-## 12.1.2 (Unreleased)
-
+## 12.1.2 (2020-6-12)
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 12.1.1 (2020-03-10)
 
