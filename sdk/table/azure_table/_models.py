@@ -8,6 +8,7 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._shared.models import Services
 
 
 class AccessPolicy(GenAccessPolicy):
@@ -287,6 +288,11 @@ class TableSasPermissions(object):
                 ('u' if self.update else '') +
                 ('d' if self.delete else ''))
 
+TableSasPermissions.QUERY = TableSasPermissions(query=True)
+TableSasPermissions.ADD = TableSasPermissions(add=True)
+TableSasPermissions.UPDATE = TableSasPermissions(update=True)
+TableSasPermissions.DELETE = TableSasPermissions(delete=True)
+
 
 def service_stats_deserialize(generated):
     """Deserialize a ServiceStats objects into a dict.
@@ -354,13 +360,13 @@ class EntityProperty(object):
     """
 
     def __init__(self, type=None, value=None, encrypt=False):
-        '''
+        """
         Represents an Azure Table. Returned by list_tables.
 
         :param str type: The type of the property.
         :param EdmType value: The value of the property.
         :param bool encrypt: Indicates whether or not the property should be encrypted.
-        '''
+        """
         self.type = type
         self.value = value
         self.encrypt = encrypt
@@ -404,3 +410,20 @@ class EdmType(object):
 
     BOOLEAN = 'Edm.Boolean'
     ''' Represents a boolean. This type will be inferred for Python bools. '''
+
+
+class TableServices(Services):
+    def __init__(self):
+
+        """
+        :param bool table:
+            Access to the `.TableService`
+        :param str _str:
+            A string representing the services.
+        """
+
+        self.table = True
+
+    def __str__(self):
+        return 't'
+
