@@ -6,9 +6,9 @@ from collections import namedtuple
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from ._generated.v7_1_preview.version import VERSION as V7_1_PREVIEW_VERSION
-from ._generated.v7_0.version import VERSION as V7_0_VERSION
-from ._generated.v2016_10_01.version import VERSION as V2016_10_01_VERSION
+from .._generated.v7_1_preview.version import VERSION as V7_1_PREVIEW_VERSION
+from .._generated.v7_0.version import VERSION as V7_0_VERSION
+from .._generated.v2016_10_01.version import VERSION as V2016_10_01_VERSION
 
 if TYPE_CHECKING:
     from typing import Union
@@ -43,31 +43,31 @@ def load_generated_api(api_version, aio=False):
         )
 
     if api_version == ApiVersion.V7_1_preview:
-        from ._generated.v7_1_preview import models
+        from .._generated.v7_1_preview import models
 
         if aio:
-            from ._generated.v7_1_preview.aio import KeyVaultClient
-            from ._generated.v7_1_preview.aio._configuration_async import KeyVaultClientConfiguration
+            from .._generated.v7_1_preview.aio import KeyVaultClient
+            from .._generated.v7_1_preview.aio._configuration_async import KeyVaultClientConfiguration
         else:
-            from ._generated.v7_1_preview import KeyVaultClient  # type: ignore
-            from ._generated.v7_1_preview._configuration import KeyVaultClientConfiguration  # type: ignore
+            from .._generated.v7_1_preview import KeyVaultClient  # type: ignore
+            from .._generated.v7_1_preview._configuration import KeyVaultClientConfiguration  # type: ignore
     elif api_version == ApiVersion.V7_0:
-        from ._generated.v7_0 import models  # type: ignore
+        from .._generated.v7_0 import models  # type: ignore
 
         if aio:
-            from ._generated.v7_0.aio import KeyVaultClient  # type: ignore
-            from ._generated.v7_0.aio._configuration_async import KeyVaultClientConfiguration  # type: ignore
+            from .._generated.v7_0.aio import KeyVaultClient  # type: ignore
+            from .._generated.v7_0.aio._configuration_async import KeyVaultClientConfiguration  # type: ignore
         else:
-            from ._generated.v7_0 import KeyVaultClient  # type: ignore
-            from ._generated.v7_0._configuration import KeyVaultClientConfiguration  # type: ignore
+            from .._generated.v7_0 import KeyVaultClient  # type: ignore
+            from .._generated.v7_0._configuration import KeyVaultClientConfiguration  # type: ignore
     elif api_version == ApiVersion.V2016_10_01:
-        from ._generated.v2016_10_01 import models  # type: ignore
+        from .._generated.v2016_10_01 import models  # type: ignore
 
         if aio:
-            from ._generated.v2016_10_01.aio import KeyVaultClient  # type: ignore
-            from ._generated.v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration  # type: ignore
+            from .._generated.v2016_10_01.aio import KeyVaultClient  # type: ignore
+            from .._generated.v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration  # type: ignore
         else:
-            from ._generated.v2016_10_01 import KeyVaultClient  # type: ignore
-            from ._generated.v2016_10_01._configuration import KeyVaultClientConfiguration  # type: ignore
+            from .._generated.v2016_10_01 import KeyVaultClient  # type: ignore
+            from .._generated.v2016_10_01._configuration import KeyVaultClientConfiguration  # type: ignore
 
     return GeneratedApi(models=models, client_cls=KeyVaultClient, config_cls=KeyVaultClientConfiguration)
