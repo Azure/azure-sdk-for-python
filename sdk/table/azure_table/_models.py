@@ -1,7 +1,7 @@
 import kwargs as kwargs
 from azure_table._generated.models import TableProperties
 from azure_table._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import PageIterator
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
@@ -254,57 +254,38 @@ class TablePropertiesPaged(PageIterator):
 
 
 class TableSasPermissions(object):
-    """QueueSasPermissions class to be used with the
-    :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
-    :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
 
-    :param bool read:
-        Read metadata and properties, including message count. Peek at messages.
-    :param bool add:
-        Add messages to the queue.
-    :param bool update:
-        Update messages in the queue. Note: Use the Process permission with
-        Update so you can first get the message you want to update.
-    :param bool process:
-        Get and delete messages from the queue.
-    """
-    def __init__(self, read=False, add=False, update=False, process=False, query=False):
-        self.read = read
-        self.add = add
-        self.update = update
-        self.process = process
-        self.query = query
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('u' if self.update else '') +
-                     ('q' if self.query else '') +
-                     ('p' if self.process else ''))
+    def __init__(self, query=False, add=False, update=False, delete=False, _str=None):
+        """
+        :param bool query:
+            Get entities and query entities.
+        :param bool add:
+            Add entities. Add and Update permissions are required for upsert operations.
+        :param bool update:
+            Update entities. Add and Update permissions are required for upsert operations.
+        :param bool delete:
+            Delete entities.
+        :param str _str:
+            A string representing the permissions.
+        """
+        if not _str:
+            _str = ''
+        self.query = query or ('r' in _str)
+        self.add = add or ('a' in _str)
+        self.update = update or ('u' in _str)
+        self.delete = delete or ('d' in _str)
+
+    def __or__(self, other):
+        return TableSasPermissions(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
-        return self._str
-
-    @classmethod
-    def from_string(cls, permission):
-        """Create a QueueSasPermissions from a string.
-
-        To specify read, add, update, or process permissions you need only to
-        include the first letter of the word in the string. E.g. For read and
-        update permissions, you would provide a string "ru".
-
-        :param str permission: The string which dictates the
-            read, add, update, or process permissions.
-        :return: A QueueSasPermissions object
-        :rtype: ~azure.storage.queue.QueueSasPermissions
-        """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_update = 'u' in permission
-        p_process = 'p' in permission
-        p_query = 'q' in permission
-
-        parsed = cls(p_read, p_add, p_update, p_process,p_query)
-        parsed._str = permission # pylint: disable = protected-access
-        return parsed
+        return (('r' if self.query else '') +
+                ('a' if self.add else '') +
+                ('u' if self.update else '') +
+                ('d' if self.delete else ''))
 
 
 def service_stats_deserialize(generated):
@@ -328,3 +309,98 @@ def service_properties_deserialize(generated):
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }
+
+
+class Entity(dict):
+    """
+    An entity object. Can be accessed as a dict or as an obj. The attributes of
+    the entity will be created dynamically. For example, the following are both
+    valid::
+        entity = Entity()
+        entity.a = 'b'
+        entity['x'] = 'y'
+    """
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise ResourceNotFoundError
+           # raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+
+    __setattr__ = dict.__setitem__
+
+    def __delattr__(self, name):
+        try:
+            del self[name]
+        except KeyError:
+            raise ResourceNotFoundError
+           # raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+
+    def __dir__(self):
+        return dir({}) + list(self.keys())
+
+
+class EntityProperty(object):
+    """
+    An entity property. Used to explicitly set :class:`~EdmType` when necessary.
+
+    Values which require explicit typing are GUID, INT32, and BINARY. Other EdmTypes
+    may be explicitly create as EntityProperty objects but need not be. For example,
+    the below with both create STRING typed properties on the entity::
+        entity = Entity()
+        entity.a = 'b'
+        entity.x = EntityProperty(EdmType.STRING, 'y')
+    """
+
+    def __init__(self, type=None, value=None, encrypt=False):
+        '''
+        Represents an Azure Table. Returned by list_tables.
+
+        :param str type: The type of the property.
+        :param EdmType value: The value of the property.
+        :param bool encrypt: Indicates whether or not the property should be encrypted.
+        '''
+        self.type = type
+        self.value = value
+        self.encrypt = encrypt
+
+
+class Table(object):
+    """
+    Represents an Azure Table. Returned by list_tables.
+
+    :ivar str name: The name of the table.
+    """
+    pass
+
+
+class EdmType(object):
+    """
+    Used by :class:`~.EntityProperty` to represent the type of the entity property
+    to be stored by the Table service.
+    """
+
+    BINARY = 'Edm.Binary'
+    ''' Represents byte data. Must be specified. '''
+
+    INT64 = 'Edm.Int64'
+    ''' Represents a number between -(2^31) and 2^31. This is the default type for Python numbers. '''
+
+    GUID = 'Edm.Guid'
+    ''' Represents a GUID. Must be specified. '''
+
+    DATETIME = 'Edm.DateTime'
+    ''' Represents a date. This type will be inferred for Python datetime objects. '''
+
+    STRING = 'Edm.String'
+    ''' Represents a string. This type will be inferred for Python strings. '''
+
+    INT32 = 'Edm.Int32'
+    ''' Represents a number between -(2^15) and 2^15. Must be specified or numbers will default to INT64. '''
+
+    DOUBLE = 'Edm.Double'
+    ''' Represents a double. This type will be inferred for Python floating point numbers. '''
+
+    BOOLEAN = 'Edm.Boolean'
+    ''' Represents a boolean. This type will be inferred for Python bools. '''
