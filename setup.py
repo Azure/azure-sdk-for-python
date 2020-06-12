@@ -26,8 +26,8 @@ packages = {package_name: base_folder for (base_folder, package_name) in package
 nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
-# Manually push meta-packages at the end, in reverse dependency order
-meta_package = ['azure-mgmt', 'azure']
+# Meta-packages to ignore
+meta_package = ['azure-keyvault', 'azure-mgmt', 'azure', 'azure-storage']
 
 # content packages are packages that are not meta nor nspkg
 content_package = sorted([p for p in packages.keys() if p not in meta_package+nspkg_packages])
@@ -40,7 +40,7 @@ content_package.insert(0, "azure-common")
 if "install" in sys.argv:
     packages_for_installation = content_package
 else:
-    packages_for_installation = nspkg_packages + content_package + meta_package
+    packages_for_installation = nspkg_packages + content_package
 
 for pkg_name in packages_for_installation:
     pkg_setup_folder = os.path.join(root_folder, packages[pkg_name], pkg_name)

@@ -6,27 +6,44 @@ interactions:
       "US"}, {"id": "3", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
       "countryHint": "US"}, {"id": "4", "text": "", "countryHint": "US"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['400']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '400'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'}
+    body:
+      string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"Japanese","iso6391Name":"ja","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: [cb51e3fc-14ee-4aa6-a196-5ce9b94fe04d]
-      content-type: [application/json; charset=utf-8]
-      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=4]
-      date: ['Tue, 03 Mar 2020 18:33:35 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-      x-envoy-upstream-service-time: ['5']
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - cccc1435-a560-4fa1-9e29-f6c5d4d55c47
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=4
+      date:
+      - Wed, 27 May 2020 16:04:06 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '8'
+    status:
+      code: 200
+      message: OK
 version: 1

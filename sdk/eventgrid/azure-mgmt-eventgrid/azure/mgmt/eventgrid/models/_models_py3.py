@@ -167,7 +167,7 @@ class CloudError(Model):
 
 
 class ConnectionState(Model):
-    """ConnectionState Information.
+    """ConnectionState information.
 
     :param status: Status of the connection. Possible values include:
      'Pending', 'Approved', 'Rejected', 'Disconnected'
@@ -587,6 +587,25 @@ class EventChannel(Resource):
      'Canceled', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.EventChannelProvisioningState
+    :ivar partner_topic_readiness_state: The readiness state of the
+     corresponding partner topic. Possible values include:
+     'NotActivatedByUserYet', 'ActivatedByUser', 'DeactivatedByUser',
+     'DeletedByUser'
+    :vartype partner_topic_readiness_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerTopicReadinessState
+    :param expiration_time_if_not_activated_utc: Expiration time of the event
+     channel. If this timer expires while the corresponding partner topic is
+     never activated,
+     the event channel and corresponding partner topic are deleted.
+    :type expiration_time_if_not_activated_utc: datetime
+    :param filter: Information about the filter for the event channel.
+    :type filter: ~azure.mgmt.eventgrid.models.EventChannelFilter
+    :param partner_topic_friendly_description: Friendly description about the
+     topic. This can be set by the publisher/partner to show custom description
+     for the customer partner topic.
+     This will be helpful to remove any ambiguity of the origin of creation of
+     the partner topic for the customer.
+    :type partner_topic_friendly_description: str
     """
 
     _validation = {
@@ -594,6 +613,7 @@ class EventChannel(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'partner_topic_readiness_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -603,13 +623,21 @@ class EventChannel(Resource):
         'source': {'key': 'properties.source', 'type': 'EventChannelSource'},
         'destination': {'key': 'properties.destination', 'type': 'EventChannelDestination'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'partner_topic_readiness_state': {'key': 'properties.partnerTopicReadinessState', 'type': 'str'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
+        'filter': {'key': 'properties.filter', 'type': 'EventChannelFilter'},
+        'partner_topic_friendly_description': {'key': 'properties.partnerTopicFriendlyDescription', 'type': 'str'},
     }
 
-    def __init__(self, *, source=None, destination=None, **kwargs) -> None:
+    def __init__(self, *, source=None, destination=None, expiration_time_if_not_activated_utc=None, filter=None, partner_topic_friendly_description: str=None, **kwargs) -> None:
         super(EventChannel, self).__init__(**kwargs)
         self.source = source
         self.destination = destination
         self.provisioning_state = None
+        self.partner_topic_readiness_state = None
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+        self.filter = filter
+        self.partner_topic_friendly_description = partner_topic_friendly_description
 
 
 class EventChannelDestination(Model):
@@ -641,6 +669,23 @@ class EventChannelDestination(Model):
         self.azure_subscription_id = azure_subscription_id
         self.resource_group = resource_group
         self.partner_topic_name = partner_topic_name
+
+
+class EventChannelFilter(Model):
+    """Filter for the Event Channel.
+
+    :param advanced_filters: An array of advanced filters that are used for
+     filtering event channels.
+    :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
+    """
+
+    _attribute_map = {
+        'advanced_filters': {'key': 'advancedFilters', 'type': '[AdvancedFilter]'},
+    }
+
+    def __init__(self, *, advanced_filters=None, **kwargs) -> None:
+        super(EventChannelFilter, self).__init__(**kwargs)
+        self.advanced_filters = advanced_filters
 
 
 class EventChannelSource(Model):
@@ -1640,9 +1685,30 @@ class PartnerRegistration(TrackedResource):
     :param partner_resource_type_display_name: Display name of the partner
      resource type.
     :type partner_resource_type_display_name: str
-    :param partner_resource_type_description: Description of the partner
-     resource type.
+    :param partner_resource_type_description: Short description of the partner
+     resource type. The length of this description should not exceed 256
+     characters.
     :type partner_resource_type_description: str
+    :param long_description: Long description for the custom scenarios and
+     integration to be displayed in the portal if needed.
+     Length of this description should not exceed 2048 characters.
+    :type long_description: str
+    :param partner_customer_service_number: The customer service number of the
+     publisher. The expected phone format should start with a '+' sign
+     followed by the country code. The remaining digits are then followed. Only
+     digits and spaces are allowed and its
+     length cannot exceed 16 digits including country code. Examples of valid
+     phone numbers are: +1 515 123 4567 and
+     +966 7 5115 2471. Examples of invalid phone numbers are: +1 (515)
+     123-4567, 1 515 123 4567 and +966 121 5115 24 7 551 1234 43
+    :type partner_customer_service_number: str
+    :param partner_customer_service_extension: The extension of the customer
+     service number of the publisher. Only digits are allowed and number of
+     digits should not exceed 10.
+    :type partner_customer_service_extension: str
+    :param customer_service_uri: The extension of the customer service URI of
+     the publisher.
+    :type customer_service_uri: str
     :param setup_uri: URI of the partner website that can be used by Azure
      customers to setup Event Grid
      integration on an event source.
@@ -1682,19 +1748,27 @@ class PartnerRegistration(TrackedResource):
         'partner_resource_type_name': {'key': 'properties.partnerResourceTypeName', 'type': 'str'},
         'partner_resource_type_display_name': {'key': 'properties.partnerResourceTypeDisplayName', 'type': 'str'},
         'partner_resource_type_description': {'key': 'properties.partnerResourceTypeDescription', 'type': 'str'},
+        'long_description': {'key': 'properties.longDescription', 'type': 'str'},
+        'partner_customer_service_number': {'key': 'properties.partnerCustomerServiceNumber', 'type': 'str'},
+        'partner_customer_service_extension': {'key': 'properties.partnerCustomerServiceExtension', 'type': 'str'},
+        'customer_service_uri': {'key': 'properties.customerServiceUri', 'type': 'str'},
         'setup_uri': {'key': 'properties.setupUri', 'type': 'str'},
         'logo_uri': {'key': 'properties.logoUri', 'type': 'str'},
         'visibility_state': {'key': 'properties.visibilityState', 'type': 'str'},
         'authorized_azure_subscription_ids': {'key': 'properties.authorizedAzureSubscriptionIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, partner_name: str=None, partner_resource_type_name: str=None, partner_resource_type_display_name: str=None, partner_resource_type_description: str=None, setup_uri: str=None, logo_uri: str=None, visibility_state=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, partner_name: str=None, partner_resource_type_name: str=None, partner_resource_type_display_name: str=None, partner_resource_type_description: str=None, long_description: str=None, partner_customer_service_number: str=None, partner_customer_service_extension: str=None, customer_service_uri: str=None, setup_uri: str=None, logo_uri: str=None, visibility_state=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
         super(PartnerRegistration, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.partner_name = partner_name
         self.partner_resource_type_name = partner_resource_type_name
         self.partner_resource_type_display_name = partner_resource_type_display_name
         self.partner_resource_type_description = partner_resource_type_description
+        self.long_description = long_description
+        self.partner_customer_service_number = partner_customer_service_number
+        self.partner_customer_service_extension = partner_customer_service_extension
+        self.customer_service_uri = customer_service_uri
         self.setup_uri = setup_uri
         self.logo_uri = logo_uri
         self.visibility_state = visibility_state
@@ -1725,6 +1799,8 @@ class PartnerRegistrationEventTypesListResult(Model):
 class PartnerRegistrationUpdateParameters(Model):
     """Properties of the Partner Registration update.
 
+    :param tags: Tags of the partner registration resource.
+    :type tags: dict[str, str]
     :param partner_topic_type_name: Name of the partner topic type.
     :type partner_topic_type_name: str
     :param partner_topic_type_display_name: Display name of the partner topic
@@ -1750,6 +1826,7 @@ class PartnerRegistrationUpdateParameters(Model):
     """
 
     _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
         'partner_topic_type_name': {'key': 'partnerTopicTypeName', 'type': 'str'},
         'partner_topic_type_display_name': {'key': 'partnerTopicTypeDisplayName', 'type': 'str'},
         'partner_topic_type_description': {'key': 'partnerTopicTypeDescription', 'type': 'str'},
@@ -1758,8 +1835,9 @@ class PartnerRegistrationUpdateParameters(Model):
         'authorized_azure_subscription_ids': {'key': 'authorizedAzureSubscriptionIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, partner_topic_type_name: str=None, partner_topic_type_display_name: str=None, partner_topic_type_description: str=None, setup_uri: str=None, logo_uri: str=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, partner_topic_type_name: str=None, partner_topic_type_display_name: str=None, partner_topic_type_description: str=None, setup_uri: str=None, logo_uri: str=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
         super(PartnerRegistrationUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
         self.partner_topic_type_name = partner_topic_type_name
         self.partner_topic_type_display_name = partner_topic_type_display_name
         self.partner_topic_type_description = partner_topic_type_description
@@ -1789,6 +1867,11 @@ class PartnerTopic(TrackedResource):
     :param source: Source associated with this partner topic. This represents
      a unique partner resource.
     :type source: str
+    :param expiration_time_if_not_activated_utc: Expiration time of the
+     partner topic. If this timer expires while the partner topic is still
+     never activated,
+     the partner topic and corresponding event channel are deleted.
+    :type expiration_time_if_not_activated_utc: datetime
     :ivar provisioning_state: Provisioning state of the partner topic.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
@@ -1798,6 +1881,12 @@ class PartnerTopic(TrackedResource):
      values include: 'NeverActivated', 'Activated', 'Deactivated'
     :type activation_state: str or
      ~azure.mgmt.eventgrid.models.PartnerTopicActivationState
+    :param partner_topic_friendly_description: Friendly description about the
+     topic. This can be set by the publisher/partner to show custom description
+     for the customer partner topic.
+     This will be helpful to remove any ambiguity of the origin of creation of
+     the partner topic for the customer.
+    :type partner_topic_friendly_description: str
     """
 
     _validation = {
@@ -1815,15 +1904,19 @@ class PartnerTopic(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'source': {'key': 'properties.source', 'type': 'str'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'activation_state': {'key': 'properties.activationState', 'type': 'str'},
+        'partner_topic_friendly_description': {'key': 'properties.partnerTopicFriendlyDescription', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, source: str=None, activation_state=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, source: str=None, expiration_time_if_not_activated_utc=None, activation_state=None, partner_topic_friendly_description: str=None, **kwargs) -> None:
         super(PartnerTopic, self).__init__(location=location, tags=tags, **kwargs)
         self.source = source
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
         self.provisioning_state = None
         self.activation_state = activation_state
+        self.partner_topic_friendly_description = partner_topic_friendly_description
 
 
 class PartnerTopicType(Resource):
@@ -1936,7 +2029,7 @@ class PrivateEndpoint(Model):
 
 
 class PrivateEndpointConnection(Resource):
-    """PrivateEndpointConnection resource information.
+    """PrivateEndpointConnection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2030,9 +2123,8 @@ class PrivateLinkResource(Model):
 class ResourceSku(Model):
     """Describes an EventGrid Resource Sku.
 
-    :param name: the Sku name of the resource.
-     the possible values: Basic; Premium. Possible values include: 'Basic',
-     'Premium'
+    :param name: The Sku name of the resource. The possible values are: Basic
+     or Premium. Possible values include: 'Basic', 'Premium'
     :type name: str or ~azure.mgmt.eventgrid.models.Sku
     """
 
@@ -2120,47 +2212,6 @@ class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
         super(ServiceBusTopicEventSubscriptionDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.endpoint_type = 'ServiceBusTopic'
-
-
-class SkuDefinitionsForResourceType(Model):
-    """Describes an EventGrid Resource Sku Definition.
-
-    :param resource_type: The Resource Type applicable for the Sku.
-    :type resource_type: str
-    :param skus: The Sku pricing tiers for the resource type.
-    :type skus: list[~azure.mgmt.eventgrid.models.ResourceSku]
-    """
-
-    _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'skus': {'key': 'skus', 'type': '[ResourceSku]'},
-    }
-
-    def __init__(self, *, resource_type: str=None, skus=None, **kwargs) -> None:
-        super(SkuDefinitionsForResourceType, self).__init__(**kwargs)
-        self.resource_type = resource_type
-        self.skus = skus
-
-
-class SkuDefinitionsForResourceTypeListResult(Model):
-    """List collection of Sku Definitions for each Resource Type.
-
-    :param value: A collection of Sku Definitions for each Resource Type.
-    :type value:
-     list[~azure.mgmt.eventgrid.models.SkuDefinitionsForResourceType]
-    :param next_link: A link for the next page of Sku Definitions.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SkuDefinitionsForResourceType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(SkuDefinitionsForResourceTypeListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
@@ -2471,7 +2522,7 @@ class Topic(TrackedResource):
     :type location: str
     :param tags: Tags of the resource.
     :type tags: dict[str, str]
-    :param private_endpoint_connections: List of private endpoint connections.
+    :param private_endpoint_connections:
     :type private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the topic. Possible values

@@ -5,73 +5,97 @@ interactions:
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['240']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'}
-    headers: {apim-request-id: f62a38ec-1b44-48be-84a2-6ca2e485bf5f, content-type: application/json;
-        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
-      date: 'Tue, 03 Mar 2020 18:34:05 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '12'}
-    status: {code: 200, message: OK}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/entities/linking, showStats=false, '']
+    body:
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 5aaa40f7-9c67-4d73-8952-cbf0e13b0888
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Wed, 27 May 2020 16:04:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '12'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['240']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'}
-    headers: {apim-request-id: 5c335185-013e-4fc0-ac9c-6a795a12eb1f, content-type: application/json;
-        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
-      date: 'Tue, 03 Mar 2020 18:34:05 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '21'}
-    status: {code: 200, message: OK}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/entities/linking, showStats=false, '']
+    body:
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 9b8a2579-bc39-43fd-960e-6da02d3e54e7
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Wed, 27 May 2020 16:04:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '23'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['240']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'}
-    headers: {apim-request-id: 86e9e0e8-e93d-4a5b-9fd4-907854efa27c, content-type: application/json;
-        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
-      date: 'Tue, 03 Mar 2020 18:34:05 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '9'}
-    status: {code: 200, message: OK}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/entities/linking, showStats=false, '']
+    body:
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 950b828f-c508-4a3a-b48c-b74b45c50c0a
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Wed, 27 May 2020 16:04:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '13'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/entities/linking?showStats=false
 version: 1

@@ -17,11 +17,17 @@ from common_tasks import process_glob_string, run_check_call
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 build_packing_script_location = os.path.join(root_dir, "build_package.py")
 
+# Import method to update package requirement if it is dev build package
+tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
+sys.path.append(tox_path)
+from sanitize_setup import process_requires
 
-def build_packages(targeted_packages, distribution_directory):
+def build_packages(targeted_packages, distribution_directory, is_dev_build = False):
     # run the build and distribution
-    for package_name in targeted_packages:
-        print(package_name)
+    for package_root in targeted_packages:
+        print(package_root)
+        if is_dev_build:
+            verify_update_package_requirement(package_root)
         print("Generating Package Using Python {}".format(sys.version))
         run_check_call(
             [
@@ -29,10 +35,15 @@ def build_packages(targeted_packages, distribution_directory):
                 build_packing_script_location,
                 "--dest",
                 distribution_directory,
-                package_name,
+                package_root,
             ],
             root_dir,
         )
+
+
+def verify_update_package_requirement(pkg_root):
+    setup_py_path = os.path.abspath(os.path.join(pkg_root, "setup.py"))
+    process_requires(setup_py_path)
 
 
 if __name__ == "__main__":
@@ -73,6 +84,16 @@ if __name__ == "__main__":
         ),
     )
 
+    parser.add_argument(
+        "--devbuild",
+        default=False,
+        dest="is_dev_build",
+        help=(
+            "Set build type to dev build so package requirements will be updated if required package is not available on PyPI"
+        ),
+    )
+
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -84,4 +105,4 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
-    build_packages(targeted_packages, args.distribution_directory)
+    build_packages(targeted_packages, args.distribution_directory, args.is_dev_build)

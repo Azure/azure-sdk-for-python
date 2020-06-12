@@ -383,9 +383,11 @@ class BlobRestoreRange(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_range: Required. Blob start range. Empty means account start.
+    :param start_range: Required. Blob start range. This is inclusive. Empty
+     means account start.
     :type start_range: str
-    :param end_range: Required. Blob end range. Empty means account end.
+    :param end_range: Required. Blob end range. This is exclusive. Empty means
+     account end.
     :type end_range: str
     """
 
@@ -785,6 +787,35 @@ class DateAfterModification(Model):
     def __init__(self, **kwargs):
         super(DateAfterModification, self).__init__(**kwargs)
         self.days_after_modification_greater_than = kwargs.get('days_after_modification_greater_than', None)
+
+
+class DeletedShare(Model):
+    """The deleted share to be restored.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param deleted_share_name: Required. Required. Identify the name of the
+     deleted share that will be restored.
+    :type deleted_share_name: str
+    :param deleted_share_version: Required. Required. Identify the version of
+     the deleted share that will be restored.
+    :type deleted_share_version: str
+    """
+
+    _validation = {
+        'deleted_share_name': {'required': True},
+        'deleted_share_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'deleted_share_name': {'key': 'deletedShareName', 'type': 'str'},
+        'deleted_share_version': {'key': 'deletedShareVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedShare, self).__init__(**kwargs)
+        self.deleted_share_name = kwargs.get('deleted_share_name', None)
+        self.deleted_share_version = kwargs.get('deleted_share_version', None)
 
 
 class DeleteRetentionPolicy(Model):
@@ -1212,6 +1243,41 @@ class FileShare(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the
+     file share. Can only be specified when creating a share. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is
+     NoRootSquash. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: datetime
+    :ivar remaining_retention_days: Remaining retention days for share that
+     was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can
+     choose between TransactionOptimized (default), Hot, and Cool. FileStorage
+     account can choose Premium. Possible values include:
+     'TransactionOptimized', 'Hot', 'Cool', 'Premium'
+    :type access_tier: str or
+     ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for
+     share access tier.
+    :vartype access_tier_change_time: datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for
+     access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the
+     share. Note that this value may not include all recently created or
+     recently resized files.
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1221,6 +1287,13 @@ class FileShare(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1231,6 +1304,16 @@ class FileShare(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -1238,6 +1321,16 @@ class FileShare(AzureEntityResource):
         self.last_modified_time = None
         self.metadata = kwargs.get('metadata', None)
         self.share_quota = kwargs.get('share_quota', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = kwargs.get('access_tier', None)
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class FileShareItem(AzureEntityResource):
@@ -1266,6 +1359,41 @@ class FileShareItem(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the
+     file share. Can only be specified when creating a share. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is
+     NoRootSquash. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: datetime
+    :ivar remaining_retention_days: Remaining retention days for share that
+     was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can
+     choose between TransactionOptimized (default), Hot, and Cool. FileStorage
+     account can choose Premium. Possible values include:
+     'TransactionOptimized', 'Hot', 'Cool', 'Premium'
+    :type access_tier: str or
+     ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for
+     share access tier.
+    :vartype access_tier_change_time: datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for
+     access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the
+     share. Note that this value may not include all recently created or
+     recently resized files.
+    :vartype share_usage_bytes: long
     """
 
     _validation = {
@@ -1275,6 +1403,13 @@ class FileShareItem(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1285,6 +1420,16 @@ class FileShareItem(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -1292,6 +1437,16 @@ class FileShareItem(AzureEntityResource):
         self.last_modified_time = None
         self.metadata = kwargs.get('metadata', None)
         self.share_quota = kwargs.get('share_quota', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = kwargs.get('access_tier', None)
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class GeoReplicationStats(Model):
@@ -1994,6 +2149,10 @@ class ManagementPolicyFilter(Model):
     :param blob_types: Required. An array of predefined enum values. Only
      blockBlob is supported.
     :type blob_types: list[str]
+    :param blob_index_match: An array of blob index tag based filters, there
+     can be at most 10 tag filters
+    :type blob_index_match:
+     list[~azure.mgmt.storage.v2019_06_01.models.TagFilter]
     """
 
     _validation = {
@@ -2003,12 +2162,14 @@ class ManagementPolicyFilter(Model):
     _attribute_map = {
         'prefix_match': {'key': 'prefixMatch', 'type': '[str]'},
         'blob_types': {'key': 'blobTypes', 'type': '[str]'},
+        'blob_index_match': {'key': 'blobIndexMatch', 'type': '[TagFilter]'},
     }
 
     def __init__(self, **kwargs):
         super(ManagementPolicyFilter, self).__init__(**kwargs)
         self.prefix_match = kwargs.get('prefix_match', None)
         self.blob_types = kwargs.get('blob_types', None)
+        self.blob_index_match = kwargs.get('blob_index_match', None)
 
 
 class ManagementPolicyRule(Model):
@@ -2189,6 +2350,130 @@ class NetworkRuleSet(Model):
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
         self.ip_rules = kwargs.get('ip_rules', None)
         self.default_action = kwargs.get('default_action', "Allow")
+
+
+class ObjectReplicationPolicy(Resource):
+    """The replication policy between two storage accounts. Multiple rules can be
+    defined in one policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar policy_id: A unique id for object replication policy.
+    :vartype policy_id: str
+    :ivar enabled_time: Indicates when the policy is enabled on the source
+     account.
+    :vartype enabled_time: datetime
+    :param source_account: Required. Required. Source account name.
+    :type source_account: str
+    :param destination_account: Required. Required. Destination account name.
+    :type destination_account: str
+    :param rules: The storage account object replication rules.
+    :type rules:
+     list[~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyRule]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'policy_id': {'readonly': True},
+        'enabled_time': {'readonly': True},
+        'source_account': {'required': True},
+        'destination_account': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'policy_id': {'key': 'properties.policyId', 'type': 'str'},
+        'enabled_time': {'key': 'properties.enabledTime', 'type': 'iso-8601'},
+        'source_account': {'key': 'properties.sourceAccount', 'type': 'str'},
+        'destination_account': {'key': 'properties.destinationAccount', 'type': 'str'},
+        'rules': {'key': 'properties.rules', 'type': '[ObjectReplicationPolicyRule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicy, self).__init__(**kwargs)
+        self.policy_id = None
+        self.enabled_time = None
+        self.source_account = kwargs.get('source_account', None)
+        self.destination_account = kwargs.get('destination_account', None)
+        self.rules = kwargs.get('rules', None)
+
+
+class ObjectReplicationPolicyFilter(Model):
+    """Filters limit replication to a subset of blobs within the storage account.
+    A logical OR is performed on values in the filter. If multiple filters are
+    defined, a logical AND is performed on all filters.
+
+    :param prefix_match: Optional. Filters the results to replicate only blobs
+     whose names begin with the specified prefix.
+    :type prefix_match: list[str]
+    :param min_creation_time: Blobs created after the time will be replicated
+     to the destination. It must be in datetime format 'yyyy-MM-ddTHH:mm:ssZ'.
+     Example: 2020-02-19T16:05:00Z
+    :type min_creation_time: str
+    """
+
+    _attribute_map = {
+        'prefix_match': {'key': 'prefixMatch', 'type': '[str]'},
+        'min_creation_time': {'key': 'minCreationTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicyFilter, self).__init__(**kwargs)
+        self.prefix_match = kwargs.get('prefix_match', None)
+        self.min_creation_time = kwargs.get('min_creation_time', None)
+
+
+class ObjectReplicationPolicyRule(Model):
+    """The replication policy rule between two containers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_id: Rule Id is auto-generated for each new rule on destination
+     account. It is required for put policy on source account.
+    :type rule_id: str
+    :param source_container: Required. Required. Source container name.
+    :type source_container: str
+    :param destination_container: Required. Required. Destination container
+     name.
+    :type destination_container: str
+    :param filters: Optional. An object that defines the filter set.
+    :type filters:
+     ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyFilter
+    """
+
+    _validation = {
+        'source_container': {'required': True},
+        'destination_container': {'required': True},
+    }
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'source_container': {'key': 'sourceContainer', 'type': 'str'},
+        'destination_container': {'key': 'destinationContainer', 'type': 'str'},
+        'filters': {'key': 'filters', 'type': 'ObjectReplicationPolicyFilter'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicyRule, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.source_container = kwargs.get('source_container', None)
+        self.destination_container = kwargs.get('destination_container', None)
+        self.filters = kwargs.get('filters', None)
 
 
 class Operation(Model):
@@ -2455,6 +2740,9 @@ class ProxyResource(Resource):
 class RestorePolicyProperties(Model):
     """The blob service properties for blob restore policy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param enabled: Required. Blob restore is enabled if set to true.
@@ -2462,22 +2750,28 @@ class RestorePolicyProperties(Model):
     :param days: how long this blob can be restored. It should be great than
      zero and less than DeleteRetentionPolicy.days.
     :type days: int
+    :ivar last_enabled_time: Returns the date and time the restore policy was
+     last enabled.
+    :vartype last_enabled_time: datetime
     """
 
     _validation = {
         'enabled': {'required': True},
         'days': {'maximum': 365, 'minimum': 1},
+        'last_enabled_time': {'readonly': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'days': {'key': 'days', 'type': 'int'},
+        'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(RestorePolicyProperties, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.days = kwargs.get('days', None)
+        self.last_enabled_time = None
 
 
 class Restriction(Model):
@@ -3439,6 +3733,42 @@ class StorageAccountUpdateParameters(Model):
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.routing_preference = kwargs.get('routing_preference', None)
         self.kind = kwargs.get('kind', None)
+
+
+class TagFilter(Model):
+    """Blob index tag based filtering for blob objects.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. This is the filter tag name, it can have 1 - 128
+     characters
+    :type name: str
+    :param op: Required. This is the comparison operator which is used for
+     object comparison and filtering. Only == (equality operator) is currently
+     supported
+    :type op: str
+    :param value: Required. This is the filter tag value field used for tag
+     based filtering, it can have 0 - 256 characters
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'op': {'required': True},
+        'value': {'required': True, 'max_length': 256, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'op': {'key': 'op', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TagFilter, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.op = kwargs.get('op', None)
+        self.value = kwargs.get('value', None)
 
 
 class TagProperty(Model):

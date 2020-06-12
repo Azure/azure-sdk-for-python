@@ -48,7 +48,50 @@ class Resource(Model):
         self.type = None
 
 
-class AttestationProvider(Resource):
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
+
+
+class AttestationProvider(TrackedResource):
     """Attestation service response message.
 
     Variables are only populated by the server, and will be ignored when
@@ -64,6 +107,12 @@ class AttestationProvider(Resource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    :param trust_model: Trust model for the attestation service instance.
+    :type trust_model: str
     :param status: Required. Status of attestation service. Possible values
      include: 'Ready', 'NotReady', 'Error'
     :type status: str or
@@ -76,6 +125,7 @@ class AttestationProvider(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'status': {'required': True},
     }
 
@@ -83,12 +133,16 @@ class AttestationProvider(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'trust_model': {'key': 'properties.trustModel', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'attest_uri': {'key': 'properties.attestUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AttestationProvider, self).__init__(**kwargs)
+        self.trust_model = kwargs.get('trust_model', None)
         self.status = kwargs.get('status', None)
         self.attest_uri = kwargs.get('attest_uri', None)
 
@@ -110,7 +164,43 @@ class AttestationProviderListResult(Model):
 
 
 class AttestationServiceCreationParams(Model):
-    """Client supplied parameters passed to attestation service.
+    """Parameters for creating an attestation service instance.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The supported Azure location where the
+     attestation service instance should be created.
+    :type location: str
+    :param tags: The tags that will be assigned to the attestation service
+     instance.
+    :type tags: dict[str, str]
+    :param properties: Required. Properties of the attestation service
+     instance
+    :type properties:
+     ~azure.mgmt.attestation.models.AttestationServiceCreationSpecificParams
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'AttestationServiceCreationSpecificParams'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AttestationServiceCreationParams, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class AttestationServiceCreationSpecificParams(Model):
+    """Client supplied parameters used to create a new attestation service
+    instance.
 
     :param attestation_policy: Name of attestation policy.
     :type attestation_policy: str
@@ -127,9 +217,26 @@ class AttestationServiceCreationParams(Model):
     }
 
     def __init__(self, **kwargs):
-        super(AttestationServiceCreationParams, self).__init__(**kwargs)
+        super(AttestationServiceCreationSpecificParams, self).__init__(**kwargs)
         self.attestation_policy = kwargs.get('attestation_policy', None)
         self.policy_signing_certificates = kwargs.get('policy_signing_certificates', None)
+
+
+class AttestationServicePatchParams(Model):
+    """Parameters for patching an attestation service instance.
+
+    :param tags: The tags that will be assigned to the attestation service
+     instance.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AttestationServicePatchParams, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
 
 
 class AzureEntityResource(Resource):
@@ -455,46 +562,3 @@ class ProxyResource(Resource):
 
     def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
-
-
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
-    :type location: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)

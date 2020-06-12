@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import HttpOperationError
 
 from .. import models
 
@@ -23,6 +24,7 @@ class VersionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar format: Lu format extension. Constant value: "lu".
     """
 
     models = models
@@ -34,6 +36,7 @@ class VersionsOperations(object):
         self._deserialize = deserializer
 
         self.config = config
+        self.format = "lu"
 
     def clone(
             self, app_id, version_id, version=None, custom_headers=None, raw=False, **operation_config):
@@ -517,3 +520,186 @@ class VersionsOperations(object):
 
         return deserialized
     delete_unlabelled_utterance.metadata = {'url': '/apps/{appId}/versions/{versionId}/suggest'}
+
+    def import_v2_app(
+            self, app_id, luis_app_v2, version_id=None, custom_headers=None, raw=False, **operation_config):
+        """Imports a new version into a LUIS application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param luis_app_v2: A LUIS application structure.
+        :type luis_app_v2:
+         ~azure.cognitiveservices.language.luis.authoring.models.LuisAppV2
+        :param version_id: The new versionId to import. If not specified, the
+         versionId will be read from the imported object.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.import_v2_app.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if version_id is not None:
+            query_parameters['versionId'] = self._serialize.query("version_id", version_id, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(luis_app_v2, 'LuisAppV2')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('str', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    import_v2_app.metadata = {'url': '/apps/{appId}/versions/import'}
+
+    def import_lu_format(
+            self, app_id, luis_app_lu, version_id=None, custom_headers=None, raw=False, **operation_config):
+        """Imports a new version into a LUIS application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param luis_app_lu: An LU representing the LUIS application structure.
+        :type luis_app_lu: str
+        :param version_id: The new versionId to import. If not specified, the
+         versionId will be read from the imported object.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.import_lu_format.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if version_id is not None:
+            query_parameters['versionId'] = self._serialize.query("version_id", version_id, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'text/plain'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(luis_app_lu, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('str', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    import_lu_format.metadata = {'url': '/apps/{appId}/versions/import'}
+
+    def export_lu_format(
+            self, app_id, version_id, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Exports a LUIS application to text format.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.export_lu_format.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['format'] = self._serialize.query("self.format", self.format, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/octet-stream'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    export_lu_format.metadata = {'url': '/apps/{appId}/versions/{versionId}/export'}

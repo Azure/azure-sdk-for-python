@@ -50,7 +50,10 @@ class ResourcesOperations(object):
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
-        :param expand: The $expand query parameter
+        :param expand: Comma-separated list of additional properties to be
+         included in the response. Valid values include `createdTime`,
+         `changedTime` and `provisioningState`. For example,
+         `$expand=createdTime,changedTime`.
         :type expand: str
         :param top: The number of results to return. If null is passed,
          returns all resources.
@@ -60,9 +63,9 @@ class ResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GenericResource
+        :return: An iterator like instance of GenericResourceExpanded
         :rtype:
-         ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2017_05_10.models.GenericResource]
+         ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourceExpandedPaged[~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourceExpanded]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -119,7 +122,7 @@ class ResourcesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GenericResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.GenericResourceExpandedPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources'}
@@ -321,7 +324,10 @@ class ResourcesOperations(object):
 
         :param filter: The filter to apply on the operation.
         :type filter: str
-        :param expand: The $expand query parameter.
+        :param expand: Comma-separated list of additional properties to be
+         included in the response. Valid values include `createdTime`,
+         `changedTime` and `provisioningState`. For example,
+         `$expand=createdTime,changedTime`.
         :type expand: str
         :param top: The number of results to return. If null is passed,
          returns all resource groups.
@@ -331,9 +337,9 @@ class ResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GenericResource
+        :return: An iterator like instance of GenericResourceExpanded
         :rtype:
-         ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2017_05_10.models.GenericResource]
+         ~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourceExpandedPaged[~azure.mgmt.resource.resources.v2017_05_10.models.GenericResourceExpanded]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -389,7 +395,7 @@ class ResourcesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GenericResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.GenericResourceExpandedPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resources'}

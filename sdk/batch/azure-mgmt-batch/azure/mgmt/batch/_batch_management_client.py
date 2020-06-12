@@ -19,6 +19,8 @@ from .operations import ApplicationOperations
 from .operations import LocationOperations
 from .operations import Operations
 from .operations import CertificateOperations
+from .operations import PrivateLinkResourceOperations
+from .operations import PrivateEndpointConnectionOperations
 from .operations import PoolOperations
 from . import models
 
@@ -41,6 +43,10 @@ class BatchManagementClient(SDKClient):
     :vartype operations: azure.mgmt.batch.operations.Operations
     :ivar certificate: Certificate operations
     :vartype certificate: azure.mgmt.batch.operations.CertificateOperations
+    :ivar private_link_resource: PrivateLinkResource operations
+    :vartype private_link_resource: azure.mgmt.batch.operations.PrivateLinkResourceOperations
+    :ivar private_endpoint_connection: PrivateEndpointConnection operations
+    :vartype private_endpoint_connection: azure.mgmt.batch.operations.PrivateEndpointConnectionOperations
     :ivar pool: Pool operations
     :vartype pool: azure.mgmt.batch.operations.PoolOperations
 
@@ -60,7 +66,7 @@ class BatchManagementClient(SDKClient):
         super(BatchManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-01'
+        self.api_version = '2020-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -75,6 +81,10 @@ class BatchManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resource = PrivateLinkResourceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.pool = PoolOperations(
             self._client, self.config, self._serialize, self._deserialize)

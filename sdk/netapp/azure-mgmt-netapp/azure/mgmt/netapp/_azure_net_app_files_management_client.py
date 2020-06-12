@@ -18,7 +18,6 @@ from .operations import NetAppResourceOperations
 from .operations import AccountsOperations
 from .operations import PoolsOperations
 from .operations import VolumesOperations
-from .operations import MountTargetsOperations
 from .operations import SnapshotsOperations
 from . import models
 
@@ -39,8 +38,6 @@ class AzureNetAppFilesManagementClient(SDKClient):
     :vartype pools: azure.mgmt.netapp.operations.PoolsOperations
     :ivar volumes: Volumes operations
     :vartype volumes: azure.mgmt.netapp.operations.VolumesOperations
-    :ivar mount_targets: MountTargets operations
-    :vartype mount_targets: azure.mgmt.netapp.operations.MountTargetsOperations
     :ivar snapshots: Snapshots operations
     :vartype snapshots: azure.mgmt.netapp.operations.SnapshotsOperations
 
@@ -61,7 +58,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-10-01'
+        self.api_version = '2019-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -74,8 +71,6 @@ class AzureNetAppFilesManagementClient(SDKClient):
         self.pools = PoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.volumes = VolumesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mount_targets = MountTargetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.snapshots = SnapshotsOperations(
             self._client, self.config, self._serialize, self._deserialize)

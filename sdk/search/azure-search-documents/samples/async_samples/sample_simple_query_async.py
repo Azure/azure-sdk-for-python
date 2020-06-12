@@ -31,17 +31,16 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 async def simple_text_query():
     # [START simple_query_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.aio import SearchIndexClient
+    from azure.search.documents.aio import SearchClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    results = await search_client.search(query="spa")
+    async with search_client:
+        results = await search_client.search(search_text="spa")
 
-    print("Hotels containing 'spa' in the name (or other fields):")
-    async for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
-
-    await search_client.close()
+        print("Hotels containing 'spa' in the name (or other fields):")
+        async for result in results:
+            print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END simple_query_async]
 
 if __name__ == '__main__':

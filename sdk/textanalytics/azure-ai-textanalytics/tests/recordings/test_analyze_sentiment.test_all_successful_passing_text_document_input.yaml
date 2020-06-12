@@ -6,25 +6,47 @@ interactions:
       "The restaurant had really good food. I recommend you try it.", "language":
       "en"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['315']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '315'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23}]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51,"text":"Microsoft
+        was founded by Bill Gates and Paul Allen."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38,"text":"I
+        did not like the hotel we stayed at."},{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21,"text":"It
+        was too expensive."}],"warnings":[]},{"id":"3","sentiment":"positive","confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36,"text":"The
+        restaurant had really good food."},{"sentiment":"positive","confidenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23,"text":"I
+        recommend you try it."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: [f9b9d330-d57c-400d-93dc-778d95b950d3]
-      content-type: [application/json; charset=utf-8]
-      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=3]
-      date: ['Tue, 03 Mar 2020 18:33:17 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-      x-envoy-upstream-service-time: ['75']
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 829ad6e0-1c65-4dbe-95e4-2ea55bfd0a7f
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Wed, 27 May 2020 16:04:02 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '103'
+    status:
+      code: 200
+      message: OK
 version: 1

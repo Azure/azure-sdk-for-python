@@ -343,7 +343,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertEqual(100 * GIGABYTE, volume.usage_threshold);
 
         volume_patch = VolumePatch(usage_threshold = 200 * GIGABYTE)
-        volume = self.client.volumes.update(volume_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        volume = self.client.volumes.update(volume_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1).result()
         self.assertEqual("Premium", volume.service_level);  # unchanged
         self.assertEqual(200 * GIGABYTE, volume.usage_threshold);
 

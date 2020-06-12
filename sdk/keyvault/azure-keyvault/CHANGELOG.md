@@ -1,5 +1,17 @@
 # Release History
 
+## 4.1.0 (2020-04-10)
+**Disclaimer**
+
+This package and the `azure.keyvault` namespace does not contain code anymore. This package now installs three sub-packages instead:
+
+* [azure-keyvault-certificates](https://pypi.org/project/azure-keyvault-certificates/)
+* [azure-keyvault-keys](https://pypi.org/project/azure-keyvault-keys/)
+* [azure-keyvault-secrets](https://pypi.org/project/azure-keyvault-secrets/)
+
+All code needs to be adapted to use the new namespaces. See individual package readmes for details.
+
+ 
 ## 4.0.0 (2019-10-31)
 
 **Disclaimer**

@@ -15,14 +15,25 @@ from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-nam
 from ._version import VERSION
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, ContextManager
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable
+    from typing import Any, Mapping, MutableMapping, Dict, Optional, Union, Callable, Sequence
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    AttributeValue = Union[
+        str,
+        bool,
+        int,
+        float,
+        Sequence[str],
+        Sequence[bool],
+        Sequence[int],
+        Sequence[float],
+    ]
+    Attributes = Optional[Dict[str, AttributeValue]]
 
 __version__ = VERSION
 
@@ -36,7 +47,7 @@ def _get_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: st
     return [headers.get(key, "")]
 
 
-def _set_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: str, value: str):
+def _set_headers_from_http_request_headers(headers: "MutableMapping[str, Any]", key: str, value: str):
     """Set headers in the given headers dict.
 
     Must comply to opentelemetry.context.propagation.httptextformat.Setter:
@@ -69,12 +80,12 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return self._span_instance
 
     def span(self, name="span"):
-        # type: (Optional[str]) -> OpenCensusSpan
+        # type: (Optional[str]) -> OpenTelemetrySpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
         :type name: str
-        :return: The OpenCensusSpan that is wrapping the child span instance
+        :return: The OpenTelemetrySpan that is wrapping the child span instance
         """
         return self.__class__(name=name)
 
@@ -112,7 +123,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __enter__(self):
         """Start a span."""
-        self.start()
         self._current_ctxt_manager = self.get_current_tracer().use_span(self._span_instance, end_on_exit=True)
         self._current_ctxt_manager.__enter__()
         return self
@@ -124,9 +134,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             self._current_ctxt_manager = None
 
     def start(self):
-        # type: () -> None
-        """Set the start time for a span."""
-        self.span_instance.start()
+        # Spans are automatically started at their creation with OpenTelemetry
+        pass
 
     def finish(self):
         # type: () -> None
@@ -156,6 +165,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         self.span_instance.set_attribute(key, value)
 
     def get_trace_parent(self):
+        # type: () -> str
         """Return traceparent string as defined in W3C trace context specification.
 
         Example:
@@ -171,8 +181,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return self.to_header()['traceparent']
 
     @classmethod
-    def link(cls, traceparent):
-        # type: (str) -> None
+    def link(cls, traceparent, attributes=None):
+        # type: (str, Attributes) -> None
         """
         Links the context to the current tracer.
 
@@ -181,11 +191,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         cls.link_from_headers({
             'traceparent': traceparent
-        })
+        }, attributes)
 
     @classmethod
-    def link_from_headers(cls, headers):
-        # type: (Dict[str, str]) -> None
+    def link_from_headers(cls, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -195,7 +205,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(_get_headers_from_http_request_headers, headers)
         span_ctx = get_span_from_context(ctx).get_context()
         current_span = cls.get_current_span()
-        current_span.links.append(Link(span_ctx))
+        current_span.links.append(Link(span_ctx, attributes))
 
     @classmethod
     def get_current_span(cls):

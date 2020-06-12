@@ -24,7 +24,7 @@ class PeeringLocationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-09-01-preview".
+    :ivar api_version: The client API version. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PeeringLocationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01-preview"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
@@ -47,7 +47,7 @@ class PeeringLocationsOperations(object):
          'Direct', 'Exchange'
         :type kind: str
         :param direct_peering_type: The type of direct peering. Possible
-         values include: 'Edge', 'Transit', 'Cdn', 'Internal'
+         values include: 'Edge', 'Transit', 'Cdn', 'Internal', 'Ix', 'IxRs'
         :type direct_peering_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

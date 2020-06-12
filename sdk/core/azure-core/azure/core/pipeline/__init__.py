@@ -38,7 +38,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 try:
     from contextlib import (  # pylint: disable=unused-import
         AbstractContextManager,
-    )  # type: ignore
+    )
 except ImportError:  # Python <= 3.5
 
     class AbstractContextManager(object):  # type: ignore
@@ -63,14 +63,45 @@ class PipelineContext(dict):
     :param transport: The HTTP transport type.
     :param kwargs: Developer-defined keyword arguments.
     """
+    _PICKLE_CONTEXT = {
+        'deserialized_data'
+    }
 
     def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
         self._protected = ["transport", "options"]
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['transport']
+        return state
+
+    def __reduce__(self):
+        reduced = super(PipelineContext, self).__reduce__()
+        saved_context = {}
+        for key, value in self.items():
+            if key in self._PICKLE_CONTEXT:
+                saved_context[key] = value
+        # 1 is for from __reduce__ spec of pickle (generic args for recreation)
+        # 2 is how dict is implementing __reduce__ (dict specific)
+        # tuple are read-only, we use a list in the meantime
+        reduced = list(reduced)
+        dict_reduced_result = list(reduced[1])
+        dict_reduced_result[2] = saved_context
+        reduced[1] = tuple(dict_reduced_result)
+        return tuple(reduced)
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self.transport = None
+
     def __setitem__(self, key, item):
-        if key in self._protected:
+        # If reloaded from pickle, _protected might not be here until restored by pickle
+        # this explains the hasattr test
+        if hasattr(self, '_protected') and key in self._protected:
             raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 

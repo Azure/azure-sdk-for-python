@@ -24,6 +24,7 @@ try:
     from ._models_py3 import AzureFileShareConfiguration
     from ._models_py3 import BatchAccount
     from ._models_py3 import BatchAccountCreateParameters
+    from ._models_py3 import BatchAccountIdentity
     from ._models_py3 import BatchAccountKeys
     from ._models_py3 import BatchAccountRegenerateKeyParameters
     from ._models_py3 import BatchAccountUpdateParameters
@@ -41,10 +42,13 @@ try:
     from ._models_py3 import DataDisk
     from ._models_py3 import DeleteCertificateError
     from ._models_py3 import DeploymentConfiguration
+    from ._models_py3 import DiskEncryptionConfiguration
+    from ._models_py3 import EncryptionProperties
     from ._models_py3 import EnvironmentSetting
     from ._models_py3 import FixedScaleSettings
     from ._models_py3 import ImageReference
     from ._models_py3 import InboundNatPool
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import KeyVaultReference
     from ._models_py3 import LinuxUserConfiguration
     from ._models_py3 import MetadataItem
@@ -56,7 +60,12 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Pool
     from ._models_py3 import PoolEndpointConfiguration
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
+    from ._models_py3 import PublicIPAddressConfiguration
     from ._models_py3 import ResizeError
     from ._models_py3 import ResizeOperationStatus
     from ._models_py3 import Resource
@@ -86,6 +95,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileShareConfiguration
     from ._models import BatchAccount
     from ._models import BatchAccountCreateParameters
+    from ._models import BatchAccountIdentity
     from ._models import BatchAccountKeys
     from ._models import BatchAccountRegenerateKeyParameters
     from ._models import BatchAccountUpdateParameters
@@ -103,10 +113,13 @@ except (SyntaxError, ImportError):
     from ._models import DataDisk
     from ._models import DeleteCertificateError
     from ._models import DeploymentConfiguration
+    from ._models import DiskEncryptionConfiguration
+    from ._models import EncryptionProperties
     from ._models import EnvironmentSetting
     from ._models import FixedScaleSettings
     from ._models import ImageReference
     from ._models import InboundNatPool
+    from ._models import KeyVaultProperties
     from ._models import KeyVaultReference
     from ._models import LinuxUserConfiguration
     from ._models import MetadataItem
@@ -118,7 +131,12 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import Pool
     from ._models import PoolEndpointConfiguration
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
+    from ._models import PublicIPAddressConfiguration
     from ._models import ResizeError
     from ._models import ResizeOperationStatus
     from ._models import Resource
@@ -139,9 +157,16 @@ from ._paged_models import BatchAccountPaged
 from ._paged_models import CertificatePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PoolPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._batch_management_client_enums import (
+    KeySource,
     PoolAllocationMode,
+    PublicNetworkAccessType,
+    ResourceIdentityType,
     ProvisioningState,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateLinkServiceConnectionStatus,
     AccountKeyType,
     PackageState,
     CertificateFormat,
@@ -150,10 +175,12 @@ from ._batch_management_client_enums import (
     AllocationState,
     CachingType,
     StorageAccountType,
+    DiskEncryptionTarget,
     ComputeNodeDeallocationOption,
     InterNodeCommunicationState,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
+    IPAddressProvisioningType,
     ComputeNodeFillType,
     ElevationLevel,
     LoginMode,
@@ -161,6 +188,8 @@ from ._batch_management_client_enums import (
     ContainerWorkingDirectory,
     CertificateStoreLocation,
     CertificateVisibility,
+    ContainerType,
+    ResourceType,
     NameAvailabilityReason,
 )
 
@@ -179,6 +208,7 @@ __all__ = [
     'AzureFileShareConfiguration',
     'BatchAccount',
     'BatchAccountCreateParameters',
+    'BatchAccountIdentity',
     'BatchAccountKeys',
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountUpdateParameters',
@@ -196,10 +226,13 @@ __all__ = [
     'DataDisk',
     'DeleteCertificateError',
     'DeploymentConfiguration',
+    'DiskEncryptionConfiguration',
+    'EncryptionProperties',
     'EnvironmentSetting',
     'FixedScaleSettings',
     'ImageReference',
     'InboundNatPool',
+    'KeyVaultProperties',
     'KeyVaultReference',
     'LinuxUserConfiguration',
     'MetadataItem',
@@ -211,7 +244,12 @@ __all__ = [
     'OperationDisplay',
     'Pool',
     'PoolEndpointConfiguration',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkServiceConnectionState',
     'ProxyResource',
+    'PublicIPAddressConfiguration',
     'ResizeError',
     'ResizeOperationStatus',
     'Resource',
@@ -231,9 +269,16 @@ __all__ = [
     'ApplicationPaged',
     'OperationPaged',
     'CertificatePaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
     'PoolPaged',
+    'KeySource',
     'PoolAllocationMode',
+    'PublicNetworkAccessType',
+    'ResourceIdentityType',
     'ProvisioningState',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateLinkServiceConnectionStatus',
     'AccountKeyType',
     'PackageState',
     'CertificateFormat',
@@ -242,10 +287,12 @@ __all__ = [
     'AllocationState',
     'CachingType',
     'StorageAccountType',
+    'DiskEncryptionTarget',
     'ComputeNodeDeallocationOption',
     'InterNodeCommunicationState',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',
+    'IPAddressProvisioningType',
     'ComputeNodeFillType',
     'ElevationLevel',
     'LoginMode',
@@ -253,5 +300,7 @@ __all__ = [
     'ContainerWorkingDirectory',
     'CertificateStoreLocation',
     'CertificateVisibility',
+    'ContainerType',
+    'ResourceType',
     'NameAvailabilityReason',
 ]

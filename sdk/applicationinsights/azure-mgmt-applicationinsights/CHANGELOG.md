@@ -1,5 +1,74 @@
 # Release History
 
+## 0.3.1 (2020-04-20)
+
+** Fixes **
+
+  - Removed an unreferenced client definition.
+
+## 0.3.0 (2020-04-08)
+
+**Features**
+
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration has a new parameter type
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration has a new parameter location
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration has a new parameter id
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration has a new parameter name1
+  - Model ApplicationInsightsComponent has a new parameter connection_string
+  - Model ApplicationInsightsComponent has a new parameter immediate_purge_data_on30_days
+  - Model ApplicationInsightsComponent has a new parameter retention_in_days
+  - Model ApplicationInsightsComponent has a new parameter disable_ip_masking
+  - Model ApplicationInsightsComponent has a new parameter public_network_access_for_query
+  - Model ApplicationInsightsComponent has a new parameter private_link_scoped_resources
+  - Model ApplicationInsightsComponent has a new parameter public_network_access_for_ingestion
+  - Added operation group ComponentCurrentPricingPlanOperations
+  - Added operation group ComponentLinkedStorageAccountsOperations
+  - Added operation group EASubscriptionListMigrationDateOperations
+  - Added operation group EASubscriptionMigrateToNewPricingModelOperations
+  - Added operation group EASubscriptionRollbackToLegacyPricingModelOperations
+  - Added operation group QueryPacksOperations
+  - Added operation group WorkbookTemplatesOperations
+  - Added operation group QueriesOperations
+
+**Breaking changes**
+
+  - Parameter location of model Workbook is now required
+  - Operation WorkbooksOperations.create_or_update has a new signature
+  - Operation WorkbooksOperations.list_by_resource_group has a new signature
+  - Operation WorkbooksOperations.update has a new signature
+  - Model Workbook no longer has parameter workbook_name
+  - Model Workbook no longer has parameter source_resource_id
+  - Model Workbook no longer has parameter shared_type_kind
+  - Model Workbook no longer has parameter workbook_id
+  - Model Workbook has a new required parameter display_name
+  - Model ApplicationInsightsComponent has a new required parameter workspace_resource_id
+
+**General Breaking Changes**
+
+This version uses a next-generation code generator that *might*
+introduce breaking changes. In summary, some modules were incorrectly
+visible/importable and have been renamed. This fixed several issues
+caused by usage of classes that were not supposed to be used in the
+first place.
+
+  - ApplicationInsightsManagementClient cannot be imported from
+    `azure.mgmt.applicationinsights.application_insights_management_client` anymore (import from
+    `azure.mgmt.applicationinsights` works like before)
+  - ApplicationInsightsManagementClientConfiguration import has been moved from
+    `azure.mgmt.applicationinsights.application_insights_management_client` 
+    to `azure.mgmt.applicationinsights`  
+  - A model `MyClass` from a "models" sub-module cannot be imported
+    anymore using `azure.mgmt.applicationinsights.models.my_class` (import from
+    `azure.mgmt.applicationinsights.models` works like before)
+  - An operation class `MyClassOperations` from an `operations`
+    sub-module cannot be imported anymore using
+    `azure.mgmt.applicationinsights.operations.my_class_operations` (import from
+    `azure.mgmt.applicationinsights.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default.
+You should always use a client as a context manager, or call close(), or
+use no more than one client per process.
+
 ## 0.2.0 (2019-04-10)
 
 **Features**

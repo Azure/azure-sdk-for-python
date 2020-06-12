@@ -51,10 +51,11 @@ class EventHub:
         self.consumer_client.receive(
             # self.on_event will dispose of the client and allow execution to
             # continue
+            partition_id=partition_id,
             on_event=self.on_event,
             on_error=self.on_error,
-            timeout=RECEIVE_TIMEOUT,
-            starting_position=STARTING_POSITION
+            starting_position=STARTING_POSITION,
+            starting_position_inclusive=True
         )
 
         # on_event closes the consumer_client which resumes execution
@@ -68,10 +69,9 @@ class EventHub:
             )
 
     def on_event(self, context, event):
-        if self.received_event_count < len(TEST_EVENTS):
-            self.received_event_count += 1
-            print(event.body_as_str())
-        else:
+        self.received_event_count += 1
+        print(event.body_as_str())
+        if self.received_event_count >= len(TEST_EVENTS):
             # Close the client which allows execution to continue
             self.close_client()
 

@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: '%PDFUUU'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '7'
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "dae94e29-fb32-4f04-911c-50a3ac022c0e"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
+    headers:
+      apim-request-id:
+      - dae94e29-fb32-4f04-911c-50a3ac022c0e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 11 Jun 2020 15:43:39 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '39'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

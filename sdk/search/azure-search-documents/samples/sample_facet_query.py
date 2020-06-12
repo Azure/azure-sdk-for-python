@@ -29,20 +29,18 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def filter_query():
     # [START facet_query]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import SearchIndexClient, SearchQuery
+    from azure.search.documents import SearchClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
-
-    results = search_client.search(query=query)
+    results = search_client.search(search_text="WiFi", facets=["Category"], top=0)
 
     facets = results.get_facets()
 
     print("Catgory facet counts for hotels:")
     for facet in facets["Category"]:
         print("    {}".format(facet))
-    # [END filter_query]
+    # [END facet_query]
 
 if __name__ == '__main__':
     filter_query()

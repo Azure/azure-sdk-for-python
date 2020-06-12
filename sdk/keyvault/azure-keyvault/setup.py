@@ -16,7 +16,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 
 setup(
     name='azure-keyvault',
-    version='4.0.0',
+    version='4.1.0',
     description='Microsoft Azure Key Vault Client Libraries for Python',
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
@@ -38,7 +38,8 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'azure-keyvault-secrets~=4.0',
-        'azure-keyvault-keys~=4.0',
+        'azure-keyvault-certificates~=4.1',
+        'azure-keyvault-secrets~=4.1',
+        'azure-keyvault-keys~=4.1',
     ],
 )

@@ -13,8 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
-from ._generated.models import TextAnalyticsErrorException
-from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
+from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_batch_input
 from ._response_handlers import (
@@ -82,9 +81,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
-        self._client = TextAnalytics(
-            endpoint=endpoint, credentials=credential, pipeline=self._pipeline
+        super(TextAnalyticsClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
@@ -96,7 +96,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
-        """Detects Language for a batch of documents.
+        """Detect language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
         one. Scores close to one indicate 100% certainty that the identified
@@ -111,7 +111,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
+            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
+            list[dict[str, str]]
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -126,7 +127,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -147,10 +148,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=language_result,
+                cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -160,7 +161,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
-        """Entity Recognition for a batch of documents.
+        """Recognize entities for a batch of documents.
 
         Identifies and categorizes entities in your text as people, places,
         organizations, date/time, quantities, percentages, currencies, and more.
@@ -175,7 +176,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
             like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -190,7 +192,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -211,10 +213,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=entities_result,
+                cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -240,7 +242,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -255,7 +258,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -276,10 +279,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=linked_entities_result,
+                cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -289,7 +292,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
-        """Extract Key Phrases from a batch of documents.
+        """Extract key phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
         text. For example, for the input text "The food was delicious and there
@@ -305,7 +308,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -320,7 +324,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -341,10 +345,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=key_phrases_result,
+                cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -369,7 +373,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of  :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -384,7 +389,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -405,8 +410,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=sentiment_result,
+                cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)

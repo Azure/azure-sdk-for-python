@@ -1,17 +1,25 @@
 
-# Azure Core Library
+# Azure Core shared client library for Python
 
-Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. 
-
-As an end user, you don't need to manually install azure-core because it will be installed automatically when you install other SDKs. 
+Azure core provides shared exceptions and modules for Python SDK client libraries. 
+These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html) .
 
 If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
 [Source code]() | [Package (Pypi)][package] | [API reference documentation]()
 
-## Azure Core Library Exceptions
+## Getting started
 
-### AzureError
+Typically, you will not need to install azure core; 
+it will be installed when you install one of the client libraries using it. 
+In case you want to install it explicitly (to implement your own client library, for example), 
+you can find it [here](https://pypi.org/project/azure-core/).
+
+## Key concepts
+
+### Azure Core Library Exceptions
+
+#### AzureError
 AzureError is the base exception for all errors.
 ```python
 class AzureError(Exception):
@@ -32,14 +40,14 @@ class AzureError(Exception):
 
 **The following exceptions inherit from AzureError:**
 
-### ServiceRequestError
+#### ServiceRequestError
 An error occurred while attempt to make a request to the service. No request was sent.
 
-### ServiceResponseError
+#### ServiceResponseError
 The request was sent, but the client failed to understand the response.
 The connection may have timed out. These errors can be retried for idempotent or safe operations.
 
-### HttpResponseError
+#### HttpResponseError
 A request was made, and a non-success status code was received from the service.
 ```python
 class HttpResponseError(AzureError):
@@ -70,25 +78,25 @@ class HttpResponseError(AzureError):
 
 **The following exceptions inherit from HttpResponseError:**
 
-### DecodeError
+#### DecodeError
 An error raised during response deserialization.
 
-### ResourceExistsError
+#### ResourceExistsError
 An error response with status code 4xx. This will not be raised directly by the Azure core pipeline.
 
-### ResourceNotFoundError
+#### ResourceNotFoundError
 An error response, typically triggered by a 412 response (for update) or 404 (for get/post).
 
-### ClientAuthenticationError
+#### ClientAuthenticationError
 An error response with status code 4xx. This will not be raised directly by the Azure core pipeline.
 
-### ResourceModifiedError
+#### ResourceModifiedError
 An error response with status code 4xx, typically 412 Conflict. This will not be raised directly by the Azure core pipeline.
 
-### ResourceNotModifiedError
+#### ResourceNotModifiedError
 An error response with status code 304. This will not be raised directly by the Azure core pipeline.
 
-### TooManyRedirectsError
+#### TooManyRedirectsError
 An error raised when the maximum number of redirect attempts is reached. The maximum amount of redirects can be configured in the RedirectPolicy.
 ```python
 class TooManyRedirectsError(HttpResponseError):
@@ -104,9 +112,10 @@ class TooManyRedirectsError(HttpResponseError):
 
 *kwargs* are keyword arguments to include with the exception.
 
-## Shared modules
+### Shared modules
 
-### MatchConditions
+#### MatchConditions
+
 MatchConditions is an enum to describe match conditions.
 ```python
 class MatchConditions(Enum):

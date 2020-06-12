@@ -6,8 +6,9 @@ import os
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .client_credential import CertificateCredential, ClientSecretCredential
-from .user import UsernamePasswordCredential
+from .certificate import CertificateCredential
+from .client_secret import ClientSecretCredential
+from .user_password import UsernamePasswordCredential
 
 
 try:
@@ -20,26 +21,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
-
-
-def get_credential_unavailable_message():
-    # type: () -> str
-    message = (
-        "Incomplete environment configuration. See "
-        + "https://aka.ms/python-sdk-identity#environment-variables for expected environment variables"
-    )
-
-    all_variables = {
-        _
-        for _ in EnvironmentVariables.CLIENT_SECRET_VARS
-        + EnvironmentVariables.CERT_VARS
-        + EnvironmentVariables.USERNAME_PASSWORD_VARS
-    }
-    set_variables = ", ".join(v for v in all_variables if v in os.environ)
-    if set_variables:
-        message += ". Currently set variables: {}".format(set_variables)
-
-    return message
 
 
 class EnvironmentCredential(object):
@@ -71,7 +52,6 @@ class EnvironmentCredential(object):
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
-        self._unavailable_message = ""
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -92,12 +72,9 @@ class EnvironmentCredential(object):
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 username=os.environ[EnvironmentVariables.AZURE_USERNAME],
                 password=os.environ[EnvironmentVariables.AZURE_PASSWORD],
-                tenant=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
+                tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
                 **kwargs
             )
-
-        if not self._credential:
-            self._unavailable_message = get_credential_unavailable_message()
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
@@ -110,5 +87,8 @@ class EnvironmentCredential(object):
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
-            raise CredentialUnavailableError(message=self._unavailable_message)
+            message = (
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured."
+            )
+            raise CredentialUnavailableError(message=message)
         return self._credential.get_token(*scopes, **kwargs)

@@ -256,19 +256,46 @@ class TenantIdDescription(Model):
     :ivar tenant_id: The tenant ID. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
+    :ivar tenant_category: The tenant category. Possible values include:
+     'Home', 'ProjectedBy', 'ManagedBy'
+    :vartype tenant_category: str or
+     ~azure.mgmt.resource.subscriptions.v2019_06_01.models.TenantCategory
+    :ivar country: Country/region name of the address for the tenant.
+    :vartype country: str
+    :ivar country_code: Country/region abbreviation for the tenant.
+    :vartype country_code: str
+    :ivar display_name: The display name of the tenant.
+    :vartype display_name: str
+    :ivar domains: The list of domains for the tenant.
+    :vartype domains: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'tenant_id': {'readonly': True},
+        'tenant_category': {'readonly': True},
+        'country': {'readonly': True},
+        'country_code': {'readonly': True},
+        'display_name': {'readonly': True},
+        'domains': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'tenant_category': {'key': 'tenantCategory', 'type': 'TenantCategory'},
+        'country': {'key': 'country', 'type': 'str'},
+        'country_code': {'key': 'countryCode', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'domains': {'key': 'domains', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(TenantIdDescription, self).__init__(**kwargs)
         self.id = None
         self.tenant_id = None
+        self.tenant_category = None
+        self.country = None
+        self.country_code = None
+        self.display_name = None
+        self.domains = None

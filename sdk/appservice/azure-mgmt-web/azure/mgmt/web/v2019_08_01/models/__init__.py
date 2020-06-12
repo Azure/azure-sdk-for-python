@@ -31,6 +31,7 @@ try:
     from ._models_py3 import AppServiceEnvironmentResource
     from ._models_py3 import AppServicePlan
     from ._models_py3 import AppServicePlanPatchResource
+    from ._models_py3 import ArmIdWrapper
     from ._models_py3 import AutoHealActions
     from ._models_py3 import AutoHealCustomAction
     from ._models_py3 import AutoHealRules
@@ -158,6 +159,12 @@ try:
     from ._models_py3 import PrivateAccess
     from ._models_py3 import PrivateAccessSubnet
     from ._models_py3 import PrivateAccessVirtualNetwork
+    from ._models_py3 import PrivateEndpointConnectionResource
+    from ._models_py3 import PrivateLinkConnectionApprovalRequestResource
+    from ._models_py3 import PrivateLinkConnectionState
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkResourcesWrapper
     from ._models_py3 import ProcessInfo
     from ._models_py3 import ProcessModuleInfo
     from ._models_py3 import ProcessThreadInfo
@@ -277,6 +284,7 @@ except (SyntaxError, ImportError):
     from ._models import AppServiceEnvironmentResource
     from ._models import AppServicePlan
     from ._models import AppServicePlanPatchResource
+    from ._models import ArmIdWrapper
     from ._models import AutoHealActions
     from ._models import AutoHealCustomAction
     from ._models import AutoHealRules
@@ -404,6 +412,12 @@ except (SyntaxError, ImportError):
     from ._models import PrivateAccess
     from ._models import PrivateAccessSubnet
     from ._models import PrivateAccessVirtualNetwork
+    from ._models import PrivateEndpointConnectionResource
+    from ._models import PrivateLinkConnectionApprovalRequestResource
+    from ._models import PrivateLinkConnectionState
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkResourcesWrapper
     from ._models import ProcessInfo
     from ._models import ProcessModuleInfo
     from ._models import ProcessThreadInfo
@@ -655,6 +669,7 @@ __all__ = [
     'AppServiceEnvironmentResource',
     'AppServicePlan',
     'AppServicePlanPatchResource',
+    'ArmIdWrapper',
     'AutoHealActions',
     'AutoHealCustomAction',
     'AutoHealRules',
@@ -782,6 +797,12 @@ __all__ = [
     'PrivateAccess',
     'PrivateAccessSubnet',
     'PrivateAccessVirtualNetwork',
+    'PrivateEndpointConnectionResource',
+    'PrivateLinkConnectionApprovalRequestResource',
+    'PrivateLinkConnectionState',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResourcesWrapper',
     'ProcessInfo',
     'ProcessModuleInfo',
     'ProcessThreadInfo',

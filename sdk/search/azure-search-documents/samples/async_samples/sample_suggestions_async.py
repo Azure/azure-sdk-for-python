@@ -31,21 +31,17 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 async def suggest_query():
     # [START suggest_query_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.aio import SearchIndexClient
-    from azure.search.documents import SuggestQuery
+    from azure.search.documents.aio import SearchClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SuggestQuery(search_text="coffee", suggester_name="sg")
+    async with search_client:
+        results = await search_client.suggest(search_text="coffee", suggester_name="sg")
 
-    results = await search_client.suggest(query=query)
-
-    print("Search suggestions for 'coffee'")
-    for result in results:
-        hotel = await search_client.get_document(key=result["HotelId"])
-        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
-
-    await search_client.close()
+        print("Search suggestions for 'coffee'")
+        for result in results:
+            hotel = await search_client.get_document(key=result["HotelId"])
+            print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
     # [END suggest_query_async]
 
 if __name__ == '__main__':

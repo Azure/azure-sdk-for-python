@@ -26,9 +26,8 @@ from azure.storage.blob import (
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
-    PartialBatchErrorException
-)
-from azure.identity import ClientSecretCredential
+    PartialBatchErrorException,
+    generate_account_sas, ResourceTypes, AccountSasPermissions, BlobProperties)
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
 import pytest
@@ -977,6 +976,58 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_delete_blobs_and_snapshot_using_sas(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        # blob with snapshot
+        blob_client1 = container.get_blob_client('bloba')
+        blob_client1.upload_blob(data, overwrite=True)
+        snapshot = blob_client1.create_snapshot()
+
+        container.get_blob_client('blobb').upload_blob(data, overwrite=True)
+        container.get_blob_client('blobc').upload_blob(data, overwrite=True)
+
+        # blob with lease
+        blob_client4 = container.get_blob_client('blobd')
+        blob_client4.upload_blob(data, overwrite=True)
+        lease = blob_client4.acquire_lease()
+
+        # Act
+        blob_props = blob_client1.get_blob_properties()
+        blob_props.snapshot = snapshot['snapshot']
+
+        blob_props_d = dict()
+        blob_props_d['name'] = "blobd"
+        blob_props_d['delete_snapshots'] = "include"
+        blob_props_d['lease_id'] = lease.id
+
+        response = container.delete_blobs(
+            blob_props,
+            'blobb',
+            'blobc',
+            blob_props_d,
+            timeout=3
+        )
+        response = list(response)
+        assert len(response) == 4
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+        assert response[3].status_code == 202
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
@@ -1071,6 +1122,64 @@ class StorageContainerTest(StorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_standard_blob_tier_set_tiers_with_sas(self, resource_group, location, storage_account,
+                                                   storage_account_key):
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            blob.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = blob.get_blob_properties()
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                blob_ref,
+                'blob2',
+                'blob3',
+                timeout=5
             )
 
             parts = list(parts)
@@ -1265,12 +1374,10 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_delegation_sas_for_container(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        pytest.skip("Current Framework Cannot Support OAUTH")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         token_credential = self.generate_oauth_token()
-        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service_client = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -1278,11 +1385,10 @@ class StorageContainerTest(StorageTestCase):
         token = generate_container_sas(
             container_client.account_name,
             container_client.container_name,
-            account_key=container_client.credential.account_key,
+            account_key=storage_account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
-            account_name='emilydevtest'
         )
 
         blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))

@@ -69,7 +69,7 @@ az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard
 
 Add an access policy for the managed identity:
 ```sh
-az keyvault set-policy -n $KEY_VAULT_NAME --object-id $MANAGED_IDENTITY_PRINCIPAL_ID --secret-permissions set delete
+az keyvault set-policy -n $KEY_VAULT_NAME --object-id $MANAGED_IDENTITY_PRINCIPAL_ID --secret-permissions list
 ```
 
 ### container registry

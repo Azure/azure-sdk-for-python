@@ -28,12 +28,12 @@ try:
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
-    from ._models_py3 import SnapshotPatch
     from ._models_py3 import Volume
     from ._models_py3 import VolumePatch
     from ._models_py3 import VolumePatchPropertiesExportPolicy
     from ._models_py3 import VolumePropertiesDataProtection
     from ._models_py3 import VolumePropertiesExportPolicy
+    from ._models_py3 import VolumeRevert
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectory
     from ._models import AuthorizeRequest
@@ -53,14 +53,13 @@ except (SyntaxError, ImportError):
     from ._models import ResourceNameAvailabilityRequest
     from ._models import ServiceSpecification
     from ._models import Snapshot
-    from ._models import SnapshotPatch
     from ._models import Volume
     from ._models import VolumePatch
     from ._models import VolumePatchPropertiesExportPolicy
     from ._models import VolumePropertiesDataProtection
     from ._models import VolumePropertiesExportPolicy
+    from ._models import VolumeRevert
 from ._paged_models import CapacityPoolPaged
-from ._paged_models import MountTargetPaged
 from ._paged_models import NetAppAccountPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SnapshotPaged
@@ -94,17 +93,16 @@ __all__ = [
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
     'Snapshot',
-    'SnapshotPatch',
     'Volume',
     'VolumePatch',
     'VolumePatchPropertiesExportPolicy',
     'VolumePropertiesDataProtection',
     'VolumePropertiesExportPolicy',
+    'VolumeRevert',
     'OperationPaged',
     'NetAppAccountPaged',
     'CapacityPoolPaged',
     'VolumePaged',
-    'MountTargetPaged',
     'SnapshotPaged',
     'InAvailabilityReasonType',
     'CheckNameResourceTypes',

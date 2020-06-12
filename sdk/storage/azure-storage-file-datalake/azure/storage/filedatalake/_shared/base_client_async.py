@@ -124,7 +124,8 @@ class AsyncStorageAccountHostsMixin(object):
             policies=[
                 StorageHeadersPolicy(),
                 self._credential_policy
-            ]
+            ],
+            enforce_https=False
         )
 
         pipeline_response = await self._pipeline.run(

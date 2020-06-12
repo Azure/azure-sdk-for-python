@@ -192,6 +192,112 @@ class ResourceIdentityType(str, Enum):
     system_assigned = "SystemAssigned"
 
 
+class IntegrationRuntimeType(str, Enum):
+
+    managed = "Managed"
+    self_hosted = "SelfHosted"
+
+
+class IntegrationRuntimeState(str, Enum):
+
+    initial = "Initial"
+    stopped = "Stopped"
+    started = "Started"
+    starting = "Starting"
+    stopping = "Stopping"
+    need_registration = "NeedRegistration"
+    online = "Online"
+    limited = "Limited"
+    offline = "Offline"
+    access_denied = "AccessDenied"
+
+
+class DataFlowComputeType(str, Enum):
+
+    general = "General"
+    memory_optimized = "MemoryOptimized"
+    compute_optimized = "ComputeOptimized"
+
+
+class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    premium_rs = "PremiumRS"
+
+
+class IntegrationRuntimeLicenseType(str, Enum):
+
+    base_price = "BasePrice"
+    license_included = "LicenseIncluded"
+
+
+class IntegrationRuntimeEntityReferenceType(str, Enum):
+
+    integration_runtime_reference = "IntegrationRuntimeReference"
+    linked_service_reference = "LinkedServiceReference"
+
+
+class IntegrationRuntimeEdition(str, Enum):
+
+    standard = "Standard"
+    enterprise = "Enterprise"
+
+
+class ManagedIntegrationRuntimeNodeStatus(str, Enum):
+
+    starting = "Starting"
+    available = "Available"
+    recycling = "Recycling"
+    unavailable = "Unavailable"
+
+
+class IntegrationRuntimeInternalChannelEncryptionMode(str, Enum):
+
+    not_set = "NotSet"
+    ssl_encrypted = "SslEncrypted"
+    not_encrypted = "NotEncrypted"
+
+
+class SelfHostedIntegrationRuntimeNodeStatus(str, Enum):
+
+    need_registration = "NeedRegistration"
+    online = "Online"
+    limited = "Limited"
+    offline = "Offline"
+    upgrading = "Upgrading"
+    initializing = "Initializing"
+    initialize_failed = "InitializeFailed"
+
+
+class IntegrationRuntimeUpdateResult(str, Enum):
+
+    none = "None"
+    succeed = "Succeed"
+    fail = "Fail"
+
+
+class IntegrationRuntimeAutoUpdate(str, Enum):
+
+    on = "On"
+    off = "Off"
+
+
+class IntegrationRuntimeAuthKeyName(str, Enum):
+
+    auth_key1 = "authKey1"
+    auth_key2 = "authKey2"
+
+
+class SsisObjectMetadataType(str, Enum):
+
+    folder = "Folder"
+    project = "Project"
+    package = "Package"
+    environment = "Environment"
+
+
 class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
 
     master = "master"

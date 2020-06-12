@@ -717,24 +717,31 @@ interactions:
       "text": "hello world", "countryHint": "US"}, {"id": "1000", "text": "hello world",
       "countryHint": "US"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['58965']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '58965'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
-    body: {string: '{"error":{"code":"InvalidRequest","message":"Invalid document
-        in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
-        request contains too many records. Max 1000 records are permitted."}}}'}
-    headers: {apim-request-id: cd36e9c2-9919-41b1-86c0-25ae979be091, content-type: application/json;
-        charset=utf-8, date: 'Tue, 03 Mar 2020 18:33:37 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '21'}
-    status: {code: 400, message: Bad Request}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/languages, showStats=false, '']
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 1000 records are permitted."}}}'
+    headers:
+      apim-request-id: fc5c7928-297c-4a22-b64e-1db901348515
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 May 2020 16:04:05 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '15'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/languages?showStats=false
 version: 1

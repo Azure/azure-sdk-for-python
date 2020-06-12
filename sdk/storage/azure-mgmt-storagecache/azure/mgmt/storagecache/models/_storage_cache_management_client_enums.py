@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class CacheIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
+
+
 class HealthStateType(str, Enum):
 
     unknown = "Unknown"
@@ -41,14 +47,14 @@ class FirmwareStatusType(str, Enum):
     unavailable = "unavailable"
 
 
-class ReasonCode(str, Enum):
-
-    quota_id = "QuotaId"
-    not_available_for_subscription = "NotAvailableForSubscription"
-
-
 class StorageTargetType(str, Enum):
 
     nfs3 = "nfs3"
     clfs = "clfs"
     unknown = "unknown"
+
+
+class ReasonCode(str, Enum):
+
+    quota_id = "QuotaId"
+    not_available_for_subscription = "NotAvailableForSubscription"

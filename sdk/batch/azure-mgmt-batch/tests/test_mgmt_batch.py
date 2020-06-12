@@ -14,6 +14,7 @@ import requests
 
 import azure.mgmt.batch
 from azure.mgmt.batch import models
+import azure.mgmt.network.models
 from azure.common.exceptions import CloudError
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
 
@@ -36,6 +37,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
             azure.mgmt.batch.BatchManagementClient)
         self.mgmt_keyvault_client = self.create_mgmt_client(
             azure.mgmt.keyvault.KeyVaultManagementClient)
+        self.mgmt_network = self.create_mgmt_client(
+            azure.mgmt.network.NetworkManagementClient)
 
     def _get_account_name(self):
         return self.get_resource_name('batch')[-24:]
@@ -43,7 +46,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        self.assertEqual(len(all_ops), 41)
+        self.assertEqual(len(all_ops), 50)
         self.assertEqual(all_ops[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(all_ops[0].origin, 'system')
         self.assertEqual(all_ops[0].display.provider, 'Microsoft Batch')
@@ -52,7 +55,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 1)
+        self.assertEqual(quotas.account_quota, 50)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
@@ -140,7 +143,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Update Account
         update_tags = {'Name': 'tagName', 'Value': 'tagValue'}
-        updated = self.mgmt_batch_client.batch_account.update(resource_group.name, account_name, update_tags)
+        updated = self.mgmt_batch_client.batch_account.update(resource_group.name, account_name, models.BatchAccountUpdateParameters(tags=update_tags))
         self.assertIsInstance(updated, models.BatchAccount)
         self.assertEqual(updated.tags['Name'], 'tagName')
         self.assertEqual(updated.tags['Value'], 'tagValue')
@@ -357,10 +360,13 @@ class MgmtBatchTest(AzureMgmtTestCase):
         parameters = models.Pool(
             scale_settings=models.ScaleSettings(
                 auto_scale=models.AutoScaleSettings(
-                    formula='$TargetDedicatedNodes=1'
+                    # Change this to a value once accounts get default quotas
+                    formula='$TargetDedicatedNodes=0'
                 )
             )
         )
+        if self.is_live:
+            time.sleep(15)
         response = self.mgmt_batch_client.pool.update(
             resource_group.name, batch_account.name, iaas_pool, parameters)
         self.assertIsInstance(response, models.Pool)
@@ -370,8 +376,9 @@ class MgmtBatchTest(AzureMgmtTestCase):
             resource_group.name, batch_account.name, iaas_pool)
         self.assertIsInstance(pool, models.Pool)
         self.assertEqual(pool.vm_size, 'STANDARD_A1'),
-        self.assertIsNone(pool.display_name),
-        self.assertEqual(pool.allocation_state, models.AllocationState.resizing)
+        self.assertIsNotNone(pool.display_name),
+        # This assert should be reintroduced when targetDedidicated nodes can be 1+
+        # self.assertEqual(pool.allocation_state, models.AllocationState.resizing)
         self.assertEqual(
             pool.deployment_configuration.virtual_machine_configuration.node_agent_sku_id,
             'batch.node.windows amd64')
@@ -390,3 +397,84 @@ class MgmtBatchTest(AzureMgmtTestCase):
         response = self.mgmt_batch_client.pool.delete(
             resource_group.name, batch_account.name, iaas_pool)
         self.assertIsNone(response.result())
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION, random_name_enabled=True)
+    def test_mgmt_batch_account_advanced(self, resource_group, location):
+        batch_account_name = self.get_resource_name('batchpendpoint')
+        vnet_name = self.get_resource_name('vnet')
+        subnet_name = self.get_resource_name('subnet')
+        subnet_id = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}".format(
+            self.settings.SUBSCRIPTION_ID,
+            resource_group.name,
+            vnet_name,
+            subnet_name)
+        private_endpoint_name = self.get_resource_name('pe')
+        private_connection_name = self.get_resource_name('pec')
+        private_link_service_id = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Batch/batchAccounts/{}'.format(
+            self.settings.SUBSCRIPTION_ID,
+            resource_group.name,
+            batch_account_name)
+        batch_account = models.BatchAccountCreateParameters(
+            location=location,
+            public_network_access='Disabled',
+            identity=models.BatchAccountIdentity(
+                type='SystemAssigned'
+            ))
+        self.mgmt_batch_client.batch_account.create(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name,
+            parameters=batch_account).result()
+        self.mgmt_network.virtual_networks.create_or_update(
+            resource_group_name=resource_group.name,
+            virtual_network_name=vnet_name,
+            parameters=self.mgmt_network.models().VirtualNetwork(
+                address_space=self.mgmt_network.models().AddressSpace(
+                    address_prefixes=['10.0.0.0/16']),
+                location=location,
+                subnets=[
+                    self.mgmt_network.models().Subnet(
+                        address_prefix='10.0.0.0/24',
+                        name=subnet_name,
+                        private_endpoint_network_policies='Disabled')])
+        ).result()
+        self.mgmt_network.private_endpoints.create_or_update(
+            resource_group_name=resource_group.name,
+            private_endpoint_name=private_endpoint_name,
+            parameters=self.mgmt_network.models().PrivateEndpoint(
+                location=location,
+                subnet=self.mgmt_network.models().Subnet(
+                    id=subnet_id
+                ),
+                manual_private_link_service_connections=[
+                    self.mgmt_network.models().PrivateLinkServiceConnection(
+                        private_link_service_id=private_link_service_id,
+                        group_ids=['batchAccount'],
+                        name=private_connection_name
+                    )]
+            )
+        ).result()
+        private_links = self.mgmt_batch_client.private_link_resource.list_by_batch_account(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name)
+        private_link = private_links.__next__()
+        self.mgmt_batch_client.private_link_resource.get(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name,
+            private_link_resource_name=private_link.name)
+        private_endpoints = self.mgmt_batch_client.private_endpoint_connection.list_by_batch_account(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name)
+
+        private_endpoint = private_endpoints.__next__()
+        self.mgmt_batch_client.private_endpoint_connection.get(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name,
+            private_endpoint_connection_name=private_endpoint.name)
+        self.mgmt_batch_client.private_endpoint_connection.update(
+            resource_group_name=resource_group.name,
+            account_name=batch_account_name,
+            private_endpoint_connection_name=private_endpoint.name,
+            private_link_service_connection_state=models.PrivateLinkServiceConnectionState(
+                status='Approved',
+                description='Approved for test'
+            )).result()

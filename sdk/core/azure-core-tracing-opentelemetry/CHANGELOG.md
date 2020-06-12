@@ -2,8 +2,17 @@
 # Release History
 
 -------------------
-## 1.0.0b4 (Unreleased)
+## 1.0.0b6 (Unreleased)
 
+
+## 1.0.0b5 (2020-06-08)
+
+- Pinned opentelemetry-api to version 0.8b0
+- Fixed a bug where `DefaultSpan` sometimes throws an AttributeError.
+
+## 1.0.0b4 (2020-05-04)
+
+- `link` and `link_from_headers` now accepts attributes.
 
 ## 1.0.0b3 (2020-04-06)
 

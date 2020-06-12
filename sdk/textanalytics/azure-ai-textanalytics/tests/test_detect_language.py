@@ -15,7 +15,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextAnalyticsClient,
-    TextDocumentInput,
+    DetectLanguageInput,
     VERSION
 )
 
@@ -53,16 +53,16 @@ class TestDetectLanguage(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español."),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-            TextDocumentInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian"),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
         response = client.detect_language(docs)
@@ -77,7 +77,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         self.assertEqual(response[3].primary_language.iso6391_name, "de")
 
         for doc in response:
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -130,6 +130,34 @@ class TestDetectLanguage(TextAnalyticsTest):
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.detect_language(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_output_same_order_as_input(self, client):
+        docs = [
+            DetectLanguageInput(id="1", text="one"),
+            DetectLanguageInput(id="2", text="two"),
+            DetectLanguageInput(id="3", text="three"),
+            DetectLanguageInput(id="4", text="four"),
+            DetectLanguageInput(id="5", text="five")
+        ]
+
+        response = client.detect_language(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -147,15 +175,6 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = client.detect_language(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
@@ -167,7 +186,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -191,7 +210,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -379,7 +399,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -409,7 +429,7 @@ class TestDetectLanguage(TextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'primary_language\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -435,7 +455,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             result = client.detect_language(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -449,20 +469,46 @@ class TestDetectLanguage(TextAnalyticsTest):
                 {"id": "2", "text": text}]
 
         doc_errors = client.detect_language(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[1].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[1].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for detect_language. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.detect_language(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            client.detect_language(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = client.detect_language(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(ValueError) as excinfo:
+            client.detect_language(docs)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            client.detect_language(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -489,12 +535,20 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
-    def test_invalid_country_hint(self, client):
+    def test_invalid_country_hint_method(self, client):
+        docs = [{"id": "1", "text": "hello world"}]
+
+        response = client.detect_language(docs, country_hint="United States")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
+        self.assertIsNotNone(response[0].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_invalid_country_hint_docs(self, client):
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
         response = client.detect_language(docs)
-        self.assertEqual(response[0].error.code, "invalidCountryHint")
+        self.assertEqual(response[0].error.code, "InvalidCountryHint")
         self.assertIsNotNone(response[0].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -537,3 +591,14 @@ class TestDetectLanguage(TextAnalyticsTest):
             country_hint="ES",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pass_cls(self, client):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        res = client.detect_language(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

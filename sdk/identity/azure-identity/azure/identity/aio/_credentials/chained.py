@@ -63,5 +63,6 @@ class ChainedTokenCredential(AsyncCredentialBase):
                 history.append((credential, str(ex)))
                 break
 
-        error_message = _get_error_message(history)
-        raise ClientAuthenticationError(message=error_message)
+        attempts = _get_error_message(history)
+        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
+        raise ClientAuthenticationError(message=message)

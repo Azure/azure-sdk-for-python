@@ -38,6 +38,9 @@ OMITTED_CI_PACKAGES = [
     "azure-mgmt-documentdb",
     "azure-servicemanagement-legacy",
     "azure-mgmt-scheduler",
+    "azure",
+    "azure-mgmt",
+    "azure-storage",
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",

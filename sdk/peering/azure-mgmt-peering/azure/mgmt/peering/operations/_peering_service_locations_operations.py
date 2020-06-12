@@ -24,7 +24,7 @@ class PeeringServiceLocationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-09-01-preview".
+    :ivar api_version: The client API version. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -34,15 +34,17 @@ class PeeringServiceLocationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01-preview"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available peering service locations for the specified
-        kind of peering.
+            self, country=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available locations for peering service.
 
+        :param country: The country of interest, in which the locations are to
+         be present.
+        :type country: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -65,6 +67,8 @@ class PeeringServiceLocationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if country is not None:
+                    query_parameters['country'] = self._serialize.query("country", country, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

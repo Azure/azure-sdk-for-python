@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/tenants?api-version=2019-06-01
+    uri: https://management.azure.com/tenants?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/tenants/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","tenantCategory":"Home"}]}'
+      string: '{"value":[{"id":"/tenants/72f988bf-86f1-41af-91ab-2d7cd011db47","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","tenantCategory":"Home"}]}'
     headers:
       cache-control:
       - no-cache
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:16:12 GMT
+      - Wed, 06 May 2020 02:44:54 GMT
       expires:
       - '-1'
       pragma:

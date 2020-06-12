@@ -4,18 +4,12 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.secrets.aio import SecretClient
+from key_vault_base_async import KeyVaultBaseAsync
 
-
-class KeyVaultSecrets:
+class KeyVaultSecrets(KeyVaultBaseAsync):
     def __init__(self):
-        # DefaultAzureCredential() expects the following environment variables:
-        # * AZURE_CLIENT_ID
-        # * AZURE_CLIENT_SECRET
-        # * AZURE_TENANT_ID
-        authority_host = os.environ.get('AZURE_AUTHORITY_HOST') or KnownAuthorities.AZURE_PUBLIC_CLOUD
-        credential = DefaultAzureCredential(authority=authority_host)
+        credential = self.get_default_credential()
         self.secret_client = SecretClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )

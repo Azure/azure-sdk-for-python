@@ -3,31 +3,48 @@ interactions:
     body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
       "Microsoft fue fundado por Bill Gates y Paul Allen", "language": "es"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['150']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
-    body: {string: '{"documents":[{"id":"2","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
-        Gates","offset":26,"length":10,"score":0.31967461235530847}],"language":"es","id":"Bill
+    body:
+      string: '{"documents":[{"id":"2","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
+        Gates","offset":26,"length":10,"confidenceScore":0.37}],"language":"es","id":"Bill
         Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
-        Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"score":0.80318090811651288}],"language":"es","id":"Paul
-        Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.30594656354495253}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2020-02-01"}'}
+        Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"confidenceScore":0.9}],"language":"es","id":"Paul
+        Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.38}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: [747d698d-f75d-4cbc-bc5c-fb922e4939a3]
-      content-type: [application/json; charset=utf-8]
-      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=1]
-      date: ['Tue, 03 Mar 2020 18:34:02 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-      x-envoy-upstream-service-time: ['12']
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - bbe20aab-42b9-48c2-97ea-8d7c5d40c04e
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Wed, 27 May 2020 16:04:13 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '23'
+    status:
+      code: 200
+      message: OK
 version: 1

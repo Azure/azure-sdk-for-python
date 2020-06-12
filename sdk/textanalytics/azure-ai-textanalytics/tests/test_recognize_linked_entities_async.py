@@ -123,6 +123,32 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_too_many_documents(self, client):
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            await client.recognize_linked_entities(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_output_same_order_as_input(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="one"),
+            TextDocumentInput(id="2", text="two"),
+            TextDocumentInput(id="3", text="three"),
+            TextDocumentInput(id="4", text="four"),
+            TextDocumentInput(id="5", text="five")
+        ]
+
+        response = await client.recognize_linked_entities(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -136,15 +162,6 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.recognize_linked_entities(
                 ["This is written in English."]
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = await client.recognize_linked_entities(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -187,7 +204,8 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
     async def test_show_stats_and_model_version(self, client):
 
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -347,6 +365,22 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         response = await client.recognize_linked_entities(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_method(self, client):
+        response = await client.recognize_linked_entities(
+            ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_docs(self, client):
+        response = await client.recognize_linked_entities(
+            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
@@ -371,7 +405,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
     async def test_user_agent(self, client):
 
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -402,7 +436,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'entities\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -429,7 +463,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         try:
             result = await client.recognize_linked_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -444,22 +478,48 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         doc_errors = await client.recognize_linked_entities(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
         self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_document_warnings(self, client):
+        # No warnings actually returned for recognize_linked_entities. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = await client.recognize_linked_entities(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            await client.recognize_linked_entities(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = await client.recognize_linked_entities(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(ValueError) as excinfo:
+            await client.recognize_linked_entities(docs)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.recognize_linked_entities(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -501,3 +561,14 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             language="es",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_pass_cls(self, client):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        res = await client.recognize_linked_entities(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

@@ -29,13 +29,11 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def suggest_query():
     # [START suggest_query]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import SearchIndexClient, SuggestQuery
+    from azure.search.documents import SearchClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SuggestQuery(search_text="coffee", suggester_name="sg")
-
-    results = search_client.suggest(query=query)
+    results = search_client.suggest(search_text="coffee", suggester_name="sg")
 
     print("Search suggestions for 'coffee'")
     for result in results:

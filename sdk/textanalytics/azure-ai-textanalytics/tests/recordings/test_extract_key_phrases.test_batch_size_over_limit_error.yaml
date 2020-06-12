@@ -712,26 +712,41 @@ interactions:
       "language": "en"}, {"id": "999", "text": "hello world", "language": "en"}, {"id":
       "1000", "text": "hello world", "language": "en"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['55962']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '55962'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
-    body: {string: '{"error":{"code":"InvalidRequest","message":"Invalid document
-        in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
-        request contains too many records. Max 1000 records are permitted."}}}'}
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 1000 records are permitted."}}}'
     headers:
-      apim-request-id: [53ab92e3-f75e-4855-8457-6f1f30d17ca3]
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 03 Mar 2020 18:33:41 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-      x-envoy-upstream-service-time: ['21']
-    status: {code: 400, message: Bad Request}
+      apim-request-id:
+      - 438f2058-71fe-45c7-bc01-f04bef245480
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 May 2020 16:04:08 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '25'
+    status:
+      code: 400
+      message: Bad Request
 version: 1

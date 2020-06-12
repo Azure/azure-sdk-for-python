@@ -4,27 +4,35 @@ interactions:
       and Paul Allen", "language": "English"}, {"id": "2", "text": "", "language":
       "es"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['156']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '156'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
-    body: {string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+    body:
+      string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: da,de,en,es,fi,fr,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2019-10-01"}'}
-    headers: {apim-request-id: b73be9f4-ca86-40a3-82ba-41fef778a76c, content-type: application/json;
-        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=0,
-      date: 'Tue, 03 Mar 2020 18:33:48 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '2'}
-    status: {code: 200, message: OK}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/keyPhrases, showStats=false, '']
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 8a4b1041-a15f-4657-8c46-4de18924b3e5
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=0
+      date: Wed, 27 May 2020 16:04:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 version: 1

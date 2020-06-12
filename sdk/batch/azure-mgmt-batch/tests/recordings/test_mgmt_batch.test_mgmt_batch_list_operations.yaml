@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
-        azure-mgmt-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
+        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2019-08-01
+    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2020-05-01
   response:
     body:
       string: '{"value":[{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
@@ -51,34 +51,49 @@ interactions:
         Pool Node Count","displayDescription":"Number of nodes leaving the Pool","unit":"Count","aggregationType":"Total","lockAggregationType":"Total","fillGapWithZero":true,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"UnusableNodeCount","displayName":"Unusable
         Node Count","displayDescription":"Number of unusable nodes","unit":"Count","aggregationType":"Total","lockAggregationType":"Total","fillGapWithZero":true,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PreemptedNodeCount","displayName":"Preempted
         Node Count","displayDescription":"Number of preempted nodes","unit":"Count","aggregationType":"Total","lockAggregationType":"Total","fillGapWithZero":true,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskStartEvent","displayName":"Task
-        Start Events","displayDescription":"Total number of tasks that have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskCompleteEvent","displayName":"Task
-        Complete Events","displayDescription":"Total number of tasks that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskFailEvent","displayName":"Task
+        Start Events","displayDescription":"Total number of tasks that have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true},{"name":"jobId","displayName":"Job ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskCompleteEvent","displayName":"Task
+        Complete Events","displayDescription":"Total number of tasks that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true},{"name":"jobId","displayName":"Job ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskFailEvent","displayName":"Task
         Fail Events","displayDescription":"Total number of tasks that have completed
-        in a failed state","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolCreateEvent","displayName":"Pool
+        in a failed state","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true},{"name":"jobId","displayName":"Job ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolCreateEvent","displayName":"Pool
         Create Events","displayDescription":"Total number of pools that have been
-        created","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeStartEvent","displayName":"Pool
+        created","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeStartEvent","displayName":"Pool
         Resize Start Events","displayDescription":"Total number of pool resizes that
-        have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeCompleteEvent","displayName":"Pool
+        have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeCompleteEvent","displayName":"Pool
         Resize Complete Events","displayDescription":"Total number of pool resizes
-        that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteStartEvent","displayName":"Pool
+        that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteStartEvent","displayName":"Pool
         Delete Start Events","displayDescription":"Total number of pool deletes that
-        have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteCompleteEvent","displayName":"Pool
+        have started","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteCompleteEvent","displayName":"Pool
         Delete Complete Events","displayDescription":"Total number of pool deletes
-        that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDeleteCompleteEvent","displayName":"Job
+        that have completed","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"poolId","displayName":"Pool
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDeleteCompleteEvent","displayName":"Job
         Delete Complete Events","displayDescription":"Total number of jobs that have
-        been successfully deleted.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDeleteStartEvent","displayName":"Job
+        been successfully deleted.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDeleteStartEvent","displayName":"Job
         Delete Start Events","displayDescription":"Total number of jobs that have
-        been requested to be deleted.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDisableCompleteEvent","displayName":"Job
+        been requested to be deleted.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDisableCompleteEvent","displayName":"Job
         Disable Complete Events","displayDescription":"Total number of jobs that have
-        been successfully disabled.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDisableStartEvent","displayName":"Job
+        been successfully disabled.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobDisableStartEvent","displayName":"Job
         Disable Start Events","displayDescription":"Total number of jobs that have
-        been requested to be disabled.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobStartEvent","displayName":"Job
+        been requested to be disabled.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobStartEvent","displayName":"Job
         Start Events","displayDescription":"Total number of jobs that have been successfully
-        started.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobTerminateCompleteEvent","displayName":"Job
+        started.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobTerminateCompleteEvent","displayName":"Job
         Terminate Complete Events","displayDescription":"Total number of jobs that
-        have been successfully terminated.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobTerminateStartEvent","displayName":"Job
+        have been successfully terminated.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"JobTerminateStartEvent","displayName":"Job
         Terminate Start Events","displayDescription":"Total number of jobs that have
-        been requested to be terminated.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false}]}}},{"name":"Microsoft.Batch/batchAccounts/jobs/read","display":{"provider":"Microsoft
+        been requested to be terminated.","unit":"Count","aggregationType":"Total","fillGapWithZero":false,"availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"dimensions":[{"name":"jobId","displayName":"Job
+        ID","toBeExportedForShoebox":true}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false}]}}},{"name":"Microsoft.Batch/batchAccounts/jobs/read","display":{"provider":"Microsoft
         Batch","resource":"Jobs","operation":"List or Get Jobs","description":"Lists
         jobs on a Batch account or gets the properties of a job"},"isDataAction":true},{"name":"Microsoft.Batch/batchAccounts/jobs/write","display":{"provider":"Microsoft
         Batch","resource":"Jobs","operation":"Create or Update Job","description":"Creates
@@ -159,16 +174,44 @@ interactions:
         Batch","resource":"Pools","operation":"Disable Pool AutoScale","description":"Disables
         automatic scaling for a Batch account pool"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/poolOperationResults/read","display":{"provider":"Microsoft
         Batch","resource":"Pools","operation":"Get Pool Operation Results","description":"Gets
-        the results of a long running pool operation on a Batch account"},"isDataAction":false}]}'
+        the results of a long running pool operation on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateLinkResources/read","display":{"provider":"Microsoft
+        Batch","resource":"PrivateLinkResources","operation":"Get or List Private
+        link resources","description":"Gets the properties of a Private link resource
+        or Lists Private link resources on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnections/write","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnections","operation":"Update Private
+        endpoint connection","description":"Update an existing Private endpoint connection
+        on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnections/read","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnections","operation":"Get or List Private
+        endpoint connection","description":"Gets Private endpoint connection or Lists
+        Private endpoint connections on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionResults/read","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnections","operation":"Get Batch account
+        private endpoint connection operation results","description":"Gets the results
+        of a long running Batch account private endpoint connection operation"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/validate/action","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Validates
+        a Private endpoint connection proxy","description":"Validates a Private endpoint
+        connection proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/write","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Create or
+        Update Private endpoint connection proxy","description":"Create a new Private
+        endpoint connection proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/read","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Get Private
+        endpoint connection proxy","description":"Gets Private endpoint connection
+        proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxies/delete","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Delete Private
+        endpoint connection proxy","description":"Delete a Private endpoint connection
+        proxy on a Batch account"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnectionProxyResults/read","display":{"provider":"Microsoft
+        Batch","resource":"PrivateEndpointConnectionProxies","operation":"Get Batch
+        account private endpoint connection proxy operation results","description":"Gets
+        the results of a long running Batch account private endpoint connection proxy
+        operation"},"isDataAction":false,"origin":"system"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '22611'
+      - '27226'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Aug 2019 23:10:09 GMT
+      - Fri, 29 May 2020 03:19:45 GMT
       expires:
       - '-1'
       pragma:

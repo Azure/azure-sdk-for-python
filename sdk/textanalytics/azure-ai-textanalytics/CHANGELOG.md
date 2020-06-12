@@ -1,16 +1,37 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b4 (Unreleased)
+## 1.0.1 (Unreleased)
+
+
+## 1.0.0 (2020-06-09)
+
+- First stable release of the azure-ai-textanalytics package. Targets the service's v3.0 API.
+
+## 1.0.0b6 (2020-05-27)
+
+**New features**
+- We now have a `warnings` property on each document-level response object returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
+- Added `text` property to `SentenceSentiment`
+
+**Breaking changes**
+- Now targets only the service's v3.0 API, instead of the v3.0-preview.1 API
+- `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
+- Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
+- `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
+
+## 1.0.0b5
+
+- This was a broken release
+
+## 1.0.0b4 (2020-04-07)
+
 **Breaking changes**
 - Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
 from this library.
 - Removed `TextAnalyticsApiKeyCredential` and now using `AzureKeyCredential` from azure.core.credentials as key credential
 - `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
 `PiiEntity` models
-
-**Breaking changes**
 - All input parameters `inputs` have been renamed to `documents`
-
 
 ## 1.0.0b3 (2020-03-10)
 

@@ -3,26 +3,41 @@ interactions:
     body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
       "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['150']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
-    body: {string: '{"error":{"code":"InvalidRequest","message":"Invalid document
-        in request.","innerError":{"code":"InvalidDocument","message":"Request contains
-        duplicated Ids. Make sure each document has a unique Id."}}}'}
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
-      apim-request-id: [eb71dc44-1602-4290-85af-1e402be3cd51]
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 03 Mar 2020 18:33:51 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-      x-envoy-upstream-service-time: ['4']
-    status: {code: 400, message: Bad Request}
+      apim-request-id:
+      - 02e928bb-06ca-4413-88d0-024412d6b4d5
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 May 2020 16:04:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4'
+    status:
+      code: 400
+      message: Bad Request
 version: 1

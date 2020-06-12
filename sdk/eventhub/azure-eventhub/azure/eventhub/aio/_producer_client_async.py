@@ -12,7 +12,7 @@ from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
-from .._common import EventDataBatch
+from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
@@ -211,16 +211,32 @@ class EventHubProducerClient(ClientBaseAsync):
 
     async def send_batch(
         self,
-        event_data_batch: EventDataBatch,
+        event_data_batch: Union[EventDataBatch, List[EventData]],
         *,
-        timeout: Optional[Union[int, float]] = None
+        timeout: Optional[Union[int, float]] = None,
+        **kwargs
     ) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
-        :param event_data_batch: The EventDataBatch object to be sent.
-        :type event_data_batch: ~azure.eventhub.EventDataBatch
-        :param float timeout: The maximum wait time to send the event data.
+        If you're sending a finite list of `EventData` and you know it's within the event hub
+        frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
+        to create `EventDataBatch` and add `EventData` into the batch one by one until the size limit,
+        and then call this method to send out the batch.
+
+        :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
+         in a batch. All `EventData` in the list or `EventDataBatch` will land on the same partition.
+        :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[~azure.eventhub.EventData]]
+        :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
+        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
+         will assign to all partitions using round-robin.
+         A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because
+         `EventDataBatch` itself has partition_id.
+        :keyword str partition_key: With the given partition_key, event data will be sent to
+         a particular partition of the Event Hub decided by the service.
+         A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
+         `EventDataBatch` itself has partition_key.
+         If both partition_id and partition_key are provided, the partition_id will take precedence.
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -228,6 +244,8 @@ class EventHubProducerClient(ClientBaseAsync):
          :class:`EventDataError<azure.eventhub.exceptions.EventDataError>`
          :class:`EventDataSendError<azure.eventhub.exceptions.EventDataSendError>`
          :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+         :class:`ValueError`
+         :class:`TypeError`
 
         .. admonition:: Example:
 
@@ -239,17 +257,28 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Asynchronously sends event data
 
         """
+        partition_id = kwargs.get("partition_id")
+        partition_key = kwargs.get("partition_key")
+        if isinstance(event_data_batch, EventDataBatch):
+            if partition_id or partition_key:
+                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
+                                "because type EventDataBatch itself may have partition_id or partition_key")
+            to_send_batch = event_data_batch
+        else:
+            to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
+            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+
         partition_id = (
-            event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+            to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
         try:
             await cast(EventHubProducer, self._producers[partition_id]).send(
-                event_data_batch, timeout=timeout
+                to_send_batch, timeout=timeout
             )
         except (KeyError, AttributeError, EventHubError):
             await self._start_producer(partition_id, timeout)
             await cast(EventHubProducer, self._producers[partition_id]).send(
-                event_data_batch, timeout=timeout
+                to_send_batch, timeout=timeout
             )
 
     async def create_batch(
@@ -261,12 +290,13 @@ class EventHubProducerClient(ClientBaseAsync):
     ) -> EventDataBatch:
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
-        The max_size should be no greater than the max allowed message size defined by the service.
+        The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
 
         :param str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
+         If both partition_id and partition_key are provided, the partition_id will take precedence.
         :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch

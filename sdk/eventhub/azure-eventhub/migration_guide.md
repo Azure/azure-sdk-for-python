@@ -12,10 +12,10 @@ the latest version improves on several areas from V1.
 
 ### Specific clients for sending and receiving
 In V5 we've simplified the API surface, making two distinct clients, rather than having a single `EventHubClient`:
-* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
-* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
+* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
+* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
 
 We've also merged the functionality from `EventProcessorHost` into 
 `EventHubConsumerClient`, allowing `EventHubConsumerClient` to be the single
@@ -53,8 +53,8 @@ The process of building event batches is more transparent with `send_batch` of V
 ## Migration samples
 
 * [Receiving events](#migrating-code-from-eventhubclient-and-asyncreceiver-to-eventhubconsumerclient-for-receiving-events)
-* [Receiving events with checkpointing](#migrating-code-from-eventhubclient-and-asyncsender-to-eventhubproducerclient-for-sending-events)
-* [Sending events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
+* [Sending events](#migrating-code-from-eventhubclient-and-asyncsender-to-eventhubproducerclient-for-sending-events)
+* [Receiving events with checkpointing](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
 
 ### Migrating code from `EventHubClient` and `AsyncReceiver` to `EventHubConsumerClient` for receiving events
 

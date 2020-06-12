@@ -5,26 +5,35 @@ interactions:
       "language": "es"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "language":
       "en"}]}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['253']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Content-Length:
+      - '253'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
-    body: {string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take\
-        \ my cat\",\"the veterinarian\"]},{\"id\":\"2\",\"keyPhrases\":[\"document\
-        \ escrito\",\"Espa\xF1ol\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\
-        \u305B\"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"}
-    headers: {apim-request-id: ed63c6c3-2802-4ae7-a10e-dbe8fafb6a8d, content-type: application/json;
-        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
-      date: 'Tue, 03 Mar 2020 18:33:49 GMT', strict-transport-security: max-age=31536000;
-        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
-      x-envoy-upstream-service-time: '4'}
-    status: {code: 200, message: OK}
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
-        //text/analytics/v3.0-preview.1/keyPhrases, showStats=false, '']
+    body:
+      string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take my cat\"\
+        ,\"the veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"document\
+        \ escrito\",\"Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
+        :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
+        :\"2019-10-01\"}"
+    headers:
+      apim-request-id: e08a3f3d-98ed-49bb-b471-66bbc856732c
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Wed, 27 May 2020 16:04:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 version: 1

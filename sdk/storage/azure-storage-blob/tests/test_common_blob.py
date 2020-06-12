@@ -12,6 +12,7 @@ import time
 import unittest
 import uuid
 import os
+import sys
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import (
@@ -586,7 +587,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
         self._setup(storage_account, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
         blob_name = self._create_block_blob()
 
         # Act
@@ -1436,30 +1437,29 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
 
     @pytest.mark.live_test_only
-    def test_user_delegation_sas_for_blob(self):
-        pytest.skip("Current Framework Cannot Support OAUTH")
+    @GlobalStorageAccountPreparer()
+    def test_user_delegation_sas_for_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-
+        byte_data = self.get_random_bytes(1024)
         # Arrange
         token_credential = self.generate_oauth_token()
-        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service_client = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
         blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
-        blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
+        blob_client.upload_blob(byte_data, length=len(byte_data))
 
         token = generate_blob_sas(
             blob_client.account_name,
             blob_client.container_name,
             blob_client.blob_name,
             snapshot=blob_client.snapshot,
-            account_key=blob_client.credential.account_key,
+            account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
-            account_name='emilydevtest',
         )
 
         # Act
@@ -1468,7 +1468,7 @@ class StorageCommonBlobTest(StorageTestCase):
         content = new_blob_client.download_blob()
 
         # Assert
-        self.assertEqual(self.byte_data, content.readall())
+        self.assertEqual(byte_data, content.readall())
 
     @GlobalStorageAccountPreparer()
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
@@ -1490,6 +1490,30 @@ class StorageCommonBlobTest(StorageTestCase):
         service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        token_credential = self.generate_oauth_token()
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
+        container = service.get_container_client(container_name)
+        try:
+            container.create_container()
+            container.upload_blob(blob_name + '1', b'HelloWorld')
+            container.upload_blob(blob_name + '2', b'HelloWorld')
+            container.upload_blob(blob_name + '3', b'HelloWorld')
+
+            delete_batch = []
+            blob_list = container.list_blobs(name_starts_with=blob_name)
+            for blob in blob_list:        
+                delete_batch.append(blob.name)
+
+            container.delete_blobs(*delete_batch)
+        finally:
+            container.delete_container()
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

@@ -4,27 +4,28 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import (
-    Any,
-    Union,
-    Dict,
-    Tuple,
-    TYPE_CHECKING,
-    Callable,
-    List,
-    Optional,
-)  # pylint: disable=unused-import
+from typing import TYPE_CHECKING
 
-from ._common import EventData
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
-from ._eventprocessor.partition_context import PartitionContext
+
 
 if TYPE_CHECKING:
     import datetime
     from azure.core.credentials import TokenCredential
+    from typing import (  # pylint: disable=ungrouped-imports
+        Any,
+        Union,
+        Dict,
+        Tuple,
+        Callable,
+        List,
+        Optional,
+    )
+    from ._eventprocessor.partition_context import PartitionContext
+    from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,8 +44,8 @@ class EventHubConsumerClient(ClientBase):
     `EventHubConsumerClient`.
     If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
-    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
-    and specify the partition_id.
+    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()` or
+    `receive_batch()` and specify the partition_id.
     Load-balancing won't work in single-partition mode. But users can still save checkpoints if the checkpoint_store
     is set.
 
@@ -349,9 +350,11 @@ class EventHubConsumerClient(ClientBase):
         # type: (Callable[["PartitionContext", List["EventData"]], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
-        :param on_event: The callback function for handling a received event. The callback takes two
-         parameters: `partition_context` which contains partition context and `event` which is the received event.
-         The callback function should be defined like: `on_event(partition_context, event)`.
+        :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
+         parameters: `partition_context` which contains partition context and `event_batch`, which is the received
+         events. The callback function should be defined like: `on_event_batch(partition_context, event_batch)`.
+         `event_batch` could be an empty list if `max_wait_time` is not None nor 0 and no event is received
+         after `max_wait_time`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
         :type on_event_batch: Callable[~azure.eventhub.PartitionContext, List[~azure.eventhub.EventData]]

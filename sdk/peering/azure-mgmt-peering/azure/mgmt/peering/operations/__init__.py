@@ -13,7 +13,10 @@ from ._legacy_peerings_operations import LegacyPeeringsOperations
 from ._operations import Operations
 from ._peer_asns_operations import PeerAsnsOperations
 from ._peering_locations_operations import PeeringLocationsOperations
+from ._registered_asns_operations import RegisteredAsnsOperations
+from ._registered_prefixes_operations import RegisteredPrefixesOperations
 from ._peerings_operations import PeeringsOperations
+from ._peering_service_countries_operations import PeeringServiceCountriesOperations
 from ._peering_service_locations_operations import PeeringServiceLocationsOperations
 from ._prefixes_operations import PrefixesOperations
 from ._peering_service_providers_operations import PeeringServiceProvidersOperations
@@ -25,7 +28,10 @@ __all__ = [
     'Operations',
     'PeerAsnsOperations',
     'PeeringLocationsOperations',
+    'RegisteredAsnsOperations',
+    'RegisteredPrefixesOperations',
     'PeeringsOperations',
+    'PeeringServiceCountriesOperations',
     'PeeringServiceLocationsOperations',
     'PrefixesOperations',
     'PeeringServiceProvidersOperations',

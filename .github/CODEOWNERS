@@ -9,42 +9,46 @@
 /sdk/ @mayurid @lmazuel
 
 # Core
-/sdk/core/ @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/ @xiangyan99 @bryevdv @lmazuel
+/sdk/core/                                                           @lmazuel @xiangyan99 @johanste
+/sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
-/sdk/identity/ @chlowell @schaabs
-/sdk/eventhub/ @annatisch @yunhaoling @YijunXieMS
-/sdk/storage/ @zezha-msft @annatisch @rakshith91 @xiafu-msft
-/sdk/applicationinsights/ @alexeldeib
-/sdk/batch/ @bgklein @matthchr @xingwu1
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
-/sdk/keyvault/ @schaabs @chlowell @iscai-msft
-/sdk/loganalytics/ @alexeldeib
-/sdk/consumption/ @sandeepnl
-/sdk/containerinstance/ @samkreter @xizhamsft
-/sdk/containerregistry/ @djyou
-/sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/ @shurd
-/sdk/datafactory/ @hvermis
-/sdk/datalake/ @ro-joowan
-/sdk/datadatamigration/ @vchske
-/sdk/eventgrid/ @kalyanaj
-/sdk/hdinsight/ @idear1203
-/sdk/machinelearningcompute/ @shutchings
-/sdk/recoveryservices/ @DheerendraRathor
-/sdk/servicefabric/ @QingChenmsft @samedder
-/sql/sql/ @jaredmoo
-/sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
-/sdk/synapse/ @aim-for-better @idear1203
-/sdk/textanalytics/ @kristapratico @iscai-msft
+/sdk/identity/                                                       @chlowell @schaabs
+/sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft
+/sdk/applicationinsights/                                            @alexeldeib
+/sdk/batch/                                                          @bgklein @xingwu1
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
+/sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
+/sdk/loganalytics/                                                   @alexeldeib
+/sdk/consumption/                                                    @sandeepnl
+/sdk/containerinstance/                                              @samkreter @xizhamsft
+/sdk/containerregistry/                                              @djyou
+/sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
+/sdk/cosmos/                                                         @shurd
+/sdk/datafactory/                                                    @hvermis
+/sdk/datalake/                                                       @ro-joowan
+/sdk/datadatamigration/                                              @vchske
+/sdk/eventgrid/                                                      @kalyanaj
+/sdk/hdinsight/                                                      @idear1203
+/sdk/machinelearningcompute/                                         @shutchings
+/sdk/recoveryservices/                                               @DheerendraRathor
+/sdk/servicefabric/                                                  @QingChenmsft @samedder
+/sql/sql/                                                            @jaredmoo
+/sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+/sdk/synapse/                                                        @aim-for-better @idear1203
+/sdk/textanalytics/                                                  @kristapratico @iscai-msft
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/ @zikalino
+/**/*mgmt*/     @zikalino
 
 ###########
 # Eng Sys
 ###########
-/eng/   @weshaggard @scbedd @mitchdenny @danieljurek
+/eng/           @weshaggard @scbedd @mitchdenny @danieljurek
 /**/tests.yml   @danieljurek
 /**/ci.yml      @mitchdenny

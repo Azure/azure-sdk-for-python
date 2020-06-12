@@ -36,7 +36,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy,
+    UserAgentPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -268,7 +268,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             policies=[
                 StorageHeadersPolicy(),
                 self._credential_policy
-            ]
+            ],
+            enforce_https=False
         )
 
         pipeline_response = self._pipeline.run(

@@ -18,7 +18,7 @@ from requests import Session
 from azure.common import (
     AzureMissingResourceHttpError,
 )
-from azure.servicebus.control_client import (
+from azure.servicebus._control_client import (
     AuthorizationRule,
     EventHub,
     ServiceBusService,

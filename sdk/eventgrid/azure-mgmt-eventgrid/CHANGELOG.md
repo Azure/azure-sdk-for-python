@@ -1,5 +1,36 @@
 # Release History
 
+## 3.0.0rc7 (2020-05-14)
+
+**Features**
+
+  - Model PartnerTopic has a new parameter expiration_time_if_not_activated_utc
+  - Model PartnerTopic has a new parameter partner_topic_friendly_description
+  - Model EventChannel has a new parameter partner_topic_readiness_state
+  - Model EventChannel has a new parameter expiration_time_if_not_activated_utc
+  - Model EventChannel has a new parameter partner_topic_friendly_description
+  - Model PartnerRegistration has a new parameter partner_customer_service_number
+  - Model PartnerRegistration has a new parameter partner_customer_service_extension
+  - Model PartnerRegistration has a new parameter long_description
+  - Model PartnerRegistration has a new parameter customer_service_uri
+
+**Breaking changes**
+
+  - Model EventChannelFilter has a new signature
+
+## 3.0.0rc6 (2020-04-03)
+
+**Features**
+
+  - Model PartnerRegistrationUpdateParameters has a new parameter tags
+  - Model EventChannel has a new parameter filter
+
+**Breaking changes**
+
+  - Operation PrivateEndpointConnectionsOperations.update has a new signature
+  - Operation SystemTopicEventSubscriptionsOperations.list_by_system_topic has a new signature
+  - Operation PartnerTopicEventSubscriptionsOperations.list_by_partner_topic has a new signature
+
 ## 3.0.0rc5 (2020-03-19)
 
 **Features**

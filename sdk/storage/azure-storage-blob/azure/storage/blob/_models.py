@@ -468,6 +468,15 @@ class BlobProperties(DictMixin):
         Indicates when the blob was created, in UTC.
     :ivar str archive_status:
         Archive status of blob.
+    :ivar str encryption_key_sha256:
+        The SHA-256 hash of the provided encryption key.
+    :ivar str encryption_scope:
+        A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the container, this value will override it if the
+        container-level scope is configured to allow overrides. Otherwise an error will be raised.
+    :ivar bool request_server_encrypted:
+        Whether this blob is encrypted.
     """
 
     def __init__(self, **kwargs):

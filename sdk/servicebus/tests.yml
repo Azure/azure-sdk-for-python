@@ -22,7 +22,7 @@ jobs:
       Matrix:
         Linux_Python35:
           OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
+          OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
         MacOs_Python37:
           OSName: 'MacOS'
@@ -34,5 +34,5 @@ jobs:
           PythonVersion: '2.7'
         Linux_Python38:
           OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
+          OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.8'

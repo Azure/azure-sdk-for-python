@@ -10,11 +10,11 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 3,\r\n    \
@@ -73,7 +73,7 @@ interactions:
         \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RouteFilters\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Route Filters\",\r\n        \"value\": \"RouteFilters\"\r\n      },\r\n\
-        \      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 1,\r\
+        \      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0,\r\
         \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkWatchers\"\
         ,\r\n      \"limit\": 1,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Watchers\",\r\n        \"value\": \"NetworkWatchers\"\r\n    \
@@ -194,7 +194,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 20 Mar 2020 10:20:57 GMT
+      - Wed, 13 May 2020 05:09:51 GMT
       expires:
       - '-1'
       pragma:
@@ -211,7 +211,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a240cfdf-17cf-4255-9cc4-1ec183535aff
+      - 1e15947a-0913-4eea-8fe5-fa17950f8e68
     status:
       code: 200
       message: OK

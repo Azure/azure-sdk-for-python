@@ -1979,6 +1979,29 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self.provisioning_state = None
 
 
+class ArmIdWrapper(Model):
+    """A wrapper for an ARM resource id.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id:
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ArmIdWrapper, self).__init__(**kwargs)
+        self.id = None
+
+
 class AutoHealActions(Model):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
@@ -7438,6 +7461,209 @@ class PrivateAccessVirtualNetwork(Model):
         self.subnets = kwargs.get('subnets', None)
 
 
+class PrivateEndpointConnectionResource(ProxyOnlyResource):
+    """Private Endpoint Connection ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state:
+    :vartype provisioning_state: str
+    :param private_endpoint: PrivateEndpoint of a remote private endpoint
+     connection
+    :type private_endpoint: ~azure.mgmt.web.v2019_08_01.models.ArmIdWrapper
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ArmIdWrapper'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionResource, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkConnectionApprovalRequestResource(ProxyOnlyResource):
+    """Private Endpoint Connection Approval ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkConnectionApprovalRequestResource, self).__init__(**kwargs)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkConnectionState(Model):
+    """The state of a private link connection.
+
+    :param status: Status of a private link connection
+    :type status: str
+    :param description: Description of a private link connection
+    :type description: str
+    :param actions_required: ActionsRequired for a private link connection
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
+
+
+class PrivateLinkResource(Model):
+    """A private link resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required.
+    :type id: str
+    :param name: Required. Name of a private link resource
+    :type name: str
+    :param type: Required.
+    :type type: str
+    :param properties: Required. Properties of a private link resource
+    :type properties:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'name': {'required': True},
+        'type': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: GroupId of a private link resource
+    :vartype group_id: str
+    :ivar required_members: RequiredMembers of a private link resource
+    :vartype required_members: list[str]
+    :ivar required_zone_names: RequiredZoneNames of a private link resource
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkResourcesWrapper(Model):
+    """Wrapper for a collection of private link resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required.
+    :type value: list[~azure.mgmt.web.v2019_08_01.models.PrivateLinkResource]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourcesWrapper, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class ProcessInfo(ProxyOnlyResource):
     """Process Information.
 
@@ -9283,6 +9509,8 @@ class SiteConfig(Model):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9424,6 +9652,7 @@ class SiteConfig(Model):
         'php_version': {'key': 'phpVersion', 'type': 'str'},
         'python_version': {'key': 'pythonVersion', 'type': 'str'},
         'node_version': {'key': 'nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
@@ -9482,6 +9711,7 @@ class SiteConfig(Model):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
@@ -9559,6 +9789,8 @@ class SiteConfigResource(ProxyOnlyResource):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9707,6 +9939,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'properties.powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'properties.windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
@@ -9765,6 +9998,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)

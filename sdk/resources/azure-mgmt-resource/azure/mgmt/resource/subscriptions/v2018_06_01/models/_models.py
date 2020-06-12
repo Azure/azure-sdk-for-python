@@ -227,6 +227,10 @@ class TenantIdDescription(Model):
     :ivar tenant_id: The tenant ID. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
+    :ivar country: Country/region name of the address for the tenant.
+    :vartype country: str
+    :ivar country_code: Country/region abbreviation for the tenant.
+    :vartype country_code: str
     :ivar display_name: The display name of the tenant.
     :vartype display_name: str
     :ivar domains: The list of domains for the tenant.
@@ -236,6 +240,8 @@ class TenantIdDescription(Model):
     _validation = {
         'id': {'readonly': True},
         'tenant_id': {'readonly': True},
+        'country': {'readonly': True},
+        'country_code': {'readonly': True},
         'display_name': {'readonly': True},
         'domains': {'readonly': True},
     }
@@ -243,6 +249,8 @@ class TenantIdDescription(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'country': {'key': 'country', 'type': 'str'},
+        'country_code': {'key': 'countryCode', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'domains': {'key': 'domains', 'type': '[str]'},
     }
@@ -251,5 +259,7 @@ class TenantIdDescription(Model):
         super(TenantIdDescription, self).__init__(**kwargs)
         self.id = None
         self.tenant_id = None
+        self.country = None
+        self.country_code = None
         self.display_name = None
         self.domains = None

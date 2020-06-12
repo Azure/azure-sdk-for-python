@@ -116,7 +116,7 @@ class PrivateEndpointConnectionsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -135,6 +135,7 @@ class PrivateEndpointConnectionsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -142,8 +143,11 @@ class PrivateEndpointConnectionsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
@@ -165,7 +169,7 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a specific private endpoint connection.
 
         Update a specific private endpoint connection under a topic or domain.
@@ -182,6 +186,10 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: The name of the private
          endpoint connection connection.
         :type private_endpoint_connection_name: str
+        :param private_endpoint_connection: The private endpoint connection
+         object to update.
+        :type private_endpoint_connection:
+         ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -201,6 +209,7 @@ class PrivateEndpointConnectionsOperations(object):
             parent_type=parent_type,
             parent_name=parent_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
+            private_endpoint_connection=private_endpoint_connection,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

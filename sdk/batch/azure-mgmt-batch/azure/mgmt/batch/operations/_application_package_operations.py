@@ -25,7 +25,7 @@ class ApplicationPackageOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2019-08-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -35,13 +35,15 @@ class ApplicationPackageOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
     def activate(
             self, resource_group_name, account_name, application_name, version_name, format, custom_headers=None, raw=False, **operation_config):
-        """Activates the specified application package.
+        """Activates the specified application package. This should be done after
+        the `ApplicationPackage` was created and uploaded. This needs to be
+        done before an `ApplicationPackage` can be used on Pools or Tasks.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -71,7 +73,7 @@ class ApplicationPackageOperations(object):
         url = self.activate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
             'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'versionName': self._serialize.url("version_name", version_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -118,7 +120,10 @@ class ApplicationPackageOperations(object):
 
     def create(
             self, resource_group_name, account_name, application_name, version_name, custom_headers=None, raw=False, **operation_config):
-        """Creates an application package record.
+        """Creates an application package record. The record contains the SAS
+        where the package should be uploaded to.  Once it is uploaded the
+        `ApplicationPackage` needs to be activated using
+        `ApplicationPackageActive` before it can be used.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -146,7 +151,7 @@ class ApplicationPackageOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
             'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'versionName': self._serialize.url("version_name", version_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -221,7 +226,7 @@ class ApplicationPackageOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
             'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'versionName': self._serialize.url("version_name", version_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -283,7 +288,7 @@ class ApplicationPackageOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
             'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'versionName': self._serialize.url("version_name", version_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -355,7 +360,7 @@ class ApplicationPackageOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
                     'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

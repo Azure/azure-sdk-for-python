@@ -24,13 +24,13 @@
 #
 # --------------------------------------------------------------------------
 import abc
-import datetime
-import email.utils
+import base64
 import json
 from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
+from ..pipeline.policies._utils import get_retry_after
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -53,40 +53,6 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
-
-
-class _FixedOffset(datetime.tzinfo):
-    """Fixed offset in minutes east from UTC.
-
-    Copy/pasted from Python doc
-
-    :param int offset: offset in minutes
-    """
-
-    def __init__(self, offset):
-        self.__offset = datetime.timedelta(minutes=offset)
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return str(self.__offset.total_seconds()/3600)
-
-    def __repr__(self):
-        return "<FixedOffset {}>".format(self.tzname(None))
-
-    def dst(self, dt):
-        return datetime.timedelta(0)
-
-
-def _parse_http_date(text):
-    """Parse a HTTP date format into datetime."""
-    parsed_date = email.utils.parsedate_tz(text)
-    return datetime.datetime(
-        *parsed_date[:6],
-        tzinfo=_FixedOffset(parsed_date[9]/60)
-    )
-
 
 def _finished(status):
     if hasattr(status, "value"):
@@ -482,6 +448,30 @@ class LROBasePolling(PollingMethod):
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
 
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        try:
+            client = kwargs["client"]
+        except KeyError:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+
+        import pickle
+        initial_response = pickle.loads(base64.b64decode(continuation_token))
+        # Restore the transport in the context
+        initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
+        return client, initial_response, deserialization_callback
+
     def run(self):
         try:
             self._poll()
@@ -543,17 +533,10 @@ class LROBasePolling(PollingMethod):
     def _extract_delay(self):
         if self._pipeline_response is None:
             return None
-        response = self._pipeline_response.http_response
-        delay = self._timeout
-        if response.headers.get("retry-after"):
-            retry_after = response.headers["retry-after"]
-            try:
-                delay = int(retry_after)
-            except ValueError:
-                # Not an integer? Try HTTP date
-                retry_date = _parse_http_date(retry_after)
-                delay = (retry_date - datetime.datetime.now(retry_date.tzinfo)).total_seconds()
-        return delay
+        delay = get_retry_after(self._pipeline_response)
+        if delay:
+            return delay
+        return self._timeout
 
     def _delay(self):
         """Check for a 'retry-after' header to set timeout,

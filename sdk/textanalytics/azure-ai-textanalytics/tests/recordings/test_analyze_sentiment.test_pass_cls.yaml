@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Test passing cls to endpoint", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"offset":0,"length":28,"text":"Test
+        passing cls to endpoint"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+    headers:
+      apim-request-id:
+      - c3a6b240-3d99-4c5e-9d52-1b033cc9f8ee
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Wed, 27 May 2020 16:04:03 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '96'
+    status:
+      code: 200
+      message: OK
+version: 1

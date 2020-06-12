@@ -47,6 +47,15 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input(self, client):
@@ -64,6 +73,15 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
+
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -106,6 +124,47 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.analyze_sentiment(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for analyze_sentiment. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.analyze_sentiment(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_output_same_order_as_input(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="one"),
+            TextDocumentInput(id="2", text="two"),
+            TextDocumentInput(id="3", text="three"),
+            TextDocumentInput(id="4", text="four"),
+            TextDocumentInput(id="5", text="five")
+        ]
+
+        response = client.analyze_sentiment(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -119,15 +178,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.analyze_sentiment(
                 ["This is written in English."]
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = client.analyze_sentiment(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -167,7 +217,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -333,6 +384,22 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_invalid_language_hint_method(self, client):
+        response = client.analyze_sentiment(
+            ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_invalid_language_hint_docs(self, client):
+        response = client.analyze_sentiment(
+            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
@@ -356,7 +423,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -386,7 +453,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'sentiment\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -412,7 +479,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         try:
             result = client.analyze_sentiment(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -427,22 +494,35 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         doc_errors = client.analyze_sentiment(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
         self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            client.analyze_sentiment(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = client.analyze_sentiment(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(ValueError) as excinfo:
+            client.analyze_sentiment(docs)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            client.analyze_sentiment(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -483,3 +563,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             language="es",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pass_cls(self, client):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        res = client.analyze_sentiment(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

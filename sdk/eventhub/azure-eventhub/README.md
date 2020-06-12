@@ -13,7 +13,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.1.0b1) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
 ## Getting started
 
 ### Prerequisites
@@ -96,7 +96,7 @@ like Azure Stream Analytics, Apache Spark, or Apache Storm.
 
 - A **partition** is an ordered sequence of events that is held in an Event Hub. Azure Event Hubs provides message streaming
 through a partitioned consumer pattern in which each consumer only reads a specific subset, or partition, of the message stream.
-As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time anEvent Hub is created and cannot be changed.
+As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time an Event Hub is created and cannot be changed.
 
 - A **consumer group** is a view of an entire Event Hub. Consumer groups enable multiple consuming applications to each
 have a separate view of the event stream, and to read the stream independently at their own pace and from their own position.
@@ -382,10 +382,7 @@ Please notice that the connection string needs to be for an [Event Hub-compatibl
 e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
 
 There are two ways to get the Event Hubs compatible endpoint:
-- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal.
-- Programmatically retrieve the built-in Event Hubs compatible endpoint.
-Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
-
+- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal and receive from it.
 ```python
 from azure.eventhub import EventHubConsumerClient
 
@@ -395,6 +392,8 @@ client = EventHubConsumerClient.from_connection_string(connection_str, consumer_
 
 partition_ids = client.get_partition_ids()
 ```
+- Programmatically retrieve the built-in Event Hubs compatible endpoint.
+Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
 
 ## Troubleshooting
 
@@ -424,7 +423,7 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html).
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html).
 
 ### Provide Feedback
 

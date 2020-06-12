@@ -27,10 +27,9 @@ from azure.core import PipelineClient
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     RequestIdPolicy,
 )
-from .policies import ARMAutoResourceProviderRegistrationPolicy
+from .policies import ARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
 
 class ARMPipelineClient(PipelineClient):
@@ -66,5 +65,5 @@ class ARMPipelineClient(PipelineClient):
             config.custom_hook_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            ARMHttpLoggingPolicy(**kwargs),
         ]

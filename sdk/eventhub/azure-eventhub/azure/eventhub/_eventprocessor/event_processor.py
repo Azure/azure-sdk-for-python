@@ -74,9 +74,8 @@ class EventProcessor(
         self._partition_close_handler = kwargs.get(
             "on_partition_close", None
         )  # type: Optional[Callable[[PartitionContext, CloseReason], None]]
-        self._checkpoint_store = kwargs.get(
-            "checkpoint_store"
-        ) or InMemoryCheckpointStore()  # type: Optional[CheckpointStore]
+        checkpoint_store = kwargs.get("checkpoint_store")  # type: Optional[CheckpointStore]
+        self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
         self._initial_event_position = kwargs.get(
             "initial_event_position", "@latest"
         )  # type: Union[str, int, datetime, Dict[str, Any]]
@@ -93,7 +92,7 @@ class EventProcessor(
 
         # Receive parameters
         self._owner_level = kwargs.get("owner_level", None)  # type: Optional[int]
-        if "checkpoint_store" in kwargs and self._owner_level is None:
+        if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
         self._prefetch = kwargs.get("prefetch", None)  # type: Optional[int]
         self._track_last_enqueued_event_properties = kwargs.get(

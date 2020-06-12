@@ -70,6 +70,24 @@ def test_retry_after(retry_after_input):
     retry_after = retry_policy.get_retry_after(pipeline_response)
     assert retry_after == float(retry_after_input)
 
+@pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
+def test_x_ms_retry_after(retry_after_input):
+    retry_policy = AsyncRetryPolicy()
+    request = HttpRequest("GET", "https://bing.com")
+    response = HttpResponse(request, None)
+    response.headers["x-ms-retry-after-ms"] = retry_after_input
+    pipeline_response = PipelineResponse(request, response, None)
+    retry_after = retry_policy.get_retry_after(pipeline_response)
+    seconds = float(retry_after_input)
+    assert retry_after == seconds/1000.0
+    response.headers.pop("x-ms-retry-after-ms")
+    response.headers["Retry-After"] = retry_after_input
+    retry_after = retry_policy.get_retry_after(pipeline_response)
+    assert retry_after == float(retry_after_input)
+    response.headers["x-ms-retry-after-ms"] = 500
+    retry_after = retry_policy.get_retry_after(pipeline_response)
+    assert retry_after == float(retry_after_input)
+
 @pytest.mark.asyncio
 async def test_retry_on_429():
     class MockTransport(AsyncHttpTransport):
@@ -96,6 +114,33 @@ async def test_retry_on_429():
     assert transport._count == 2
 
 @pytest.mark.asyncio
+async def test_no_retry_on_201():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._count = 0
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+        async def close(self):
+            pass
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 201
+            headers = {"Retry-After": "1"}
+            response.headers = headers
+            return response
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = AsyncRetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = AsyncPipeline(transport, [http_retry])
+    await pipeline.run(http_request)
+    assert transport._count == 1
+
+@pytest.mark.asyncio
 async def test_retry_seekable_stream():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -114,7 +159,9 @@ async def test_retry_seekable_stream():
                 raise AzureError('fail on first')
             position = request.body.tell()
             assert position == 0
-            return HttpResponse(request, None)
+            response = HttpResponse(request, None)
+            response.status_code = 400
+            return response
 
     data = BytesIO(b"Lots of dataaaa")
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
@@ -148,7 +195,9 @@ async def test_retry_seekable_file():
                 if name and body and hasattr(body, 'read'):
                     position = body.tell()
                     assert not position
-                    return HttpResponse(request, None)
+                    response = HttpResponse(request, None)
+                    response.status_code = 400
+                    return response
 
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')

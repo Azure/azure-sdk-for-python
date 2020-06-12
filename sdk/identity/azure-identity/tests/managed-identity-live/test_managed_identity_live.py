@@ -16,5 +16,5 @@ def test_managed_identity_live(live_managed_identity_config):
 
     # do something with Key Vault to verify the credential can get a valid token
     client = SecretClient(live_managed_identity_config["vault_url"], credential, logging_enable=True)
-    secret = client.set_secret("managed-identity-test-secret", "value")
-    client.begin_delete_secret(secret.name)
+    for _ in client.list_properties_of_secrets():
+        pass

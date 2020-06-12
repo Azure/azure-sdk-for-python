@@ -168,7 +168,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self.scheme,
             hostname,
             quote(container_name),
-            quote(self.blob_name, safe='~'),
+            quote(self.blob_name, safe='~/'),
             self._query_str)
 
     @classmethod
@@ -625,6 +625,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         options = {
             'timeout': kwargs.pop('timeout', None),
+            'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
             'delete_snapshots': delete_snapshots or None,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions}

@@ -215,28 +215,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             the source path must have an active lease and the leaase ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword str umask:
-            Optional and only valid if Hierarchical Namespace is enabled for the account.
-            When creating a file or directory and the parent folder does not have a default ACL,
-            the umask restricts the permissions of the file or directory to be created.
-            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
-            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
-            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
-            The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions:
-            Optional and only valid if Hierarchical Namespace
-            is enabled for the account. Sets POSIX access permissions for the file
-            owner, the file owning group, and others. Each class may be granted
-            read, write, or execute permission.  The sticky bit is also supported.
-            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-            supported.
-        :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.

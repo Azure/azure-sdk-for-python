@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = "az account get-access-token --output json --resource {}"
+NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
 # CLI's "expiresOn" is naive, so we use this naive datetime for the epoch to calculate expires_on in UTC
 EPOCH = datetime.fromtimestamp(0)
@@ -116,6 +117,8 @@ def _run_command(command):
         # non-zero return from shell
         if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
             error = CredentialUnavailableError(message=CLI_NOT_FOUND)
+        elif "az login" in ex.output or "az account set" in ex.output:
+            error = CredentialUnavailableError(message=NOT_LOGGED_IN)
         else:
             # return code is from the CLI -> propagate its output
             if ex.output:

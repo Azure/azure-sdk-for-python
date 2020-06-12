@@ -2,11 +2,6 @@ parameters:
   RunCoverage: false
 
 steps:
-  - script: |
-      coverage xml -i --omit="*test*,*example*"
-    displayName: 'Generate Coverage XML'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   - script: |
       codecov -t $(codecov-python-repository-token)

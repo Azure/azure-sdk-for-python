@@ -192,13 +192,10 @@ class ApplicationPackageReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The ID of the application package to install. This
-     must be inside the same batch account as the pool. This can either be a
-     reference to a specific version or the default version if one exists.
+    :param id: Required.
     :type id: str
-    :param version: The version of the application to deploy. If omitted, the
-     default version is deployed. If this is omitted, and no default version is
-     specified for this application, the request fails with the error code
+    :param version: If this is omitted, and no default version is specified
+     for this application, the request fails with the error code
      InvalidApplicationPackageReferences. If you are calling the REST API
      directly, the HTTP status code is 409.
     :type version: str
@@ -224,11 +221,9 @@ class AutoScaleRun(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param evaluation_time: Required. The time at which the autoscale formula
-     was last evaluated.
+    :param evaluation_time: Required.
     :type evaluation_time: datetime
-    :param results: The final values of all variables used in the evaluation
-     of the autoscale formula. Each variable value is returned in the form
+    :param results: Each variable value is returned in the form
      $variable=value, and variables are separated by semicolons.
     :type results: str
     :param error: Details of the error encountered evaluating the autoscale
@@ -264,7 +259,7 @@ class AutoScaleRunError(Model):
     :param message: Required. A message describing the error, intended to be
      suitable for display in a user interface.
     :type message: str
-    :param details: Additional details about the error.
+    :param details:
     :type details: list[~azure.mgmt.batch.models.AutoScaleRunError]
     """
 
@@ -291,12 +286,10 @@ class AutoScaleSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param formula: Required. A formula for the desired number of compute
-     nodes in the pool.
+    :param formula: Required.
     :type formula: str
-    :param evaluation_interval: The time interval at which to automatically
-     adjust the pool size according to the autoscale formula. If omitted, the
-     default value is 15 minutes (PT15M).
+    :param evaluation_interval: If omitted, the default value is 15 minutes
+     (PT15M).
     :type evaluation_interval: timedelta
     """
 
@@ -371,13 +364,12 @@ class AutoUserSpecification(Model):
     """Specifies the parameters for the auto user that runs a task on the Batch
     service.
 
-    :param scope: The scope for the auto user. The default value is Pool. If
-     the pool is running Windows a value of Task should be specified if
-     stricter isolation between tasks is required. For example, if the task
-     mutates the registry in a way which could impact other tasks, or if
-     certificates have been specified on the pool which should not be
-     accessible by normal tasks but should be accessible by start tasks.
-     Possible values include: 'Task', 'Pool'
+    :param scope: The default value is Pool. If the pool is running Windows a
+     value of Task should be specified if stricter isolation between tasks is
+     required. For example, if the task mutates the registry in a way which
+     could impact other tasks, or if certificates have been specified on the
+     pool which should not be accessible by normal tasks but should be
+     accessible by start tasks. Possible values include: 'Task', 'Pool'
     :type scope: str or ~azure.mgmt.batch.models.AutoUserScope
     :param elevation_level: The elevation level of the auto user. The default
      value is nonAdmin. Possible values include: 'NonAdmin', 'Admin'
@@ -400,22 +392,20 @@ class AzureBlobFileSystemConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage Account name.
+    :param account_name: Required.
     :type account_name: str
-    :param container_name: Required. The Azure Blob Storage Container name.
+    :param container_name: Required.
     :type container_name: str
-    :param account_key: The Azure Storage Account key. This property is
-     mutually exclusive with sasKey and one must be specified.
+    :param account_key: This property is mutually exclusive with sasKey and
+     one must be specified.
     :type account_key: str
-    :param sas_key: The Azure Storage SAS token. This property is mutually
-     exclusive with accountKey and one must be specified.
+    :param sas_key: This property is mutually exclusive with accountKey and
+     one must be specified.
     :type sas_key: str
-    :param blobfuse_options: Additional command line options to pass to the
-     mount command. These are 'net use' options in Windows and 'mount' options
-     in Linux.
+    :param blobfuse_options: These are 'net use' options in Windows and
+     'mount' options in Linux.
     :type blobfuse_options: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
@@ -451,21 +441,19 @@ class AzureFileShareConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage account name.
+    :param account_name: Required.
     :type account_name: str
-    :param azure_file_url: Required. The Azure Files URL. This is of the form
+    :param azure_file_url: Required. This is of the form
      'https://{account}.file.core.windows.net/'.
     :type azure_file_url: str
-    :param account_key: Required. The Azure Storage account key.
+    :param account_key: Required.
     :type account_key: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
     """
 
@@ -568,9 +556,24 @@ class BatchAccount(Resource):
     :ivar key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
     :vartype key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+    :ivar public_network_access: The network interface type for accessing
+     Azure Batch service and Batch account operations. If not specified, the
+     default value is 'enabled'. Possible values include: 'Enabled',
+     'Disabled'. Default value: "Enabled" .
+    :vartype public_network_access: str or
+     ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar private_endpoint_connections: List of private endpoint connections
+     associated with the Batch account
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.batch.models.PrivateEndpointConnection]
     :ivar auto_storage: The properties and status of any auto-storage account
      associated with the Batch account.
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageProperties
+    :ivar encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
+    :vartype encryption: ~azure.mgmt.batch.models.EncryptionProperties
     :ivar dedicated_core_quota: The dedicated core quota for the Batch
      account. For accounts with PoolAllocationMode set to UserSubscription,
      quota is managed on the subscription so this value is not returned.
@@ -601,6 +604,8 @@ class BatchAccount(Resource):
     :ivar active_job_and_job_schedule_quota: The active job and job schedule
      quota for the Batch account.
     :vartype active_job_and_job_schedule_quota: int
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _validation = {
@@ -613,7 +618,10 @@ class BatchAccount(Resource):
         'provisioning_state': {'readonly': True},
         'pool_allocation_mode': {'readonly': True},
         'key_vault_reference': {'readonly': True},
+        'public_network_access': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
         'auto_storage': {'readonly': True},
+        'encryption': {'readonly': True},
         'dedicated_core_quota': {'readonly': True},
         'low_priority_core_quota': {'readonly': True},
         'dedicated_core_quota_per_vm_family': {'readonly': True},
@@ -632,13 +640,17 @@ class BatchAccount(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'PublicNetworkAccessType'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'dedicated_core_quota': {'key': 'properties.dedicatedCoreQuota', 'type': 'int'},
         'low_priority_core_quota': {'key': 'properties.lowPriorityCoreQuota', 'type': 'int'},
         'dedicated_core_quota_per_vm_family': {'key': 'properties.dedicatedCoreQuotaPerVMFamily', 'type': '[VirtualMachineFamilyCoreQuota]'},
         'dedicated_core_quota_per_vm_family_enforced': {'key': 'properties.dedicatedCoreQuotaPerVMFamilyEnforced', 'type': 'bool'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -647,13 +659,17 @@ class BatchAccount(Resource):
         self.provisioning_state = None
         self.pool_allocation_mode = None
         self.key_vault_reference = None
+        self.public_network_access = None
+        self.private_endpoint_connections = None
         self.auto_storage = None
+        self.encryption = None
         self.dedicated_core_quota = None
         self.low_priority_core_quota = None
         self.dedicated_core_quota_per_vm_family = None
         self.dedicated_core_quota_per_vm_family_enforced = None
         self.pool_quota = None
         self.active_job_and_job_schedule_quota = None
+        self.identity = kwargs.get('identity', None)
 
 
 class BatchAccountCreateParameters(Model):
@@ -679,6 +695,18 @@ class BatchAccountCreateParameters(Model):
     :param key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
     :type key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+    :param public_network_access: The network access type for accessing Azure
+     Batch account. If not specified, the default value is 'enabled'. Possible
+     values include: 'Enabled', 'Disabled'. Default value: "Enabled" .
+    :type public_network_access: str or
+     ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :param encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
+    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _validation = {
@@ -691,6 +719,9 @@ class BatchAccountCreateParameters(Model):
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'PublicNetworkAccessType'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -700,6 +731,49 @@ class BatchAccountCreateParameters(Model):
         self.auto_storage = kwargs.get('auto_storage', None)
         self.pool_allocation_mode = kwargs.get('pool_allocation_mode', None)
         self.key_vault_reference = kwargs.get('key_vault_reference', None)
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
+        self.encryption = kwargs.get('encryption', None)
+        self.identity = kwargs.get('identity', None)
+
+
+class BatchAccountIdentity(Model):
+    """The identity of the Batch account, if configured. This is only used when
+    the user specifies 'Microsoft.KeyVault' as their Batch account encryption
+    configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The principal id of the Batch account. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id associated with the Batch account. This
+     property will only be provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: Required. The type of identity used for the Batch account.
+     Possible values include: 'SystemAssigned', 'None'
+    :type type: str or ~azure.mgmt.batch.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BatchAccountIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class BatchAccountKeys(Model):
@@ -765,17 +839,28 @@ class BatchAccountUpdateParameters(Model):
     :type tags: dict[str, str]
     :param auto_storage: The properties related to the auto-storage account.
     :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+    :param encryption: The encryption configuration for the Batch account.
+     Configures how customer data is encrypted inside the Batch account. By
+     default, accounts are encrypted using a Microsoft managed key. For
+     additional control, a customer-managed key can be used instead.
+    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param identity: The identity of the Batch account.
+    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
     }
 
     def __init__(self, **kwargs):
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.auto_storage = kwargs.get('auto_storage', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class BatchLocationQuota(Model):
@@ -816,29 +901,25 @@ class Certificate(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param thumbprint_algorithm: The algorithm of the certificate thumbprint.
-     This must match the first portion of the certificate name. Currently
-     required to be 'SHA1'.
+    :param thumbprint_algorithm: This must match the first portion of the
+     certificate name. Currently required to be 'SHA1'.
     :type thumbprint_algorithm: str
-    :param thumbprint: The thumbprint of the certificate. This must match the
-     thumbprint from the name.
+    :param thumbprint: This must match the thumbprint from the name.
     :type thumbprint: str
     :param format: The format of the certificate - either Pfx or Cer. If
      omitted, the default is Pfx. Possible values include: 'Pfx', 'Cer'
     :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Succeeded', 'Deleting', 'Failed'
+    :ivar provisioning_state: Possible values include: 'Succeeded',
+     'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.CertificateProvisioningState
-    :ivar provisioning_state_transition_time: The time at which the
-     certificate entered its current state.
+    :ivar provisioning_state_transition_time:
     :vartype provisioning_state_transition_time: datetime
     :ivar previous_provisioning_state: The previous provisioned state of the
      resource. Possible values include: 'Succeeded', 'Deleting', 'Failed'
     :vartype previous_provisioning_state: str or
      ~azure.mgmt.batch.models.CertificateProvisioningState
-    :ivar previous_provisioning_state_transition_time: The time at which the
-     certificate entered its previous state.
+    :ivar previous_provisioning_state_transition_time:
     :vartype previous_provisioning_state_transition_time: datetime
     :ivar public_data: The public key of the certificate.
     :vartype public_data: str
@@ -894,12 +975,10 @@ class Certificate(ProxyResource):
 class CertificateBaseProperties(Model):
     """CertificateBaseProperties.
 
-    :param thumbprint_algorithm: The algorithm of the certificate thumbprint.
-     This must match the first portion of the certificate name. Currently
-     required to be 'SHA1'.
+    :param thumbprint_algorithm: This must match the first portion of the
+     certificate name. Currently required to be 'SHA1'.
     :type thumbprint_algorithm: str
-    :param thumbprint: The thumbprint of the certificate. This must match the
-     thumbprint from the name.
+    :param thumbprint: This must match the thumbprint from the name.
     :type thumbprint: str
     :param format: The format of the certificate - either Pfx or Cer. If
      omitted, the default is Pfx. Possible values include: 'Pfx', 'Cer'
@@ -935,22 +1014,18 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param thumbprint_algorithm: The algorithm of the certificate thumbprint.
-     This must match the first portion of the certificate name. Currently
-     required to be 'SHA1'.
+    :param thumbprint_algorithm: This must match the first portion of the
+     certificate name. Currently required to be 'SHA1'.
     :type thumbprint_algorithm: str
-    :param thumbprint: The thumbprint of the certificate. This must match the
-     thumbprint from the name.
+    :param thumbprint: This must match the thumbprint from the name.
     :type thumbprint: str
     :param format: The format of the certificate - either Pfx or Cer. If
      omitted, the default is Pfx. Possible values include: 'Pfx', 'Cer'
     :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :param data: Required. The base64-encoded contents of the certificate. The
-     maximum size is 10KB.
+    :param data: Required. The maximum size is 10KB.
     :type data: str
-    :param password: The password to access the certificate's private key.
-     This is required if the certificate format is pfx and must be omitted if
-     the certificate format is cer.
+    :param password: This must not be specified if the certificate format is
+     Cer.
     :type password: str
     """
 
@@ -989,32 +1064,28 @@ class CertificateReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The fully qualified ID of the certificate to install
-     on the pool. This must be inside the same batch account as the pool.
+    :param id: Required.
     :type id: str
-    :param store_location: The location of the certificate store on the
-     compute node into which to install the certificate. The default value is
-     currentUser. This property is applicable only for pools configured with
-     Windows nodes (that is, created with cloudServiceConfiguration, or with
-     virtualMachineConfiguration using a Windows image reference). For Linux
-     compute nodes, the certificates are stored in a directory inside the task
-     working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
-     supplied to the task to query for this location. For certificates with
-     visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and certificates are placed
-     in that directory. Possible values include: 'CurrentUser', 'LocalMachine'
+    :param store_location: The default value is currentUser. This property is
+     applicable only for pools configured with Windows nodes (that is, created
+     with cloudServiceConfiguration, or with virtualMachineConfiguration using
+     a Windows image reference). For Linux compute nodes, the certificates are
+     stored in a directory inside the task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for
+     this location. For certificates with visibility of 'remoteUser', a 'certs'
+     directory is created in the user's home directory (e.g.,
+     /home/{user-name}/certs) and certificates are placed in that directory.
+     Possible values include: 'CurrentUser', 'LocalMachine'
     :type store_location: str or
      ~azure.mgmt.batch.models.CertificateStoreLocation
-    :param store_name: The name of the certificate store on the compute node
-     into which to install the certificate. This property is applicable only
-     for pools configured with Windows nodes (that is, created with
-     cloudServiceConfiguration, or with virtualMachineConfiguration using a
-     Windows image reference). Common store names include: My, Root, CA, Trust,
-     Disallowed, TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but
-     any custom store name can also be used. The default value is My.
+    :param store_name: This property is applicable only for pools configured
+     with Windows nodes (that is, created with cloudServiceConfiguration, or
+     with virtualMachineConfiguration using a Windows image reference). Common
+     store names include: My, Root, CA, Trust, Disallowed, TrustedPeople,
+     TrustedPublisher, AuthRoot, AddressBook, but any custom store name can
+     also be used. The default value is My.
     :type store_name: str
-    :param visibility: Which user accounts on the compute node should have
-     access to the private data of the certificate.
+    :param visibility:
     :type visibility: list[str or
      ~azure.mgmt.batch.models.CertificateVisibility]
     """
@@ -1048,8 +1119,7 @@ class CheckNameAvailabilityParameters(Model):
 
     :param name: Required. The name to check for availability
     :type name: str
-    :ivar type: Required. The resource type. Must be set to
-     Microsoft.Batch/batchAccounts. Default value:
+    :ivar type: Required. The resource type. Default value:
      "Microsoft.Batch/batchAccounts" .
     :vartype type: str
     """
@@ -1114,22 +1184,18 @@ class CIFSMountConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param username: Required. The user to use for authentication against the
-     CIFS file system.
+    :param username: Required.
     :type username: str
-    :param source: Required. The URI of the file system to mount.
+    :param source: Required.
     :type source: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
-    :param password: Required. The password to use for authentication against
-     the CIFS file system.
+    :param password: Required.
     :type password: str
     """
 
@@ -1222,8 +1288,7 @@ class CloudServiceConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param os_family: Required. The Azure Guest OS family to be installed on
-     the virtual machines in the pool. Possible values are: 2 - OS Family 2,
+    :param os_family: Required. Possible values are: 2 - OS Family 2,
      equivalent to Windows Server 2008 R2 SP1. 3 - OS Family 3, equivalent to
      Windows Server 2012. 4 - OS Family 4, equivalent to Windows Server 2012
      R2. 5 - OS Family 5, equivalent to Windows Server 2016. 6 - OS Family 6,
@@ -1231,9 +1296,8 @@ class CloudServiceConfiguration(Model):
      OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
-    :param os_version: The Azure Guest OS version to be installed on the
-     virtual machines in the pool. The default value is * which specifies the
-     latest operating system version for the specified OS family.
+    :param os_version: The default value is * which specifies the latest
+     operating system version for the specified OS family.
     :type os_version: str
     """
 
@@ -1260,18 +1324,16 @@ class ContainerConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The container technology to be used.  Default value:
-     "DockerCompatible" .
+    :ivar type: Required.  Default value: "DockerCompatible" .
     :vartype type: str
-    :param container_image_names: The collection of container image names.
-     This is the full image reference, as would be specified to "docker pull".
-     An image will be sourced from the default Docker registry unless the image
-     is fully qualified with an alternative registry.
+    :param container_image_names: This is the full image reference, as would
+     be specified to "docker pull". An image will be sourced from the default
+     Docker registry unless the image is fully qualified with an alternative
+     registry.
     :type container_image_names: list[str]
-    :param container_registries: Additional private registries from which
-     containers can be pulled. If any images must be downloaded from a private
-     registry which requires credentials, then those credentials must be
-     provided here.
+    :param container_registries: If any images must be downloaded from a
+     private registry which requires credentials, then those credentials must
+     be provided here.
     :type container_registries:
      list[~azure.mgmt.batch.models.ContainerRegistry]
     """
@@ -1299,30 +1361,29 @@ class ContainerRegistry(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param registry_server: The registry URL. If omitted, the default is
-     "docker.io".
+    :param registry_server: If omitted, the default is "docker.io".
     :type registry_server: str
-    :param user_name: Required. The user name to log into the registry server.
-    :type user_name: str
-    :param password: Required. The password to log into the registry server.
+    :param username: Required.
+    :type username: str
+    :param password: Required.
     :type password: str
     """
 
     _validation = {
-        'user_name': {'required': True},
+        'username': {'required': True},
         'password': {'required': True},
     }
 
     _attribute_map = {
         'registry_server': {'key': 'registryServer', 'type': 'str'},
-        'user_name': {'key': 'username', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ContainerRegistry, self).__init__(**kwargs)
         self.registry_server = kwargs.get('registry_server', None)
-        self.user_name = kwargs.get('user_name', None)
+        self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
 
 
@@ -1446,14 +1507,57 @@ class DeploymentConfiguration(Model):
         self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
 
 
+class DiskEncryptionConfiguration(Model):
+    """The disk encryption configuration applied on compute nodes in the pool.
+    Disk encryption configuration is not supported on Linux pool created with
+    Virtual Machine Image or Shared Image Gallery Image.
+
+    :param targets: On Linux pool, only "TemporaryDisk" is supported; on
+     Windows pool, "OsDisk" and "TemporaryDisk" must be specified.
+    :type targets: list[str or ~azure.mgmt.batch.models.DiskEncryptionTarget]
+    """
+
+    _attribute_map = {
+        'targets': {'key': 'targets', 'type': '[DiskEncryptionTarget]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiskEncryptionConfiguration, self).__init__(**kwargs)
+        self.targets = kwargs.get('targets', None)
+
+
+class EncryptionProperties(Model):
+    """Configures how customer data is encrypted inside the Batch account. By
+    default, accounts are encrypted using a Microsoft managed key. For
+    additional control, a customer-managed key can be used instead.
+
+    :param key_source: Type of the key source. Possible values include:
+     'Microsoft.Batch', 'Microsoft.KeyVault'
+    :type key_source: str or ~azure.mgmt.batch.models.KeySource
+    :param key_vault_properties: Additional details when using
+     Microsoft.KeyVault
+    :type key_vault_properties: ~azure.mgmt.batch.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'key_source': {'key': 'keySource', 'type': 'KeySource'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.key_source = kwargs.get('key_source', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
 class EnvironmentSetting(Model):
     """An environment variable to be set on a task process.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
+    :param name: Required.
     :type name: str
-    :param value: The value of the environment variable.
+    :param value:
     :type value: str
     """
 
@@ -1475,20 +1579,19 @@ class EnvironmentSetting(Model):
 class FixedScaleSettings(Model):
     """Fixed scale settings for the pool.
 
-    :param resize_timeout: The timeout for allocation of compute nodes to the
-     pool. The default value is 15 minutes. Timeout values use ISO 8601 format.
-     For example, use PT10M for 10 minutes. The minimum value is 5 minutes. If
-     you specify a value less than 5 minutes, the Batch service rejects the
-     request with an error; if you are calling the REST API directly, the HTTP
-     status code is 400 (Bad Request).
+    :param resize_timeout: The default value is 15 minutes. Timeout values use
+     ISO 8601 format. For example, use PT10M for 10 minutes. The minimum value
+     is 5 minutes. If you specify a value less than 5 minutes, the Batch
+     service rejects the request with an error; if you are calling the REST API
+     directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param target_dedicated_nodes: The desired number of dedicated compute
-     nodes in the pool. At least one of targetDedicatedNodes, targetLowPriority
-     nodes must be set.
+     nodes in the pool. At least one of targetDedicatedNodes,
+     targetLowPriorityNodes must be set.
     :type target_dedicated_nodes: int
     :param target_low_priority_nodes: The desired number of low-priority
      compute nodes in the pool. At least one of targetDedicatedNodes,
-     targetLowPriority nodes must be set.
+     targetLowPriorityNodes must be set.
     :type target_low_priority_nodes: int
     :param node_deallocation_option: Determines what to do with a node and its
      running task(s) if the pool size is decreasing. If omitted, the default
@@ -1519,31 +1622,19 @@ class ImageReference(Model):
     imageReferences verified by Azure Batch, see the 'List supported node agent
     SKUs' operation.
 
-    :param publisher: The publisher of the Azure Virtual Machines Marketplace
-     image. For example, Canonical or MicrosoftWindowsServer.
+    :param publisher: For example, Canonical or MicrosoftWindowsServer.
     :type publisher: str
-    :param offer: The offer type of the Azure Virtual Machines Marketplace
-     image. For example, UbuntuServer or WindowsServer.
+    :param offer: For example, UbuntuServer or WindowsServer.
     :type offer: str
-    :param sku: The SKU of the Azure Virtual Machines Marketplace image. For
-     example, 18.04-LTS or 2019-Datacenter.
+    :param sku: For example, 18.04-LTS or 2019-Datacenter.
     :type sku: str
-    :param version: The version of the Azure Virtual Machines Marketplace
-     image. A value of 'latest' can be specified to select the latest version
-     of an image. If omitted, the default is 'latest'.
+    :param version: A value of 'latest' can be specified to select the latest
+     version of an image. If omitted, the default is 'latest'.
     :type version: str
-    :param id: The ARM resource identifier of the Virtual Machine Image or
-     Shared Image Gallery Image. Compute Nodes of the Pool will be created
-     using this Image Id. This is of either the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}
-     for Virtual Machine Image or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}
-     for SIG image. This property is mutually exclusive with other properties.
-     For Virtual Machine Image it must be in the same region and subscription
-     as the Azure Batch account. For SIG image it must have replicas in the
-     same region as the Azure Batch account. For information about the firewall
-     settings for the Batch node agent to communicate with the Batch service
-     see
+    :param id: This property is mutually exclusive with other properties. The
+     Shared Image Gallery image must have replicas in the same region as the
+     Azure Batch account. For information about the firewall settings for the
+     Batch node agent to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type id: str
     """
@@ -1571,14 +1662,13 @@ class InboundNatPool(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the endpoint. The name must be unique
-     within a Batch pool, can contain letters, numbers, underscores, periods,
-     and hyphens. Names must start with a letter or number, must end with a
-     letter, number, or underscore, and cannot exceed 77 characters.  If any
-     invalid values are provided the request fails with HTTP status code 400.
+    :param name: Required. The name must be unique within a Batch pool, can
+     contain letters, numbers, underscores, periods, and hyphens. Names must
+     start with a letter or number, must end with a letter, number, or
+     underscore, and cannot exceed 77 characters.  If any invalid values are
+     provided the request fails with HTTP status code 400.
     :type name: str
-    :param protocol: Required. The protocol of the endpoint. Possible values
-     include: 'TCP', 'UDP'
+    :param protocol: Required. Possible values include: 'TCP', 'UDP'
     :type protocol: str or ~azure.mgmt.batch.models.InboundEndpointProtocol
     :param backend_port: Required. The port number on the compute node. This
      must be unique within a Batch pool. Acceptable values are between 1 and
@@ -1601,13 +1691,12 @@ class InboundNatPool(Model):
      any reserved or overlapping values are provided the request fails with
      HTTP status code 400.
     :type frontend_port_range_end: int
-    :param network_security_group_rules: A list of network security group
-     rules that will be applied to the endpoint. The maximum number of rules
-     that can be specified across all the endpoints on a Batch pool is 25. If
-     no network security group rules are specified, a default rule will be
-     created to allow inbound access to the specified backendPort. If the
-     maximum number of network security group rules is exceeded the request
-     fails with HTTP status code 400.
+    :param network_security_group_rules: The maximum number of rules that can
+     be specified across all the endpoints on a Batch pool is 25. If no network
+     security group rules are specified, a default rule will be created to
+     allow inbound access to the specified backendPort. If the maximum number
+     of network security group rules is exceeded the request fails with HTTP
+     status code 400.
     :type network_security_group_rules:
      list[~azure.mgmt.batch.models.NetworkSecurityGroupRule]
     """
@@ -1637,6 +1726,29 @@ class InboundNatPool(Model):
         self.frontend_port_range_start = kwargs.get('frontend_port_range_start', None)
         self.frontend_port_range_end = kwargs.get('frontend_port_range_end', None)
         self.network_security_group_rules = kwargs.get('network_security_group_rules', None)
+
+
+class KeyVaultProperties(Model):
+    """KeyVault configuration when using an encryption KeySource of
+    Microsoft.KeyVault.
+
+    :param key_identifier: Full path to the versioned secret. Example
+     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053.
+     To be usable the following prerequisites must be met:
+     The Batch Account has a System Assigned identity
+     The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap
+     permissions
+     The KeyVault has soft-delete and purge protection enabled
+    :type key_identifier: str
+    """
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
 
 
 class KeyVaultReference(Model):
@@ -1679,14 +1791,14 @@ class LinuxUserConfiguration(Model):
      must be specified together or not at all. If not specified the underlying
      operating system picks the gid.
     :type gid: int
-    :param ssh_private_key: The SSH private key for the user account. The
-     private key must not be password protected. The private key is used to
-     automatically configure asymmetric-key based authentication for SSH
-     between nodes in a Linux pool when the pool's enableInterNodeCommunication
-     property is true (it is ignored if enableInterNodeCommunication is false).
-     It does this by placing the key pair into the user's .ssh directory. If
-     not specified, password-less SSH is not configured between nodes (no
-     modification of the user's .ssh directory is done).
+    :param ssh_private_key: The private key must not be password protected.
+     The private key is used to automatically configure asymmetric-key based
+     authentication for SSH between nodes in a Linux pool when the pool's
+     enableInterNodeCommunication property is true (it is ignored if
+     enableInterNodeCommunication is false). It does this by placing the key
+     pair into the user's .ssh directory. If not specified, password-less SSH
+     is not configured between nodes (no modification of the user's .ssh
+     directory is done).
     :type ssh_private_key: str
     """
 
@@ -1711,9 +1823,9 @@ class MetadataItem(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the metadata item.
+    :param name: Required.
     :type name: str
-    :param value: Required. The value of the metadata item.
+    :param value: Required.
     :type value: str
     """
 
@@ -1773,30 +1885,27 @@ class MountConfiguration(Model):
 class NetworkConfiguration(Model):
     """The network configuration for a pool.
 
-    :param subnet_id: The ARM resource identifier of the virtual network
-     subnet which the compute nodes of the pool will join. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
-     The virtual network must be in the same region and subscription as the
-     Azure Batch account. The specified subnet should have enough free IP
-     addresses to accommodate the number of nodes in the pool. If the subnet
-     doesn't have enough free IP addresses, the pool will partially allocate
-     compute nodes, and a resize error will occur. The 'MicrosoftAzureBatch'
-     service principal must have the 'Classic Virtual Machine Contributor'
-     Role-Based Access Control (RBAC) role for the specified VNet. The
-     specified subnet must allow communication from the Azure Batch service to
-     be able to schedule tasks on the compute nodes. This can be verified by
-     checking if the specified VNet has any associated Network Security Groups
-     (NSG). If communication to the compute nodes in the specified subnet is
-     denied by an NSG, then the Batch service will set the state of the compute
-     nodes to unusable. For pools created via virtualMachineConfiguration the
-     Batch account must have poolAllocationMode userSubscription in order to
-     use a VNet. If the specified VNet has any associated Network Security
-     Groups (NSG), then a few reserved system ports must be enabled for inbound
-     communication. For pools created with a virtual machine configuration,
-     enable ports 29876 and 29877, as well as port 22 for Linux and port 3389
-     for Windows. For pools created with a cloud service configuration, enable
-     ports 10100, 20100, and 30100. Also enable outbound connections to Azure
-     Storage on port 443. For more details see:
+    :param subnet_id: The virtual network must be in the same region and
+     subscription as the Azure Batch account. The specified subnet should have
+     enough free IP addresses to accommodate the number of nodes in the pool.
+     If the subnet doesn't have enough free IP addresses, the pool will
+     partially allocate compute nodes and a resize error will occur. The
+     'MicrosoftAzureBatch' service principal must have the 'Classic Virtual
+     Machine Contributor' Role-Based Access Control (RBAC) role for the
+     specified VNet. The specified subnet must allow communication from the
+     Azure Batch service to be able to schedule tasks on the compute nodes.
+     This can be verified by checking if the specified VNet has any associated
+     Network Security Groups (NSG). If communication to the compute nodes in
+     the specified subnet is denied by an NSG, then the Batch service will set
+     the state of the compute nodes to unusable. If the specified VNet has any
+     associated Network Security Groups (NSG), then a few reserved system ports
+     must be enabled for inbound communication. For pools created with a
+     virtual machine configuration, enable ports 29876 and 29877, as well as
+     port 22 for Linux and port 3389 for Windows. For pools created with a
+     cloud service configuration, enable ports 10100, 20100, and 30100. Also
+     enable outbound connections to Azure Storage on port 443. For
+     cloudServiceConfiguration pools, only 'classic' VNETs are supported. For
+     more details see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     :param endpoint_configuration: The configuration for endpoints on compute
@@ -1804,27 +1913,24 @@ class NetworkConfiguration(Model):
      pools with the virtualMachineConfiguration property.
     :type endpoint_configuration:
      ~azure.mgmt.batch.models.PoolEndpointConfiguration
-    :param public_ips: The list of public IPs which the Batch service will use
-     when provisioning Compute Nodes. The number of IPs specified here limits
-     the maximum size of the Pool - 50 dedicated nodes or 20 low-priority nodes
-     can be allocated for each public IP. For example, a pool needing 150
-     dedicated VMs would need at least 3 public IPs specified. Each element of
-     this collection is of the form:
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
-    :type public_ips: list[str]
+    :param public_ip_address_configuration: The Public IPAddress configuration
+     for Compute Nodes in the Batch Pool. This property is only supported on
+     Pools with the virtualMachineConfiguration property.
+    :type public_ip_address_configuration:
+     ~azure.mgmt.batch.models.PublicIPAddressConfiguration
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
-        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
+        'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = kwargs.get('subnet_id', None)
         self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
-        self.public_ips = kwargs.get('public_ips', None)
+        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
 
 
 class NetworkSecurityGroupRule(Model):
@@ -1837,24 +1943,22 @@ class NetworkSecurityGroupRule(Model):
      number the higher the priority. For example, rules could be specified with
      order numbers of 150, 250, and 350. The rule with the order number of 150
      takes precedence over the rule that has an order of 250. Allowed
-     priorities are 150 to 3500. If any reserved or duplicate values are
+     priorities are 150 to 4096. If any reserved or duplicate values are
      provided the request fails with HTTP status code 400.
     :type priority: int
-    :param access: Required. The action that should be taken for a specified
-     IP address, subnet range or tag. Possible values include: 'Allow', 'Deny'
+    :param access: Required. Possible values include: 'Allow', 'Deny'
     :type access: str or
      ~azure.mgmt.batch.models.NetworkSecurityGroupRuleAccess
-    :param source_address_prefix: Required. The source address prefix or tag
-     to match for the rule. Valid values are a single IP address (i.e.
-     10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all
-     addresses).  If any other values are provided the request fails with HTTP
-     status code 400.
+    :param source_address_prefix: Required. Valid values are a single IP
+     address (i.e. 10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag,
+     or * (for all addresses).  If any other values are provided the request
+     fails with HTTP status code 400.
     :type source_address_prefix: str
-    :param source_port_ranges: The source port ranges to match for the rule.
-     Valid values are '*' (for all ports 0 - 65535) or arrays of ports or port
-     ranges (i.e. 100-200). The ports should in the range of 0 to 65535 and the
-     port ranges or ports can't overlap. If any other values are provided the
-     request fails with HTTP status code 400. Default value will be *.
+    :param source_port_ranges: Valid values are '*' (for all ports 0 - 65535)
+     or arrays of ports or port ranges (i.e. 100-200). The ports should in the
+     range of 0 to 65535 and the port ranges or ports can't overlap. If any
+     other values are provided the request fails with HTTP status code 400.
+     Default value will be *.
     :type source_port_ranges: list[str]
     """
 
@@ -1884,16 +1988,14 @@ class NFSMountConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The URI of the file system to mount.
+    :param source: Required.
     :type source: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
     """
 
@@ -1918,14 +2020,13 @@ class NFSMountConfiguration(Model):
 class Operation(Model):
     """A REST API operation.
 
-    :param name: The operation name. This is of the format
-     {provider}/{resource}/{operation}
+    :param name: This is of the format {provider}/{resource}/{operation}
     :type name: str
-    :param display: The object that describes the operation.
+    :param display:
     :type display: ~azure.mgmt.batch.models.OperationDisplay
-    :param origin: The intended executor of the operation.
+    :param origin:
     :type origin: str
-    :param properties: Properties of the operation.
+    :param properties:
     :type properties: object
     """
 
@@ -1947,14 +2048,13 @@ class Operation(Model):
 class OperationDisplay(Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
+    :param provider:
     :type provider: str
-    :param operation: The operation type. For example: read, write, delete, or
-     listKeys/action
+    :param operation: For example: read, write, delete, or listKeys/action
     :type operation: str
-    :param resource: The resource type on which the operation is performed.
+    :param resource:
     :type resource: str
-    :param description: The friendly name of the operation.
+    :param description:
     :type description: str
     """
 
@@ -1987,35 +2087,29 @@ class Pool(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param display_name: The display name for the pool. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :ivar last_modified: The last modified time of the pool. This is the last
-     time at which the pool level data, such as the targetDedicatedNodes or
-     autoScaleSettings, changed. It does not factor in node-level changes such
-     as a compute node changing state.
+    :ivar last_modified: This is the last time at which the pool level data,
+     such as the targetDedicatedNodes or autoScaleSettings, changed. It does
+     not factor in node-level changes such as a compute node changing state.
     :vartype last_modified: datetime
-    :ivar creation_time: The creation time of the pool.
+    :ivar creation_time:
     :vartype creation_time: datetime
-    :ivar provisioning_state: The current state of the pool. Possible values
-     include: 'Succeeded', 'Deleting'
+    :ivar provisioning_state: Possible values include: 'Succeeded', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.PoolProvisioningState
-    :ivar provisioning_state_transition_time: The time at which the pool
-     entered its current state.
+    :ivar provisioning_state_transition_time:
     :vartype provisioning_state_transition_time: datetime
-    :ivar allocation_state: Whether the pool is resizing. Possible values
-     include: 'Steady', 'Resizing', 'Stopping'
+    :ivar allocation_state: Possible values include: 'Steady', 'Resizing',
+     'Stopping'
     :vartype allocation_state: str or ~azure.mgmt.batch.models.AllocationState
-    :ivar allocation_state_transition_time: The time at which the pool entered
-     its current allocation state.
+    :ivar allocation_state_transition_time:
     :vartype allocation_state_transition_time: datetime
-    :param vm_size: The size of virtual machines in the pool. All VMs in a
-     pool are the same size. For information about available sizes of virtual
-     machines for Cloud Services pools (pools created with
-     cloudServiceConfiguration), see Sizes for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
+    :param vm_size: For information about available sizes of virtual machines
+     for Cloud Services pools (pools created with cloudServiceConfiguration),
+     see Sizes for Cloud Services
+     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall. For
      information about available VM sizes for pools using images from the
      Virtual Machines Marketplace (pools created with
@@ -2046,12 +2140,11 @@ class Pool(ProxyResource):
      the autoscale formula. This property is set only if the pool automatically
      scales, i.e. autoScaleSettings are used.
     :vartype auto_scale_run: ~azure.mgmt.batch.models.AutoScaleRun
-    :param inter_node_communication: Whether the pool permits direct
-     communication between nodes. This imposes restrictions on which nodes can
-     be assigned to the pool. Enabling this value can reduce the chance of the
-     requested number of nodes to be allocated in the pool. If not specified,
-     this value defaults to 'Disabled'. Possible values include: 'Enabled',
-     'Disabled'
+    :param inter_node_communication: This imposes restrictions on which nodes
+     can be assigned to the pool. Enabling this value can reduce the chance of
+     the requested number of nodes to be allocated in the pool. If not
+     specified, this value defaults to 'Disabled'. Possible values include:
+     'Enabled', 'Disabled'
     :type inter_node_communication: str or
      ~azure.mgmt.batch.models.InterNodeCommunicationState
     :param network_configuration: The network configuration for the pool.
@@ -2065,47 +2158,40 @@ class Pool(ProxyResource):
      nodes in a pool. If not specified, the default is spread.
     :type task_scheduling_policy:
      ~azure.mgmt.batch.models.TaskSchedulingPolicy
-    :param user_accounts: The list of user accounts to be created on each node
-     in the pool.
+    :param user_accounts:
     :type user_accounts: list[~azure.mgmt.batch.models.UserAccount]
-    :param metadata: A list of name-value pairs associated with the pool as
-     metadata. The Batch service does not assign any meaning to metadata; it is
-     solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.mgmt.batch.models.MetadataItem]
     :param start_task: A task specified to run on each compute node as it
      joins the pool. In an PATCH (update) operation, this property can be set
      to an empty object to remove the start task from the pool.
     :type start_task: ~azure.mgmt.batch.models.StartTask
-    :param certificates: The list of certificates to be installed on each
-     compute node in the pool. For Windows compute nodes, the Batch service
-     installs the certificates to the specified certificate store and location.
-     For Linux compute nodes, the certificates are stored in a directory inside
-     the task working directory and an environment variable
+    :param certificates: For Windows compute nodes, the Batch service installs
+     the certificates to the specified certificate store and location. For
+     Linux compute nodes, the certificates are stored in a directory inside the
+     task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
      location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificates: list[~azure.mgmt.batch.models.CertificateReference]
-    :param application_packages: The list of application packages to be
-     installed on each compute node in the pool. Changes to application package
-     references affect all new compute nodes joining the pool, but do not
-     affect compute nodes that are already in the pool until they are rebooted
-     or reimaged. There is a maximum of 10 application package references on
-     any given pool.
+    :param application_packages: Changes to application package references
+     affect all new compute nodes joining the pool, but do not affect compute
+     nodes that are already in the pool until they are rebooted or reimaged.
+     There is a maximum of 10 application package references on any given pool.
     :type application_packages:
      list[~azure.mgmt.batch.models.ApplicationPackageReference]
-    :param application_licenses: The list of application licenses the Batch
-     service will make available on each compute node in the pool. The list of
-     application licenses must be a subset of available Batch service
-     application licenses. If a license is requested which is not supported,
-     pool creation will fail.
+    :param application_licenses: The list of application licenses must be a
+     subset of available Batch service application licenses. If a license is
+     requested which is not supported, pool creation will fail.
     :type application_licenses: list[str]
     :ivar resize_operation_status: Contains details about the current or last
      completed resize operation.
     :vartype resize_operation_status:
      ~azure.mgmt.batch.models.ResizeOperationStatus
-    :param mount_configuration: A list of file systems to mount on each node
-     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :param mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and
+     Blobfuse.
     :type mount_configuration:
      list[~azure.mgmt.batch.models.MountConfiguration]
     """
@@ -2193,11 +2279,9 @@ class PoolEndpointConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param inbound_nat_pools: Required. A list of inbound NAT pools that can
-     be used to address specific ports on an individual compute node
-     externally. The maximum number of inbound NAT pools per Batch pool is 5.
-     If the maximum number of inbound NAT pools is exceeded the request fails
-     with HTTP status code 400.
+    :param inbound_nat_pools: Required. The maximum number of inbound NAT
+     pools per Batch pool is 5. If the maximum number of inbound NAT pools is
+     exceeded the request fails with HTTP status code 400.
     :type inbound_nat_pools: list[~azure.mgmt.batch.models.InboundNatPool]
     """
 
@@ -2214,6 +2298,197 @@ class PoolEndpointConfiguration(Model):
         self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
 
 
+class PrivateEndpoint(Model):
+    """The private endpoint of the private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id:
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """Contains information about a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
+    :ivar provisioning_state: Possible values include: 'Succeeded',
+     'Updating', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.batch.models.PrivateEndpointConnectionProvisioningState
+    :param private_endpoint: The ARM resource identifier of the private
+     endpoint.
+    :type private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
+    :param private_link_service_connection_state: The private link service
+     connection state of the private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.batch.models.PrivateLinkServiceConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'PrivateEndpointConnectionProvisioningState'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkResource(ProxyResource):
+    """Contains information about a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
+    :ivar group_id: The group id is used to establish the private link
+     connection.
+    :vartype group_id: str
+    :ivar required_members:
+    :vartype required_members: list[str]
+    :ivar required_zone_names:
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The private link service connection state of the private endpoint
+    connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The status for the private endpoint connection of
+     Batch account. Possible values include: 'Approved', 'Pending', 'Rejected',
+     'Disconnected'
+    :type status: str or
+     ~azure.mgmt.batch.models.PrivateLinkServiceConnectionStatus
+    :param description:
+    :type description: str
+    :ivar action_required:
+    :vartype action_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'action_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'PrivateLinkServiceConnectionStatus'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.action_required = None
+
+
+class PublicIPAddressConfiguration(Model):
+    """The public IP Address configuration of the networking configuration of a
+    Pool.
+
+    :param provision: The provisioning type for Public IP Addresses for the
+     pool. The default value is BatchManaged. Possible values include:
+     'BatchManaged', 'UserManaged', 'NoPublicIPAddresses'
+    :type provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
+    :param ip_address_ids: The number of IPs specified here limits the maximum
+     size of the Pool - 50 dedicated nodes or 20 low-priority nodes can be
+     allocated for each public IP. For example, a pool needing 150 dedicated
+     VMs would need at least 3 public IPs specified. Each element of this
+     collection is of the form:
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+    :type ip_address_ids: list[str]
+    """
+
+    _attribute_map = {
+        'provision': {'key': 'provision', 'type': 'IPAddressProvisioningType'},
+        'ip_address_ids': {'key': 'ipAddressIds', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PublicIPAddressConfiguration, self).__init__(**kwargs)
+        self.provision = kwargs.get('provision', None)
+        self.ip_address_ids = kwargs.get('ip_address_ids', None)
+
+
 class ResizeError(Model):
     """An error that occurred when resizing a pool.
 
@@ -2225,7 +2500,7 @@ class ResizeError(Model):
     :param message: Required. A message describing the error, intended to be
      suitable for display in a user interface.
     :type message: str
-    :param details: Additional details about the error.
+    :param details:
     :type details: list[~azure.mgmt.batch.models.ResizeError]
     """
 
@@ -2260,11 +2535,10 @@ class ResizeOperationStatus(Model):
     :param target_low_priority_nodes: The desired number of low-priority
      compute nodes in the pool.
     :type target_low_priority_nodes: int
-    :param resize_timeout: The timeout for allocation of compute nodes to the
-     pool or removal of compute nodes from the pool. The default value is 15
-     minutes. The minimum value is 5 minutes. If you specify a value less than
-     5 minutes, the Batch service returns an error; if you are calling the REST
-     API directly, the HTTP status code is 400 (Bad Request).
+    :param resize_timeout: The default value is 15 minutes. The minimum value
+     is 5 minutes. If you specify a value less than 5 minutes, the Batch
+     service returns an error; if you are calling the REST API directly, the
+     HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param node_deallocation_option: Determines what to do with a node and its
      running task(s) if the pool size is decreasing. The default value is
@@ -2272,11 +2546,10 @@ class ResizeOperationStatus(Model):
      'TaskCompletion', 'RetainedData'
     :type node_deallocation_option: str or
      ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
-    :param start_time: The time when this resize operation was started.
+    :param start_time:
     :type start_time: datetime
-    :param errors: Details of any errors encountered while performing the last
-     resize on the pool. This property is set only if an error occurred during
-     the last pool resize, and only when the pool allocationState is Steady.
+    :param errors: This property is set only if an error occurred during the
+     last pool resize, and only when the pool allocationState is Steady.
     :type errors: list[~azure.mgmt.batch.models.ResizeError]
     """
 
@@ -2302,54 +2575,48 @@ class ResizeOperationStatus(Model):
 class ResourceFile(Model):
     """A single file or multiple files to be downloaded to a compute node.
 
-    :param auto_storage_container_name: The storage container name in the auto
-     storage account. The autoStorageContainerName, storageContainerUrl and
-     httpUrl properties are mutually exclusive and one of them must be
-     specified.
+    :param auto_storage_container_name: The autoStorageContainerName,
+     storageContainerUrl and httpUrl properties are mutually exclusive and one
+     of them must be specified.
     :type auto_storage_container_name: str
-    :param storage_container_url: The URL of the blob container within Azure
-     Blob Storage. The autoStorageContainerName, storageContainerUrl and
-     httpUrl properties are mutually exclusive and one of them must be
-     specified. This URL must be readable and listable using anonymous access;
-     that is, the Batch service does not present any credentials when
-     downloading the blob. There are two ways to get such a URL for a blob in
-     Azure storage: include a Shared Access Signature (SAS) granting read and
-     list permissions on the blob, or set the ACL for the blob or its container
-     to allow public access.
+    :param storage_container_url: The autoStorageContainerName,
+     storageContainerUrl and httpUrl properties are mutually exclusive and one
+     of them must be specified. This URL must be readable and listable using
+     anonymous access; that is, the Batch service does not present any
+     credentials when downloading the blob. There are two ways to get such a
+     URL for a blob in Azure storage: include a Shared Access Signature (SAS)
+     granting read and list permissions on the blob, or set the ACL for the
+     blob or its container to allow public access.
     :type storage_container_url: str
-    :param http_url: The URL of the file to download. The
-     autoStorageContainerName, storageContainerUrl and httpUrl properties are
-     mutually exclusive and one of them must be specified. If the URL is Azure
-     Blob Storage, it must be readable using anonymous access; that is, the
-     Batch service does not present any credentials when downloading the blob.
-     There are two ways to get such a URL for a blob in Azure storage: include
-     a Shared Access Signature (SAS) granting read permissions on the blob, or
-     set the ACL for the blob or its container to allow public access.
+    :param http_url: The autoStorageContainerName, storageContainerUrl and
+     httpUrl properties are mutually exclusive and one of them must be
+     specified. If the URL is Azure Blob Storage, it must be readable using
+     anonymous access; that is, the Batch service does not present any
+     credentials when downloading the blob. There are two ways to get such a
+     URL for a blob in Azure storage: include a Shared Access Signature (SAS)
+     granting read permissions on the blob, or set the ACL for the blob or its
+     container to allow public access.
     :type http_url: str
-    :param blob_prefix: The blob prefix to use when downloading blobs from an
-     Azure Storage container. Only the blobs whose names begin with the
-     specified prefix will be downloaded. The property is valid only when
+    :param blob_prefix: The property is valid only when
      autoStorageContainerName or storageContainerUrl is used. This prefix can
      be a partial filename or a subdirectory. If a prefix is not specified, all
      the files in the container will be downloaded.
     :type blob_prefix: str
-    :param file_path: The location on the compute node to which to download
-     the file, relative to the task's working directory. If the httpUrl
-     property is specified, the filePath is required and describes the path
-     which the file will be downloaded to, including the filename. Otherwise,
-     if the autoStorageContainerName or storageContainerUrl property is
-     specified, filePath is optional and is the directory to download the files
-     to. In the case where filePath is used as a directory, any directory
-     structure already associated with the input data will be retained in full
-     and appended to the specified filePath directory. The specified relative
-     path cannot break out of the task's working directory (for example by
-     using '..').
+    :param file_path: If the httpUrl property is specified, the filePath is
+     required and describes the path which the file will be downloaded to,
+     including the filename. Otherwise, if the autoStorageContainerName or
+     storageContainerUrl property is specified, filePath is optional and is the
+     directory to download the files to. In the case where filePath is used as
+     a directory, any directory structure already associated with the input
+     data will be retained in full and appended to the specified filePath
+     directory. The specified relative path cannot break out of the task's
+     working directory (for example by using '..').
     :type file_path: str
-    :param file_mode: The file permission mode attribute in octal format. This
-     property applies only to files being downloaded to Linux compute nodes. It
-     will be ignored if it is specified for a resourceFile which will be
-     downloaded to a Windows node. If this property is not specified for a
-     Linux node, then a default value of 0770 is applied to the file.
+    :param file_mode: This property applies only to files being downloaded to
+     Linux compute nodes. It will be ignored if it is specified for a
+     resourceFile which will be downloaded to a Windows node. If this property
+     is not specified for a Linux node, then a default value of 0770 is applied
+     to the file.
     :type file_mode: str
     """
 
@@ -2413,19 +2680,16 @@ class StartTask(Model):
     install/launch services from the start task working directory, as this will
     block Batch from being able to re-run the start task.
 
-    :param command_line: The command line of the start task. The command line
-     does not run under a shell, and therefore cannot take advantage of shell
-     features such as environment variable expansion. If you want to take
-     advantage of such features, you should invoke the shell in the command
-     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
-     MyCommand" in Linux. Required if any other properties of the startTask are
-     specified.
+    :param command_line: The command line does not run under a shell, and
+     therefore cannot take advantage of shell features such as environment
+     variable expansion. If you want to take advantage of such features, you
+     should invoke the shell in the command line, for example using "cmd /c
+     MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. Required if any
+     other properties of the startTask are specified.
     :type command_line: str
-    :param resource_files: A list of files that the Batch service will
-     download to the compute node before running the command line.
+    :param resource_files:
     :type resource_files: list[~azure.mgmt.batch.models.ResourceFile]
-    :param environment_settings: A list of environment variable settings for
-     the start task.
+    :param environment_settings:
     :type environment_settings:
      list[~azure.mgmt.batch.models.EnvironmentSetting]
     :param user_identity: The user identity under which the start task runs.
@@ -2488,21 +2752,19 @@ class TaskContainerSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param container_run_options: Additional options to the container create
-     command. These additional options are supplied as arguments to the "docker
-     create" command, in addition to those controlled by the Batch Service.
+    :param container_run_options: These additional options are supplied as
+     arguments to the "docker create" command, in addition to those controlled
+     by the Batch Service.
     :type container_run_options: str
-    :param image_name: Required. The image to use to create the container in
-     which the task will run. This is the full image reference, as would be
+    :param image_name: Required. This is the full image reference, as would be
      specified to "docker pull". If no tag is provided as part of the image
      name, the tag ":latest" is used as a default.
     :type image_name: str
     :param registry: The private registry which contains the container image.
      This setting can be omitted if was already provided at pool creation.
     :type registry: ~azure.mgmt.batch.models.ContainerRegistry
-    :param working_directory: A flag to indicate where the container task
-     working directory is. The default is 'taskWorkingDirectory'. Possible
-     values include: 'TaskWorkingDirectory', 'ContainerImageDefault'
+    :param working_directory: Possible values include: 'TaskWorkingDirectory',
+     'ContainerImageDefault'
     :type working_directory: str or
      ~azure.mgmt.batch.models.ContainerWorkingDirectory
     """
@@ -2531,8 +2793,7 @@ class TaskSchedulingPolicy(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_fill_type: Required. How tasks should be distributed across
-     compute nodes. Possible values include: 'Spread', 'Pack'
+    :param node_fill_type: Required. Possible values include: 'Spread', 'Pack'
     :type node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
@@ -2554,9 +2815,9 @@ class UserAccount(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the user account.
+    :param name: Required.
     :type name: str
-    :param password: Required. The password for the user account.
+    :param password: Required.
     :type password: str
     :param elevation_level: The elevation level of the user account. nonAdmin
      - The auto user is a standard user without elevated access. admin - The
@@ -2604,9 +2865,8 @@ class UserIdentity(Model):
 
     Specify either the userName or autoUser property, but not both.
 
-    :param user_name: The name of the user identity under which the task is
-     run. The userName and autoUser properties are mutually exclusive; you must
-     specify one but not both.
+    :param user_name: The userName and autoUser properties are mutually
+     exclusive; you must specify one but not both.
     :type user_name: str
     :param auto_user: The auto user under which the task is run. The userName
      and autoUser properties are mutually exclusive; you must specify one but
@@ -2634,29 +2894,26 @@ class VirtualMachineConfiguration(Model):
     :param image_reference: Required. A reference to the Azure Virtual
      Machines Marketplace Image or the custom Virtual Machine Image to use.
     :type image_reference: ~azure.mgmt.batch.models.ImageReference
-    :param node_agent_sku_id: Required. The SKU of the Batch node agent to be
-     provisioned on compute nodes in the pool. The Batch node agent is a
-     program that runs on each node in the pool, and provides the
-     command-and-control interface between the node and the Batch service.
-     There are different implementations of the node agent, known as SKUs, for
-     different operating systems. You must specify a node agent SKU which
-     matches the selected image reference. To get the list of supported node
-     agent SKUs along with their list of verified image references, see the
-     'List supported node agent SKUs' operation.
+    :param node_agent_sku_id: Required. The Batch node agent is a program that
+     runs on each node in the pool, and provides the command-and-control
+     interface between the node and the Batch service. There are different
+     implementations of the node agent, known as SKUs, for different operating
+     systems. You must specify a node agent SKU which matches the selected
+     image reference. To get the list of supported node agent SKUs along with
+     their list of verified image references, see the 'List supported node
+     agent SKUs' operation.
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the imageReference
      specifies a Linux OS image.
     :type windows_configuration: ~azure.mgmt.batch.models.WindowsConfiguration
-    :param data_disks: The configuration for data disks attached to the
-     compute nodes in the pool. This property must be specified if the compute
-     nodes in the pool need to have empty data disks attached to them.
+    :param data_disks: This property must be specified if the compute nodes in
+     the pool need to have empty data disks attached to them.
     :type data_disks: list[~azure.mgmt.batch.models.DataDisk]
-    :param license_type: The type of on-premises license to be used when
-     deploying the operating system. This only applies to images that contain
-     the Windows operating system, and should only be used when you hold valid
-     on-premises licenses for the nodes which will be deployed. If omitted, no
-     on-premises licensing discount is applied. Values are:
+    :param license_type: This only applies to images that contain the Windows
+     operating system, and should only be used when you hold valid on-premises
+     licenses for the nodes which will be deployed. If omitted, no on-premises
+     licensing discount is applied. Values are:
      Windows_Server - The on-premises license is for Windows Server.
      Windows_Client - The on-premises license is for Windows Client.
     :type license_type: str
@@ -2667,6 +2924,11 @@ class VirtualMachineConfiguration(Model):
      specify it.
     :type container_configuration:
      ~azure.mgmt.batch.models.ContainerConfiguration
+    :param disk_encryption_configuration: The disk encryption configuration
+     for the pool. If specified, encryption is performed on each node in the
+     pool during node provisioning.
+    :type disk_encryption_configuration:
+     ~azure.mgmt.batch.models.DiskEncryptionConfiguration
     """
 
     _validation = {
@@ -2681,6 +2943,7 @@ class VirtualMachineConfiguration(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
+        'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -2691,6 +2954,7 @@ class VirtualMachineConfiguration(Model):
         self.data_disks = kwargs.get('data_disks', None)
         self.license_type = kwargs.get('license_type', None)
         self.container_configuration = kwargs.get('container_configuration', None)
+        self.disk_encryption_configuration = kwargs.get('disk_encryption_configuration', None)
 
 
 class VirtualMachineFamilyCoreQuota(Model):
@@ -2741,10 +3005,10 @@ class WindowsConfiguration(Model):
 class WindowsUserConfiguration(Model):
     """Properties used to create a user account on a Windows node.
 
-    :param login_mode: Login mode for user. Specifies login mode for the user.
-     The default value for VirtualMachineConfiguration pools is interactive
-     mode and for CloudServiceConfiguration pools is batch mode. Possible
-     values include: 'Batch', 'Interactive'
+    :param login_mode: Specifies login mode for the user. The default value
+     for VirtualMachineConfiguration pools is interactive mode and for
+     CloudServiceConfiguration pools is batch mode. Possible values include:
+     'Batch', 'Interactive'
     :type login_mode: str or ~azure.mgmt.batch.models.LoginMode
     """
 

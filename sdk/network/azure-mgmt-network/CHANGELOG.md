@@ -1,5 +1,41 @@
 # Release History
 
+## 10.2.0 (2020-04-10)
+
+**Features**
+
+  - Model VpnConnection has a new parameter routing_configuration
+  - Model NatRuleCondition has a new parameter terminate_tls
+  - Model HubVirtualNetworkConnection has a new parameter routing_configuration
+  - Model ExpressRouteConnection has a new parameter routing_configuration
+  - Model FirewallPolicy has a new parameter transport_security
+  - Model FirewallPolicy has a new parameter identity
+  - Model FirewallPolicy has a new parameter threat_intel_whitelist
+  - Model ApplicationRuleCondition has a new parameter target_urls
+  - Model P2SConnectionConfiguration has a new parameter routing_configuration
+  - Model BackendAddressPool has a new parameter load_balancer_backend_addresses
+  - Added operation LoadBalancerBackendAddressPoolsOperations.create_or_update
+  - Added operation LoadBalancerBackendAddressPoolsOperations.delete
+  - Added operation group HubRouteTablesOperations
+
+## 10.1.0 (2020-04-10)
+
+**Features**
+
+  - Model VpnConnection has a new parameter dpd_timeout_seconds
+  - Model FirewallPolicy has a new parameter intrusion_system_mode
+  - Model Subnet has a new parameter ip_allocations
+  - Model ApplicationGateway has a new parameter force_firewall_policy_association
+  - Model PrivateEndpoint has a new parameter custom_dns_configs
+  - Model VirtualNetworkGatewayConnection has a new parameter dpd_timeout_seconds
+  - Model VpnClientConfiguration has a new parameter radius_servers
+  - Model VirtualNetwork has a new parameter ip_allocations
+  - Model VirtualHub has a new parameter security_partner_provider
+  - Model VpnServerConfiguration has a new parameter radius_servers
+  - Added operation group PrivateDnsZoneGroupsOperations
+  - Added operation group SecurityPartnerProvidersOperations
+  - Added operation group IpAllocationsOperations
+
 ## 10.0.0 (2020-03-31)
 
 **Features**

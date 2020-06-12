@@ -23,7 +23,10 @@ class RecordingProcessor(object):
         # but we don't want to modify the case of original header key.
         for key, values in entity['headers'].items():
             if key.lower() == header.lower():
-                entity['headers'][key] = [replace_fn(v) for v in values]
+                if isinstance(values, list):
+                    entity['headers'][key] = [replace_fn(v) for v in values]
+                else:
+                    entity['headers'][key] = replace_fn(values)
 
 
 class SubscriptionRecordingProcessor(RecordingProcessor):

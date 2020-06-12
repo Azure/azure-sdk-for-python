@@ -73,16 +73,16 @@ class AccessKeys(Model):
 
 
 class Resource(Model):
-    """The Resource definition.
+    """The resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     """
 
@@ -112,11 +112,11 @@ class ArmDisasterRecovery(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: Provisioning state of the Alias(Disaster
      Recovery configuration) - possible values 'Accepted' or 'Succeeded' or
@@ -176,11 +176,11 @@ class AuthorizationRule(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     :param rights: Required. The rights associated with the rule.
     :type rights: list[str or
@@ -329,11 +329,11 @@ class ConsumerGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     :ivar created_at: Exact time the message was created.
     :vartype created_at: datetime
@@ -403,20 +403,20 @@ class Destination(Model):
 
 
 class TrackedResource(Resource):
-    """Definition of Resource.
+    """Definition of resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
     """
 
@@ -446,15 +446,15 @@ class EHNamespace(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
     :param sku: Properties of sku resource
     :type sku: ~azure.mgmt.eventhub.v2017_04_01.models.Sku
@@ -524,7 +524,7 @@ class EHNamespace(TrackedResource):
 
 
 class ErrorResponse(Model):
-    """Error response indicates EventHub service is not able to process the
+    """Error response indicates Event Hub service is not able to process the
     incoming request. The reason is provided in the error message.
 
     :param code: Error code.
@@ -562,11 +562,11 @@ class Eventhub(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
@@ -631,15 +631,15 @@ class MessagingPlan(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
     :ivar sku: Sku type
     :vartype sku: int
@@ -687,17 +687,17 @@ class MessagingRegions(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param properties:
+    :param properties: Properties of Messaging Region
     :type properties:
      ~azure.mgmt.eventhub.v2017_04_01.models.MessagingRegionsProperties
     """
@@ -723,7 +723,7 @@ class MessagingRegions(TrackedResource):
 
 
 class MessagingRegionsProperties(Model):
-    """MessagingRegionsProperties.
+    """Properties of Messaging Region.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -756,11 +756,11 @@ class NetworkRuleSet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     :param default_action: Default Action for Network Rule Set. Possible
      values include: 'Allow', 'Deny'

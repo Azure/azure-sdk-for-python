@@ -89,9 +89,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         """
         self._enforce_https(request)
 
-        if self._need_new_token:
+        if self._token is None or self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+        self._update_headers(request.http_request.headers, self._token.token)
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
@@ -102,8 +102,8 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential, name):
-        # type: (AzureKeyCredential, str) -> None
+    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
+        # type: (AzureKeyCredential, str, Any) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:

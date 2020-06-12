@@ -692,7 +692,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # passes live.
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
         blob_name = await self._create_block_blob()
 
         # Act
@@ -1556,6 +1556,30 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        token_credential = self.generate_oauth_token()
+        async with BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential) as service:
+            container = service.get_container_client(container_name)
+            try:
+                await container.create_container()
+                await container.upload_blob(blob_name + '1', b'HelloWorld')
+                await container.upload_blob(blob_name + '2', b'HelloWorld')
+                await container.upload_blob(blob_name + '3', b'HelloWorld')
+
+                delete_batch = []
+                blob_list = container.list_blobs(name_starts_with=blob_name)
+                async for blob in blob_list:        
+                    delete_batch.append(blob.name)
+
+                await container.delete_blobs(*delete_batch)
+            finally:
+                await container.delete_container()
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

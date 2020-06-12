@@ -35,6 +35,17 @@ from ._sql_pool_vulnerability_assessment_rule_baselines_operations import SqlPoo
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
+from ._integration_runtimes_operations import IntegrationRuntimesOperations
+from ._integration_runtime_node_ip_address_operations import IntegrationRuntimeNodeIpAddressOperations
+from ._integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
+from ._integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
+from ._integration_runtime_credentials_operations import IntegrationRuntimeCredentialsOperations
+from ._integration_runtime_connection_infos_operations import IntegrationRuntimeConnectionInfosOperations
+from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKeysOperations
+from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
+from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 
 __all__ = [
     'BigDataPoolsOperations',
@@ -63,4 +74,15 @@ __all__ = [
     'WorkspacesOperations',
     'WorkspaceAadAdminsOperations',
     'WorkspaceManagedIdentitySqlControlSettingsOperations',
+    'IntegrationRuntimesOperations',
+    'IntegrationRuntimeNodeIpAddressOperations',
+    'IntegrationRuntimeObjectMetadataOperations',
+    'IntegrationRuntimeNodesOperations',
+    'IntegrationRuntimeCredentialsOperations',
+    'IntegrationRuntimeConnectionInfosOperations',
+    'IntegrationRuntimeAuthKeysOperations',
+    'IntegrationRuntimeMonitoringDataOperations',
+    'IntegrationRuntimeStatusOperations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionsOperations',
 ]

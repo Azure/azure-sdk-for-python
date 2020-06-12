@@ -16,6 +16,7 @@ from ._usages_operations import UsagesOperations
 from ._management_policies_operations import ManagementPoliciesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._object_replication_policies_operations import ObjectReplicationPoliciesOperations
 from ._encryption_scopes_operations import EncryptionScopesOperations
 from ._blob_services_operations import BlobServicesOperations
 from ._blob_containers_operations import BlobContainersOperations
@@ -30,6 +31,7 @@ __all__ = [
     'ManagementPoliciesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'ObjectReplicationPoliciesOperations',
     'EncryptionScopesOperations',
     'BlobServicesOperations',
     'BlobContainersOperations',

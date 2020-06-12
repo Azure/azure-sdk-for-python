@@ -492,7 +492,7 @@ class PartnerTopicEventSubscriptionsOperations(object):
     get_full_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}/getFullUrl'}
 
     def list_by_partner_topic(
-            self, resource_group_name, partner_topic_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, partner_topic_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List event subscriptions of a partner topic.
 
         List event subscriptions that belong to a specific partner topic.
@@ -502,6 +502,20 @@ class PartnerTopicEventSubscriptionsOperations(object):
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic.
         :type partner_topic_name: str
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
+        :type filter: str
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -526,6 +540,10 @@ class PartnerTopicEventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link

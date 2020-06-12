@@ -94,7 +94,7 @@ Allow the system-assigned identity to access the Key Vault:
 ```sh
 az keyvault set-policy -n $KEY_VAULT_NAME \
     --object-id $(az functionapp identity show -g $RESOURCE_GROUP -n $FUNCTION_APP_SYSTEM_ASSIGNED --query principalId -o tsv) \
-    --secret-permissions set delete
+    --secret-permissions list
 ```
 
 
@@ -108,7 +108,7 @@ Allow it to access the Key Vault:
 ```sh
 az keyvault set-policy -n $KEY_VAULT_NAME \
     --object-id $(az identity show -g $RESOURCE_GROUP -n $MANAGED_IDENTITY_NAME --query principalId -o tsv) \
-    --secret-permissions set delete
+    --secret-permissions list
 ```
 
 

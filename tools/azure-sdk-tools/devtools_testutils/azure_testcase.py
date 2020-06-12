@@ -185,7 +185,7 @@ class AzureTestCase(ReplayableTest):
                 # Create azure-identity class
                 from azure.identity import ClientSecretCredential
                 credentials = ClientSecretCredential(
-                    tenant=tenant_id,
+                    tenant_id=tenant_id,
                     client_id=client_id,
                     client_secret=secret
                 )

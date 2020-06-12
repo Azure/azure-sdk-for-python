@@ -23,9 +23,8 @@ def create_snapshot(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_
         # we need to get the volume id if we didn't just create it
         volume = client.volumes.get(rg, account_name, pool_name, volume_name)
 
-    snapshot_body = Snapshot(location=location, file_system_id=volume.file_system_id)
-    snapshot = client.snapshots.create(snapshot_body, rg, account_name, pool_name, volume_name, snapshot_name).result()
-
+    snapshot = client.snapshots.create(rg, account_name, pool_name, volume_name, snapshot_name,location=location, file_system_id=volume.file_system_id).result()
+    
     return snapshot
 
 def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_name, live=False):
@@ -51,6 +50,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_snapshot(self):
+        print("@@@@@@@@@", TEST_RG)
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)

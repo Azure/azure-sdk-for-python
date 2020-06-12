@@ -12,10 +12,28 @@
 from enum import Enum
 
 
+class KeySource(str, Enum):
+
+    microsoft_batch = "Microsoft.Batch"  #: Batch creates and manages the encryption keys used to protect the account data.
+    microsoft_key_vault = "Microsoft.KeyVault"  #: The encryption keys used to protect the account data are stored in an external key vault. If this is set then the Batch Account identity must be set to `SystemAssigned` and a valid Key Identifier must also be supplied under the keyVaultProperties.
+
+
 class PoolAllocationMode(str, Enum):
 
     batch_service = "BatchService"  #: Pools will be allocated in subscriptions owned by the Batch service.
     user_subscription = "UserSubscription"  #: Pools will be allocated in a subscription owned by the user.
+
+
+class PublicNetworkAccessType(str, Enum):
+
+    enabled = "Enabled"  #: Enables connectivity to Azure Batch through public DNS.
+    disabled = "Disabled"  #: Disables public connectivity and enables private connectivity to Azure Batch Service through private endpoint resource.
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"  #: Batch account has a system assigned identity with it.
+    none = "None"  #: Batch account has no identity associated with it. Setting `None` in update account will remove existing identities.
 
 
 class ProvisioningState(str, Enum):
@@ -26,6 +44,21 @@ class ProvisioningState(str, Enum):
     succeeded = "Succeeded"  #: The account has been created and is ready for use.
     failed = "Failed"  #: The last operation for the account is failed.
     cancelled = "Cancelled"  #: The last operation for the account is cancelled.
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"  #: The connection status is final and is ready for use if Status is Approved.
+    updating = "Updating"  #: The user has requested that the connection status be updated, but the update operation has not yet completed. You may not reference the connection when connecting the Batch account.
+    failed = "Failed"  #: The user requested that the connection be updated and it failed. You may retry the update operation.
+
+
+class PrivateLinkServiceConnectionStatus(str, Enum):
+
+    approved = "Approved"  #: The private endpoint connection is approved and can be used to access Batch account
+    pending = "Pending"  #: The private endpoint connection is pending and cannot be used to access Batch account
+    rejected = "Rejected"  #: The private endpoint connection is rejected and cannot be used to access Batch account
+    disconnected = "Disconnected"  #: The private endpoint connection is disconnected and cannot be used to access Batch account
 
 
 class AccountKeyType(str, Enum):
@@ -79,6 +112,12 @@ class StorageAccountType(str, Enum):
     premium_lrs = "Premium_LRS"  #: The data disk should use premium locally redundant storage.
 
 
+class DiskEncryptionTarget(str, Enum):
+
+    os_disk = "OsDisk"  #: The OS Disk on the compute node is encrypted.
+    temporary_disk = "TemporaryDisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
+
+
 class ComputeNodeDeallocationOption(str, Enum):
 
     requeue = "Requeue"  #: Terminate running task processes and requeue the tasks. The tasks will run again when a node is available. Remove nodes as soon as tasks have been terminated.
@@ -103,6 +142,13 @@ class NetworkSecurityGroupRuleAccess(str, Enum):
 
     allow = "Allow"  #: Allow access.
     deny = "Deny"  #: Deny access.
+
+
+class IPAddressProvisioningType(str, Enum):
+
+    batch_managed = "BatchManaged"  #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on the size of the Pool.
+    user_managed = "UserManaged"  #: Public IPs are provided by the user and will be used to provision the Compute Nodes.
+    no_public_ip_addresses = "NoPublicIPAddresses"  #: No public IP Address will be created for the Compute Nodes in the Pool.
 
 
 class ComputeNodeFillType(str, Enum):
@@ -146,6 +192,16 @@ class CertificateVisibility(str, Enum):
     start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
     task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
+
+
+class ContainerType(str, Enum):
+
+    docker_compatible = "DockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
+
+
+class ResourceType(str, Enum):
+
+    batch_accounts = "Microsoft.Batch/batchAccounts"  #: The Batch account resource type.
 
 
 class NameAvailabilityReason(str, Enum):

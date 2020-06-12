@@ -11,8 +11,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:14:45 GMT
+      - Fri, 15 May 2020 02:25:33 GMT
       expires:
       - '-1'
       pragma:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -54,8 +54,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:14:47 GMT
+      - Fri, 15 May 2020 02:25:36 GMT
       expires:
       - '-1'
       pragma:
@@ -81,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -95,32 +95,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/{tag1:
-        value1,","tagName":"{tag1: value1,","count":{"type":"Total","value":8},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/{tag1:
-        value1,/tagValues/","tagValue":"","count":{"type":"Total","value":8}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2:
-        value2}","tagName":"tag2: value2}","count":{"type":"Total","value":8},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2:
-        value2}/tagValues/","tagValue":"","count":{"type":"Total","value":8}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/{tag2:
-        value2,","tagName":"{tag2: value2,","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/{tag2:
-        value2,/tagValues/","tagValue":"","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1:
-        value1}","tagName":"tag1: value1}","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1:
-        value1}/tagValues/","tagValue":"","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage","tagName":"ms-resource-usage","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage/tagValues/azure-cloud-shell","tagValue":"azure-cloud-shell","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing_test","tagName":"zhoxing_test","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing_test/tagValues/1","tagValue":"1","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing_test/tagValues/2","tagValue":"2","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/a","tagName":"a","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/a/tagValues/a-value1","tagValue":"a-value1","count":{"type":"Total","value":0}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/a/tagValues/a-value2","tagValue":"a-value2","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag2714","tagName":"xplatResourceGroupTag2714","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag2714/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag6197","tagName":"xplatResourceGroupTag6197","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag6197/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag8910","tagName":"xplatResourceGroupTag8910","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag8910/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag992","tagName":"xplatResourceGroupTag992","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag992/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag9929","tagName":"xplatResourceGroupTag9929","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag9929/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag5235","tagName":"xplatResourceTag5235","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag5235/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag5313","tagName":"xplatResourceTag5313","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag5313/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag604","tagName":"xplatResourceTag604","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag604/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8015","tagName":"xplatResourceTag8015","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8015/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8954","tagName":"xplatResourceTag8954","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8954/tagValues/fooValue","tagValue":"fooValue","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag9032","tagName":"xplatResourceTag9032","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag9032/tagValues/ygtag-value","tagValue":"ygtag-value","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/yugangw-tag","tagName":"yugangw-tag","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/yugangw-tag/tagValues/yugangw-tag-v1","tagValue":"yugangw-tag-v1","count":{"type":"Total","value":0}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/yugangw-tag/tagValues/yugangw-tag-v2","tagValue":"yugangw-tag-v2","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/yugangw-tag2","tagName":"yugangw-tag2","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/yugangw-tag2/tagValues/yugangw-tag2-v1","tagValue":"yugangw-tag2-v1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing-test","tagName":"zhoxing-test","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing-test/tagValues/asdsad","tagValue":"asdsad","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing_test2","tagName":"zhoxing_test2","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/zhoxing_test2/tagValues/1","tagValue":"1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/product","tagName":"product","count":{"type":"Total","value":30},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/product/tagValues/azurecli","tagValue":"azurecli","count":{"type":"Total","value":30}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/cause","tagName":"cause","count":{"type":"Total","value":30},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/cause/tagValues/automation","tagValue":"automation","count":{"type":"Total","value":30}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date","tagName":"date","count":{"type":"Total","value":30},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-24T23:09:56Z","tagValue":"2020-01-24T23:09:56Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-25T18:32:09Z","tagValue":"2020-01-25T18:32:09Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-30T09:04:16Z","tagValue":"2020-01-30T09:04:16Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-31T23:45:47Z","tagValue":"2020-01-31T23:45:47Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-02-04T04:01:45Z","tagValue":"2020-02-04T04:01:45Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-02-04T04:04:09Z","tagValue":"2020-02-04T04:04:09Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-15T16:54:47Z","tagValue":"2019-10-15T16:54:47Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-15T16:55:16Z","tagValue":"2019-10-15T16:55:16Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-15T16:56:15Z","tagValue":"2019-10-15T16:56:15Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-15T16:56:26Z","tagValue":"2019-10-15T16:56:26Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-16T14:48:47Z","tagValue":"2019-10-16T14:48:47Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-17T15:42:46Z","tagValue":"2019-10-17T15:42:46Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-17T15:43:24Z","tagValue":"2019-10-17T15:43:24Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-17T15:44:46Z","tagValue":"2019-10-17T15:44:46Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-10-18T00:59:19Z","tagValue":"2019-10-18T00:59:19Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-11-11T08:59:35Z","tagValue":"2019-11-11T08:59:35Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-11-11T08:59:39Z","tagValue":"2019-11-11T08:59:39Z","count":{"type":"Total","value":2}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-11-11T08:59:40Z","tagValue":"2019-11-11T08:59:40Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-12-27T22:15:53Z","tagValue":"2019-12-27T22:15:53Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-12-30T02:24:44Z","tagValue":"2019-12-30T02:24:44Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-15T07:30:47Z","tagValue":"2020-01-15T07:30:47Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T07:23:31Z","tagValue":"2020-01-21T07:23:31Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T07:26:32Z","tagValue":"2020-01-21T07:26:32Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T07:33:45Z","tagValue":"2020-01-21T07:33:45Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T07:36:43Z","tagValue":"2020-01-21T07:36:43Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T07:42:41Z","tagValue":"2020-01-21T07:42:41Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T12:30:29Z","tagValue":"2020-01-21T12:30:29Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-01-21T18:21:39Z","tagValue":"2020-01-21T18:21:39Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2019-12-30T01:51:46Z","tagValue":"2019-12-30T01:51:46Z","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag3602","tagName":"xplatResourceGroupTag3602","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag7142","tagName":"xplatResourceGroupTag7142","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag7429","tagName":"xplatResourceGroupTag7429","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag7670","tagName":"xplatResourceGroupTag7670","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceGroupTag9838","tagName":"xplatResourceGroupTag9838","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag1210","tagName":"xplatResourceTag1210","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag3833","tagName":"xplatResourceTag3833","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag7831","tagName":"xplatResourceTag7831","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8311","tagName":"xplatResourceTag8311","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag8732","tagName":"xplatResourceTag8732","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag875","tagName":"xplatResourceTag875","count":{"type":"Total","value":0},"values":[]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/xplatResourceTag9329","tagName":"xplatResourceTag9329","count":{"type":"Total","value":0},"values":[]}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1","tagName":"imagetemplate_tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag1/tagValues/IT_T1","tagValue":"IT_T1","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2","tagName":"imagetemplate_tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imagetemplate_tag2/tagValues/IT_T2","tagValue":"IT_T2","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage","tagName":"ms-resource-usage","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage/tagValues/azure-cloud-shell","tagValue":"azure-cloud-shell","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby","tagName":"createdby","count":{"type":"Total","value":9},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/azureimagebuilder","tagValue":"azureimagebuilder","count":{"type":"Total","value":6}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/createdby/tagValues/AzureVMImageBuilder","tagValue":"AzureVMImageBuilder","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue","tagName":"magicvalue","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/magicvalue/tagValues/0d819542a3774a2a8709401a7cd09eb8","tagValue":"0d819542a3774a2a8709401a7cd09eb8","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/Red","tagValue":"Red","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2","tagName":"tag2","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2/tagValues/White","tagValue":"White","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator","tagName":"Creator","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator/tagValues/Automatically
+        added by NRMS Azure Policy","tagValue":"Automatically added by NRMS Azure
+        Policy","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info","tagName":"NRMS-Info","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info/tagValues/http://aka.ms/nrms","tagValue":"http://aka.ms/nrms","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version","tagName":"NRMS-Version","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version/tagValues/2019-03-20","tagValue":"2019-03-20","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1","tagName":"key1","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName","tagName":"imageTemplateName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyImageTemplate","tagValue":"MyImageTemplate","count":{"type":"Total","value":2}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateName/tagValues/MyNewImageTemplate","tagValue":"MyNewImageTemplate","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName","tagName":"imageTemplateResourceGroupName","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","tagValue":"cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","tagValue":"awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/imageTemplateResourceGroupName/tagValues/pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","tagValue":"pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment","tagName":"environment","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment/tagValues/Terraform
+        Devops Test","tagValue":"Terraform Devops Test","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
+        Is Cleanup Service","tagName":"What Is Cleanup Service","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
+        Is Cleanup Service/tagValues/https://aka.ms/WhatIsCleanupService","tagValue":"https://aka.ms/WhatIsCleanupService","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/myTag","tagName":"myTag","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/myTag/tagValues/test","tagValue":"test","count":{"type":"Total","value":1}}]}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '16135'
+      - '6672'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:14:47 GMT
+      - Fri, 15 May 2020 02:25:36 GMT
       expires:
       - '-1'
       pragma:
@@ -146,8 +143,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -161,7 +158,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 04 Feb 2020 04:14:48 GMT
+      - Fri, 15 May 2020 02:25:38 GMT
       expires:
       - '-1'
       pragma:
@@ -171,7 +168,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14998'
     status:
       code: 200
       message: OK
@@ -187,8 +184,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -202,7 +199,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 04 Feb 2020 04:14:50 GMT
+      - Fri, 15 May 2020 02:25:41 GMT
       expires:
       - '-1'
       pragma:
@@ -212,7 +209,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14997'
     status:
       code: 200
       message: OK

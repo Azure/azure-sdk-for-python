@@ -18,7 +18,10 @@ from .operations import LegacyPeeringsOperations
 from .operations import Operations
 from .operations import PeerAsnsOperations
 from .operations import PeeringLocationsOperations
+from .operations import RegisteredAsnsOperations
+from .operations import RegisteredPrefixesOperations
 from .operations import PeeringsOperations
+from .operations import PeeringServiceCountriesOperations
 from .operations import PeeringServiceLocationsOperations
 from .operations import PrefixesOperations
 from .operations import PeeringServiceProvidersOperations
@@ -40,8 +43,14 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
     :vartype peer_asns: azure.mgmt.peering.operations.PeerAsnsOperations
     :ivar peering_locations: PeeringLocations operations
     :vartype peering_locations: azure.mgmt.peering.operations.PeeringLocationsOperations
+    :ivar registered_asns: RegisteredAsns operations
+    :vartype registered_asns: azure.mgmt.peering.operations.RegisteredAsnsOperations
+    :ivar registered_prefixes: RegisteredPrefixes operations
+    :vartype registered_prefixes: azure.mgmt.peering.operations.RegisteredPrefixesOperations
     :ivar peerings: Peerings operations
     :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
+    :ivar peering_service_countries: PeeringServiceCountries operations
+    :vartype peering_service_countries: azure.mgmt.peering.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocations operations
     :vartype peering_service_locations: azure.mgmt.peering.operations.PeeringServiceLocationsOperations
     :ivar prefixes: Prefixes operations
@@ -66,7 +75,7 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
         super(PeeringManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-09-01-preview'
+        self.api_version = '2020-01-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -78,7 +87,13 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.peering_locations = PeeringLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.registered_asns = RegisteredAsnsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.registered_prefixes = RegisteredPrefixesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.peerings = PeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.peering_service_countries = PeeringServiceCountriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.peering_service_locations = PeeringServiceLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

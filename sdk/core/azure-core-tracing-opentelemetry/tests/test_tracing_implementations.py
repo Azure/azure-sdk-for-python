@@ -50,7 +50,7 @@ class TestOpentelemetryWrapper:
                 with wrapped_span.span() as child:
                     assert child.span_instance.name == "span"
                     assert child.span_instance is tracer.get_current_span()
-                    assert child.span_instance.parent is wrapped_span.span_instance
+                    assert child.span_instance.parent is wrapped_span.span_instance.context
 
     def test_start_finish(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
@@ -103,6 +103,33 @@ class TestOpentelemetryWrapper:
                 assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
                 assert link.context.span_id == int("231ebdc614cb9ddd", 16)
 
+    def test_links_with_attribute(self, tracer):
+        with tracer.start_as_current_span("Root") as parent:
+            attributes = {"attribute1": 1, "attribute2": 2}
+            og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-02"}
+            with OpenTelemetrySpan() as wrapped_class:
+                OpenTelemetrySpan.link_from_headers(og_header, attributes)
+
+                assert len(wrapped_class.span_instance.links) == 1
+                link = wrapped_class.span_instance.links[0]
+
+                assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
+                assert link.context.span_id == int("231ebdc614cb9ddd", 16)
+                assert "attribute1" in link.attributes
+                assert "attribute2" in link.attributes
+                assert link.attributes == attributes
+
+            with OpenTelemetrySpan() as wrapped_class:
+                OpenTelemetrySpan.link("00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-02", attributes)
+
+                assert len(wrapped_class.span_instance.links) == 1
+                link = wrapped_class.span_instance.links[0]
+
+                assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
+                assert link.context.span_id == int("231ebdc614cb9ddd", 16)
+                assert "attribute1" in link.attributes
+                assert "attribute2" in link.attributes
+                assert link.attributes == attributes
 
     def test_add_attribute(self, tracer):
         with tracer.start_as_current_span("Root") as parent:

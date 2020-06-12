@@ -31,7 +31,6 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
-import email
 from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
@@ -45,6 +44,7 @@ from azure.core.exceptions import (
 )
 
 from ._base import HTTPPolicy, RequestHistory
+from . import _utils
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -167,18 +167,7 @@ class RetryPolicy(HTTPPolicy):
         :param str retry_after: Retry-After header
         :rtype: float
         """
-        try:
-            seconds = float(retry_after)
-        except TypeError:
-            retry_date_tuple = email.utils.parsedate(retry_after)
-            if retry_date_tuple is None:
-                return None
-            retry_date = time.mktime(retry_date_tuple)
-            seconds = retry_date - time.time()
-
-        if seconds < 0:
-            seconds = 0
-        return seconds
+        return _utils.parse_retry_after(retry_after)
 
     def get_retry_after(self, response):
         """Get the value of Retry-After in seconds.
@@ -186,16 +175,9 @@ class RetryPolicy(HTTPPolicy):
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: Value of Retry-After in seconds.
-        :rtype: float
+        :rtype: float or None
         """
-        retry_after = response.http_response.headers.get("Retry-After")
-        if retry_after:
-            return self.parse_retry_after(retry_after)
-        retry_after = response.http_response.headers.get("retry-after-ms")
-        if retry_after:
-            parsed_retry_after = self.parse_retry_after(retry_after)
-            return parsed_retry_after / 1000.0
-        return None
+        return _utils.get_retry_after(response)
 
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
@@ -281,12 +263,20 @@ class RetryPolicy(HTTPPolicy):
         code is on the list of status codes to be retried upon on the
         presence of the aforementioned header.
 
+        The behavior is:
+        -	If status_code < 400: don't retry
+        -	Else if Retry-After present: retry
+        -	Else: retry based on the safe status code list ([408, 429, 500, 502, 503, 504])
+
+
         :param dict settings: The retry settings.
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if method/status code is retryable. False if not retryable.
         :rtype: bool
         """
+        if response.http_response.status_code < 400:
+            return False
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
             return True

@@ -10,140 +10,211 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .link_target_py3 import LinkTarget
-    from .tag_py3 import Tag
-    from .core_summary_py3 import CoreSummary
-    from .search_sort_py3 import SearchSort
-    from .search_metadata_schema_py3 import SearchMetadataSchema
-    from .search_metadata_py3 import SearchMetadata
-    from .saved_search_py3 import SavedSearch
-    from .saved_searches_list_result_py3 import SavedSearchesListResult
-    from .search_error_py3 import SearchError
-    from .search_results_response_py3 import SearchResultsResponse
-    from .search_schema_value_py3 import SearchSchemaValue
-    from .search_get_schema_response_py3 import SearchGetSchemaResponse
-    from .search_highlight_py3 import SearchHighlight
-    from .search_parameters_py3 import SearchParameters
-    from .storage_account_py3 import StorageAccount
-    from .storage_insight_status_py3 import StorageInsightStatus
-    from .storage_insight_py3 import StorageInsight
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .workspace_purge_body_filters_py3 import WorkspacePurgeBodyFilters
-    from .workspace_purge_body_py3 import WorkspacePurgeBody
-    from .workspace_purge_response_py3 import WorkspacePurgeResponse
-    from .workspace_purge_status_response_py3 import WorkspacePurgeStatusResponse
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .linked_service_py3 import LinkedService
-    from .data_source_py3 import DataSource
-    from .data_source_filter_py3 import DataSourceFilter
-    from .intelligence_pack_py3 import IntelligencePack
-    from .shared_keys_py3 import SharedKeys
-    from .metric_name_py3 import MetricName
-    from .usage_metric_py3 import UsageMetric
-    from .management_group_py3 import ManagementGroup
-    from .sku_py3 import Sku
-    from .workspace_py3 import Workspace
+    from ._models_py3 import AvailableServiceTier
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import Cluster
+    from ._models_py3 import ClusterErrorResponse, ClusterErrorResponseException
+    from ._models_py3 import ClusterPatch
+    from ._models_py3 import ClusterSku
+    from ._models_py3 import CoreSummary
+    from ._models_py3 import DataExport
+    from ._models_py3 import DataExportErrorResponse, DataExportErrorResponseException
+    from ._models_py3 import DataSource
+    from ._models_py3 import DataSourceFilter
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorContract, ErrorContractException
+    from ._models_py3 import ErrorResponse
+    from ._models_py3 import Identity
+    from ._models_py3 import IntelligencePack
+    from ._models_py3 import KeyVaultProperties
+    from ._models_py3 import LinkedService
+    from ._models_py3 import LinkedStorageAccountsResource
+    from ._models_py3 import ManagementGroup
+    from ._models_py3 import MetricName
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationStatus
+    from ._models_py3 import PrivateLinkScopedResource
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import SavedSearch
+    from ._models_py3 import SavedSearchesListResult
+    from ._models_py3 import SearchGetSchemaResponse
+    from ._models_py3 import SearchMetadata
+    from ._models_py3 import SearchMetadataSchema
+    from ._models_py3 import SearchSchemaValue
+    from ._models_py3 import SearchSort
+    from ._models_py3 import SharedKeys
+    from ._models_py3 import StorageAccount
+    from ._models_py3 import StorageInsight
+    from ._models_py3 import StorageInsightStatus
+    from ._models_py3 import Table
+    from ._models_py3 import Tag
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UsageMetric
+    from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceCapping
+    from ._models_py3 import WorkspacePatch
+    from ._models_py3 import WorkspacePurgeBody
+    from ._models_py3 import WorkspacePurgeBodyFilters
+    from ._models_py3 import WorkspacePurgeResponse
+    from ._models_py3 import WorkspacePurgeStatusResponse
+    from ._models_py3 import WorkspaceSku
 except (SyntaxError, ImportError):
-    from .link_target import LinkTarget
-    from .tag import Tag
-    from .core_summary import CoreSummary
-    from .search_sort import SearchSort
-    from .search_metadata_schema import SearchMetadataSchema
-    from .search_metadata import SearchMetadata
-    from .saved_search import SavedSearch
-    from .saved_searches_list_result import SavedSearchesListResult
-    from .search_error import SearchError
-    from .search_results_response import SearchResultsResponse
-    from .search_schema_value import SearchSchemaValue
-    from .search_get_schema_response import SearchGetSchemaResponse
-    from .search_highlight import SearchHighlight
-    from .search_parameters import SearchParameters
-    from .storage_account import StorageAccount
-    from .storage_insight_status import StorageInsightStatus
-    from .storage_insight import StorageInsight
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .workspace_purge_body_filters import WorkspacePurgeBodyFilters
-    from .workspace_purge_body import WorkspacePurgeBody
-    from .workspace_purge_response import WorkspacePurgeResponse
-    from .workspace_purge_status_response import WorkspacePurgeStatusResponse
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .linked_service import LinkedService
-    from .data_source import DataSource
-    from .data_source_filter import DataSourceFilter
-    from .intelligence_pack import IntelligencePack
-    from .shared_keys import SharedKeys
-    from .metric_name import MetricName
-    from .usage_metric import UsageMetric
-    from .management_group import ManagementGroup
-    from .sku import Sku
-    from .workspace import Workspace
-from .storage_insight_paged import StorageInsightPaged
-from .usage_metric_paged import UsageMetricPaged
-from .management_group_paged import ManagementGroupPaged
-from .workspace_paged import WorkspacePaged
-from .linked_service_paged import LinkedServicePaged
-from .data_source_paged import DataSourcePaged
-from .operation_paged import OperationPaged
-from .log_analytics_management_client_enums import (
-    SearchSortEnum,
-    StorageInsightState,
-    PurgeState,
+    from ._models import AvailableServiceTier
+    from ._models import AzureEntityResource
+    from ._models import Cluster
+    from ._models import ClusterErrorResponse, ClusterErrorResponseException
+    from ._models import ClusterPatch
+    from ._models import ClusterSku
+    from ._models import CoreSummary
+    from ._models import DataExport
+    from ._models import DataExportErrorResponse, DataExportErrorResponseException
+    from ._models import DataSource
+    from ._models import DataSourceFilter
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorContract, ErrorContractException
+    from ._models import ErrorResponse
+    from ._models import Identity
+    from ._models import IntelligencePack
+    from ._models import KeyVaultProperties
+    from ._models import LinkedService
+    from ._models import LinkedStorageAccountsResource
+    from ._models import ManagementGroup
+    from ._models import MetricName
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationStatus
+    from ._models import PrivateLinkScopedResource
+    from ._models import ProxyResource
+    from ._models import Resource
+    from ._models import SavedSearch
+    from ._models import SavedSearchesListResult
+    from ._models import SearchGetSchemaResponse
+    from ._models import SearchMetadata
+    from ._models import SearchMetadataSchema
+    from ._models import SearchSchemaValue
+    from ._models import SearchSort
+    from ._models import SharedKeys
+    from ._models import StorageAccount
+    from ._models import StorageInsight
+    from ._models import StorageInsightStatus
+    from ._models import Table
+    from ._models import Tag
+    from ._models import TrackedResource
+    from ._models import UsageMetric
+    from ._models import Workspace
+    from ._models import WorkspaceCapping
+    from ._models import WorkspacePatch
+    from ._models import WorkspacePurgeBody
+    from ._models import WorkspacePurgeBodyFilters
+    from ._models import WorkspacePurgeResponse
+    from ._models import WorkspacePurgeStatusResponse
+    from ._models import WorkspaceSku
+from ._paged_models import ClusterPaged
+from ._paged_models import DataExportPaged
+from ._paged_models import DataSourcePaged
+from ._paged_models import LinkedServicePaged
+from ._paged_models import LinkedStorageAccountsResourcePaged
+from ._paged_models import ManagementGroupPaged
+from ._paged_models import OperationPaged
+from ._paged_models import StorageInsightPaged
+from ._paged_models import TablePaged
+from ._paged_models import UsageMetricPaged
+from ._paged_models import WorkspacePaged
+from ._log_analytics_management_client_enums import (
+    Type,
     DataSourceKind,
+    LinkedServiceEntityStatus,
+    DataSourceType,
+    WorkspaceSkuNameEnum,
+    DataIngestionStatus,
+    WorkspaceEntityStatus,
+    PublicNetworkAccessType,
+    ClusterEntityStatus,
+    ClusterSkuNameEnum,
+    IdentityType,
+    StorageInsightState,
     SkuNameEnum,
-    EntityStatus,
+    SearchSortEnum,
+    PurgeState,
 )
 
 __all__ = [
-    'LinkTarget',
-    'Tag',
+    'AvailableServiceTier',
+    'AzureEntityResource',
+    'Cluster',
+    'ClusterErrorResponse', 'ClusterErrorResponseException',
+    'ClusterPatch',
+    'ClusterSku',
     'CoreSummary',
-    'SearchSort',
-    'SearchMetadataSchema',
-    'SearchMetadata',
-    'SavedSearch',
-    'SavedSearchesListResult',
-    'SearchError',
-    'SearchResultsResponse',
-    'SearchSchemaValue',
-    'SearchGetSchemaResponse',
-    'SearchHighlight',
-    'SearchParameters',
-    'StorageAccount',
-    'StorageInsightStatus',
-    'StorageInsight',
-    'Resource',
-    'ProxyResource',
-    'WorkspacePurgeBodyFilters',
-    'WorkspacePurgeBody',
-    'WorkspacePurgeResponse',
-    'WorkspacePurgeStatusResponse',
-    'OperationDisplay',
-    'Operation',
-    'LinkedService',
+    'DataExport',
+    'DataExportErrorResponse', 'DataExportErrorResponseException',
     'DataSource',
     'DataSourceFilter',
+    'ErrorAdditionalInfo',
+    'ErrorContract', 'ErrorContractException',
+    'ErrorResponse',
+    'Identity',
     'IntelligencePack',
-    'SharedKeys',
-    'MetricName',
-    'UsageMetric',
+    'KeyVaultProperties',
+    'LinkedService',
+    'LinkedStorageAccountsResource',
     'ManagementGroup',
-    'Sku',
+    'MetricName',
+    'Operation',
+    'OperationDisplay',
+    'OperationStatus',
+    'PrivateLinkScopedResource',
+    'ProxyResource',
+    'Resource',
+    'SavedSearch',
+    'SavedSearchesListResult',
+    'SearchGetSchemaResponse',
+    'SearchMetadata',
+    'SearchMetadataSchema',
+    'SearchSchemaValue',
+    'SearchSort',
+    'SharedKeys',
+    'StorageAccount',
+    'StorageInsight',
+    'StorageInsightStatus',
+    'Table',
+    'Tag',
+    'TrackedResource',
+    'UsageMetric',
     'Workspace',
-    'StorageInsightPaged',
-    'UsageMetricPaged',
-    'ManagementGroupPaged',
-    'WorkspacePaged',
-    'LinkedServicePaged',
+    'WorkspaceCapping',
+    'WorkspacePatch',
+    'WorkspacePurgeBody',
+    'WorkspacePurgeBodyFilters',
+    'WorkspacePurgeResponse',
+    'WorkspacePurgeStatusResponse',
+    'WorkspaceSku',
+    'DataExportPaged',
     'DataSourcePaged',
+    'LinkedServicePaged',
+    'LinkedStorageAccountsResourcePaged',
+    'ManagementGroupPaged',
     'OperationPaged',
-    'SearchSortEnum',
-    'StorageInsightState',
-    'PurgeState',
+    'UsageMetricPaged',
+    'WorkspacePaged',
+    'ClusterPaged',
+    'StorageInsightPaged',
+    'TablePaged',
+    'Type',
     'DataSourceKind',
+    'LinkedServiceEntityStatus',
+    'DataSourceType',
+    'WorkspaceSkuNameEnum',
+    'DataIngestionStatus',
+    'WorkspaceEntityStatus',
+    'PublicNetworkAccessType',
+    'ClusterEntityStatus',
+    'ClusterSkuNameEnum',
+    'IdentityType',
+    'StorageInsightState',
     'SkuNameEnum',
-    'EntityStatus',
+    'SearchSortEnum',
+    'PurgeState',
 ]

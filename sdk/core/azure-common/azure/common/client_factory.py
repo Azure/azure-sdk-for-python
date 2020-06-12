@@ -14,9 +14,6 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
-import adal
-from msrestazure.azure_active_directory import AdalAuthentication
-
 from .credentials import get_azure_cli_credentials
 from .cloud import get_cli_active_cloud
 
@@ -153,6 +150,9 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     :param dict config_dict: A config dict.
     :return: An instantiated client
     """
+    import adal
+    from msrestazure.azure_active_directory import AdalAuthentication
+
     is_graphrbac = client_class.__name__ == 'GraphRbacManagementClient'
     is_keyvault = client_class.__name__ == 'KeyVaultClient'
     parameters = {

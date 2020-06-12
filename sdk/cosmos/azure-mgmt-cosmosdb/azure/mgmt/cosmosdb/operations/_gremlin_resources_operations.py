@@ -27,7 +27,7 @@ class GremlinResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2019-12-12".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class GremlinResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-12"
+        self.api_version = "2020-03-01"
 
         self.config = config
 
@@ -46,7 +46,8 @@ class GremlinResourcesOperations(object):
         """Lists the Gremlin databases under an existing Azure Cosmos DB database
         account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -65,7 +66,7 @@ class GremlinResourcesOperations(object):
                 # Construct URL
                 url = self.list_gremlin_databases.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
@@ -73,7 +74,7 @@ class GremlinResourcesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -119,7 +120,8 @@ class GremlinResourcesOperations(object):
         """Gets the Gremlin databases under an existing Azure Cosmos DB database
         account with the provided name.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -138,7 +140,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.get_gremlin_database.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -147,7 +149,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -185,7 +187,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.create_update_gremlin_database.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -194,7 +196,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -234,7 +236,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, create_update_gremlin_database_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Gremlin database.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -292,7 +295,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.delete_gremlin_database.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -301,7 +304,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -329,7 +332,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Gremlin database.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -374,7 +378,8 @@ class GremlinResourcesOperations(object):
         """Gets the RUs per second of the Gremlin database under an existing Azure
         Cosmos DB database account with the provided name.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -393,7 +398,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.get_gremlin_database_throughput.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -402,7 +407,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -440,7 +445,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.update_gremlin_database_throughput.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -449,7 +454,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -489,7 +494,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, update_throughput_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update RUs per second of an Azure Cosmos DB Gremlin database.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -546,7 +552,8 @@ class GremlinResourcesOperations(object):
         """Lists the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -567,7 +574,7 @@ class GremlinResourcesOperations(object):
                 # Construct URL
                 url = self.list_gremlin_graphs.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseName': self._serialize.url("database_name", database_name, 'str')
@@ -576,7 +583,7 @@ class GremlinResourcesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -622,7 +629,8 @@ class GremlinResourcesOperations(object):
         """Gets the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -643,7 +651,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.get_gremlin_graph.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
@@ -653,7 +661,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -691,7 +699,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.create_update_gremlin_graph.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
@@ -701,7 +709,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -741,7 +749,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, graph_name, create_update_gremlin_graph_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Gremlin graph.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -801,7 +810,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.delete_gremlin_graph.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
@@ -811,7 +820,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -839,7 +848,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Gremlin graph.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -887,7 +897,8 @@ class GremlinResourcesOperations(object):
         """Gets the Gremlin graph throughput under an existing Azure Cosmos DB
         database account with the provided name.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
@@ -908,7 +919,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.get_gremlin_graph_throughput.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
@@ -918,7 +929,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -956,7 +967,7 @@ class GremlinResourcesOperations(object):
         # Construct URL
         url = self.update_gremlin_graph_throughput.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
@@ -966,7 +977,7 @@ class GremlinResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -1006,7 +1017,8 @@ class GremlinResourcesOperations(object):
             self, resource_group_name, account_name, database_name, graph_name, update_throughput_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update RUs per second of an Azure Cosmos DB Gremlin graph.
 
-        :param resource_group_name: Name of an Azure resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str

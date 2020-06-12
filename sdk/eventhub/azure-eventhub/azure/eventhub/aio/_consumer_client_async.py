@@ -49,8 +49,8 @@ class EventHubConsumerClient(ClientBaseAsync):
     `EventHubConsumerClient`.
     If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
-    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
-    and specify the partition_id.
+    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()` or
+    `receive_batch()` and specify the partition_id.
     Load-balancing won't work in single-partition mode. But users can still save checkpoints if the checkpoint_store
     is set.
 

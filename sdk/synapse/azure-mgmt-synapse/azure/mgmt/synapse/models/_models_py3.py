@@ -404,11 +404,147 @@ class CheckNameAvailabilityResponse(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """The object that defines the structure of an Azure Synapse error response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
+    :type code: str
+    :param message: Required. Error message.
+    :type message: str
+    :param target: Property name/path in request associated with error.
+    :type target: str
+    :param details: Array with additional error details.
+    :type details: list[~azure.mgmt.synapse.models.CloudError]
     """
 
-    _attribute_map = {
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
     }
+
+    _attribute_map = {
+        'code': {'key': 'error.code', 'type': 'str'},
+        'message': {'key': 'error.message', 'type': 'str'},
+        'target': {'key': 'error.target', 'type': 'str'},
+        'details': {'key': 'error.details', 'type': '[CloudError]'},
+    }
+
+    def __init__(self, *, code: str, message: str, target: str=None, details=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CustomSetupBase(Model):
+    """The base definition of the custom setup.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CmdkeySetup, EnvironmentVariableSetup, ComponentSetup
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'CmdkeySetup': 'CmdkeySetup', 'EnvironmentVariableSetup': 'EnvironmentVariableSetup', 'ComponentSetup': 'ComponentSetup'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CustomSetupBase, self).__init__(**kwargs)
+        self.type = None
+
+
+class CmdkeySetup(CustomSetupBase):
+    """The custom setup of running cmdkey commands.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param target_name: Required. The server name of data source access.
+    :type target_name: object
+    :param user_name: Required. The user name of data source access.
+    :type user_name: object
+    :param password: Required. The password of data source access.
+    :type password: ~azure.mgmt.synapse.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'target_name': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'target_name': {'key': 'typeProperties.targetName', 'type': 'object'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, target_name, user_name, password, **kwargs) -> None:
+        super(CmdkeySetup, self).__init__(**kwargs)
+        self.target_name = target_name
+        self.user_name = user_name
+        self.password = password
+        self.type = 'CmdkeySetup'
+
+
+class ComponentSetup(CustomSetupBase):
+    """The custom setup of installing 3rd party components.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    :param license_key: The license key to activate the component.
+    :type license_key: ~azure.mgmt.synapse.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'component_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'component_name': {'key': 'typeProperties.componentName', 'type': 'str'},
+        'license_key': {'key': 'typeProperties.licenseKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, component_name: str, license_key=None, **kwargs) -> None:
+        super(ComponentSetup, self).__init__(**kwargs)
+        self.component_name = component_name
+        self.license_key = license_key
+        self.type = 'ComponentSetup'
 
 
 class CreateSqlPoolRestorePointDefinition(Model):
@@ -522,6 +658,60 @@ class DataWarehouseUserActivities(ProxyResource):
     def __init__(self, **kwargs) -> None:
         super(DataWarehouseUserActivities, self).__init__(**kwargs)
         self.active_queries_count = None
+
+
+class EntityReference(Model):
+    """The entity reference.
+
+    :param type: The type of this referenced entity. Possible values include:
+     'IntegrationRuntimeReference', 'LinkedServiceReference'
+    :type type: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeEntityReferenceType
+    :param reference_name: The name of this referenced entity.
+    :type reference_name: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, reference_name: str=None, **kwargs) -> None:
+        super(EntityReference, self).__init__(**kwargs)
+        self.type = type
+        self.reference_name = reference_name
+
+
+class EnvironmentVariableSetup(CustomSetupBase):
+    """The custom setup of setting environment variable.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param variable_name: Required. The name of the environment variable.
+    :type variable_name: str
+    :param variable_value: Required. The value of the environment variable.
+    :type variable_value: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'variable_name': {'required': True},
+        'variable_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'variable_name': {'key': 'typeProperties.variableName', 'type': 'str'},
+        'variable_value': {'key': 'typeProperties.variableValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, variable_name: str, variable_value: str, **kwargs) -> None:
+        super(EnvironmentVariableSetup, self).__init__(**kwargs)
+        self.variable_name = variable_name
+        self.variable_value = variable_value
+        self.type = 'EnvironmentVariableSetup'
 
 
 class ErrorAdditionalInfo(Model):
@@ -706,6 +896,690 @@ class GeoBackupPolicy(ProxyResource):
         self.location = None
 
 
+class GetSsisObjectMetadataRequest(Model):
+    """The request payload of get SSIS object metadata.
+
+    :param metadata_path: Metadata path.
+    :type metadata_path: str
+    """
+
+    _attribute_map = {
+        'metadata_path': {'key': 'metadataPath', 'type': 'str'},
+    }
+
+    def __init__(self, *, metadata_path: str=None, **kwargs) -> None:
+        super(GetSsisObjectMetadataRequest, self).__init__(**kwargs)
+        self.metadata_path = metadata_path
+
+
+class IntegrationRuntime(Model):
+    """Azure Synapse nested object which serves as a compute resource for
+    activities.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ManagedIntegrationRuntime, SelfHostedIntegrationRuntime
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Integration runtime description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Managed': 'ManagedIntegrationRuntime', 'SelfHosted': 'SelfHostedIntegrationRuntime'}
+    }
+
+    def __init__(self, *, additional_properties=None, description: str=None, **kwargs) -> None:
+        super(IntegrationRuntime, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.description = description
+        self.type = None
+
+
+class IntegrationRuntimeAuthKeys(Model):
+    """The integration runtime authentication keys.
+
+    :param auth_key1: The primary integration runtime authentication key.
+    :type auth_key1: str
+    :param auth_key2: The secondary integration runtime authentication key.
+    :type auth_key2: str
+    """
+
+    _attribute_map = {
+        'auth_key1': {'key': 'authKey1', 'type': 'str'},
+        'auth_key2': {'key': 'authKey2', 'type': 'str'},
+    }
+
+    def __init__(self, *, auth_key1: str=None, auth_key2: str=None, **kwargs) -> None:
+        super(IntegrationRuntimeAuthKeys, self).__init__(**kwargs)
+        self.auth_key1 = auth_key1
+        self.auth_key2 = auth_key2
+
+
+class IntegrationRuntimeComputeProperties(Model):
+    """The compute resource properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param location: The location for managed integration runtime. The
+     supported regions could be found on
+     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities
+    :type location: str
+    :param node_size: The node size requirement to managed integration
+     runtime.
+    :type node_size: str
+    :param number_of_nodes: The required number of nodes for managed
+     integration runtime.
+    :type number_of_nodes: int
+    :param max_parallel_executions_per_node: Maximum parallel executions count
+     per node for managed integration runtime.
+    :type max_parallel_executions_per_node: int
+    :param data_flow_properties: Data flow properties for managed integration
+     runtime.
+    :type data_flow_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeDataFlowProperties
+    :param v_net_properties: VNet properties for managed integration runtime.
+    :type v_net_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeVNetProperties
+    """
+
+    _validation = {
+        'number_of_nodes': {'minimum': 1},
+        'max_parallel_executions_per_node': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'node_size': {'key': 'nodeSize', 'type': 'str'},
+        'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
+        'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
+        'data_flow_properties': {'key': 'dataFlowProperties', 'type': 'IntegrationRuntimeDataFlowProperties'},
+        'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
+    }
+
+    def __init__(self, *, additional_properties=None, location: str=None, node_size: str=None, number_of_nodes: int=None, max_parallel_executions_per_node: int=None, data_flow_properties=None, v_net_properties=None, **kwargs) -> None:
+        super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.location = location
+        self.node_size = node_size
+        self.number_of_nodes = number_of_nodes
+        self.max_parallel_executions_per_node = max_parallel_executions_per_node
+        self.data_flow_properties = data_flow_properties
+        self.v_net_properties = v_net_properties
+
+
+class IntegrationRuntimeConnectionInfo(Model):
+    """Connection information for encrypting the on-premises data source
+    credentials.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar service_token: The token generated in service. Callers use this
+     token to authenticate to integration runtime.
+    :vartype service_token: str
+    :ivar identity_cert_thumbprint: The integration runtime SSL certificate
+     thumbprint. Click-Once application uses it to do server validation.
+    :vartype identity_cert_thumbprint: str
+    :ivar host_service_uri: The on-premises integration runtime host URL.
+    :vartype host_service_uri: str
+    :ivar version: The integration runtime version.
+    :vartype version: str
+    :ivar public_key: The public key for encrypting a credential when
+     transferring the credential to the integration runtime.
+    :vartype public_key: str
+    :ivar is_identity_cert_exprired: Whether the identity certificate is
+     expired.
+    :vartype is_identity_cert_exprired: bool
+    """
+
+    _validation = {
+        'service_token': {'readonly': True},
+        'identity_cert_thumbprint': {'readonly': True},
+        'host_service_uri': {'readonly': True},
+        'version': {'readonly': True},
+        'public_key': {'readonly': True},
+        'is_identity_cert_exprired': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'service_token': {'key': 'serviceToken', 'type': 'str'},
+        'identity_cert_thumbprint': {'key': 'identityCertThumbprint', 'type': 'str'},
+        'host_service_uri': {'key': 'hostServiceUri', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'public_key': {'key': 'publicKey', 'type': 'str'},
+        'is_identity_cert_exprired': {'key': 'isIdentityCertExprired', 'type': 'bool'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(IntegrationRuntimeConnectionInfo, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.service_token = None
+        self.identity_cert_thumbprint = None
+        self.host_service_uri = None
+        self.version = None
+        self.public_key = None
+        self.is_identity_cert_exprired = None
+
+
+class IntegrationRuntimeCustomSetupScriptProperties(Model):
+    """Custom setup script properties for a managed dedicated integration runtime.
+
+    :param blob_container_uri: The URI of the Azure blob container that
+     contains the custom setup script.
+    :type blob_container_uri: str
+    :param sas_token: The SAS token of the Azure blob container.
+    :type sas_token: ~azure.mgmt.synapse.models.SecureString
+    """
+
+    _attribute_map = {
+        'blob_container_uri': {'key': 'blobContainerUri', 'type': 'str'},
+        'sas_token': {'key': 'sasToken', 'type': 'SecureString'},
+    }
+
+    def __init__(self, *, blob_container_uri: str=None, sas_token=None, **kwargs) -> None:
+        super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
+        self.blob_container_uri = blob_container_uri
+        self.sas_token = sas_token
+
+
+class IntegrationRuntimeDataFlowProperties(Model):
+    """Data flow properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param compute_type: Compute type of the cluster which will execute data
+     flow job. Possible values include: 'General', 'MemoryOptimized',
+     'ComputeOptimized'
+    :type compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
+    :param core_count: Core count of the cluster which will execute data flow
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
+    :type core_count: int
+    :param time_to_live: Time to live (in minutes) setting of the cluster
+     which will execute data flow job.
+    :type time_to_live: int
+    """
+
+    _validation = {
+        'time_to_live': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+    }
+
+    def __init__(self, *, additional_properties=None, compute_type=None, core_count: int=None, time_to_live: int=None, **kwargs) -> None:
+        super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.compute_type = compute_type
+        self.core_count = core_count
+        self.time_to_live = time_to_live
+
+
+class IntegrationRuntimeDataProxyProperties(Model):
+    """Data proxy properties for a managed dedicated integration runtime.
+
+    :param connect_via: The self-hosted integration runtime reference.
+    :type connect_via: ~azure.mgmt.synapse.models.EntityReference
+    :param staging_linked_service: The staging linked service reference.
+    :type staging_linked_service: ~azure.mgmt.synapse.models.EntityReference
+    :param path: The path to contain the staged data in the Blob storage.
+    :type path: str
+    """
+
+    _attribute_map = {
+        'connect_via': {'key': 'connectVia', 'type': 'EntityReference'},
+        'staging_linked_service': {'key': 'stagingLinkedService', 'type': 'EntityReference'},
+        'path': {'key': 'path', 'type': 'str'},
+    }
+
+    def __init__(self, *, connect_via=None, staging_linked_service=None, path: str=None, **kwargs) -> None:
+        super(IntegrationRuntimeDataProxyProperties, self).__init__(**kwargs)
+        self.connect_via = connect_via
+        self.staging_linked_service = staging_linked_service
+        self.path = path
+
+
+class IntegrationRuntimeMonitoringData(Model):
+    """Get monitoring data response.
+
+    :param name: Integration runtime name.
+    :type name: str
+    :param nodes: Integration runtime node monitoring data.
+    :type nodes:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeNodeMonitoringData]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'nodes': {'key': 'nodes', 'type': '[IntegrationRuntimeNodeMonitoringData]'},
+    }
+
+    def __init__(self, *, name: str=None, nodes=None, **kwargs) -> None:
+        super(IntegrationRuntimeMonitoringData, self).__init__(**kwargs)
+        self.name = name
+        self.nodes = nodes
+
+
+class IntegrationRuntimeNodeIpAddress(Model):
+    """The IP address of self-hosted integration runtime node.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar ip_address: The IP address of self-hosted integration runtime node.
+    :vartype ip_address: str
+    """
+
+    _validation = {
+        'ip_address': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(IntegrationRuntimeNodeIpAddress, self).__init__(**kwargs)
+        self.ip_address = None
+
+
+class IntegrationRuntimeNodeMonitoringData(Model):
+    """Monitoring data for integration runtime node.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar node_name: Name of the integration runtime node.
+    :vartype node_name: str
+    :ivar available_memory_in_mb: Available memory (MB) on the integration
+     runtime node.
+    :vartype available_memory_in_mb: int
+    :ivar cpu_utilization: CPU percentage on the integration runtime node.
+    :vartype cpu_utilization: int
+    :ivar concurrent_jobs_limit: Maximum concurrent jobs on the integration
+     runtime node.
+    :vartype concurrent_jobs_limit: int
+    :ivar concurrent_jobs_running: The number of jobs currently running on the
+     integration runtime node.
+    :vartype concurrent_jobs_running: int
+    :ivar max_concurrent_jobs: The maximum concurrent jobs in this integration
+     runtime.
+    :vartype max_concurrent_jobs: int
+    :ivar sent_bytes: Sent bytes on the integration runtime node.
+    :vartype sent_bytes: float
+    :ivar received_bytes: Received bytes on the integration runtime node.
+    :vartype received_bytes: float
+    """
+
+    _validation = {
+        'node_name': {'readonly': True},
+        'available_memory_in_mb': {'readonly': True},
+        'cpu_utilization': {'readonly': True},
+        'concurrent_jobs_limit': {'readonly': True},
+        'concurrent_jobs_running': {'readonly': True},
+        'max_concurrent_jobs': {'readonly': True},
+        'sent_bytes': {'readonly': True},
+        'received_bytes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'node_name': {'key': 'nodeName', 'type': 'str'},
+        'available_memory_in_mb': {'key': 'availableMemoryInMB', 'type': 'int'},
+        'cpu_utilization': {'key': 'cpuUtilization', 'type': 'int'},
+        'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
+        'concurrent_jobs_running': {'key': 'concurrentJobsRunning', 'type': 'int'},
+        'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},
+        'sent_bytes': {'key': 'sentBytes', 'type': 'float'},
+        'received_bytes': {'key': 'receivedBytes', 'type': 'float'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(IntegrationRuntimeNodeMonitoringData, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.node_name = None
+        self.available_memory_in_mb = None
+        self.cpu_utilization = None
+        self.concurrent_jobs_limit = None
+        self.concurrent_jobs_running = None
+        self.max_concurrent_jobs = None
+        self.sent_bytes = None
+        self.received_bytes = None
+
+
+class IntegrationRuntimeRegenerateKeyParameters(Model):
+    """Parameters to regenerate the authentication key.
+
+    :param key_name: The name of the authentication key to regenerate.
+     Possible values include: 'authKey1', 'authKey2'
+    :type key_name: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeAuthKeyName
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_name=None, **kwargs) -> None:
+        super(IntegrationRuntimeRegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_name = key_name
+
+
+class SubResource(Model):
+    """Azure Synapse nested resource, which belongs to a factory.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SubResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.etag = None
+
+
+class IntegrationRuntimeResource(SubResource):
+    """Integration runtime resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Integration runtime properties.
+    :type properties: ~azure.mgmt.synapse.models.IntegrationRuntime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'IntegrationRuntime'},
+    }
+
+    def __init__(self, *, properties, **kwargs) -> None:
+        super(IntegrationRuntimeResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class IntegrationRuntimeSsisCatalogInfo(Model):
+    """Catalog information for managed dedicated integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param catalog_server_endpoint: The catalog database server URL.
+    :type catalog_server_endpoint: str
+    :param catalog_admin_user_name: The administrator user name of catalog
+     database.
+    :type catalog_admin_user_name: str
+    :param catalog_admin_password: The password of the administrator user
+     account of the catalog database.
+    :type catalog_admin_password: ~azure.mgmt.synapse.models.SecureString
+    :param catalog_pricing_tier: The pricing tier for the catalog database.
+     The valid values could be found in
+     https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
+     values include: 'Basic', 'Standard', 'Premium', 'PremiumRS'
+    :type catalog_pricing_tier: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogPricingTier
+    """
+
+    _validation = {
+        'catalog_admin_user_name': {'max_length': 128, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'catalog_server_endpoint': {'key': 'catalogServerEndpoint', 'type': 'str'},
+        'catalog_admin_user_name': {'key': 'catalogAdminUserName', 'type': 'str'},
+        'catalog_admin_password': {'key': 'catalogAdminPassword', 'type': 'SecureString'},
+        'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, catalog_server_endpoint: str=None, catalog_admin_user_name: str=None, catalog_admin_password=None, catalog_pricing_tier=None, **kwargs) -> None:
+        super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.catalog_server_endpoint = catalog_server_endpoint
+        self.catalog_admin_user_name = catalog_admin_user_name
+        self.catalog_admin_password = catalog_admin_password
+        self.catalog_pricing_tier = catalog_pricing_tier
+
+
+class IntegrationRuntimeSsisProperties(Model):
+    """SSIS properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param catalog_info: Catalog information for managed dedicated integration
+     runtime.
+    :type catalog_info:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
+    :param license_type: License type for bringing your own license scenario.
+     Possible values include: 'BasePrice', 'LicenseIncluded'
+    :type license_type: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeLicenseType
+    :param custom_setup_script_properties: Custom setup script properties for
+     a managed dedicated integration runtime.
+    :type custom_setup_script_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeCustomSetupScriptProperties
+    :param data_proxy_properties: Data proxy properties for a managed
+     dedicated integration runtime.
+    :type data_proxy_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeDataProxyProperties
+    :param edition: The edition for the SSIS Integration Runtime. Possible
+     values include: 'Standard', 'Enterprise'
+    :type edition: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEdition
+    :param express_custom_setup_properties: Custom setup without script
+     properties for a SSIS integration runtime.
+    :type express_custom_setup_properties:
+     list[~azure.mgmt.synapse.models.CustomSetupBase]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'catalog_info': {'key': 'catalogInfo', 'type': 'IntegrationRuntimeSsisCatalogInfo'},
+        'license_type': {'key': 'licenseType', 'type': 'str'},
+        'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
+        'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
+        'edition': {'key': 'edition', 'type': 'str'},
+        'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
+    }
+
+    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, express_custom_setup_properties=None, **kwargs) -> None:
+        super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.catalog_info = catalog_info
+        self.license_type = license_type
+        self.custom_setup_script_properties = custom_setup_script_properties
+        self.data_proxy_properties = data_proxy_properties
+        self.edition = edition
+        self.express_custom_setup_properties = express_custom_setup_properties
+
+
+class IntegrationRuntimeStatus(Model):
+    """Integration runtime status.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ManagedIntegrationRuntimeStatus,
+    SelfHostedIntegrationRuntimeStatus
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar data_factory_name: The workspace name which the integration runtime
+     belong to.
+    :vartype data_factory_name: str
+    :ivar state: The state of integration runtime. Possible values include:
+     'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
+    :vartype state: str or ~azure.mgmt.synapse.models.IntegrationRuntimeState
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'data_factory_name': {'readonly': True},
+        'state': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Managed': 'ManagedIntegrationRuntimeStatus', 'SelfHosted': 'SelfHostedIntegrationRuntimeStatus'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(IntegrationRuntimeStatus, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.data_factory_name = None
+        self.state = None
+        self.type = None
+
+
+class IntegrationRuntimeStatusResponse(Model):
+    """Integration runtime status response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The integration runtime name.
+    :vartype name: str
+    :param properties: Required. Integration runtime properties.
+    :type properties: ~azure.mgmt.synapse.models.IntegrationRuntimeStatus
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'IntegrationRuntimeStatus'},
+    }
+
+    def __init__(self, *, properties, **kwargs) -> None:
+        super(IntegrationRuntimeStatusResponse, self).__init__(**kwargs)
+        self.name = None
+        self.properties = properties
+
+
+class IntegrationRuntimeVNetProperties(Model):
+    """VNet properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param v_net_id: The ID of the VNet that this integration runtime will
+     join.
+    :type v_net_id: str
+    :param subnet: The name of the subnet this integration runtime will join.
+    :type subnet: str
+    :param public_ips: Resource IDs of the public IP addresses that this
+     integration runtime will use.
+    :type public_ips: list[str]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'v_net_id': {'key': 'vNetId', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
+    }
+
+    def __init__(self, *, additional_properties=None, v_net_id: str=None, subnet: str=None, public_ips=None, **kwargs) -> None:
+        super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.v_net_id = v_net_id
+        self.subnet = subnet
+        self.public_ips = public_ips
+
+
 class IpFirewallRuleInfo(ProxyResource):
     """IP firewall rule.
 
@@ -823,6 +1697,138 @@ class LibraryRequirements(Model):
         self.filename = filename
 
 
+class LinkedIntegrationRuntime(Model):
+    """The linked integration runtime information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the linked integration runtime.
+    :vartype name: str
+    :ivar subscription_id: The subscription ID for which the linked
+     integration runtime belong to.
+    :vartype subscription_id: str
+    :ivar data_factory_name: The name of the workspace for which the linked
+     integration runtime belong to.
+    :vartype data_factory_name: str
+    :ivar data_factory_location: The location of the workspace for which the
+     linked integration runtime belong to.
+    :vartype data_factory_location: str
+    :ivar create_time: The creating time of the linked integration runtime.
+    :vartype create_time: datetime
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'data_factory_name': {'readonly': True},
+        'data_factory_location': {'readonly': True},
+        'create_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
+        'data_factory_location': {'key': 'dataFactoryLocation', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LinkedIntegrationRuntime, self).__init__(**kwargs)
+        self.name = None
+        self.subscription_id = None
+        self.data_factory_name = None
+        self.data_factory_location = None
+        self.create_time = None
+
+
+class LinkedIntegrationRuntimeType(Model):
+    """The base definition of a linked integration runtime.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LinkedIntegrationRuntimeKeyAuthorization,
+    LinkedIntegrationRuntimeRbacAuthorization
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
+    :type authorization_type: str
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'authorization_type': {'Key': 'LinkedIntegrationRuntimeKeyAuthorization', 'RBAC': 'LinkedIntegrationRuntimeRbacAuthorization'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LinkedIntegrationRuntimeType, self).__init__(**kwargs)
+        self.authorization_type = None
+
+
+class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
+    """The key authorization type integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
+    :type authorization_type: str
+    :param key: Required. The key used for authorization.
+    :type key: ~azure.mgmt.synapse.models.SecureString
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+        'key': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'SecureString'},
+    }
+
+    def __init__(self, *, key, **kwargs) -> None:
+        super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__(**kwargs)
+        self.key = key
+        self.authorization_type = 'Key'
+
+
+class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
+    """The role based access control (RBAC) authorization type integration
+    runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
+    :type authorization_type: str
+    :param resource_id: Required. The resource identifier of the integration
+     runtime to be shared.
+    :type resource_id: str
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+        'resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str, **kwargs) -> None:
+        super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.authorization_type = 'RBAC'
+
+
 class ManagedIdentity(Model):
     """The workspace managed identity.
 
@@ -923,6 +1929,259 @@ class ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedId
         super(ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
+
+
+class ManagedIntegrationRuntime(IntegrationRuntime):
+    """Managed integration runtime, including managed elastic and managed
+    dedicated integration runtimes.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Integration runtime description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :ivar state: Integration runtime state, only valid for managed dedicated
+     integration runtime. Possible values include: 'Initial', 'Stopped',
+     'Started', 'Starting', 'Stopping', 'NeedRegistration', 'Online',
+     'Limited', 'Offline', 'AccessDenied'
+    :vartype state: str or ~azure.mgmt.synapse.models.IntegrationRuntimeState
+    :param compute_properties: The compute resource for managed integration
+     runtime.
+    :type compute_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeComputeProperties
+    :param ssis_properties: SSIS properties for managed integration runtime.
+    :type ssis_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeSsisProperties
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'compute_properties': {'key': 'typeProperties.computeProperties', 'type': 'IntegrationRuntimeComputeProperties'},
+        'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
+    }
+
+    def __init__(self, *, additional_properties=None, description: str=None, compute_properties=None, ssis_properties=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
+        self.state = None
+        self.compute_properties = compute_properties
+        self.ssis_properties = ssis_properties
+        self.type = 'Managed'
+
+
+class ManagedIntegrationRuntimeError(Model):
+    """Error definition for managed integration runtime.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar time: The time when the error occurred.
+    :vartype time: datetime
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar parameters: Managed integration runtime error parameters.
+    :vartype parameters: list[str]
+    :ivar message: Error message.
+    :vartype message: str
+    """
+
+    _validation = {
+        'time': {'readonly': True},
+        'code': {'readonly': True},
+        'parameters': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'code': {'key': 'code', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '[str]'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntimeError, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.time = None
+        self.code = None
+        self.parameters = None
+        self.message = None
+
+
+class ManagedIntegrationRuntimeNode(Model):
+    """Properties of integration runtime node.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar node_id: The managed integration runtime node id.
+    :vartype node_id: str
+    :ivar status: The managed integration runtime node status. Possible values
+     include: 'Starting', 'Available', 'Recycling', 'Unavailable'
+    :vartype status: str or
+     ~azure.mgmt.synapse.models.ManagedIntegrationRuntimeNodeStatus
+    :param errors: The errors that occurred on this integration runtime node.
+    :type errors:
+     list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeError]
+    """
+
+    _validation = {
+        'node_id': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'node_id': {'key': 'nodeId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': '[ManagedIntegrationRuntimeError]'},
+    }
+
+    def __init__(self, *, additional_properties=None, errors=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntimeNode, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.node_id = None
+        self.status = None
+        self.errors = errors
+
+
+class ManagedIntegrationRuntimeOperationResult(Model):
+    """Properties of managed integration runtime operation result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar type: The operation type. Could be start or stop.
+    :vartype type: str
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: datetime
+    :ivar result: The operation result.
+    :vartype result: str
+    :ivar error_code: The error code.
+    :vartype error_code: str
+    :ivar parameters: Managed integration runtime error parameters.
+    :vartype parameters: list[str]
+    :ivar activity_id: The activity id for the operation request.
+    :vartype activity_id: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'start_time': {'readonly': True},
+        'result': {'readonly': True},
+        'error_code': {'readonly': True},
+        'parameters': {'readonly': True},
+        'activity_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'result': {'key': 'result', 'type': 'str'},
+        'error_code': {'key': 'errorCode', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '[str]'},
+        'activity_id': {'key': 'activityId', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntimeOperationResult, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = None
+        self.start_time = None
+        self.result = None
+        self.error_code = None
+        self.parameters = None
+        self.activity_id = None
+
+
+class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
+    """Managed integration runtime status.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar data_factory_name: The workspace name which the integration runtime
+     belong to.
+    :vartype data_factory_name: str
+    :ivar state: The state of integration runtime. Possible values include:
+     'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
+    :vartype state: str or ~azure.mgmt.synapse.models.IntegrationRuntimeState
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :ivar create_time: The time at which the integration runtime was created,
+     in ISO8601 format.
+    :vartype create_time: datetime
+    :ivar nodes: The list of nodes for managed integration runtime.
+    :vartype nodes:
+     list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeNode]
+    :ivar other_errors: The errors that occurred on this integration runtime.
+    :vartype other_errors:
+     list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeError]
+    :ivar last_operation: The last operation result that occurred on this
+     integration runtime.
+    :vartype last_operation:
+     ~azure.mgmt.synapse.models.ManagedIntegrationRuntimeOperationResult
+    """
+
+    _validation = {
+        'data_factory_name': {'readonly': True},
+        'state': {'readonly': True},
+        'type': {'required': True},
+        'create_time': {'readonly': True},
+        'nodes': {'readonly': True},
+        'other_errors': {'readonly': True},
+        'last_operation': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
+        'nodes': {'key': 'typeProperties.nodes', 'type': '[ManagedIntegrationRuntimeNode]'},
+        'other_errors': {'key': 'typeProperties.otherErrors', 'type': '[ManagedIntegrationRuntimeError]'},
+        'last_operation': {'key': 'typeProperties.lastOperation', 'type': 'ManagedIntegrationRuntimeOperationResult'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ManagedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.create_time = None
+        self.nodes = None
+        self.other_errors = None
+        self.last_operation = None
+        self.type = 'Managed'
 
 
 class MetadataSyncConfig(ProxyResource):
@@ -1136,6 +2395,183 @@ class OperationResource(Model):
         self.start_time = start_time
         self.end_time = end_time
         self.percent_complete = percent_complete
+
+
+class PrivateEndpoint(Model):
+    """Private endpoint details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param private_endpoint: The private endpoint which the connection belongs
+     to.
+    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: Provisioning state of the private endpoint
+     connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateLinkResource(ProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar properties: The private link resource properties.
+    :vartype properties:
+     ~azure.mgmt.synapse.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.properties = None
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: Required DNS zone names of the the private link
+     resource.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """Connection state details of the private endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param status: The private link service connection status. Possible values
+     include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or ~azure.mgmt.synapse.models.enum
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service
+     connection.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
 
 
 class QueryInterval(Model):
@@ -1451,6 +2887,356 @@ class RestorePoint(ProxyResource):
         self.earliest_restore_date = None
         self.restore_point_creation_date = None
         self.restore_point_label = None
+
+
+class SecretBase(Model):
+    """The base definition of a secret type.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SecureString
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'SecureString': 'SecureString'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SecretBase, self).__init__(**kwargs)
+        self.type = None
+
+
+class SecureString(SecretBase):
+    """Azure Synapse secure string definition. The string value will be masked
+    with asterisks '*' during Get or List API calls.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param value: Required. Value of secure string.
+    :type value: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, value: str, **kwargs) -> None:
+        super(SecureString, self).__init__(**kwargs)
+        self.value = value
+        self.type = 'SecureString'
+
+
+class SelfHostedIntegrationRuntime(IntegrationRuntime):
+    """Self-hosted integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Integration runtime description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param linked_info:
+    :type linked_info: ~azure.mgmt.synapse.models.LinkedIntegrationRuntimeType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeType'},
+    }
+
+    def __init__(self, *, additional_properties=None, description: str=None, linked_info=None, **kwargs) -> None:
+        super(SelfHostedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
+        self.linked_info = linked_info
+        self.type = 'SelfHosted'
+
+
+class SelfHostedIntegrationRuntimeNode(Model):
+    """Properties of Self-hosted integration runtime node.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar node_name: Name of the integration runtime node.
+    :vartype node_name: str
+    :ivar machine_name: Machine name of the integration runtime node.
+    :vartype machine_name: str
+    :ivar host_service_uri: URI for the host machine of the integration
+     runtime.
+    :vartype host_service_uri: str
+    :ivar status: Status of the integration runtime node. Possible values
+     include: 'NeedRegistration', 'Online', 'Limited', 'Offline', 'Upgrading',
+     'Initializing', 'InitializeFailed'
+    :vartype status: str or
+     ~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNodeStatus
+    :ivar capabilities: The integration runtime capabilities dictionary
+    :vartype capabilities: dict[str, str]
+    :ivar version_status: Status of the integration runtime node version.
+    :vartype version_status: str
+    :ivar version: Version of the integration runtime node.
+    :vartype version: str
+    :ivar register_time: The time at which the integration runtime node was
+     registered in ISO8601 format.
+    :vartype register_time: datetime
+    :ivar last_connect_time: The most recent time at which the integration
+     runtime was connected in ISO8601 format.
+    :vartype last_connect_time: datetime
+    :ivar expiry_time: The time at which the integration runtime will expire
+     in ISO8601 format.
+    :vartype expiry_time: datetime
+    :ivar last_start_time: The time the node last started up.
+    :vartype last_start_time: datetime
+    :ivar last_stop_time: The integration runtime node last stop time.
+    :vartype last_stop_time: datetime
+    :ivar last_update_result: The result of the last integration runtime node
+     update. Possible values include: 'None', 'Succeed', 'Fail'
+    :vartype last_update_result: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeUpdateResult
+    :ivar last_start_update_time: The last time for the integration runtime
+     node update start.
+    :vartype last_start_update_time: datetime
+    :ivar last_end_update_time: The last time for the integration runtime node
+     update end.
+    :vartype last_end_update_time: datetime
+    :ivar is_active_dispatcher: Indicates whether this node is the active
+     dispatcher for integration runtime requests.
+    :vartype is_active_dispatcher: bool
+    :ivar concurrent_jobs_limit: Maximum concurrent jobs on the integration
+     runtime node.
+    :vartype concurrent_jobs_limit: int
+    :ivar max_concurrent_jobs: The maximum concurrent jobs in this integration
+     runtime.
+    :vartype max_concurrent_jobs: int
+    """
+
+    _validation = {
+        'node_name': {'readonly': True},
+        'machine_name': {'readonly': True},
+        'host_service_uri': {'readonly': True},
+        'status': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'version_status': {'readonly': True},
+        'version': {'readonly': True},
+        'register_time': {'readonly': True},
+        'last_connect_time': {'readonly': True},
+        'expiry_time': {'readonly': True},
+        'last_start_time': {'readonly': True},
+        'last_stop_time': {'readonly': True},
+        'last_update_result': {'readonly': True},
+        'last_start_update_time': {'readonly': True},
+        'last_end_update_time': {'readonly': True},
+        'is_active_dispatcher': {'readonly': True},
+        'concurrent_jobs_limit': {'readonly': True},
+        'max_concurrent_jobs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'node_name': {'key': 'nodeName', 'type': 'str'},
+        'machine_name': {'key': 'machineName', 'type': 'str'},
+        'host_service_uri': {'key': 'hostServiceUri', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '{str}'},
+        'version_status': {'key': 'versionStatus', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'register_time': {'key': 'registerTime', 'type': 'iso-8601'},
+        'last_connect_time': {'key': 'lastConnectTime', 'type': 'iso-8601'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'last_start_time': {'key': 'lastStartTime', 'type': 'iso-8601'},
+        'last_stop_time': {'key': 'lastStopTime', 'type': 'iso-8601'},
+        'last_update_result': {'key': 'lastUpdateResult', 'type': 'str'},
+        'last_start_update_time': {'key': 'lastStartUpdateTime', 'type': 'iso-8601'},
+        'last_end_update_time': {'key': 'lastEndUpdateTime', 'type': 'iso-8601'},
+        'is_active_dispatcher': {'key': 'isActiveDispatcher', 'type': 'bool'},
+        'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
+        'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(SelfHostedIntegrationRuntimeNode, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.node_name = None
+        self.machine_name = None
+        self.host_service_uri = None
+        self.status = None
+        self.capabilities = None
+        self.version_status = None
+        self.version = None
+        self.register_time = None
+        self.last_connect_time = None
+        self.expiry_time = None
+        self.last_start_time = None
+        self.last_stop_time = None
+        self.last_update_result = None
+        self.last_start_update_time = None
+        self.last_end_update_time = None
+        self.is_active_dispatcher = None
+        self.concurrent_jobs_limit = None
+        self.max_concurrent_jobs = None
+
+
+class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
+    """Self-hosted integration runtime status.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar data_factory_name: The workspace name which the integration runtime
+     belong to.
+    :vartype data_factory_name: str
+    :ivar state: The state of integration runtime. Possible values include:
+     'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
+    :vartype state: str or ~azure.mgmt.synapse.models.IntegrationRuntimeState
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :ivar create_time: The time at which the integration runtime was created,
+     in ISO8601 format.
+    :vartype create_time: datetime
+    :ivar task_queue_id: The task queue id of the integration runtime.
+    :vartype task_queue_id: str
+    :ivar internal_channel_encryption: It is used to set the encryption mode
+     for node-node communication channel (when more than 2 self-hosted
+     integration runtime nodes exist). Possible values include: 'NotSet',
+     'SslEncrypted', 'NotEncrypted'
+    :vartype internal_channel_encryption: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeInternalChannelEncryptionMode
+    :ivar version: Version of the integration runtime.
+    :vartype version: str
+    :param nodes: The list of nodes for this integration runtime.
+    :type nodes:
+     list[~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode]
+    :ivar scheduled_update_date: The date at which the integration runtime
+     will be scheduled to update, in ISO8601 format.
+    :vartype scheduled_update_date: datetime
+    :ivar update_delay_offset: The time in the date scheduled by service to
+     update the integration runtime, e.g., PT03H is 3 hours
+    :vartype update_delay_offset: str
+    :ivar local_time_zone_offset: The local time zone offset in hours.
+    :vartype local_time_zone_offset: str
+    :ivar capabilities: Object with additional information about integration
+     runtime capabilities.
+    :vartype capabilities: dict[str, str]
+    :ivar service_urls: The URLs for the services used in integration runtime
+     backend service.
+    :vartype service_urls: list[str]
+    :ivar auto_update: Whether Self-hosted integration runtime auto update has
+     been turned on. Possible values include: 'On', 'Off'
+    :vartype auto_update: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
+    :ivar version_status: Status of the integration runtime version.
+    :vartype version_status: str
+    :param links: The list of linked integration runtimes that are created to
+     share with this integration runtime.
+    :type links: list[~azure.mgmt.synapse.models.LinkedIntegrationRuntime]
+    :ivar pushed_version: The version that the integration runtime is going to
+     update to.
+    :vartype pushed_version: str
+    :ivar latest_version: The latest version on download center.
+    :vartype latest_version: str
+    :ivar auto_update_eta: The estimated time when the self-hosted integration
+     runtime will be updated.
+    :vartype auto_update_eta: datetime
+    """
+
+    _validation = {
+        'data_factory_name': {'readonly': True},
+        'state': {'readonly': True},
+        'type': {'required': True},
+        'create_time': {'readonly': True},
+        'task_queue_id': {'readonly': True},
+        'internal_channel_encryption': {'readonly': True},
+        'version': {'readonly': True},
+        'scheduled_update_date': {'readonly': True},
+        'update_delay_offset': {'readonly': True},
+        'local_time_zone_offset': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'service_urls': {'readonly': True},
+        'auto_update': {'readonly': True},
+        'version_status': {'readonly': True},
+        'pushed_version': {'readonly': True},
+        'latest_version': {'readonly': True},
+        'auto_update_eta': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
+        'task_queue_id': {'key': 'typeProperties.taskQueueId', 'type': 'str'},
+        'internal_channel_encryption': {'key': 'typeProperties.internalChannelEncryption', 'type': 'str'},
+        'version': {'key': 'typeProperties.version', 'type': 'str'},
+        'nodes': {'key': 'typeProperties.nodes', 'type': '[SelfHostedIntegrationRuntimeNode]'},
+        'scheduled_update_date': {'key': 'typeProperties.scheduledUpdateDate', 'type': 'iso-8601'},
+        'update_delay_offset': {'key': 'typeProperties.updateDelayOffset', 'type': 'str'},
+        'local_time_zone_offset': {'key': 'typeProperties.localTimeZoneOffset', 'type': 'str'},
+        'capabilities': {'key': 'typeProperties.capabilities', 'type': '{str}'},
+        'service_urls': {'key': 'typeProperties.serviceUrls', 'type': '[str]'},
+        'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
+        'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
+        'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
+        'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
+        'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
+        'auto_update_eta': {'key': 'typeProperties.autoUpdateETA', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, additional_properties=None, nodes=None, links=None, **kwargs) -> None:
+        super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.create_time = None
+        self.task_queue_id = None
+        self.internal_channel_encryption = None
+        self.version = None
+        self.nodes = nodes
+        self.scheduled_update_date = None
+        self.update_delay_offset = None
+        self.local_time_zone_offset = None
+        self.capabilities = None
+        self.service_urls = None
+        self.auto_update = None
+        self.version_status = None
+        self.links = links
+        self.pushed_version = None
+        self.latest_version = None
+        self.auto_update_eta = None
+        self.type = 'SelfHosted'
 
 
 class SensitivityLabel(ProxyResource):
@@ -2401,6 +4187,389 @@ class SqlPoolVulnerabilityAssessmentScansExport(ProxyResource):
         self.exported_report_location = None
 
 
+class SsisObjectMetadata(Model):
+    """SSIS object metadata.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SsisFolder, SsisProject, SsisPackage, SsisEnvironment
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Metadata id.
+    :type id: long
+    :param name: Metadata name.
+    :type name: str
+    :param description: Metadata description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Folder': 'SsisFolder', 'Project': 'SsisProject', 'Package': 'SsisPackage', 'Environment': 'SsisEnvironment'}
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, **kwargs) -> None:
+        super(SsisObjectMetadata, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.description = description
+        self.type = None
+
+
+class SsisEnvironment(SsisObjectMetadata):
+    """Ssis environment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Metadata id.
+    :type id: long
+    :param name: Metadata name.
+    :type name: str
+    :param description: Metadata description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param folder_id: Folder id which contains environment.
+    :type folder_id: long
+    :param variables: Variable in environment
+    :type variables: list[~azure.mgmt.synapse.models.SsisVariable]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'variables': {'key': 'variables', 'type': '[SsisVariable]'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, folder_id: int=None, variables=None, **kwargs) -> None:
+        super(SsisEnvironment, self).__init__(id=id, name=name, description=description, **kwargs)
+        self.folder_id = folder_id
+        self.variables = variables
+        self.type = 'Environment'
+
+
+class SsisEnvironmentReference(Model):
+    """Ssis environment reference.
+
+    :param id: Environment reference id.
+    :type id: long
+    :param environment_folder_name: Environment folder name.
+    :type environment_folder_name: str
+    :param environment_name: Environment name.
+    :type environment_name: str
+    :param reference_type: Reference type
+    :type reference_type: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'environment_folder_name': {'key': 'environmentFolderName', 'type': 'str'},
+        'environment_name': {'key': 'environmentName', 'type': 'str'},
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: int=None, environment_folder_name: str=None, environment_name: str=None, reference_type: str=None, **kwargs) -> None:
+        super(SsisEnvironmentReference, self).__init__(**kwargs)
+        self.id = id
+        self.environment_folder_name = environment_folder_name
+        self.environment_name = environment_name
+        self.reference_type = reference_type
+
+
+class SsisFolder(SsisObjectMetadata):
+    """Ssis folder.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Metadata id.
+    :type id: long
+    :param name: Metadata name.
+    :type name: str
+    :param description: Metadata description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, **kwargs) -> None:
+        super(SsisFolder, self).__init__(id=id, name=name, description=description, **kwargs)
+        self.type = 'Folder'
+
+
+class SsisObjectMetadataListResponse(Model):
+    """A list of SSIS object metadata.
+
+    :param value: List of SSIS object metadata.
+    :type value: list[~azure.mgmt.synapse.models.SsisObjectMetadata]
+    :param next_link: The link to the next page of results, if any remaining
+     results exist.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SsisObjectMetadata]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
+        super(SsisObjectMetadataListResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SsisObjectMetadataStatusResponse(Model):
+    """The status of the operation.
+
+    :param status: The status of the operation.
+    :type status: str
+    :param name: The operation name.
+    :type name: str
+    :param properties: The operation properties.
+    :type properties: str
+    :param error: The operation error message.
+    :type error: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
+    }
+
+    def __init__(self, *, status: str=None, name: str=None, properties: str=None, error: str=None, **kwargs) -> None:
+        super(SsisObjectMetadataStatusResponse, self).__init__(**kwargs)
+        self.status = status
+        self.name = name
+        self.properties = properties
+        self.error = error
+
+
+class SsisPackage(SsisObjectMetadata):
+    """Ssis Package.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Metadata id.
+    :type id: long
+    :param name: Metadata name.
+    :type name: str
+    :param description: Metadata description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param folder_id: Folder id which contains package.
+    :type folder_id: long
+    :param project_version: Project version which contains package.
+    :type project_version: long
+    :param project_id: Project id which contains package.
+    :type project_id: long
+    :param parameters: Parameters in package
+    :type parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'project_version': {'key': 'projectVersion', 'type': 'long'},
+        'project_id': {'key': 'projectId', 'type': 'long'},
+        'parameters': {'key': 'parameters', 'type': '[SsisParameter]'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, folder_id: int=None, project_version: int=None, project_id: int=None, parameters=None, **kwargs) -> None:
+        super(SsisPackage, self).__init__(id=id, name=name, description=description, **kwargs)
+        self.folder_id = folder_id
+        self.project_version = project_version
+        self.project_id = project_id
+        self.parameters = parameters
+        self.type = 'Package'
+
+
+class SsisParameter(Model):
+    """Ssis parameter.
+
+    :param id: Parameter id.
+    :type id: long
+    :param name: Parameter name.
+    :type name: str
+    :param description: Parameter description.
+    :type description: str
+    :param data_type: Parameter type.
+    :type data_type: str
+    :param required: Whether parameter is required.
+    :type required: bool
+    :param sensitive: Whether parameter is sensitive.
+    :type sensitive: bool
+    :param design_default_value: Design default value of parameter.
+    :type design_default_value: str
+    :param default_value: Default value of parameter.
+    :type default_value: str
+    :param sensitive_default_value: Default sensitive value of parameter.
+    :type sensitive_default_value: str
+    :param value_type: Parameter value type.
+    :type value_type: str
+    :param value_set: Parameter value set.
+    :type value_set: bool
+    :param variable: Parameter reference variable.
+    :type variable: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'required': {'key': 'required', 'type': 'bool'},
+        'sensitive': {'key': 'sensitive', 'type': 'bool'},
+        'design_default_value': {'key': 'designDefaultValue', 'type': 'str'},
+        'default_value': {'key': 'defaultValue', 'type': 'str'},
+        'sensitive_default_value': {'key': 'sensitiveDefaultValue', 'type': 'str'},
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'value_set': {'key': 'valueSet', 'type': 'bool'},
+        'variable': {'key': 'variable', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, data_type: str=None, required: bool=None, sensitive: bool=None, design_default_value: str=None, default_value: str=None, sensitive_default_value: str=None, value_type: str=None, value_set: bool=None, variable: str=None, **kwargs) -> None:
+        super(SsisParameter, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.description = description
+        self.data_type = data_type
+        self.required = required
+        self.sensitive = sensitive
+        self.design_default_value = design_default_value
+        self.default_value = default_value
+        self.sensitive_default_value = sensitive_default_value
+        self.value_type = value_type
+        self.value_set = value_set
+        self.variable = variable
+
+
+class SsisProject(SsisObjectMetadata):
+    """Ssis project.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Metadata id.
+    :type id: long
+    :param name: Metadata name.
+    :type name: str
+    :param description: Metadata description.
+    :type description: str
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param folder_id: Folder id which contains project.
+    :type folder_id: long
+    :param version: Project version.
+    :type version: long
+    :param environment_refs: Environment reference in project
+    :type environment_refs:
+     list[~azure.mgmt.synapse.models.SsisEnvironmentReference]
+    :param parameters: Parameters in project
+    :type parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'version': {'key': 'version', 'type': 'long'},
+        'environment_refs': {'key': 'environmentRefs', 'type': '[SsisEnvironmentReference]'},
+        'parameters': {'key': 'parameters', 'type': '[SsisParameter]'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, folder_id: int=None, version: int=None, environment_refs=None, parameters=None, **kwargs) -> None:
+        super(SsisProject, self).__init__(id=id, name=name, description=description, **kwargs)
+        self.folder_id = folder_id
+        self.version = version
+        self.environment_refs = environment_refs
+        self.parameters = parameters
+        self.type = 'Project'
+
+
+class SsisVariable(Model):
+    """Ssis variable.
+
+    :param id: Variable id.
+    :type id: long
+    :param name: Variable name.
+    :type name: str
+    :param description: Variable description.
+    :type description: str
+    :param data_type: Variable type.
+    :type data_type: str
+    :param sensitive: Whether variable is sensitive.
+    :type sensitive: bool
+    :param value: Variable value.
+    :type value: str
+    :param sensitive_value: Variable sensitive value.
+    :type sensitive_value: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'sensitive': {'key': 'sensitive', 'type': 'bool'},
+        'value': {'key': 'value', 'type': 'str'},
+        'sensitive_value': {'key': 'sensitiveValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, data_type: str=None, sensitive: bool=None, value: str=None, sensitive_value: str=None, **kwargs) -> None:
+        super(SsisVariable, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.description = description
+        self.data_type = data_type
+        self.sensitive = sensitive
+        self.value = value
+        self.sensitive_value = sensitive_value
+
+
 class TopQueries(Model):
     """A database query.
 
@@ -2533,6 +4702,54 @@ class TransparentDataEncryption(ProxyResource):
         super(TransparentDataEncryption, self).__init__(**kwargs)
         self.location = None
         self.status = status
+
+
+class UpdateIntegrationRuntimeNodeRequest(Model):
+    """Update integration runtime node request.
+
+    :param concurrent_jobs_limit: The number of concurrent jobs permitted to
+     run on the integration runtime node. Values between 1 and
+     maxConcurrentJobs(inclusive) are allowed.
+    :type concurrent_jobs_limit: int
+    """
+
+    _validation = {
+        'concurrent_jobs_limit': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
+    }
+
+    def __init__(self, *, concurrent_jobs_limit: int=None, **kwargs) -> None:
+        super(UpdateIntegrationRuntimeNodeRequest, self).__init__(**kwargs)
+        self.concurrent_jobs_limit = concurrent_jobs_limit
+
+
+class UpdateIntegrationRuntimeRequest(Model):
+    """Update integration runtime request.
+
+    :param auto_update: Enables or disables the auto-update feature of the
+     self-hosted integration runtime. See
+     https://go.microsoft.com/fwlink/?linkid=854189. Possible values include:
+     'On', 'Off'
+    :type auto_update: str or
+     ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
+    :param update_delay_offset: The time offset (in hours) in the day, e.g.,
+     PT03H is 3 hours. The integration runtime auto update will happen on that
+     time.
+    :type update_delay_offset: str
+    """
+
+    _attribute_map = {
+        'auto_update': {'key': 'autoUpdate', 'type': 'str'},
+        'update_delay_offset': {'key': 'updateDelayOffset', 'type': 'str'},
+    }
+
+    def __init__(self, *, auto_update=None, update_delay_offset: str=None, **kwargs) -> None:
+        super(UpdateIntegrationRuntimeRequest, self).__init__(**kwargs)
+        self.auto_update = auto_update
+        self.update_delay_offset = update_delay_offset
 
 
 class VirtualNetworkProfile(Model):
@@ -2722,6 +4939,14 @@ class Workspace(TrackedResource):
      ~azure.mgmt.synapse.models.VirtualNetworkProfile
     :param connectivity_endpoints: Connectivity endpoints
     :type connectivity_endpoints: dict[str, str]
+    :param managed_virtual_network: Setting this to 'default' will ensure that
+     all compute for this workspace is in a virtual network managed on behalf
+     of the user.
+    :type managed_virtual_network: str
+    :param private_endpoint_connections: Private endpoint connections to the
+     workspace
+    :type private_endpoint_connections:
+     list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -2748,10 +4973,12 @@ class Workspace(TrackedResource):
         'sql_administrator_login': {'key': 'properties.sqlAdministratorLogin', 'type': 'str'},
         'virtual_network_profile': {'key': 'properties.virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
         'connectivity_endpoints': {'key': 'properties.connectivityEndpoints', 'type': '{str}'},
+        'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
-    def __init__(self, *, location: str, tags=None, default_data_lake_storage=None, sql_administrator_login_password: str=None, sql_administrator_login: str=None, virtual_network_profile=None, connectivity_endpoints=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, default_data_lake_storage=None, sql_administrator_login_password: str=None, sql_administrator_login: str=None, virtual_network_profile=None, connectivity_endpoints=None, managed_virtual_network: str=None, private_endpoint_connections=None, identity=None, **kwargs) -> None:
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
         self.default_data_lake_storage = default_data_lake_storage
         self.sql_administrator_login_password = sql_administrator_login_password
@@ -2760,6 +4987,8 @@ class Workspace(TrackedResource):
         self.sql_administrator_login = sql_administrator_login
         self.virtual_network_profile = virtual_network_profile
         self.connectivity_endpoints = connectivity_endpoints
+        self.managed_virtual_network = managed_virtual_network
+        self.private_endpoint_connections = private_endpoint_connections
         self.identity = identity
 
 

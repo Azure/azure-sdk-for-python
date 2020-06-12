@@ -32,6 +32,7 @@ from ._paged_models import TenantIdDescriptionPaged
 from ._subscription_client_enums import (
     SubscriptionState,
     SpendingLimit,
+    TenantCategory,
 )
 
 __all__ = [
@@ -48,4 +49,5 @@ __all__ = [
     'TenantIdDescriptionPaged',
     'SubscriptionState',
     'SpendingLimit',
+    'TenantCategory',
 ]

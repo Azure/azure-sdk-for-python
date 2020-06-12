@@ -34,6 +34,14 @@ Then for common search index operations:
 
 * Perform basic document updates: [sample_crud_operations.py](sample_crud_operations.py) ([async version](async_samples/sample_crud_operations_async.py))
 
+* CRUD operations for index: [sample_index_crud_operations.py](sample_index_crud_operations.py) ([async version](async_samples/sample_index_crud_operations_async.py))
+
+* Analyze text: [sample_analyze_text.py](sample_analyze_text.py) ([async version](async_samples/sample_analyze_text_async.py))
+
+* CRUD operations for indexers: [sample_indexers_operations.py](sample_indexers_operations.py) ([async version](async_samples/sample_indexer_operations_async.py))
+
+* General workflow of indexer, datasource and index: [sample_indexer_datasource_skillset.py](sample_indexer_datasource_skillset.py) ([async version](async_samples/sample_indexer_datasource_skillset.py))
+
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
