@@ -1214,9 +1214,9 @@ class ContainerEncryptionScope(object):
 
 
 class DelimitedJSON(object):
-    """Defines the input of output JSON serialization for a blob data query.
+    """Defines the input or output JSON serialization for a blob data query.
 
-    :keyword str record_separator: The separator character, default value is '\n'
+    :keyword str delimiter: The line separator character, default value is '\n'
     """
 
     def __init__(self, **kwargs):
@@ -1224,7 +1224,7 @@ class DelimitedJSON(object):
 
 
 class CSVDialect(object):
-    """Defines the input or output delimited (CSV) serialization for a blob quick query request.
+    """Defines the input or output delimited (CSV) serialization for a blob query request.
 
     :keyword str delimiter: column separator, defaults to ','
     :keyword str quotechar: field quote, defaults to '"'

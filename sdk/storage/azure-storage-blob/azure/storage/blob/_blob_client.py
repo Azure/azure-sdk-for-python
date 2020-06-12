@@ -661,7 +661,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         query_request = QueryRequest(
             expression=query_expression,
             input_serialization=serialize_query_format(input_format, headers=has_header),
-            output_serialization=serialize_query_format(output_format, headers=has_header)
+            output_serialization=serialize_query_format(output_format)
         )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
