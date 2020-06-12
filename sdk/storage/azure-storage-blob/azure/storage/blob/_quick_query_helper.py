@@ -44,7 +44,6 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self.size = None
         self.bytes_processed = 0
         self._errors = errors
-        self._request_options = kwargs
         self._encoding = encoding
         self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
         self._first_result = self._process_record(next(self._parsed_results))
@@ -73,8 +72,8 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     def _iter_records(self):
-        if first_result:
-            yield first_result
+        if self._first_result:
+            yield self._first_result
         for next_result in self._parsed_results:
             processed_result = self._process_record(next_result)
             if processed_result:
