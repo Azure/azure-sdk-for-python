@@ -250,15 +250,6 @@ class BlobContainer(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar version: The version of the deleted blob container.
-    :vartype version: str
-    :ivar deleted: Indicates whether the blob container was deleted.
-    :vartype deleted: bool
-    :ivar deleted_time: Blob container deletion time.
-    :vartype deleted_time: datetime
-    :ivar remaining_retention_days: Remaining retention days for soft deleted
-     blob container.
-    :vartype remaining_retention_days: int
     :param default_encryption_scope: Default the container to use specified
      encryption scope for all writes.
     :type default_encryption_scope: str
@@ -314,10 +305,6 @@ class BlobContainer(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'version': {'readonly': True},
-        'deleted': {'readonly': True},
-        'deleted_time': {'readonly': True},
-        'remaining_retention_days': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'lease_status': {'readonly': True},
         'lease_state': {'readonly': True},
@@ -333,10 +320,6 @@ class BlobContainer(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
-        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
-        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
         'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
         'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'PublicAccess'},
@@ -353,10 +336,6 @@ class BlobContainer(AzureEntityResource):
 
     def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, public_access=None, metadata=None, **kwargs) -> None:
         super(BlobContainer, self).__init__(**kwargs)
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
@@ -897,10 +876,6 @@ class Encryption(Model):
      Possible values include: 'Microsoft.Storage', 'Microsoft.Keyvault'.
      Default value: "Microsoft.Storage" .
     :type key_source: str or ~azure.mgmt.storage.v2019_06_01.models.KeySource
-    :param require_infrastructure_encryption: A boolean indicating whether or
-     not the service applies a secondary layer of encryption with platform
-     managed keys for data at rest.
-    :type require_infrastructure_encryption: bool
     :param key_vault_properties: Properties provided by key vault.
     :type key_vault_properties:
      ~azure.mgmt.storage.v2019_06_01.models.KeyVaultProperties
@@ -913,15 +888,13 @@ class Encryption(Model):
     _attribute_map = {
         'services': {'key': 'services', 'type': 'EncryptionServices'},
         'key_source': {'key': 'keySource', 'type': 'str'},
-        'require_infrastructure_encryption': {'key': 'requireInfrastructureEncryption', 'type': 'bool'},
         'key_vault_properties': {'key': 'keyvaultproperties', 'type': 'KeyVaultProperties'},
     }
 
-    def __init__(self, *, services=None, key_source="Microsoft.Storage", require_infrastructure_encryption: bool=None, key_vault_properties=None, **kwargs) -> None:
+    def __init__(self, *, services=None, key_source="Microsoft.Storage", key_vault_properties=None, **kwargs) -> None:
         super(Encryption, self).__init__(**kwargs)
         self.services = services
         self.key_source = key_source
-        self.require_infrastructure_encryption = require_infrastructure_encryption
         self.key_vault_properties = key_vault_properties
 
 
@@ -1912,15 +1885,6 @@ class ListContainerItem(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar version: The version of the deleted blob container.
-    :vartype version: str
-    :ivar deleted: Indicates whether the blob container was deleted.
-    :vartype deleted: bool
-    :ivar deleted_time: Blob container deletion time.
-    :vartype deleted_time: datetime
-    :ivar remaining_retention_days: Remaining retention days for soft deleted
-     blob container.
-    :vartype remaining_retention_days: int
     :param default_encryption_scope: Default the container to use specified
      encryption scope for all writes.
     :type default_encryption_scope: str
@@ -1976,10 +1940,6 @@ class ListContainerItem(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'version': {'readonly': True},
-        'deleted': {'readonly': True},
-        'deleted_time': {'readonly': True},
-        'remaining_retention_days': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'lease_status': {'readonly': True},
         'lease_state': {'readonly': True},
@@ -1995,10 +1955,6 @@ class ListContainerItem(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
-        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
-        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
         'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
         'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'PublicAccess'},
@@ -2015,10 +1971,6 @@ class ListContainerItem(AzureEntityResource):
 
     def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, public_access=None, metadata=None, **kwargs) -> None:
         super(ListContainerItem, self).__init__(**kwargs)
-        self.version = None
-        self.deleted = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
         self.default_encryption_scope = default_encryption_scope
         self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
@@ -2031,66 +1983,6 @@ class ListContainerItem(AzureEntityResource):
         self.legal_hold = None
         self.has_legal_hold = None
         self.has_immutability_policy = None
-
-
-class ListQueue(Resource):
-    """ListQueue.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param metadata: A name-value pair that represents queue metadata.
-    :type metadata: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
-    }
-
-    def __init__(self, *, metadata=None, **kwargs) -> None:
-        super(ListQueue, self).__init__(**kwargs)
-        self.metadata = metadata
-
-
-class ListQueueServices(Model):
-    """ListQueueServices.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: List of queue services returned.
-    :vartype value:
-     list[~azure.mgmt.storage.v2019_06_01.models.QueueServiceProperties]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[QueueServiceProperties]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ListQueueServices, self).__init__(**kwargs)
-        self.value = None
 
 
 class ListServiceSasResponse(Model):
@@ -2115,30 +2007,6 @@ class ListServiceSasResponse(Model):
     def __init__(self, **kwargs) -> None:
         super(ListServiceSasResponse, self).__init__(**kwargs)
         self.service_sas_token = None
-
-
-class ListTableServices(Model):
-    """ListTableServices.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: List of table services returned.
-    :vartype value:
-     list[~azure.mgmt.storage.v2019_06_01.models.TableServiceProperties]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[TableServiceProperties]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ListTableServices, self).__init__(**kwargs)
-        self.value = None
 
 
 class ManagementPolicy(Resource):
@@ -2867,45 +2735,6 @@ class ProxyResource(Resource):
 
     def __init__(self, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
-
-
-class QueueServiceProperties(Resource):
-    """The properties of a storage account’s Queue service.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param cors: Specifies CORS rules for the Queue service. You can include
-     up to five CorsRule elements in the request. If no CorsRule elements are
-     included in the request body, all CORS rules will be deleted, and CORS
-     will be disabled for the Queue service.
-    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
-    }
-
-    def __init__(self, *, cors=None, **kwargs) -> None:
-        super(QueueServiceProperties, self).__init__(**kwargs)
-        self.cors = cors
 
 
 class RestorePolicyProperties(Model):
@@ -3904,125 +3733,6 @@ class StorageAccountUpdateParameters(Model):
         self.large_file_shares_state = large_file_shares_state
         self.routing_preference = routing_preference
         self.kind = kind
-
-
-class StorageQueue(Resource):
-    """StorageQueue.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param metadata: A name-value pair that represents queue metadata.
-    :type metadata: dict[str, str]
-    :ivar approximate_message_count: Integer indicating an approximate number
-     of messages in the queue. This number is not lower than the actual number
-     of messages in the queue, but could be higher.
-    :vartype approximate_message_count: int
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'approximate_message_count': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
-        'approximate_message_count': {'key': 'properties.approximateMessageCount', 'type': 'int'},
-    }
-
-    def __init__(self, *, metadata=None, **kwargs) -> None:
-        super(StorageQueue, self).__init__(**kwargs)
-        self.metadata = metadata
-        self.approximate_message_count = None
-
-
-class Table(Resource):
-    """Properties of the table, including Id, resource name, resource type.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :ivar table_name: Table name under the specified account
-    :vartype table_name: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'table_name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'table_name': {'key': 'properties.tableName', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Table, self).__init__(**kwargs)
-        self.table_name = None
-
-
-class TableServiceProperties(Resource):
-    """The properties of a storage account’s Table service.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param cors: Specifies CORS rules for the Table service. You can include
-     up to five CorsRule elements in the request. If no CorsRule elements are
-     included in the request body, all CORS rules will be deleted, and CORS
-     will be disabled for the Table service.
-    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
-    }
-
-    def __init__(self, *, cors=None, **kwargs) -> None:
-        super(TableServiceProperties, self).__init__(**kwargs)
-        self.cors = cors
 
 
 class TagFilter(Model):
