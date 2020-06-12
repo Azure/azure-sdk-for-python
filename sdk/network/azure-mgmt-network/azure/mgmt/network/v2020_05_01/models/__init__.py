@@ -39,6 +39,10 @@ try:
     from ._models_py3 import ApplicationGatewayIPConfiguration
     from ._models_py3 import ApplicationGatewayOnDemandProbe
     from ._models_py3 import ApplicationGatewayPathRule
+    from ._models_py3 import ApplicationGatewayPrivateEndpointConnection
+    from ._models_py3 import ApplicationGatewayPrivateLinkConfiguration
+    from ._models_py3 import ApplicationGatewayPrivateLinkIpConfiguration
+    from ._models_py3 import ApplicationGatewayPrivateLinkResource
     from ._models_py3 import ApplicationGatewayProbe
     from ._models_py3 import ApplicationGatewayProbeHealthResponseMatch
     from ._models_py3 import ApplicationGatewayRedirectConfiguration
@@ -55,7 +59,7 @@ try:
     from ._models_py3 import ApplicationGatewayUrlConfiguration
     from ._models_py3 import ApplicationGatewayUrlPathMap
     from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from ._models_py3 import ApplicationRuleCondition
+    from ._models_py3 import ApplicationRule
     from ._models_py3 import ApplicationSecurityGroup
     from ._models_py3 import AutoApprovedPrivateLinkService
     from ._models_py3 import Availability
@@ -98,10 +102,12 @@ try:
     from ._models_py3 import BastionShareableLinkListRequest
     from ._models_py3 import BastionShareableLinkListResult
     from ._models_py3 import BGPCommunity
+    from ._models_py3 import BgpConnection
     from ._models_py3 import BgpPeerStatus
     from ._models_py3 import BgpPeerStatusListResult
     from ._models_py3 import BgpServiceCommunity
     from ._models_py3 import BgpSettings
+    from ._models_py3 import BreakOutCategoryPolicies
     from ._models_py3 import CheckPrivateLinkServiceVisibilityRequest
     from ._models_py3 import ConnectionMonitor
     from ._models_py3 import ConnectionMonitorDestination
@@ -142,12 +148,14 @@ try:
     from ._models_py3 import DhcpOptions
     from ._models_py3 import Dimension
     from ._models_py3 import DnsNameAvailabilityResult
+    from ._models_py3 import DnsSettings
     from ._models_py3 import EffectiveNetworkSecurityGroup
     from ._models_py3 import EffectiveNetworkSecurityGroupAssociation
     from ._models_py3 import EffectiveNetworkSecurityGroupListResult
     from ._models_py3 import EffectiveNetworkSecurityRule
     from ._models_py3 import EffectiveRoute
     from ._models_py3 import EffectiveRouteListResult
+    from ._models_py3 import EffectiveRoutesParameters
     from ._models_py3 import EndpointServiceResult
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ErrorDetails
@@ -189,14 +197,14 @@ try:
     from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
     from ._models_py3 import FirewallPolicy
     from ._models_py3 import FirewallPolicyCertificateAuthority
-    from ._models_py3 import FirewallPolicyFilterRule
-    from ._models_py3 import FirewallPolicyFilterRuleAction
-    from ._models_py3 import FirewallPolicyNatRule
-    from ._models_py3 import FirewallPolicyNatRuleAction
+    from ._models_py3 import FirewallPolicyFilterRuleCollection
+    from ._models_py3 import FirewallPolicyFilterRuleCollectionAction
+    from ._models_py3 import FirewallPolicyNatRuleCollection
+    from ._models_py3 import FirewallPolicyNatRuleCollectionAction
     from ._models_py3 import FirewallPolicyRule
-    from ._models_py3 import FirewallPolicyRuleCondition
-    from ._models_py3 import FirewallPolicyRuleConditionApplicationProtocol
-    from ._models_py3 import FirewallPolicyRuleGroup
+    from ._models_py3 import FirewallPolicyRuleApplicationProtocol
+    from ._models_py3 import FirewallPolicyRuleCollection
+    from ._models_py3 import FirewallPolicyRuleCollectionGroup
     from ._models_py3 import FirewallPolicyThreatIntelWhitelist
     from ._models_py3 import FirewallPolicyTransportSecurity
     from ._models_py3 import FirewallPolicyTrustedRootCertificate
@@ -208,9 +216,12 @@ try:
     from ._models_py3 import GatewayRoute
     from ._models_py3 import GatewayRouteListResult
     from ._models_py3 import GetVpnSitesConfigurationRequest
+    from ._models_py3 import HopLink
     from ._models_py3 import HTTPConfiguration
     from ._models_py3 import HTTPHeader
     from ._models_py3 import HubIPAddresses
+    from ._models_py3 import HubIpConfiguration
+    from ._models_py3 import HubPublicIPAddresses
     from ._models_py3 import HubRoute
     from ._models_py3 import HubRouteTable
     from ._models_py3 import HubVirtualNetworkConnection
@@ -244,7 +255,7 @@ try:
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NatGateway
     from ._models_py3 import NatGatewaySku
-    from ._models_py3 import NatRuleCondition
+    from ._models_py3 import NatRule
     from ._models_py3 import NetworkConfigurationDiagnosticParameters
     from ._models_py3 import NetworkConfigurationDiagnosticProfile
     from ._models_py3 import NetworkConfigurationDiagnosticResponse
@@ -258,14 +269,17 @@ try:
     from ._models_py3 import NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties
     from ._models_py3 import NetworkInterfaceTapConfiguration
     from ._models_py3 import NetworkProfile
-    from ._models_py3 import NetworkRuleCondition
+    from ._models_py3 import NetworkRule
     from ._models_py3 import NetworkSecurityGroup
     from ._models_py3 import NetworkSecurityGroupResult
     from ._models_py3 import NetworkSecurityRulesEvaluationResult
     from ._models_py3 import NetworkVirtualAppliance
+    from ._models_py3 import NetworkVirtualApplianceSku
+    from ._models_py3 import NetworkVirtualApplianceSkuInstances
     from ._models_py3 import NetworkWatcher
     from ._models_py3 import NextHopParameters
     from ._models_py3 import NextHopResult
+    from ._models_py3 import Office365PolicyProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationPropertiesFormatServiceSpecification
@@ -360,8 +374,11 @@ try:
     from ._models_py3 import VerificationIPFlowParameters
     from ._models_py3 import VerificationIPFlowResult
     from ._models_py3 import VirtualApplianceNicProperties
+    from ._models_py3 import VirtualApplianceSite
     from ._models_py3 import VirtualApplianceSkuProperties
     from ._models_py3 import VirtualHub
+    from ._models_py3 import VirtualHubEffectiveRoute
+    from ._models_py3 import VirtualHubEffectiveRouteEffectiveRouteList
     from ._models_py3 import VirtualHubId
     from ._models_py3 import VirtualHubRoute
     from ._models_py3 import VirtualHubRouteTable
@@ -445,6 +462,10 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGatewayIPConfiguration
     from ._models import ApplicationGatewayOnDemandProbe
     from ._models import ApplicationGatewayPathRule
+    from ._models import ApplicationGatewayPrivateEndpointConnection
+    from ._models import ApplicationGatewayPrivateLinkConfiguration
+    from ._models import ApplicationGatewayPrivateLinkIpConfiguration
+    from ._models import ApplicationGatewayPrivateLinkResource
     from ._models import ApplicationGatewayProbe
     from ._models import ApplicationGatewayProbeHealthResponseMatch
     from ._models import ApplicationGatewayRedirectConfiguration
@@ -461,7 +482,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGatewayUrlConfiguration
     from ._models import ApplicationGatewayUrlPathMap
     from ._models import ApplicationGatewayWebApplicationFirewallConfiguration
-    from ._models import ApplicationRuleCondition
+    from ._models import ApplicationRule
     from ._models import ApplicationSecurityGroup
     from ._models import AutoApprovedPrivateLinkService
     from ._models import Availability
@@ -504,10 +525,12 @@ except (SyntaxError, ImportError):
     from ._models import BastionShareableLinkListRequest
     from ._models import BastionShareableLinkListResult
     from ._models import BGPCommunity
+    from ._models import BgpConnection
     from ._models import BgpPeerStatus
     from ._models import BgpPeerStatusListResult
     from ._models import BgpServiceCommunity
     from ._models import BgpSettings
+    from ._models import BreakOutCategoryPolicies
     from ._models import CheckPrivateLinkServiceVisibilityRequest
     from ._models import ConnectionMonitor
     from ._models import ConnectionMonitorDestination
@@ -548,12 +571,14 @@ except (SyntaxError, ImportError):
     from ._models import DhcpOptions
     from ._models import Dimension
     from ._models import DnsNameAvailabilityResult
+    from ._models import DnsSettings
     from ._models import EffectiveNetworkSecurityGroup
     from ._models import EffectiveNetworkSecurityGroupAssociation
     from ._models import EffectiveNetworkSecurityGroupListResult
     from ._models import EffectiveNetworkSecurityRule
     from ._models import EffectiveRoute
     from ._models import EffectiveRouteListResult
+    from ._models import EffectiveRoutesParameters
     from ._models import EndpointServiceResult
     from ._models import Error, ErrorException
     from ._models import ErrorDetails
@@ -595,14 +620,14 @@ except (SyntaxError, ImportError):
     from ._models import ExpressRouteServiceProviderBandwidthsOffered
     from ._models import FirewallPolicy
     from ._models import FirewallPolicyCertificateAuthority
-    from ._models import FirewallPolicyFilterRule
-    from ._models import FirewallPolicyFilterRuleAction
-    from ._models import FirewallPolicyNatRule
-    from ._models import FirewallPolicyNatRuleAction
+    from ._models import FirewallPolicyFilterRuleCollection
+    from ._models import FirewallPolicyFilterRuleCollectionAction
+    from ._models import FirewallPolicyNatRuleCollection
+    from ._models import FirewallPolicyNatRuleCollectionAction
     from ._models import FirewallPolicyRule
-    from ._models import FirewallPolicyRuleCondition
-    from ._models import FirewallPolicyRuleConditionApplicationProtocol
-    from ._models import FirewallPolicyRuleGroup
+    from ._models import FirewallPolicyRuleApplicationProtocol
+    from ._models import FirewallPolicyRuleCollection
+    from ._models import FirewallPolicyRuleCollectionGroup
     from ._models import FirewallPolicyThreatIntelWhitelist
     from ._models import FirewallPolicyTransportSecurity
     from ._models import FirewallPolicyTrustedRootCertificate
@@ -614,9 +639,12 @@ except (SyntaxError, ImportError):
     from ._models import GatewayRoute
     from ._models import GatewayRouteListResult
     from ._models import GetVpnSitesConfigurationRequest
+    from ._models import HopLink
     from ._models import HTTPConfiguration
     from ._models import HTTPHeader
     from ._models import HubIPAddresses
+    from ._models import HubIpConfiguration
+    from ._models import HubPublicIPAddresses
     from ._models import HubRoute
     from ._models import HubRouteTable
     from ._models import HubVirtualNetworkConnection
@@ -650,7 +678,7 @@ except (SyntaxError, ImportError):
     from ._models import MetricSpecification
     from ._models import NatGateway
     from ._models import NatGatewaySku
-    from ._models import NatRuleCondition
+    from ._models import NatRule
     from ._models import NetworkConfigurationDiagnosticParameters
     from ._models import NetworkConfigurationDiagnosticProfile
     from ._models import NetworkConfigurationDiagnosticResponse
@@ -664,14 +692,17 @@ except (SyntaxError, ImportError):
     from ._models import NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties
     from ._models import NetworkInterfaceTapConfiguration
     from ._models import NetworkProfile
-    from ._models import NetworkRuleCondition
+    from ._models import NetworkRule
     from ._models import NetworkSecurityGroup
     from ._models import NetworkSecurityGroupResult
     from ._models import NetworkSecurityRulesEvaluationResult
     from ._models import NetworkVirtualAppliance
+    from ._models import NetworkVirtualApplianceSku
+    from ._models import NetworkVirtualApplianceSkuInstances
     from ._models import NetworkWatcher
     from ._models import NextHopParameters
     from ._models import NextHopResult
+    from ._models import Office365PolicyProperties
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationPropertiesFormatServiceSpecification
@@ -766,8 +797,11 @@ except (SyntaxError, ImportError):
     from ._models import VerificationIPFlowParameters
     from ._models import VerificationIPFlowResult
     from ._models import VirtualApplianceNicProperties
+    from ._models import VirtualApplianceSite
     from ._models import VirtualApplianceSkuProperties
     from ._models import VirtualHub
+    from ._models import VirtualHubEffectiveRoute
+    from ._models import VirtualHubEffectiveRouteEffectiveRouteList
     from ._models import VirtualHubId
     from ._models import VirtualHubRoute
     from ._models import VirtualHubRouteTable
@@ -822,6 +856,8 @@ except (SyntaxError, ImportError):
     from ._models import WebApplicationFirewallCustomRule
     from ._models import WebApplicationFirewallPolicy
 from ._paged_models import ApplicationGatewayPaged
+from ._paged_models import ApplicationGatewayPrivateEndpointConnectionPaged
+from ._paged_models import ApplicationGatewayPrivateLinkResourcePaged
 from ._paged_models import ApplicationGatewaySslPredefinedPolicyPaged
 from ._paged_models import ApplicationSecurityGroupPaged
 from ._paged_models import AutoApprovedPrivateLinkServicePaged
@@ -834,6 +870,7 @@ from ._paged_models import BackendAddressPoolPaged
 from ._paged_models import BastionHostPaged
 from ._paged_models import BastionSessionStatePaged
 from ._paged_models import BastionShareableLinkPaged
+from ._paged_models import BgpConnectionPaged
 from ._paged_models import BgpServiceCommunityPaged
 from ._paged_models import ConnectionMonitorResultPaged
 from ._paged_models import DdosProtectionPlanPaged
@@ -849,9 +886,10 @@ from ._paged_models import ExpressRoutePortPaged
 from ._paged_models import ExpressRoutePortsLocationPaged
 from ._paged_models import ExpressRouteServiceProviderPaged
 from ._paged_models import FirewallPolicyPaged
-from ._paged_models import FirewallPolicyRuleGroupPaged
+from ._paged_models import FirewallPolicyRuleCollectionGroupPaged
 from ._paged_models import FlowLogPaged
 from ._paged_models import FrontendIPConfigurationPaged
+from ._paged_models import HubIpConfigurationPaged
 from ._paged_models import HubRouteTablePaged
 from ._paged_models import HubVirtualNetworkConnectionPaged
 from ._paged_models import InboundNatRulePaged
@@ -867,6 +905,7 @@ from ._paged_models import NetworkInterfaceTapConfigurationPaged
 from ._paged_models import NetworkProfilePaged
 from ._paged_models import NetworkSecurityGroupPaged
 from ._paged_models import NetworkVirtualAppliancePaged
+from ._paged_models import NetworkVirtualApplianceSkuPaged
 from ._paged_models import NetworkWatcherPaged
 from ._paged_models import OperationPaged
 from ._paged_models import OutboundRulePaged
@@ -890,6 +929,7 @@ from ._paged_models import ServiceEndpointPolicyDefinitionPaged
 from ._paged_models import ServiceEndpointPolicyPaged
 from ._paged_models import SubnetPaged
 from ._paged_models import UsagePaged
+from ._paged_models import VirtualApplianceSitePaged
 from ._paged_models import VirtualHubPaged
 from ._paged_models import VirtualHubRouteTableV2Paged
 from ._paged_models import VirtualNetworkGatewayConnectionListEntityPaged
@@ -960,10 +1000,10 @@ from ._network_management_client_enums import (
     ExpressRouteLinkAdminState,
     ExpressRoutePortsEncapsulation,
     FirewallPolicyIntrusionSystemMode,
-    FirewallPolicyNatRuleActionType,
-    FirewallPolicyFilterRuleActionType,
-    FirewallPolicyRuleConditionApplicationProtocolType,
-    FirewallPolicyRuleConditionNetworkProtocol,
+    FirewallPolicyNatRuleCollectionActionType,
+    FirewallPolicyFilterRuleCollectionActionType,
+    FirewallPolicyRuleApplicationProtocolType,
+    FirewallPolicyRuleNetworkProtocol,
     IpAllocationType,
     LoadBalancerSkuName,
     LoadDistribution,
@@ -1022,6 +1062,8 @@ from ._network_management_client_enums import (
     VirtualNetworkGatewayConnectionType,
     VirtualNetworkGatewayConnectionProtocol,
     OfficeTrafficCategory,
+    RoutingState,
+    HubBgpConnectionStatus,
     VpnConnectionStatus,
     VirtualWanSecurityProviderType,
     TunnelConnectionStatus,
@@ -1071,6 +1113,10 @@ __all__ = [
     'ApplicationGatewayIPConfiguration',
     'ApplicationGatewayOnDemandProbe',
     'ApplicationGatewayPathRule',
+    'ApplicationGatewayPrivateEndpointConnection',
+    'ApplicationGatewayPrivateLinkConfiguration',
+    'ApplicationGatewayPrivateLinkIpConfiguration',
+    'ApplicationGatewayPrivateLinkResource',
     'ApplicationGatewayProbe',
     'ApplicationGatewayProbeHealthResponseMatch',
     'ApplicationGatewayRedirectConfiguration',
@@ -1087,7 +1133,7 @@ __all__ = [
     'ApplicationGatewayUrlConfiguration',
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
-    'ApplicationRuleCondition',
+    'ApplicationRule',
     'ApplicationSecurityGroup',
     'AutoApprovedPrivateLinkService',
     'Availability',
@@ -1130,10 +1176,12 @@ __all__ = [
     'BastionShareableLinkListRequest',
     'BastionShareableLinkListResult',
     'BGPCommunity',
+    'BgpConnection',
     'BgpPeerStatus',
     'BgpPeerStatusListResult',
     'BgpServiceCommunity',
     'BgpSettings',
+    'BreakOutCategoryPolicies',
     'CheckPrivateLinkServiceVisibilityRequest',
     'ConnectionMonitor',
     'ConnectionMonitorDestination',
@@ -1174,12 +1222,14 @@ __all__ = [
     'DhcpOptions',
     'Dimension',
     'DnsNameAvailabilityResult',
+    'DnsSettings',
     'EffectiveNetworkSecurityGroup',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveNetworkSecurityRule',
     'EffectiveRoute',
     'EffectiveRouteListResult',
+    'EffectiveRoutesParameters',
     'EndpointServiceResult',
     'Error', 'ErrorException',
     'ErrorDetails',
@@ -1221,14 +1271,14 @@ __all__ = [
     'ExpressRouteServiceProviderBandwidthsOffered',
     'FirewallPolicy',
     'FirewallPolicyCertificateAuthority',
-    'FirewallPolicyFilterRule',
-    'FirewallPolicyFilterRuleAction',
-    'FirewallPolicyNatRule',
-    'FirewallPolicyNatRuleAction',
+    'FirewallPolicyFilterRuleCollection',
+    'FirewallPolicyFilterRuleCollectionAction',
+    'FirewallPolicyNatRuleCollection',
+    'FirewallPolicyNatRuleCollectionAction',
     'FirewallPolicyRule',
-    'FirewallPolicyRuleCondition',
-    'FirewallPolicyRuleConditionApplicationProtocol',
-    'FirewallPolicyRuleGroup',
+    'FirewallPolicyRuleApplicationProtocol',
+    'FirewallPolicyRuleCollection',
+    'FirewallPolicyRuleCollectionGroup',
     'FirewallPolicyThreatIntelWhitelist',
     'FirewallPolicyTransportSecurity',
     'FirewallPolicyTrustedRootCertificate',
@@ -1240,9 +1290,12 @@ __all__ = [
     'GatewayRoute',
     'GatewayRouteListResult',
     'GetVpnSitesConfigurationRequest',
+    'HopLink',
     'HTTPConfiguration',
     'HTTPHeader',
     'HubIPAddresses',
+    'HubIpConfiguration',
+    'HubPublicIPAddresses',
     'HubRoute',
     'HubRouteTable',
     'HubVirtualNetworkConnection',
@@ -1276,7 +1329,7 @@ __all__ = [
     'MetricSpecification',
     'NatGateway',
     'NatGatewaySku',
-    'NatRuleCondition',
+    'NatRule',
     'NetworkConfigurationDiagnosticParameters',
     'NetworkConfigurationDiagnosticProfile',
     'NetworkConfigurationDiagnosticResponse',
@@ -1290,14 +1343,17 @@ __all__ = [
     'NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties',
     'NetworkInterfaceTapConfiguration',
     'NetworkProfile',
-    'NetworkRuleCondition',
+    'NetworkRule',
     'NetworkSecurityGroup',
     'NetworkSecurityGroupResult',
     'NetworkSecurityRulesEvaluationResult',
     'NetworkVirtualAppliance',
+    'NetworkVirtualApplianceSku',
+    'NetworkVirtualApplianceSkuInstances',
     'NetworkWatcher',
     'NextHopParameters',
     'NextHopResult',
+    'Office365PolicyProperties',
     'Operation',
     'OperationDisplay',
     'OperationPropertiesFormatServiceSpecification',
@@ -1392,8 +1448,11 @@ __all__ = [
     'VerificationIPFlowParameters',
     'VerificationIPFlowResult',
     'VirtualApplianceNicProperties',
+    'VirtualApplianceSite',
     'VirtualApplianceSkuProperties',
     'VirtualHub',
+    'VirtualHubEffectiveRoute',
+    'VirtualHubEffectiveRouteEffectiveRouteList',
     'VirtualHubId',
     'VirtualHubRoute',
     'VirtualHubRouteTable',
@@ -1449,6 +1508,8 @@ __all__ = [
     'WebApplicationFirewallPolicy',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
+    'ApplicationGatewayPrivateLinkResourcePaged',
+    'ApplicationGatewayPrivateEndpointConnectionPaged',
     'ApplicationSecurityGroupPaged',
     'AvailableDelegationPaged',
     'AvailableServiceAliasPaged',
@@ -1471,7 +1532,7 @@ __all__ = [
     'ExpressRoutePortPaged',
     'ExpressRouteLinkPaged',
     'FirewallPolicyPaged',
-    'FirewallPolicyRuleGroupPaged',
+    'FirewallPolicyRuleCollectionGroupPaged',
     'IpAllocationPaged',
     'IpGroupPaged',
     'LoadBalancerPaged',
@@ -1489,6 +1550,8 @@ __all__ = [
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkVirtualAppliancePaged',
+    'VirtualApplianceSitePaged',
+    'NetworkVirtualApplianceSkuPaged',
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
     'ConnectionMonitorResultPaged',
@@ -1533,6 +1596,8 @@ __all__ = [
     'VpnSiteLinkConnectionPaged',
     'P2SVpnGatewayPaged',
     'VirtualHubRouteTableV2Paged',
+    'BgpConnectionPaged',
+    'HubIpConfigurationPaged',
     'HubRouteTablePaged',
     'WebApplicationFirewallPolicyPaged',
     'ApplicationGatewayProtocol',
@@ -1585,10 +1650,10 @@ __all__ = [
     'ExpressRouteLinkAdminState',
     'ExpressRoutePortsEncapsulation',
     'FirewallPolicyIntrusionSystemMode',
-    'FirewallPolicyNatRuleActionType',
-    'FirewallPolicyFilterRuleActionType',
-    'FirewallPolicyRuleConditionApplicationProtocolType',
-    'FirewallPolicyRuleConditionNetworkProtocol',
+    'FirewallPolicyNatRuleCollectionActionType',
+    'FirewallPolicyFilterRuleCollectionActionType',
+    'FirewallPolicyRuleApplicationProtocolType',
+    'FirewallPolicyRuleNetworkProtocol',
     'IpAllocationType',
     'LoadBalancerSkuName',
     'LoadDistribution',
@@ -1647,6 +1712,8 @@ __all__ = [
     'VirtualNetworkGatewayConnectionType',
     'VirtualNetworkGatewayConnectionProtocol',
     'OfficeTrafficCategory',
+    'RoutingState',
+    'HubBgpConnectionStatus',
     'VpnConnectionStatus',
     'VirtualWanSecurityProviderType',
     'TunnelConnectionStatus',
