@@ -644,8 +644,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _quick_query_options(self, query_expression,
                              **kwargs):
         # type: (str, **Any) -> Dict[str, Any]
+        delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
+        if input_format:
+            try:
+                delimiter = input_format.lineterminator
+            except AttributeError:
+                delimiter = input_format.delimiter
         output_format = kwargs.pop('output_format', None)
+        if output_format:
+            try:
+                delimiter = output_format.lineterminator
+            except AttributeError:
+                delimiter = output_format.delimiter
         has_header = kwargs.pop('has_header', None)
         query_request = QueryRequest(
             expression=query_expression,
@@ -675,7 +686,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'cls': return_headers_and_deserialized,
         }
         options.update(kwargs)
-        return options
+        return options, delimiter
 
     @distributed_trace
     def query_blob(self, query_expression, **kwargs):
@@ -749,7 +760,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         errors = kwargs.pop("errors", None) or 'strict'
         encoding = kwargs.pop("encoding", None)
-        options = self._quick_query_options(query_expression, **kwargs)
+        options, delimiter = self._quick_query_options(query_expression, **kwargs)
         try:
             headers, raw_response_body = self._client.blob.query(**options)
         except StorageErrorException as error:
@@ -758,6 +769,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             name=self.blob_name,
             container=self.container_name,
             errors=errors,
+            record_delimiter=delimiter,
             encoding=encoding,
             headers=headers,
             response=raw_response_body)

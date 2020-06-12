@@ -30,6 +30,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         name=None,
         container=None,
         errors='strict',
+        record_delimiter='\n',
         encoding=None,
         headers=None,
         response=None
@@ -39,6 +40,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self.response_headers = headers
         self.size = 0
         self.bytes_processed = 0
+        self.record_delimiter = record_delimiter.encode('utf-8')
         self._errors = errors
         self._encoding = encoding
         self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
@@ -76,9 +78,6 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             if processed_result is not None:
                 yield processed_result
 
-    def tell(self):
-        return self.bytes_processed
-
     def readall(self):
         """Return all quick query results.
 
@@ -108,7 +107,13 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
         :rtype: Iterable[bytes]
         """
-        return self._iter_records()
+        for record_chunk in self._iter_records():
+            for record in record_chunk.split(self.record_delimiter):
+                if self._encoding:
+                    yield record.decode(self._encoding)
+                else:
+                    yield record
+
 
 
 class QuickQueryStreamer(object):
