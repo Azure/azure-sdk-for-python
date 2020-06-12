@@ -1257,4 +1257,7 @@ class BlobQueryError(Exception):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
-        super(BlobQueryError, self).__init__(self.error)
+        message = self.error
+        if self.description:
+            message += ": {}".format(self.description)
+        super(BlobQueryError, self).__init__(message)
