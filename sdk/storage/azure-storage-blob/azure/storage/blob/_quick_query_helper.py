@@ -54,9 +54,9 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def _process_record(self, result):
         self.size = result.get('totalBytes', self.size)
         self.bytes_processed = result.get('bytesScanned', self.bytes_processed)
-        if result.get('data'):
+        if 'data' in result:
             return result.get('data')
-        if result.get('fatal') is not None and self._errors != 'ignore':
+        if 'fatal' in result and self._errors != 'ignore':
             error = BlobQueryError(
                 error=result['name'],
                 is_fatal=result['fatal'],
