@@ -208,7 +208,7 @@ class AutomaticRepairsPolicy(Model):
      state change has completed. This helps avoid premature or accidental
      repairs. The time duration should be specified in ISO 8601 format. The
      minimum allowed grace period is 30 minutes (PT30M), which is also the
-     default value.
+     default value. The maximum allowed grace period is 90 minutes (PT90M).
     :type grace_period: str
     """
 
@@ -1138,15 +1138,29 @@ class DiffDiskSettings(Model):
      disk. Possible values include: 'Local'
     :type option: str or
      ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk.<br><br> Possible values are: <br><br> **CacheDisk** <br><br>
+     **ResourceDisk** <br><br> Default: **CacheDisk** if one is configured for
+     the VM size otherwise **ResourceDisk** is used.<br><br> Refer to VM size
+     documentation for Windows VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes and
+     Linux VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes to
+     check which VM sizes exposes a cache disk. Possible values include:
+     'CacheDisk', 'ResourceDisk'
+    :type placement: str or
+     ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
+        'placement': {'key': 'placement', 'type': 'str'},
     }
 
-    def __init__(self, *, option=None, **kwargs) -> None:
+    def __init__(self, *, option=None, placement=None, **kwargs) -> None:
         super(DiffDiskSettings, self).__init__(**kwargs)
         self.option = option
+        self.placement = placement
 
 
 class Disallowed(Model):
@@ -1601,7 +1615,7 @@ class GalleryArtifactPublishingProfileBase(Model):
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     """
@@ -1657,7 +1671,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     :param source: Required.
@@ -1777,22 +1791,16 @@ class GalleryArtifactSource(Model):
 class GalleryArtifactVersionSource(Model):
     """The gallery artifact version source.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The id of the gallery artifact version source. Can
-     specify a disk uri, snapshot uri, or user image.
+    :param id: The id of the gallery artifact version source. Can specify a
+     disk uri, snapshot uri, or user image.
     :type id: str
     """
-
-    _validation = {
-        'id': {'required': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, *, id: str=None, **kwargs) -> None:
         super(GalleryArtifactVersionSource, self).__init__(**kwargs)
         self.id = id
 
@@ -2251,7 +2259,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     """
@@ -2786,7 +2794,8 @@ class ImageReference(SubResource):
     about platform images, marketplace images, or virtual machine images. This
     element is required when you want to use a platform image, marketplace
     image, or virtual machine image, but is not used in other creation
-    operations.
+    operations. NOTE: Image reference publisher and offer can only be set when
+    you create the scale set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3294,14 +3303,12 @@ class NetworkProfile(Model):
 class OrchestrationServiceStateInput(Model):
     """The input for OrchestrationServiceState.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Default value:
-     "AutomaticRepairs" .
-    :vartype service_name: str
+    :param service_name: Required. The name of the service. Possible values
+     include: 'AutomaticRepairs'
+    :type service_name: str or
+     ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
     :param action: Required. The action to be performed. Possible values
      include: 'Resume', 'Suspend'
     :type action: str or
@@ -3309,7 +3316,7 @@ class OrchestrationServiceStateInput(Model):
     """
 
     _validation = {
-        'service_name': {'required': True, 'constant': True},
+        'service_name': {'required': True},
         'action': {'required': True},
     }
 
@@ -3318,10 +3325,9 @@ class OrchestrationServiceStateInput(Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    service_name = "AutomaticRepairs"
-
-    def __init__(self, *, action, **kwargs) -> None:
+    def __init__(self, *, service_name, action, **kwargs) -> None:
         super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        self.service_name = service_name
         self.action = action
 
 
@@ -3386,8 +3392,8 @@ class OSDisk(Model):
     :type image: ~azure.mgmt.compute.v2019_12_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
-     <br><br> Default: **None for Standard storage. ReadOnly for Premium
-     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
+     <br><br> Default: **None** for Standard storage. **ReadOnly** for Premium
+     storage. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2019_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
@@ -4437,7 +4443,9 @@ class ScheduledEventsProfile(Model):
 
 
 class Sku(Model):
-    """Describes a virtual machine scale set sku.
+    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not
+    supported on the hardware the scale set is currently on, you need to
+    deallocate the VMs in the scale set before you modify the SKU name.
 
     :param name: The sku name.
     :type name: str
@@ -4707,7 +4715,7 @@ class TargetRegion(Model):
     :type regional_replica_count: int
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     :param encryption:
@@ -5206,7 +5214,7 @@ class VirtualMachine(Resource):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
@@ -6037,7 +6045,9 @@ class VirtualMachineScaleSet(Resource):
      Machine Scale Set.
     :vartype unique_id: str
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines.
+     single placement group, of max size 100 virtual machines. NOTE: If
+     singlePlacementGroup is true, it may be modified to false. However, if
+     singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
     :param zone_balance: Whether to force strictly even Virtual Machine
      distribution cross x-zones in case there is zone outage.
@@ -6065,7 +6075,8 @@ class VirtualMachineScaleSet(Resource):
      configured.
     :type identity:
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetIdentity
-    :param zones: The virtual machine scale set zones.
+    :param zones: The virtual machine scale set zones. NOTE: Availability
+     zones can only be set when you create the scale set
     :type zones: list[str]
     """
 
@@ -6550,13 +6561,13 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same load balancer.
+     balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references
      to inbound Nat pools of the load balancers. A scale set can reference
      inbound nat pools of one public and one internal load balancer. Multiple
-     scale sets cannot use the same load balancer
+     scale sets cannot use the same basic sku load balancer.
     :type load_balancer_inbound_nat_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     """
@@ -7158,7 +7169,9 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      not run on the extra overprovisioned VMs.
     :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines.
+     single placement group, of max size 100 virtual machines. NOTE: If
+     singlePlacementGroup is true, it may be modified to false. However, if
+     singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
     :param additional_capabilities: Specifies additional capabilities enabled
      or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
@@ -7216,6 +7229,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
 
 class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's IP configuration.
+    NOTE: The subnet of a scale set may be modified as long as the original
+    subnet and the new subnet are in the same virtual network.
 
     :param id: Resource Id
     :type id: str
@@ -7914,7 +7929,7 @@ class VirtualMachineScaleSetVMProfile(Model):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
@@ -8127,7 +8142,7 @@ class VirtualMachineUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
