@@ -547,8 +547,8 @@ class StorageQuickQueryTest(StorageTestCase):
             credential=storage_account_key)
         self._setup(bsc)
 
-        data1 = b'{\"name\": \"owner\", \"id\": 1}'
-        data2 = b'{\"name2\": \"owner2\"}'
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
