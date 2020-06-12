@@ -28,6 +28,8 @@ import unittest
 import azure.mgmt.appconfiguration
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
+from _aio_testcase import AzureMgmtAsyncTestCase
+
 AZURE_LOCATION = 'eastus'
 KEY_UUID = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
 LABEL_UUID = "1d7b2b28-549e-11e9-b51c-2816a84d0309"
@@ -36,12 +38,12 @@ LABEL = "test_label1_" + LABEL_UUID
 TEST_CONTENT_TYPE = "test content type"
 TEST_VALUE = "test value"
 
-class MgmtAppConfigurationTest(AzureMgmtTestCase):
+class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
 
     def setUp(self):
         super(MgmtAppConfigurationTest, self).setUp()
-        from azure.mgmt.appconfiguration import AppConfigurationManagementClient
-        self.mgmt_client = self.create_mgmt_client(
+        from azure.mgmt.appconfiguration.aio import AppConfigurationManagementClient
+        self.mgmt_client = self.create_mgmt_aio_client(
             AppConfigurationManagementClient
         )
 
@@ -135,17 +137,25 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
-        conf_store = result.result()
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # ConfigurationStores_ListKeys[post]
-        keys = list(self.mgmt_client.configuration_stores.list_keys(resource_group.name, CONFIGURATION_STORE_NAME))
+        keys = self.to_list(
+            self.mgmt_client.configuration_stores.list_keys(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
 
         # ConfigurationStores_RegenerateKey[post]
         BODY = {
           "id": keys[0].id
         }
-        key = self.mgmt_client.configuration_stores.regenerate_key(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        key = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.regenerate_key(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
 
         if self.is_live:
             # create key-value
@@ -156,14 +166,16 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
           "key": KEY,
           "label": LABEL
         }
-        result = self.mgmt_client.configuration_stores.list_key_value(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.list_key_value(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
-        VNET_NAME = "vnetname"
-        SUB_NET = "subnetname"
+        VNET_NAME = "vnetnamexxy"
+        SUB_NET = "subnetnamexxy"
         ENDPOINT_NAME = "endpointxyz"
         CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
         PRIVATE_ENDPOINT_CONNECTION_NAME = self.get_resource_name("privateendpoint")
@@ -178,8 +190,12 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
-        conf_store = result.result()
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
+        conf_store = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         if self.is_live:
             # create endpoint
@@ -203,7 +219,9 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # result = result.result()
 
         # ConfigurationStores_Get[get]
-        conf_store = self.mgmt_client.configuration_stores.get(resource_group.name, CONFIGURATION_STORE_NAME)
+        conf_store = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.get(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
 
         PRIVATE_ENDPOINT_CONNECTION_NAME = conf_store.private_endpoint_connections[0].name
         private_connection_id = conf_store.private_endpoint_connections[0].id
@@ -220,37 +238,62 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "description": "Auto-Approved"
           }
         }
-        result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
-            resource_group.name,
-            CONFIGURATION_STORE_NAME,
-            PRIVATE_ENDPOINT_CONNECTION_NAME,
-            BODY)
-            # id=BODY["id"],
-            # private_endpoint=BODY["private_endpoint"],
-            # private_link_service_connection_state=BODY["private_link_service_connection_state"])
-        result = result.result()
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.private_endpoint_connections.begin_create_or_update(
+                resource_group.name,
+                CONFIGURATION_STORE_NAME,
+                PRIVATE_ENDPOINT_CONNECTION_NAME,
+                BODY
+            )
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
+        # result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
+        #     resource_group.name,
+        #     CONFIGURATION_STORE_NAME,
+        #     PRIVATE_ENDPOINT_CONNECTION_NAME,
+        #     BODY)
+        #     # id=BODY["id"],
+        #     # private_endpoint=BODY["private_endpoint"],
+        #     # private_link_service_connection_state=BODY["private_link_service_connection_state"])
+        # result = result.result()
           
         # PrivateEndpointConnection_GetConnection[get]
-        result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.private_endpoint_connections.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        )
 
         # PrivateLinkResources_ListGroupIds[get]
-        privatelinks = list(self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
+        privatelinks = self.to_list(
+            self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
         PRIVATE_LINK_RESOURCE_NAME = privatelinks[0].name
 
         # PrivateLinkResources_Get[get]
-        result = self.mgmt_client.private_link_resources.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_LINK_RESOURCE_NAME)
+        self.event_loop.run_until_complete(
+            self.mgmt_client.private_link_resources.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_LINK_RESOURCE_NAME)
+        )
 
         # PrivateEndpointConnection_List[get]
-        result = list(self.mgmt_client.private_endpoint_connections.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
+        result = self.to_list(
+            self.mgmt_client.private_endpoint_connections.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
 
         # List the operations available
-        result = self.mgmt_client.operations.list()
+        result = self.to_list(
+            self.mgmt_client.operations.list()
+        )
 
         # ConfigurationStores_ListByResourceGroup[get]
-        result = self.mgmt_client.configuration_stores.list_by_resource_group(resource_group.name)
+        result = self.to_list(
+            self.mgmt_client.configuration_stores.list_by_resource_group(resource_group.name)
+        )
 
         # ConfigurationStores_List[get]
-        result = self.mgmt_client.configuration_stores.list()
+        result = self.to_list(
+            self.mgmt_client.configuration_stores.list()
+        )
 
         # ConfigurationStores_Update[patch]
         BODY = {
@@ -261,8 +304,12 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "name": "Standard"
           }
         }
-        result = self.mgmt_client.configuration_stores.begin_update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
-        result = result.result()
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.begin_update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # ConfigurationStores_Update_WithIdentity[patch]
         # BODY = {
@@ -285,23 +332,34 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
           "name": "contoso",
           "type": "Microsoft.AppConfiguration/configurationStores"
         }
-        result = self.mgmt_client.operations.check_name_availability(BODY)
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.operations.check_name_availability(BODY)
+        )
 
         # ConfigurationStores_CheckNameAvailable[post]
         BODY = {
           "name": "contoso",
           "type": "Microsoft.AppConfiguration/configurationStores"
         }
-        result = self.mgmt_client.operations.check_name_availability(BODY)
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.operations.check_name_availability(BODY)
+        )
 
         # PrivateEndpointConnections_Delete[delete]
-        result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
-        result = result.result()
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
         # ConfigurationStores_Delete[delete]
-        result = self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
-        result = result.result()
-
+        result = self.event_loop.run_until_complete(
+            self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
+        )
+        result = self.event_loop.run_until_complete(
+            result.result()
+        )
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
