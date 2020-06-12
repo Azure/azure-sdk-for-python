@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
     from datetime import datetime
-    from ._shared._generated.v7_0 import models as _models
+    from ._generated.v7_0 import models as _models
 
 
 class SecretProperties(object):
