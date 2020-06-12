@@ -21,6 +21,18 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 
 class TestReceiptFromUrl(FormRecognizerTest):
 
+    @GlobalFormRecognizerAccountPreparer()
+    def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+        self.assertEqual(client._client._config.polling_interval, 7)
+
+        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, polling_interval=6)
+        poller.wait()
+        self.assertEqual(poller._polling_method._timeout, 6)
+        poller2 = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+        poller2.wait()
+        self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
+
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()

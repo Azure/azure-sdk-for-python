@@ -21,6 +21,22 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 class TestTraining(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True)
+    def test_polling_interval(self, client, container_sas_url):
+        def check_poll_value(poll):
+            if self.is_live:
+                self.assertEqual(poll, 5)
+            else:
+                self.assertEqual(poll, 0)
+        check_poll_value(client._client._config.polling_interval)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, polling_interval=6)
+        poller.wait()
+        self.assertEqual(poller._polling_method._timeout, 6)
+        poller2 = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
+        poller2.wait()
+        check_poll_value(poller2._polling_method._timeout)  # goes back to client default
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
