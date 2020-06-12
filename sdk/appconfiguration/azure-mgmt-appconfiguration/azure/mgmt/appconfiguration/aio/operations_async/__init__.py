@@ -6,14 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._app_configuration_management_client import AppConfigurationManagementClient
-from ._version import VERSION
+from ._configuration_stores_operations_async import ConfigurationStoresOperations
+from ._operations_async import Operations
+from ._private_endpoint_connections_operations_async import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations_async import PrivateLinkResourcesOperations
 
-__version__ = VERSION
-__all__ = ['AppConfigurationManagementClient']
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'ConfigurationStoresOperations',
+    'Operations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+]
