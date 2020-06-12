@@ -14,8 +14,8 @@ from azure.storage.blob import (
 
 # ------------------------------------------------------------------------------
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
-           b'azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\nEvent Hubs,' \
-           b'azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\nEvent Hubs - Azure Storage CheckpointStore,' \
+           b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
+           b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
            b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,' \
            b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,' \
            b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,' \
@@ -118,7 +118,7 @@ class StorageQuickQueryTest(StorageTestCase):
         # upload the csv file
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA)
+        blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         errors = []
 
@@ -146,6 +146,46 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertTrue(len(query_result) > 0)
 
     @GlobalStorageAccountPreparer()
+    def test_quick_query_with_serialization_setting_throws_error(self, resource_group, location, storage_account,
+                                                                 storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def progress_callback(error, bytes_processed, total_bytes):
+            if error:
+                errors.append(error)
+            if not bytes_processed:
+                print("All bytes have been processed")
+                print("Total Bytes should be {}".format(total_bytes))
+            else:
+                print(bytes_processed)
+
+        input_seri = DelimitedTextConfiguration(column_separator=',', field_quote='"', record_separator='\n',
+                                                escape_char='', headers_present=True
+                                                )
+        output_seri = DelimitedTextConfiguration(column_separator=';', field_quote="'", record_separator='.',
+                                                 escape_char='\\', headers_present=True
+                                                 )
+        resp = blob_client.query("SELECT RepoPath from BlobStorage", progress_callback=progress_callback,
+                                 input_serialization=input_seri, output_serialization=output_seri)
+        query_result = resp.readall()
+
+        # the error is because that line only has one column
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(resp.total_bytes, len(CSV_DATA))
+        self.assertTrue(len(query_result) > 0)
+
+    @GlobalStorageAccountPreparer()
     def test_quick_query_with_serialization_json_setting(self, resource_group, location, storage_account,
                                                          storage_account_key):
         # Arrange
@@ -154,19 +194,14 @@ class StorageQuickQueryTest(StorageTestCase):
             credential=storage_account_key)
         self._setup(bsc)
 
-        data1 = b'{name: owner}'
-        data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data1 = b'{\"name\": \"owner\", \"id\": 1}'
+        data2 = b'{\"name2\": \"owner2\"}'
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data)
+        blob_client.upload_blob(data, overwrite=True)
 
         errors = []
 
@@ -182,7 +217,7 @@ class StorageQuickQueryTest(StorageTestCase):
         input_seri = '\n'
         output_seri = ';'
 
-        resp = blob_client.query("SELECT * from BlobStorage", progress_callback=progress_callback,
+        resp = blob_client.query("SELECT name from BlobStorage", progress_callback=progress_callback,
                                  input_serialization=input_seri, output_serialization=output_seri)
         query_result = resp.readall()
 
