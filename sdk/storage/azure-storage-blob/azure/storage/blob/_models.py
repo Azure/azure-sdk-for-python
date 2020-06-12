@@ -1213,7 +1213,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class JSONEncoder(object):
+class DelimitedJSON(object):
     """Defines the input of output JSON serialization for a blob data query.
 
     :keyword str record_separator: The separator character, default value is '\n'

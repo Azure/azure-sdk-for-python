@@ -12,7 +12,7 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
     CSVDialect,
-    JSONEncoder,
+    DelimitedJSON,
     BlobQueryError
 )
 
@@ -121,6 +121,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
+            return True
 
         reader = blob_client.query_blob("SELECT * from BlobStorage", errors=on_error)
         data = reader.readall()
@@ -147,6 +148,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
+            return True
 
         reader = blob_client.query_blob("SELECT * from BlobStorage", errors=on_error, encoding='utf-8')
         data = reader.readall()
@@ -174,6 +176,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
+            return True
 
         input_format = CSVDialect(
             delimiter=',',
@@ -226,8 +229,9 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
+            return True
 
-        input_format = JSONEncoder()
+        input_format = DelimitedJSON()
         output_format = CSVDialect(
             delimiter=';',
             quotechar="'",
@@ -244,6 +248,50 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(resp.size, 43)
         self.assertEqual(query_result, b'')
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_readall_with_fatal_error_handler_raise(self, resource_group, location, storage_account,
+                                                          storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+            return False
+
+        input_format = DelimitedJSON()
+        output_format = CSVDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            errors=on_error,
+            blob_format=input_format,
+            output_format=output_format)
+        with pytest.raises(BlobQueryError):
+            query_result = resp.readall()
 
     @GlobalStorageAccountPreparer()
     def test_quick_query_readall_with_fatal_error_ignore(self, resource_group, location, storage_account,
@@ -268,7 +316,7 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(data, overwrite=True)
 
-        input_format = JSONEncoder()
+        input_format = DelimitedJSON()
         output_format = CSVDialect(
             delimiter=';',
             quotechar="'",
@@ -300,6 +348,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
+            return True
 
         # def progress_callback(error, bytes_processed, total_bytes):
         #     if error:
@@ -427,9 +476,10 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
+            return True
 
-        input_format = JSONEncoder(delimiter='\n')
-        output_format = JSONEncoder(delimiter=';')
+        input_format = DelimitedJSON(delimiter='\n')
+        output_format = DelimitedJSON(delimiter=';')
 
         resp = blob_client.query_blob(
             "SELECT name from BlobStorage",

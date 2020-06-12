@@ -693,13 +693,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom CSVDialect, or alternatively a JSONEncoder.
-        :paramtype blob_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.JSONEncoder
+            a custom CSVDialect, or alternatively a DelimitedJSON.
+        :paramtype blob_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.DelimitedJSON
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the blob. By providing an output format, the blob data will be reformatted
-            according to that profile. This value can be a CSVDialect or a JSONEncoder.
-        :paramtype output_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.JSONEncoder
+            according to that profile. This value can be a CSVDialect or a DelimitedJSON.
+        :paramtype output_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.DelimitedJSON
         :keyword bool has_header:
             Whether the blob data includes headers in the first line. The default value is False, meaning that the
             data will be returned inclusive of the first line. If set to True, the data will be returned exclusive

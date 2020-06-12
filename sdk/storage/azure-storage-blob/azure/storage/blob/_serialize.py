@@ -13,7 +13,7 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    JSONEncoder,
+    DelimitedJSON,
     CSVDialect
 )
 from ._generated.models import (
@@ -147,7 +147,7 @@ def serialize_blob_tags(tags=None):
 
 
 def serialize_query_format(formater, headers=None):
-    if isinstance(formater, JSONEncoder):
+    if isinstance(formater, DelimitedJSON):
         if headers is not None:
             raise ValueError("The 'has_header' parameter is not supported for JSON data.")
         serialization_settings = JsonTextConfiguration(
@@ -173,5 +173,5 @@ def serialize_query_format(formater, headers=None):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be CSVDialect or JSONEncoder.")
+        raise TypeError("Format must be CSVDialect or DelimitedJSON.")
     return QuerySerialization(format=qq_format)
