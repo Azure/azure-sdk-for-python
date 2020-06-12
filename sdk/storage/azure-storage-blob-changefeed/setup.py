@@ -84,15 +84,9 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=[
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-        'azure.storage',
-        'azure.storage.blob',
-        'tests',
-        'tests.blob',
-        'tests.common'
-    ]),
+    packages=[
+        'azure.storage.blob.changefeed',
+    ],
     install_requires=[
         "azure-storage-blob>=12.3.0", #TODO change it to 12.4.0 when release stg73
     ],
