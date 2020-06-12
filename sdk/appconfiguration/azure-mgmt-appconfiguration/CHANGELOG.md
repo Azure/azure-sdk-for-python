@@ -7,7 +7,7 @@ For detailed changelog please refer to equivalent stable version 0.4.0 (https://
 
 This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
 
-## General breaking changes
+**General breaking changes**
 
 - Credential system has been completly revamped:
 
@@ -25,7 +25,7 @@ This version uses a next-generation code generator that introduces important bre
   - For a complete set of
   supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
-## General new features
+**General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
