@@ -52,10 +52,7 @@ try:
     from ._models_py3 import LegalHoldProperties
     from ._models_py3 import ListAccountSasResponse
     from ._models_py3 import ListContainerItem
-    from ._models_py3 import ListQueue
-    from ._models_py3 import ListQueueServices
     from ._models_py3 import ListServiceSasResponse
-    from ._models_py3 import ListTableServices
     from ._models_py3 import ManagementPolicy
     from ._models_py3 import ManagementPolicyAction
     from ._models_py3 import ManagementPolicyBaseBlob
@@ -77,7 +74,6 @@ try:
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
-    from ._models_py3 import QueueServiceProperties
     from ._models_py3 import Resource
     from ._models_py3 import RestorePolicyProperties
     from ._models_py3 import Restriction
@@ -96,9 +92,6 @@ try:
     from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
-    from ._models_py3 import StorageQueue
-    from ._models_py3 import Table
-    from ._models_py3 import TableServiceProperties
     from ._models_py3 import TagFilter
     from ._models_py3 import TagProperty
     from ._models_py3 import TrackedResource
@@ -149,10 +142,7 @@ except (SyntaxError, ImportError):
     from ._models import LegalHoldProperties
     from ._models import ListAccountSasResponse
     from ._models import ListContainerItem
-    from ._models import ListQueue
-    from ._models import ListQueueServices
     from ._models import ListServiceSasResponse
-    from ._models import ListTableServices
     from ._models import ManagementPolicy
     from ._models import ManagementPolicyAction
     from ._models import ManagementPolicyBaseBlob
@@ -174,7 +164,6 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceListResult
     from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
-    from ._models import QueueServiceProperties
     from ._models import Resource
     from ._models import RestorePolicyProperties
     from ._models import Restriction
@@ -193,9 +182,6 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountMicrosoftEndpoints
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
-    from ._models import StorageQueue
-    from ._models import Table
-    from ._models import TableServiceProperties
     from ._models import TagFilter
     from ._models import TagProperty
     from ._models import TrackedResource
@@ -207,13 +193,11 @@ from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import EncryptionScopePaged
 from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
-from ._paged_models import ListQueuePaged
 from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
-from ._paged_models import TablePaged
 from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
     ReasonCode,
@@ -257,7 +241,6 @@ from ._storage_management_client_enums import (
     ShareAccessTier,
     StorageAccountExpand,
     ListKeyExpand,
-    ListContainersInclude,
     ListSharesExpand,
     GetShareExpand,
 )
@@ -305,10 +288,7 @@ __all__ = [
     'LegalHoldProperties',
     'ListAccountSasResponse',
     'ListContainerItem',
-    'ListQueue',
-    'ListQueueServices',
     'ListServiceSasResponse',
-    'ListTableServices',
     'ManagementPolicy',
     'ManagementPolicyAction',
     'ManagementPolicyBaseBlob',
@@ -330,7 +310,6 @@ __all__ = [
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
-    'QueueServiceProperties',
     'Resource',
     'RestorePolicyProperties',
     'Restriction',
@@ -349,9 +328,6 @@ __all__ = [
     'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
-    'StorageQueue',
-    'Table',
-    'TableServiceProperties',
     'TagFilter',
     'TagProperty',
     'TrackedResource',
@@ -369,8 +345,6 @@ __all__ = [
     'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
     'FileShareItemPaged',
-    'ListQueuePaged',
-    'TablePaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',
@@ -412,7 +386,6 @@ __all__ = [
     'ShareAccessTier',
     'StorageAccountExpand',
     'ListKeyExpand',
-    'ListContainersInclude',
     'ListSharesExpand',
     'GetShareExpand',
 ]

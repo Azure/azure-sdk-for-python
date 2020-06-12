@@ -311,32 +311,6 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def queue(self):
-        """Instance depends on the API version:
-
-           * 2019-06-01: :class:`QueueOperations<azure.mgmt.storage.v2019_06_01.operations.QueueOperations>`
-        """
-        api_version = self._get_api_version('queue')
-        if api_version == '2019-06-01':
-            from .v2019_06_01.operations import QueueOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def queue_services(self):
-        """Instance depends on the API version:
-
-           * 2019-06-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2019_06_01.operations.QueueServicesOperations>`
-        """
-        api_version = self._get_api_version('queue_services')
-        if api_version == '2019-06-01':
-            from .v2019_06_01.operations import QueueServicesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def skus(self):
         """Instance depends on the API version:
 
@@ -409,32 +383,6 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_04_01.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import StorageAccountsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def table(self):
-        """Instance depends on the API version:
-
-           * 2019-06-01: :class:`TableOperations<azure.mgmt.storage.v2019_06_01.operations.TableOperations>`
-        """
-        api_version = self._get_api_version('table')
-        if api_version == '2019-06-01':
-            from .v2019_06_01.operations import TableOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def table_services(self):
-        """Instance depends on the API version:
-
-           * 2019-06-01: :class:`TableServicesOperations<azure.mgmt.storage.v2019_06_01.operations.TableServicesOperations>`
-        """
-        api_version = self._get_api_version('table_services')
-        if api_version == '2019-06-01':
-            from .v2019_06_01.operations import TableServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
