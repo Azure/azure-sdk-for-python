@@ -147,7 +147,16 @@ def serialize_blob_tags(tags=None):
 
 
 def serialize_query_format(formater, headers=None):
-    if headers or isinstance(formater, CSVDialect):
+    if isinstance(formater, JSONEncoder):
+        if headers is not None:
+            raise ValueError("The 'has_header' parameter is not supported for JSON data.")
+        serialization_settings = JsonTextConfiguration(
+            record_separator=formater.delimiter
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.json,
+            json_text_configuration=serialization_settings)
+    elif headers or hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
         if not formater:
             formater = CSVDialect()
         serialization_settings = DelimitedTextConfiguration(
@@ -161,13 +170,6 @@ def serialize_query_format(formater, headers=None):
             type=QueryFormatType.delimited,
             delimited_text_configuration=serialization_settings
         )
-    elif isinstance(formater, JSONEncoder):
-        serialization_settings = JsonTextConfiguration(
-            record_separator=formater.record_separator
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.json,
-            json_text_configuration=serialization_settings)
     elif not formater:
         return None
     else:

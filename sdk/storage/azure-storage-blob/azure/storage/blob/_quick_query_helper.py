@@ -5,15 +5,11 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-import logging
 
 from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
 from ._models import BlobQueryError
-
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
@@ -56,27 +52,27 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self.bytes_processed = result.get('bytesScanned', self.bytes_processed)
         if 'data' in result:
             return result.get('data')
-        if 'fatal' in result and self._errors != 'ignore':
+        if 'fatal' in result:
             error = BlobQueryError(
                 error=result['name'],
                 is_fatal=result['fatal'],
                 description=result['description'],
                 position=result['position']
             )
-            if result['fatal'] or self._errors == 'strict':
+            if (self._errors == 'ignore' and result['fatal']) or self._errors == 'strict':
                 raise error
-            if self._errors == 'warning':
-                _LOGGER.warning(str(error))
+            if self._errors == 'ignore':
+                return None
             else:
                 self._errors(error)
         return None
 
     def _iter_records(self):
-        if self._first_result:
+        if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
             processed_result = self._process_record(next_result)
-            if processed_result:
+            if processed_result is not None:
                 yield processed_result
 
     def tell(self):

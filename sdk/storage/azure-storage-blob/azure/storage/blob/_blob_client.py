@@ -689,7 +689,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Determines the error behaviour. The default value is 'strict', where any non-fatal error will be
             raised. Other possible values include:
                 - 'ignore': Non-fatal errors will be ignored, this may result in dropped records.
-                - 'warning': Non-fatal errors will be logged at the warning level.
                 - Callable[Exception]: If a callable is provided, customer error handling can be defined.
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to

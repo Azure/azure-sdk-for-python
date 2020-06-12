@@ -1220,7 +1220,7 @@ class JSONEncoder(object):
     """
 
     def __init__(self, **kwargs):
-        self.record_separator = kwargs.pop('record_separator', '\n')
+        self.delimiter = kwargs.pop('delimiter', '\n')
 
 
 class CSVDialect(object):
