@@ -6142,6 +6142,26 @@ class QuotaCounterValueContractProperties(Model):
         self.kb_transferred = kb_transferred
 
 
+class QuotaCounterValueUpdateContract(Model):
+    """Quota counter value details.
+
+    :param calls_count: Number of times Counter was called.
+    :type calls_count: int
+    :param kb_transferred: Data Transferred in KiloBytes.
+    :type kb_transferred: float
+    """
+
+    _attribute_map = {
+        'calls_count': {'key': 'properties.callsCount', 'type': 'int'},
+        'kb_transferred': {'key': 'properties.kbTransferred', 'type': 'float'},
+    }
+
+    def __init__(self, *, calls_count: int=None, kb_transferred: float=None, **kwargs) -> None:
+        super(QuotaCounterValueUpdateContract, self).__init__(**kwargs)
+        self.calls_count = calls_count
+        self.kb_transferred = kb_transferred
+
+
 class RecipientEmailCollection(Model):
     """Paged Recipient User list representation.
 
