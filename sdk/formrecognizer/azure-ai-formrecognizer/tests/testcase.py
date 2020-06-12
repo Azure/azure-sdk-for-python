@@ -518,7 +518,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         training_params = self.get_training_parameters(client)
 
         if self.copy:
-            return self.get_copy_parameters(training_params, client)
+            return self.get_copy_parameters(training_params, client, **kwargs)
 
         return training_params
 
