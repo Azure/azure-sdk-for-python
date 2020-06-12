@@ -26,9 +26,6 @@ CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = "az account get-access-token --output json --resource {}"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
-# CLI's "expiresOn" is naive, so we use this naive datetime for the epoch to calculate expires_on in UTC
-EPOCH = datetime.fromtimestamp(0)
-
 
 class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
@@ -74,8 +71,8 @@ def parse_token(output):
         token = json.loads(output)
         parsed_expires_on = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
 
-        # calculate seconds since the epoch; parsed_expires_on and EPOCH are naive
-        expires_on = (parsed_expires_on - EPOCH).total_seconds()
+        # calculate seconds since the epoch; parsed_expires_on is naive
+        expires_on = (parsed_expires_on - datetime.fromtimestamp(0)).total_seconds()
 
         return AccessToken(token["accessToken"], int(expires_on))
     except (KeyError, ValueError):
