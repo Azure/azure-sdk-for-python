@@ -8,9 +8,11 @@ from azure_table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure_table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from azure_table._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure_table._shared.response_handlers import process_storage_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure_table._version import VERSION
-from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
+
+from sdk.table.azure_table._shared.response_handlers import return_headers_and_deserialized
 
 
 class TableClient(StorageAccountHostsMixin):
@@ -96,6 +98,43 @@ class TableClient(StorageAccountHostsMixin):
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
 
     @distributed_trace
+    def get_table_access_policy(
+            self,
+            **kwargs
+    ):
+        timeout = kwargs.pop('timeout', None)
+        try:
+            _, identifiers = self._client.table.get_access_policy(
+                table=self.table_name,
+                timeout=timeout,
+                cls=return_headers_and_deserialized,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+
+    @distributed_trace
+    def set_table_access_policy(self, signed_identifiers, **kwargs):
+        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        try:
+            self._client.table.set_access_policy(
+                table=self.table_name,
+                table_acl=identifiers,
+                **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def create_queue(self, table_name, **kwargs):
         # type: (Optional[Any]) -> None
         table_properties = TableProperties(table_name=table_name)
@@ -140,42 +179,118 @@ class TableClient(StorageAccountHostsMixin):
         return response  # type: ignore
 
     @distributed_trace
-    def get_table_access_policy(self, table, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
-        timeout = kwargs.pop('timeout', None)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
+    def delete_entity(
+            self,
+            partition_key,
+            row_key,
+            if_match,
+            timeout=None,
+            request_id_parameter=None,
+            query_options=None
+    ):
         try:
-            _, identifiers = self._client.table.get_access_policy(
-                table=table,
-                timeout=timeout,
-                request_id_parameter=request_id_parameter,
-                **kwargs)
-        except HttpResponseError as error:
+            self._client.table.delete_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                if_match=if_match)
+        except ResourceNotFoundError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_table_access_policy(self, table, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
-        timeout = kwargs.pop('timeout', None)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
-        if len(signed_identifiers) > 15:
-            raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 15 access policies on a single resource.')
-        identifiers = []
-        for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
+    def insert_entity(
+            self,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+
         try:
-            self._client.table.set_access_policy(
-                table,
-                timeout=timeout,
-                request_id_parameter=request_id_parameter,
-                table_acl=signed_identifiers or None,
-                **kwargs)
+            inserted_entity = self._client.table.insert_entity(
+                table=self.table_name,
+                if_match=if_match,
+                table_entity_properties=table_entity_properties,
+                query_options=query_options
+            )
+            return inserted_entity
+        except ResourceNotFoundError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def update_entity(
+            self,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+        if table_entity_properties:
+            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
+            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+
+        try:
+            updated_entity = self._client.table.update_entity(
+                table_name=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                if_match=if_match,
+                table_entity_properties=table_entity_properties)
+            return updated_entity
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def merge_entity(self):
+        response = self.table_name
+
+    @distributed_trace
+    def upsert_insert_merge_entity(
+            self,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+        # Insert or Merge
+        try:
+            merge_entity = self.merge_entity(
+                partition_key=partition_key,
+                row_key=row_key
+            )
+            # update_entity = self.update_entity(partition_key=partition_key,row_key=row_key)
+            return merge_entity
+        except ResourceNotFoundError:
+            insert_entity = self.insert_entity(
+                partition_key=partition_key,
+                row_key=row_key
+            )
+            return insert_entity
+
+    def upsert_insert_update_entity(
+            self,
+            partition_key,
+            row_key,
+            timeout=None,
+            request_id_parameter=None,
+            if_match=None,
+            table_entity_properties=None,
+            query_options=None
+    ):
+        # Insert or Update
+        try:
+            update_entity = self.update_entity(partition_key=partition_key,row_key=row_key)
+            return update_entity
+        except ResourceNotFoundError:
+            insert_entity = self.insert_entity(
+                partition_key=partition_key,
+                row_key=row_key
+            )
+            return insert_entity

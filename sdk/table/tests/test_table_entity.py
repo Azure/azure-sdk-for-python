@@ -15,7 +15,7 @@ import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
 
-from azure.azure_table import TableServiceClient
+from azure_table import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
@@ -54,7 +54,7 @@ class StorageTableEntityTest(TableTestCase):
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
-                self.ts.create_table(self.table_name)
+                self.ts.create_table(table_name=self.table_name)
             except ResourceExistsError:
                 pass
 
@@ -288,7 +288,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for entities ------------------------------------------
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

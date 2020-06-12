@@ -335,20 +335,17 @@ class StorageTableTest(TableTestCase):
             pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = self._create_table(ts)
+        client = ts.get_table_client(table=table.table_name)
 
         # Act
-        access_policy = AccessPolicy(permission=TableSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow() - timedelta(minutes=5))
-        identifiers = {'testid': access_policy}
-        # identifiers = dict()
-        # identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
-        #                                      expiry=datetime.utcnow() + timedelta(hours=1),
-        #                                      permission=TableSasPermissions(query=True))
+        identifiers = dict()
+        identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
+                                              expiry=datetime.utcnow() + timedelta(hours=1),
+                                              permission=TableSasPermissions(query=True))
         try:
-            ts.set_table_access_policy(table_name=table.table_name,signed_identifiers=identifiers)
+            client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert
-            acl = ts.get_table_access_policy(table_name=table.table_name)
+            acl = client.get_table_access_policy()
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 1)
             self.assertTrue('testid' in acl)
@@ -356,7 +353,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
