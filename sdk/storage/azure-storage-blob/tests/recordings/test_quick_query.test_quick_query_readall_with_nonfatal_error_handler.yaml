@@ -11,36 +11,36 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1?restype=container
+    uri: https://storagename.blob.core.windows.net/utqqcontainerec2f1c98?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:1108d2e7-c01e-0009-0ccd-400873000000\nTime:2020-06-12T15:25:50.7743265Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Wed, 27 May 2020 21:08:39 GMT
-      etag:
-      - '"0x8D80282219CBACC"'
-      last-modified:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2019-12-12'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
-    body: "Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\nEvent
-      Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\nEvent Hubs - Azure Storage
-      CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\nKey
+    body: "Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent
+      Hubs\r\nEvent Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\nKey
       Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\nKey
       Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\nKey
       Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\nStorage
@@ -59,7 +59,7 @@ interactions:
       - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\nText
       Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,MissingDocs\r\nApp
       Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\nEvent
-      Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE"
+      Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n"
     headers:
       Accept:
       - '*/*'
@@ -68,21 +68,21 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2306'
+      - '2256'
       Content-Type:
       - application/octet-stream
-      If-None-Match:
-      - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
+      x-ms-tags:
+      - ''
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1/csvfileea8e0dd1
+    uri: https://storagename.blob.core.windows.net/utqqcontainerec2f1c98/csvfileec2f1c98
   response:
     body:
       string: ''
@@ -90,17 +90,17 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - 6qNUJItG1aexpFSF0g7WyA==
+      - YCu60jbjN5Bt+lODPNdZjg==
       date:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       etag:
-      - '"0x8D8028221B0EF22"'
+      - '"0x8D80EE4E3BCB679"'
       last-modified:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - Egm6/9FcUeU=
+      - RKBng4iRtGI=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -111,7 +111,9 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT * from BlobStorage</Expression></QueryRequest>'
+      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT RepoPath from BlobStorage</Expression><InputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>,</ColumnSeparator><FieldQuote>"</FieldQuote><RecordSeparator>
+
+      </RecordSeparator><EscapeChar /><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></InputSerialization><OutputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>;</ColumnSeparator><FieldQuote>''</FieldQuote><RecordSeparator>.</RecordSeparator><EscapeChar>\</EscapeChar><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></OutputSerialization></QueryRequest>'
     headers:
       Accept:
       - application/xml
@@ -120,17 +122,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '721'
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       x-ms-version:
       - '2019-12-12'
     method: POST
-    uri: https://storagename.blob.core.windows.net/utqqcontainerea8e0dd1/csvfileea8e0dd1?comp=query
+    uri: https://storagename.blob.core.windows.net/utqqcontainerec2f1c98/csvfileec2f1c98?comp=query
   response:
     body:
       string: !!binary |
@@ -168,59 +170,26 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoA/Ph5PAAL/kiSdydZxH53yALMIwDGI1Nl
-        cnZpY2UsUGFja2FnZSxWZXJzaW9uLFJlcG9QYXRoLE1pc3NpbmdEb2NzCkFwcCBDb25maWd1cmF0
-        aW9uLGF6dXJlLWRhdGEtYXBwY29uZmlndXJhdGlvbiwxLjAuMSxhcHBjb25maWd1cmF0aW9uLEZB
-        TFNFCkV2ZW50IEh1YnMsYXp1cmUtbWVzc2FnaW5nLWV2ZW50aHVicyw1LjAuMSxldmVudGh1YnMs
-        RkFMU0UKRXZlbnQgSHVicyAtIEF6dXJlIFN0b3JhZ2UgQ2hlY2twb2ludFN0b3JlLGF6dXJlLW1l
-        c3NhZ2luZy1ldmVudGh1YnMtY2hlY2twb2ludHN0b3JlLWJsb2IsMS4wLjEsZXZlbnRodWJzLEZB
-        TFNFCklkZW50aXR5LGF6dXJlLWlkZW50aXR5LDEuMS4wLWJldGEuMSxpZGVudGl0eSxGQUxTRQpL
-        ZXkgVmF1bHQgLSBDZXJ0aWZpY2F0ZXMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtY2VydGlmaWNh
-        dGVzLDQuMC4wLGtleXZhdWx0LEZBTFNFCktleSBWYXVsdCAtIEtleXMsYXp1cmUtc2VjdXJpdHkt
-        a2V5dmF1bHQta2V5cyw0LjIuMC1iZXRhLjEsa2V5dmF1bHQsRkFMU0UKS2V5IFZhdWx0IC0gU2Vj
-        cmV0cyxhenVyZS1zZWN1cml0eS1rZXl2YXVsdC1zZWNyZXRzLDQuMS4wLGtleXZhdWx0LEZBTFNF
-        ClN0b3JhZ2UgLSBCbG9icyxhenVyZS1zdG9yYWdlLWJsb2IsMTIuNC4wLHN0b3JhZ2UsRkFMU0UK
-        U3RvcmFnZSAtIEJsb2JzIEJhdGNoLGF6dXJlLXN0b3JhZ2UtYmxvYi1iYXRjaCwxMi40LjAtYmV0
-        YS4xLHN0b3JhZ2UsRkFMU0UKU3RvcmFnZSAtIEJsb2JzIENyeXB0b2dyYXBoeSxhenVyZS1zdG9y
-        YWdlLWJsb2ItY3J5cHRvZ3JhcGh5LDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBGaWxl
-        IFNoYXJlcyxhenVyZS1zdG9yYWdlLWZpbGUtc2hhcmUsMTIuMi4wLHN0b3JhZ2UsRkFMU0UKU3Rv
-        cmFnZSAtIFF1ZXVlcyxhenVyZS1zdG9yYWdlLXF1ZXVlLDEyLjMuMCxzdG9yYWdlLEZBTFNFClRl
-        eHQgQW5hbHl0aWNzLGF6dXJlLWFpLXRleHRhbmFseXRpY3MsMS4wLjAtYmV0YS4yLHRleHRhbmFs
-        eXRpY3MsRkFMU0UKVHJhY2luZyxhenVyZS1jb3JlLXRyYWNpbmctb3BlbnRlbGVtZXRyeSwxLjAu
-        MC1iZXRhLjIsY29yZSxGQUxTRQpTZXJ2aWNlLFBhY2thZ2UsVmVyc2lvbixSZXBvUGF0aCxNaXNz
-        aW5nRG9jcwpBcHAgQ29uZmlndXJhdGlvbixhenVyZS1kYXRhLWFwcGNvbmZpZ3VyYXRpb24sMS4w
-        LjEsYXBwY29uZmlndXJhdGlvbixGQUxTRQpFdmVudCBIdWJzLGF6dXJlLW1lc3NhZ2luZy1ldmVu
-        dGh1YnMsNS4wLjEsZXZlbnRodWJzLEZBTFNFCkV2ZW50IEh1YnMgLSBBenVyZSBTdG9yYWdlIENo
-        ZWNrcG9pbnRTdG9yZSxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLWNoZWNrcG9pbnRzdG9yZS1i
-        bG9iLDEuMC4xLGV2ZW50aHVicyxGQUxTRQpJZGVudGl0eSxhenVyZS1pZGVudGl0eSwxLjEuMC1i
-        ZXRhLjEsaWRlbnRpdHksRkFMU0UKS2V5IFZhdWx0IC0gQ2VydGlmaWNhdGVzLGF6dXJlLXNlY3Vy
-        aXR5LWtleXZhdWx0LWNlcnRpZmljYXRlcyw0LjAuMCxrZXl2YXVsdCxGQUxTRQpLZXkgVmF1bHQg
-        LSBLZXlzLGF6dXJlLXNlY3VyaXR5LWtleXZhdWx0LWtleXMsNC4yLjAtYmV0YS4xLGtleXZhdWx0
-        LEZBTFNFCktleSBWYXVsdCAtIFNlY3JldHMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtc2VjcmV0
-        cyw0LjEuMCxrZXl2YXVsdCxGQUxTRQpTdG9yYWdlIC0gQmxvYnMsYXp1cmUtc3RvcmFnZS1ibG9i
-        LDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBCYXRjaCxhenVyZS1zdG9yYWdl
-        LWJsb2ItYmF0Y2gsMTIuNC4wLWJldGEuMSxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBD
-        cnlwdG9ncmFwaHksYXp1cmUtc3RvcmFnZS1ibG9iLWNyeXB0b2dyYXBoeSwxMi40LjAsc3RvcmFn
-        ZSxGQUxTRQpTdG9yYWdlIC0gRmlsZSBTaGFyZXMsYXp1cmUtc3RvcmFnZS1maWxlLXNoYXJlLDEy
-        LjIuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBRdWV1ZXMsYXp1cmUtc3RvcmFnZS1xdWV1ZSwx
-        Mi4zLjAsc3RvcmFnZSxGQUxTRQpUZXh0IEFuYWx5dGljcyxhenVyZS1haS10ZXh0YW5hbHl0aWNz
-        LDEuMC4wLWJldGEuMix0ZXh0YW5hbHl0aWNzLEZBTFNFClRyYWNpbmcsYXp1cmUtY29yZS10cmFj
-        aW5nLW9wZW50ZWxlbWV0cnksMS4wLjAtYmV0YS4yLGNvcmUsRkFMU0UKU2VydmljZSxQYWNrYWdl
-        LFZlcnNpb24sUmVwb1BhdGgsTWlzc2luZ0RvY3MKQXBwIENvbmZpZ3VyYXRpb24sYXp1cmUtZGF0
-        YS1hcHBjb25maWd1cmF0aW9uLDEuMC4xLGFwcGNvbmZpZ3VyYXRpb24sRkFMU0UKRXZlbnQgSHVi
-        cyxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLDUuMC4xLGV2ZW50aHVicyxGQUxTRQr8+Hk8AAv+
-        SJJ3J1nEfnfIAgoEhCSEJPz4eTwAC/5IkncnWcR+d8gCBgaEJPz4eTwAC/5IkncnWcR+d8g=
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAxYqaRVIixUWfJ4lk+M+1HALcBADWBGFw
+        cGNvbmZpZ3VyYXRpb24uZXZlbnRodWJzLmlkZW50aXR5LmtleXZhdWx0LmtleXZhdWx0LmtleXZh
+        dWx0LnN0b3JhZ2Uuc3RvcmFnZS5zdG9yYWdlLnN0b3JhZ2Uuc3RvcmFnZS50ZXh0YW5hbHl0aWNz
+        LmNvcmUuUmVwb1BhdGguYXBwY29uZmlndXJhdGlvbi5ldmVudGh1YnMuZXZlbnRodWJzLmlkZW50
+        aXR5LmtleXZhdWx0LmtleXZhdWx0LmtleXZhdWx0LnN0b3JhZ2Uuc3RvcmFnZS5zdG9yYWdlLnN0
+        b3JhZ2Uuc3RvcmFnZS50ZXh0YW5hbHl0aWNzLmNvcmUuUmVwb1BhdGguYXBwY29uZmlndXJhdGlv
+        bi5ldmVudGh1YnMuxYqaRVIixUWfJ4lk+M+1HAJ+AgAoSW52YWxpZENvbHVtbk9yZGluYWxKQ29s
+        dW1uIG9yZGluYWwgZG9lcyBub3QgZXhpc3QgaW4gcm93LuwBxYqaRVIixUWfJ4lk+M+1HAIKBKAj
+        oCPFippFUiLFRZ8niWT4z7UcAgYGoCPFippFUiLFRZ8niWT4z7Uc
     headers:
       accept-ranges:
       - bytes
       content-type:
       - avro/binary
       date:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       etag:
-      - '"0x8D8028221B0EF22"'
+      - '"0x8D80EE4E3BCB679"'
       last-modified:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 15:25:50 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -228,7 +197,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 27 May 2020 21:08:40 GMT
+      - Fri, 12 Jun 2020 14:35:43 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
