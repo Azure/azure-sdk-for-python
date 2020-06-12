@@ -78,7 +78,6 @@ class FormTrainingClient(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
-        self._kwargs = kwargs.copy()
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
@@ -380,13 +379,15 @@ class FormTrainingClient(object):
             transport=TransportWrapper(self._client._client._pipeline._transport),
             policies=self._client._client._pipeline._impl_policies
         )  # type: Pipeline
-        kwargs.update(self._kwargs)
-        return FormRecognizerClient(
+        client = FormRecognizerClient(
             self._endpoint,
             self._credential,
             pipeline=_pipeline,
             **kwargs
         )
+        # need to share config, but can't pass as a keyword into client
+        client._client._config = self._client._client._config
+        return client
 
     def close(self):
         # type: () -> None

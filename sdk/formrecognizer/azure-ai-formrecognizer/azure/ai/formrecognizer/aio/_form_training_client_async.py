@@ -83,7 +83,6 @@ class FormTrainingClient(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-        self._kwargs = kwargs.copy()
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
@@ -403,13 +402,15 @@ class FormTrainingClient(object):
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
             policies=self._client._client._pipeline._impl_policies
         )  # type: AsyncPipeline
-        kwargs.update(self._kwargs)
-        return FormRecognizerClient(
+        client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
             pipeline=_pipeline,
             **kwargs
         )
+        # need to share config, but can't pass as a keyword into client
+        client._client._config = self._client._client._config
+        return client
 
     async def __aenter__(self) -> "FormTrainingClient":
         await self._client.__aenter__()
