@@ -87,7 +87,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                         return
                     raise AzureTestError('Timed out waiting for resource group to be deleted.')
                 else:
-                    self.client.resource_groups.delete(name, polling=False)
+                    self.client.resource_groups.begin_delete(name, polling=False)
             except CloudError:
                 pass
 
