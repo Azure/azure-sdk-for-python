@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: HEAD
-    uri: https://management.azure.com/providers/Microsoft.DocumentDB/databaseAccountNames/pycosmosdbx1427b100e?api-version=2020-03-01
+    uri: https://management.azure.com/providers/Microsoft.DocumentDB/databaseAccountNames/pycosmosdbx1427b100e?api-version=2020-04-01
   response:
     body:
       string: ''
@@ -24,7 +24,7 @@ interactions:
       content-length:
       - '148'
       date:
-      - Sat, 18 Apr 2020 06:49:03 GMT
+      - Fri, 12 Jun 2020 01:44:06 GMT
       pragma:
       - no-cache
       server:
@@ -51,35 +51,35 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e","name":"pycosmosdbx1427b100e","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Creating","ipRangeFilter":"","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"apiProperties":null,"databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
-        US","failoverPriority":0}],"cors":[],"capabilities":[]}}'
+        US","failoverPriority":0}],"cors":[],"capabilities":[],"ipRules":[]}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       cache-control:
       - no-store, no-cache
       content-length:
-      - '1471'
+      - '1476'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:49:12 GMT
+      - Fri, 12 Jun 2020 01:44:16 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e/operationResults/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e/operationResults/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       pragma:
       - no-cache
       server:
@@ -93,7 +93,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -109,10 +109,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -122,11 +122,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:49:44 GMT
+      - Fri, 12 Jun 2020 01:44:47 GMT
       pragma:
       - no-cache
       server:
@@ -140,7 +140,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -154,10 +154,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -167,11 +167,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:50:14 GMT
+      - Fri, 12 Jun 2020 01:45:17 GMT
       pragma:
       - no-cache
       server:
@@ -185,7 +185,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -199,10 +199,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -212,11 +212,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:50:44 GMT
+      - Fri, 12 Jun 2020 01:45:47 GMT
       pragma:
       - no-cache
       server:
@@ -230,7 +230,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -244,10 +244,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -257,11 +257,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:51:14 GMT
+      - Fri, 12 Jun 2020 01:46:19 GMT
       pragma:
       - no-cache
       server:
@@ -275,7 +275,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -289,10 +289,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -302,11 +302,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:51:47 GMT
+      - Fri, 12 Jun 2020 01:46:49 GMT
       pragma:
       - no-cache
       server:
@@ -320,7 +320,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -334,10 +334,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -347,11 +347,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:52:17 GMT
+      - Fri, 12 Jun 2020 01:47:20 GMT
       pragma:
       - no-cache
       server:
@@ -365,7 +365,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -379,10 +379,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -392,11 +392,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:52:47 GMT
+      - Fri, 12 Jun 2020 01:47:51 GMT
       pragma:
       - no-cache
       server:
@@ -410,7 +410,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -424,10 +424,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -437,11 +437,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:53:18 GMT
+      - Fri, 12 Jun 2020 01:48:22 GMT
       pragma:
       - no-cache
       server:
@@ -455,7 +455,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -469,10 +469,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -482,11 +482,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:53:49 GMT
+      - Fri, 12 Jun 2020 01:48:54 GMT
       pragma:
       - no-cache
       server:
@@ -500,7 +500,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -514,10 +514,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -527,11 +527,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:54:19 GMT
+      - Fri, 12 Jun 2020 01:49:25 GMT
       pragma:
       - no-cache
       server:
@@ -545,7 +545,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -559,10 +559,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -572,11 +572,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:54:49 GMT
+      - Fri, 12 Jun 2020 01:49:55 GMT
       pragma:
       - no-cache
       server:
@@ -590,7 +590,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -604,10 +604,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -617,11 +617,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:55:21 GMT
+      - Fri, 12 Jun 2020 01:50:26 GMT
       pragma:
       - no-cache
       server:
@@ -635,7 +635,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -649,10 +649,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -662,11 +662,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:55:51 GMT
+      - Fri, 12 Jun 2020 01:50:56 GMT
       pragma:
       - no-cache
       server:
@@ -680,7 +680,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -694,10 +694,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -707,11 +707,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:56:21 GMT
+      - Fri, 12 Jun 2020 01:51:28 GMT
       pragma:
       - no-cache
       server:
@@ -725,7 +725,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -739,10 +739,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -752,11 +752,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:56:52 GMT
+      - Fri, 12 Jun 2020 01:51:58 GMT
       pragma:
       - no-cache
       server:
@@ -770,7 +770,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -784,10 +784,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -797,11 +797,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:57:22 GMT
+      - Fri, 12 Jun 2020 01:52:29 GMT
       pragma:
       - no-cache
       server:
@@ -815,7 +815,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -829,10 +829,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -842,11 +842,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:57:54 GMT
+      - Fri, 12 Jun 2020 01:53:01 GMT
       pragma:
       - no-cache
       server:
@@ -860,7 +860,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -874,10 +874,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -887,11 +887,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:58:24 GMT
+      - Fri, 12 Jun 2020 01:53:32 GMT
       pragma:
       - no-cache
       server:
@@ -905,7 +905,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -919,10 +919,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -932,11 +932,11 @@ interactions:
       content-length:
       - '21'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:58:54 GMT
+      - Fri, 12 Jun 2020 01:54:03 GMT
       pragma:
       - no-cache
       server:
@@ -950,7 +950,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -964,10 +964,280 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:54:36 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:55:07 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:55:37 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:56:09 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:56:40 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-location:
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
+      content-type:
+      - application/json
+      date:
+      - Fri, 12 Jun 2020 01:57:11 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -977,11 +1247,11 @@ interactions:
       content-length:
       - '22'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/8a60bf73-dbfc-4db5-bc4d-8851cea491ba?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/3199f3f9-04d7-4a35-bd7f-bd576bc8210b?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:59:25 GMT
+      - Fri, 12 Jun 2020 01:57:43 GMT
       pragma:
       - no-cache
       server:
@@ -995,7 +1265,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
@@ -1009,29 +1279,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.13.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/0.15.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e","name":"pycosmosdbx1427b100e","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pycosmosdbx1427b100e.documents.azure.com:443/","ipRangeFilter":"","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"apiProperties":null,"databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pycosmosdbx1427b100e.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","documentEndpoint":"https://pycosmosdbx1427b100e-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","documentEndpoint":"https://pycosmosdbx1427b100e-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
         US","documentEndpoint":"https://pycosmosdbx1427b100e-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"pycosmosdbx1427b100e-westus","locationName":"West
-        US","failoverPriority":0}],"cors":[],"capabilities":[]}}'
+        US","failoverPriority":0}],"cors":[],"capabilities":[],"ipRules":[]}}'
     headers:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '1796'
+      - '1801'
       content-location:
-      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-03-01
+      - https://management.documents.azure.com:450/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_cosmosdb_test_accounts_create427b100e/providers/Microsoft.DocumentDB/databaseAccounts/pycosmosdbx1427b100e?api-version=2020-04-01
       content-type:
       - application/json
       date:
-      - Sat, 18 Apr 2020 06:59:25 GMT
+      - Fri, 12 Jun 2020 01:57:43 GMT
       pragma:
       - no-cache
       server:
@@ -1045,7 +1315,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-gatewayversion:
-      - version=2.10.0
+      - version=2.11.0
     status:
       code: 200
       message: Ok
