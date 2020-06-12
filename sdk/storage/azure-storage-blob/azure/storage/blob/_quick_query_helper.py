@@ -75,7 +75,7 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def _parse_quick_query_result(self, raw_response_body, stream, progress_callback=None):
         parsed_results = DataFileReader(QuickQueryStreamer(raw_response_body), DatumReader())
         for parsed_result in parsed_results:
-            if parsed_result.get('data'):
+            if 'data' in parsed_result:
                 stream.write(parsed_result.get('data'))
                 continue
 
@@ -84,7 +84,7 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
             fatal = QuickQueryError(parsed_result['name'],
                                     parsed_result['fatal'],
                                     parsed_result['description'],
-                                    parsed_result['position']) if parsed_result.get('fatal') else None
+                                    parsed_result['position']) if 'fatal' in parsed_result else None
             if progress_callback:
                 progress_callback(fatal, self.bytes_processed, self.total_bytes)
 
