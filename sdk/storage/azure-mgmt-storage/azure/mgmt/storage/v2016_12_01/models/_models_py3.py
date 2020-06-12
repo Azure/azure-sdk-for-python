@@ -391,14 +391,12 @@ class ServiceSasParameters(Model):
     :param resource: Required. The signed services accessible with the service
      SAS. Possible values include: Blob (b), Container (c), File (f), Share
      (s). Possible values include: 'b', 'c', 'f', 's'
-    :type resource: str or
-     ~azure.mgmt.storage.v2016_12_01.models.SignedResource
+    :type resource: str or ~azure.mgmt.storage.v2016_12_01.models.enum
     :param permissions: The signed permissions for the service SAS. Possible
      values include: Read (r), Write (w), Delete (d), List (l), Add (a), Create
      (c), Update (u) and Process (p). Possible values include: 'r', 'd', 'w',
      'l', 'a', 'c', 'u', 'p'
-    :type permissions: str or
-     ~azure.mgmt.storage.v2016_12_01.models.Permissions
+    :type permissions: str or ~azure.mgmt.storage.v2016_12_01.models.enum
     :param ip_address_or_range: An IP address or a range of IP addresses from
      which to accept requests.
     :type ip_address_or_range: str

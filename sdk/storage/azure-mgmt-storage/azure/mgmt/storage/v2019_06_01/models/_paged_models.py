@@ -142,29 +142,3 @@ class FileShareItemPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(FileShareItemPaged, self).__init__(*args, **kwargs)
-class ListQueuePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ListQueue <azure.mgmt.storage.v2019_06_01.models.ListQueue>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ListQueue]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ListQueuePaged, self).__init__(*args, **kwargs)
-class TablePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Table <azure.mgmt.storage.v2019_06_01.models.Table>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Table]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(TablePaged, self).__init__(*args, **kwargs)

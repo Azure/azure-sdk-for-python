@@ -300,11 +300,6 @@ class ListKeyExpand(str, Enum):
     kerb = "kerb"
 
 
-class ListContainersInclude(str, Enum):
-
-    deleted = "deleted"
-
-
 class ListSharesExpand(str, Enum):
 
     deleted = "deleted"

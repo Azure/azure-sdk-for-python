@@ -1,27 +1,5 @@
 # Release History
 
-## 11.0.0 (2020-05-30)
-
-**Features**
-
-  - Model BlobContainer has a new parameter remaining_retention_days
-  - Model BlobContainer has a new parameter version
-  - Model BlobContainer has a new parameter deleted
-  - Model BlobContainer has a new parameter deleted_time
-  - Model ListContainerItem has a new parameter remaining_retention_days
-  - Model ListContainerItem has a new parameter version
-  - Model ListContainerItem has a new parameter deleted
-  - Model ListContainerItem has a new parameter deleted_time
-  - Model Encryption has a new parameter require_infrastructure_encryption
-  - Added operation group QueueServicesOperations
-  - Added operation group TableServicesOperations
-  - Added operation group TableOperations
-  - Added operation group QueueOperations
-
-**Breaking changes**
-
-  - Operation BlobContainersOperations.list has a new signature
-
 ## 10.0.0 (2020-05-07)
 
 **Features**

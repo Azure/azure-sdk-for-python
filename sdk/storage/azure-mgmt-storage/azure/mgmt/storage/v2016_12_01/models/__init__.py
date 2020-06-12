@@ -66,8 +66,6 @@ from ._storage_management_client_enums import (
     KeyPermission,
     UsageUnit,
     HttpProtocol,
-    SignedResource,
-    Permissions,
 )
 
 __all__ = [
@@ -104,6 +102,4 @@ __all__ = [
     'KeyPermission',
     'UsageUnit',
     'HttpProtocol',
-    'SignedResource',
-    'Permissions',
 ]
