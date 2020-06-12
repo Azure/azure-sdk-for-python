@@ -14,21 +14,21 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"properties\":
-        {\r\n    \"creationData\": {\r\n      \"createOption\": \"Empty\"\r\n    },\r\n
-        \   \"diskSizeGB\": 20,\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\":
-        true\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"\
+        properties\": {\r\n    \"creationData\": {\r\n      \"createOption\": \"Empty\"\
+        \r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"provisioningState\": \"Updating\"\
+        ,\r\n    \"isArmResource\": true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8d1d3cd0-b01b-4ca7-b09d-abd99191bc05?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26f0106d-e76c-41a2-8667-e418601cf28d?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -36,11 +36,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:16 GMT
+      - Wed, 25 Mar 2020 03:42:38 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8d1d3cd0-b01b-4ca7-b09d-abd99191bc05?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26f0106d-e76c-41a2-8667-e418601cf28d?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -67,34 +67,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8d1d3cd0-b01b-4ca7-b09d-abd99191bc05?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26f0106d-e76c-41a2-8667-e418601cf28d?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-05-29T07:41:16.3349293+00:00\",\r\n  \"endTime\":
-        \"2020-05-29T07:41:16.538049+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
-        \ \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\n  \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\",\r\n
-        \ \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
-        \ \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
-        \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\":
-        500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\":
-        \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"2020-05-29T07:41:16.3505585+00:00\",\r\n
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n
-        \   \"diskSizeBytes\": 21474836480,\r\n    \"uniqueId\": \"8edfa6f4-0feb-4129-bcd1-50342dac20e9\"\r\n
-        \ }\r\n}\r\n  },\r\n  \"name\": \"8d1d3cd0-b01b-4ca7-b09d-abd99191bc05\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-03-25T03:42:38.7674124+00:00\",\r\n  \"\
+        endTime\": \"2020-03-25T03:42:38.9236931+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\
+        \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-25T03:42:38.7674124+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 21474836480,\r\n    \"uniqueId\": \"b3f9cecd-8ae8-46d3-a4a2-9b126d65b634\"\
+        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"26f0106d-e76c-41a2-8667-e418601cf28d\"\
+        \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1027'
+      - '1028'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:19 GMT
+      - Wed, 25 Mar 2020 03:42:41 GMT
       expires:
       - '-1'
       pragma:
@@ -111,7 +113,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49999,Microsoft.Compute/GetOperation30Min;399999
+      - Microsoft.Compute/GetOperation3Min;49997,Microsoft.Compute/GetOperation30Min;399935
     status:
       code: 200
       message: OK
@@ -125,22 +127,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\",\r\n
-        \ \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
-        \ \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
-        \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\":
-        500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\":
-        \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"2020-05-29T07:41:16.3505585+00:00\",\r\n
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n
-        \   \"diskSizeBytes\": 21474836480,\r\n    \"uniqueId\": \"8edfa6f4-0feb-4129-bcd1-50342dac20e9\"\r\n
-        \ }\r\n}"
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-25T03:42:38.7674124+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 21474836480,\r\n    \"uniqueId\": \"b3f9cecd-8ae8-46d3-a4a2-9b126d65b634\"\
+        \r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -149,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:19 GMT
+      - Wed, 25 Mar 2020 03:42:41 GMT
       expires:
       - '-1'
       pragma:
@@ -166,7 +169,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4999,Microsoft.Compute/LowCostGet30Min;39999
+      - Microsoft.Compute/LowCostGet3Min;4994,Microsoft.Compute/LowCostGet30Min;39930
     status:
       code: 200
       message: OK
@@ -180,24 +183,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\",\r\n
-        \ \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
-        \ \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
-        \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\":
-        500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\":
-        \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"2020-05-29T07:41:16.3505585+00:00\",\r\n
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n
-        \   \"diskSizeBytes\": 21474836480,\r\n    \"uniqueId\": \"8edfa6f4-0feb-4129-bcd1-50342dac20e9\"\r\n
-        \ }\r\n}"
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-25T03:42:38.7674124+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 21474836480,\r\n    \"uniqueId\": \"b3f9cecd-8ae8-46d3-a4a2-9b126d65b634\"\
+        \r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -206,7 +210,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:19 GMT
+      - Wed, 25 Mar 2020 03:42:41 GMT
       expires:
       - '-1'
       pragma:
@@ -223,7 +227,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4998,Microsoft.Compute/LowCostGet30Min;39998
+      - Microsoft.Compute/LowCostGet3Min;4993,Microsoft.Compute/LowCostGet30Min;39929
     status:
       code: 200
       message: OK
@@ -243,23 +247,23 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"sku\":
-        {\r\n    \"name\": \"Standard_LRS\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\":
-        {\r\n      \"createOption\": \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n
-        \   \"encryption\": {\r\n      \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n
-        \   },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\":
-        true\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"\
+        sku\": {\r\n    \"name\": \"Standard_LRS\"\r\n  },\r\n  \"properties\": {\r\
+        \n    \"creationData\": {\r\n      \"createOption\": \"Empty\"\r\n    },\r\
+        \n    \"diskSizeGB\": 20,\r\n    \"encryption\": {\r\n      \"type\": \"EncryptionAtRestWithPlatformKey\"\
+        \r\n    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\"\
+        : true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8538b5a1-6b94-40b4-b1cb-6495a0d15d87?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/9e69f9a2-21bc-48ee-9f8c-ed446184ba52?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -267,11 +271,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:21 GMT
+      - Wed, 25 Mar 2020 03:42:42 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8538b5a1-6b94-40b4-b1cb-6495a0d15d87?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/9e69f9a2-21bc-48ee-9f8c-ed446184ba52?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -298,25 +302,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/8538b5a1-6b94-40b4-b1cb-6495a0d15d87?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/9e69f9a2-21bc-48ee-9f8c-ed446184ba52?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-05-29T07:41:21.1007417+00:00\",\r\n  \"endTime\":
-        \"2020-05-29T07:41:21.2726299+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
-        \ \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\n  \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\",\r\n
-        \ \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
-        \ \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
-        \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\":
-        500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\":
-        \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"2020-05-29T07:41:16.3505585+00:00\",\r\n
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n
-        \   \"diskSizeBytes\": 21474836480,\r\n    \"uniqueId\": \"8edfa6f4-0feb-4129-bcd1-50342dac20e9\"\r\n
-        \ }\r\n}\r\n  },\r\n  \"name\": \"8538b5a1-6b94-40b4-b1cb-6495a0d15d87\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-03-25T03:42:43.0800815+00:00\",\r\n  \"\
+        endTime\": \"2020-03-25T03:42:43.2363381+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\
+        \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-25T03:42:38.7674124+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 21474836480,\r\n    \"uniqueId\": \"b3f9cecd-8ae8-46d3-a4a2-9b126d65b634\"\
+        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"9e69f9a2-21bc-48ee-9f8c-ed446184ba52\"\
+        \r\n}"
     headers:
       cache-control:
       - no-cache
@@ -325,7 +331,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:23 GMT
+      - Wed, 25 Mar 2020 03:42:45 GMT
       expires:
       - '-1'
       pragma:
@@ -342,7 +348,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49997,Microsoft.Compute/GetOperation30Min;399997
+      - Microsoft.Compute/GetOperation3Min;49995,Microsoft.Compute/GetOperation30Min;399933
     status:
       code: 200
       message: OK
@@ -356,22 +362,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\",\r\n
-        \ \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
-        \ \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
-        \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\":
-        500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\":
-        \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"2020-05-29T07:41:16.3505585+00:00\",\r\n
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n
-        \   \"diskSizeBytes\": 21474836480,\r\n    \"uniqueId\": \"8edfa6f4-0feb-4129-bcd1-50342dac20e9\"\r\n
-        \ }\r\n}"
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-25T03:42:38.7674124+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 21474836480,\r\n    \"uniqueId\": \"b3f9cecd-8ae8-46d3-a4a2-9b126d65b634\"\
+        \r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -380,7 +387,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 07:41:23 GMT
+      - Wed, 25 Mar 2020 03:42:46 GMT
       expires:
       - '-1'
       pragma:
@@ -397,7 +404,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4996,Microsoft.Compute/LowCostGet30Min;39996
+      - Microsoft.Compute/LowCostGet3Min;4990,Microsoft.Compute/LowCostGet30Min;39926
     status:
       code: 200
       message: OK
