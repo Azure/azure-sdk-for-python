@@ -1,10 +1,14 @@
 # Release History
 
-## 12.3.2
+## 12.3.2 (2020-6-12)
 **Fixes**
 - Fixed issue where batch requests could not be combined with SAS (#9534)
+- Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
 - Metadata cannot have leading space (#11457)
 - Improve the performance of upload when using max_concurrency
+
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 12.3.1 (2020-04-29)
 
