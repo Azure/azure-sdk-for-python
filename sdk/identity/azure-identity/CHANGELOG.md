@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.0b6 (Unreleased)
+
+
 ## 1.4.0b5 (2020-06-12)
 - Prevent an error on importing `AzureCliCredential` on Windows caused by a bug
   in old versions of Python 3.6 (this bug was fixed in Python 3.6.5).
