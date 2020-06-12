@@ -15,4 +15,3 @@ __all__ = ['KeyVaultClient']
 from .version import VERSION
 
 __version__ = VERSION
-
