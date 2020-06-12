@@ -28,6 +28,9 @@
   ],
   "tags": [
     {
+      "name": "Namespace Operations"
+    },
+    {
       "name": "Queue Operations"
     },
     {
@@ -1355,6 +1358,44 @@
         }
       ]
     },
+    "TrueFilter" :{
+      "allOf": [
+        {
+          "$ref": "#/definitions/RuleFilter"
+        },
+        {
+          "type":"object",
+          "properties": {
+            "SqlExpression": {
+              "type": "string",
+              "default": "1 = 1",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FalseFilter" :{
+      "allOf": [
+        {
+          "$ref": "#/definitions/RuleFilter"
+        },
+        {
+          "type":"object",
+          "properties": {
+            "SqlExpression": {
+              "type": "string",
+              "default": "1 != 1",
+              "xml": {
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              }
+            }
+          }
+        }
+      ]
+    },
     "RuleDescription": {
       "type": "object",
       "xml": {
@@ -1489,6 +1530,107 @@
             "$ref": "#/definitions/RuleDescriptionEntry"
           }
         }
+      }
+    },
+    "NamespaceProperties": {
+      "description": "Description of a Service Bus Namespace.",
+      "type": "object",
+      "xml": {
+        "name": "NamespaceInfo",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "CreatedTime": {
+          "description": "The exact time the namespace was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessagingSKU": {
+          "description": "",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "ModifiedTime": {
+          "description": "The exact time the namespace was last modified.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Name": {
+          "description": "Name of the namespace",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "NamespaceType": {
+          "description": "Name of the namespace",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        }
+      }
+    },
+    "NamespacePropertiesEntry": {
+      "description": "Represents an entry in the feed when querying namespace info",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The name of the namespace",
+          "$ref": "#/definitions/ResponseTitle"
+        },
+        "updated": {
+          "description": "The timestamp for when this entry was generated",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "author": {
+          "$ref": "#/definitions/ResponseAuthor"
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "The QueueDescription",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "Type of content in namespace info response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "NamespaceProperties": {
+              "$ref": "#/definitions/NamespaceProperties"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
       }
     }
   },
@@ -1960,6 +2102,32 @@
         "description": "Delete the rule with the given topicName, subscriptionName and ruleName.",
         "tags": [
           "Rule Operations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ServiceBusManagementErrorResponse"
+          }
+        }
+      }
+    },
+    "/$namespaceinfo": {
+      "get": {
+        "operationId": "Namespace_Get",
+        "summary": "Get Namespace Properties",
+        "description": "Get the details about the Service Bus namespace.",
+        "tags": [
+          "Namespace Operations"
         ],
         "parameters": [
           {
