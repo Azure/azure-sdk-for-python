@@ -485,36 +485,41 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             return {"client": client,
                     "container_sas_url": container_sas_url}
 
+    def get_copy_parameters(self, training_params, client, **kwargs):
+        if self.is_live:
+            resource_group = kwargs.get("resource_group")
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
+
+            resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
+                          "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
+            resource_location = "centraluseuap"
+            self.test_class_instance.scrubber.register_name_pair(
+                resource_id,
+                "resource_id"
+            )
+        else:
+            resource_location = "centraluseuap"
+            resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
+
+        return {
+            "client": client,
+            "container_sas_url": training_params["container_sas_url"],
+            "location": resource_location,
+            "resource_id": resource_id
+        }
+
     def create_resource(self, name, **kwargs):
         client = self.create_form_client(**kwargs)
+
         if not self.training:
             return {"client": client}
 
         training_params = self.get_training_parameters(client)
 
         if self.copy:
-            if self.is_live:
-                resource_group = kwargs.get("resource_group")
-                subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-                form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
+            return self.get_copy_parameters(training_params, client)
 
-                resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
-                              "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = "centraluseuap"
-                self.test_class_instance.scrubber.register_name_pair(
-                    resource_id,
-                    "resource_id"
-                )
-            else:
-                resource_location = "centraluseuap"
-                resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
-
-            return {
-                "client": client,
-                "container_sas_url": training_params["container_sas_url"],
-                "location": resource_location,
-                "resource_id": resource_id
-            }
         return training_params
 
     def create_form_client(self, **kwargs):
