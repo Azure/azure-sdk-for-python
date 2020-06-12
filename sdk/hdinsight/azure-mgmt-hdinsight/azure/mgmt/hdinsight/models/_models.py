@@ -1338,22 +1338,6 @@ class HostInfo(Model):
         self.name = kwargs.get('name', None)
 
 
-class HostInfoListResult(Model):
-    """Result of the request to list cluster hosts.
-
-    :param value: The list of cluster hosts.
-    :type value: list[~azure.mgmt.hdinsight.models.HostInfo]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[HostInfo]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(HostInfoListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class KafkaRestProperties(Model):
     """The kafka rest proxy configuration which contains AAD security group
     information.

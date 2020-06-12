@@ -53,8 +53,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: HostInfoListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hdinsight.models.HostInfoListResult or
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.hdinsight.models.HostInfo] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
@@ -91,7 +91,7 @@ class VirtualMachinesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('HostInfoListResult', response)
+            deserialized = self._deserialize('[HostInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
