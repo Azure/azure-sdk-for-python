@@ -215,6 +215,6 @@ __all__ = [
     'ContainerEncryptionScope',
     'BlobQueryError',
     'DelimitedJSON',
-    'CSVDialect'
+    'CSVDialect',
     'BlobQueryReader'
 ]

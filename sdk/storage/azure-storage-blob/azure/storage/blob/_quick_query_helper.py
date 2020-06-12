@@ -65,9 +65,8 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 raise error
             if self._errors == 'ignore':
                 return None
-            else:
-                if not self._errors(error):
-                    raise error
+            if not self._errors(error):
+                raise error
         return None
 
     def _iter_records(self):

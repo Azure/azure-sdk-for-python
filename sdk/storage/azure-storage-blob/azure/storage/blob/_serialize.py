@@ -27,9 +27,7 @@ from ._generated.models import (
     JsonTextConfiguration,
     QueryFormatType,
     BlobTag,
-    BlobTags,
-    JsonTextConfiguration,
-    DelimitedTextConfiguration,
+    BlobTags
 )
 
 
