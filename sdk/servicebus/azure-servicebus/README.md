@@ -124,7 +124,7 @@ The following sections provide several code snippets covering some of the most c
 * [Send a message to a queue](#send-a-message-to-a-queue)
 * [Receive a message from a queue](#receive-a-message-from-a-queue)
 * [Sending and receiving a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
-* [Defer a message on receipt](#defer-a-message-on-receipt)
+* [Settle a message after receipt](#settle-a-message-after-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
@@ -160,11 +160,16 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_receiver(queue_name) as receiver:
+    # idle_timeout specifies how long the receiver should wait with no incoming messages before stopping receipt.  Default is None; to receive forever.
+    with client.get_queue_receiver(queue_name, idle_timeout=30) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.complete()
 ```
+
+> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages, as opposed to receiving perpetually.
+
+It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
+
 
 ### Sending and receiving a message from a session enabled subscription
 
@@ -187,14 +192,74 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_subscription_session_receiver(topic_name, subscription_name, session_id) as receiver:
         for msg in receiver:
             print(str(msg))
+```
+
+### Settle a message after receipt
+
+When receiving from a queue, you have multiple actions you can take on the messages you receive.  
+
+> **NOTE**: You can only settle `ReceivedMessage` objects having been returned from `ServiceBusReceiver.receive()` and `ServiceBusReceive.__iter__()` in `ReceiveSettleMode.PeekLock` mode
+> (this is the default).  `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt as if `complete()` had been called on it.  `PeekMessage` messages
+> returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aformentioned receive methods.
+
+#### Complete
+
+Declares the message processing to be successfully completed, removing the message from the queue.
+
+```Python
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
             msg.complete()
 ```
 
-### Defer a message on receipt
+#### Abandon
 
-When receiving from a queue, you have multiple actions you can take on the messages you receive.  Where the prior example completes a message,
-permanently removing it from the queue and marking as complete, this example demonstrates how to defer the message, sending it back to the queue
-such that it must now be received via sequence number:
+Abandon processing of the message for the time being, returning the message immediately back to the queue to be picked up by another (or the same) receiver.
+
+```Python
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.abandon()
+```
+
+#### DeadLetter
+
+Transfer the message from the primary queue and into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_queue_deadletter_receiver` function and consumed from like any other queue receiver.
+
+```Python
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.dead_letter()
+```
+
+#### Defer
+
+Defer is subtly different from the prior settlement methods.  It prevents the message from being directly received from the queue
+by setting it aside such that it must be received by sequence number in a call to `ServiceBusReceiver.receive_deferred_messages`
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -209,11 +274,6 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
             msg.defer()
 ```
-
-Other settlement methods (beyond complete and defer) include:
-* `dead_letter`, removing the message from the primary queue and sending it to a
-special "dead-letter sub-queue" where it can be accessed using the `get_queue_deadletter_receiver` function.
-* `abandon`, immediately returning the message back to the queue to be picked up by another (or the same) receiver.
 
 ## Troubleshooting
 
@@ -233,7 +293,33 @@ link will extend this timeout.
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 - max_wait_time: Provided when calling receive() to fetch a batch of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
 
+> **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `renew_lock()` manually, one can
+> leverage the `AutoLockRenew` functionality detailed below.
+
 ### AutoLockRenew
+
+`AutoLockRenew` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `renew_lock()` is impractical or undesired.
+Internally, it is not much more than shorthand for creating a concurrent watchdog to call `renew_lock()` if the object is nearing expiry.
+It should be used as follows:
+
+```python
+from azure.servicebus import ServiceBusClient, AutoLockRenew
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+queue_name = os.environ['SERVICE_BUS_SESSION_ID']
+
+renewer = AutoLockRenew()
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
+        renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
+        for msg in receiver.receive():
+            renewer.register(msg, timeout=60)
+            # Do your application logic here
+            msg.complete()
+renewer.shutdown()
+```
 
 If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.
 It would also manifest when trying to take action (such as completing a message) on the specified object.
