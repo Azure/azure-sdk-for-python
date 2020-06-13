@@ -76,7 +76,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 raise error
         return None
 
-    def _iter_records(self):
+    def _iter_stream(self):
         if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
@@ -110,7 +110,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             or any writable stream.
         :returns: None
         """
-        for record in self._iter_records():
+        for record in self._iter_stream():
             stream.write(record)
 
     def records(self):
@@ -124,7 +124,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         :rtype: Iterable[Union[bytes, str]]
         """
         delimiter = self.record_delimiter.encode('utf-8')
-        for record_chunk in self._iter_records():
+        for record_chunk in self._iter_stream():
             for record in record_chunk.split(delimiter):
                 if self._encoding:
                     yield record.decode(self._encoding)
