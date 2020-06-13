@@ -218,12 +218,7 @@ class TopicDescription(object):
         self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
         self.authorization_rules = kwargs.get('authorization_rules', None)
         self.status = kwargs.get('status', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.accessed_at = kwargs.get('accessed_at', None)
         self.support_ordering = kwargs.get('support_ordering', None)
-        self.message_count_details = kwargs.get('message_count_details', None)
-        self.subscription_count = kwargs.get('subscription_count', None)
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
         self.enable_partitioning = kwargs.get('enable_partitioning', None)
         self.entity_availability_status = kwargs.get('entity_availability_status', None)
@@ -246,12 +241,7 @@ class TopicDescription(object):
         qd.is_anonymous_accessible = internal_td.is_anonymous_accessible
         qd.authorization_rules = internal_td.authorization_rules
         qd.status = internal_td.status
-        qd.created_at = internal_td.created_at
-        qd.updated_at = internal_td.updated_at
-        qd.accessed_at = internal_td.accessed_at
         qd.support_ordering = internal_td.support_ordering
-        qd.message_count_details = internal_td.message_count_details
-        qd.subscription_count = internal_td.subscription_count
         qd.auto_delete_on_idle = internal_td.auto_delete_on_idle
         qd.enable_partitioning = internal_td.enable_partitioning
         qd.entity_availability_status = internal_td.entity_availability_status
@@ -272,12 +262,7 @@ class TopicDescription(object):
         self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
         self._internal_td.authorization_rules = self.authorization_rules
         self._internal_td.status = self.status
-        self._internal_td.created_at = self.created_at
-        self._internal_td.updated_at = self.updated_at
-        self._internal_td.accessed_at = self.accessed_at
         self._internal_td.support_ordering = self.support_ordering
-        self._internal_td.message_count_details = self.message_count_details
-        self._internal_td.subscription_count = self.subscription_count
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_td.enable_partitioning = self.enable_partitioning
         self._internal_td.entity_availability_status = self.entity_availability_status
@@ -288,15 +273,66 @@ class TopicDescription(object):
         return self._internal_td
 
 
-class SubscriptionDescription(InternalSubscriptionDescription):
+class TopicRuntimeInfo(object):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TopicRuntimeInfo, self).__init__(**kwargs)
+        self.topic_name = kwargs.get('topic_name', None)
+        self._internal_td = None
+        self.status = kwargs.get('status', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.accessed_at = kwargs.get('accessed_at', None)
+        self.message_count_details = kwargs.get('message_count_details', None)
+        self.subscription_count = kwargs.get('subscription_count', None)
+
+    @classmethod
+    def _from_internal_entity(cls, internal_td):
+        qd = cls()
+        qd.created_at = internal_td.created_at
+        qd.updated_at = internal_td.updated_at
+        qd.accessed_at = internal_td.accessed_at
+        qd.message_count_details = internal_td.message_count_details
+        qd.subscription_count = internal_td.subscription_count
+
+
+class SubscriptionDescription(object):
     def __init__(self, **kwargs):
         super(SubscriptionDescription, self).__init__(**kwargs)
         self.topic_name = kwargs.get("topic_name")
         self.subscription_name = kwargs.get("subscription_name")
         self._internal_sd = None
 
+        self.lock_duration = kwargs.get('lock_duration', None)
+        self.requires_session = kwargs.get('requires_session', None)
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
+        self.dead_lettering_on_filter_evaluation_exceptions = kwargs.get(
+            'dead_lettering_on_filter_evaluation_exceptions', None)
+        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.status = kwargs.get('status', None)
+        self.forward_to = kwargs.get('forward_to', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.entity_availability_status = kwargs.get('entity_availability_status', None)
 
-class RuleDescription(InternalRuleDescription):
+
+class SubscriptionRuntimeInfo(object):
+    def __init__(self, **kwargs):
+        super(SubscriptionRuntimeInfo, self).__init__(**kwargs)
+        self.topic_name = kwargs.get("topic_name")
+        self.subscription_name = kwargs.get("subscription_name")
+
+        self.message_count = kwargs.get('message_count', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.accessed_at = kwargs.get('accessed_at', None)
+        self.message_count_details = kwargs.get('message_count_details', None)
+
+
+class RuleDescription(object):
     def __init__(self, **kwargs):
         self.topic_name = kwargs.get("topic_name")
         self.subscription_name = kwargs.get("subscription_name")

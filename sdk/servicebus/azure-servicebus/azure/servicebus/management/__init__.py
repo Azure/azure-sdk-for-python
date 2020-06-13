@@ -5,8 +5,10 @@
 
 from ._management_client import ServiceBusManagementClient
 from ._generated.models import AuthorizationRule, MessageCountDetails, \
-    AccessRights, EntityAvailabilityStatus, EntityStatus
-from ._models import QueueRuntimeInfo, QueueDescription
+    AccessRights, EntityAvailabilityStatus, EntityStatus, \
+    RuleDescription, RuleFilter, CorrelationFilter, SqlFilter, TrueFilter, FalseFilter
+from ._models import QueueRuntimeInfo, QueueDescription, TopicRuntimeInfo, TopicDescription, \
+    SubscriptionDescription, SubscriptionRuntimeInfo
 
 __all__ = [
     "ServiceBusManagementClient",

@@ -12,7 +12,8 @@ import six
 from azure.core.paging import ItemPaged
 from azure.servicebus.management._generated.models import QueueDescriptionFeed, TopicDescription, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
-    RuleDescriptionFeed, RuleDescription
+    RuleDescriptionFeed, RuleDescription, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
+    TopicDescriptionFeed, CreateSubscriptionBody
 from azure.servicebus.management._utils import extract_data_template, get_next_template
 from azure.servicebus.management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from msrest.exceptions import ValidationError
@@ -332,18 +333,52 @@ class ServiceBusManagementClient:
         pass
 
     def create_topic(self, topic, **kwargs):
-        pass
+        create_entity_body = CreateTopicBody(
+            content=CreateTopicBodyContent(
+                topic_description=topic,  # type: ignore
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        entry_ele = self._impl.entity.put(
+            topic.topic_name,  # type: ignore
+            request_body, api_version=constants.API_VERSION, **kwargs)
+        entry = TopicDescriptionEntry.deserialize(entry_ele)
+        result = entry.content.queue_description
+        return result
 
     def update_topic(self, topic, **kwargs):
-        pass
+        create_entity_body = CreateTopicBody(
+            content=CreateTopicBodyContent(
+                topic_description=topic,  # type: ignore
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        entry_ele = self._impl.entity.put(
+            topic.topic_name,  # type: ignore
+            request_body, api_version=constants.API_VERSION, if_match="*", **kwargs)
+        entry = TopicDescriptionEntry.deserialize(entry_ele)
+        result = entry.content.queue_description
+        return result
 
     def delete_topic(self, topic_name, **kwargs):
-        pass
+        self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_topics(self, topic_name, **kwargs):
-        pass
+    def list_topics(self, **kwargs):
+        def entry_to_topic(entry):
+            rule = entry.content.subscription_description
+            # TODO: convert to external SubscriptionDescription
+            return rule
 
-    def list_topics_runtime_info(self, topic_name, **kwargs):
+        extract_data = functools.partial(
+            extract_data_template, TopicDescriptionFeed, entry_to_topic
+        )
+        get_next = functools.partial(
+            get_next_template, functools.partial(self._impl.list_subscriptions), **kwargs
+        )
+        return ItemPaged(
+            get_next, extract_data)
+
+    def list_topics_runtime_info(self, **kwargs):
         pass
 
     def get_subscription(self, topic_name, subscription_name, **kwargs):
@@ -355,14 +390,36 @@ class ServiceBusManagementClient:
     def get_subscription_runtime_info(self, topic_name, subscription_name, **kwargs):
         pass
 
-    def create_subscriptiono(self, subscription, **kwargs):
-        pass
+    def create_subscription(self, subscription, **kwargs):
+        create_entity_body = CreateSubscriptionBody(
+            content=CreateTopicBodyContent(
+                subscription_description=subscription,  # type: ignore
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        entry_ele = self._impl.entity.put(
+            subscription.subscription_name,  # type: ignore
+            request_body, api_version=constants.API_VERSION, **kwargs)
+        entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        result = entry.content.subscription_description
+        return result
 
     def update_subscription(self, subscription, **kwargs):
-        pass
+        create_entity_body = CreateSubscriptionBody(
+            content=CreateTopicBodyContent(
+                subscription_description=subscription,  # type: ignore
+            )
+        )
+        request_body = create_entity_body.serialize(is_xml=True)
+        entry_ele = self._impl.entity.put(
+            subscription.subscription_name,  # type: ignore
+            request_body, api_version=constants.API_VERSION, if_match="*", **kwargs)
+        entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        result = entry.content.subscription_description
+        return result
 
     def delete_subscription(self, topic_name, subscription_name, **kwargs):
-        pass
+        self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(self, topic_name, **kwargs):
         def entry_to_rule(entry):
@@ -417,8 +474,10 @@ class ServiceBusManagementClient:
     def list_rules_runtime_info(self, topic_name, subscription_name, **kwargs):
         pass
 
-    def get_management_properties(self):
-        pass
+    def get_namespace_properties(self, **kwargs):
+        entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
+        namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
+        return namespace_entry.content.namespace_properties
 
     # TODO: discuss whether we need API xxx_exists in Python. It's easy to tell by get_xxx(), which
     # raises ResourceNotExists
