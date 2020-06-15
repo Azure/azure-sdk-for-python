@@ -44,7 +44,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
                 renewer.register(msg, timeout=100)
             print('Register messages into AutoLockRenew done.')
 
-            await asyncio.sleep(100)  # message handling for long period
+            await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
                 await msg.complete()
