@@ -21,8 +21,8 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 class TestContentFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_content_encoded_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_content_encoded_url(self, client):
         try:
             poller = client.begin_recognize_content_from_url("https://fakeuri.com/blank%20space")
         except HttpResponseError as e:

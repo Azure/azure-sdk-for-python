@@ -47,8 +47,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipts_encoded_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipts_encoded_url(self, client):
         try:
             poller = await client.begin_recognize_receipts_from_url("https://fakeuri.com/blank%20space")
         except HttpResponseError as e:

@@ -68,7 +68,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             copy = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     async def test_copy_model_fail_bad_model_id(self, client, container_sas_url, location, resource_id):
         pytest.skip("service team will tell us when to enable this test")
 

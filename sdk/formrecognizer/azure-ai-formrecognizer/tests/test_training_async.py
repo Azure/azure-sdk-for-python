@@ -38,9 +38,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_training_encoded_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_training_encoded_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = await client.begin_training(
                 training_files_url="https://fakeuri.com/blank%20space",
