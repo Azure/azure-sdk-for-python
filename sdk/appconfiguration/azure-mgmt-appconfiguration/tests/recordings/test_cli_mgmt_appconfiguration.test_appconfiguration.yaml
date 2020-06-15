@@ -12,28 +12,25 @@ interactions:
       Content-Length:
       - '85'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-appconfiguration/0.4.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-04-14T14:30:06.4841259+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore","name":"myConfigStore","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-05-19T08:55:20.8429316+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a","name":"configuration39c8158a","location":"westus","tags":{}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/50db16ce-8844-7473-f0ca-62024e75e984?api-version=2019-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/119bc219-ad5c-fd45-2f73-4a720afbb783?api-version=2019-11-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '492'
+      - '508'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 14:30:06 GMT
+      - Tue, 19 May 2020 08:55:21 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -53,22 +50,21 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-appconfiguration/0.4.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/50db16ce-8844-7473-f0ca-62024e75e984?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/119bc219-ad5c-fd45-2f73-4a720afbb783?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/50db16ce-8844-7473-f0ca-62024e75e984","name":"50db16ce-8844-7473-f0ca-62024e75e984","status":"Succeeded","error":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/119bc219-ad5c-fd45-2f73-4a720afbb783","name":"119bc219-ad5c-fd45-2f73-4a720afbb783","status":"Succeeded","error":null}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/50db16ce-8844-7473-f0ca-62024e75e984?api-version=2019-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/119bc219-ad5c-fd45-2f73-4a720afbb783?api-version=2019-11-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -76,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 14:30:18 GMT
+      - Tue, 19 May 2020 08:55:31 GMT
       expires:
       - '-1'
       pragma:
@@ -98,30 +94,29 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-appconfiguration/0.4.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-04-14T14:30:07+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-05-19T08:55:22+00:00","endpoint":"https://configuration39c8158a.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a","name":"configuration39c8158a","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '575'
+      - '599'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 14:30:23 GMT
+      - Tue, 19 May 2020 08:55:31 GMT
       etag:
-      - W/"2e009901-0000-0700-0000-5e95c8ef0000"
+      - W/"9e00330e-0000-0700-0000-5ec39ef90000"
       expires:
       - '-1'
       pragma:
@@ -140,54 +135,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-appconfiguration/0.4.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2019-11-01-preview
-  response:
-    body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-04-14T14:30:07+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '575'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 14 Apr 2020 14:30:23 GMT
-      etag:
-      - W/"2e009901-0000-0700-0000-5e95c8ef0000"
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - openresty/1.15.8.1
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
+    body: '{"location": "eastus", "properties": {"addressSpace": {"addressPrefixes":
+      ["10.0.0.0/16"]}}}'
     headers:
       Accept:
       - application/json
@@ -196,24 +145,1117 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '92'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-appconfiguration/0.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2019-11-01-preview
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname?api-version=2020-04-01
   response:
     body:
-      string: ''
+      string: "{\r\n  \"name\": \"vnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname\"\
+        ,\r\n  \"etag\": \"W/\\\"86513df7-ac82-4df2-8311-c25fd80eaf5b\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
+        \   \"resourceGuid\": \"a403b02f-9bab-4ff9-94c2-c3503d0a1bef\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
+        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
+        : false\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/56d3e719-81e0-4179-8209-0f925887a165?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '688'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - bc0de5bc-2ec3-476c-9920-79cb6d11d007
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/56d3e719-81e0-4179-8209-0f925887a165?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '0'
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
       date:
-      - Tue, 14 Apr 2020 14:30:25 GMT
+      - Tue, 19 May 2020 08:55:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - d2e35b9c-a8de-47ad-a7b9-4794c81b42e3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"vnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname\"\
+        ,\r\n  \"etag\": \"W/\\\"47e79ef6-2e46-4d2b-b400-32609e426921\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"a403b02f-9bab-4ff9-94c2-c3503d0a1bef\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
+        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
+        : false\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '689'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:41 GMT
+      etag:
+      - W/"47e79ef6-2e46-4d2b-b400-32609e426921"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 1d524e82-b179-4a65-907d-1423aa436964
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"addressPrefix": "10.0.0.0/24", "privateEndpointNetworkPolicies":
+      "disabled", "privateLinkServiceNetworkPolicies": "disabled"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '143'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname\"\
+        ,\r\n  \"etag\": \"W/\\\"1610ca65-dd2f-4d7f-8009-d90d99a5e00c\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
+        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
+        : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
+        \r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1d62bc94-eb64-489b-bb0e-b7255cd5d7ad?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '581'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 91a2e132-f8a1-4b0b-bd6b-bd33e4f45df9
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1d62bc94-eb64-489b-bb0e-b7255cd5d7ad?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - da8c2646-074d-40b1-a8db-b44eabd8f2fe
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname\"\
+        ,\r\n  \"etag\": \"W/\\\"271a082e-cc7a-40a9-b839-0841be084881\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
+        : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
+        \r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '582'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:46 GMT
+      etag:
+      - W/"271a082e-cc7a-40a9-b839-0841be084881"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - d791addb-86a9-4dbe-847c-130c5723f3d1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"location": "eastus", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname"},
+      "privateLinkServiceConnections": [{"properties": {"privateLinkServiceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a",
+      "groupIds": ["configurationStores"]}, "name": "myconnection"}]}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '607'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"endpointxyz\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz\"\
+        ,\r\n  \"etag\": \"W/\\\"145d252d-4cbb-4277-a1e3-bf4377630630\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
+        eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
+        ,\r\n    \"resourceGuid\": \"cad9e8d5-cc13-423a-95a2-480a52784f2e\",\r\n \
+        \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
+        myconnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz/privateLinkServiceConnections/myconnection\"\
+        ,\r\n        \"etag\": \"W/\\\"145d252d-4cbb-4277-a1e3-bf4377630630\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
+        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a\"\
+        ,\r\n          \"groupIds\": [\r\n            \"configurationStores\"\r\n\
+        \          ],\r\n          \"privateLinkServiceConnectionState\": {\r\n  \
+        \          \"status\": \"Approved\",\r\n            \"description\": \"\"\
+        ,\r\n            \"actionsRequired\": \"None\"\r\n          }\r\n        },\r\
+        \n        \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\
+        \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
+        \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname\"\
+        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/endpointxyz.nic.067e04db-8917-4519-9444-41212c719df2\"\
+        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/33669c52-9882-424d-9259-c30540b1f9cb?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '2157'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:55:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - a9db9842-c53b-4653-b2cf-bdad22f01bf5
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/33669c52-9882-424d-9259-c30540b1f9cb?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '30'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - f012810b-6800-4612-ab8f-881b8e6f3167
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/33669c52-9882-424d-9259-c30540b1f9cb?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '30'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - daa0acdb-6188-46d8-9e80-5933f89a1588
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/33669c52-9882-424d-9259-c30540b1f9cb?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 596b470b-cd1f-4b78-a227-01df251a9c12
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"endpointxyz\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz\"\
+        ,\r\n  \"etag\": \"W/\\\"65ff1f5f-85ae-44d9-9445-0a53b4f35f34\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
+        eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
+        ,\r\n    \"resourceGuid\": \"cad9e8d5-cc13-423a-95a2-480a52784f2e\",\r\n \
+        \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
+        myconnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz/privateLinkServiceConnections/myconnection\"\
+        ,\r\n        \"etag\": \"W/\\\"65ff1f5f-85ae-44d9-9445-0a53b4f35f34\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
+        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a\"\
+        ,\r\n          \"groupIds\": [\r\n            \"configurationStores\"\r\n\
+        \          ],\r\n          \"privateLinkServiceConnectionState\": {\r\n  \
+        \          \"status\": \"Approved\",\r\n            \"description\": \"Auto-Approved\"\
+        ,\r\n            \"actionsRequired\": \"None\"\r\n          }\r\n        },\r\
+        \n        \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\
+        \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
+        \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetname/subnets/subnetname\"\
+        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/endpointxyz.nic.067e04db-8917-4519-9444-41212c719df2\"\
+        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": [\r\n      {\r\n      \
+        \  \"fqdn\": \"configuration39c8158a.azconfig.io\",\r\n        \"ipAddresses\"\
+        : [\r\n          \"10.0.0.4\"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2308'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:22 GMT
+      etag:
+      - W/"65ff1f5f-85ae-44d9-9445-0a53b4f35f34"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 4e7d9468-2c5a-42bf-84e3-e5e3a91f5d51
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-05-19T08:55:22+00:00","endpoint":"https://configuration39c8158a.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":"endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionsRequired":"None"}}}]},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a","name":"configuration39c8158a","location":"westus","tags":{"my_tag":"myTagValue"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1401'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:22 GMT
+      etag:
+      - W/"9e00e814-0000-0700-0000-5ec39f320000"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"properties": {"privateEndpoint": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},
+      "privateLinkServiceConnectionState": {"status": "Approved", "description": "Auto-Approved"}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '324'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Updating","privateEndpoint":null,"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":"endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","location":null,"tags":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/30c88986-5fae-086f-3bd3-8d7ad6cbc8d0?api-version=2019-11-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '617'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/30c88986-5fae-086f-3bd3-8d7ad6cbc8d0?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/30c88986-5fae-086f-3bd3-8d7ad6cbc8d0","name":"30c88986-5fae-086f-3bd3-8d7ad6cbc8d0","status":"Succeeded","error":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/30c88986-5fae-086f-3bd3-8d7ad6cbc8d0?api-version=2019-11-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '248'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":null,"location":"westus","tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '765'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":null,"location":"westus","tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '765'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateLinkResources?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"value":[{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateLinkResources/configurationStores","name":"configurationStores","type":"Microsoft.AppConfiguration/configurationStores/privateLinkResources","properties":{"groupId":"configurationStores","requiredMembers":["configurationStores"],"requiredZoneNames":["privatelink.azconfig.io"]}}],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateLinkResources/configurationStores?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateLinkResources/configurationStores","name":"configurationStores","type":"Microsoft.AppConfiguration/configurationStores/privateLinkResources","properties":{"groupId":"configurationStores","requiredMembers":["configurationStores"],"requiredZoneNames":["privatelink.azconfig.io"]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '498'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"value":[{"type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":null,"location":"westus","tags":null}],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '793'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"sku": {"name": "Standard"}, "tags": {"category": "Marketing"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '64'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-05-19T08:55:22+00:00","endpoint":"https://configuration39c8158a.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","name":"endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/endpointxyz"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Auto-Approved","actionsRequired":"None"}}}]},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a","name":"configuration39c8158a","location":"westus","tags":{"category":"Marketing"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1402'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:37 GMT
+      etag:
+      - W/"9e004517-0000-0700-0000-5ec39f440000"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "contoso", "type": "Microsoft.AppConfiguration/configurationStores"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '77'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/checkNameAvailability?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"nameAvailable":false,"message":"The specified name is already in
+        use.","reason":"AlreadyExists"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '98'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "contoso", "type": "Microsoft.AppConfiguration/configurationStores"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '77'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/checkNameAvailability?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"nameAvailable":false,"message":"The specified name is already in
+        use.","reason":"AlreadyExists"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '98'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a/privateEndpointConnections/endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores/privateEndpointConnections","properties":{"provisioningState":"Deleting","privateEndpoint":null,"privateLinkServiceConnectionState":null},"id":null,"name":"endpointxyz.cad9e8d5-cc13-423a-95a2-480a52784f2e","location":null,"tags":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff?api-version=2019-11-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '290'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:39 GMT
       expires:
       - '-1'
       pragma:
@@ -226,6 +1268,134 @@ interactions:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff","name":"2881e91c-5493-6d89-0180-c4226047acff","status":"Deleting","error":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff?api-version=2019-11-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '247'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff","name":"2881e91c-5493-6d89-0180-c4226047acff","status":"Succeeded","error":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/2881e91c-5493-6d89-0180-c4226047acff?api-version=2019-11-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '248'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 May 2020 08:56:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-appconfiguration/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configuration39c8158a?api-version=2019-11-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 19 May 2020 08:57:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
     status:
       code: 200
       message: OK

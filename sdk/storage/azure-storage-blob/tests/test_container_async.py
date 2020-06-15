@@ -1105,11 +1105,16 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         blob_props = await blob_client1.get_blob_properties()
         blob_props.snapshot = snapshot['snapshot']
 
+        blob_props_d = dict()
+        blob_props_d['name'] = "blobd"
+        blob_props_d['delete_snapshots'] = "include"
+        blob_props_d['lease_id'] = lease.id
+
         response = await self._to_list(await container.delete_blobs(
             blob_props,
             'blobb',
             'blobc',
-            BlobProperties(name="blobd", lease_id=lease.id, delete_snapshots="include"),
+            blob_props_d,
             timeout=3
         ))
         response = list(response)

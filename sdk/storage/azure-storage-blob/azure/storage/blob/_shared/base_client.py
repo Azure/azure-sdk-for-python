@@ -260,8 +260,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             url='{}://{}/?comp=batch{}{}'.format(
                 self.scheme,
                 self.primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
+                kwargs.pop('sas', ""),
+                kwargs.pop('timeout', "")
             ),
             headers={
                 'x-ms-version': self.api_version
