@@ -380,24 +380,24 @@ class FirewallPolicyIntrusionSystemMode(str, Enum):
     disabled = "Disabled"
 
 
-class FirewallPolicyNatRuleActionType(str, Enum):
+class FirewallPolicyNatRuleCollectionActionType(str, Enum):
 
     dnat = "DNAT"
 
 
-class FirewallPolicyFilterRuleActionType(str, Enum):
+class FirewallPolicyFilterRuleCollectionActionType(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
 
 
-class FirewallPolicyRuleConditionApplicationProtocolType(str, Enum):
+class FirewallPolicyRuleApplicationProtocolType(str, Enum):
 
     http = "Http"
     https = "Https"
 
 
-class FirewallPolicyRuleConditionNetworkProtocol(str, Enum):
+class FirewallPolicyRuleNetworkProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
@@ -858,6 +858,22 @@ class OfficeTrafficCategory(str, Enum):
     optimize_and_allow = "OptimizeAndAllow"
     all = "All"
     none = "None"
+
+
+class RoutingState(str, Enum):
+
+    none = "None"
+    provisioned = "Provisioned"
+    provisioning = "Provisioning"
+    failed = "Failed"
+
+
+class HubBgpConnectionStatus(str, Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
 
 
 class VpnConnectionStatus(str, Enum):
