@@ -380,8 +380,8 @@ class FormTrainingClient(object):
             policies=self._client._client._pipeline._impl_policies
         )  # type: Pipeline
         client = FormRecognizerClient(
-            self._endpoint,
-            self._credential,
+            endpoint=self._endpoint,
+            credential=self._credential,
             pipeline=_pipeline,
             **kwargs
         )
