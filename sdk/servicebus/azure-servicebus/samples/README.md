@@ -35,7 +35,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Receive dead-lettered messages
 - [receive_iterator_queue.py](./sync_samples/receive_iterator_queue.py) ([async_version](./async_samples/receive_iterator_queue_async.py)) - Examples to receive messages from a service bus queue by iterating over ServiceBusReceiver:
     - Receive messages by iterating over ServiceBusReceiver
-- [session_pool_receive.py](./sync_samples/session_pool_receive.py) ([async_version](./async_samples/session_pool_receive_async.py)) - Examples to receive messages from multiple available sessions in parallel with pool:
+- [session_pool_receive.py](./sync_samples/session_pool_receive.py) ([async_version](./async_samples/session_pool_receive_async.py)) - Examples to receive messages from multiple available sessions in parallel with a thread pool:
     - Receive messages from multiple available sessions in parallel with pool
     - Automatically renew the lock on the session through AutoLockRenew
 - [session_send_receive.py](./sync_samples/session_send_receive.py) ([async_version](./async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
