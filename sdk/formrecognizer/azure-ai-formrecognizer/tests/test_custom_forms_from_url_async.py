@@ -21,6 +21,17 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_forms_encoded_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        try:
+            poller = await client.begin_recognize_custom_forms_from_url(
+                model_id="00000000-0000-0000-0000-000000000000",
+                form_url="https://fakeuri.com/blank%20space"
+            )
+        except HttpResponseError as e:
+            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
+
+    @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with self.assertRaises(ValueError):
