@@ -68,6 +68,21 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(copy=True)
+    async def test_copy_model_fail_bad_model_id(self, client, container_sas_url, location, resource_id):
+        pytest.skip("service team will tell us when to enable this test")
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+
+        target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+
+        with self.assertRaises(HttpResponseError):
+            # give bad model_id
+            poller = await client.begin_copy_model("00000000-0000-0000-0000-000000000000", target=target)
+            copy = await poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer(copy=True)
     async def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
         training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
