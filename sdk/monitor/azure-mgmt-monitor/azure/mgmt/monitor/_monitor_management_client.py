@@ -74,6 +74,7 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
             'operations': '2015-04-01',
             'scheduled_query_rules': '2018-04-16',
             'service_diagnostic_settings': '2016-09-01',
+            'subscription_diagnostic_settings': '2017-05-01-preview',
             'tenant_activity_logs': '2015-04-01',
             'vm_insights': '2018-11-27-preview',
         }},
@@ -565,6 +566,19 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
             from .v2015_07_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
         elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def subscription_diagnostic_settings(self):
+        """Instance depends on the API version:
+
+           * 2017-05-01-preview: :class:`SubscriptionDiagnosticSettingsOperations<azure.mgmt.monitor.v2017_05_01_preview.operations.SubscriptionDiagnosticSettingsOperations>`
+        """
+        api_version = self._get_api_version('subscription_diagnostic_settings')
+        if api_version == '2017-05-01-preview':
+            from .v2017_05_01_preview.operations import SubscriptionDiagnosticSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

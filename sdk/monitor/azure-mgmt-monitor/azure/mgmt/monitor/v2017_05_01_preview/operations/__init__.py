@@ -13,10 +13,12 @@ from ._diagnostic_settings_category_operations import DiagnosticSettingsCategory
 from ._diagnostic_settings_operations import DiagnosticSettingsOperations
 from ._metric_definitions_operations import MetricDefinitionsOperations
 from ._metrics_operations import MetricsOperations
+from ._subscription_diagnostic_settings_operations import SubscriptionDiagnosticSettingsOperations
 
 __all__ = [
     'DiagnosticSettingsCategoryOperations',
     'DiagnosticSettingsOperations',
     'MetricDefinitionsOperations',
     'MetricsOperations',
+    'SubscriptionDiagnosticSettingsOperations',
 ]

@@ -17,6 +17,7 @@ from .operations import DiagnosticSettingsCategoryOperations
 from .operations import DiagnosticSettingsOperations
 from .operations import MetricDefinitionsOperations
 from .operations import MetricsOperations
+from .operations import SubscriptionDiagnosticSettingsOperations
 from . import models
 
 
@@ -34,6 +35,8 @@ class MonitorManagementClient(SDKClient):
     :vartype metric_definitions: azure.mgmt.monitor.v2017_05_01_preview.operations.MetricDefinitionsOperations
     :ivar metrics: Metrics operations
     :vartype metrics: azure.mgmt.monitor.v2017_05_01_preview.operations.MetricsOperations
+    :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettings operations
+    :vartype subscription_diagnostic_settings: azure.mgmt.monitor.v2017_05_01_preview.operations.SubscriptionDiagnosticSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -59,4 +62,6 @@ class MonitorManagementClient(SDKClient):
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metrics = MetricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_diagnostic_settings = SubscriptionDiagnosticSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
