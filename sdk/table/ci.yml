@@ -45,6 +45,6 @@ stages:
   parameters:
     ServiceDirectory: table
     Artifacts:
-    - name: azure_table
+    - name: azure-table
       safeName: azuretable
 
