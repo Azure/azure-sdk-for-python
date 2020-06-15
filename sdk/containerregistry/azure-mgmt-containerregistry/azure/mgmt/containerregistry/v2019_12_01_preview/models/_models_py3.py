@@ -3512,15 +3512,20 @@ class RunGetLogResult(Model):
 
     :param log_link: The link to logs for a run on a azure container registry.
     :type log_link: str
+    :param log_artifact_link: The link to logs in registry for a run on a
+     azure container registry.
+    :type log_artifact_link: str
     """
 
     _attribute_map = {
         'log_link': {'key': 'logLink', 'type': 'str'},
+        'log_artifact_link': {'key': 'logArtifactLink', 'type': 'str'},
     }
 
-    def __init__(self, *, log_link: str=None, **kwargs) -> None:
+    def __init__(self, *, log_link: str=None, log_artifact_link: str=None, **kwargs) -> None:
         super(RunGetLogResult, self).__init__(**kwargs)
         self.log_link = log_link
+        self.log_artifact_link = log_artifact_link
 
 
 class RunUpdateParameters(Model):
