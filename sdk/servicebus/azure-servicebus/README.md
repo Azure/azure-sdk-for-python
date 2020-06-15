@@ -109,13 +109,13 @@ For more information about these resources, see [What is Azure Service Bus?][ser
 
 To interact with these resources, one should be familiar with the following SDK concepts:
 
-* [ServiceBusClient][reference_client]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
+* [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender][reference_sender]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
+* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
 
-* [Receiver][reference_receiver]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
+* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
 
-* [Message][reference_message]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
+* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
 
 ## Examples
 
