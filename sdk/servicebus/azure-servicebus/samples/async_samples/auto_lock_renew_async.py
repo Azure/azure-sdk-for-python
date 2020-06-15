@@ -75,7 +75,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
             print('Register session into AutoLockRenew.')
 
             received_msgs = await receiver.receive(max_batch_size=10, max_wait_time=5)
-            await asyncio.sleep(100)  # message handling for long period
+            await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
                 await msg.complete()
