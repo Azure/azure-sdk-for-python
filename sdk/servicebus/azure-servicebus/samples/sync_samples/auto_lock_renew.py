@@ -32,9 +32,11 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
             sender.send(msgs_to_send)
             print('Send messages to non-sessionful queue.')
 
+        renewer = AutoLockRenew()
+
         with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10) as receiver:
             received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
-            renewer = AutoLockRenew()
+
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
                 renewer.register(msg, timeout=100)
@@ -44,9 +46,9 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
 
             for msg in received_msgs:
                 msg.complete()
-            renewer.shutdown()
-
             print('Complete messages.')
+
+        renewer.shutdown()
 
 
 def renew_lock_on_session_of_the_sessionful_entity():
@@ -59,12 +61,14 @@ def renew_lock_on_session_of_the_sessionful_entity():
             sender.send(msgs_to_send)
             print('Send messages to sessionful queue.')
 
+        renewer = AutoLockRenew()
+
         with servicebus_client.get_queue_session_receiver(
             queue_name=SESSION_QUEUE_NAME,
             session_id='SESSION',
             prefetch=10
         ) as receiver:
-            renewer = AutoLockRenew()
+
             # automatically renew the lock on the session for 100 seconds
             renewer.register(receiver.session, timeout=100)
             print('Register session into AutoLockRenew.')
@@ -74,9 +78,10 @@ def renew_lock_on_session_of_the_sessionful_entity():
 
             for msg in received_msgs:
                 msg.complete()
-            renewer.shutdown()
 
             print('Complete messages.')
+
+        renewer.shutdown()
 
 
 renew_lock_on_message_received_from_non_sessionful_entity()
