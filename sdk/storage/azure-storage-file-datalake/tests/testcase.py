@@ -354,7 +354,7 @@ class StorageTestCase(unittest.TestCase):
                         val = val.replace(old_value.encode(), new_value.encode())
                     elif isinstance(val, dict):
                         val2 = str(val).replace(old_value, new_value)
-                        val = eval(val2)    #nosec
+                        val = eval(val2)    # nosec
                     else:
                         val = val.replace(old_value, new_value)
         return val

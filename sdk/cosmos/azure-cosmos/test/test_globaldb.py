@@ -89,7 +89,7 @@ class Test_globaldb_tests(unittest.TestCase):
         self.client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_tests.host, Test_globaldb_tests.masterKey)
         
         # Create the test database only when it's not already present
-        query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_globaldb_tests.test_database_id + '\'') #nosec
+        query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_globaldb_tests.test_database_id + '\'') # nosec
         it = iter(query_iterable)
         
         self.test_db = next(it, None)
@@ -97,7 +97,7 @@ class Test_globaldb_tests(unittest.TestCase):
             self.test_db = self.client.CreateDatabase({'id' : Test_globaldb_tests.test_database_id})
 
         # Create the test collection only when it's not already present
-        query_iterable = self.client.QueryContainers(self.test_db['_self'], 'SELECT * FROM root r WHERE r.id=\'' + Test_globaldb_tests.test_collection_id + '\'')   #nosec
+        query_iterable = self.client.QueryContainers(self.test_db['_self'], 'SELECT * FROM root r WHERE r.id=\'' + Test_globaldb_tests.test_collection_id + '\'')   # nosec
         it = iter(query_iterable)
         
         self.test_coll = next(it, None)
