@@ -160,7 +160,8 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    # idle_timeout specifies how long the receiver should wait with no incoming messages before stopping receipt.  Default is None; to receive forever.
+    # idle_timeout specifies how long the receiver should wait with no incoming messages before stopping receipt.  
+    # Default is None; to receive forever.
     with client.get_queue_receiver(queue_name, idle_timeout=30) as receiver:
         for msg in receiver:
             print(str(msg))
@@ -199,7 +200,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 When receiving from a queue, you have multiple actions you can take on the messages you receive.  
 
 > **NOTE**: You can only settle `ReceivedMessage` objects having been returned from `ServiceBusReceiver.receive()` and `ServiceBusReceive.__iter__()` in `ReceiveSettleMode.PeekLock` mode
-> (this is the default).  `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt as if `complete()` had been called on it.  `PeekMessage` messages
+> (this is the default).  `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekMessage` messages
 > returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aformentioned receive methods.
 
 #### Complete
