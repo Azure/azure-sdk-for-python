@@ -150,7 +150,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ### Receive a message from a queue
 
-To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
+To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently as follows:
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -167,9 +167,24 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
 ```
 
-> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.
+> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.  For instance:
 
-It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
+```Python
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
+        for msg in receiver.receive(max_batch_size=5, max_wait_time=30):
+            print(str(msg))
+```
+
+In this example, max_batch_size (and prefetch, as required by max_batch_size) declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
+
+> **NOTE:** It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
 ### Sending and receiving a message from a session enabled subscription
