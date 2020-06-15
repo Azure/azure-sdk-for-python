@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0rc14
+## 3.0.0rc14(2020-06-15)
 
 **Features**
 
