@@ -1,5 +1,23 @@
 # Release History
 
+## 4.0.0 (2020-06-12)
+
+**Features**
+
+  - Model Cluster has a new parameter updated_at
+  - Model Cluster has a new parameter created_at
+  - Added operation ClustersOperations.update
+  - Added operation ClustersOperations.create_or_update
+  - Added operation ClustersOperations.list_available_cluster_region
+
+**Breaking changes**
+
+  - Model Cluster no longer has parameter created
+  - Model Cluster no longer has parameter updated
+  - Removed operation ClustersOperations.put
+  - Removed operation ClustersOperations.list_available_clusters
+  - Removed operation ClustersOperations.patch
+
 ## 3.1.0 (2020-05-13)
 
 **Features**
