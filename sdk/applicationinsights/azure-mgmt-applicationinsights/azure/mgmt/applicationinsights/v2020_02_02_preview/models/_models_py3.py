@@ -149,6 +149,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      'Disabled'. Default value: "Enabled" .
     :type public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "LogAnalytics" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
     """
 
     _validation = {
@@ -198,9 +204,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, kind: str, workspace_resource_id: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str, workspace_resource_id: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", ingestion_mode="LogAnalytics", **kwargs) -> None:
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -223,6 +230,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.private_link_scoped_resources = None
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
+        self.ingestion_mode = ingestion_mode
 
 
 class CloudError(Model):
