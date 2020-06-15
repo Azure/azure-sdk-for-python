@@ -9,6 +9,7 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._shared.models import Services
+from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
 class AccessPolicy(GenAccessPolicy):
@@ -331,8 +332,7 @@ class Entity(dict):
         try:
             return self[name]
         except KeyError:
-            raise ResourceNotFoundError
-           # raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+             raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 
     __setattr__ = dict.__setitem__
 
@@ -340,8 +340,7 @@ class Entity(dict):
         try:
             del self[name]
         except KeyError:
-            raise ResourceNotFoundError
-           # raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 
     def __dir__(self):
         return dir({}) + list(self.keys())

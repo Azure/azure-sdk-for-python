@@ -31,6 +31,7 @@ from ._constants import (
     _ENCRYPTION_PROTOCOL_V1,
 )
 
+_ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
 _ERROR_CONFLICT = 'Conflict ({0})'
 _ERROR_NOT_FOUND = 'Not found ({0})'
 _ERROR_UNKNOWN = 'Unknown error ({0})'
