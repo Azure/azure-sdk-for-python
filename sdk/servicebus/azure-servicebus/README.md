@@ -167,7 +167,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
 ```
 
-> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages, as opposed to receiving perpetually.
+> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.
 
 It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
