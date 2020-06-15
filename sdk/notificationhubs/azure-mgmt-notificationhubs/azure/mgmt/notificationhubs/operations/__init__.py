@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._notification_hubs_operations import NotificationHubsOperations
 
 __all__ = [
     'Operations',
