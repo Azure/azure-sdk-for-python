@@ -74,7 +74,7 @@ def renew_lock_on_session_of_the_sessionful_entity():
             print('Register session into AutoLockRenew.')
 
             received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
-            time.sleep(100)  # message handling for long period
+            time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
                 msg.complete()
