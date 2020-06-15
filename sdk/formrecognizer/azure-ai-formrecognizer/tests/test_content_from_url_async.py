@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import pytest
+import functools
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
@@ -12,6 +13,10 @@ from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
+
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestContentFromUrlAsync(AsyncFormRecognizerTest):
@@ -24,8 +29,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_auth_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_content_url_auth_successful_key(self, client):
         poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = await poller.result()
 
@@ -37,16 +42,15 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = await client.begin_recognize_content_from_url("https://badurl.jpg")
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_pass_stream(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_content_url_pass_stream(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
@@ -55,9 +59,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_transform_pdf(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_url_transform_pdf(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -77,10 +80,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_pdf(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account,
-                                      AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_url_pdf(self, client):
         poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -92,9 +93,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.tables[0].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_url_transform_jpg(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -114,10 +114,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_url_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account,
-                                      AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_url_jpg(self, client):
         poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
         result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -132,16 +130,16 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.tables[1].page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_content_multipage_url(self, client):
         poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
         result = await poller.result()
         self.assertEqual(len(result), 3)
         self.assertFormPagesHasValues(result)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_multipage_transform_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_content_multipage_transform_url(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -161,10 +159,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
     @pytest.mark.live_test_only
-    async def test_content_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account,
-                                      AzureKeyCredential(form_recognizer_account_key))
+    async def test_content_continuation_token(self, client):
         initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
         cont_token = initial_poller.continuation_token()
 
@@ -174,10 +171,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_multipage_table_span_pdf(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account,
-                                      AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_multipage_table_span_pdf(self, client):
         poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
         result = await poller.result()
         self.assertEqual(len(result), 2)
@@ -199,10 +194,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_content_multipage_table_span_transform(self, resource_group, location, form_recognizer_account,
-                                                form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_content_multipage_table_span_transform(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
