@@ -109,13 +109,13 @@ For more information about these resources, see [What is Azure Service Bus?][ser
 
 To interact with these resources, one should be familiar with the following SDK concepts:
 
-* [ServiceBusClient](./azure/servicebus/_servicebus_client.py): This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
+* [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender](./azure/servicebus/_servicebus_sender.py): To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
+* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
 
-* [Receiver](./azure/servicebus/_servicebus_receiver.py): To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
+* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
 
-* [Message](./azure/servicebus/_common/message.py): When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
+* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
 
 ## Examples
 
@@ -150,7 +150,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ### Receive a message from a queue
 
-To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
+To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently as follows:
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -167,9 +167,24 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
 ```
 
-> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.
+> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.  For instance:
 
-It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
+```Python
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
+        for msg in receiver.receive(max_batch_size=5, max_wait_time=30):
+            print(str(msg))
+```
+
+In this example, max_batch_size (and prefetch, as required by max_batch_size) declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
+
+> **NOTE:** It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
 ### Sending and receiving a message from a session enabled subscription
@@ -386,6 +401,10 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[message_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.Message
+[receiver_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusReceiver
+[sender_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSender
+[client_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusClient
 [0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
 [0_50_pypi]: https://pypi.org/project/azure-servicebus/
 [0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html
