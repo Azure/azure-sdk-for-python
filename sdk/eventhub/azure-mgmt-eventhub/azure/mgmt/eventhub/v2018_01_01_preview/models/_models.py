@@ -414,10 +414,11 @@ class Cluster(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Properties of the cluster SKU.
     :type sku: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterSku
-    :ivar created: The UTC time when the Event Hubs Cluster was created.
-    :vartype created: str
-    :ivar updated: The UTC time when the Event Hubs Cluster was last updated.
-    :vartype updated: str
+    :ivar created_at: The UTC time when the Event Hubs Cluster was created.
+    :vartype created_at: str
+    :ivar updated_at: The UTC time when the Event Hubs Cluster was last
+     updated.
+    :vartype updated_at: str
     :ivar metric_id: The metric ID of the cluster resource. Provided by the
      service and not modifiable by the user.
     :vartype metric_id: str
@@ -429,8 +430,8 @@ class Cluster(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
         'metric_id': {'readonly': True},
         'status': {'readonly': True},
     }
@@ -442,8 +443,8 @@ class Cluster(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ClusterSku'},
-        'created': {'key': 'properties.created', 'type': 'str'},
-        'updated': {'key': 'properties.updated', 'type': 'str'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'str'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
     }
@@ -451,8 +452,8 @@ class Cluster(TrackedResource):
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
-        self.created = None
-        self.updated = None
+        self.created_at = None
+        self.updated_at = None
         self.metric_id = None
         self.status = None
 
