@@ -89,6 +89,48 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
+    async def test_custom_form_unlabeled_blank_page(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+
+        with open(self.blank_pdf, "rb") as fd:
+            blank = fd.read()
+        poller = await fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            blank
+        )
+        form = await poller.result()
+
+        self.assertEqual(len(form), 1)
+        self.assertEqual(form[0].page_range.first_page_number, 1)
+        self.assertEqual(form[0].page_range.last_page_number, 1)
+        self.assertIsNotNone(form[0].pages)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_custom_form_labeled_blank_page(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        model = await poller.result()
+
+        with open(self.blank_pdf, "rb") as fd:
+            blank = fd.read()
+        poller = await fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            blank
+        )
+        form = await poller.result()
+
+        self.assertEqual(len(form), 1)
+        self.assertEqual(form[0].page_range.first_page_number, 1)
+        self.assertEqual(form[0].page_range.last_page_number, 1)
+        self.assertIsNotNone(form[0].pages)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalTrainingAccountPreparer()
     async def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
