@@ -61,7 +61,7 @@ class DeviceSecurityGroupsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'resourceId': self._serialize.url("resource_id", resource_id, 'str')
+                    'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -132,7 +132,7 @@ class DeviceSecurityGroupsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -198,7 +198,7 @@ class DeviceSecurityGroupsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -265,7 +265,7 @@ class DeviceSecurityGroupsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

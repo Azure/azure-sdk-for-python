@@ -62,7 +62,7 @@ class AssessmentsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -134,7 +134,7 @@ class AssessmentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -202,7 +202,7 @@ class AssessmentsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -270,7 +270,7 @@ class AssessmentsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

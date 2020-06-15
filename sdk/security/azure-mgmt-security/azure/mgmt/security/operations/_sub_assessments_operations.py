@@ -63,7 +63,7 @@ class SubAssessmentsOperations(object):
                 # Construct URL
                 url = self.list_all.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -137,7 +137,7 @@ class SubAssessmentsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str'),
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
                     'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -212,7 +212,7 @@ class SubAssessmentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str'),
             'subAssessmentName': self._serialize.url("sub_assessment_name", sub_assessment_name, 'str')
         }

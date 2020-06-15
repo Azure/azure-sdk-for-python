@@ -62,7 +62,7 @@ class AdvancedThreatProtectionOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'settingName': self._serialize.url("self.setting_name", self.setting_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -127,7 +127,7 @@ class AdvancedThreatProtectionOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True),
             'settingName': self._serialize.url("self.setting_name", self.setting_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
