@@ -42,7 +42,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
                 renewer.register(msg, timeout=100)
             print('Register messages into AutoLockRenew done.')
 
-            time.sleep(100)  # message handling for long period
+            time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
                 msg.complete()
