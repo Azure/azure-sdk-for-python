@@ -8,13 +8,16 @@
 import unittest
 from datetime import datetime, timedelta
 
+import pytest
+
 from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError, ResourceModifiedError
 from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
     ResourceTypes, AccountSasPermissions, \
-    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions
+    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
+    FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
 from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
@@ -561,6 +564,86 @@ class FileTest(StorageTestCase):
     @record
     def test_rename_file_with_non_used_name(self):
         file_client = self._create_file_and_return_client()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_file_system_sas(self):
+        # sas token is calculated from storage key, so live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_file_system_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_file_sas(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_file_sas(self.dsc.account_name,
+                                  self.file_system_name,
+                                  None,
+                                  "oldfile",
+                                  self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                  expiry=datetime.utcnow() + timedelta(hours=1),
+                                  )
+
+        new_token = generate_file_sas(self.dsc.account_name,
+                                      self.file_system_name,
+                                      None,
+                                      "newname",
+                                      self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                      permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                      expiry=datetime.utcnow() + timedelta(hours=1),
+                                      )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname'+'?'+new_token)
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_account_sas(self):
+        pytest.skip("service bug")
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=5),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
         data_bytes = b"abc"
         file_client.append_data(data_bytes, 0, 3)
         file_client.flush_data(3)

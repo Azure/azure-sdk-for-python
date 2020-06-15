@@ -12,7 +12,8 @@ from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ResourceModifiedError
-from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient
+from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient, \
+    generate_file_system_sas, FileSystemSasPermissions, DataLakeFileClient
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
 from testcase import (
     StorageTestCase,
@@ -413,6 +414,7 @@ class DirectoryTest(StorageTestCase):
         # rename dir2 under filesystem2 to dir1 under filesystem1
         res = source_directory_client.rename_directory('/' + destination_file_system_name + '/' + non_existing_dir_name)
 
+
         # the source directory has been renamed to destination directory, so it cannot be found
         with self.assertRaises(HttpResponseError):
             source_directory_client.get_directory_properties()
@@ -431,6 +433,26 @@ class DirectoryTest(StorageTestCase):
 
         with self.assertRaises(HttpResponseError):
             dir2.get_directory_properties()
+
+    def test_rename_dir_with_file_system_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        token = generate_file_system_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddirectory", credential=token)
+        dir_client.create_directory()
+        new_client = dir_client.rename_directory(dir_client.file_system_name+'/'+'newdirectory')
+
+        new_client.get_directory_properties()
+        self.assertEqual(new_client.path_name, "newdirectory")
 
     @record
     def test_get_properties(self):
