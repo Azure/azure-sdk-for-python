@@ -153,7 +153,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ### Receive messages from a queue
 
-To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently as follows:
+To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently through the receiver itself.
 
 #### Receive messages from a queue through iterating over ServiceBusReceiver
 
@@ -174,7 +174,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 #### Receive messages from a queue through `ServiceBusReceiver.receive()`
 
-`ServiceBusReceiver.receive()` always returns an array of messages.
+> **NOTE:** `ServiceBusReceiver.receive()` always returns an array of messages.
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -185,13 +185,13 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
-        received_messages = receiver.receive(max_wait_time=10)  # try to receive a single message within 10 seconds
-        if received_messages:
-            print(str(received_messages[0]))
+        received_message_array = receiver.receive(max_wait_time=10)  # try to receive a single message within 10 seconds
+        if received_message_array:
+            print(str(received_message_array[0]))
 
     with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
-        received_messages = receiver.receive(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
-        for message in received_messages:
+        received_message_array = receiver.receive(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
+        for message in received_message_array:
             print(str(message))
 ```
 
@@ -338,6 +338,7 @@ import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 queue_name = os.environ['SERVICE_BUS_SESSION_ID']
+session_id = "<your-session-id>"
 
 renewer = AutoLockRenew()
 with ServiceBusClient.from_connection_string(connstr) as client:
