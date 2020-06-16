@@ -21,10 +21,11 @@
     "https"
   ],
   "produces": [
-    "application/xml"
+    "application/xml",
+    "application/atom+xml"
   ],
   "consumes": [
-    "application/xml"
+    "application/atom+xml"
   ],
   "tags": [
     {
@@ -373,6 +374,140 @@
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       }
     },
+    "MessagingSku": {
+      "description": "The SKU for the messaging entity.",
+      "type": "string",
+      "xml": {
+        "name": "MessagingSKU",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "NamespaceProperties": {
+      "description": "The metadata related to a Service Bus namespace.",
+      "type": "object",
+      "xml": {
+        "name": "NamespaceInfo",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "properties": {
+        "Alias": {
+          "description": "Alias for the geo-disaster recovery Service Bus namespace.",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "CreatedTime": {
+          "description": "The exact time the namespace was created.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "MessagingSku": {
+          "$ref": "#/definitions/MessagingSku"
+        },
+        "MessagingUnits": {
+          "description": "The number of messaging units allocated to the namespace.",
+          "type": "integer",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "ModifiedTime": {
+          "description": "The exact time the namespace was last modified.",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "Name": {
+          "description": "Name of the namespace",
+          "type": "string",
+          "xml": {
+            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+          }
+        },
+        "NamespaceType": {
+          "$ref": "#/definitions/NamespaceType"
+        }
+      }
+    },
+    "NamespacePropertiesEntry": {
+      "description": "Represents an entry in the feed when querying namespace info",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The URL of the GET request",
+          "type": "string",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "title": {
+          "description": "The name of the namespace.",
+          "type": "object"
+        },
+        "updated": {
+          "description": "The timestamp for when this namespace was last updated",
+          "type": "string",
+          "format": "date-time",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          }
+        },
+        "author": {
+          "$ref": "#/definitions/ResponseAuthor"
+        },
+        "link": {
+          "$ref": "#/definitions/ResponseLink"
+        },
+        "content": {
+          "description": "Information about the namespace.",
+          "type": "object",
+          "xml": {
+            "namespace": "http://www.w3.org/2005/Atom"
+          },
+          "properties": {
+            "type": {
+              "description": "Type of content in namespace info response",
+              "type": "string",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "NamespaceProperties": {
+              "$ref": "#/definitions/NamespaceProperties"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "entry",
+        "namespace": "http://www.w3.org/2005/Atom"
+      }
+    },
+    "NamespaceType": {
+      "description": "The type of entities the namespace can contain.",
+      "type": "string",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Messaging",
+        "NotificationHub",
+        "Mixed",
+        "EventHub",
+        "Relay"
+      ]
+    },
     "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
       "type": "object",
@@ -566,7 +701,7 @@
         },
         "title": {
           "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -647,7 +782,7 @@
         },
         "link": {
           "description": "Links to paginated response.",
-          "type":"array",
+          "type": "array",
           "items": {
             "$ref": "#/definitions/ResponseLink"
           }
@@ -664,7 +799,7 @@
     "ResponseAuthor": {
       "description": "The author that created this resource",
       "type": "object",
-      "xml":{
+      "xml": {
         "namespace": "http://www.w3.org/2005/Atom"
       },
       "properties": {
@@ -699,23 +834,6 @@
       "xml": {
         "name": "link",
         "namespace": "http://www.w3.org/2005/Atom"
-      }
-    },
-    "ResponseTitle": {
-      "description": "The title of the response",
-      "type": "string",
-      "xml": {
-        "namespace": "http://www.w3.org/2005/Atom"
-      },
-      "properties": {
-        "type": {
-          "description": "Type of value",
-          "type": "string",
-          "xml": {
-            "attribute": true,
-            "namespace": "http://www.w3.org/2005/Atom"
-          }
-        }
       }
     },
     "ServiceBusManagementError": {
@@ -785,7 +903,7 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "FilteringMessagesBeforePublishing":{
+        "FilteringMessagesBeforePublishing": {
           "description": "Filter messages before publishing.",
           "type": "boolean",
           "xml": {
@@ -917,7 +1035,7 @@
         },
         "title": {
           "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -998,7 +1116,7 @@
         },
         "link": {
           "description": "Links to paginated response.",
-          "type":"array",
+          "type": "array",
           "items": {
             "$ref": "#/definitions/ResponseLink"
           }
@@ -1140,8 +1258,8 @@
           }
         },
         "title": {
-          "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "description": "The name of the subscription",
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -1219,7 +1337,7 @@
         },
         "link": {
           "description": "Links to paginated response.",
-          "type":"array",
+          "type": "array",
           "items": {
             "$ref": "#/definitions/ResponseLink"
           }
@@ -1234,14 +1352,14 @@
       }
     },
     "RuleFilter": {
-      "type":"object",
+      "type": "object",
       "discriminator": "type",
       "xml": {
         "name": "Filter",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       },
       "properties": {
-        "type":{
+        "type": {
           "type": "string",
           "xml": {
             "attribute": true,
@@ -1252,7 +1370,7 @@
       }
     },
     "KeyValue": {
-      "type":"object",
+      "type": "object",
       "xml": {
         "name": "KeyValueOfstringanyType",
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
@@ -1278,51 +1396,51 @@
           "$ref": "#/definitions/RuleFilter"
         },
         {
-          "type":"object",
+          "type": "object",
           "properties": {
-            "CorrelationId" :{
+            "CorrelationId": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "MessageId":{
+            "MessageId": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "To" :{
+            "To": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "ReplyTo":{
+            "ReplyTo": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "Label" :{
+            "Label": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "SessionId":{
+            "SessionId": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "ReplyToSessionId" :{
+            "ReplyToSessionId": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
             },
-            "ContentType":{
+            "ContentType": {
               "type": "string",
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
@@ -1340,13 +1458,13 @@
         }
       ]
     },
-    "SqlFilter" :{
+    "SqlFilter": {
       "allOf": [
         {
           "$ref": "#/definitions/RuleFilter"
         },
         {
-          "type":"object",
+          "type": "object",
           "properties": {
             "SqlExpression": {
               "type": "string",
@@ -1358,13 +1476,13 @@
         }
       ]
     },
-    "TrueFilter" :{
+    "TrueFilter": {
       "allOf": [
         {
           "$ref": "#/definitions/RuleFilter"
         },
         {
-          "type":"object",
+          "type": "object",
           "properties": {
             "SqlExpression": {
               "type": "string",
@@ -1377,13 +1495,13 @@
         }
       ]
     },
-    "FalseFilter" :{
+    "FalseFilter": {
       "allOf": [
         {
           "$ref": "#/definitions/RuleFilter"
         },
         {
-          "type":"object",
+          "type": "object",
           "properties": {
             "SqlExpression": {
               "type": "string",
@@ -1440,7 +1558,7 @@
         },
         "title": {
           "description": "The name of the rule",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -1518,7 +1636,7 @@
         },
         "link": {
           "description": "Links to paginated response.",
-          "type":"array",
+          "type": "array",
           "items": {
             "$ref": "#/definitions/ResponseLink"
           }
@@ -1530,107 +1648,6 @@
             "$ref": "#/definitions/RuleDescriptionEntry"
           }
         }
-      }
-    },
-    "NamespaceProperties": {
-      "description": "Description of a Service Bus Namespace.",
-      "type": "object",
-      "xml": {
-        "name": "NamespaceInfo",
-        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-      },
-      "properties": {
-        "CreatedTime": {
-          "description": "The exact time the namespace was created.",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "MessagingSKU": {
-          "description": "",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "ModifiedTime": {
-          "description": "The exact time the namespace was last modified.",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "Name": {
-          "description": "Name of the namespace",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        },
-        "NamespaceType": {
-          "description": "Name of the namespace",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
-        }
-      }
-    },
-    "NamespacePropertiesEntry": {
-      "description": "Represents an entry in the feed when querying namespace info",
-      "type": "object",
-      "properties": {
-        "id": {
-          "description": "The URL of the GET request",
-          "type": "string",
-          "xml": {
-            "namespace": "http://www.w3.org/2005/Atom"
-          }
-        },
-        "title": {
-          "description": "The name of the namespace",
-          "$ref": "#/definitions/ResponseTitle"
-        },
-        "updated": {
-          "description": "The timestamp for when this entry was generated",
-          "type": "string",
-          "format": "date-time",
-          "xml": {
-            "namespace": "http://www.w3.org/2005/Atom"
-          }
-        },
-        "author": {
-          "$ref": "#/definitions/ResponseAuthor"
-        },
-        "link": {
-          "$ref": "#/definitions/ResponseLink"
-        },
-        "content": {
-          "description": "The QueueDescription",
-          "type": "object",
-          "xml": {
-            "namespace": "http://www.w3.org/2005/Atom"
-          },
-          "properties": {
-            "type": {
-              "description": "Type of content in namespace info response",
-              "type": "string",
-              "xml": {
-                "attribute": true
-              }
-            },
-            "NamespaceProperties": {
-              "$ref": "#/definitions/NamespaceProperties"
-            }
-          }
-        }
-      },
-      "xml": {
-        "name": "entry",
-        "namespace": "http://www.w3.org/2005/Atom"
       }
     }
   },
@@ -1934,7 +1951,7 @@
         }
       }
     },
-    "/{topicName}/subscriptions/{subscriptionName}/rules":{
+    "/{topicName}/subscriptions/{subscriptionName}/rules": {
       "parameters": [
         {
           "name": "topicName",
@@ -1992,7 +2009,7 @@
         }
       }
     },
-    "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}":{
+    "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}": {
       "parameters": [
         {
           "name": "topicName",
@@ -2138,7 +2155,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "object"
+              "$ref": "#/definitions/NamespacePropertiesEntry"
             }
           },
           "default": {
