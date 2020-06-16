@@ -398,7 +398,6 @@
         "Alias": {
           "description": "Alias for the geo-disaster recovery Service Bus namespace.",
           "type": "string",
-          "format": "date-time",
           "xml": {
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
@@ -411,7 +410,7 @@
             "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
           }
         },
-        "MessagingSKU": {
+        "MessagingSku": {
           "$ref": "#/definitions/MessagingSku"
         },
         "MessagingUnits": {
@@ -702,7 +701,7 @@
         },
         "title": {
           "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -834,14 +833,6 @@
       },
       "xml": {
         "name": "link",
-        "namespace": "http://www.w3.org/2005/Atom"
-      }
-    },
-    "ResponseTitle": {
-      "description": "The title of the response",
-      "type": "object",
-      "xml": {
-        "wrapped": false,
         "namespace": "http://www.w3.org/2005/Atom"
       }
     },
@@ -1044,7 +1035,7 @@
         },
         "title": {
           "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -1267,8 +1258,8 @@
           }
         },
         "title": {
-          "description": "The name of the queue",
-          "$ref": "#/definitions/ResponseTitle"
+          "description": "The name of the subscription",
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -1567,7 +1558,7 @@
         },
         "title": {
           "description": "The name of the rule",
-          "$ref": "#/definitions/ResponseTitle"
+          "type": "object"
         },
         "published": {
           "description": "The timestamp for when this queue was published",
@@ -2164,7 +2155,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "object"
+              "$ref": "#/definitions/NamespacePropertiesEntry"
             }
           },
           "default": {
