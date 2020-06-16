@@ -28,7 +28,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: cognitiveservices
-    TestTimeoutInMinutes: 75
     Artifacts:
     - name: azure_cognitiveservices_anomalydetector
       safeName: azurecognitiveservicesanomalydetector

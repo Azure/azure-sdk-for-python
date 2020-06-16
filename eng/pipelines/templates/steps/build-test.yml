@@ -4,7 +4,7 @@ parameters:
   EnvVars: {}
   ServiceDirectory: ''
   PythonVersion: ''
-  OSName: ''
+  OSVmImage: ''
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
@@ -24,8 +24,6 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-    parameters:
-      OSName: ${{ parameters.OSName }}
 
   - script: |
       python -m pip install pip == 20.1
@@ -56,7 +54,7 @@ steps:
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+      testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
       failTaskOnFailedTests: true
 
   - template: publish-coverage.yml
