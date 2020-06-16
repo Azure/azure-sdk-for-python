@@ -2,6 +2,12 @@
 
 ## 2019-07-07 (2019-07-07)
 
+**Fixes**
+- Responses are always decoded as UTF8
+
+**Notes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
+
 
 ## 12.1.1 (2020-03-10)
 
