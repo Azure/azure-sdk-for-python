@@ -12,6 +12,16 @@
 from enum import Enum
 
 
+class GlobalParameterType(str, Enum):
+
+    object_enum = "Object"
+    string = "String"
+    int_enum = "Int"
+    float_enum = "Float"
+    bool_enum = "Bool"
+    array = "Array"
+
+
 class IntegrationRuntimeState(str, Enum):
 
     initial = "Initial"
@@ -433,6 +443,13 @@ class TeradataPartitionOption(str, Enum):
     dynamic_range = "DynamicRange"
 
 
+class SqlPartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -466,6 +483,7 @@ class SsisPackageLocationType(str, Enum):
     ssisdb = "SSISDB"
     file = "File"
     inline_package = "InlinePackage"
+    package_store = "PackageStore"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):

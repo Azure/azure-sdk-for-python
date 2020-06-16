@@ -1,5 +1,70 @@
 # Release History
 
+## 0.11.0 (2020-06-16)
+
+**Features**
+
+  - Model AzureBlobStorageReadSettings has a new parameter partition_root_path
+  - Model AzureBlobStorageReadSettings has a new parameter delete_files_after_completion
+  - Model SqlSource has a new parameter partition_option
+  - Model SqlSource has a new parameter partition_settings
+  - Model JsonSource has a new parameter format_settings
+  - Model DynamicsAXSource has a new parameter http_request_timeout
+  - Model AzureFileStorageReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageReadSettings has a new parameter prefix
+  - Model AzureFileStorageReadSettings has a new parameter delete_files_after_completion
+  - Model AzureSqlSource has a new parameter partition_option
+  - Model AzureSqlSource has a new parameter partition_settings
+  - Model GetMetadataActivity has a new parameter format_settings
+  - Model GetMetadataActivity has a new parameter store_settings
+  - Model SapCloudForCustomerSink has a new parameter http_request_timeout
+  - Model DataFlowSource has a new parameter schema_linked_service
+  - Model DataFlowSource has a new parameter linked_service
+  - Model SftpReadSettings has a new parameter enable_partition_discovery
+  - Model SftpReadSettings has a new parameter partition_root_path
+  - Model SftpReadSettings has a new parameter delete_files_after_completion
+  - Model FtpReadSettings has a new parameter enable_partition_discovery
+  - Model FtpReadSettings has a new parameter partition_root_path
+  - Model FtpReadSettings has a new parameter delete_files_after_completion
+  - Model IntegrationRuntimeSsisProperties has a new parameter package_stores
+  - Model SSISPackageLocation has a new parameter configuration_access_credential
+  - Model SqlMISource has a new parameter partition_option
+  - Model SqlMISource has a new parameter partition_settings
+  - Model SapCloudForCustomerSource has a new parameter http_request_timeout
+  - Model AzureDataLakeStoreReadSettings has a new parameter delete_files_after_completion
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_before
+  - Model AzureDataLakeStoreReadSettings has a new parameter partition_root_path
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_after
+  - Model AzureBlobFSReadSettings has a new parameter partition_root_path
+  - Model AzureBlobFSReadSettings has a new parameter delete_files_after_completion
+  - Model SapEccSource has a new parameter http_request_timeout
+  - Model DeleteActivity has a new parameter store_settings
+  - Model FileServerReadSettings has a new parameter delete_files_after_completion
+  - Model FileServerReadSettings has a new parameter partition_root_path
+  - Model FileServerReadSettings has a new parameter file_filter
+  - Model HttpReadSettings has a new parameter enable_partition_discovery
+  - Model HttpReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageLinkedService has a new parameter connection_string
+  - Model AzureFileStorageLinkedService has a new parameter file_share
+  - Model AzureFileStorageLinkedService has a new parameter account_key
+  - Model AzureFileStorageLinkedService has a new parameter sas_uri
+  - Model AzureFileStorageLinkedService has a new parameter sas_token
+  - Model AmazonS3ReadSettings has a new parameter partition_root_path
+  - Model AmazonS3ReadSettings has a new parameter delete_files_after_completion
+  - Model GoogleCloudStorageReadSettings has a new parameter partition_root_path
+  - Model GoogleCloudStorageReadSettings has a new parameter delete_files_after_completion
+  - Model ODataSource has a new parameter http_request_timeout
+  - Model SqlDWSource has a new parameter partition_option
+  - Model SqlDWSource has a new parameter partition_settings
+  - Model BinarySource has a new parameter format_settings
+  - Model DataFlowSink has a new parameter schema_linked_service
+  - Model DataFlowSink has a new parameter linked_service
+  - Model DelimitedTextReadSettings has a new parameter compression_properties
+  - Model Factory has a new parameter global_parameters
+  - Model SqlServerSource has a new parameter partition_option
+  - Model SqlServerSource has a new parameter partition_settings
+  - Model HdfsReadSettings has a new parameter partition_root_path
+
 ## 0.10.0 (2020-03-10)
 
 **Features**
