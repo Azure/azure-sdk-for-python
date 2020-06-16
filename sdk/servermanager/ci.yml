@@ -24,11 +24,10 @@ pr:
     include:
     - sdk/servermanager/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servermanager
     Artifacts:
     - name: azure_mgmt_servermanager
       safeName: azuremgmtservermanager
-      

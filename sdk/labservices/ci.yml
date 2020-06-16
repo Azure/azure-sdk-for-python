@@ -24,8 +24,8 @@ pr:
     include:
     - sdk/labservices/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: labservices
     Artifacts:

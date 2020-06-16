@@ -24,11 +24,10 @@ pr:
     include:
     - sdk/managementpartner/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: managementpartner
     Artifacts:
     - name: azure_mgmt_managementpartner
       safeName: azuremgmtmanagementpartner
-      

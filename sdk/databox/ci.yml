@@ -24,9 +24,8 @@ pr:
     include:
     - sdk/databox/
 
-
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: databox
     Artifacts:

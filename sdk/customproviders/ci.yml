@@ -24,9 +24,8 @@ pr:
     include:
     - sdk/customproviders/
 
-
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: customproviders
     Artifacts:

@@ -26,8 +26,8 @@ pr:
     - sdk/textanalytics/
     - sdk/core/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: textanalytics
     Artifacts:

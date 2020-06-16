@@ -24,8 +24,8 @@ pr:
     include:
     - sdk/servicefabric/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicefabric
     Artifacts:
@@ -33,4 +33,3 @@ stages:
       safeName: azuremgmtservicefabric
     - name: azure_servicefabric
       safeName: azureservicefabric
-      

@@ -30,8 +30,8 @@ pr:
     - tools/
     - eng/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
     Artifacts:

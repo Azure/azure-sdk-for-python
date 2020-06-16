@@ -24,11 +24,10 @@ pr:
     include:
     - sdk/monitor/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: monitor
     Artifacts:
     - name: azure_mgmt_monitor
       safeName: azuremgmtmonitor
-      

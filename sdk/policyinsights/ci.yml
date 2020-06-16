@@ -24,11 +24,10 @@ pr:
     include:
     - sdk/policyinsights/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: policyinsights
     Artifacts:
     - name: azure_mgmt_policyinsights
       safeName: azuremgmtpolicyinsights
-      

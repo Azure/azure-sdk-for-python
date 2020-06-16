@@ -24,11 +24,10 @@ pr:
     include:
     - sdk/security/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: security
     Artifacts:
     - name: azure_mgmt_security
       safeName: azuremgmtsecurity
-      

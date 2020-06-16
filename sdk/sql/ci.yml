@@ -24,8 +24,8 @@ pr:
     include:
     - sdk/sql/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: sql
     Artifacts:
@@ -33,4 +33,3 @@ stages:
       safeName: azuremgmtsql
     - name: azure_mgmt_sqlvirtualmachine
       safeName: azuremgmtsqlvirtualmachine
-      

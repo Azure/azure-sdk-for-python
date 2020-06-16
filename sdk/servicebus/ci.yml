@@ -24,8 +24,8 @@ pr:
     include:
     - sdk/servicebus/
 
-stages:
-- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicebus
     Artifacts:
@@ -33,4 +33,3 @@ stages:
       safeName: azuremgmtservicebus
     - name: azure_servicebus
       safeName: azureservicebus
-      
