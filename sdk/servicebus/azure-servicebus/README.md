@@ -121,8 +121,8 @@ To interact with these resources, one should be familiar with the following SDK 
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Send message(s) to a queue](#send-message(s)-to-a-queue)
-* [Receive message(s) from a queue](#receive-message(s)-from-a-queue)
+* [Send messages to a queue](#send-messages-to-a-queue)
+* [Receive messages from a queue](#receive-messages-from-a-queue)
 * [Send and receive a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
 * [Settle a message after receipt](#settle-a-message-after-receipt)
 
@@ -130,7 +130,7 @@ To perform management tasks such as creating and deleting queues/topics/subscrip
 
 Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
-### Send message(s) to a queue
+### Send messages to a queue
 
 This example sends single message and array of messages to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
@@ -151,11 +151,11 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         sender.send(messages)
 ```
 
-### Receive message(s) from a queue
+### Receive messages from a queue
 
 To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently as follows:
 
-#### Receive messages from a queue through receiver serving as a generator
+#### Receive messages from a queue through iterating over ServiceBusReceiver
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -172,7 +172,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
 ```
 
-#### Receive message(s) from a queue through `ServiceBusReceiver.receive()`
+#### Receive messages from a queue through `ServiceBusReceiver.receive()`
 
 `ServiceBusReceiver.receive()` always returns an array of messages.
 
