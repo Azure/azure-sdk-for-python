@@ -17,7 +17,8 @@ import pytest
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
-    OAuthRequestResponsesFilter
+    OAuthRequestResponsesFilter,
+    Track2UserAgentChecker
 )
 from azure_devtools.scenario_tests.config import TestConfig
 
@@ -116,11 +117,14 @@ class AzureTestCase(ReplayableTest):
             return fake_settings, None
 
     def _get_recording_processors(self):
-        return [
+        processors = [
             self.scrubber,
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
         ]
+        if _is_autorest_v3:
+            processors.append(Track2UserAgentChecker())
+        return processors
 
     def _get_replay_processors(self):
         return [

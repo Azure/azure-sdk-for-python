@@ -201,3 +201,13 @@ class RequestUrlNormalizer(RecordingProcessor):
         import re
         request.uri = re.sub('(?<!:)//', '/', request.uri)
         return request
+
+class Track2UserAgentChecker(RecordingProcessor):
+    """Check if the user-agent is following track2 guidelines"""
+
+    def process_request(self, request):
+        user_agent_header = request['headers'].get("user-agent", None)
+        if user_agent_header:
+            # Do the check you want here
+            if "azsdk-python-" not in user_agent_header:
+                raise RuntimeError("User-Agent syntax is not respected. https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy")

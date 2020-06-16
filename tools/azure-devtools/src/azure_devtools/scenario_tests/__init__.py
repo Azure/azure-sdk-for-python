@@ -12,6 +12,7 @@ from .recording_processors import (
     RecordingProcessor, SubscriptionRecordingProcessor,
     LargeRequestBodyProcessor, LargeResponseBodyProcessor, LargeResponseBodyReplacer,
     OAuthRequestResponsesFilter, DeploymentNameReplacer, GeneralNameReplacer, AccessTokenReplacer, RequestUrlNormalizer,
+    Track2UserAgentChecker,
 )
 from .utilities import create_random_name, get_sha1_hash
 
@@ -22,7 +23,7 @@ __all__ = ['IntegrationTestBase', 'ReplayableTest', 'LiveTest',
            'RecordingProcessor', 'SubscriptionRecordingProcessor',
            'LargeRequestBodyProcessor', 'LargeResponseBodyProcessor', 'LargeResponseBodyReplacer',
            'OAuthRequestResponsesFilter', 'DeploymentNameReplacer', 'GeneralNameReplacer',
-           'AccessTokenReplacer', 'RequestUrlNormalizer',
+           'AccessTokenReplacer', 'RequestUrlNormalizer', 'Track2UserAgentChecker',
            'live_only', 'record_only',
            'create_random_name', 'get_sha1_hash']
 __version__ = '0.5.2'
