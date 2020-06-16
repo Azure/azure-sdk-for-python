@@ -194,16 +194,6 @@ class CertificateVisibility(str, Enum):
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
 
-class ContainerType(str, Enum):
-
-    docker_compatible = "DockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
-
-
-class ResourceType(str, Enum):
-
-    batch_accounts = "Microsoft.Batch/batchAccounts"  #: The Batch account resource type.
-
-
 class NameAvailabilityReason(str, Enum):
 
     invalid = "Invalid"  #: The requested name is invalid.
