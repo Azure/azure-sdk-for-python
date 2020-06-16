@@ -21,10 +21,10 @@
     "https"
   ],
   "produces": [
+    "application/xml",
     "application/atom+xml"
   ],
   "consumes": [
-    "application/xml",
     "application/atom+xml"
   ],
   "tags": [
@@ -374,6 +374,19 @@
         "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       }
     },
+    "MessagingSku": {
+      "description": "The SKU for the messaging entity.",
+      "type": "string",
+      "xml": {
+        "name": "MessagingSKU",
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
     "NamespaceProperties": {
       "description": "The metadata related to a Service Bus namespace.",
       "type": "object",
@@ -399,11 +412,7 @@
           }
         },
         "MessagingSKU": {
-          "description": "The SKU for the messaging entity.",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/MessagingSku"
         },
         "MessagingUnits": {
           "description": "The number of messaging units allocated to the namespace.",
@@ -428,11 +437,7 @@
           }
         },
         "NamespaceType": {
-          "description": "Type of entities present in the namespace.",
-          "type": "string",
-          "xml": {
-            "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-          }
+          "$ref": "#/definitions/NamespaceType"
         }
       }
     },
@@ -489,6 +494,20 @@
         "name": "entry",
         "namespace": "http://www.w3.org/2005/Atom"
       }
+    },
+    "NamespaceType": {
+      "description": "The type of entities the namespace can contain.",
+      "type": "string",
+      "xml": {
+        "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+      },
+      "enum": [
+        "Messaging",
+        "NotificationHub",
+        "Mixed",
+        "EventHub",
+        "Relay"
+      ]
     },
     "QueueDescription": {
       "description": "Description of a Service Bus queue resource.",
@@ -820,19 +839,10 @@
     },
     "ResponseTitle": {
       "description": "The title of the response",
-      "type": "string",
+      "type": "object",
       "xml": {
+        "wrapped": false,
         "namespace": "http://www.w3.org/2005/Atom"
-      },
-      "properties": {
-        "type": {
-          "description": "Type of value",
-          "type": "string",
-          "xml": {
-            "attribute": true,
-            "namespace": "http://www.w3.org/2005/Atom"
-          }
-        }
       }
     },
     "ServiceBusManagementError": {
