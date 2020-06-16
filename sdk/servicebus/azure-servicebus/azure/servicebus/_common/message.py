@@ -320,7 +320,7 @@ class BatchMessage(object):
     def _from_list(self, messages):
         for each in messages:
             if not isinstance(each, Message):
-                raise ValueError("Populating a message batch only supports iterables containing Message Objects.  "
+                raise ValueError("Only Message or iterable object containing Messages are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
             self.add(each)
 

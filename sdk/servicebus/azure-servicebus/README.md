@@ -121,18 +121,18 @@ To interact with these resources, one should be familiar with the following SDK 
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Send a message to a queue](#send-a-message-to-a-queue)
-* [Receive a message from a queue](#receive-a-message-from-a-queue)
-* [Sending and receiving a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
+* [Send messages to a queue](#send-messages-to-a-queue)
+* [Receive messages from a queue](#receive-messages-from-a-queue)
+* [Send and receive a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
 * [Settle a message after receipt](#settle-a-message-after-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
 Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
-### Send a message to a queue
+### Send messages to a queue
 
-This example sends a message to a queue that is assumed to already exist, created via the Azure portal or az commands.
+This example sends single message and array of messages to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
 ```Python
 from azure.servicebus import ServiceBusClient, Message
@@ -144,13 +144,18 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
 
-        message = Message("Single message")
-        sender.send(message)
+        single_message = Message("Single message")
+        sender.send(single_message)
+
+        messages = [Message("First message"), Message("Second message")]
+        sender.send(messages)
 ```
 
-### Receive a message from a queue
+### Receive messages from a queue
 
-To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently as follows:
+To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently through the receiver itself.
+
+#### Receive messages from a queue through iterating over ServiceBusReceiver
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -163,11 +168,13 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     # idle_timeout specifies how long the receiver should wait with no incoming messages before stopping receipt.  
     # Default is None; to receive forever.
     with client.get_queue_receiver(queue_name, idle_timeout=30) as receiver:
-        for msg in receiver:
+        for msg in receiver:  # ServiceBusReceiver instance is a generator
             print(str(msg))
 ```
 
-> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually.  For instance:
+#### Receive messages from a queue through `ServiceBusReceiver.receive()`
+
+> **NOTE:** `ServiceBusReceiver.receive()` receives a single or constrained batch of messages through an ad-hoc method call, as opposed to receiving perpetually from the generator. It always returns a list.
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -177,14 +184,20 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        received_message_array = receiver.receive(max_wait_time=10)  # try to receive a single message within 10 seconds
+        if received_message_array:
+            print(str(received_message_array[0]))
+
     with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
-        for msg in receiver.receive(max_batch_size=5, max_wait_time=30):
-            print(str(msg))
+        received_message_array = receiver.receive(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
+        for message in received_message_array:
+            print(str(message))
 ```
 
 In this example, max_batch_size (and prefetch, as required by max_batch_size) declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
 
-> **NOTE:** It should also be noted that `ServiceBusReceiver.Peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
+> **NOTE:** It should also be noted that `ServiceBusReceiver.peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
 ### Sending and receiving a message from a session enabled subscription
@@ -198,7 +211,7 @@ import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
 subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
-session_id = os.environ.get('SERVICE_BUS_SESSION_ID')
+session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_topic_sender(topic_name) as sender:
@@ -324,7 +337,7 @@ from azure.servicebus import ServiceBusClient, AutoLockRenew
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-queue_name = os.environ['SERVICE_BUS_SESSION_ID']
+session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 renewer = AutoLockRenew()
 with ServiceBusClient.from_connection_string(connstr) as client:
