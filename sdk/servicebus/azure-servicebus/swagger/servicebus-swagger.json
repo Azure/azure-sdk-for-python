@@ -269,7 +269,7 @@
       },
       "properties": {
         "content": {
-          "description": "TopicDescription for the new topic.",
+          "description": "RuleDescription for the new Rule.",
           "type": "object",
           "xml": {
             "namespace": "http://www.w3.org/2005/Atom"
@@ -283,8 +283,8 @@
                 "attribute": true
               }
             },
-            "TopicDescription": {
-              "description": "Topic information to create.",
+            "RuleDescription": {
+              "description": "Rule information to create.",
               "$ref": "#/definitions/RuleDescription"
             }
           }
@@ -1327,15 +1327,17 @@
               "xml": {
                 "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
               }
-            }
-          },
-          "additionalProperties": {
-            "type": "object",
-            "xml": {
-              "name": "Properties",
-              "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
             },
-            "$ref": "#/definitions/KeyValue"
+            "Properties": {
+              "type": "array",
+              "xml": {
+                "wrapped": true,
+                "namespace": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+              },
+              "items": {
+                "$ref": "#/definitions/KeyValue"
+              }
+            }
           }
         }
       ]
