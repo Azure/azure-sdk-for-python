@@ -14,9 +14,6 @@ from ._models import (
     TrainingStatus,
     CustomFormModelStatus,
     FormContentType,
-    USReceipt,
-    ReceiptType,
-    USReceiptItem,
     FormTable,
     FormTableCell,
     TrainingDocumentInfo,
@@ -33,7 +30,7 @@ from ._models import (
     FormWord,
     CustomFormModel,
     CustomFormSubmodel,
-    CustomFormModelField
+    CustomFormModelField,
 )
 
 
@@ -45,9 +42,6 @@ __all__ = [
     'CustomFormModelStatus',
     'FormContentType',
     'FormContent',
-    'USReceipt',
-    'ReceiptType',
-    'USReceiptItem',
     'FormTable',
     'FormTableCell',
     'TrainingDocumentInfo',
@@ -64,7 +58,7 @@ __all__ = [
     'FormWord',
     'CustomFormModel',
     'CustomFormSubmodel',
-    'CustomFormModelField'
+    'CustomFormModelField',
 ]
 
 __VERSION__ = VERSION

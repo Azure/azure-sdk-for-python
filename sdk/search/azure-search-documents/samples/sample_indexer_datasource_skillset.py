@@ -89,7 +89,8 @@ def _create_skillset():
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    result = client.create_skillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    skillset = SearchIndexerSkillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    result = client.create_skillset(skillset)
     return result
 
 def sample_indexer_workflow():

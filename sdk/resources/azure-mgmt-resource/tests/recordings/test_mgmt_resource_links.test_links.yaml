@@ -11,29 +11,45 @@ interactions:
       Content-Length:
       - '22'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a?api-version=2015-05-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a?api-version=2019-07-01
   response:
     body:
+<<<<<<< HEAD
       string: "{\r\n  \"name\": \"pytestavset7650e8a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a\"\
         ,\r\n  \"type\": \"Microsoft.Compute/availabilitySets\",\r\n  \"location\"\
         : \"westus\",\r\n  \"properties\": {\r\n    \"platformUpdateDomainCount\"\
         : 5,\r\n    \"platformFaultDomainCount\": 3\r\n  }\r\n}"
+=======
+      string: "{\r\n  \"name\": \"pytestavset7650e8a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/availabilitySets\",\r\n  \"location\"\
+        : \"westus\",\r\n  \"properties\": {\r\n    \"platformUpdateDomainCount\"\
+        : 5,\r\n    \"platformFaultDomainCount\": 3\r\n  },\r\n  \"sku\": {\r\n  \
+        \  \"name\": \"Classic\"\r\n  }\r\n}"
+>>>>>>> master
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '393'
+      - '434'
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:02 GMT
+=======
+      - Tue, 19 May 2020 17:09:17 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -50,15 +66,18 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
+<<<<<<< HEAD
       - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1196
+=======
+      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1195
+>>>>>>> master
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a",
-      "notes": "Testing links"}}\'''''
+    body: '{"location": "westus"}'
     headers:
       Accept:
       - application/json
@@ -67,29 +86,93 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '231'
+      - '22'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2?api-version=2019-07-01
   response:
     body:
-      string: '{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}'
+      string: "{\r\n  \"name\": \"pytestavset7650e8a2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/availabilitySets\",\r\n  \"location\"\
+        : \"westus\",\r\n  \"properties\": {\r\n    \"platformUpdateDomainCount\"\
+        : 5,\r\n    \"platformFaultDomainCount\": 3\r\n  },\r\n  \"sku\": {\r\n  \
+        \  \"name\": \"Classic\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '563'
+      - '436'
       content-type:
       - application/json; charset=utf-8
       date:
+      - Tue, 19 May 2020 17:09:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/PutVM3Min;236,Microsoft.Compute/PutVM30Min;1194
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2",
+      "notes": "Testing links"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '232'
+      Content-Type:
+      - application/json
+      User-Agent:
+<<<<<<< HEAD
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
+  response:
+    body:
+      string: '{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2/","notes":"Testing
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '692'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:01 GMT
+=======
+      - Tue, 19 May 2020 17:09:21 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -99,7 +182,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -113,25 +196,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
   response:
     body:
-      string: '{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}'
+      string: '{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2/","notes":"Testing
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '563'
+      - '692'
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:11 GMT
+=======
+      - Tue, 19 May 2020 17:09:32 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -157,25 +248,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/links?api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
+      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2/","notes":"Testing
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '575'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:11 GMT
+=======
+      - Tue, 19 May 2020 17:09:32 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -201,25 +300,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links?$filter=atScope%28%29&api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
+      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2/","notes":"Testing
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '575'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:11 GMT
+=======
+      - Tue, 19 May 2020 17:09:32 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -245,25 +352,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links?$filter=atScope%28%29&api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links?$filter=atScope%28%29&api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","notes":"Testing
-        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
+      string: '{"value":[{"properties":{"sourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/","targetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a2/","notes":"Testing
+        links"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink","type":"Microsoft.Resources/links","name":"myLink"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '575'
+      - '704'
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:11 GMT
+=======
+      - Tue, 19 May 2020 17:09:32 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -283,7 +398,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -291,12 +406,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
+=======
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+>>>>>>> master
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a/providers/Microsoft.Resources/links/myLink?api-version=2016-09-01
   response:
     body:
       string: ''
@@ -306,7 +425,11 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Fri, 05 Jun 2020 02:26:11 GMT
+=======
+      - Tue, 19 May 2020 17:09:32 GMT
+>>>>>>> master
       expires:
       - '-1'
       pragma:
@@ -316,7 +439,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK

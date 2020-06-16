@@ -18,10 +18,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
     body:
-      string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'
+      string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'
     headers:
       cache-control:
       - no-cache
@@ -59,10 +59,10 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'
+      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'
     headers:
       cache-control:
       - no-cache
@@ -104,7 +104,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
     body:
       string: ''

@@ -19,6 +19,10 @@
   - Added operation CustomVisionPredictionClientOperationsMixin.detect_image
   - Added operation group CustomVisionTrainingClientOperationsMixin
 
+**Breaking changes**
+
+- Credentials are now longer a simple string, but a `msrest.authentication.ApiKeyCredentials` instance instead  
+
 **General Breaking changes**
 
 This version uses a next-generation code generator that *might*

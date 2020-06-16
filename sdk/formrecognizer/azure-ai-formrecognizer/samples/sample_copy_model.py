@@ -54,15 +54,13 @@ class CopyModelSample(object):
 
         # [START begin_copy_model]
         source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
-        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         poller = source_client.begin_copy_model(
             model_id=source_model_id,
             target=target
         )
-        copy = poller.result()
+        copied_over_model = poller.result()
 
-        copied_over_model = target_client.get_custom_model(copy.model_id)
         print("Model ID: {}".format(copied_over_model.model_id))
         print("Status: {}".format(copied_over_model.status))
         # [END begin_copy_model]

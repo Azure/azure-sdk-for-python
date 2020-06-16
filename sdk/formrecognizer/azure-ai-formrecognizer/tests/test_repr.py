@@ -96,20 +96,6 @@ def form_page(form_table, form_line):
     return model, model_repr
 
 @pytest.fixture
-def us_receipt_type():
-    model = _models.ReceiptType(type="Itemized", confidence=1.0)
-    model_repr = "ReceiptType(type=Itemized, confidence=1.0)"
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
-def us_receipt_item(form_field_two):
-    model = _models.USReceiptItem(name=form_field_two[0], quantity=form_field_two[0], price=form_field_two[0], total_price=form_field_two[0])
-    model_repr = "USReceiptItem(name={}, quantity={}, price={}, total_price={})".format(form_field_two[1], form_field_two[1], form_field_two[1], form_field_two[1])[:1024]
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def custom_form_model_field():
     model = _models.CustomFormModelField(label="label", name="name", accuracy=0.99)
     model_repr = "CustomFormModelField(label=label, name=name, accuracy=0.99)"
@@ -141,64 +127,11 @@ def training_document_info(form_recognizer_error):
 class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
-    def test_recognized_form(self, form_field_one, page_range, form_page, us_receipt_type, us_receipt_item):
+    def test_recognized_form(self, form_field_one, page_range, form_page):
         model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
         model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
             form_field_one[1], page_range[1], form_page[1]
         )[:1024]
-        assert repr(model) == model_repr
-
-    def test_recognized_receipt(self, form_field_one, page_range, form_page, us_receipt_type):
-        model = _models.RecognizedReceipt(
-            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]],
-            receipt_type=us_receipt_type[0], receipt_locale="en-US")
-        model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
-            form_field_one[1], page_range[1], form_page[1], us_receipt_type[0], "en-US"
-        )[:1024]
-        assert repr(model) == model_repr
-
-    def test_us_receipt(self, form_field_one, form_field_two, us_receipt_type, us_receipt_item, page_range, form_page):
-        model = _models.USReceipt(
-            merchant_address=form_field_one[0],
-            merchant_name=form_field_two[0],
-            merchant_phone_number=form_field_one[0],
-            receipt_type=us_receipt_type[0],
-            receipt_items=[us_receipt_item[0], us_receipt_item[0]],
-            subtotal=form_field_two[0],
-            tax=form_field_one[0],
-            tip=form_field_two[0],
-            total=form_field_one[0],
-            transaction_date=form_field_two[0],
-            transaction_time=form_field_one[0],
-            fields={
-                "one": form_field_one[0]
-            },
-            page_range=page_range[0],
-            pages=[form_page[0]],
-            form_type="test",
-            receipt_locale="en-US"
-        )
-        model_repr="USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, receipt_type={}, receipt_items=[{}, {}], subtotal={}, " \
-            "tax={}, tip={}, total={}, transaction_date={}, transaction_time={}, fields={{'one': {}}}, page_range={}, pages=[{}], " \
-            "form_type=test, receipt_locale=en-US)".format(
-                form_field_one[1],
-                form_field_two[1],
-                form_field_one[1],
-                us_receipt_type[1],
-                us_receipt_item[1],
-                us_receipt_item[1],
-                form_field_two[1],
-                form_field_one[1],
-                form_field_two[1],
-                form_field_one[1],
-                form_field_two[1],
-                form_field_one[1],
-                form_field_one[1],
-                page_range[1],
-                form_page[1]
-            )[:1024]
-
-
         assert repr(model) == model_repr
 
     def test_custom_form_model(self, custom_form_sub_model, form_recognizer_error, training_document_info):

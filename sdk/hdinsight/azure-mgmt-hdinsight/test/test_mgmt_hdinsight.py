@@ -73,7 +73,11 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                                                        storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-premium')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
+<<<<<<< HEAD
         create_params.properties.tier = Tier.standard
+=======
+        create_params.properties.tier = Tier.premium
+>>>>>>> master
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
@@ -164,7 +168,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         )
         update_params = VaultCreateOrUpdateParameters(location=location,
                                                       properties=vault.properties)
-        vault = self.vault_mgmt_client.vaults.create_or_update(resource_group.name, vault.name, update_params).result()
+        vault = self.vault_mgmt_client.vaults.begin_create_or_update(resource_group.name, vault.name, update_params).result()
         self.assertIsNotNone(vault)
 
         # create keyclient

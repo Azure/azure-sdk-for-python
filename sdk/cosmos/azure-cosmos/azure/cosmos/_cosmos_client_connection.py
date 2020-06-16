@@ -31,6 +31,7 @@ import six
 from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
+from azure.core.exceptions import raise_with_traceback  # type: ignore
 from azure.core.pipeline.policies import (  # type: ignore
     HTTPPolicy,
     ContentDecodePolicy,
@@ -2480,11 +2481,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     def __ValidateResource(resource):
         id_ = resource.get("id")
         if id_:
-            if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1:
-                raise ValueError("Id contains illegal chars.")
+            try:
+                if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1:
+                    raise ValueError("Id contains illegal chars.")
 
-            if id_[-1] == " ":
-                raise ValueError("Id ends with a space.")
+                if id_[-1] == " ":
+                    raise ValueError("Id ends with a space.")
+            except AttributeError:
+                raise_with_traceback(TypeError, message="Id type must be a string.")
 
     # Adds the partition key to options
     def _AddPartitionKey(self, collection_link, document, options):

@@ -1,0 +1,43 @@
+{
+    "chosen_version": "2019-06-01",
+    "total_api_version_list": ["2019-06-01"],
+    "client": {
+        "name": "SubscriptionClient",
+        "filename": "_subscription_client",
+        "description": "All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization."
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"]
+    },
+    "operation_groups": {
+        "operations": "Operations",
+        "subscriptions": "SubscriptionsOperations",
+        "tenants": "TenantsOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}

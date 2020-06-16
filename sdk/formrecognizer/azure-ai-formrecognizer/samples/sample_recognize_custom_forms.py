@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze a form from a document with a custom
     trained model. The form must be of the same type as the forms the custom model
     was trained on. To learn how to train your own models, look at
-    sample_train_unlabeled_model.py and sample_train_labeled_model.py
+    sample_train_model_without_labels.py and sample_train_model_with_labels.py
 USAGE:
     python sample_recognize_custom_forms.py
 
@@ -29,6 +29,7 @@ import os
 class RecognizeCustomForms(object):
 
     def recognize_custom_forms(self):
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -42,7 +43,7 @@ class RecognizeCustomForms(object):
         )
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
-        with open("sample_forms/forms/Form_1.jpg", "rb") as f:
+        with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
                 model_id=model_id, form=f
             )

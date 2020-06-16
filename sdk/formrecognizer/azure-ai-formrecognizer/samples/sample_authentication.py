@@ -28,6 +28,7 @@ USAGE:
     3) AZURE_CLIENT_ID - the client ID of your active directory application.
     4) AZURE_TENANT_ID - the tenant ID of your active directory application.
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
+    6) AZURE_FORM_RECOGNIZER_AAD_ENDPOINT - the endpoint to your Form Recognizer resource for using AAD.
 """
 
 import os
@@ -50,14 +51,14 @@ class AuthenticationSample(object):
         receipt = poller.result()
 
     def authentication_with_azure_active_directory_form_recognizer_client(self):
+        # [START create_fr_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_fr_client_with_aad]
         from azure.ai.formrecognizer import FormRecognizerClient
         from azure.identity import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
@@ -77,14 +78,14 @@ class AuthenticationSample(object):
         properties = form_training_client.get_account_properties()
 
     def authentication_with_azure_active_directory_form_training_client(self):
+        # [START create_ft_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_ft_client_with_aad]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.identity import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_training_client = FormTrainingClient(endpoint, credential)
