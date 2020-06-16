@@ -1,6 +1,6 @@
 # Release History
 
-## 2019-07-07 (2019-07-07)
+## 0.12.01b (2019-07-07)
 
 **Fixes**
 - Responses are always decoded as UTF8
