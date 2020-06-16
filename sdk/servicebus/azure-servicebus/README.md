@@ -174,7 +174,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 #### Receive messages from a queue through `ServiceBusReceiver.receive()`
 
-> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually. It always returns an array of messages.
+> **NOTE:** `ServiceBusReceiver.receive()` receives a single or constrained batch of messages through an ad-hoc method call, as opposed to receiving perpetually from the generator. It always returns a list.
 
 ```Python
 from azure.servicebus import ServiceBusClient
