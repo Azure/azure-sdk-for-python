@@ -12,17 +12,17 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import AzureRedHatOpenShiftClientConfiguration
+from ._configuration import AzureRedHatOpenShift4ClientConfiguration
 from .operations import Operations
 from .operations import OpenShiftClustersOperations
 from . import models
 
 
-class AzureRedHatOpenShiftClient(SDKClient):
-    """Rest API for Azure Red Hat OpenShift
+class AzureRedHatOpenShift4Client(SDKClient):
+    """Rest API for Azure Red Hat OpenShift 4
 
     :ivar config: Configuration for client.
-    :vartype config: AzureRedHatOpenShiftClientConfiguration
+    :vartype config: AzureRedHatOpenShift4ClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.redhatopenshift.v2020_04_30.operations.Operations
@@ -40,8 +40,8 @@ class AzureRedHatOpenShiftClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureRedHatOpenShiftClientConfiguration(credentials, subscription_id, base_url)
-        super(AzureRedHatOpenShiftClient, self).__init__(self.config.credentials, self.config)
+        self.config = AzureRedHatOpenShift4ClientConfiguration(credentials, subscription_id, base_url)
+        super(AzureRedHatOpenShift4Client, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2020-04-30'
