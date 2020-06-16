@@ -17,6 +17,6 @@
 
 - Open a terminal, install azure-core & azure-identity
 
-- Run vscode_test.py
+- Run run-test.py
 
 Expect: a valid access token is printed out.
