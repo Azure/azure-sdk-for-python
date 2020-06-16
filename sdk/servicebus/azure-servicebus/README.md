@@ -174,7 +174,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 #### Receive messages from a queue through `ServiceBusReceiver.receive()`
 
-> **NOTE:** `ServiceBusReceiver.receive()` always returns an array of messages.
+> **NOTE:** `ServiceBusReceiver.receive()` provides another mechanism to receive if it is desired to receive a single or constrained batch of messages through a single method call, as opposed to receiving perpetually. It always returns an array of messages.
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -211,7 +211,7 @@ import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
 subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
-session_id = os.environ.get('SERVICE_BUS_SESSION_ID')
+session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_topic_sender(topic_name) as sender:
@@ -337,8 +337,7 @@ from azure.servicebus import ServiceBusClient, AutoLockRenew
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-queue_name = os.environ['SERVICE_BUS_SESSION_ID']
-session_id = "<your-session-id>"
+session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 renewer = AutoLockRenew()
 with ServiceBusClient.from_connection_string(connstr) as client:
