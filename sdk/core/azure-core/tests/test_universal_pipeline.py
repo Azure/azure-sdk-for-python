@@ -81,7 +81,7 @@ def test_pipeline_context():
 
     serialized = pickle.dumps(context)
 
-    revived_context = pickle.loads(serialized)
+    revived_context = pickle.loads(serialized)  # nosec
     assert revived_context.options == kwargs
     assert revived_context.transport is None
     assert 'deserialized_data' in revived_context

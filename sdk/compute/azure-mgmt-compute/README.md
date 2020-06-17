@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Compute Management](https://docs.microsoft.com/python/api/overview/azure/virtualmachines)
+For code examples, see [Compute Management](https://docs.microsoft.com/python/api/overview/azure/virtualmachines?view=azure-python-preview)
 on docs.microsoft.com.
 
 

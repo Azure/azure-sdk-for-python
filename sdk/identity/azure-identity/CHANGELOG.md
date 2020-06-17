@@ -1,7 +1,8 @@
 # Release History
 
 ## 1.4.0b6 (Unreleased)
-
+- The async `AzureCliCredential` correctly invokes `/bin/sh`
+  ([#12048](https://github.com/Azure/azure-sdk-for-python/issues/12048))
 
 ## 1.4.0b5 (2020-06-12)
 - Prevent an error on importing `AzureCliCredential` on Windows caused by a bug

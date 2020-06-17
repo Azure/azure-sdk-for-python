@@ -501,7 +501,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                         data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
                 except NameError:
                     pass
-                return ET.fromstring(data_as_str)
+                return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....

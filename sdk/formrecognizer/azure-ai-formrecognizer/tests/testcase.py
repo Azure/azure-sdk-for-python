@@ -25,11 +25,14 @@ from azure_devtools.scenario_tests import (
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
 
+REGION = os.getenv('REGION', 'centraluseuap')
+
 
 class AccessTokenReplacer(RecordingProcessor):
     """Replace the access token in a request/response body."""
 
     def __init__(self, replacement='redacted'):
+
         self._replacement = replacement
 
     def process_request(self, request):
@@ -385,7 +388,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
             )
 
         return {
-            'location': 'centraluseuap',
+            'location': REGION,
             'resource_group': rg,
         }
 
@@ -400,21 +403,22 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
         return {
-            'location': 'centraluseuap',
+            'location': REGION,
             'resource_group': FormRecognizerTest._RESOURCE_GROUP,
             'form_recognizer_account': form_recognizer_account,
             'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY
         }
 
 
-class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
+class GlobalClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalTrainingAccountPreparer, self).__init__(
+        super(GlobalClientPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
+        self.training = kwargs.get("training", False)
         self.multipage_test = kwargs.get("multipage", False)
         self.multipage_test_2 = kwargs.get("multipage2", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
@@ -444,50 +448,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                 raise
         return key_value
 
-    def create_resource(self, name, **kwargs):
-        client, container_sas_url, blob_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
-
-        if self.need_blob_sas_url:
-            return {"client": client,
-                    "container_sas_url": container_sas_url,
-                    "blob_sas_url": blob_sas_url}
-        if self.copy:
-            if self.is_live:
-                resource_group = kwargs.get("resource_group")
-                subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-                form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
-
-                resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
-                              "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = "centraluseuap"
-                self.test_class_instance.scrubber.register_name_pair(
-                    resource_id,
-                    "resource_id"
-                )
-            else:
-                resource_location = "centraluseuap"
-                resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
-
-            return {
-                "client": client,
-                "container_sas_url": container_sas_url,
-                "location": resource_location,
-                "resource_id": resource_id
-            }
-
-        else:
-            return {"client": client,
-                    "container_sas_url": container_sas_url}
-
-    def create_form_client_and_container_sas_url(self, **kwargs):
-        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
-        if form_recognizer_account is None:
-            form_recognizer_account = kwargs.pop("form_recognizer_account")
-
-        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
-        if form_recognizer_account_key is None:
-            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
-
+    def get_training_parameters(self, client):
         if self.is_live:
             if self.multipage_test:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
@@ -519,22 +480,82 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
             container_sas_url = "containersasurl"
             blob_sas_url = "blob_sas_url"
 
+        if self.need_blob_sas_url:
+            return {"client": client,
+                    "container_sas_url": container_sas_url,
+                    "blob_sas_url": blob_sas_url}
+        else:
+            return {"client": client,
+                    "container_sas_url": container_sas_url}
+
+    def get_copy_parameters(self, training_params, client, **kwargs):
+        if self.is_live:
+            resource_group = kwargs.get("resource_group")
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
+
+            resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
+                          "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
+            resource_location = REGION
+            self.test_class_instance.scrubber.register_name_pair(
+                resource_id,
+                "resource_id"
+            )
+        else:
+            resource_location = REGION
+            resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
+
+        return {
+            "client": client,
+            "container_sas_url": training_params["container_sas_url"],
+            "location": resource_location,
+            "resource_id": resource_id
+        }
+
+    def create_resource(self, name, **kwargs):
+        client = self.create_form_client(**kwargs)
+
+        if not self.training:
+            return {"client": client}
+
+        training_params = self.get_training_parameters(client)
+
+        if self.copy:
+            return self.get_copy_parameters(training_params, client, **kwargs)
+
+        return training_params
+
+    def create_form_client(self, **kwargs):
+        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
+        if form_recognizer_account is None:
+            form_recognizer_account = kwargs.pop("form_recognizer_account")
+
+        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
+        if form_recognizer_account_key is None:
+            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
+
+        if self.is_live:
+            polling_interval = 5
+        else:
+            polling_interval = 0
+
         return self.client_cls(
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
+            polling_interval=polling_interval,
             **self.client_kwargs
-        ), container_sas_url, blob_sas_url
+        )
 
 
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="centraluseuap")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="centraluseuap"
+        location=REGION
     )
 
     try:
